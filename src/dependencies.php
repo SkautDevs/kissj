@@ -1,8 +1,8 @@
 <?php
 
 use \Psr\Container\ContainerInterface as C;
-use Src\ParticipantService;
-use Src\UserService;
+use \kissj\ParticipantService;
+use \kissj\UserService;
 
 // DIC configuration
 
@@ -25,7 +25,8 @@ $container['logger'] = function (C $c) {
 	return $logger;
 };
 
-// PHPmailes
+// PHPmailer
+// https://github.com/PHPMailer/PHPMailer
 $container['mailer'] = function (C $c) {
 	$settings = $c->get('settings')['mailer'];
 	$mailer = new \PHPMailer\PHPMailer\PHPMailer(true);

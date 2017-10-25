@@ -2,7 +2,7 @@
 
 namespace Tests\Functional;
 
-use Src\UserService;
+use kissj\UserService;
 
 class RegisterTest extends BaseTestCase {
 

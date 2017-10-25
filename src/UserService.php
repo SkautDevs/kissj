@@ -1,16 +1,10 @@
 <?php
 
-namespace Src;
+namespace kissj;
 
 use DateTime;
 use PDO;
 
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 2017-10-25
- * Time: 20:22
- */
 class UserService {
 
 	/** @var PDO */
