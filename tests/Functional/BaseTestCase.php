@@ -74,4 +74,50 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         // Return the response
         return $response;
     }
+
+	/**
+	 * Process the application given a request method and URI
+	 *
+	 * @param array|object|null $requestData the request data
+	 */
+	public function app(string $requestMethod, string $requestUri, $requestData = null): App
+	{
+		// Create a mock environment for testing with
+		$environment = Environment::mock(
+			[
+				'REQUEST_METHOD' => $requestMethod,
+				'REQUEST_URI' => $requestUri
+			]
+		);
+
+		// Set up a request object based on the environment
+		$request = Request::createFromEnvironment($environment);
+
+		// Add request data, if it exists
+		if (isset($requestData)) {
+			$request = $request->withParsedBody($requestData);
+		}
+
+		// Set up a response object
+		$response = new Response();
+
+		// Use the application settings
+		$settings = require __DIR__ . '/../../src/settings.php';
+
+		// Instantiate the application
+		$app = new App($settings);
+
+		// Set up dependencies
+		require __DIR__ . '/../../src/dependencies.php';
+
+		// Register middleware
+		if ($this->withMiddleware) {
+			require __DIR__ . '/../../src/middleware.php';
+		}
+
+		// Register routes
+		require __DIR__ . '/../../src/routes.php';
+
+		return $app;
+	}
 }
