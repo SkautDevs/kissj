@@ -6,6 +6,6 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 
 `git clone [this repository]`
 
-`composer update`
+`composer install`
 
 And you are good to go! 
