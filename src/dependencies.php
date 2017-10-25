@@ -1,17 +1,19 @@
 <?php
+
+use \Psr\Container\ContainerInterface as C;
 // DIC configuration
 
 $container = $app->getContainer();
 
 // view renderer
-$container['renderer'] = function ($c) {
+$container['renderer'] = function (C $c) {
 	$settings = $c->get('settings')['renderer'];
 	return new Slim\Views\PhpRenderer($settings['template_path']);
 	
 };
 
 // monolog
-$container['logger'] = function ($c) {
+$container['logger'] = function (C $c) {
 	$settings = $c->get('settings')['logger'];
 	$logger = new Monolog\Logger($settings['name']);
 	$logger->pushProcessor(new Monolog\Processor\UidProcessor());
@@ -21,7 +23,7 @@ $container['logger'] = function ($c) {
 };
 
 // PHPmailes
-$container['mailer'] = function ($c) {
+$container['mailer'] = function (C $c) {
 	$settings = $c->get('settings')['mailer'];
 	$mailer = new \PHPMailer\PHPMailer\PHPMailer(true);
 	
@@ -49,4 +51,26 @@ $container['mailer'] = function ($c) {
 	$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 	$mail->send();
 	*/
+};
+
+// db
+$container['db'] = function (C $c) {
+	$path = 'db';
+	$dsn = 'sqlite:' . __DIR__ . '/' . $path;
+	$pdo = new PDO($dsn);
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	return $pdo;
+};
+
+// user service
+$container['userService'] = function (C $c) {
+	$service = new UserService($c->get('db'));
+	return $service;
+};
+
+// participant service
+$container['participantService'] = function (C $c) {
+	$service = new ParticipantService($c->get('db'));
+	return $service;
 };
