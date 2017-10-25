@@ -1,5 +1,9 @@
 <?php
 
+namespace Src;
+
+use PDO;
+
 /**
  * Created by PhpStorm.
  * User: Azathoth

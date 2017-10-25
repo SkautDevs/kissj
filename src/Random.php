@@ -1,5 +1,7 @@
 <?php
 
+namespace Src;
+
 /**
  * Created by PhpStorm.
  * User: Azathoth

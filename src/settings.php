@@ -28,5 +28,9 @@ return [
 			'bcc_mail' => '', //registration mail for example
 			'bcc_name' => '',
 		],
+
+		'db' => [
+			'path' => __DIR__ . '/../db'
+		]
 	],
 ];

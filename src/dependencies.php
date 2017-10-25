@@ -1,6 +1,9 @@
 <?php
 
 use \Psr\Container\ContainerInterface as C;
+use Src\ParticipantService;
+use Src\UserService;
+
 // DIC configuration
 
 $container = $app->getContainer();
@@ -55,8 +58,8 @@ $container['mailer'] = function (C $c) {
 
 // db
 $container['db'] = function (C $c) {
-	$path = 'db';
-	$dsn = 'sqlite:' . __DIR__ . '/' . $path;
+	$path = $c->get('settings')['db']['path'];
+	$dsn = 'sqlite:' . $path;
 	$pdo = new PDO($dsn);
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

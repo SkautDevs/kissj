@@ -1,5 +1,10 @@
 <?php
 
+namespace Src;
+
+use DateTime;
+use PDO;
+
 /**
  * Created by PhpStorm.
  * User: Azathoth
@@ -17,7 +22,7 @@ class UserService {
 
 	public function registerUser(string $firstName, string $lastName, string $email, DateTime $birthDate, string $phone, string $country, string $group): int {
 		$stmt = $this->conn->prepare("INSERT INTO users (first_name, last_name, email, birth_date, phone, country, \"group\") VALUES (?, ?, ?, ?, ?, ?, ?)");
-		$stmt->execute([$firstName, $lastName, $email, $birthDate, $phone, $country, $group]);
+		$stmt->execute([$firstName, $lastName, $email, $birthDate->format('Y-m-d H:i:s'), $phone, $country, $group]);
 		return $this->conn->lastInsertId();
 	}
 
