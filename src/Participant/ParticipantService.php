@@ -1,10 +1,10 @@
 <?php
 
-namespace Src\Participant;
+namespace kissj\Participant;
 
-use kissj\User\Participant;
-use kissj\User\ParticipantRepository;
-use kissj\User\PatrolLeader;
+use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\PatrolLeader;
 use kissj\User\User;
 use PDO;
 
@@ -14,7 +14,7 @@ use PDO;
  * Date: 2017-10-25
  * Time: 20:22
  */
-class ParticipantService {
+class ParticipantService implements ParticipantServiceInterface {
 
 	/**
 	 * @var ParticipantRepository

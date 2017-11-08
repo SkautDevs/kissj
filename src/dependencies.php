@@ -68,6 +68,11 @@ $container['tokenRepository'] = function (C $c) {
 	return $service;
 };
 
+$container['participantRepository'] = function (C $c) {
+	$service = new ParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return $service;
+};
+
 // user service
 $container['userService'] = function (C $c) {
 	$service = new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'));
