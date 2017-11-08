@@ -8,7 +8,9 @@ return [
 		
 		// PHPmailer settings
 		'mailer' => [
+			'smtp' => true,
 			'smtp_server' => 'localhost',
+			'smtp_port' => 587,
 			'smtp_username' => '',
 			'smtp_password' => '',
 			
