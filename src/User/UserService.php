@@ -6,12 +6,6 @@ use DateTime;
 use kissj\Random;
 use PHPMailer\PHPMailer\PHPMailer;
 
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 2017-10-25
- * Time: 20:22
- */
 class UserService {
 
 	/** @var UserRepository */
@@ -44,7 +38,10 @@ class UserService {
 		$loginToken->created = new \DateTime();
 		$loginToken->used = false;
 		$this->loginTokenRepository->persist($loginToken);
-//		todo: poslat email s linkem
+
+		$mesasge = '';
+		$this->mailer->sendMail($email, 'Link s přihlášením', $mesasge);
+
 		return $token;
 	}
 
