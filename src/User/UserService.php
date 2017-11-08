@@ -2,6 +2,8 @@
 
 namespace kissj\User;
 
+use kissj\Mailer\MailerInterface;
+
 class UserService {
 
 	/** @var UserRepository */
@@ -12,7 +14,7 @@ class UserService {
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 
-	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, PHPMailer $mailer) {
+	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
