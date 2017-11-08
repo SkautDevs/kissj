@@ -3,9 +3,7 @@
 namespace kissj\User;
 
 use DateTime;
-use PDO;
 use PHPMailer\PHPMailer\PHPMailer;
-use Src\Random;
 
 /**
  * Created by PhpStorm.

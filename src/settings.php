@@ -23,10 +23,10 @@ return [
 			'smtp_username' => '',
 			'smtp_password' => '',
 
-			'from_mail' => 'registration@localhost', //registration mail
+			'from_mail' => 'registration@localhost.cz', //registration mail
 			'from_name' => 'Registrace Localhost',
 
-			'bcc_mail' => '', //registration mail for example
+			'bcc_mail' => 'registration@localhost.cz', //registration mail for example
 			'bcc_name' => '',
 		],
 
