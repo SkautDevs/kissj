@@ -79,23 +79,12 @@ $app->group("/" . $settings['settings']['eventName'], function () {
 	})->setName('registration');
 	
 	$this->post("/signup", function (Request $request, Response $response, array $args) {
-		
 		$email = $request->getParsedBodyParam("email");
-<<<<<<< f883af041c9ee207f8c8c9bb09318f7586b67a90
 		$this->userService->registerUser($email);
 		$this->userService->sendLoginLink($email);
-		return $response->withRedirect($this->get('router')->pathFor('signed-up', ['email' => $email]));
-	})->setName('signup');
-	
-	$this->get("/signed-up/{email}", function (Request $request, Response $response, array $args) {
-		return $this->renderer->render($response, 'signed-up.phtml', $args);
-	})->setName("signed-up");
-	
-=======
 		return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
 	})->setName('signup');
-
->>>>>>> Move to twig
+	
 	// LANDING PAGE
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
