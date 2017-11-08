@@ -8,8 +8,12 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 
 `composer update`
 
-And you are good to go! 
+And you are good to go!
 
+## Local mail service
+
+ - using https://gist.github.com/raelgc/6031274 and it works like a charm!
+ 
 # Devstack
 We use:
 - [slim framework](https://www.slimframework.com/) for routing and DI
