@@ -1,9 +1,9 @@
 <?php
 $settings = [
 	'settings' => [
-		'debug' => false, // keep disable Whoops debugger
-		'displayErrorDetails' => false, // set to false in production
-		'addContentLengthHeader' => false, // Allow the web server to send the content-length header
+		'debug' => false, // disable Whoops debugger
+		'displayErrorDetails' => false, // false in production
+		'addContentLengthHeader' => false, // allow the web server to send the content-length header
 		
 		// Renderer settings
 		'renderer' => [
@@ -39,7 +39,8 @@ $settings = [
 		'eventName' => 'cej2018',
 	],
 ];
-
-$settings = array_replace_recursive($settings, require('settings_custom.php'));
+if (file_exists('settings_custom.php')) {
+	$settings = array_replace_recursive($settings, require('settings_custom.php'));
+}
 
 return $settings;
