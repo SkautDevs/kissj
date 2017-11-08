@@ -2,6 +2,8 @@
 
 namespace kissj;
 
+use LeanMapper\Entity;
+use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
 
 class Repository extends BaseRepository {
@@ -11,12 +13,8 @@ class Repository extends BaseRepository {
 	}
 
 	public function findOneBy(array $criteria) {
-		// first part
-		$qb = $this->connection->select('*')
-			->from($this->getTable());
-		foreach ($criteria as $field => $value) {
-			$qb->where("$field = %s", $value);
-		}
+		$qb = $this->createFluent();
+		$this->addConditions($qb, $criteria);
 		$row = $qb->fetch();
 
 		if ($row === false) {
@@ -26,35 +24,40 @@ class Repository extends BaseRepository {
 		return $this->createEntity($row);
 	}
 
-	public function findIdBy(array $criteria): int {
-		$qb = $this->connection->select('id')
-			->from($this->getTable());
-		foreach ($criteria as $field => $value) {
-			$qb->where("$field = %i", $value);
+	public function countBy(array $criteria): int {
+		/** @var Fluent $qb */
+		$qb = $this->connection->select('count(*)')->from($this->table);
+		$this->addConditions($qb, $criteria);
+		$row = $qb->fetch();
+
+		if ($row === false) {
+			throw new \Exception('Entity was not found.');
 		}
+		// second part
+		return $this->createEntity($row);
+	}
+
+	protected function addConditions(Fluent $qb, array $criteria) {
+		foreach ($criteria as $field => $value) {
+			if ($value instanceof Entity) {
+				$qb->where($field . "_id = %i", $value->id);
+			} else {
+				$qb->where("$field = %s", $value);
+			}
+		}
+	}
+
+	public function findIdBy(array $criteria): int {
+		$qb = $this->createFluent();
+		$this->addConditions($qb, $criteria);
 		$id = $qb->fetchSingle();
 
 		return $id;
 	}
 
-//	public function findBy(array $criteria): array {
-//		// first part
-//		$row = $this->connection->select('*')
-//			->from($this->getTable())
-//			->where('id = %i', $id)
-//			->fetch();
-//
-//		if ($row === false) {
-//			throw new \Exception('Entity was not found.');
-//		}
-//		// second part
-//		return $this->createEntity($row);
-//	}
-
 	public function findAll() {
 		return $this->createEntities(
-			$this->connection->select('*')
-				->from($this->getTable())
+			$this->createFluent()
 				->fetchAll()
 		);
 	}

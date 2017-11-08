@@ -27,6 +27,9 @@ create table patrolleader
   id INTEGER
     primary key
   autoincrement,
+  user_id INT
+    CONSTRAINT patrolleader_user_id_fk
+    REFERENCES user (id),
   first_name TEXT not null,
   last_name TEXT not null,
   birth_date DATETIME not null,
