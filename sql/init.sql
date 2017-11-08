@@ -12,6 +12,9 @@ create table participant
   id INTEGER
     primary key
   autoincrement,
+  user_id INT
+    CONSTRAINT participant_patrolleader_id_fk
+    REFERENCES patrolleader (id),
   first_name TEXT not null,
   last_name TEXT not null,
   birth_date DATETIME not null,
