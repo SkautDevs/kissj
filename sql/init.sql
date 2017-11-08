@@ -1,4 +1,4 @@
-create table users
+create table user
 (
   id INTEGER
     primary key
@@ -14,15 +14,15 @@ create table users
 ;
 
 create unique index users_email_uindex
-  on users (email)
+  on user (email)
 ;
 
-CREATE TABLE login_tokens
+CREATE TABLE login_token
 (
   token   TEXT NOT NULL,
   user_id INT
     CONSTRAINT login_tokens_users_id_fk
-    REFERENCES users (id),
+    REFERENCES user (id),
   created DATETIME,
   used    BOOLEAN
 );

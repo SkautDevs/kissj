@@ -2,6 +2,7 @@
 
 namespace kissj;
 
+use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
@@ -15,7 +16,7 @@ use LeanMapper\Row;
 class Mapper implements IMapper {
 
 	/** @var string */
-	protected $defaultEntityNamespace = 'Src';
+	protected $defaultEntityNamespace = 'kissj';
 
 	/** @var string */
 	protected $relationshipTableGlue = '_';
@@ -29,6 +30,9 @@ class Mapper implements IMapper {
 	}
 
 	public function getEntityClass($table, Row $row = null) {
+		if ($table === 'user') {
+			return User::class;
+		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
 	}
 
