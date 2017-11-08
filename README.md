@@ -16,12 +16,17 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 
 And you are good to go!
 
+# Devstack
+We use:
+- [slim framework](https://www.slimframework.com/) for routing, DI and middlewares
+- [LeanMapper](http://leanmapper.com) as ORM
+- ... more in `composer.json`
+
+## Possible problems and fixies
+
+- databasefile db.sqlite and *its directory* must be writable by execution programm
 
 ## Local mail service
 
- - using https://gist.github.com/raelgc/6031274 and it works like a charm!
+- using https://gist.github.com/raelgc/6031274 and it works like a charm!
  
-# Devstack
-We use:
-- [slim framework](https://www.slimframework.com/) for routing and DI
-- [LeanMapper](http://leanmapper.com) as ORM
