@@ -2,27 +2,17 @@
 
 namespace kissj\Participant;
 
-use kissj\Participant\Participant;
-use kissj\Participant\ParticipantRepository;
-use kissj\Participant\PatrolLeader;
 use kissj\User\User;
-use PDO;
 
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 2017-10-25
- * Time: 20:22
- */
 class ParticipantService implements ParticipantServiceInterface {
-
-	/**
-	 * @var ParticipantRepository
-	 */
+	/** @var ParticipantRepository */
 	private $participantRepository;
+	/** @var PatrolLeaderRepository */
+	private $patrolLeaderRepository;
 
-	public function __construct(ParticipantRepository $participantRepository) {
+	public function __construct(ParticipantRepository $participantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
 		$this->participantRepository = $participantRepository;
+		$this->patrolLeaderRepository = $patrolLeaderRepository;
 	}
 
 	public function register(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies) {
@@ -35,6 +25,12 @@ class ParticipantService implements ParticipantServiceInterface {
 	}
 
 	public function getPatrolLeader(User $user): PatrolLeader {
-		
+		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
+		if ($patrolLeader === null) {
+			$patrolLeader = new PatrolLeader();
+			$patrolLeader->user = $user;
+			$this->patrolLeaderRepository->persist($patrolLeader);
+		}
+		return $patrolLeader;
 	}
 }

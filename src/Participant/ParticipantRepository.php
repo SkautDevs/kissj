@@ -6,7 +6,7 @@ use kissj\Repository;
 
 /**
  * Class LoginTokenRepository
- * @method LoginToken findOneBy(array $criteria)
+ * @method Participant findOneBy(array $criteria)
  */
 class ParticipantRepository extends Repository {
 

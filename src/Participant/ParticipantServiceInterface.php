@@ -2,7 +2,6 @@
 
 namespace kissj\Participant;
 
-use kissj\User\PatrolLeader;
 use kissj\User\User;
 
 

@@ -13,13 +13,14 @@ return [
 		// Monolog settings
 		'logger' => [
 			'name' => 'slim-app',
-			'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__.'/../logs/app.log',
+			'path' => __DIR__.'/../logs/app.log',
 			'level' => \Monolog\Logger::DEBUG,
 		],
 
 		// PHPmailer settings
 		'mailer' => [
 			'smtp_server' => 'localhost',
+			'smtp_port' => 587,
 			'smtp_username' => '',
 			'smtp_password' => '',
 

@@ -2,10 +2,10 @@
 
 namespace kissj\Participant;
 
+use kissj\User\User;
 use LeanMapper\Entity;
 
 /**
- * Class User
  * @property int $id
  * @property string $firstName
  * @property string $lastName
@@ -13,6 +13,7 @@ use LeanMapper\Entity;
  * @property string $allergies
  * @property string $phoneNumber
  * @property string $country
+ * @property User $user m:hasOne
  */
 class PatrolLeader extends Entity {
 

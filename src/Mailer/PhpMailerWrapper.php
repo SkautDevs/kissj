@@ -5,6 +5,7 @@ namespace kissj\Mailer;
 class PhpMailerWrapper implements MailerInterface {
 	
 	public $smtp_server;
+	public $smtp_port;
 	public $smtp_username;
 	public $smtp_password;
 	public $from_mail;
@@ -14,6 +15,7 @@ class PhpMailerWrapper implements MailerInterface {
 	
 	public function __construct($mailerSettings) {
 		$this->smtp_server = $mailerSettings['smtp_server'];
+		$this->smtp_port = $mailerSettings['smtp_port'];
 		$this->smtp_username = $mailerSettings['smtp_password'];
 		$this->smtp_password = $mailerSettings['from_mail'];
 		$this->from_mail = $mailerSettings['from_mail'];
@@ -33,7 +35,7 @@ class PhpMailerWrapper implements MailerInterface {
 		$mailer->Username = $this->smtp_username;    // SMTP username
 		$mailer->Password = $this->smtp_password;    // SMTP password
 		$mailer->SMTPSecure = 'tls';    // Enable TLS encryption, `ssl` also accepted
-		$mailer->Port = 587;    // TCP port to connect to
+		$mailer->Port = $this->smtp_port;    // TCP port to connect to
 		
 		//Recipients
 		$mailer->setFrom($this->from_mail, $this->from_name);
