@@ -39,6 +39,6 @@ $settings = [
 	],
 ];
 
-$settings = require('settings_custom.php') $settings;
+$settings = array_merge(require('settings_custom.php'), $settings);
 
 return $settings;

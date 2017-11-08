@@ -4,16 +4,17 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 
 # Installation (not complete yet)
 
+1. Download project
 `git clone [this repository]`
-
+2. Install dependencies
 `composer update`
+3. Prepare database
+	- Copy `db_init.sqlite` to `db.sqlite` 
+	- Run `sql/init.sql` to `db.sqlite`
+4. Create local config
+	Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
 
 And you are good to go!
-
-## Local database
-
-- Copy `db_init.sqlite` to `db.sqlite`. 
-- Run `sql/init.sql` to `db.sqlite`.
 
 
 ## Local mail service
