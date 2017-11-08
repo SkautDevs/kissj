@@ -2,6 +2,10 @@
 
 namespace Src\Participant;
 
+use kissj\User\Participant;
+use kissj\User\ParticipantRepository;
+use kissj\User\PatrolLeader;
+use kissj\User\User;
 use PDO;
 
 /**
@@ -12,15 +16,22 @@ use PDO;
  */
 class ParticipantService {
 
-	/** @var PDO */
-	private $conn;
+	/**
+	 * @var ParticipantRepository
+	 */
+	private $participantRepository;
 
-	public function __construct(PDO $conn) {
-		$this->conn = $conn;
+	public function __construct(ParticipantRepository $participantRepository) {
+		$this->participantRepository = $participantRepository;
 	}
 
-	public function addParticipant() {
-
+	public function register(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies) {
+		$participant = new Participant();
+		$participant->patrolLeader = $patrolLeader;
+		$participant->firstName = $firstName;
+		$participant->lastName = $lastName;
+		$participant->allergies = $allergies;
+		$this->participantRepository->persist($participant);
 	}
 
 }

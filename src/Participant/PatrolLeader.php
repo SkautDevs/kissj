@@ -11,9 +11,10 @@ use LeanMapper\Entity;
  * @property string $lastName
  * @property \DateTime $birthDate m:passThru(fromString|toString)
  * @property string $allergies
- * @property PatrolLeader $patrolLeader m:hasOne
+ * @property string $phoneNumber
+ * @property string $country
  */
-class Participant extends Entity {
+class PatrolLeader extends Entity {
 
 	public function toString(\DateTime $val): string {
 		return $val->format(DATE_ISO8601);

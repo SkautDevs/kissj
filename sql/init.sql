@@ -15,9 +15,21 @@ create table participant
   first_name TEXT not null,
   last_name TEXT not null,
   birth_date DATETIME not null,
+  allergies TEXT not null
+)
+;
+
+create table patrolleader
+(
+  id INTEGER
+    primary key
+  autoincrement,
+  first_name TEXT not null,
+  last_name TEXT not null,
+  birth_date DATETIME not null,
   phone TEXT not null,
   country TEXT not null,
-  "group" TEXT not null
+  allergies TEXT not null
 )
 ;
 

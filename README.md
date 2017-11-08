@@ -12,7 +12,8 @@ And you are good to go!
 
 ## Local database
 
-Create new sqlite file and run `sql/init.sql`.
+- Copy `db_init.sqlite` to `db.sqlite`. 
+- Run `sql/init.sql` to `db.sqlite`.
 
 
 ## Local mail service
