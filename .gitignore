@@ -3,4 +3,4 @@ logs/*
 .idea/*
 /db.sqlite
 /db_test.sqlite
-/src/settings_custom.php
+/settings_custom__.php
