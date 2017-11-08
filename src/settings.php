@@ -27,7 +27,7 @@ return [
 			'from_name' => 'Registrace Localhost',
 
 			'bcc_mail' => 'registration@localhost.cz', //registration mail for example
-			'bcc_name' => '',
+			'bcc_name' => 'Registrační Asistentka',
 		],
 
 		'db' => [
