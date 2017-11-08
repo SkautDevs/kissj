@@ -2,8 +2,8 @@
 
 namespace kissj;
 
-use kissj\Participant\Participant;
-use kissj\Participant\PatrolLeader;
+use kissj\Patrol\Participant;
+use kissj\Patrol\PatrolLeader;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;

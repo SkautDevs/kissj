@@ -35,7 +35,8 @@ create table patrolleader
   birth_date DATETIME,
   phone TEXT,
   country TEXT,
-  allergies TEXT
+  allergies TEXT,
+  finished    BOOLEAN
 )
 ;
 

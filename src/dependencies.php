@@ -1,9 +1,9 @@
 <?php
 
 use kissj\Mapper;
-use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantService;
-use kissj\Participant\PatrolLeaderRepository;
+use kissj\Patrol\ParticipantRepository;
+use kissj\Patrol\ParticipantService;
+use kissj\Patrol\PatrolLeaderRepository;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;

@@ -1,21 +1,19 @@
 <?php
 
-namespace kissj\Participant;
+namespace kissj\Patrol;
 
-use kissj\User\User;
 use LeanMapper\Entity;
 
 /**
+ * Class User
  * @property int $id
  * @property string $firstName
  * @property string $lastName
  * @property \DateTime $birthDate m:passThru(fromString|toString)
  * @property string $allergies
- * @property string $phoneNumber
- * @property string $country
- * @property User $user m:hasOne
+ * @property PatrolLeader $patrolLeader m:hasOne
  */
-class PatrolLeader extends Entity {
+class Participant extends Entity {
 
 	public function toString(\DateTime $val): string {
 		return $val->format(DATE_ISO8601);

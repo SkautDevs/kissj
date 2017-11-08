@@ -18,11 +18,11 @@ $app->group("/" . $settings['settings']['eventName'], function () {
 
     $this->group("/patrol-leader", function () {
 
-        $this->get("/register", function (Request $request, Response $response, array $args) {
-            return $this->renderer->render($response, 'register-patrol.html', $args);
+        $this->get("/addParticipant", function (Request $request, Response $response, array $args) {
+            return $this->renderer->render($response, 'addParticipant-patrol.html', $args);
         });
 
-        $this->post("/register", function (Request $request, Response $response, array $args) {
+        $this->post("/addParticipant", function (Request $request, Response $response, array $args) {
             // TODO process
             return $response->withRedirect("TODO");
         });
@@ -57,11 +57,11 @@ $app->group("/" . $settings['settings']['eventName'], function () {
 
     $this->group("/ist", function () {
 
-        $this->get("/register", function (Request $request, Response $response, array $args) {
-            return $this->renderer->render($response, 'register-ist.html', $args);
+        $this->get("/addParticipant", function (Request $request, Response $response, array $args) {
+            return $this->renderer->render($response, 'addParticipant-ist.html', $args);
         });
 
-        $this->post("/register", function (Request $request, Response $response, array $args) {
+        $this->post("/addParticipant", function (Request $request, Response $response, array $args) {
             // TODO process
             return $response->withRedirect("TODO");
         });
