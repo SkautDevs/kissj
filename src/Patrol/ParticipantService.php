@@ -38,10 +38,14 @@ class ParticipantService implements ParticipantServiceInterface {
 	}
 
 	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies) {
-		// TODO: Implement addPatrolLeaderInfo() method.
+		$patrolLeader->firstName = $firstName;
+		$patrolLeader->lastName = $lastName;
+		$patrolLeader->allergies = $allergies;
+		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 
 	public function closeRegistration(PatrolLeader $patrolLeader) {
-		// TODO: Implement closeRegistration() method.
+		$patrolLeader->finished = false;
+		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 }
