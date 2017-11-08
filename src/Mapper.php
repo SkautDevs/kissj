@@ -42,7 +42,7 @@ class Mapper implements IMapper {
 		if ($table === 'participant') {
 			return Participant::class;
 		}
-		if ($table === 'patrolLeader') {
+		if ($table === 'patrolleader') {
 			return PatrolLeader::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);

@@ -22,6 +22,6 @@ class CreatePatrolLeaderTest extends BaseTestCase {
 		$user = $userService->registerUser($email);
 		$patrolLeader = $participantService->getPatrolLeader($user);
 
-		$this->assertEquals($patrolLeader->user, $user);
+		$this->assertEquals($patrolLeader->user->id, $user->id);
 	}
 }
