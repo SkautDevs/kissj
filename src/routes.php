@@ -81,8 +81,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->post("/signup", function (Request $request, Response $response, array $args) {
 		
 		$email = $request->getParsedBodyParam("email");
-		$this->UserService->registerUser($email);
-		$this->UserService->sendLoginLink($email);
+		$this->userService->registerUser($email);
+		$this->userService->sendLoginLink($email);
 		return $response->withRedirect($this->get('router')->pathFor('signed-up', ['email' => $email]));
 	})->setName('signup');
 	
