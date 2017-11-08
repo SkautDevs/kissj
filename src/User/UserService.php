@@ -21,11 +21,11 @@ class UserService {
 		$this->loginTokenRepository = $loginTokenRepository;
 	}
 	
-	public function registerUser(string $email): int {
+	public function registerUser(string $email): User {
 		$user = new User();
 		$user->email = $email;
 		$this->userRepository->persist($user);
-		return $user->id;
+		return $user;
 	}
 	
 	public function sendLoginLink(string $email): string {
@@ -38,7 +38,7 @@ class UserService {
 		$loginToken->used = false;
 		$this->loginTokenRepository->persist($loginToken);
 		
-		$mesasge = '';
+		$mesasge = 'byl jste registrován';
 		$this->mailer->sendMail($email, 'Link s přihlášením', $mesasge);
 		
 		return $token;

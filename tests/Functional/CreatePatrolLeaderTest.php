@@ -3,9 +3,10 @@
 namespace Tests\Functional;
 
 
+use kissj\Participant\ParticipantService;
 use kissj\User\UserService;
 
-class RegisterTest extends BaseTestCase {
+class CreatePatrolLeaderTest extends BaseTestCase {
 
 	/**
 	 * Test that the index route returns a rendered response containing the text 'SlimFramework' but not a greeting
@@ -14,12 +15,13 @@ class RegisterTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
+		/** @var ParticipantService $participantService */
+		$participantService = $app->getContainer()->get('participantService');
 
-		$email = 'test@example.com';
+		$email = 'test2@example.com';
 		$user = $userService->registerUser($email);
-		$token = $userService->sendLoginLink($email);
-		$loadedUser = $userService->getUser($token);
+		$patrolLeader = $participantService->getPatrolLeader($user);
 
-		$this->assertEquals($user, $loadedUser);
+		$this->assertEquals($patrolLeader->user, $user);
 	}
 }

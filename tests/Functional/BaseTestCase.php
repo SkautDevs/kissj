@@ -50,22 +50,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase {
 		// Set up a response object
 		$response = new Response();
 
-		// Use the application settings
-		$settings = require __DIR__ . '/../../src/settings_test.php';
-
-		// Instantiate the application
-		$app = new App($settings);
-
-		// Set up dependencies
-		require __DIR__ . '/../../src/dependencies.php';
-
-		// Register middleware
-		if ($this->withMiddleware) {
-			require __DIR__ . '/../../src/middleware.php';
-		}
-
-		// Register routes
-		require __DIR__ . '/../../src/routes.php';
+		$app = $this->app();
 
 		// Process the application
 		$response = $app->process($request, $response);

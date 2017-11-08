@@ -1,11 +1,13 @@
 <?php
 
 use kissj\Mapper;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
+use kissj\Participant\PatrolLeaderRepository;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use \Psr\Container\ContainerInterface as C;
-use Src\Participant\ParticipantService;
 
 // DIC configuration
 
@@ -68,6 +70,16 @@ $container['tokenRepository'] = function (C $c) {
 	return $service;
 };
 
+$container['participantRepository'] = function (C $c) {
+	$service = new ParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return $service;
+};
+
+$container['patrolLeaderRepository'] = function (C $c) {
+	$service = new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return $service;
+};
+
 // user service
 $container['userService'] = function (C $c) {
 	$service = new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'));
@@ -76,7 +88,7 @@ $container['userService'] = function (C $c) {
 
 // participant service
 $container['participantService'] = function (C $c) {
-	$service = new ParticipantService($c->get('db'));
+	$service = new ParticipantService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
 	return $service;
 };
 
