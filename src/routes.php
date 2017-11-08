@@ -73,19 +73,26 @@ $app->group("/" . $settings['settings']['eventName'], function () {
     });
 
     // REGISTRATION
-
+	
+	$this->get("/registration", function (Request $request, Response $response, array $args) {
+		return $this->renderer->render($response, 'registration.phtml', ['router' => $this->router]);
+	})->setName('registration');
+	
+	$this->post("/signup", function (Request $request, Response $response, array $args) {
+		// TODO process
+		//$this->UserService
+		$email = $request->getParsedBodyParam("email");
+		return $response->withRedirect($this->get('router')->pathFor('signed-up', ['email' => $email]));
+	})->setName('signup');
+	
     $this->get("/signed-up/{email}", function (Request $request, Response $response, array $args) {
         return $this->renderer->render($response, 'signed-up.phtml', $args);
     })->setName("signed-up");
-
-    $this->post("/signup", function (Request $request, Response $response, array $args) {
-        // TODO process
-        $email = $request->getParsedBodyParam("email");
-        return $response->withRedirect($this->get('router')->pathFor('signed-up', ['email' => $email]));
-    });
-
-    $this->get("/[signup]", function (Request $request, Response $response, array $args) {
-        return $this->renderer->render($response, 'signup.phtml', $args);
-    });
+    
+    // LANDING PAGE
+	
+	$this->get("", function (Request $request, Response $response, array $args) {
+		return $this->renderer->render($response, 'landing-page.phtml', ['router' => $this->router]);
+	})->setName("landing");
 
 });
