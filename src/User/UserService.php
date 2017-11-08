@@ -2,31 +2,32 @@
 
 namespace kissj\User;
 
+use kissj\Random;
 use kissj\Mailer\MailerInterface;
 
 class UserService {
-
+	
 	/** @var UserRepository */
 	private $userRepository;
-
-	/** @var PHPMailer */
+	
+	/** @var MailerInterface */
 	private $mailer;
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
-
+	
 	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
 	}
-
+	
 	public function registerUser(string $email): int {
 		$user = new User();
 		$user->email = $email;
 		$this->userRepository->persist($user);
 		return $user->id;
 	}
-
+	
 	public function sendLoginLink(string $email): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$loginToken = new LoginToken();
@@ -42,10 +43,10 @@ class UserService {
 		
 		return $token;
 	}
-
+	
 	public function getUser(string $token): User {
-		$user = $this->loginTokenRepository->findOneBy(['token' => $token]);
+		$user = $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 		return $user;
 	}
-
+	
 }

@@ -5,6 +5,7 @@ use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use \Psr\Container\ContainerInterface as C;
+use Src\Participant\ParticipantService;
 
 // DIC configuration
 

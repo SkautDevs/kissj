@@ -10,6 +10,12 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 
 And you are good to go!
 
+## Local database
+
+- Copy `db_init.sqlite` to `db.sqlite`. 
+- Run `sql/init.sql` to `db.sqlite`.
+
+
 ## Local mail service
 
  - using https://gist.github.com/raelgc/6031274 and it works like a charm!
