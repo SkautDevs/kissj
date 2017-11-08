@@ -2,7 +2,8 @@
 
 namespace Tests\Functional;
 
-use kissj\UserService;
+
+use kissj\User\UserService;
 
 class RegisterTest extends BaseTestCase {
 
@@ -15,7 +16,7 @@ class RegisterTest extends BaseTestCase {
 		$userService = $app->getContainer()->get('userService');
 
 		$email = 'test@example.com';
-		$userId = $userService->registerUser('tester', 'tester', $email, new \DateTime(), '+420777777777', 'CZ', 'my group');
+		$userId = $userService->registerUser($email);
 		$token = $userService->sendLoginLink($email);
 		$loadedId = $userService->getUserId($token);
 
