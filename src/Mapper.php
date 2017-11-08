@@ -2,6 +2,7 @@
 
 namespace kissj;
 
+use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
@@ -32,6 +33,9 @@ class Mapper implements IMapper {
 	public function getEntityClass($table, Row $row = null) {
 		if ($table === 'user') {
 			return User::class;
+		}
+		if ($table === 'logintoken') {
+			return LoginToken::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
 	}

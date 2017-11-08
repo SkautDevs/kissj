@@ -25,8 +25,11 @@ create unique index user_email_uindex
   on user (email)
 ;
 
-CREATE TABLE login_token
+CREATE TABLE logintoken
 (
+  id INTEGER
+    primary key
+  autoincrement,
   token   TEXT NOT NULL,
   user_id INT
     CONSTRAINT login_tokens_users_id_fk

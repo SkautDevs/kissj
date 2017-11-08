@@ -3,6 +3,7 @@
 namespace kissj\User;
 
 use DateTime;
+use kissj\Random;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -48,7 +49,7 @@ class UserService {
 	}
 
 	public function getUser(string $token): User {
-		$user = $this->loginTokenRepository->findOneBy(['token' => $token]);
+		$user = $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 		return $user;
 	}
 

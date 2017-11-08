@@ -1,6 +1,6 @@
 <?php
 
-namespace kissj\User;
+namespace kissj;
 
 class Random {
 

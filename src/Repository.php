@@ -15,7 +15,7 @@ class Repository extends BaseRepository {
 		$qb = $this->connection->select('*')
 			->from($this->getTable());
 		foreach ($criteria as $field => $value) {
-			$qb->where("$field = %i", $value);
+			$qb->where("$field = %s", $value);
 		}
 		$row = $qb->fetch();
 
