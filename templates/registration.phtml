@@ -5,13 +5,10 @@
         <title>CEJ 2018 Registrace</title>
     </head>
     <body>
-        <h1>Registrace patrol a IST na CEJ 2018</h1>
+        <h1>Registrace účastníka na CEJ 2018</h1>
 
         <form action="<?= $router->pathFor('signup'); ?>" method="post">
             <input type="email" name="email" placeholder="E-mail" required="required"/><br/>
-            <input type="radio" name="role" value="patrol-leader" id="role-patrol-leader" required="required"/> <label for="role-patrol-leader">Patrol leader</label><br/>
-            <input type="radio" name="role" value="ist" id="role-ist" required="required" /> <label for="role-ist">IST</label><br/>
-
             <input type="submit" value="Přihlásit se" />
         </form>
     </body>
