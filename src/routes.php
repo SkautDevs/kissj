@@ -3,6 +3,8 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+// TODO fix problem with "public" subdirectory in URI (not nice)
+
 // Routes
 $app->group("/" . $settings['settings']['eventName'], function () {
 
@@ -70,7 +72,7 @@ $app->group("/" . $settings['settings']['eventName'], function () {
 
     });
 
-    // DEFAULT
+    // REGISTRATION
 
     $this->get("/signed-up/{email}", function (Request $request, Response $response, array $args) {
         return $this->renderer->render($response, 'signed-up.phtml', $args);

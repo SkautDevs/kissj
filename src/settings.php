@@ -19,12 +19,12 @@ return [
 
 		// PHPmailer settings
 		'mailer' => [
-			'smtp_server' => '',
+			'smtp_server' => 'localhost',
 			'smtp_username' => '',
 			'smtp_password' => '',
 
-			'from_mail' => '', //registration mail
-			'from_name' => '',
+			'from_mail' => 'registration@localhost', //registration mail
+			'from_name' => 'Registrace Localhost',
 
 			'bcc_mail' => '', //registration mail for example
 			'bcc_name' => '',
