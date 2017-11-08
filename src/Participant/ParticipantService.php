@@ -25,12 +25,14 @@ class ParticipantService implements ParticipantServiceInterface {
 	}
 
 	public function getPatrolLeader(User $user): PatrolLeader {
-		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
-		if ($patrolLeader === null) {
+		if ($this->patrolLeaderRepository->countBy(['user' => $user]) === 0) {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
 			$this->patrolLeaderRepository->persist($patrolLeader);
+			return $patrolLeader;
 		}
+
+		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
 		return $patrolLeader;
 	}
 }

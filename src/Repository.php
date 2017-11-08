@@ -2,8 +2,8 @@
 
 namespace kissj;
 
-use Dibi\Fluent;
 use LeanMapper\Entity;
+use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
 
 class Repository extends BaseRepository {
@@ -24,8 +24,9 @@ class Repository extends BaseRepository {
 		return $this->createEntity($row);
 	}
 
-	public function countOneBy(array $criteria) {
-		$qb = $this->createFluent();
+	public function countBy(array $criteria): int {
+		/** @var Fluent $qb */
+		$qb = $this->connection->select('count(*)')->from($this->table);
 		$this->addConditions($qb, $criteria);
 		$row = $qb->fetch();
 
