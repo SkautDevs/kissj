@@ -1,13 +1,7 @@
 <?php
 
-namespace Src;
+namespace kissj;
 
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 2017-10-25
- * Time: 21:08
- */
 class Random {
 
 	public static function generateToken(): string {
