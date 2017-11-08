@@ -1,6 +1,6 @@
 <?php
 
-namespace User;
+namespace kissj\User;
 
 use DateTime;
 use PDO;

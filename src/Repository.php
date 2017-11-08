@@ -1,6 +1,6 @@
 <?php
 
-namespace User;
+namespace kissj;
 
 use LeanMapper\Repository as BaseRepository;
 

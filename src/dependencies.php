@@ -1,8 +1,10 @@
 <?php
 
+use kissj\Mapper;
+use kissj\User\LoginTokenRepository;
+use kissj\User\UserRepository;
+use kissj\User\UserService;
 use \Psr\Container\ContainerInterface as C;
-use Src\Participant\ParticipantService;
-use User\UserService;
 
 // DIC configuration
 
@@ -69,7 +71,7 @@ $container['db'] = function (C $c) {
 
 // db_mapper
 $container['dbMapper'] = function (C $c) {
-	$mapper = new \Mapper();
+	$mapper = new Mapper();
 	return $mapper;
 };
 
@@ -79,21 +81,19 @@ $container['dbFactory'] = function (C $c) {
 	return $entityFactory;
 };
 
-// user service
 $container['userRepository'] = function (C $c) {
-	$service = new \User\UserRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	$service = new UserRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 	return $service;
 };
 
-// user service
 $container['tokenRepository'] = function (C $c) {
-	$service = new \User\LoginTokenRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	$service = new LoginTokenRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 	return $service;
 };
 
 // user service
 $container['userService'] = function (C $c) {
-	$service = new UserService($c->get('userRepository'), $c->get('mailer'));
+	$service = new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'));
 	return $service;
 };
 

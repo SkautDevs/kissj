@@ -23,6 +23,6 @@ $app = new App($settings);
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 
-/** @var PDO $conn */
+/** @var \LeanMapper\Connection $conn */
 $conn = $app->getContainer()->get('db');
-$conn->exec(file_get_contents(__DIR__ . '/../sql/init.sql'));
+$conn->nativeQuery(file_get_contents(__DIR__ . '/../sql/init.sql'));
