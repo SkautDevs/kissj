@@ -3,9 +3,17 @@ create table user
   id INTEGER
     primary key
   autoincrement,
+  email TEXT not null
+)
+;
+
+create table participant
+(
+  id INTEGER
+    primary key
+  autoincrement,
   first_name TEXT not null,
   last_name TEXT not null,
-  email TEXT not null,
   birth_date DATETIME not null,
   phone TEXT not null,
   country TEXT not null,
@@ -13,7 +21,7 @@ create table user
 )
 ;
 
-create unique index users_email_uindex
+create unique index user_email_uindex
   on user (email)
 ;
 

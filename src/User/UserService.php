@@ -27,15 +27,9 @@ class UserService {
 		$this->loginTokenRepository = $loginTokenRepository;
 	}
 
-	public function registerUser(string $firstName, string $lastName, string $email, DateTime $birthDate, string $phone, string $country, string $group): int {
+	public function registerUser(string $email): int {
 		$user = new User();
-		$user->firstName = $firstName;
-		$user->lastName = $lastName;
 		$user->email = $email;
-		$user->birthDate = $birthDate;
-		$user->country = $country;
-		$user->phone = $phone;
-		$user->group = $group;
 		$this->userRepository->persist($user);
 		return $user->id;
 	}

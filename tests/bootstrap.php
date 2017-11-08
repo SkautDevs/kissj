@@ -25,4 +25,5 @@ require __DIR__ . '/../src/dependencies.php';
 
 /** @var \LeanMapper\Connection $conn */
 $conn = $app->getContainer()->get('db');
-$conn->nativeQuery(file_get_contents(__DIR__ . '/../sql/init.sql'));
+$conn->connect();
+$conn->loadFile(__DIR__ . '/../sql/init.sql');
