@@ -34,4 +34,7 @@ class ParticipantService {
 		$this->participantRepository->persist($participant);
 	}
 
+	public function getPatrolLeader(User $user): PatrolLeader {
+		
+	}
 }
