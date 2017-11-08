@@ -1,8 +1,8 @@
 <?php
 
 use \Psr\Container\ContainerInterface as C;
-use Src\ParticipantService;
-use Src\UserService;
+use Src\Participant\ParticipantService;
+use User\UserService;
 
 // DIC configuration
 
@@ -59,16 +59,41 @@ $container['mailer'] = function (C $c) {
 // db
 $container['db'] = function (C $c) {
 	$path = $c->get('settings')['db']['path'];
-	$dsn = 'sqlite:' . $path;
-	$pdo = new PDO($dsn);
-	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$connection = new LeanMapper\Connection([
+		'driver'   => 'sqlite3',
+		'database' => $path,
+	]);
 
-	return $pdo;
+	return $connection;
+};
+
+// db_mapper
+$container['dbMapper'] = function (C $c) {
+	$mapper = new \Mapper();
+	return $mapper;
+};
+
+// db_mapper
+$container['dbFactory'] = function (C $c) {
+	$entityFactory = new LeanMapper\DefaultEntityFactory;
+	return $entityFactory;
+};
+
+// user service
+$container['userRepository'] = function (C $c) {
+	$service = new \User\UserRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return $service;
+};
+
+// user service
+$container['tokenRepository'] = function (C $c) {
+	$service = new \User\LoginTokenRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return $service;
 };
 
 // user service
 $container['userService'] = function (C $c) {
-	$service = new UserService($c->get('db'));
+	$service = new UserService($c->get('userRepository'), $c->get('mailer'));
 	return $service;
 };
 

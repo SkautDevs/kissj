@@ -30,7 +30,7 @@ return [
 		],
 
 		'db' => [
-			'path' => __DIR__ . '/../db'
+			'path' => __DIR__ . '/../db.sqlite'
 		],
 
         'eventName' => 'cej2018',

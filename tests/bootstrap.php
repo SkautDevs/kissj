@@ -10,7 +10,9 @@ use Slim\App;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-unlink(__DIR__ . '/../db_test');
+if (file_exists(__DIR__ . '/../db_test.sqlite')) {
+	unlink(__DIR__ . '/../db_test.sqlite');
+}
 
 // Use the application settings
 $settings = require __DIR__ . '/../src/settings_test.php';

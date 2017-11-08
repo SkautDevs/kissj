@@ -9,3 +9,8 @@ kissj is scouts registration system for jamborees with simple idea - it has to b
 `composer update`
 
 And you are good to go! 
+
+# Devstack
+We use:
+- [slim framework](https://www.slimframework.com/) for routing and DI
+- [LeanMapper](http://leanmapper.com) as ORM
