@@ -2,10 +2,16 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<h1>Registrace patrol a IST na CEJ 2018</h1>
 
-	<form action="{{ path_for('signup') }}" method="post">
-		<input type="email" name="email" placeholder="E-mail" required="required"/><br/>
-		<input type="submit" value="Přihlásit se" />
+	<form action="{{ path_for('signup') }}" method="post" class="login-card mdc-elevation--z4">
+		<h1>Registrace patrol a IST na CEJ 2018</h1>
+		 <div class="mdc-form-field">
+			<div class="mdc-textfield" data-mdc-auto-init="MDCTextfield">
+				<input class="mdc-textfield__input" type="email" name="email" id="form-email" required/><br/>
+				<label class="mdc-textfield__label" for="form-email">Email</label>
+				<div class="mdc-textfield__bottom-line"></div>
+			</div>
+		</div>
+		<input type="submit" value="Přihlásit se" class="mdc-button mdc-button--raised" />
 	</form>
 {% endblock %}
