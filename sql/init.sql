@@ -30,12 +30,13 @@ create table patrolleader
   user_id INT
     CONSTRAINT patrolleader_user_id_fk
     REFERENCES user (id),
-  first_name TEXT not null,
-  last_name TEXT not null,
-  birth_date DATETIME not null,
-  phone TEXT not null,
-  country TEXT not null,
-  allergies TEXT not null
+  first_name TEXT,
+  last_name TEXT,
+  birth_date DATETIME,
+  phone TEXT,
+  country TEXT,
+  allergies TEXT,
+  finished    BOOLEAN
 )
 ;
 

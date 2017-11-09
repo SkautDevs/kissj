@@ -1,6 +1,6 @@
 <?php
 
-namespace kissj\Participant;
+namespace kissj\Patrol;
 
 use kissj\Repository;
 

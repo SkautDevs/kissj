@@ -42,7 +42,6 @@ $settings = [
 		'eventName' => 'cej2018',
 	],
 ];
-
 if (file_exists(__DIR__.'/settings_custom.php')) {
 	$settings = array_replace_recursive($settings, require('settings_custom.php'));
 }

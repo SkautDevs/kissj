@@ -2,8 +2,8 @@
 
 namespace kissj;
 
-use kissj\Participant\Participant;
-use kissj\Participant\PatrolLeader;
+use kissj\Patrol\Participant;
+use kissj\Patrol\PatrolLeader;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;
@@ -42,7 +42,7 @@ class Mapper implements IMapper {
 		if ($table === 'participant') {
 			return Participant::class;
 		}
-		if ($table === 'patrolLeader') {
+		if ($table === 'patrolleader') {
 			return PatrolLeader::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);

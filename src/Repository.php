@@ -26,15 +26,11 @@ class Repository extends BaseRepository {
 
 	public function countBy(array $criteria): int {
 		/** @var Fluent $qb */
-		$qb = $this->connection->select('count(*)')->from($this->table);
+		$qb = $this->connection->select('count(*)')->from($this->getTable());
 		$this->addConditions($qb, $criteria);
-		$row = $qb->fetch();
+		$row = $qb->fetchSingle();
 
-		if ($row === false) {
-			throw new \Exception('Entity was not found.');
-		}
-		// second part
-		return $this->createEntity($row);
+		return $row;
 	}
 
 	protected function addConditions(Fluent $qb, array $criteria) {
