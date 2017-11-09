@@ -24,7 +24,12 @@ We use:
 
 ## Possible problems and fixies
 
+#### Database could not be read
 - databasefile db.sqlite and *its directory* must be writable by execution programm
+
+#### STMP connection error
+ - TLS is not working corrently, 
+ - try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
 
 ## Local mail service
 

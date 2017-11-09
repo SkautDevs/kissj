@@ -21,15 +21,18 @@ $settings = [
 		'mailer' => [
 			'smtp' => true,
 			'smtp_server' => 'localhost',
+			'smtp_auth' => true,    // SMTP authentication
 			'smtp_port' => 587,
 			'smtp_username' => '',
 			'smtp_password' => '',
 			
-			'from_mail' => 'registration@localhost.cz', //registration mail
+			'from_mail' => 'registration@localhost.cz', // registration mail
 			'from_name' => 'Registrace Localhost',
 			
-			'bcc_mail' => 'registration@localhost.cz', //registration mail for example
+			'bcc_mail' => 'registration@localhost.cz', // another mail
 			'bcc_name' => 'Registrační Asistentka',
+			
+			'disable_tls' => false, // turn off all certificate checks
 		],
 		
 		'db' => [
