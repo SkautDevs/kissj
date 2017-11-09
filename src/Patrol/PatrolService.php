@@ -4,7 +4,7 @@ namespace kissj\Patrol;
 
 use kissj\User\User;
 
-class ParticipantService implements ParticipantServiceInterface {
+class PatrolService implements PatrolServiceInterface {
 	/** @var ParticipantRepository */
 	private $participantRepository;
 	/** @var PatrolLeaderRepository */

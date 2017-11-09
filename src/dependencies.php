@@ -2,7 +2,7 @@
 
 use kissj\Mapper;
 use kissj\Patrol\ParticipantRepository;
-use kissj\Patrol\ParticipantService;
+use kissj\Patrol\PatrolService;
 use kissj\Patrol\PatrolLeaderRepository;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
@@ -88,7 +88,7 @@ $container['userService'] = function (C $c) {
 
 // participant service
 $container['participantService'] = function (C $c) {
-	$service = new ParticipantService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
+	$service = new PatrolService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
 	return $service;
 };
 

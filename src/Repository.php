@@ -1,5 +1,7 @@
 <?php
 
+// TODO move into Db directory
+
 namespace kissj;
 
 use LeanMapper\Entity;

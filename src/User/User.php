@@ -15,7 +15,16 @@ class User extends Entity {
 		return $val->format(DATE_ISO8601);
 	}
 
+	// TODO rename more verbally (getDateFromString?)
 	public function fromString(string $val): string {
 		return new \DateTime($val);
+	}
+	
+	/**
+	 * @return string - 'patrol-leader' || 'ist' || 'guest'
+	 */
+	public function getRole(): string {
+		// TODO implement
+		return 'patrol-leader';
 	}
 }

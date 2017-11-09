@@ -10,12 +10,8 @@ use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
 use LeanMapper\Row;
+// TODO move into Db directory
 
-/**
- * Default IMapper implementation
- *
- * @author Vojtěch Kohout
- */
 class Mapper implements IMapper {
 
 	/** @var string */

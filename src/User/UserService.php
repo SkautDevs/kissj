@@ -5,7 +5,7 @@ namespace kissj\User;
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
 
-class UserService {
+class UserService implements UserServiceInterface {
 	
 	/** @var UserRepository */
 	private $userRepository;
@@ -28,7 +28,7 @@ class UserService {
 		return $user;
 	}
 	
-	public function sendLoginLink(string $email): string {
+	public function sendLoginLink(string $email): bool {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$loginToken = new LoginToken();
 		$token = Random::generateToken();
@@ -41,7 +41,8 @@ class UserService {
 		$mesasge = 'byl jste registrován';
 		$this->mailer->sendMail($email, 'Link s přihlášením', $mesasge);
 		
-		return $token;
+		// TODO implement success check?
+		return true;
 	}
 	
 	public function getUser(string $token): User {
@@ -49,4 +50,8 @@ class UserService {
 		return $user;
 	}
 	
+	public function isLoginValid(string $token): bool {
+		// TODO: Implement isLoginValid() method.
+		return true;
+	}
 }

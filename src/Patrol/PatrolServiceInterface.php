@@ -5,7 +5,7 @@ namespace kissj\Patrol;
 use kissj\User\User;
 
 
-interface ParticipantServiceInterface {
+interface PatrolServiceInterface {
 	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies);
 
 	public function addParticipant(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies);

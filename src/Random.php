@@ -1,5 +1,7 @@
 <?php
 
+// TODO move into container
+
 namespace kissj;
 
 class Random {
