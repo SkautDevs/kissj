@@ -2,10 +2,9 @@
 
 namespace kissj\Mailer;
 
-use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class PhpMailerWrapper implements MailerInterface {
+class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 	
 	private $smtp;
 	private $smtp_server;
