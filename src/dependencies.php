@@ -92,6 +92,11 @@ $container['participantService'] = function (C $c) {
 	return $service;
 };
 
+$container['flashMessages'] = function (C $c) {
+	$flashMessages = new kissj\FlashMessages\FlashMessagesBySession();
+	return $flashMessages;
+};
+
 $container['view'] = function ($c) {
 	$view = new \Slim\Views\Twig(dirname(__FILE__) . '/../templates/', [
 		'cache' => false ? dirname(__FILE__) . '/../temp/twig' : false
@@ -100,7 +105,10 @@ $container['view'] = function ($c) {
 	// Instantiate and add Slim specific extension
 	$basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
+	
 
 	return $view;
 };
+
+$container['view']['flashMessages'] = $container->get('flashMessages')->dumpMessagesIntoArray();
 

@@ -112,6 +112,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	// LANDING PAGE
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
+		$this->flashMessages->info('Welcome!');
 		return $this->view->render($response, 'landing-page.twig', ['router' => $this->router]);
 	})->setName("landing");
 });
