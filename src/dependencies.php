@@ -101,14 +101,11 @@ $container['view'] = function ($c) {
 	$view = new \Slim\Views\Twig(dirname(__FILE__) . '/../templates/', [
 		'cache' => false ? dirname(__FILE__) . '/../temp/twig' : false
 	]);
-
+	
 	// Instantiate and add Slim specific extension
 	$basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
+	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']->dumpMessagesIntoArray());
 	
-
 	return $view;
 };
-
-$container['view']['flashMessages'] = $container->get('flashMessages')->dumpMessagesIntoArray();
-
