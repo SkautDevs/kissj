@@ -8,6 +8,14 @@ use LeanMapper\Entity;
  * Class User
  * @property int $id
  * @property string $email
+ * @property string $role
+ * 	'patrol-leader'
+ * 	'ist'
+ * 	'guest'
+ * 	'staff'
+ * 	'team'
+ * 	'event-chief'
+ * 	'contingent-chief'
  */
 class User extends Entity {
 
@@ -18,13 +26,5 @@ class User extends Entity {
 	// TODO rename more verbally (getDateFromString?)
 	public function fromString(string $val): string {
 		return new \DateTime($val);
-	}
-	
-	/**
-	 * @return string - 'patrol-leader' || 'ist' || 'guest'
-	 */
-	public function getRole(): string {
-		// TODO implement
-		return 'patrol-leader';
 	}
 }

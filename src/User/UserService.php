@@ -9,7 +9,6 @@ class UserService implements UserServiceInterface {
 	
 	/** @var UserRepository */
 	private $userRepository;
-	
 	/** @var MailerInterface */
 	private $mailer;
 	/** @var LoginTokenRepository */
@@ -28,30 +27,50 @@ class UserService implements UserServiceInterface {
 		return $user;
 	}
 	
-	public function sendLoginLink(string $email): bool {
+	public function sendLoginToken(string $email) {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$loginToken = new LoginToken();
-		$token = Random::generateToken();
+		$token = Random::generateToken(); // TODO move from static into DI
 		$loginToken->token = $token;
 		$loginToken->user = $user;
 		$loginToken->created = new \DateTime();
 		$loginToken->used = false;
 		$this->loginTokenRepository->persist($loginToken);
 		
-		$mesasge = 'byl jste registrován';
+		// TODO check if this is rightly implemented
+		$link = $this->get('router')->pathFor('login', ['token' => $token]);
+		// TODO add event from settings
+		$mesasge = '<p>Ahoj!</p>
+		<p>Přihlašuješ se do registrace na akci CEJ 2018 - přihlásíš se klikem na tento link: <a href="'.$link.'">'.$link.'</a></p>';
 		$this->mailer->sendMail($email, 'Link s přihlášením', $mesasge);
-		
-		// TODO implement success check?
-		return true;
 	}
 	
-	public function getUser(string $token): User {
+	public function isLoginTokenValid(string $token): bool {
+		// TODO: Implement isLoginTokenValid() method.
+	}
+	
+	public function getUserFromToken(string $token): User {
 		$user = $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 		return $user;
 	}
 	
-	public function isLoginValid(string $token): bool {
-		// TODO: Implement isLoginValid() method.
-		return true;
+	public function saveUserIntoSession(User $user) {
+		// TODO: Implement saveUserIntoSession() method.
+		$_SESSION['user']['id'] = $id;
+		$_SESSION['user']['email'] = $email;
+		$_SESSION['user']['role'] = $role;
+	}
+	
+	public function canRecreateUserFromSession($sessionUser): bool {
+		return (isset($sessionUser['id'], $sessionUser['email'], $sessionUser['role']));
+	}
+	
+	public function createUserFromSession($sessionUser): User {
+		// TODO: Implement createUserFromSession() method.
+		$id = $sessionUser['id'];
+		$email = $sessionUser['email'];
+		$role = $sessionUser['role'];
+		
+		return $user;
 	}
 }

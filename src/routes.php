@@ -44,7 +44,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			// TODO - add bad login screen
 			return $response->withRedirect("TODO - add bad login screen");
 		}
-	});
+	})->setName('login');
 	
 	// PATROLS
 	// TODO discuss - should be this joined?
