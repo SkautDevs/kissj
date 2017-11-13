@@ -1,7 +1,6 @@
 <?php
 // Application middleware
 
-
 // DEBUGGER
 
 $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
@@ -16,6 +15,7 @@ $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 // TRANSLATOR
 
 // https://symfony.com/doc/current/components/translation.html
+
 
 // CSRF PROTECTION
 

@@ -13,7 +13,9 @@ interface UserServiceInterface {
 	
 	public function saveUserIntoSession(User $user);
 	
-	public function canRecreateUserFromSession($session): bool;
+	public function canRecreateUserFromSession(array $session): bool;
 	
-	public function createUserFromSession($session): User;
+	public function createUserFromSession(array $session): User;
+	
+	public function logoutUser();
 }

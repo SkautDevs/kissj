@@ -7,7 +7,7 @@ kissj is scouts **registration system for jamborees** with simple idea - it has 
 1. Download project
 `git clone [this repository]`
 2. Install dependencies
-`composer update`
+`composer install`
 3. Prepare database
 	- Copy `db_init.sqlite` to `db.sqlite` 
 	- Run `sql/init.sql` to `db.sqlite`

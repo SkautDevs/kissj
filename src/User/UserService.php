@@ -73,4 +73,8 @@ class UserService implements UserServiceInterface {
 		
 		return $user;
 	}
+	
+	public function logoutUser() {
+		unset($_SESSION['user']);
+	}
 }

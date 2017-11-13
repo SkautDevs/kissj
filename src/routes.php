@@ -8,7 +8,7 @@ use Slim\Http\Response;
 // Routes
 $app->group("/".$settings['settings']['eventName'], function () {
 	
-	// REGISTRATION & LOGIN
+	// REGISTRATION, LOGIN & LOGOUT
 	
 	$this->get("/registration", function (Request $request, Response $response, array $args) {
 		return $this->view->render($response, 'registration.twig', ['router' => $this->router]);
@@ -28,13 +28,13 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$role = $this->userService->getUser($loginToken)->getRole();
 			switch ($role) {
 				case 'patrol-leader': {
-					return $response->withRedirect($this->get('router')->pathFor('pl-dashboard'));
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 				}
 				case 'ist': {
-					return $response->withRedirect($this->get('router')->pathFor('ist-dashboard'));
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 				}
 				case 'guest': {
-					return $response->withRedirect($this->get('router')->pathFor('guest-dashboard'));
+					return $response->withRedirect($this->router->pathFor('guest-dashboard'));
 				}
 				default: {
 					throw new Exception('Unknown role');
@@ -45,6 +45,13 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response->withRedirect("TODO - add bad login screen");
 		}
 	})->setName('login');
+	
+	$this->get("/logout", function (Request $request, Response $response, array $args) {
+		$this->userService->logout();
+		$this->flashMessages->info('Jsi úspěšně odhlášený');
+		
+		return $response->withRedirect($this->router->pathFor('landing'));
+	})->setName('logout');
 	
 	// PATROLS
 	// TODO discuss - should be this joined?
@@ -63,7 +70,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		$this->post("/addParticipant", function (Request $request, Response $response, array $args) {
 			// TODO process
-			return $response->withRedirect($this->get('router')->pathFor('pl-dashboard'));
+			return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 		});
 	});
 	
