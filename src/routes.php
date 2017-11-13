@@ -17,14 +17,14 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->post("/signup", function (Request $request, Response $response, array $args) {
 		$email = $request->getParsedBodyParam("email");
 		$user = $this->userService->registerUser($email);
-		$this->userService->sendLoginLink($email);
+		$this->userService->sendLoginTokenByMail($email);
 		return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
 	})->setName('signup');
 	
 	
 	$this->get("/login/{token}", function (Request $request, Response $response, array $args) {
 		$loginToken = $args['token'];
-		if ($this->userService->isLoginValid($loginToken)) {
+		if ($this->userService->isLoginTokenValid($loginToken)) {
 			$role = $this->userService->getUser($loginToken)->getRole();
 			switch ($role) {
 				case 'patrol-leader': {

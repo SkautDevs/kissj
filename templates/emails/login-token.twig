@@ -1,0 +1,10 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<p>Ahoj!</p>
+		<p>Přihlašuješ se do registrace na akci {{ eventName }} - přihlásíš se klikem na tento link: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
+		<p>Base host scheme: {{ baseHostScheme }}</p>
+		<p>Base url: {{ base_url() }}</p>
+	</div>
+{% endblock %}

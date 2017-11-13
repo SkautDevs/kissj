@@ -4,12 +4,14 @@ namespace kissj\User;
 
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
-use kissj\Mailer\PhpMailerWrapper;
 use Slim\Router;
 
 class UserService implements UserServiceInterface {
 	
 	private $router;
+	private $random;
+	private $eventName;
+	private $renderer;
 	
 	/** @var UserRepository */
 	private $userRepository;
@@ -18,11 +20,14 @@ class UserService implements UserServiceInterface {
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router) {
-		$this->router = $router;
+	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
+		$this->router = $router;
+		$this->random = $random;
+		$this->eventName = $eventName;
+		$this->renderer = $renderer;
 	}
 	
 	public function registerUser(string $email): User {
@@ -32,10 +37,10 @@ class UserService implements UserServiceInterface {
 		return $user;
 	}
 	
-	public function sendLoginToken(string $email) {
+	public function sendLoginTokenByMail(string $email) {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$loginToken = new LoginToken();
-		$token = Random::generateToken(); // TODO move from static into DI
+		$token = $this->random->generateToken();
 		$loginToken->token = $token;
 		$loginToken->user = $user;
 		$loginToken->created = new \DateTime();
@@ -44,13 +49,11 @@ class UserService implements UserServiceInterface {
 		
 		// TODO check if this is rightly implemented
 		$link = $this->router->pathFor('login', ['token' => $token]);
-		// TODO add event from settings
-		$mesasge = '<p>Ahoj!</p>
-		<p>Přihlašuješ se do registrace na akci CEJ 2018 - přihlásíš se klikem na tento link: <a href="'.$link.'">'.$link.'</a></p>';
-		$this->mailer->sendMail($email, 'Link s přihlášením', $mesasge);
+		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
+		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
 	}
 	
-	public function isLoginTokenValid(string $token): bool {
+	public function isLoginTokenValid(string $loginToken): bool {
 		// TODO: Implement isLoginTokenValid() method.
 	}
 	
@@ -78,6 +81,7 @@ class UserService implements UserServiceInterface {
 		
 		return $user;
 	}
+	
 	public function logoutUser() {
 		unset($_SESSION['user']);
 	}

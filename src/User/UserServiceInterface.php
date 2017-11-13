@@ -5,7 +5,7 @@ namespace kissj\User;
 interface UserServiceInterface {
 	public function registerUser(string $email): User;
 	
-	public function sendLoginToken(string $email);
+	public function sendLoginTokenByMail(string $email);
 	
 	public function isLoginTokenValid(string $token): bool;
 	
