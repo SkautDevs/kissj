@@ -13,9 +13,9 @@ interface UserServiceInterface {
 	
 	public function saveUserIntoSession(User $user);
 	
-	public function canRecreateUserFromSession(array $session): bool;
+	public function canRecreateUserFromSession($possibleUserSession): bool; // not input type array, because cull can be given
 	
-	public function createUserFromSession(array $session): User;
+	public function createUserFromSession(array $userSession): User;
 	
 	public function logoutUser();
 }

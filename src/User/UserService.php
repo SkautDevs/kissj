@@ -4,8 +4,12 @@ namespace kissj\User;
 
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
+use kissj\Mailer\PhpMailerWrapper;
+use Slim\Router;
 
 class UserService implements UserServiceInterface {
+	
+	private $router;
 	
 	/** @var UserRepository */
 	private $userRepository;
@@ -14,7 +18,8 @@ class UserService implements UserServiceInterface {
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer) {
+	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router) {
+		$this->router = $router;
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
@@ -38,7 +43,7 @@ class UserService implements UserServiceInterface {
 		$this->loginTokenRepository->persist($loginToken);
 		
 		// TODO check if this is rightly implemented
-		$link = $this->get('router')->pathFor('login', ['token' => $token]);
+		$link = $this->router->pathFor('login', ['token' => $token]);
 		// TODO add event from settings
 		$mesasge = '<p>Ahoj!</p>
 		<p>Přihlašuješ se do registrace na akci CEJ 2018 - přihlásíš se klikem na tento link: <a href="'.$link.'">'.$link.'</a></p>';
@@ -61,11 +66,11 @@ class UserService implements UserServiceInterface {
 		$_SESSION['user']['role'] = $role;
 	}
 	
-	public function canRecreateUserFromSession($sessionUser): bool {
-		return (isset($sessionUser['id'], $sessionUser['email'], $sessionUser['role']));
+	public function canRecreateUserFromSession($possibleUserSession): bool {
+		return (isset($userSessionUser['id'], $userSessionUser['email'], $userSessionUser['role']));
 	}
 	
-	public function createUserFromSession($sessionUser): User {
+	public function createUserFromSession(array $sessionUser): User {
 		// TODO: Implement createUserFromSession() method.
 		$id = $sessionUser['id'];
 		$email = $sessionUser['email'];
@@ -73,7 +78,6 @@ class UserService implements UserServiceInterface {
 		
 		return $user;
 	}
-	
 	public function logoutUser() {
 		unset($_SESSION['user']);
 	}

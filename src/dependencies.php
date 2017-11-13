@@ -82,7 +82,7 @@ $container['patrolLeaderRepository'] = function (C $c) {
 
 // user service
 $container['userService'] = function (C $c) {
-	$service = new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'));
+	$service = new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'));
 	return $service;
 };
 

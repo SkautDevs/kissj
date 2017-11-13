@@ -25,8 +25,8 @@ $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 // USER MIDDLEWARE
 
 // TODO check and test implementation
-$app->add(function (\Slim\Http\Request $request, \Slim\Http\Response $response, $next) {
-	$userSevice = $this->get['userSevice'];
+$app->add(function (\Slim\Http\Request $request, \Slim\Http\Response $response, $next) use ($container) {
+	$userSevice = $container->userService;
 	if ($userSevice->canRecreateUserFromSession($_SESSION['user'])) {
 		$request->user = $userSevice->createUserFromSession($_SESSION['user']);
 	}
