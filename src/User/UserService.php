@@ -46,19 +46,17 @@ class UserService implements UserServiceInterface {
 		$loginToken->used = false;
 		$this->loginTokenRepository->persist($loginToken);
 		
-		// TODO check if this is rightly implemented
 		$link = $this->router->pathFor('login', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
-		return empty($this->loginTokenRepository->findOneBy(['token', $loginToken]));
+		return !is_null($this->loginTokenRepository->findOneBy(['token' => $loginToken]));
 	}
 	
 	public function getUserFromToken(string $token): User {
-		$user = $this->loginTokenRepository->findOneBy(['token' => $token])->user;
-		return $user;
+		return $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 	}
 	
 	public function saveUserIdIntoSession(User $user) {
