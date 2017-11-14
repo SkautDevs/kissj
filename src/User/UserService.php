@@ -71,6 +71,7 @@ class UserService implements UserServiceInterface {
 	
 	public function getRole(User $user): string {
 		//$this->userRepository->
+		return 'ist';
 	}
 	
 	public function saveUserIdIntoSession(User $user) {

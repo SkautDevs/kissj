@@ -95,11 +95,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			} else {
 				switch ($role) {
 					case 'patrol-leader': {
-						return $response->withRedirect($this->router->getPath('pl-dashboard'));
+						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 						break;
 					}
 					case 'ist': {
-						return $response->withRedirect($this->router->getPath('ist-dashboard'));
+						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					}
 					default: {
 						throw new Exception('Non-implemented role "'.$role.'"!');
@@ -115,6 +115,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->group("/patrol-leader", function () {
 		
 		// PATROL-LEADER AREA
+		
+		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
+			return $this->view->render($response, 'pl-dashboard.html', $args);
+		})->setName('dashboard-pl');
 		
 		$this->get("/details", function (Request $request, Response $response, array $args) {
 			return $this->renderer->render($response, 'patrol-leader-details.html', $args);
@@ -133,10 +137,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			// TODO process
 			return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 		});
-		
-		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'pl-dashboard.html', $args);
-		})->setName('pl-dashboard');
 		
 		
 		// PARTICIPANT
@@ -161,9 +161,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
-		if ($request->getAttribute('user')['role'] != 'patrol-leader') {
+		if ($this->userService->getRole($request->getAttribute('user')) != 'patrol-leader') {
 			$this->flashMessages('Sorry, you are not logged as Patrol Leader');
-			return $response->withRedirect($this->router->getPath('loginScreen'));
+			return $response->withRedirect($this->router->pathFor('loginScreen'));
 		} else {
 			$response = $next($request, $response);
 			return $response;
@@ -175,11 +175,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->group("/ist", function () {
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			return $this->renderer->render($response, 'view-ist.html', $args);
+			return $this->view->render($response, 'dashboard-ist.html', $args);
 		})->setName('ist-dashboard');
 		
 		$this->get("/details[/{id}]", function (Request $request, Response $response, array $args) {
-			return $this->renderer->render($response, 'participant-details.html', $args);
+			return $this->view->render($response, 'participant-details.html', $args);
 		});
 		
 		$this->post("/details[/{id}]", function (Request $request, Response $response, array $args) {
@@ -189,9 +189,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
-		if ($request->getAttribute('user')['role'] != 'ist') {
+		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
 			$this->flashMessages('Sorry, you are not logged as IST');
-			return $response->withRedirect($this->router->getPath('loginScreen'));
+			return $response->withRedirect($this->router->pathFor('loginScreen'));
 		} else {
 			$response = $next($request, $response);
 			return $response;
