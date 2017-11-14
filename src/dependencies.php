@@ -1,9 +1,9 @@
 <?php
 
-use kissj\Mapper;
-use kissj\Patrol\ParticipantRepository;
-use kissj\Patrol\PatrolService;
-use kissj\Patrol\PatrolLeaderRepository;
+use kissj\Orm\Mapper;
+use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -60,7 +60,7 @@ $container['tokenRepository'] = function (C $c) {
 };
 
 $container['participantRepository'] = function (C $c) {
-	return new ParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new PatrolParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
 $container['patrolLeaderRepository'] = function (C $c) {
@@ -69,7 +69,7 @@ $container['patrolLeaderRepository'] = function (C $c) {
 
 // user service
 $container['userService'] = function (C $c) {
-	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'));
+	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
 };
 
 // participant service

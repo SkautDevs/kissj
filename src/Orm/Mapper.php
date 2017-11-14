@@ -1,16 +1,15 @@
 <?php
 
-namespace kissj;
+namespace kissj\Orm;
 
-use kissj\Patrol\Participant;
-use kissj\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Patrol\PatrolLeader;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
 use LeanMapper\Row;
-// TODO move into Db directory
 
 class Mapper implements IMapper {
 
@@ -36,7 +35,7 @@ class Mapper implements IMapper {
 			return LoginToken::class;
 		}
 		if ($table === 'participant') {
-			return Participant::class;
+			return PatrolParticipant::class;
 		}
 		if ($table === 'patrolleader') {
 			return PatrolLeader::class;

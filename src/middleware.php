@@ -1,7 +1,7 @@
 <?php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 // DEBUGGER
 
@@ -10,7 +10,7 @@ $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 
 // TRAILING SLASH REMOVER
 
-$app->add(function (RequestInterface $request, ResponseInterface $response, callable $next) {
+$app->add(function (Request $request, Response $response, callable $next) {
 	$uri = $request->getUri();
 	$path = $uri->getPath();
 	if ($path != '/' && substr($path, -1) == '/') {
@@ -47,11 +47,11 @@ $app->add(function (RequestInterface $request, ResponseInterface $response, call
 
 // USER AUTHENTICATION MIDDLEWARE
 
-// TODO check and test implementation
-$app->add(function (RequestInterface $request, ResponseInterface $response, callable $next) use ($container) {
+$app->add(function (Request $request, Response $response, callable $next) use ($container) {
 	$userSevice = $container->userService;
-	if ($userSevice->canRecreateUserFromSession($_SESSION['user'] ?? null)) {
-		$request->user = $userSevice->createUserFromSession($_SESSION['user']);
+	$canRecreateUserFromSession = $userSevice->canRecreateUserFromSession($_SESSION['user'] ?? null);
+	if ($canRecreateUserFromSession) {
+		$request = $request->withAttribute('user', $userSevice->createUserFromSession($_SESSION['user']));
 	}
 	
 	$response = $next($request, $response);

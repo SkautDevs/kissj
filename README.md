@@ -1,6 +1,6 @@
-# Slim Framework 3 Skeleton Application
+# KISSJ - Keep It Simple Stupid for Jamborees!
 
-kissj is scouts **registration system for jamborees** with simple idea - it has to be stupidly simple!
+kissj is scouts **registration system for Scout Jamborees** with simple idea - it has to be stupidly simple!
 
 # Installation (yet)
 
@@ -26,19 +26,18 @@ We use:
 # Codestyle
 
 - tabs! (4 spaces wide)
-- directories in concern of separation
-- lambda func. in routes serves "as controllers"
+- directories in Separation of Concerns
+- lambda functions in routes serves "as controllers"
 - Interfaces!
-- ...
+- KISS please
 
 # Possible problems & fixies + trivia
 
 #### Database could not be read
-- databasefile db.sqlite and *its directory* must be writable by execution programm
+- databasefile db.sqlite *and its directory* must be writable by execution programm
 
 #### STMP connection error
- - TLS is not working corrently, 
- - try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
+ - if TLS is not working corrently, try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
 
 #### Local mail service at Linux/Mac
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace kissj\Patrol;
+namespace kissj\Participant\Patrol;
 
 use kissj\User\User;
 

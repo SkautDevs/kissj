@@ -12,6 +12,7 @@ class UserService implements UserServiceInterface {
 	private $random;
 	private $eventName;
 	private $renderer;
+	private $possibleRoles;
 	
 	/** @var UserRepository */
 	private $userRepository;
@@ -20,7 +21,7 @@ class UserService implements UserServiceInterface {
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer) {
+	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer, array $possibleRoles) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
@@ -28,6 +29,15 @@ class UserService implements UserServiceInterface {
 		$this->random = $random;
 		$this->eventName = $eventName;
 		$this->renderer = $renderer;
+		$this->possibleRoles = $possibleRoles;
+	}
+	
+	public function isUserRoleValid(string $role): bool {
+		return in_array($role, $this->possibleRoles);
+	}
+	
+	public function isEmailExisting(string $email): bool {
+		return $this->userRepository->isExisting(['email' => $email]);
 	}
 	
 	public function registerUser(string $email) {
@@ -59,12 +69,16 @@ class UserService implements UserServiceInterface {
 		return $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 	}
 	
+	public function getRole(User $user): string {
+		//$this->userRepository->
+	}
+	
 	public function saveUserIdIntoSession(User $user) {
 		$_SESSION['user']['id'] = $user->id;
 	}
 	
 	public function canRecreateUserFromSession($possibleUserSession): bool {
-		return (isset($possibleUserSession['id']));
+		return $this->userRepository->isExisting(['id' => $possibleUserSession['id'] ?? null]);
 	}
 	
 	public function createUserFromSession(array $sessionUser): User {

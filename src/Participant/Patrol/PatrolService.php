@@ -1,22 +1,22 @@
 <?php
 
-namespace kissj\Patrol;
+namespace kissj\Participant\Patrol;
 
 use kissj\User\User;
 
 class PatrolService implements PatrolServiceInterface {
-	/** @var ParticipantRepository */
+	/** @var PatrolParticipantRepository */
 	private $participantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
 
-	public function __construct(ParticipantRepository $participantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
+	public function __construct(PatrolParticipantRepository $participantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
 		$this->participantRepository = $participantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 	}
 
 	public function addParticipant(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies) {
-		$participant = new Participant();
+		$participant = new PatrolParticipant();
 		$participant->patrolLeader = $patrolLeader;
 		$participant->firstName = $firstName;
 		$participant->lastName = $lastName;

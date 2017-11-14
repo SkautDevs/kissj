@@ -1,8 +1,8 @@
 <?php
 
-namespace kissj\Patrol;
+namespace kissj\Participant\Patrol;
 
-use kissj\Repository;
+use kissj\Orm\Repository;
 
 /**
  * Class LoginTokenRepository

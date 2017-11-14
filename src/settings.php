@@ -40,6 +40,16 @@ $settings = [
 		],
 		
 		'eventName' => 'cej2018',
+		
+		'possibleUserRoles' => [
+			'patrol-leader',
+			'ist',
+			//'guest',
+			//'staff',
+			//'team',
+			//'event-chief',
+			//'contingent-chief',
+		],
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {

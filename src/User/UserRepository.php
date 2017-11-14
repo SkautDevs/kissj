@@ -2,7 +2,7 @@
 
 namespace kissj\User;
 
-use kissj\Repository;
+use kissj\Orm\Repository;
 
 class UserRepository extends Repository {
 

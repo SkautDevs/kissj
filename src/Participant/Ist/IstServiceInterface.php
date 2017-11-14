@@ -1,6 +1,6 @@
 <?php
 
-namespace kissj\Ist;
+namespace kissj\Participant\Ist;
 
 use kissj\User\User;
 

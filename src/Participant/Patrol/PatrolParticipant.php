@@ -1,11 +1,10 @@
 <?php
 
-namespace kissj\Patrol;
+namespace kissj\Participant\Patrol;
 
 use LeanMapper\Entity;
 
 /**
- * Class User
  * @property int $id
  * @property string $firstName
  * @property string $lastName
@@ -13,7 +12,7 @@ use LeanMapper\Entity;
  * @property string $allergies
  * @property PatrolLeader $patrolLeader m:hasOne
  */
-class Participant extends Entity {
+class PatrolParticipant extends Entity {
 
 	public function toString(\DateTime $val): string {
 		return $val->format(DATE_ISO8601);
