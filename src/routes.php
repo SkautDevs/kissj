@@ -16,7 +16,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	$this->post("/signup", function (Request $request, Response $response, array $args) {
 		$email = $request->getParsedBodyParam("email");
-		$user = $this->userService->registerUser($email);
+		$this->userService->registerUser($email);
 		$this->userService->sendLoginTokenByMail($email);
 		return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
 	})->setName('signup');
@@ -25,8 +25,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->get("/login/{token}", function (Request $request, Response $response, array $args) {
 		$loginToken = $args['token'];
 		if ($this->userService->isLoginTokenValid($loginToken)) {
-			$role = $this->userService->getUser($loginToken)->getRole();
-			switch ($role) {
+			$user = $this->userService->getUserFromToken($loginToken);
+			switch ($user->getRole()) {
 				case 'patrol-leader': {
 					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 				}
@@ -113,8 +113,13 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	});
 	
 	// GUESTS
-	
 	// TODO
+	
+	// ADMINISTRATION
+	
+	$this->any("/admin", function (Request $request, Response $response, array $args) {
+		require "admin/dbninja/index.php";
+	});
 	
 	// LANDING PAGE
 	

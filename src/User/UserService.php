@@ -30,11 +30,10 @@ class UserService implements UserServiceInterface {
 		$this->renderer = $renderer;
 	}
 	
-	public function registerUser(string $email): User {
+	public function registerUser(string $email) {
 		$user = new User();
 		$user->email = $email;
 		$this->userRepository->persist($user);
-		return $user;
 	}
 	
 	public function sendLoginTokenByMail(string $email) {
@@ -54,7 +53,7 @@ class UserService implements UserServiceInterface {
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
-		// TODO: Implement isLoginTokenValid() method.
+		return empty($this->loginTokenRepository->findOneBy(['token', $loginToken]));
 	}
 	
 	public function getUserFromToken(string $token): User {
@@ -62,24 +61,16 @@ class UserService implements UserServiceInterface {
 		return $user;
 	}
 	
-	public function saveUserIntoSession(User $user) {
-		// TODO: Implement saveUserIntoSession() method.
-		$_SESSION['user']['id'] = $id;
-		$_SESSION['user']['email'] = $email;
-		$_SESSION['user']['role'] = $role;
+	public function saveUserIdIntoSession(User $user) {
+		$_SESSION['user']['id'] = $user->id;
 	}
 	
 	public function canRecreateUserFromSession($possibleUserSession): bool {
-		return (isset($userSessionUser['id'], $userSessionUser['email'], $userSessionUser['role']));
+		return (isset($possibleUserSession['id']));
 	}
 	
 	public function createUserFromSession(array $sessionUser): User {
-		// TODO: Implement createUserFromSession() method.
-		$id = $sessionUser['id'];
-		$email = $sessionUser['email'];
-		$role = $sessionUser['role'];
-		
-		return $user;
+		return $this->userRepository->findOneBy(['id' => $sessionUser['id']]);
 	}
 	
 	public function logoutUser() {

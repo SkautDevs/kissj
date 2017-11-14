@@ -50,7 +50,7 @@ $app->add(function (RequestInterface $request, ResponseInterface $response, call
 // TODO check and test implementation
 $app->add(function (RequestInterface $request, ResponseInterface $response, callable $next) use ($container) {
 	$userSevice = $container->userService;
-	if ($userSevice->canRecreateUserFromSession($_SESSION['user'])) {
+	if ($userSevice->canRecreateUserFromSession($_SESSION['user'] ?? null)) {
 		$request->user = $userSevice->createUserFromSession($_SESSION['user']);
 	}
 	

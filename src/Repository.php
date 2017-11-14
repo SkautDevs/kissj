@@ -1,6 +1,6 @@
 <?php
 
-// TODO move into Db directory
+// TODO move this file into Db or ORM directory
 
 namespace kissj;
 
