@@ -40,10 +40,11 @@ class UserService implements UserServiceInterface {
 		return $this->userRepository->isExisting(['email' => $email]);
 	}
 	
-	public function registerUser(string $email) {
+	public function registerUser(string $email): User {
 		$user = new User();
 		$user->email = $email;
 		$this->userRepository->persist($user);
+		return $user;
 	}
 	
 	public function sendLoginTokenByMail(string $email) {

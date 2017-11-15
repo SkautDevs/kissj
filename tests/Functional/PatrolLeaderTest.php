@@ -3,7 +3,7 @@
 namespace Tests\Functional;
 
 
-use kissj\Patrol\ParticipantService;
+use kissj\Participant\Patrol\PatrolService;
 use kissj\User\UserService;
 
 class PatrolLeaderTest extends BaseTestCase {
@@ -15,7 +15,7 @@ class PatrolLeaderTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
-		/** @var ParticipantService $participantService */
+		/** @var PatrolService $participantService */
 		$participantService = $app->getContainer()->get('participantService');
 
 		$email = 'test2@example.com';
@@ -33,7 +33,7 @@ class PatrolLeaderTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
-		/** @var ParticipantService $participantService */
+		/** @var PatrolService $participantService */
 		$participantService = $app->getContainer()->get('participantService');
 
 		$email = 'test3@example.com';

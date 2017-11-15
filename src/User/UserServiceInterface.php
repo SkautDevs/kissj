@@ -5,7 +5,7 @@ namespace kissj\User;
 interface UserServiceInterface {
 	public function isUserRoleValid(string $role): bool;
 	
-	public function registerUser(string $email);
+	public function registerUser(string $email): User;
 	
 	public function isEmailExisting(string $email): bool;
 	

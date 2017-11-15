@@ -37,15 +37,24 @@ class PatrolService implements PatrolServiceInterface {
 		return $patrolLeader;
 	}
 
-	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader, string $firstName, string $lastName, string $allergies) {
-		$patrolLeader->firstName = $firstName;
-		$patrolLeader->lastName = $lastName;
-		$patrolLeader->allergies = $allergies;
+	public function closeRegistration(PatrolLeader $patrolLeader) {
+		$patrolLeader->finished = false;
 		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 
-	public function closeRegistration(PatrolLeader $patrolLeader) {
-		$patrolLeader->finished = false;
+	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
+	                                    string $firstName,
+	                                    string $lastName,
+	                                    string $allergies,
+	                                    string $dateOfBirth,
+	                                    string $permanentResidence,
+	                                    string $telephoneNumber,
+	                                    string $scoutUnit,
+	                                    string $country,
+	                                    string $notes) {
+		$patrolLeader->firstName = $firstName;
+		$patrolLeader->lastName = $lastName;
+		$patrolLeader->allergies = $allergies;
 		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 }
