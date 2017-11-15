@@ -1,7 +1,5 @@
 <?php
 
-// TODO move this file into Db or ORM directory
-
 namespace kissj\Orm;
 
 use LeanMapper\Entity;
