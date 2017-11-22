@@ -62,6 +62,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		
 		//Recipients
 		$mailer->setFrom($this->from_mail, $this->from_name);
+		$mailer->addAddress($recipient);
 		$mailer->addCC($this->bcc_mail, $this->bcc_name);
 		
 		// Content

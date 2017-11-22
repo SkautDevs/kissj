@@ -220,7 +220,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	// ADMINISTRATION
 	
 	$this->any("/admin", function (Request $request, Response $response, array $args) {
-		//require "admin/...";
+		require __DIR__ . "/../admin/custom.php";
 	});
 	
 	// LANDING PAGE
