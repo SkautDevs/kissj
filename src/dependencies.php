@@ -72,8 +72,8 @@ $container['userService'] = function (C $c) {
 	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
 };
 
-// participant service
-$container['participantService'] = function (C $c) {
+// patrol service
+$container['patrolService'] = function (C $c) {
 	return new PatrolService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
 };
 

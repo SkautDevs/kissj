@@ -72,7 +72,7 @@ class UserService implements UserServiceInterface {
 	
 	public function getRole(User $user): string {
 		//$this->userRepository->
-		return 'ist';
+		return 'patrol-leader';
 	}
 	
 	public function saveUserIdIntoSession(User $user) {

@@ -15,12 +15,12 @@ class CreatePatrolLeaderTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
-		/** @var PatrolService $participantService */
-		$participantService = $app->getContainer()->get('participantService');
+		/** @var PatrolService $patrolService */
+		$patrolService = $app->getContainer()->get('patrolService');
 
 		$email = 'test2@example.com';
 		$user = $userService->registerUser($email);
-		$patrolLeader = $participantService->getPatrolLeader($user);
+		$patrolLeader = $patrolService->getPatrolLeader($user);
 
 		$this->assertEquals($patrolLeader->user, $user);
 	}

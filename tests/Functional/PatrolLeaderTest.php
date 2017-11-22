@@ -15,12 +15,12 @@ class PatrolLeaderTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
-		/** @var PatrolService $participantService */
-		$participantService = $app->getContainer()->get('participantService');
+		/** @var PatrolService $patrolService */
+		$patrolService = $app->getContainer()->get('patrolService');
 
 		$email = 'test2@example.com';
 		$user = $userService->registerUser($email);
-		$patrolLeader = $participantService->getPatrolLeader($user);
+		$patrolLeader = $patrolService->getPatrolLeader($user);
 
 		$this->assertEquals($patrolLeader->user->id, $user->id);
 		$this->assertFalse($patrolLeader->finished);
@@ -33,20 +33,20 @@ class PatrolLeaderTest extends BaseTestCase {
 		$app = $this->app();
 		/** @var UserService $userService */
 		$userService = $app->getContainer()->get('userService');
-		/** @var PatrolService $participantService */
-		$participantService = $app->getContainer()->get('participantService');
+		/** @var PatrolService $patrolService */
+		$patrolService = $app->getContainer()->get('patrolService');
 
 		$email = 'test3@example.com';
 		$user = $userService->registerUser($email);
-		$patrolLeader = $participantService->getPatrolLeader($user);
+		$patrolLeader = $patrolService->getPatrolLeader($user);
 
 		$this->assertEquals($patrolLeader->user->id, $user->id);
 		$this->assertFalse($patrolLeader->finished);
 
-		$participantService->addPatrolLeaderInfo($patrolLeader, 'leader', 'leaderový', 'burákové máslo');
+		$patrolService->addPatrolLeaderInfo($patrolLeader, 'leader', 'leaderový', 'burákové máslo');
 
 		$this->assertFalse($patrolLeader->finished);
-		$participantService->closeRegistration($patrolLeader);
+		$patrolService->closeRegistration($patrolLeader);
 		$this->assertTrue($patrolLeader->finished);
 	}
 }

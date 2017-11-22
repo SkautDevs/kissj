@@ -117,9 +117,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// PATROL-LEADER AREA
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			$infoPL = $this->PatrolService
-			return $this->view->render($response, 'pl-dashboard.html', ['infoPL' => $infoPL]);
-		})->setName('dashboard-pl');
+			$infoPL = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			return $this->view->render($response, 'dashboard-pl.html', ['infoPL' => $infoPL]);
+		})->setName('pl-dashboard');
 		
 		$this->get("/details", function (Request $request, Response $response, array $args) {
 			return $this->renderer->render($response, 'patrol-leader-details.html', $args);
@@ -191,7 +191,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
 		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
-			$this->flashMessages('Sorry, you are not logged as IST');
+			$this->flashMessages->error('Sorry, you are not logged as IST');
 			return $response->withRedirect($this->router->pathFor('loginScreen'));
 		} else {
 			$response = $next($request, $response);
