@@ -10,17 +10,36 @@ interface PatrolServiceInterface {
 										string $firstName,
 										string $lastName,
 										string $allergies,
-										string $dateOfBirth,
-										string $permanentResidence,
-										string $telephoneNumber,
-										string $scoutUnit,
+										\DateTime $birthDate,
+										string $birthPlace,
 										string $country,
-										string $notes);
+										string $gender,
+										string $permanentResidence,
+										string $scoutUnit,
+										string $telephoneNumber,
+										string $email,
+										string $foodPreferences,
+										string $cardPassportNumber,
+										string $notes,
+		// PatrolLeader specific
+										string $patrolName
+	);
 	
 	public function addParticipant(PatrolLeader $patrolLeader,
 								   string $firstName,
 								   string $lastName,
-								   string $allergies);
+								   string $allergies,
+								   \DateTime $birthDate,
+								   string $birthPlace,
+								   string $country,
+								   string $gender,
+								   string $permanentResidence,
+								   string $scoutUnit,
+								   string $telephoneNumber,
+								   string $email,
+								   string $foodPreferences,
+								   string $cardPassportNumber,
+								   string $notes);
 	
 	public function getPatrolLeader(User $user): PatrolLeader;
 	

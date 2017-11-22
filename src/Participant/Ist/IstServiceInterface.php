@@ -2,23 +2,31 @@
 
 namespace kissj\Participant\Ist;
 
-use kissj\User\User;
-
 
 interface IstServiceInterface {
 	public function addIstInfo(Ist $ist,
 							   string $firstName,
 							   string $lastName,
 							   string $allergies,
-							   string $dateOfBirth,
-							   string $permanentResidence,
-							   string $telephoneNumber,
-							   string $scoutUnit,
+							   \DateTime $birthDate,
+							   string $birthPlace,
 							   string $country,
-							   string $notes
+							   string $gender,
+							   string $permanentResidence,
+							   string $scoutUnit,
+							   string $telephoneNumber,
+							   string $email,
+							   string $foodPreferences,
+							   string $cardPassportNumber,
+							   string $notes,
+		// IST specific
+							   string $workPreferences,
+							   string $skills,
+							   string $languages,
+							   \DateTime $arrivalDate,
+							   \DateTime $leavingDate,
+							   string $carRegistrationPlate
 	);
 	
-	public function getIst(User $user): Ist;
-	
-	public function closeRegistration(Ist $patrolLeader);
+	public function closeRegistration(Ist $ist);
 }
