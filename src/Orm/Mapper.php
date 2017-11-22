@@ -5,6 +5,7 @@ namespace kissj\Orm;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\User\LoginToken;
+use kissj\User\Role;
 use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
@@ -39,6 +40,9 @@ class Mapper implements IMapper {
 		}
 		if ($table === 'patrolleader') {
 			return PatrolLeader::class;
+		}
+		if ($table === 'role') {
+			return Role::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
 	}
