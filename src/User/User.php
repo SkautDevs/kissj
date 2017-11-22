@@ -8,6 +8,7 @@ use LeanMapper\Entity;
  * Class User
  * @property int    $id
  * @property string $email
+ * @property Role   $role m:hasOne
  */
 class User extends Entity {
 	

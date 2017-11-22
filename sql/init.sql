@@ -1,9 +1,8 @@
 CREATE TABLE user
 (
-	id    INTEGER
-		PRIMARY KEY
-	autoincrement,
-	email TEXT NOT NULL
+	id                  INTEGER	PRIMARY KEY	autoincrement,
+	email               TEXT NOT NULL,
+  role_id             INT CONSTRAINT user_role_id_fk REFERENCES role (id)
 );
 
 CREATE TABLE patrolparticipant
@@ -90,4 +89,11 @@ CREATE TABLE logintoken
 	REFERENCES USER (id),
 	created DATETIME,
 	used    BOOLEAN
+);
+
+CREATE TABLE role
+(
+  id                     INTEGER PRIMARY KEY autoincrement,
+  name                   TEXT
+
 );
