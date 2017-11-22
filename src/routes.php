@@ -118,7 +118,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
 			$infoPL = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			return $this->view->render($response, 'dashboard-pl.html', ['infoPL' => $infoPL]);
+			return $this->view->render($response, 'dashboard-pl.twig', ['infoPL' => $infoPL]);
 		})->setName('pl-dashboard');
 		
 		$this->get("/details", function (Request $request, Response $response, array $args) {
@@ -176,7 +176,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->group("/ist", function () {
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'dashboard-ist.html', $args);
+			return $this->view->render($response, 'dashboard-ist.twig', $args);
 		})->setName('ist-dashboard');
 		
 		$this->get("/details[/{id}]", function (Request $request, Response $response, array $args) {

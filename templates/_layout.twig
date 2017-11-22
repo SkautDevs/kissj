@@ -10,9 +10,13 @@
 	</head>
 	<body>
 		<h1 class="text-center">KISSJ - CEJ 2018</h1>
-		{% for flashMessage in flashMessages %}
-            {{ flashMessage['type'] }} -> {{ flashMessage['message'] }}<br/>
-        {% endfor %}
+		<div class="flash-wrapper">
+			{% for flashMessage in flashMessages %}
+				<div class="alert alert-{{ flashMessage['type'] }}">
+					{{ flashMessage['message'] }}
+				</div>
+			{% endfor %}
+		</div>
 		<main role="main" class="container">
 			{% block content %}{% endblock %}
 		</main>

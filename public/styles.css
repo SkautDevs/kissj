@@ -5,3 +5,8 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.flash-wrapper {
+	max-width: 720px;
+	margin: 0 auto;
+}
