@@ -14,6 +14,10 @@ interface UserServiceInterface {
 	public function isLoginTokenValid(string $token): bool;
 	
 	public function getUserFromToken(string $token): User;
+
+    public function getTokenForUser(User $user): string;
+
+    public function getTokenForEmail(string $email): string;
 	
 	public function getRole(User $user): string;
 	

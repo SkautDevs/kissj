@@ -2,6 +2,7 @@
 
 namespace kissj\Mailer;
 
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
@@ -69,6 +70,11 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$mailer->Subject = $subject;
 		$mailer->Body = $body;
 		$mailer->AltBody = strip_tags($body);
-		$mailer->send();
+
+		$mailSent = $mailer->send();
+
+		if ($mailSent === false) {
+		    throw new Exception("Error sending email");
+        }
 	}
 }

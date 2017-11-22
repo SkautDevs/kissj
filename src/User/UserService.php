@@ -69,6 +69,15 @@ class UserService implements UserServiceInterface {
 	public function getUserFromToken(string $token): User {
 		return $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 	}
+
+    public function getTokenForEmail(string $email): string {
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+        return $this->getTokenForUser($user);
+    }
+
+    public function getTokenForUser(User $user): string {
+        return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
+    }
 	
 	public function getRole(User $user): string {
 		//$this->userRepository->

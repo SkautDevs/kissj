@@ -41,10 +41,25 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		}
 		
 		$email = $request->getParsedBodyParam("email");
-		$this->userService->registerUser($email);
-		$this->userService->sendLoginTokenByMail($email);
-		
-		return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
+
+		try {
+            $this->userService->registerUser($email);
+        } catch (\Dibi\Exception $e) {
+		    $this->logger->addError("Error registering user", array($e));
+            $this->flashMessages->error("Nepovedlo se založit uživatele pro email $email .");
+            return $response->withRedirect($this->router->pathFor('registration', ['role' => $role]));
+        }
+
+		try {
+            $this->userService->sendLoginTokenByMail($email);
+            return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
+        } catch (\Exception $e) {
+            $this->logger->addError("Error sending registration email to $email with token " .
+                $this->userService->getTokenForEmail($email), array($e));
+            $this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkuste se prosím přihlásit znovu.");
+            return $response->withRedirect($this->router->pathFor('loginScreen'));
+        }
+
 	})->setName('signup');
 	
 	$this->get("/login", function (Request $request, Response $response, array $args) {
