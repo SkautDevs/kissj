@@ -117,7 +117,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// PATROL-LEADER AREA
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'pl-dashboard.html', $args);
+			$infoPL = $this->PatrolService
+			return $this->view->render($response, 'pl-dashboard.html', ['infoPL' => $infoPL]);
 		})->setName('dashboard-pl');
 		
 		$this->get("/details", function (Request $request, Response $response, array $args) {

@@ -1,4 +1,5 @@
 <?php
+
 $settings = [
 	'settings' => [
 		'debug' => false, // disable Whoops debugger

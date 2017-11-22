@@ -9,6 +9,12 @@ if (PHP_SAPI == 'cli-server') {
 	}
 }
 
+$version = explode('.', PHP_VERSION);
+if ($version[0] < 7) {
+	echo 'You are using PHP 5 or less - please update into PHP 7';
+	die();
+}
+
 require __DIR__.'/../vendor/autoload.php';
 
 session_start();
