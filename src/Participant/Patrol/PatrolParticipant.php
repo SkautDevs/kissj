@@ -9,7 +9,7 @@ use LeanMapper\Entity;
  * @property string       $firstName
  * @property string       $lastName
  * @property string       $allergies
- * @property \DateTime    $birthDate m:passThru(fromString|toString)
+ * @property \DateTime    $birthDate m:passThru(dateFromString|dateToString)
  * @property string       $birthPlace
  * @property string       $country
  * @property string       $gender
@@ -25,11 +25,11 @@ use LeanMapper\Entity;
  */
 class PatrolParticipant extends Entity {
 	
-	public function toString(\DateTime $val): string {
+	public function dateToString(\DateTime $val): string {
 		return $val->format(DATE_ISO8601);
 	}
 	
-	public function fromString(string $val): string {
+	public function dateFromString(string $val): string {
 		return new \DateTime($val);
 	}
 }

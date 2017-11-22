@@ -12,12 +12,11 @@ use LeanMapper\Entity;
  */
 class User extends Entity {
 	
-	public function toString(\DateTime $val): string {
+	public function dateToString(\DateTime $val): string {
 		return $val->format(DATE_ISO8601);
 	}
 	
-	// TODO rename more verbally (getDateFromString? dateFromString?)
-	public function fromString(string $val): string {
+	public function dateFromString(string $val): string {
 		return new \DateTime($val);
 	}
 }
