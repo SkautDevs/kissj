@@ -42,4 +42,9 @@ We use:
 #### Local mail service at Linux/Mac
 
 - using https://gist.github.com/raelgc/6031274 and it works like a charm!
+- not exactly like a charm:
+    - https://serverfault.com/questions/184138/quick-linux-mail-server-setup-for-programming
+        - good to setup the aliases, so that the mail falls into your account's mailbox
+        - installing procmail fixed it for me (instead of postfix)
+    - easier than setting up thinderbird is just typing `mail` in commandline
  

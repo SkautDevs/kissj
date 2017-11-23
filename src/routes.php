@@ -69,10 +69,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->post("/login", function (Request $request, Response $response, array $args) {
 		$email = $request->getParam('email');
 		if ($this->userService->isEmailExisting($email)) {
-			$this->userService->sendLoginTokenByMail($email);
-			$this->flashMessages->success('Posláno! Klikni na link v mailu a tím se přihlásíš!');
-			
-			return $this->view->render($response, 'loginScreenAfterSend.twig', []);
+		    try {
+		        $this->userService->sendLoginTokenByMail($email);
+                $this->flashMessages->success('Posláno! Klikni na link v mailu a tím se přihlásíš!');
+
+                return $this->view->render($response, 'loginScreenAfterSend.twig', []);
+            } catch (Exception $e) {
+                $this->logger->addError("Error sending login email to $email with token " .
+                    $this->userService->getTokenForEmail($email), array($e));
+                $this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.");
+                return $response->withRedirect($this->router->pathFor('loginScreen'));
+            }
 		} else {
 			$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
 			return $response->withRedirect($this->router->pathFor('landing'));
