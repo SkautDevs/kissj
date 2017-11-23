@@ -6,31 +6,31 @@ use kissj\User\User;
 use LeanMapper\Entity;
 
 /**
- * @property int       $id
- * @property string    $firstName,
- * @property string    $lastName,
- * @property string    $allergies,
- * @property \DateTime $birthDate m:passThru(dateFromString|dateToString)
- * @property string    $birthPlace,
- * @property string    $country,
- * @property string    $gender,
- * @property string    $permanentResidence,
- * @property string    $scoutUnit,
- * @property string    $telephoneNumber,
- * @property string    $email,
- * @property string    $foodPreferences,
- * @property string    $cardPassportNumber,
- * @property string    $notes
+ * @property int            $id
+ * @property string|null    $firstName,
+ * @property string|null    $lastName,
+ * @property string|null    $allergies,
+ * @property \DateTime|null $birthDate m:passThru(dateFromString|dateToString)
+ * @property string|null    $birthPlace,
+ * @property string|null    $country,
+ * @property string|null    $gender,
+ * @property string|null    $permanentResidence,
+ * @property string|null    $scoutUnit,
+ * @property string|null    $telephoneNumber,
+ * @property string|null    $email,
+ * @property string|null    $foodPreferences,
+ * @property string|null    $cardPassportNumber,
+ * @property string|null    $notes
  *
- * @property string    $workPreferences,
- * @property string    $skills,
- * @property string    $languages,
- * @property \DateTime $arrivalDate, m:passThru(dateFromString|dateToString)
- * @property \DateTime $leavingDate, m:passThru(dateFromString|dateToString)
- * @property string    $carRegistrationPlate
+ * @property string|null    $workPreferences,
+ * @property string|null    $skills,
+ * @property string|null    $languages,
+ * @property \DateTime|null      $arrivalDate, m:passThru(dateFromString|dateToString)
+ * @property \DateTime|null      $leavingDate, m:passThru(dateFromString|dateToString)
+ * @property string|null         $carRegistrationPlate
  *
- * @property boolean   $finished
- * @property User      $user m:hasOne
+ * @property boolean        $finished
+ * @property User           $user m:hasOne
  */
 class Ist extends Entity {
 	

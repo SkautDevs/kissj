@@ -139,9 +139,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// PATROL-LEADER AREA
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			$infoPL = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			$firstName = $infoPL->getFirstName();
-			return $this->view->render($response, 'dashboard-pl.twig', ['infoPL' => $infoPL]);
+			$pl = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			return $this->view->render($response, 'dashboard-pl.twig', ['plInfo' => $pl]);
 		})->setName('pl-dashboard');
 		
 		$this->get("/details", function (Request $request, Response $response, array $args) {

@@ -5,6 +5,21 @@
 		<h2>Dashboard PL</h2>
 		@TODO
 		<h1>PL info</h1>
-		<p>{{ infoPL.getFirstName}}</p>
+		<p>ID: {{ plInfo.getId }}</p>
+		<p>Křestní: {{ plInfo.getFirstName }}</p>
+		<p>Příjmení: {{ plInfo.getLastName }}</p>
+		<p>Alergie: {{ plInfo.getAllergies }}</p>
+		<p>Datum narození: {{ plInfo.getBirthDate }}</p>
+		<p>Místo narození: {{ plInfo.getBirthPlace }}</p>
+		<p>Země: {{ plInfo.getCountry }}</p>
+		<p>Gender: {{ plInfo.getGender }}</p>
+		<p>Trvalá adresa: {{ plInfo.getPermanentResidence }}</p>
+		<p>Skautská jednostka: {{ plInfo.getScoutUnit }}</p>
+		<p>Telefoní kontakt: {{ plInfo.getTelephoneNumber }}</p>
+		<p>Email: {{ plInfo.getEmail }}</p>
+		<p>Dieta: {{ plInfo.getFoodPreferences }}</p>
+		<p>Číslo pasu/OP: {{ plInfo.getCardPassportNumber }}</p>
+		<p>Poznámky: {{ plInfo.getNotes }}</p>
+		<p>Název patroly: {{ plInfo.getPatrolName }}</p>
 	</div>
 {% endblock %}
