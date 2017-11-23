@@ -51,6 +51,11 @@ $settings = [
 			//'event-chief',
 			//'contingent-chief',
 		],
+		
+		'adminer' => [
+			'login' => 'admin',
+			'password' => '',
+		]
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {

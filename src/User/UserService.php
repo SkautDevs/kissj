@@ -47,7 +47,7 @@ class UserService implements UserServiceInterface {
 		return $user;
 	}
 	
-	public function sendLoginTokenByMail(string $email) {
+	public function sendLoginTokenByMail(string $email): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$loginToken = new LoginToken();
 		$token = $this->random->generateToken();
@@ -60,6 +60,8 @@ class UserService implements UserServiceInterface {
 		$link = $this->router->pathFor('login', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
+		// return token for testing
+		return $token;
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {

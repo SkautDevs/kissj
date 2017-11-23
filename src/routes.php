@@ -43,22 +43,22 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$email = $request->getParsedBodyParam("email");
 
 		try {
-            $this->userService->registerUser($email);
-        } catch (\Dibi\Exception $e) {
-		    $this->logger->addError("Error registering user", array($e));
-            $this->flashMessages->error("Nepovedlo se založit uživatele pro email $email .");
-            return $response->withRedirect($this->router->pathFor('registration', ['role' => $role]));
-        }
+			$this->userService->registerUser($email);
+		} catch (\Dibi\Exception $e) {
+			$this->logger->addError("Error registering user", array($e));
+			$this->flashMessages->error("Nepovedlo se založit uživatele pro email $email .");
+			return $response->withRedirect($this->router->pathFor('registration', ['role' => $role]));
+		}
 
 		try {
-            $this->userService->sendLoginTokenByMail($email);
-            return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
-        } catch (\Exception $e) {
-            $this->logger->addError("Error sending registration email to $email with token " .
-                $this->userService->getTokenForEmail($email), array($e));
-            $this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkuste se prosím přihlásit znovu.");
-            return $response->withRedirect($this->router->pathFor('loginScreen'));
-        }
+			$this->userService->sendLoginTokenByMail($email);
+			return $this->view->render($response, 'signed-up.twig', ['email' => $email]);
+		} catch (\Exception $e) {
+			$this->logger->addError("Error sending registration email to $email with token ".
+				$this->userService->getTokenForEmail($email), array($e));
+			$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkuste se prosím přihlásit znovu.");
+			return $response->withRedirect($this->router->pathFor('loginScreen'));
+		}
 
 	})->setName('signup');
 	
@@ -87,6 +87,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->setName('loginScreenAfterSent');
 	
+	$this->get('/loginScreenAfterSend', function (Request $request, Response $response, array $args) {
+		return $this->view->render($response, 'loginScreenAfterSend.twig', []);
+	})->setName('loginScreenAfterSent');
+
 	$this->get("/login/{token}", function (Request $request, Response $response, array $args) {
 		$loginToken = $args['token'];
 		if ($this->userService->isLoginTokenValid($loginToken)) {
@@ -140,6 +144,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
 			$infoPL = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			$firstName = $infoPL->getFirstName();
 			return $this->view->render($response, 'dashboard-pl.twig', ['infoPL' => $infoPL]);
 		})->setName('pl-dashboard');
 		
@@ -227,7 +232,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	// ADMINISTRATION
 	
 	$this->any("/admin", function (Request $request, Response $response, array $args) {
-		require __DIR__ . "/../admin/custom.php";
+		global $adminerSettings;
+		$adminerSettings = $this->get('settings')['adminer'];
+		require __DIR__."/../admin/custom.php";
 	});
 	
 	// LANDING PAGE

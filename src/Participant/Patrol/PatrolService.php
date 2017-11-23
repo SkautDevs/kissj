@@ -65,7 +65,7 @@ class PatrolService implements PatrolServiceInterface {
 	}
 	
 	public function closeRegistration(PatrolLeader $patrolLeader) {
-		$patrolLeader->finished = false;
+		$patrolLeader->finished = true;
 		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 	

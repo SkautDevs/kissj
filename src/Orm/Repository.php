@@ -45,7 +45,8 @@ class Repository extends BaseRepository {
 	protected function addConditions(Fluent $qb, array $criteria) {
 		foreach ($criteria as $field => $value) {
 			if ($value instanceof Entity) {
-				$qb->where($field."_id = %i", $value->id);
+				$columnName = $this->mapper->getRelationshipColumn($this->table, $this->mapper->getTable(get_class($value)));
+				$qb->where("$columnName = %i", $value->id);
 			} else {
 				$qb->where("$field = %s", $value);
 			}

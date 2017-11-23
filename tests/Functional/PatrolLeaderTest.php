@@ -18,7 +18,7 @@ class PatrolLeaderTest extends BaseTestCase {
 		/** @var PatrolService $patrolService */
 		$patrolService = $app->getContainer()->get('patrolService');
 
-		$email = 'test2@example.com';
+		$email = 'test4@example.com';
 		$user = $userService->registerUser($email);
 		$patrolLeader = $patrolService->getPatrolLeader($user);
 
@@ -43,7 +43,23 @@ class PatrolLeaderTest extends BaseTestCase {
 		$this->assertEquals($patrolLeader->user->id, $user->id);
 		$this->assertFalse($patrolLeader->finished);
 
-		$patrolService->addPatrolLeaderInfo($patrolLeader, 'leader', 'leaderový', 'burákové máslo');
+		$patrolService->addPatrolLeaderInfo($patrolLeader,
+			'leader',
+			'leaderový',
+			'burákové máslo',
+			new \DateTime(),
+			'Kalimdor',
+			'Azeroth',
+			'attack helicopter',
+			'Northrend',
+			'High Elves',
+			'none',
+			'test@test.moe',
+			'trolls',
+			'some',
+			'some note',
+		'my great patrol'
+		);
 
 		$this->assertFalse($patrolLeader->finished);
 		$patrolService->closeRegistration($patrolLeader);
