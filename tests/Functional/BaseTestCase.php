@@ -78,6 +78,11 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase {
 		// Set up dependencies
 		require __DIR__ . '/../../src/dependencies.php';
 
+		//mock mailer
+		$app->getContainer()['mailer'] = function () {
+			return new \kissj\Mailer\MockMailer();
+		};
+
 		// Register middleware
 		if ($this->withMiddleware) {
 			require __DIR__ . '/../../src/middleware.php';

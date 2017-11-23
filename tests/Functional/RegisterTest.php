@@ -17,9 +17,9 @@ class RegisterTest extends BaseTestCase {
 
 		$email = 'test@example.com';
 		$user = $userService->registerUser($email);
-		$token = $userService->sendLoginLink($email);
-		$loadedUser = $userService->getUser($token);
+		$token = $userService->sendLoginTokenByMail($email);
+		$loadedUser = $userService->getUserFromToken($token);
 
-		$this->assertEquals($user, $loadedUser);
+		$this->assertEquals($user->id, $loadedUser->id);
 	}
 }

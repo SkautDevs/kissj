@@ -37,6 +37,7 @@ CREATE TABLE patrolleader
 	nationality        TEXT,
 	gender             TEXT,
 	address            TEXT,
+	country            TEXT,
 	phone              TEXT,
 	email              TEXT,
 	scoutUnit          TEXT,

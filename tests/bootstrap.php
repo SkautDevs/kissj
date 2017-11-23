@@ -23,6 +23,11 @@ $app = new App($settings);
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 
+//mock mailer
+$app->getContainer()['mailer'] = function (C $c) {
+	return new \kissj\Mailer\MockMailer();
+};
+
 /** @var \LeanMapper\Connection $conn */
 $conn = $app->getContainer()->get('db');
 $conn->connect();
