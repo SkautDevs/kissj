@@ -60,7 +60,7 @@ class Mapper implements IMapper {
 	}
 
 	public function getRelationshipColumn($sourceTable, $targetTable) {
-		return $targetTable . '_' . $this->getPrimaryKey($targetTable);
+		return $targetTable . ucfirst($this->getPrimaryKey($targetTable));
 	}
 
 	public function getTableByRepositoryClass($repositoryClass) {

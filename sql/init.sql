@@ -2,7 +2,7 @@ CREATE TABLE user
 (
 	id      INTEGER PRIMARY KEY    autoincrement,
 	email   TEXT NOT NULL,
-	role_id INT CONSTRAINT user_roleId_fk REFERENCES role (id)
+	roleId INT CONSTRAINT user_roleId_fk REFERENCES role (id)
 );
 
 CREATE TABLE patrolparticipant
