@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 class MockMailer implements \kissj\Mailer\MailerInterface {
 
 
-	public function sendMail($recipient, $subject, $body) {
+	public function sendMail($recipientEmail, $subject, $body) {
 
 	}
 }

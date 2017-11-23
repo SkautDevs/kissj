@@ -33,7 +33,9 @@ $settings = [
 			'bcc_mail' => 'registration@localhost.cz', // another mail
 			'bcc_name' => 'Registrační Asistentka',
 			
-			'disable_tls' => false, // turn off all certificate checks
+			'disable_tls' => false, // turn off all certificate checksdebugOutoutLevel
+			'debugOutoutLevel' => 0, // print debug leve (0 min to 4 max)
+			'sendMailToMainRecipient' => true, // turn off in localhost
 		],
 		
 		'db' => [

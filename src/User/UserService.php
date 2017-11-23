@@ -57,7 +57,7 @@ class UserService implements UserServiceInterface {
 		$loginToken->used = false;
 		$this->loginTokenRepository->persist($loginToken);
 		
-		$link = $this->router->pathFor('login', ['token' => $token]);
+		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
 		// return token for testing

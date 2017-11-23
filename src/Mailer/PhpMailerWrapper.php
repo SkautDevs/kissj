@@ -18,8 +18,10 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 	private $bcc_mail;
 	private $bcc_name;
 	private $disable_tls;
+	private $debugOutputLevel;
+	private $sendMailToMainRecipient;
 	
-	public function __construct($mailerSettings) {
+	public function __construct(array $mailerSettings) {
 		$this->smtp = $mailerSettings['smtp'];
 		$this->smtp_server = $mailerSettings['smtp_server'];
 		$this->smtp_auth = $mailerSettings['smtp_auth'];
@@ -31,9 +33,11 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$this->bcc_mail = $mailerSettings['from_mail'];
 		$this->bcc_name = $mailerSettings['bcc_name'];
 		$this->disable_tls = $mailerSettings['disable_tls'];
+		$this->debugOutputLevel = $mailerSettings['debugOutoutLevel'];
+		$this->sendMailToMainRecipient = $mailerSettings['$sendMailToMainRecipient'];
 	}
 	
-	public function sendMail($recipient, $subject, $body) {
+	public function sendMail($recipientEmail, $subject, $body) {
 		$mailer = new PHPMailer();
 		
 		//Server settings
@@ -62,8 +66,11 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		
 		//Recipients
 		$mailer->setFrom($this->from_mail, $this->from_name);
-		$mailer->addAddress($recipient);
 		$mailer->addCC($this->bcc_mail, $this->bcc_name);
+		
+		if ($this->sendMailToMainRecipient) {
+			$mailer->addAddress($recipientEmail);
+		}
 		
 		// Content
 		$mailer->isHTML(true);

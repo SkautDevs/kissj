@@ -21,9 +21,10 @@ $container['logger'] = function (C $c) {
 	return $logger;
 };
 
-// PHPmailes
+// PHPmailer
 $container['mailer'] = function (C $c) {
-	return new \kissj\Mailer\PhpMailerWrapper($c->get('settings')['mailer']);
+	$settings = $c->get('settings');
+	return new \kissj\Mailer\PhpMailerWrapper($settings['mailer']);
 };
 
 $container['random'] = function (C $c) {
