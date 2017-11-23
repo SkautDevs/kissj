@@ -34,6 +34,8 @@ CREATE TABLE patrolleader
 	-- same as patrolparticipant
 	firstName          TEXT,
 	lastName           TEXT,
+	permanentResidence TEXT,
+	telephoneNumber    TEXT,
 	nationality        TEXT,
 	gender             TEXT,
 	address            TEXT,
