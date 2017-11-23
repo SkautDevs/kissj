@@ -9,12 +9,13 @@ CREATE TABLE patrolparticipant
 (
 	id                 INTEGER PRIMARY KEY autoincrement,
 	userId             INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
+	
 	firstName          TEXT,
 	lastName           TEXT,
-	nationality        TEXT,
+	permanentResidence TEXT,
+	telephoneNumber    TEXT,
 	gender             TEXT,
-	address            TEXT,
-	phone              TEXT,
+	country            TEXT,
 	email              TEXT,
 	scoutUnit          TEXT,
 	birthDate          DATETIME,
@@ -36,11 +37,8 @@ CREATE TABLE patrolleader
 	lastName           TEXT,
 	permanentResidence TEXT,
 	telephoneNumber    TEXT,
-	nationality        TEXT,
 	gender             TEXT,
-	address            TEXT,
 	country            TEXT,
-	phone              TEXT,
 	email              TEXT,
 	scoutUnit          TEXT,
 	birthDate          DATETIME,
@@ -49,7 +47,6 @@ CREATE TABLE patrolleader
 	foodPreferences    TEXT,
 	cardPassportNumber TEXT,
 	notes              TEXT
-
 );
 
 CREATE TABLE ist
@@ -66,10 +63,10 @@ CREATE TABLE ist
 	-- same as patrolparticipant
 	firstName            TEXT,
 	lastName             TEXT,
-	nationality          TEXT,
+	permanentResidence TEXT,
+	telephoneNumber    TEXT,
 	gender               TEXT,
-	address              TEXT,
-	phone                TEXT,
+	country            TEXT,
 	email                TEXT,
 	scoutUnit            TEXT,
 	birthDate            DATETIME,
@@ -78,7 +75,6 @@ CREATE TABLE ist
 	foodPreferences      TEXT,
 	cardPassportNumber   TEXT,
 	notes                TEXT
-
 );
 
 CREATE UNIQUE INDEX user_email_uindex
