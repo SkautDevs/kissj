@@ -29,7 +29,7 @@ use LeanMapper\Entity;
  */
 class PatrolLeader extends Entity {
 	
-	public function dateToString(\DateTime $val): ?string {
+	public function dateToString(?\DateTime $val): ?string {
 		if (is_null($val)) {
 			return null;
 		} else {
@@ -37,8 +37,8 @@ class PatrolLeader extends Entity {
 		}
 	}
 	
-	public function dateFromString($val): ?string {
-		if (is_null($val)) {
+	public function dateFromString(?string $val): ?\DateTime {
+		if (empty($val)) {
 			return null;
 		} else {
 			return new \DateTime($val);

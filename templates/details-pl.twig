@@ -4,21 +4,22 @@
 	<div class="text-center">
 		<h2>Změna informací PL s ID {{ plInfo.getId }}</h2>
 		<form method="POST" action="{{ path_for('pl-postDetails') }}">
-			Název patroly: <input type="text" value="{{ plInfo.getPatrolName }}"><br/>
-			Křestní: <input type="text" value="{{ plInfo.getFirstName }}"><br/>
-			Příjmení: <input type="text" value="{{ plInfo.getLastName }}"><br/>
-			Alergie: <input type="text" value="{{ plInfo.getAllergies }}"><br/>
-			Datum narození: <input type="text" value="{{ plInfo.getBirthDate }}"><br/>
-			Místo narození: <input type="text" value="{{ plInfo.getBirthPlace }}"><br/>
-			Země: <input type="text" value="{{ plInfo.getCountry }}"><br/>
-			Gender: <input type="text" value="{{ plInfo.getGender }}"><br/>
-			Trvalá adresa: <input type="text" value="{{ plInfo.getPermanentResidence }}"><br/>
-			Skautská jednotka: <input type="text" value="{{ plInfo.getScoutUnit }}"><br/>
-			Telefoní kontakt: <input type="text" value="{{ plInfo.getTelephoneNumber }}"><br/>
-			Email: <input type="text" value="{{ plInfo.getEmail }}"><br/>
-			Dieta: <input type="text" value="{{ plInfo.getFoodPreferences }}"><br/>
-			Číslo pasu/OP: <input type="text" value="{{ plInfo.getCardPassportNumber }}"><br/>
-			Poznámky: <input type="text" value="{{ plInfo.getNotes }}"><br/>
+			Název patroly: <input type="text" name="patrolName" value="{{ plInfo.getPatrolName }}"><br/>
+			Křestní: <input type="text" name="firstName" value="{{ plInfo.getFirstName }}"><br/>
+			Příjmení: <input type="text" name="lastName" value="{{ plInfo.getLastName }}"><br/>
+			Alergie: <input type="text" name="allergies" value="{{ plInfo.getAllergies }}"><br/>
+			Datum narození: <input type="date" name="birthDate" value="{{ plInfo.getBirthDate.format('Y-m-d') }}"><br/>
+			Místo narození: <input type="text" name="birthPlace" value="{{ plInfo.getBirthPlace }}"><br/>
+			Země: <input type="text" name="country" value="{{ plInfo.getCountry }}"><br/>
+			Gender: <input type="text" name="gender" value="{{ plInfo.getGender }}"><br/>
+			Trvalá adresa: <input type="text" name="permanentResidence" value="{{ plInfo.getPermanentResidence }}"><br/>
+			Skautská jednotka: <input type="text" name="scoutUnit" value="{{ plInfo.getScoutUnit }}"><br/>
+			Telefoní kontakt (pouze čísta s možným + na začátku): <input type="text" name="telephoneNumber"
+																		 value="{{ plInfo.getTelephoneNumber }}"><br/>
+			Email: <input type="email" name="email" value="{{ plInfo.getEmail }}"><br/>
+			Dieta: <input type="text" name="foodPreferences" value="{{ plInfo.getFoodPreferences }}"><br/>
+			Číslo pasu/OP: <input type="text" name="cardPassportNumber" value="{{ plInfo.getCardPassportNumber }}"><br/>
+			Poznámky: <input type="text" name="notes" value="{{ plInfo.getNotes }}"><br/>
 
 			<input type="submit" value="Uložit">
 		</form>

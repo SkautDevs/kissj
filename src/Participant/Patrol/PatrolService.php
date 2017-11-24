@@ -28,21 +28,42 @@ class PatrolService implements PatrolServiceInterface {
 		return $patrolLeader;
 	}
 	
-	public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array {
-		// TODO implement
-		return [new PatrolParticipant(), new PatrolParticipant()];
-	}
-	
-	public function isPatrolLeaderDetailsValid(array $attributes): bool {
-		// TODO implement
-		return true;
+	public function isPatrolLeaderDetailsValid(string $firstName,
+											   string $lastName,
+											   string $allergies,
+											   string $birthDate,
+											   string $birthPlace,
+											   string $country,
+											   string $gender,
+											   string $permanentResidence,
+											   string $scoutUnit,
+											   string $telephoneNumber,
+											   string $email,
+											   string $foodPreferences,
+											   string $cardPassportNumber,
+											   string $notes,
+											   string $patrolName): bool {
+		$validFlag = true;
+		
+		if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
+			$validFlag = false;
+		}
+		// check for numbers and plus sight up front only
+		if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
+			$validFlag = false;
+		}
+		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+			$validFlag = false;
+		}
+		
+		return $validFlag;
 	}
 	
 	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
 										string $firstName,
 										string $lastName,
 										string $allergies,
-										\DateTime $birthDate,
+										string $birthDate,
 										string $birthPlace,
 										string $country,
 										string $gender,
@@ -57,7 +78,7 @@ class PatrolService implements PatrolServiceInterface {
 		$patrolLeader->firstName = $firstName;
 		$patrolLeader->lastName = $lastName;
 		$patrolLeader->allergies = $allergies;
-		$patrolLeader->birthDate = $birthDate;
+		$patrolLeader->birthDate = new \DateTime($birthDate);
 		$patrolLeader->birthPlace = $birthPlace;
 		$patrolLeader->country = $country;
 		$patrolLeader->gender = $gender;
@@ -73,26 +94,31 @@ class PatrolService implements PatrolServiceInterface {
 		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 	
+	public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array {
+		// TODO implement
+		return [new PatrolParticipant(), new PatrolParticipant()];
+	}
+	
 	public function isParticipantDetailsValid(array $attributes): bool {
 		// TODO implement
 		return true;
 	}
 	
 	public function addParticipant(PatrolLeader $patrolLeader,
-								   string $firstName,
-								   string $lastName,
-								   string $allergies,
-								   \DateTime $birthDate,
-								   string $birthPlace,
-								   string $country,
-								   string $gender,
-								   string $permanentResidence,
-								   string $scoutUnit,
-								   string $telephoneNumber,
-								   string $email,
-								   string $foodPreferences,
-								   string $cardPassportNumber,
-								   string $notes) {
+								   ?string $firstName,
+								   ?string $lastName,
+								   ?string $allergies,
+								   ?\DateTime $birthDate,
+								   ?string $birthPlace,
+								   ?string $country,
+								   ?string $gender,
+								   ?string $permanentResidence,
+								   ?string $scoutUnit,
+								   ?string $telephoneNumber,
+								   ?string $email,
+								   ?string $foodPreferences,
+								   ?string $cardPassportNumber,
+								   ?string $notes) {
 		$participant = new PatrolParticipant();
 		
 		$participant->patrolLeader = $patrolLeader;

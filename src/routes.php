@@ -139,9 +139,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// PATROL-LEADER
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			$user = $request->getAttribute('user');
+			$patrolLeader = $this->patrolService->getPatrolLeader($user);
 			$allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
-			return $this->view->render($response, 'dashboard-pl.twig', ['plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
+			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user,'plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
 		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
@@ -150,10 +151,44 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		})->setName('pl-changeDetails');
 		
 		$this->post("/postDetails", function (Request $request, Response $response, array $args) {
-			$attributes = $request->getAttributes();
-			if ($this->patrolService->isPatrolLeaderDetailsValid($attributes)) {
-				// TODO add safe of details
-				$this->flashMessages->success('Údaje úspěšně vloženy');
+			$params = $request->getParams();
+			if ($this->patrolService->isPatrolLeaderDetailsValid(
+				$params['firstName'] ?? null,
+				$params['lastName'] ?? null,
+				$params['allergies'] ?? null,
+				$params['birthDate'] ?? null,
+				$params['birthPlace'] ?? null,
+				$params['country'] ?? null,
+				$params['gender'] ?? null,
+				$params['permanentResidence'] ?? null,
+				$params['scoutUnit'] ?? null,
+				$params['telephoneNumber'] ?? null,
+				$params['email'] ?? null,
+				$params['foodPreferences'] ?? null,
+				$params['cardPassportNumber'] ?? null,
+				$params['notes'] ?? null,
+				$params['patrolName'] ?? null)) {
+				
+				$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+				$this->patrolService->addPatrolLeaderInfo(
+					$patrolLeader,
+					$params['firstName'] ?? null,
+					$params['lastName'] ?? null,
+					$params['allergies'] ?? null,
+					$params['birthDate'] ?? null,
+					$params['birthPlace'] ?? null,
+					$params['country'] ?? null,
+					$params['gender'] ?? null,
+					$params['permanentResidence'] ?? null,
+					$params['scoutUnit'] ?? null,
+					$params['telephoneNumber'] ?? null,
+					$params['email'] ?? null,
+					$params['foodPreferences'] ?? null,
+					$params['cardPassportNumber'] ?? null,
+					$params['notes'] ?? null,
+					$params['patrolName'] ?? null);
+				
+				$this->flashMessages->success('Údaje úspěšně uloženy');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			} else {
 				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus akci znovu.');
@@ -213,7 +248,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
 		if ($this->userService->getRole($request->getAttribute('user')) != 'patrol-leader') {
-			$this->flashMessages->error('Sorry, you are not logged as Patrol Leader');
+			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
 			$response = $next($request, $response);
@@ -242,7 +277,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
 		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
-			$this->flashMessages->error('Sorry, you are not logged as IST');
+			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
 			$response = $next($request, $response);

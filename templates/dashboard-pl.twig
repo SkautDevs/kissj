@@ -3,6 +3,8 @@
 {% block content %}
 	<div class="text-center">
 		<h2>Dashboard PL</h2>
+		ID: {{ user.id }}<br/>
+		Přihlášený s emailem: {{ user.email }}<br/>
 		<a class="btn btn-primary" href="{{ path_for('logout') }}">Odhlásit se</a><br/>
 		<h2>PL údaje o sobě</h2>
 		<a class="btn btn-primary" href="{{ path_for('pl-changeDetails') }}">Změnit údaje o sobě</a><br/>
@@ -10,7 +12,7 @@
 		Křestní jméno: {{ plDetails.getFirstName }}<br/>
 		Příjmení: {{ plDetails.getLastName }}<br/>
 		Alergie: {{ plDetails.getAllergies }}<br/>
-		Datum narození: {{ plDetails.getBirthDate }}<br/>
+		Datum narození: {{ plDetails.getBirthDate.format('Y-m-d') }}<br/>
 		Místo narození: {{ plDetails.getBirthPlace }}<br/>
 		Země: {{ plDetails.getCountry }}<br/>
 		Gender: {{ plDetails.getGender }}<br/>
