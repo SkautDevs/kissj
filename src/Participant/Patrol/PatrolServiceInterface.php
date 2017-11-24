@@ -6,6 +6,11 @@ use kissj\User\User;
 
 
 interface PatrolServiceInterface {
+	
+	public function getPatrolLeader(User $user): PatrolLeader;
+	
+	public function isPatrolLeaderDetailsValid(array $attributes): bool;
+	
 	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
 										string $firstName,
 										string $lastName,
@@ -25,6 +30,10 @@ interface PatrolServiceInterface {
 										string $patrolName
 	);
 	
+	public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array;
+	
+	public function isParticipantDetailsValid(array $attributes): bool;
+	
 	public function addParticipant(PatrolLeader $patrolLeader,
 								   string $firstName,
 								   string $lastName,
@@ -40,8 +49,6 @@ interface PatrolServiceInterface {
 								   string $foodPreferences,
 								   string $cardPassportNumber,
 								   string $notes);
-	
-	public function getPatrolLeader(User $user): PatrolLeader;
 	
 	public function closeRegistration(PatrolLeader $patrolLeader);
 }

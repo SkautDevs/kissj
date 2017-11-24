@@ -3,23 +3,33 @@
 {% block content %}
 	<div class="text-center">
 		<h2>Dashboard PL</h2>
-		@TODO
-		<h1>PL info</h1>
-		<p>ID: {{ plInfo.getId }}</p>
-		<p>Křestní: {{ plInfo.getFirstName }}</p>
-		<p>Příjmení: {{ plInfo.getLastName }}</p>
-		<p>Alergie: {{ plInfo.getAllergies }}</p>
-		<p>Datum narození: {{ plInfo.getBirthDate }}</p>
-		<p>Místo narození: {{ plInfo.getBirthPlace }}</p>
-		<p>Země: {{ plInfo.getCountry }}</p>
-		<p>Gender: {{ plInfo.getGender }}</p>
-		<p>Trvalá adresa: {{ plInfo.getPermanentResidence }}</p>
-		<p>Skautská jednotka: {{ plInfo.getScoutUnit }}</p>
-		<p>Telefoní kontakt: {{ plInfo.getTelephoneNumber }}</p>
-		<p>Email: {{ plInfo.getEmail }}</p>
-		<p>Dieta: {{ plInfo.getFoodPreferences }}</p>
-		<p>Číslo pasu/OP: {{ plInfo.getCardPassportNumber }}</p>
-		<p>Poznámky: {{ plInfo.getNotes }}</p>
-		<p>Název patroly: {{ plInfo.getPatrolName }}</p>
+		<a class="btn btn-primary" href="{{ path_for('logout') }}">Odhlásit se</a><br/>
+		<h2>PL údaje o sobě</h2>
+		<a class="btn btn-primary" href="{{ path_for('pl-changeDetails') }}">Změnit údaje o sobě</a><br/>
+		Název patroly: {{ plDetails.getPatrolName }}<br/>
+		Křestní jméno: {{ plDetails.getFirstName }}<br/>
+		Příjmení: {{ plDetails.getLastName }}<br/>
+		Alergie: {{ plDetails.getAllergies }}<br/>
+		Datum narození: {{ plDetails.getBirthDate }}<br/>
+		Místo narození: {{ plDetails.getBirthPlace }}<br/>
+		Země: {{ plDetails.getCountry }}<br/>
+		Gender: {{ plDetails.getGender }}<br/>
+		Trvalá adresa: {{ plDetails.getPermanentResidence }}<br/>
+		Skautská jednotka: {{ plDetails.getScoutUnit }}<br/>
+		Telefoní kontakt: {{ plDetails.getTelephoneNumber }}<br/>
+		Email: {{ plDetails.getEmail }}<br/>
+		Dieta: {{ plDetails.getFoodPreferences }}<br/>
+		Číslo pasu/OP: {{ plDetails.getCardPassportNumber }}<br/>
+		Poznámky: {{ plDetails.getNotes }}<br/>
+		<br/>
+		<br/>
+		<h2>Seznam účastníků</h2>
+		<a class="btn btn-primary" href="{{ path_for('pl-addParticipant') }}">Přidat účastníka</a><br/>
+		{% for participant in pDetails %}
+			<h4>Jméno: {{ participant.getFirstName }} {{ participant.getLastName }}</h4>
+		{% endfor %}
+		<br/>
+		<br/>
+		<a class="btn btn-primary" href="{{ path_for('pl-closeRegistration') }}">Uzavřít registraci</a>
 	</div>
 {% endblock %}

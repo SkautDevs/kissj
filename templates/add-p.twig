@@ -1,0 +1,26 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Přidat účastníka</h2>
+		<form method="POST" action="{{ path_for('pl-postNewParticipant') }}">
+			Křestní: <input type="text"><br/>
+			Příjmení: <input type="text"><br/>
+			Alergie: <input type="text"><br/>
+			Datum narození: <input type="text"><br/>
+			Místo narození: <input type="text"><br/>
+			Země: <input type="text"><br/>
+			Gender: <input type="text"><br/>
+			Trvalá adresa: <input type="text"><br/>
+			Skautská jednotka: <input type="text"><br/>
+			Telefoní kontakt: <input type="text"><br/>
+			Email: <input type="text"><br/>
+			Dieta: <input type="text"><br/>
+			Číslo pasu/OP: <input type="text"><br/>
+			Poznámky: <input type="text"><br/>
+
+			<input type="submit" value="Vložit nového účastníka">
+		</form>
+		<a href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>
+	</div>
+{% endblock %}

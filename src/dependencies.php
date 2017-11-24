@@ -11,7 +11,6 @@ use \Psr\Container\ContainerInterface as C;
 
 $container = $app->getContainer();
 
-// monolog
 $container['logger'] = function (C $c) {
 	$settings = $c->get('settings')['logger'];
 	$logger = new Monolog\Logger($settings['name']);
@@ -21,7 +20,6 @@ $container['logger'] = function (C $c) {
 	return $logger;
 };
 
-// PHPmailer
 $container['mailer'] = function (C $c) {
 	$settings = $c->get('settings');
 	return new \kissj\Mailer\PhpMailerWrapper($settings['mailer']);
@@ -47,11 +45,11 @@ $container['dbMapper'] = function (C $c) {
 	return new Mapper();
 };
 
-// db_mapper
 $container['dbFactory'] = function (C $c) {
 	return new LeanMapper\DefaultEntityFactory;
 };
 
+// repositories
 $container['userRepository'] = function (C $c) {
 	return new UserRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
@@ -68,21 +66,21 @@ $container['patrolLeaderRepository'] = function (C $c) {
 	return new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
-// user service
+// servics
 $container['userService'] = function (C $c) {
 	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
 };
 
-// patrol service
 $container['patrolService'] = function (C $c) {
 	return new PatrolService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
 };
 
+// views
 $container['flashMessages'] = function (C $c) {
 	return new kissj\FlashMessages\FlashMessagesBySession();
 };
 
-$container['view'] = function ($c) {
+$container['view'] = function (C $c) {
 	$view = new \Slim\Views\Twig(dirname(__FILE__).'/../templates/', [
 		'cache' => false ? dirname(__FILE__).'/../temp/twig' : false
 	]);

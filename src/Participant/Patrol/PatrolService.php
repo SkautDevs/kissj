@@ -15,6 +15,69 @@ class PatrolService implements PatrolServiceInterface {
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 	}
 	
+	public function getPatrolLeader(User $user): PatrolLeader {
+		if ($this->patrolLeaderRepository->countBy(['user' => $user]) === 0) {
+			$patrolLeader = new PatrolLeader();
+			$patrolLeader->user = $user;
+			$patrolLeader->finished = false;
+			$this->patrolLeaderRepository->persist($patrolLeader);
+			return $patrolLeader;
+		}
+		
+		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
+		return $patrolLeader;
+	}
+	
+	public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array {
+		// TODO implement
+		return [new PatrolParticipant(), new PatrolParticipant()];
+	}
+	
+	public function isPatrolLeaderDetailsValid(array $attributes): bool {
+		// TODO implement
+		return true;
+	}
+	
+	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
+										string $firstName,
+										string $lastName,
+										string $allergies,
+										\DateTime $birthDate,
+										string $birthPlace,
+										string $country,
+										string $gender,
+										string $permanentResidence,
+										string $scoutUnit,
+										string $telephoneNumber,
+										string $email,
+										string $foodPreferences,
+										string $cardPassportNumber,
+										string $notes,
+										string $patrolName) {
+		$patrolLeader->firstName = $firstName;
+		$patrolLeader->lastName = $lastName;
+		$patrolLeader->allergies = $allergies;
+		$patrolLeader->birthDate = $birthDate;
+		$patrolLeader->birthPlace = $birthPlace;
+		$patrolLeader->country = $country;
+		$patrolLeader->gender = $gender;
+		$patrolLeader->permanentResidence = $permanentResidence;
+		$patrolLeader->scoutUnit = $scoutUnit;
+		$patrolLeader->telephoneNumber = $telephoneNumber;
+		$patrolLeader->email = $email;
+		$patrolLeader->foodPreferences = $foodPreferences;
+		$patrolLeader->cardPassportNumber = $cardPassportNumber;
+		$patrolLeader->notes = $notes;
+		$patrolLeader->patrolName = $patrolName;
+		
+		$this->patrolLeaderRepository->persist($patrolLeader);
+	}
+	
+	public function isParticipantDetailsValid(array $attributes): bool {
+		// TODO implement
+		return true;
+	}
+	
 	public function addParticipant(PatrolLeader $patrolLeader,
 								   string $firstName,
 								   string $lastName,
@@ -51,56 +114,8 @@ class PatrolService implements PatrolServiceInterface {
 		$this->participantRepository->persist($participant);
 	}
 	
-	public function getPatrolLeader(User $user): PatrolLeader {
-		if ($this->patrolLeaderRepository->countBy(['user' => $user]) === 0) {
-			$patrolLeader = new PatrolLeader();
-			$patrolLeader->user = $user;
-			$patrolLeader->finished = false;
-			$this->patrolLeaderRepository->persist($patrolLeader);
-			return $patrolLeader;
-		}
-		
-		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
-		return $patrolLeader;
-	}
-	
 	public function closeRegistration(PatrolLeader $patrolLeader) {
 		$patrolLeader->finished = true;
-		$this->patrolLeaderRepository->persist($patrolLeader);
-	}
-	
-	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
-										string $firstName,
-										string $lastName,
-										string $allergies,
-										\DateTime $birthDate,
-										string $birthPlace,
-										string $country,
-										string $gender,
-										string $permanentResidence,
-										string $scoutUnit,
-										string $telephoneNumber,
-										string $email,
-										string $foodPreferences,
-										string $cardPassportNumber,
-										string $notes,
-										string $patrolName) {
-		$patrolLeader->firstName = $firstName;
-		$patrolLeader->lastName = $lastName;
-		$patrolLeader->allergies = $allergies;
-		$patrolLeader->birthDate = $birthDate;
-		$patrolLeader->birthPlace = $birthPlace;
-		$patrolLeader->country = $country;
-		$patrolLeader->gender = $gender;
-		$patrolLeader->permanentResidence = $permanentResidence;
-		$patrolLeader->scoutUnit = $scoutUnit;
-		$patrolLeader->telephoneNumber = $telephoneNumber;
-		$patrolLeader->email = $email;
-		$patrolLeader->foodPreferences = $foodPreferences;
-		$patrolLeader->cardPassportNumber = $cardPassportNumber;
-		$patrolLeader->notes = $notes;
-		$patrolLeader->patrolName = $patrolName;
-		
 		$this->patrolLeaderRepository->persist($patrolLeader);
 	}
 }

@@ -132,41 +132,69 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->setName('getDashboard');
 	
 	
-	// PATROLS
+	// PATROL
 	
-	$this->group("/patrol-leader", function () {
+	$this->group("/patrol", function () {
 		
-		// PATROL-LEADER AREA
+		// PATROL-LEADER
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			$pl = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			return $this->view->render($response, 'dashboard-pl.twig', ['plInfo' => $pl]);
+			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			$allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
+			return $this->view->render($response, 'dashboard-pl.twig', ['plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
-		$this->get("/details", function (Request $request, Response $response, array $args) {
-			return $this->renderer->render($response, 'patrol-leader-details.html', $args);
-		});
+		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+			$plDetails = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			return $this->view->render($response, 'details-pl.twig', ['plInfo' => $plDetails]);
+		})->setName('pl-changeDetails');
 		
-		$this->post("/details", function (Request $request, Response $response, array $args) {
-			// TODO process
-			return $response->withRedirect("TODO");
-		});
+		$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+			$attributes = $request->getAttributes();
+			if ($this->patrolService->isPatrolLeaderDetailsValid($attributes)) {
+				// TODO add safe of details
+				$this->flashMessages->success('Údaje úspěšně vloženy');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			} else {
+				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus akci znovu.');
+				return $response->withRedirect($this->router->pathFor('pl-changeDetails'));
+			}
+		})->setName('pl-postDetails');
 		
-		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
-			return $this->renderer->render($response, 'addParticipant-patrol.html', $args);
-		});
-		
-		$this->post("/addParticipant", function (Request $request, Response $response, array $args) {
-			// TODO process
-			return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-		});
-		
+		$this->post("/closeRegistration", function (Request $request, Response $response, array $args) {
+			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			if ($this->patrolService->isRegistrationValid($patrolLeader)) {
+				// TODO close registration
+				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email, jakmile bude schválena');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			} else {
+				$this->flashMessages->warning('Registraci ještě nelze uzavřít');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			}
+		})->setName('pl-closeRegistration');
 		
 		// PARTICIPANT
+		
+		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
+			return $this->view->render($response, 'add-p.twig', $args);
+		})->setName('pl-addParticipant');
+		
+		$this->post("/postNewParticipant", function (Request $request, Response $response, array $args) {
+			$attributes = $request->getAttributes();
+			if ($this->patrolService->isParticipantDetailsValid($attributes)) {
+				// TODO add safe of details
+				$this->flashMessages->success('Účastník úspěšně vložen');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			} else {
+				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus akci znovu.');
+				return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+			}
+		})->setName('pl-postNewParticipant');
 		
 		$this->group("/participant", function () {
 			
 			$this->get("/details[/{id}]", function (Request $request, Response $response, array $args) {
+				// TODO process
 				return $this->renderer->render($response, 'participant-details.html', $args);
 			});
 			
@@ -192,6 +220,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response;
 		}
 	});
+	
 	
 	// IST
 	
@@ -221,8 +250,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		}
 	});
 	
-	// GUESTS
-	// TODO
 	
 	// ADMINISTRATION
 	
@@ -237,6 +264,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->get("", function (Request $request, Response $response, array $args) {
 		$this->flashMessages->info('Welcome!');
 		
-		return $this->view->render($response, 'landing-page.twig', ['router' => $this->router]);
+		return $this->view->render($response, 'landing-page.twig');
 	})->setName("landing");
 });
