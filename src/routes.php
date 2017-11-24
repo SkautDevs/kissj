@@ -65,7 +65,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->logger->addError("Error sending login email to $email with token ".
 					$this->userService->getTokenForEmail($email), array($e));
 				$this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.");
-				return $response->withRedirect($this->router->pathFor('loginScreen'));
+				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 			}
 			
 			$this->flashMessages->success('Posláno! Klikni na link v mailu a tím se přihlásíš!');
@@ -110,7 +110,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$role = $this->userService->getRole($request->getAttribute('user'));
 		if (is_null($role)) {
 			$this->flashMessages->error('Sorry, you are not logged');
-			return $response->withRedirect($this->router->pathFor('loginScreen'));
+			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
 			if (!$this->userService->isUserRoleValid($role)) {
 				throw new Exception('Unknown role "'.$role.'"');
@@ -185,8 +185,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
 		if ($this->userService->getRole($request->getAttribute('user')) != 'patrol-leader') {
-			$this->flashMessages('Sorry, you are not logged as Patrol Leader');
-			return $response->withRedirect($this->router->pathFor('loginScreen'));
+			$this->flashMessages->error('Sorry, you are not logged as Patrol Leader');
+			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
 			$response = $next($request, $response);
 			return $response;
@@ -214,7 +214,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// protected area for Patrol Leaders
 		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
 			$this->flashMessages->error('Sorry, you are not logged as IST');
-			return $response->withRedirect($this->router->pathFor('loginScreen'));
+			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
 			$response = $next($request, $response);
 			return $response;

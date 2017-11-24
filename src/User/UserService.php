@@ -81,7 +81,10 @@ class UserService implements UserServiceInterface {
         return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
     }
 	
-	public function getRole(User $user): string {
+	public function getRole(?User $user): string {
+		if (is_null($user)) {
+			return 'non-logged';
+		}
 		//$this->userRepository->
 		return 'patrol-leader';
 	}

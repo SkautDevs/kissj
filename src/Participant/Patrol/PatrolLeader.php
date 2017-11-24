@@ -30,7 +30,11 @@ use LeanMapper\Entity;
 class PatrolLeader extends Entity {
 	
 	public function dateToString(\DateTime $val): ?string {
-		return $val->format(DATE_ISO8601);
+		if (is_null($val)) {
+			return null;
+		} else {
+			return $val->format(DATE_ISO8601);
+		}
 	}
 	
 	public function dateFromString($val): ?string {
