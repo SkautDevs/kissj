@@ -34,7 +34,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$this->bcc_name = $mailerSettings['bcc_name'];
 		$this->disable_tls = $mailerSettings['disable_tls'];
 		$this->debugOutputLevel = $mailerSettings['debugOutoutLevel'];
-		$this->sendMailToMainRecipient = $mailerSettings['$sendMailToMainRecipient'];
+		$this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
 	}
 	
 	public function sendMail($recipientEmail, $subject, $body) {
