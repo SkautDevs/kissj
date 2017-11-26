@@ -1,0 +1,27 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Přidat účastníka</h2>
+		<form method="POST" action="{{ path_for('p-postDetails', ['participantId' => pDetail.getId]) }}">
+			Křestní: <input type="text" name="firstName" value="{{ pDetail.getFirstName }}"><br/>
+			Příjmení: <input type="text" name="lastName" value="{{ pDetail.getLastName }}"><br/>
+			Alergie: <input type="text" name="allergies" value="{{ pDetail.getAllergies }}"><br/>
+			Datum narození: <input type="date" name="birthDate" value="{{ pDetail.getBirthDate.format('Y-m-d') }}"><br/>
+			Místo narození: <input type="text" name="birthPlace" value="{{ pDetail.getBirthPlace }}"><br/>
+			Země: <input type="text" name="country" value="{{ pDetail.getCountry }}"><br/>
+			Gender: <input type="text" name="gender" value="{{ pDetail.getGender }}"><br/>
+			Trvalá adresa: <input type="text" name="permanentResidence" value="{{ pDetail.getPermanentResidence }}"><br/>
+			Skautská jednotka: <input type="text" name="scoutUnit" value="{{ pDetail.getScoutUnit }}"><br/>
+			Telefoní kontakt (pouze čísta s možným + na začátku): <input type="text" name="telephoneNumber"
+																		 value="{{ pDetail.getTelephoneNumber }}"><br/>
+			Email: <input type="email" name="email" value="{{ pDetail.getEmail }}"><br/>
+			Dieta: <input type="text" name="foodPreferences" value="{{ pDetail.getFoodPreferences }}"><br/>
+			Číslo pasu/OP: <input type="text" name="cardPassportNumber" value="{{ pDetail.getCardPassportNumber }}"><br/>
+			Poznámky: <input type="text" name="notes" value="{{ pDetail.getNotes }}"><br/>
+
+			<input type="submit" value="Vložit nového účastníka">
+		</form>
+		<a href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>
+	</div>
+{% endblock %}

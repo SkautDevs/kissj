@@ -60,11 +60,13 @@ class UserService implements UserServiceInterface {
 		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
-		// return token for testing
+		// TODO invalidate all other tokens for this User
+		
 		return $token;
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
+		// TODO implement time gate (15 mins from settings preferably)
 		return !is_null($this->loginTokenRepository->findOneBy(['token' => $loginToken]));
 	}
 	
@@ -85,6 +87,7 @@ class UserService implements UserServiceInterface {
 		if (is_null($user)) {
 			return 'non-logged';
 		}
+		// TODO implement
 		//$this->userRepository->
 		return 'patrol-leader';
 	}

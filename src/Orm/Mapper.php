@@ -35,7 +35,7 @@ class Mapper implements IMapper {
 		if ($table === 'logintoken') {
 			return LoginToken::class;
 		}
-		if ($table === 'participant') {
+		if ($table === 'patrolparticipant') {
 			return PatrolParticipant::class;
 		}
 		if ($table === 'patrolleader') {

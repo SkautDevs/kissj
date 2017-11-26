@@ -58,7 +58,7 @@ $container['tokenRepository'] = function (C $c) {
 	return new LoginTokenRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
-$container['participantRepository'] = function (C $c) {
+$container['patrolParticipantRepository'] = function (C $c) {
 	return new PatrolParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
@@ -66,13 +66,13 @@ $container['patrolLeaderRepository'] = function (C $c) {
 	return new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
-// servics
+// services
 $container['userService'] = function (C $c) {
 	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
 };
 
 $container['patrolService'] = function (C $c) {
-	return new PatrolService($c->get('participantRepository'), $c->get('patrolLeaderRepository'));
+	return new PatrolService($c->get('patrolParticipantRepository'), $c->get('patrolLeaderRepository'));
 };
 
 // views

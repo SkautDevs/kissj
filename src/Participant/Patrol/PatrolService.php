@@ -6,12 +6,12 @@ use kissj\User\User;
 
 class PatrolService implements PatrolServiceInterface {
 	/** @var PatrolParticipantRepository */
-	private $participantRepository;
+	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
 	
-	public function __construct(PatrolParticipantRepository $participantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
-		$this->participantRepository = $participantRepository;
+	public function __construct(PatrolParticipantRepository $patrolParticipantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
+		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 	}
 	
@@ -59,22 +59,22 @@ class PatrolService implements PatrolServiceInterface {
 		return $validFlag;
 	}
 	
-	public function addPatrolLeaderInfo(PatrolLeader $patrolLeader,
-										string $firstName,
-										string $lastName,
-										string $allergies,
-										string $birthDate,
-										string $birthPlace,
-										string $country,
-										string $gender,
-										string $permanentResidence,
-										string $scoutUnit,
-										string $telephoneNumber,
-										string $email,
-										string $foodPreferences,
-										string $cardPassportNumber,
-										string $notes,
-										string $patrolName) {
+	public function editPatrolLeaderInfo(PatrolLeader $patrolLeader,
+										 string $firstName,
+										 string $lastName,
+										 string $allergies,
+										 string $birthDate,
+										 string $birthPlace,
+										 string $country,
+										 string $gender,
+										 string $permanentResidence,
+										 string $scoutUnit,
+										 string $telephoneNumber,
+										 string $email,
+										 string $foodPreferences,
+										 string $cardPassportNumber,
+										 string $notes,
+										 string $patrolName) {
 		$patrolLeader->firstName = $firstName;
 		$patrolLeader->lastName = $lastName;
 		$patrolLeader->allergies = $allergies;
@@ -99,45 +99,92 @@ class PatrolService implements PatrolServiceInterface {
 		return [new PatrolParticipant(), new PatrolParticipant()];
 	}
 	
-	public function isParticipantDetailsValid(array $attributes): bool {
-		// TODO implement
-		return true;
+	public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant {
+		$patrolParticipant = new PatrolParticipant();
+		$patrolParticipant->patrolLeader = $patrolLeader;
+		
+		$this->patrolParticipantRepository->persist($patrolParticipant);
+		
+		return $patrolParticipant;
 	}
 	
-	public function addParticipant(PatrolLeader $patrolLeader,
-								   ?string $firstName,
-								   ?string $lastName,
-								   ?string $allergies,
-								   ?\DateTime $birthDate,
-								   ?string $birthPlace,
-								   ?string $country,
-								   ?string $gender,
-								   ?string $permanentResidence,
-								   ?string $scoutUnit,
-								   ?string $telephoneNumber,
-								   ?string $email,
-								   ?string $foodPreferences,
-								   ?string $cardPassportNumber,
-								   ?string $notes) {
-		$participant = new PatrolParticipant();
+	public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant {
+		$patrolParticipant = $this->patrolParticipantRepository->findOneBy(['id' => $patrolParticipantId]);
 		
-		$participant->patrolLeader = $patrolLeader;
-		$participant->firstName = $firstName;
-		$participant->lastName = $lastName;
-		$participant->allergies = $allergies;
-		$participant->birthDate = $birthDate;
-		$participant->birthPlace = $birthPlace;
-		$participant->country = $country;
-		$participant->gender = $gender;
-		$participant->permanentResidence = $permanentResidence;
-		$participant->scoutUnit = $scoutUnit;
-		$participant->telephoneNumber = $telephoneNumber;
-		$participant->email = $email;
-		$participant->foodPreferences = $foodPreferences;
-		$participant->cardPassportNumber = $cardPassportNumber;
-		$participant->notes = $notes;
+		return $patrolParticipant;
+	}
+	
+	public function isPatrolParticipantDetailsValid(?string $firstName,
+													?string $lastName,
+													?string $allergies,
+													?\DateTime $birthDate,
+													?string $birthPlace,
+													?string $country,
+													?string $gender,
+													?string $permanentResidence,
+													?string $scoutUnit,
+													?string $telephoneNumber,
+													?string $email,
+													?string $foodPreferences,
+													?string $cardPassportNumber,
+													?string $notes): bool {
+		$validFlag = true;
 		
-		$this->participantRepository->persist($participant);
+		if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
+			$validFlag = false;
+		}
+		// check for numbers and plus sight up front only
+		if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
+			$validFlag = false;
+		}
+		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+			$validFlag = false;
+		}
+		
+		return $validFlag;
+	}
+	
+	public function editPatrolParticipant(PatrolParticipant $patrolParticipant,
+										  ?string $firstName,
+										  ?string $lastName,
+										  ?string $allergies,
+										  ?\DateTime $birthDate,
+										  ?string $birthPlace,
+										  ?string $country,
+										  ?string $gender,
+										  ?string $permanentResidence,
+										  ?string $scoutUnit,
+										  ?string $telephoneNumber,
+										  ?string $email,
+										  ?string $foodPreferences,
+										  ?string $cardPassportNumber,
+										  ?string $notes) {
+		$patrolParticipant->firstName = $firstName;
+		$patrolParticipant->lastName = $lastName;
+		$patrolParticipant->allergies = $allergies;
+		$patrolParticipant->birthDate = $birthDate;
+		$patrolParticipant->birthPlace = new \DateTime($birthDate);
+		$patrolParticipant->country = $country;
+		$patrolParticipant->gender = $gender;
+		$patrolParticipant->permanentResidence = $permanentResidence;
+		$patrolParticipant->scoutUnit = $scoutUnit;
+		$patrolParticipant->telephoneNumber = $telephoneNumber;
+		$patrolParticipant->email = $email;
+		$patrolParticipant->foodPreferences = $foodPreferences;
+		$patrolParticipant->cardPassportNumber = $cardPassportNumber;
+		$patrolParticipant->notes = $notes;
+		
+		$this->patrolParticipantRepository->persist($patrolParticipant);
+	}
+	
+	public function deletePatrolParticipant(PatrolParticipant $patrolParticipant) {
+		// TODO implement
+	}
+	
+	public function participantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
+												   PatrolLeader $patrolLeader): bool {
+		// TODO implement
+		return true;
 	}
 	
 	public function closeRegistration(PatrolLeader $patrolLeader) {

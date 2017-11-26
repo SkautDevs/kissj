@@ -142,7 +142,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$user = $request->getAttribute('user');
 			$patrolLeader = $this->patrolService->getPatrolLeader($user);
 			$allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
-			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user,'plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
+			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
 		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
@@ -191,7 +191,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->flashMessages->success('Údaje úspěšně uloženy');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			} else {
-				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus akci znovu.');
+				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
 				return $response->withRedirect($this->router->pathFor('pl-changeDetails'));
 			}
 		})->setName('pl-postDetails');
@@ -211,38 +211,79 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		// PARTICIPANT
 		
 		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'add-p.twig', $args);
+			// create participant and reroute to edit him
+			$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
+			return $response->withRedirect($this->router->pathFor('p-change-details', ['participantId' => $newParticipant->getId]));
 		})->setName('pl-addParticipant');
 		
-		$this->post("/postNewParticipant", function (Request $request, Response $response, array $args) {
-			$attributes = $request->getAttributes();
-			if ($this->patrolService->isParticipantDetailsValid($attributes)) {
-				// TODO add safe of details
-				$this->flashMessages->success('Účastník úspěšně vložen');
+		$this->group("/participant/{participantId}", function () {
+			
+			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+				return $this->view->render($response, 'details-p.twig', ['pDetail' => $pDetails]);
+			})->setName('p-change-details');
+			
+			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+				$params = $request->getParams();
+				
+				if ($this->patrolService->isParticipantDetailsValid(
+					$params['firstName'] ?? null,
+					$params['lastName'] ?? null,
+					$params['allergies'] ?? null,
+					$params['birthDate'] ?? null,
+					$params['birthPlace'] ?? null,
+					$params['country'] ?? null,
+					$params['gender'] ?? null,
+					$params['permanentResidence'] ?? null,
+					$params['scoutUnit'] ?? null,
+					$params['telephoneNumber'] ?? null,
+					$params['email'] ?? null,
+					$params['foodPreferences'] ?? null,
+					$params['cardPassportNumber'] ?? null,
+					$params['notes'] ?? null,
+					$params['patrolName'] ?? null)) {
+					
+					$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+					$this->patrolService->addParticipant(
+						$patrolLeader,
+						$params['firstName'] ?? null,
+						$params['lastName'] ?? null,
+						$params['allergies'] ?? null,
+						$params['birthDate'] ?? null,
+						$params['birthPlace'] ?? null,
+						$params['country'] ?? null,
+						$params['gender'] ?? null,
+						$params['permanentResidence'] ?? null,
+						$params['scoutUnit'] ?? null,
+						$params['telephoneNumber'] ?? null,
+						$params['email'] ?? null,
+						$params['foodPreferences'] ?? null,
+						$params['cardPassportNumber'] ?? null,
+						$params['notes'] ?? null);
+					
+					$this->flashMessages->success('Účastník úspěšně uložen');
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+				} else {
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus přidat účastníka znovu.');
+					return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+				}
+			})->setName('p-postDetails');
+			
+			// TODO
+			$this->post("/delete", function (Request $request, Response $response, array $args) {
+				// TODO process
+				return $response->withRedirect("TODO");
+			});
+			
+		})->add(function (Request $request, Response $response, callable $next) {
+			// participants actions are allowed only for their Patrol Leader
+			if (!$this->patrolService->participantBelongsPatrolLeader()) {
+				$this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			} else {
-				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus akci znovu.');
-				return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+				$response = $next($request, $response);
+				return $response;
 			}
-		})->setName('pl-postNewParticipant');
-		
-		$this->group("/participant", function () {
-			
-			$this->get("/details[/{id}]", function (Request $request, Response $response, array $args) {
-				// TODO process
-				return $this->renderer->render($response, 'participant-details.html', $args);
-			});
-			
-			$this->post("/details[/{id}]", function (Request $request, Response $response, array $args) {
-				// TODO process
-				return $response->withRedirect("TODO");
-			});
-			
-			$this->post("/delete/{id}", function (Request $request, Response $response, array $args) {
-				// TODO process
-				return $response->withRedirect("TODO");
-			});
-			
 		});
 		
 	})->add(function (Request $request, Response $response, callable $next) {
@@ -255,9 +296,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response;
 		}
 	});
-	
-	
-	// IST
+
+
+// IST
 	
 	$this->group("/ist", function () {
 		
@@ -284,17 +325,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response;
 		}
 	});
-	
-	
-	// ADMINISTRATION
+
+
+// ADMINISTRATION
 	
 	$this->any("/admin", function (Request $request, Response $response, array $args) {
 		global $adminerSettings;
 		$adminerSettings = $this->get('settings')['adminer'];
 		require __DIR__."/../admin/custom.php";
 	});
-	
-	// LANDING PAGE
+
+// LANDING PAGE
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
 		$this->flashMessages->info('Welcome!');

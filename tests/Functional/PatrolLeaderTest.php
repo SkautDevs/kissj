@@ -43,7 +43,7 @@ class PatrolLeaderTest extends BaseTestCase {
 		$this->assertEquals($patrolLeader->user->id, $user->id);
 		$this->assertFalse($patrolLeader->finished);
 
-		$patrolService->addPatrolLeaderInfo($patrolLeader,
+		$patrolService->editPatrolLeaderInfo($patrolLeader,
 			'leader',
 			'leaderový',
 			'burákové máslo',
