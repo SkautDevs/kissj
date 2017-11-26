@@ -8,7 +8,7 @@ CREATE TABLE user
 CREATE TABLE patrolparticipant
 (
 	id                 INTEGER PRIMARY KEY autoincrement,
-	userId             INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
+  patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
 	
 	firstName          TEXT,
 	lastName           TEXT,
