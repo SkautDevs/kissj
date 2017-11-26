@@ -9,7 +9,7 @@ use Slim\Http\Response;
 $app->group("/".$settings['settings']['eventName'], function () {
 	
 	// REGISTRATION, LOGIN & LOGOUT
-	
+
 	$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
 		if (!$this->userService->isUserRoleValid($role)) {
@@ -33,7 +33,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		}
 		
-		$this->userService->registerUser($email);
+		$user = $this->userService->registerUser($email);
+		$this->userService->addRole($user, $role);
 		try {
 			$this->userService->sendLoginTokenByMail($email);
 			return $response->withRedirect($this->router->pathFor('signupSuccess'));

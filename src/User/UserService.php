@@ -16,12 +16,14 @@ class UserService implements UserServiceInterface {
 	
 	/** @var UserRepository */
 	private $userRepository;
+	/** @var RoleRepository */
+	private $roleRepository;
 	/** @var MailerInterface */
 	private $mailer;
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	public function __construct(UserRepository $userRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer, array $possibleRoles) {
+	public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer, array $possibleRoles) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
@@ -30,6 +32,7 @@ class UserService implements UserServiceInterface {
 		$this->eventName = $eventName;
 		$this->renderer = $renderer;
 		$this->possibleRoles = $possibleRoles;
+		$this->roleRepository = $roleRepository;
 	}
 	
 	public function isUserRoleValid(string $role): bool {
@@ -87,9 +90,8 @@ class UserService implements UserServiceInterface {
 		if (is_null($user)) {
 			return 'non-logged';
 		}
-		// TODO implement
-		//$this->userRepository->
-		return 'patrol-leader';
+
+		return $this->roleRepository->findOneBy(['user' => $user]);
 	}
 	
 	public function saveUserIdIntoSession(User $user) {
@@ -106,5 +108,12 @@ class UserService implements UserServiceInterface {
 	
 	public function logoutUser() {
 		unset($_SESSION['user']);
+	}
+
+	public function addRole(User $user, string $roleName) {
+		$role = new Role();
+		$role->name = $roleName;
+		$role->user = $user;
+		$this->roleRepository->persist($role);
 	}
 }

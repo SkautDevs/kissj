@@ -66,9 +66,13 @@ $container['patrolLeaderRepository'] = function (C $c) {
 	return new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
+$container['roleRepository'] = function (C $c) {
+	return new \kissj\User\RoleRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+};
+
 // services
 $container['userService'] = function (C $c) {
-	return new UserService($c->get('userRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
+	return new UserService($c->get('userRepository'), $c->get('roleRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
 };
 
 $container['patrolService'] = function (C $c) {
