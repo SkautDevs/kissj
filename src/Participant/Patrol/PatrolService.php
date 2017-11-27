@@ -95,8 +95,7 @@ class PatrolService implements PatrolServiceInterface {
 	}
 	
 	public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array {
-		// TODO implement
-		return [new PatrolParticipant(), new PatrolParticipant()];
+		return $this->patrolParticipantRepository->findBy(['patrolleader' => $patrolLeader]);
 	}
 	
 	public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant {

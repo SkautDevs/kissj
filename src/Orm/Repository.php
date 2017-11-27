@@ -32,7 +32,21 @@ class Repository extends BaseRepository {
 		// second part
 		return $this->createEntity($row);
 	}
-	
+
+	public function findBy(array $criteria): array {
+		$qb = $this->createFluent();
+		$this->addConditions($qb, $criteria);
+		$rows = $qb->fetchAll();
+
+		$entities = [];
+
+		foreach ($rows as $row) {
+			$entities[] = $this->createEntity($row);
+		}
+
+		return $entities;
+	}
+
 	public function countBy(array $criteria): int {
 		/** @var Fluent $qb */
 		$qb = $this->connection->select('count(*)')->from($this->getTable());
