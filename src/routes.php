@@ -214,7 +214,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
 			// create participant and reroute to edit him
 			$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
-			return $response->withRedirect($this->router->pathFor('p-change-details', ['participantId' => $newParticipant->getId()]));
+			return $response->withRedirect($this->router->pathFor('p-changeDetails', ['participantId' => $newParticipant->getId()]));
 		})->setName('pl-addParticipant');
 		
 		$this->group("/participant/{participantId}", function () {
@@ -222,7 +222,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
 				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
 				return $this->view->render($response, 'details-p.twig', ['pDetail' => $pDetails]);
-			})->setName('p-change-details');
+			})->setName('p-changeDetails');
 			
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
 				$params = $request->getParams();
@@ -270,13 +270,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				}
 			})->setName('p-postDetails');
 			
-			// TODO
-			$this->post("/delete", function (Request $request, Response $response, array $args) {
+			$this->get("/delete", function (Request $request, Response $response, array $args) {
+				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+				return $this->view->render($response, 'delete-p.twig', ['pDetail' => $pDetails]);
+			})->setName('p-delete');
+			
+			$this->post("/comfirmDelete", function (Request $request, Response $response, array $args) {
 				$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
 				$this->patrolService->deletePatrolParticipant($patrolParticipant);
 				$this->flashMessages->success('Účastník úspěšně vymazán!');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			})->setName('p-delete');
+			})->setName('p-confirmDelete');
 			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// participants actions are allowed only for their Patrol Leader

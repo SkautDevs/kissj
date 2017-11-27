@@ -29,11 +29,8 @@
 		<a class="btn btn-primary" href="{{ path_for('pl-addParticipant') }}">Přidat účastníka</a><br/>
 		{% for participant in pDetails %}
 			<p>Účastník {{ participant.getFirstName }} {{ participant.getLastName }}
-				<a class="btn btn-primary"
-				   href="{{ path_for('p-change-details', {'participantId': participant.getId}) }}">Edit</a>
-			<form method="post" action="{{ path_for('p-delete', {'participantId': participant.getId}) }}">
-				<input type="submit" class="btn btn-danger" value="Delete">
-			</form>
+			<a class="btn btn-primary" href="{{ path_for('p-changeDetails',{'participantId': participant.getId}) }}">Edit</a>
+			<a class="btn btn-danger" href="{{ path_for('p-delete',{'participantId': participant.getId}) }}">Delete</a>
 			</p>
 		{% endfor %}
 		<br/>
