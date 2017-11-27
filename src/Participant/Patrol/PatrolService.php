@@ -4,7 +4,7 @@ namespace kissj\Participant\Patrol;
 
 use kissj\User\User;
 
-class PatrolService implements PatrolServiceInterface {
+class PatrolService {
 	/** @var PatrolParticipantRepository */
 	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
@@ -116,7 +116,7 @@ class PatrolService implements PatrolServiceInterface {
 	public function isPatrolParticipantDetailsValid(?string $firstName,
 													?string $lastName,
 													?string $allergies,
-													?\DateTime $birthDate,
+													?string $birthDate,
 													?string $birthPlace,
 													?string $country,
 													?string $gender,
@@ -147,7 +147,7 @@ class PatrolService implements PatrolServiceInterface {
 										  ?string $firstName,
 										  ?string $lastName,
 										  ?string $allergies,
-										  ?\DateTime $birthDate,
+										  ?string $birthDate,
 										  ?string $birthPlace,
 										  ?string $country,
 										  ?string $gender,
@@ -161,8 +161,8 @@ class PatrolService implements PatrolServiceInterface {
 		$patrolParticipant->firstName = $firstName;
 		$patrolParticipant->lastName = $lastName;
 		$patrolParticipant->allergies = $allergies;
-		$patrolParticipant->birthDate = $birthDate;
-		$patrolParticipant->birthPlace = new \DateTime($birthDate);
+		$patrolParticipant->birthDate = new \DateTime($birthDate);
+		$patrolParticipant->birthPlace = $birthPlace;
 		$patrolParticipant->country = $country;
 		$patrolParticipant->gender = $gender;
 		$patrolParticipant->permanentResidence = $permanentResidence;
@@ -180,8 +180,8 @@ class PatrolService implements PatrolServiceInterface {
 		$this->patrolParticipantRepository->delete($patrolParticipant);
 	}
 	
-	public function participantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
-												   PatrolLeader $patrolLeader): bool {
+	public function patrolParticipantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
+														 PatrolLeader $patrolLeader): bool {
 		return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
 	}
 	

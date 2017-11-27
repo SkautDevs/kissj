@@ -28,10 +28,16 @@
 		<h2>Seznam účastníků</h2>
 		<a class="btn btn-primary" href="{{ path_for('pl-addParticipant') }}">Přidat účastníka</a><br/>
 		{% for participant in pDetails %}
-			<h4>Jméno: {{ participant.getFirstName }} {{ participant.getLastName }}</h4>
+			<p>Účastník {{ participant.getFirstName }} {{ participant.getLastName }}
+				<a class="btn btn-primary"
+				   href="{{ path_for('p-change-details', {'participantId': participant.getId}) }}">Edit</a>
+			<form method="post" action="{{ path_for('p-delete', {'participantId': participant.getId}) }}">
+				<input type="submit" class="btn btn-danger" value="Delete">
+			</form>
+			</p>
 		{% endfor %}
 		<br/>
 		<br/>
-		<a class="btn btn-primary" href="{{ path_for('pl-closeRegistration') }}">Uzavřít registraci</a>
+		<a class="btn btn-danger" href="{{ path_for('pl-closeRegistration') }}">Uzavřít registraci</a>
 	</div>
 {% endblock %}

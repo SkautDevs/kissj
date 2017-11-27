@@ -9,7 +9,7 @@ use Slim\Http\Response;
 $app->group("/".$settings['settings']['eventName'], function () {
 	
 	// REGISTRATION, LOGIN & LOGOUT
-
+	
 	$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
 		if (!$this->userService->isUserRoleValid($role)) {
@@ -171,7 +171,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$params['patrolName'] ?? null)) {
 				
 				$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-				$this->patrolService->addPatrolLeaderInfo(
+				$this->patrolService->editPatrolLeaderInfo(
 					$patrolLeader,
 					$params['firstName'] ?? null,
 					$params['lastName'] ?? null,
@@ -214,7 +214,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
 			// create participant and reroute to edit him
 			$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
-			return $response->withRedirect($this->router->pathFor('p-change-details', ['participantId' => $newParticipant->getId]));
+			return $response->withRedirect($this->router->pathFor('p-change-details', ['participantId' => $newParticipant->getId()]));
 		})->setName('pl-addParticipant');
 		
 		$this->group("/participant/{participantId}", function () {
@@ -227,7 +227,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
 				$params = $request->getParams();
 				
-				if ($this->patrolService->isParticipantDetailsValid(
+				if ($this->patrolService->isPatrolParticipantDetailsValid(
 					$params['firstName'] ?? null,
 					$params['lastName'] ?? null,
 					$params['allergies'] ?? null,
@@ -244,9 +244,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$params['notes'] ?? null,
 					$params['patrolName'] ?? null)) {
 					
-					$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-					$this->patrolService->addParticipant(
-						$patrolLeader,
+					$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
+					$this->patrolService->editPatrolParticipant(
+						$patrolParticipant,
 						$params['firstName'] ?? null,
 						$params['lastName'] ?? null,
 						$params['allergies'] ?? null,
@@ -272,13 +272,20 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			// TODO
 			$this->post("/delete", function (Request $request, Response $response, array $args) {
-				// TODO process
-				return $response->withRedirect("TODO");
-			});
+				$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
+				$this->patrolService->deletePatrolParticipant($patrolParticipant);
+				$this->flashMessages->success('Účastník úspěšně vymazán!');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			})->setName('p-delete');
 			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// participants actions are allowed only for their Patrol Leader
-			if (!$this->patrolService->participantBelongsPatrolLeader()) {
+			// get route params from request (undocumented feature)
+			$routeParams = $request->getAttribute('routeInfo')[2];
+			if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
+				$this->patrolService->getPatrolParticipant($routeParams['participantId']),
+				$this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
+				
 				$this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			} else {

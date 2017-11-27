@@ -6,7 +6,7 @@ use kissj\Random;
 use kissj\Mailer\MailerInterface;
 use Slim\Router;
 
-class UserService implements UserServiceInterface {
+class UserService {
 	
 	private $router;
 	private $random;
@@ -76,22 +76,22 @@ class UserService implements UserServiceInterface {
 	public function getUserFromToken(string $token): User {
 		return $this->loginTokenRepository->findOneBy(['token' => $token])->user;
 	}
-
-    public function getTokenForEmail(string $email): string {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-        return $this->getTokenForUser($user);
-    }
-
-    public function getTokenForUser(User $user): string {
-        return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
-    }
 	
-	public function getRole(?User $user): string {
+	public function getTokenForEmail(string $email): string {
+		$user = $this->userRepository->findOneBy(['email' => $email]);
+		return $this->getTokenForUser($user);
+	}
+	
+	public function getTokenForUser(User $user): string {
+		return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
+	}
+	
+	public function getRole(?User $user): string{
 		if (is_null($user)) {
 			return 'non-logged';
 		}
-
-		return $this->roleRepository->findOneBy(['user' => $user]);
+		
+		return $this->roleRepository->findOneBy(['user' => $user])->getName();
 	}
 	
 	public function saveUserIdIntoSession(User $user) {
@@ -109,7 +109,8 @@ class UserService implements UserServiceInterface {
 	public function logoutUser() {
 		unset($_SESSION['user']);
 	}
-
+	
+	// TODO add fixed event parameter
 	public function addRole(User $user, string $roleName) {
 		$role = new Role();
 		$role->name = $roleName;
