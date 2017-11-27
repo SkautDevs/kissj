@@ -29,7 +29,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$email = $request->getParsedBodyParam("email");
 		
 		if ($this->userService->isEmailExisting($email)) {
-			$this->flashMessages->error("Nepovedlo se založit uživatele pro email $email, protože už takový existuje. Nechceš se spíš příhlásit?");
+			$this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email, ENT_QUOTES).', protože už takový existuje. Nechceš se spíš příhlásit?');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		}
 		
