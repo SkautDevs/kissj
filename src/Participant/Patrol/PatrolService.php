@@ -178,13 +178,12 @@ class PatrolService implements PatrolServiceInterface {
 	}
 	
 	public function deletePatrolParticipant(PatrolParticipant $patrolParticipant) {
-		// TODO implement
+		$this->patrolParticipantRepository->delete($patrolParticipant);
 	}
 	
 	public function participantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
 												   PatrolLeader $patrolLeader): bool {
-		// TODO implement
-		return true;
+		return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
 	}
 	
 	public function closeRegistration(PatrolLeader $patrolLeader) {
