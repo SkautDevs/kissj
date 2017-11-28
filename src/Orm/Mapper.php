@@ -4,6 +4,7 @@ namespace kissj\Orm;
 
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Ist\Ist;
 use kissj\User\LoginToken;
 use kissj\User\Role;
 use kissj\User\User;
@@ -35,11 +36,14 @@ class Mapper implements IMapper {
 		if ($table === 'logintoken') {
 			return LoginToken::class;
 		}
+		if ($table === 'patrolleader') {
+			return PatrolLeader::class;
+		}
 		if ($table === 'patrolparticipant') {
 			return PatrolParticipant::class;
 		}
-		if ($table === 'patrolleader') {
-			return PatrolLeader::class;
+		if ($table === 'ist') {
+			return Ist::class;
 		}
 		if ($table === 'role') {
 			return Role::class;

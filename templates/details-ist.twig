@@ -1,0 +1,33 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Změna informací IST s ID {{ plInfo.getId }}</h2>
+		<form method="POST" action="{{ path_for('ist-postDetails') }}">
+			Křestní: <input type="text" name="firstName" value="{{ istDetails.getFirstName }}"><br/>
+			Příjmení: <input type="text" name="lastName" value="{{ istDetails.getLastName }}"><br/>
+			Alergie: <input type="text" name="allergies" value="{{ istDetails.getAllergies }}"><br/>
+			Datum narození: <input type="date" name="birthDate" value="{{ istDetails.getBirthDate.format('Y-m-d') }}"><br/>
+			Místo narození: <input type="text" name="birthPlace" value="{{ istDetails.getBirthPlace }}"><br/>
+			Země: <input type="text" name="country" value="{{ istDetails.getCountry }}"><br/>
+			Gender: <input type="text" name="gender" value="{{ istDetails.getGender }}"><br/>
+			Trvalá adresa: <input type="text" name="permanentResidence" value="{{ istDetails.getPermanentResidence }}"><br/>
+			Skautská jednotka: <input type="text" name="scoutUnit" value="{{ istDetails.getScoutUnit }}"><br/>
+			Telefoní kontakt (pouze čísta s možným + na začátku): <input type="text" name="telephoneNumber"
+																		 value="{{ istDetails.getTelephoneNumber }}"><br/>
+			Email: <input type="email" name="email" value="{{ istDetails.getEmail }}"><br/>
+			Dieta: <input type="text" name="foodPreferences" value="{{ istDetails.getFoodPreferences }}"><br/>
+			Číslo pasu/OP: <input type="text" name="cardPassportNumber" value="{{ istDetails.getCardPassportNumber }}"><br/>
+			Poznámky: <input type="text" name="notes" value="{{ istDetails.getNotes }}"><br/>
+			Preference práce: <input type="text" name="workPreferences" value="{{ istDetails.getWorkPreferences }}"><br/>
+			Skills: <input type="text" name="skills" value="{{ istDetails.getSkills }}"><br/>
+			Jazyky, kterými se domluvím: <input type="text" name="languages" value="{{ istDetails.getLanguages }}"><br/>
+			čas příjezdu: <input type="date" name="arrivalDate" value="{{ istDetails.getArrivalDate.format('Y-m-d') }}"><br/>
+			čas odjezdu: <input type="date" name="leavingDate" value="{{ istDetails.getLeavingDate.format('Y-m-d') }}"><br/>
+			Pokud přijedu autem, jeho poznávací značka: <input type="text" name="carRegistrationPlate" value="{{ istDetails.getCarRegistrationPlate }}"><br/>
+
+			<input type="submit" value="Uložit">
+		</form>
+		<a href="{{ path_for('ist-dashboard') }}">Zpět na dashboard</a>
+	</div>
+{% endblock %}

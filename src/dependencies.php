@@ -4,9 +4,12 @@ use kissj\Orm\Mapper;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
+use kissj\Participant\Ist\IstRepository;
+use kissj\Participant\Ist\IstService;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
+use \kissj\User\RoleRepository;
 use \Psr\Container\ContainerInterface as C;
 
 $container = $app->getContainer();
@@ -66,8 +69,12 @@ $container['patrolLeaderRepository'] = function (C $c) {
 	return new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
+$container['istRepository'] = function (C $c) {
+	return new IstRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+};
+
 $container['roleRepository'] = function (C $c) {
-	return new \kissj\User\RoleRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new RoleRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
 };
 
 // services
@@ -77,6 +84,10 @@ $container['userService'] = function (C $c) {
 
 $container['patrolService'] = function (C $c) {
 	return new PatrolService($c->get('patrolParticipantRepository'), $c->get('patrolLeaderRepository'));
+};
+
+$container['istService'] = function (C $c) {
+	return new IstService($c->get('istRepository'));
 };
 
 // views

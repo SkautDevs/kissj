@@ -2,8 +2,8 @@
 
 namespace kissj\Participant\Patrol;
 
+use kissj\Participant\Participant;
 use kissj\User\User;
-use LeanMapper\Entity;
 
 /**
  * @property int            $id
@@ -27,21 +27,6 @@ use LeanMapper\Entity;
  * @property boolean        $finished
  * @property User           $user m:hasOne
  */
-class PatrolLeader extends Entity {
-	
-	public function dateToString(?\DateTime $val): ?string {
-		if (is_null($val)) {
-			return null;
-		} else {
-			return $val->format(DATE_ISO8601);
-		}
-	}
-	
-	public function dateFromString(?string $val): ?\DateTime {
-		if (empty($val)) {
-			return null;
-		} else {
-			return new \DateTime($val);
-		}
-	}
+class PatrolLeader extends Participant {
+
 }

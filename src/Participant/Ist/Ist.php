@@ -2,8 +2,8 @@
 
 namespace kissj\Participant\Ist;
 
+use kissj\Participant\Participant;
 use kissj\User\User;
-use LeanMapper\Entity;
 
 /**
  * @property int            $id
@@ -25,20 +25,13 @@ use LeanMapper\Entity;
  * @property string|null    $workPreferences,
  * @property string|null    $skills,
  * @property string|null    $languages,
- * @property \DateTime|null      $arrivalDate, m:passThru(dateFromString|dateToString)
- * @property \DateTime|null      $leavingDate, m:passThru(dateFromString|dateToString)
- * @property string|null         $carRegistrationPlate
+ * @property \DateTime|null $arrivalDate m:passThru(dateFromString|dateToString)
+ * @property \DateTime|null $leavingDate m:passThru(dateFromString|dateToString)
+ * @property string|null    $carRegistrationPlate
  *
  * @property boolean        $finished
  * @property User           $user m:hasOne
  */
-class Ist extends Entity {
-	
-	public function dateToString(\DateTime $val): string {
-		return $val->format(DATE_ISO8601);
-	}
-	
-	public function dateFromString(string $val): string {
-		return new \DateTime($val);
-	}
+class Ist extends Participant {
+
 }

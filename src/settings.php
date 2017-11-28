@@ -33,6 +33,7 @@ $settings = [
 			'bcc_mail' => 'registration@localhost.cz', // another mail
 			'bcc_name' => 'Registrační Asistentka',
 			
+			// debugging settings
 			'disable_tls' => false, // turn off all certificate checksdebugOutoutLevel
 			'debugOutoutLevel' => 0, // print debug leve (0 min to 4 max)
 			'sendMailToMainRecipient' => true, // turn off in localhost
@@ -55,8 +56,9 @@ $settings = [
 		],
 		
 		'adminer' => [
-			'login' => 'admin',
-			'password' => '',
+			// change password add this into your settings_custom please
+			// 'login' => 'superSecretUsername',
+			// 'password' => 'superSecretPassword',
 		]
 	],
 ];

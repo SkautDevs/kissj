@@ -244,9 +244,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$params['notes'] ?? null,
 					$params['patrolName'] ?? null)) {
 					
-					$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
 					$this->patrolService->editPatrolParticipant(
-						$patrolParticipant,
+						$this->patrolService->getPatrolParticipant($args['participantId']),
 						$params['firstName'] ?? null,
 						$params['lastName'] ?? null,
 						$params['allergies'] ?? null,
@@ -284,8 +283,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// participants actions are allowed only for their Patrol Leader
-			// get route params from request (undocumented feature)
-			$routeParams = $request->getAttribute('routeInfo')[2];
+			$routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature)
 			if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
 				$this->patrolService->getPatrolParticipant($routeParams['participantId']),
 				$this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
@@ -315,20 +313,87 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->group("/ist", function () {
 		
 		$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'dashboard-ist.twig', $args);
+			$user = $request->getAttribute('user');
+			$ist = $this->istService->getIst($user);
+			return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist]);
 		})->setName('ist-dashboard');
 		
-		$this->get("/details[/{id}]", function (Request $request, Response $response, array $args) {
-			return $this->view->render($response, 'participant-details.html', $args);
-		});
+		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+			$istDetails = $this->istService->getIst($request->getAttribute('user'));
+			return $this->view->render($response, 'details-ist.twig', ['istDetails' => $istDetails]);
+		})->setName('ist-changeDetails');
 		
-		$this->post("/details[/{id}]", function (Request $request, Response $response, array $args) {
-			// TODO process
-			return $response->withRedirect("TODO");
-		});
+		$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+			$params = $request->getParams();
+			if ($this->istService->isIstDetailsValid(
+				$params['firstName'] ?? null,
+				$params['lastName'] ?? null,
+				$params['allergies'] ?? null,
+				$params['birthDate'] ?? null,
+				$params['birthPlace'] ?? null,
+				$params['country'] ?? null,
+				$params['gender'] ?? null,
+				$params['permanentResidence'] ?? null,
+				$params['scoutUnit'] ?? null,
+				$params['telephoneNumber'] ?? null,
+				$params['email'] ?? null,
+				$params['foodPreferences'] ?? null,
+				$params['cardPassportNumber'] ?? null,
+				$params['notes'] ?? null,
+				
+				$params['workPreferences'] ?? null,
+				$params['skills'] ?? null,
+				$params['languages'] ?? null,
+				$params['arrivalDate'] ?? null,
+				$params['leavingDate'] ?? null,
+				$params['carRegistrationPlate'] ?? null)) {
+				
+				$this->istService->editIstInfo(
+					$this->istService->getIst($request->getAttribute('user')),
+					$params['firstName'] ?? null,
+					$params['lastName'] ?? null,
+					$params['allergies'] ?? null,
+					$params['birthDate'] ?? null,
+					$params['birthPlace'] ?? null,
+					$params['country'] ?? null,
+					$params['gender'] ?? null,
+					$params['permanentResidence'] ?? null,
+					$params['scoutUnit'] ?? null,
+					$params['telephoneNumber'] ?? null,
+					$params['email'] ?? null,
+					$params['foodPreferences'] ?? null,
+					$params['cardPassportNumber'] ?? null,
+					$params['notes'] ?? null,
+					
+					$params['workPreferences'] ?? null,
+					$params['skills'] ?? null,
+					$params['languages'] ?? null,
+					$params['arrivalDate'] ?? null,
+					$params['leavingDate'] ?? null,
+					$params['carRegistrationPlate'] ?? null);
+				
+				$this->flashMessages->success('Údaje úspěšně uloženy');
+				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+			} else {
+				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+				return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
+			}
+		})->setName('ist-postDetails');
+		
+		$this->post("/closeRegistration", function (Request $request, Response $response, array $args) {
+			$ist = $this->istService->getIst($request->getAttribute('user'));
+			if ($this->istService->isRegistrationValid($ist)) {
+				// TODO close registration
+				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email, jakmile bude schválena');
+				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+			} else {
+				$this->flashMessages->warning('Registraci ještě nelze uzavřít');
+				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+			}
+		})->setName('ist-closeRegistration');
 		
 	})->add(function (Request $request, Response $response, callable $next) {
-		// protected area for Patrol Leaders
+		// protected area for IST
 		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
 			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
