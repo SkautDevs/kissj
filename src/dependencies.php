@@ -102,8 +102,8 @@ $container['view'] = function (C $c) {
 	
 	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
-	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme() . '://'.$uri->getHost().$uri->getBasePath()), '/');
-	$baseHostScheme = $uri->getScheme() . '://'.$uri->getHost();
+	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
+	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost();
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']->dumpMessagesIntoArray());
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);

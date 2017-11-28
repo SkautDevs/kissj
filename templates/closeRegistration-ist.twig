@@ -1,0 +1,12 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Uzavřít registrace</h2>
+		<p>Skutečně chtete uzavřít registraci? Tato akce je nevratná!</p>
+		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration') }}">
+			<input class="btn btn-primary" type="submit" value="Uzavřít registraci">
+		</form>
+		<a class="btn btn-default" href="{{ path_for('ist-dashboard') }}">Zpět na dashboard</a>
+	</div>
+{% endblock %}
