@@ -5,6 +5,7 @@
 		<h2>Uzavřít registrace</h2>
 		<p>Skutečně chtete uzavřít registraci? Tato akce je nevratná!</p>
 		<form method="POST" action="{{ path_for('pl-confirmCloseRegistration') }}">
+			<input type="checkbox" required="required"> Souhlasím se vším, co tu bude v budoucnu napsané.
 			<input class="btn btn-primary" type="submit" value="Uzavřít registraci">
 		</form>
 		<a class="btn btn-default" href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>

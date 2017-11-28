@@ -8,7 +8,7 @@ use Slim\Http\Response;
 // Routes
 $app->group("/".$settings['settings']['eventName'], function () {
 	
-	// REGISTRATION, LOGIN & LOGOUT
+	// LANDING, LEGAL & RANDOM
 	
 	$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
@@ -20,6 +20,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role]);
 	})->setName('registration');
 	
+	$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
+		return $this->view->render($response, 'registrationLostSoul.twig');
+	})->setName('registrationLostSoul');
+	
+	// REGISTRATION, LOGIN & LOGOUT
 	
 	$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
