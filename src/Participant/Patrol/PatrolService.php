@@ -2,6 +2,7 @@
 
 namespace kissj\Participant\Patrol;
 
+use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\User;
 
 class PatrolService {
@@ -9,10 +10,17 @@ class PatrolService {
 	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
+	private $eventSettings;
+	private $flashMessages;
 	
-	public function __construct(PatrolParticipantRepository $patrolParticipantRepository, PatrolLeaderRepository $patrolLeaderRepository) {
+	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
+								PatrolLeaderRepository $patrolLeaderRepository,
+								FlashMessagesInterface $flashMessages,
+								$eventSettings) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
+		$this->flashMessages = $flashMessages;
+		$this->eventSettings = $eventSettings;
 	}
 	
 	public function getPatrolLeader(User $user): PatrolLeader {
@@ -26,6 +34,26 @@ class PatrolService {
 		
 		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
 		return $patrolLeader;
+	}
+	
+	private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
+		return $this->isPatrolLeaderDetailsValid(
+			$patrolLeader->getFirstName(),
+			$patrolLeader->getLastName(),
+			$patrolLeader->getAllergies(),
+			($patrolLeader->getBirthDate() ? $patrolLeader->getBirthDate()->format('Y-m-d') : null),
+			$patrolLeader->getBirthPlace(),
+			$patrolLeader->getCountry(),
+			$patrolLeader->getGender(),
+			$patrolLeader->getPermanentResidence(),
+			$patrolLeader->getScoutUnit(),
+			$patrolLeader->getTelephoneNumber(),
+			$patrolLeader->getEmail(),
+			$patrolLeader->getFoodPreferences(),
+			$patrolLeader->getCardPassportNumber(),
+			$patrolLeader->getNotes(),
+			$patrolLeader->getPatrolName()
+		);
 	}
 	
 	public function isPatrolLeaderDetailsValid(string $firstName,
@@ -113,6 +141,24 @@ class PatrolService {
 		return $patrolParticipant;
 	}
 	
+	private function isPatrolParticipantValid(PatrolParticipant $participant): bool {
+		return $this->isPatrolParticipantDetailsValid($participant->getFirstName(),
+			$participant->getLastName(),
+			$participant->getAllergies(),
+			($participant->getBirthDate() ? $participant->getBirthDate()->format('Y-m-d') : null),
+			$participant->getBirthPlace(),
+			$participant->getCountry(),
+			$participant->getGender(),
+			$participant->getPermanentResidence(),
+			$participant->getScoutUnit(),
+			$participant->getTelephoneNumber(),
+			$participant->getEmail(),
+			$participant->getFoodPreferences(),
+			$participant->getCardPassportNumber(),
+			$participant->getNotes()
+		);
+	}
+	
 	public function isPatrolParticipantDetailsValid(?string $firstName,
 													?string $lastName,
 													?string $allergies,
@@ -183,6 +229,42 @@ class PatrolService {
 	public function patrolParticipantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
 														 PatrolLeader $patrolLeader): bool {
 		return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
+	}
+	
+	public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
+		$validityFlag = true;
+		if (!$this->isPatrolLeaderValid($patrolLeader)) {
+			$this->flashMessages->warning('Údaje Patrol Leadera nejsou kompletní');
+			$validityFlag = false;
+		}
+		$participants = $this->getAllParticipantsBelongsPatrolLeader($patrolLeader);
+		$participantsCount = count($participants);
+		if ($participantsCount < $this->eventSettings['minimalPatrolParticipantsCount']) {
+			$this->flashMessages->warning('Účastníků je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
+			$validityFlag = false;
+		}
+		if ($participantsCount > $this->eventSettings['maximalPatrolParticipantsCount']) {
+			$this->flashMessages->warning('Účastníků je moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
+			$validityFlag = false;
+		}
+		foreach ($participants as $participant) {
+			if (!$this->isPatrolParticipantValid($participant)) {
+				$participantName = $participant->getFirstName().' '.$participant->getLastName();
+				$this->flashMessages->warning('Údaje účastníka jménem '.$participantName.' nejsou kompletní');
+				$validityFlag = false;
+			}
+		}
+		if ($this->getClosedPatrolsCount() > $this->eventSettings['maximalClosedPatrolsCount']) {
+			$this->flashMessages->warning('Je uzavřeno maximální počet patrol. Počkej prosím na zvýšení limitu patrol. ');
+			$validityFlag = false;
+		}
+		
+		return $validityFlag;
+	}
+	
+	private function getClosedPatrolsCount(): int {
+		// TODO implement
+		return 25;
 	}
 	
 	public function closeRegistration(PatrolLeader $patrolLeader) {

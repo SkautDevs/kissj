@@ -54,40 +54,67 @@ $container['dbFactory'] = function (C $c) {
 
 // repositories
 $container['userRepository'] = function (C $c) {
-	return new UserRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new UserRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 $container['tokenRepository'] = function (C $c) {
-	return new LoginTokenRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new LoginTokenRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 $container['patrolParticipantRepository'] = function (C $c) {
-	return new PatrolParticipantRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new PatrolParticipantRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 $container['patrolLeaderRepository'] = function (C $c) {
-	return new PatrolLeaderRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new PatrolLeaderRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 $container['istRepository'] = function (C $c) {
-	return new IstRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new IstRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 $container['roleRepository'] = function (C $c) {
-	return new RoleRepository($c->get('db'), $c->get('dbMapper'), $c->get('dbFactory'));
+	return new RoleRepository($c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
 };
 
 // services
 $container['userService'] = function (C $c) {
-	return new UserService($c->get('userRepository'), $c->get('roleRepository'), $c->get('tokenRepository'), $c->get('mailer'), $c->get('router'), $c->get('random'), $c->get('settings')['eventName'], $c->get('view'), $c->get('settings')['possibleUserRoles']);
+	return new UserService($c->get('userRepository'),
+		$c->get('roleRepository'),
+		$c->get('tokenRepository'),
+		$c->get('mailer'),
+		$c->get('router'),
+		$c->get('random'),
+		$c->get('settings')['eventName'],
+		$c->get('view'),
+		$c->get('settings')['possibleUserRoles']);
 };
 
 $container['patrolService'] = function (C $c) {
-	return new PatrolService($c->get('patrolParticipantRepository'), $c->get('patrolLeaderRepository'));
+	$eventSettings = $c->get('settings')['event'];
+	return new PatrolService($c->get('patrolParticipantRepository'),
+		$c->get('patrolLeaderRepository'),
+		$c->get('flashMessages'),
+		$eventSettings);
 };
 
 $container['istService'] = function (C $c) {
-	return new IstService($c->get('istRepository'));
+	$eventSettings = $c->get('settings')['event'];
+	return new IstService($c->get('istRepository'),
+		$c->get('flashMessages'),
+		$eventSettings);
 };
 
 // views

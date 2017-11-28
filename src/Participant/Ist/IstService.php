@@ -2,15 +2,21 @@
 
 namespace kissj\Participant\Ist;
 
+use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\User;
 
 class IstService {
 	/** @var IstRepository */
 	private $istRepository;
+	private $eventSettings;
+	private $flashMessages;
 	
-	public function __construct(IstRepository $istRepository) {
-		$this->patrolParticipantRepository = $istRepository;
+	public function __construct(IstRepository $istRepository,
+								FlashMessagesInterface $flashMessages,
+								$eventSettings) {
 		$this->istRepository = $istRepository;
+		$this->flashMessages = $flashMessages;
+		$this->eventSettings = $eventSettings;
 	}
 	
 	public function getIst(User $user): Ist {
@@ -24,6 +30,29 @@ class IstService {
 		
 		$ist = $this->istRepository->findOneBy(['user' => $user]);
 		return $ist;
+	}
+	
+	private function isIstValid(Ist $ist): bool {
+		return $this->isIstDetailsValid($ist->getFirstName(),
+			$ist->getLastName(),
+			$ist->getAllergies(),
+			($ist->getBirthDate() ? $ist->getBirthDate()->format('Y-m-d') : null),
+			$ist->getBirthPlace(),
+			$ist->getCountry(),
+			$ist->getGender(),
+			$ist->getPermanentResidence(),
+			$ist->getScoutUnit(),
+			$ist->getTelephoneNumber(),
+			$ist->getEmail(),
+			$ist->getFoodPreferences(),
+			$ist->getCardPassportNumber(),
+			$ist->getNotes(),
+			$ist->getPatrolName(),
+			$ist->getSkills(),
+			$ist->getLanguages(),
+			$ist->getArrivalDate(),
+			$ist->getLeavingDate(),
+			$ist->getCarRegistrationPlate());
 	}
 	
 	public function isIstDetailsValid(?string $firstName,
@@ -112,6 +141,25 @@ class IstService {
 		$ist->carRegistrationPlate = $carRegistrationPlate;
 		
 		$this->istRepository->persist($ist);
+	}
+	
+	public function isCloseRegistrationValid(Ist $ist): bool {
+		$validityFlag = true;
+		if (!$this->isIstValid($ist)) {
+			$this->flashMessages->warning('Údaje IST nejsou kompletní');
+			$validityFlag = false;
+		}
+		if ($this->getClosedIstsCount() > $this->eventSettings['maximalClosedIstsCount']) {
+			$this->flashMessages->warning('Je uzavřeno maximální počet IST. Počkej prosím na zvýšení limitu pro IST.');
+			$validityFlag = false;
+		}
+		
+		return $validityFlag;
+	}
+	
+	private function getClosedIstsCount(): integer {
+		// TODO implement
+		return 100;
 	}
 	
 	public function closeRegistration(Ist $ist) {

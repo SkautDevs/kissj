@@ -198,12 +198,14 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		})->setName('pl-postDetails');
 		
 		$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
+			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+			$this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
 			return $this->view->render($response, 'closeRegistration-pl.twig');
 		})->setName('pl-closeRegistration');
 		
 		$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
 			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			if ($this->patrolService->isRegistrationValid($patrolLeader)) {
+			if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
 				// TODO close registration
 				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email, jakmile bude schválena');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
@@ -385,6 +387,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		})->setName('ist-postDetails');
 		
 		$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
+			$ist = $this->istService->getIst($request->getAttribute('user'));
+			$this->istService->isCloseRegistrationValid($ist); // call because of warnings
 			return $this->view->render($response, 'closeRegistration-ist.twig');
 		})->setName('ist-closeRegistration');
 		

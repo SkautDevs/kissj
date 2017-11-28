@@ -56,10 +56,18 @@ $settings = [
 		],
 		
 		'adminer' => [
-			// change password add this into your settings_custom please
+			// change password & add this into your settings_custom please
 			// 'login' => 'superSecretUsername',
 			// 'password' => 'superSecretPassword',
-		]
+		],
+		
+		'event' => [
+			'minimalPatrolParticipantsCount' => 9,
+			'maximalPatrolParticipantsCount' => 9,
+			
+			'maximalClosedPatrolsCount' => 25,
+			'maximalClosedIstsCount' => 100,
+		],
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {
