@@ -3,22 +3,33 @@
 namespace kissj\Participant\Patrol;
 
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\User\Role;
+use kissj\User\RoleRepository;
 use kissj\User\User;
+use kissj\User\UserStatusService;
 
 class PatrolService {
 	/** @var PatrolParticipantRepository */
 	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
+	/** @var RoleRepository */
+	private $roleRepository;
+	/** @var UserStatusService */
+	private $userStatusService;
 	private $eventSettings;
 	private $flashMessages;
 	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
 								PatrolLeaderRepository $patrolLeaderRepository,
+								RoleRepository $roleRepository,
+								UserStatusService $userStatusService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
+		$this->roleRepository = $roleRepository;
+		$this->userStatusService = $userStatusService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
 	}
@@ -27,7 +38,6 @@ class PatrolService {
 		if ($this->patrolLeaderRepository->countBy(['user' => $user]) === 0) {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
-			$patrolLeader->finished = false;
 			$this->patrolLeaderRepository->persist($patrolLeader);
 			return $patrolLeader;
 		}
@@ -38,21 +48,21 @@ class PatrolService {
 	
 	private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
 		return $this->isPatrolLeaderDetailsValid(
-			$patrolLeader->getFirstName(),
-			$patrolLeader->getLastName(),
-			$patrolLeader->getAllergies(),
-			($patrolLeader->getBirthDate() ? $patrolLeader->getBirthDate()->format('Y-m-d') : null),
-			$patrolLeader->getBirthPlace(),
-			$patrolLeader->getCountry(),
-			$patrolLeader->getGender(),
-			$patrolLeader->getPermanentResidence(),
-			$patrolLeader->getScoutUnit(),
-			$patrolLeader->getTelephoneNumber(),
-			$patrolLeader->getEmail(),
-			$patrolLeader->getFoodPreferences(),
-			$patrolLeader->getCardPassportNumber(),
-			$patrolLeader->getNotes(),
-			$patrolLeader->getPatrolName()
+			$patrolLeader->firstName,
+			$patrolLeader->lastName,
+			$patrolLeader->allergies,
+			($patrolLeader->birthDate ? $patrolLeader->birthDate->format('Y-m-d') : null),
+			$patrolLeader->birthPlace,
+			$patrolLeader->country,
+			$patrolLeader->gender,
+			$patrolLeader->permanentResidence,
+			$patrolLeader->scoutUnit,
+			$patrolLeader->telephoneNumber,
+			$patrolLeader->email,
+			$patrolLeader->foodPreferences,
+			$patrolLeader->cardPassportNumber,
+			$patrolLeader->notes,
+			$patrolLeader->patrolName
 		);
 	}
 	
@@ -142,20 +152,21 @@ class PatrolService {
 	}
 	
 	private function isPatrolParticipantValid(PatrolParticipant $participant): bool {
-		return $this->isPatrolParticipantDetailsValid($participant->getFirstName(),
-			$participant->getLastName(),
-			$participant->getAllergies(),
-			($participant->getBirthDate() ? $participant->getBirthDate()->format('Y-m-d') : null),
-			$participant->getBirthPlace(),
-			$participant->getCountry(),
-			$participant->getGender(),
-			$participant->getPermanentResidence(),
-			$participant->getScoutUnit(),
-			$participant->getTelephoneNumber(),
-			$participant->getEmail(),
-			$participant->getFoodPreferences(),
-			$participant->getCardPassportNumber(),
-			$participant->getNotes()
+		return $this->isPatrolParticipantDetailsValid(
+			$participant->firstName,
+			$participant->lastName,
+			$participant->allergies,
+			($participant->birthDate ? $participant->birthDate->format('Y-m-d') : null),
+			$participant->birthPlace,
+			$participant->country,
+			$participant->gender,
+			$participant->permanentResidence,
+			$participant->scoutUnit,
+			$participant->telephoneNumber,
+			$participant->email,
+			$participant->foodPreferences,
+			$participant->cardPassportNumber,
+			$participant->notes
 		);
 	}
 	
@@ -222,6 +233,10 @@ class PatrolService {
 		$this->patrolParticipantRepository->persist($patrolParticipant);
 	}
 	
+	/**
+	 * @param PatrolParticipant $patrolParticipant
+	 * @throws \LeanMapper\Exception\InvalidStateException
+	 */
 	public function deletePatrolParticipant(PatrolParticipant $patrolParticipant) {
 		$this->patrolParticipantRepository->delete($patrolParticipant);
 	}
@@ -255,7 +270,7 @@ class PatrolService {
 			}
 		}
 		if ($this->getClosedPatrolsCount() > $this->eventSettings['maximalClosedPatrolsCount']) {
-			$this->flashMessages->warning('Je uzavřeno maximální počet patrol. Počkej prosím na zvýšení limitu patrol. ');
+			$this->flashMessages->warning('Je zaregistrovaný maximální počet patrol. Počkej prosím na zvýšení limitu patrol. ');
 			$validityFlag = false;
 		}
 		
@@ -267,8 +282,14 @@ class PatrolService {
 		return 25;
 	}
 	
+	/**
+	 * @param PatrolLeader $patrolLeader
+	 * @throws \Exception
+	 */
 	public function closeRegistration(PatrolLeader $patrolLeader) {
-		$patrolLeader->finished = true;
-		$this->patrolLeaderRepository->persist($patrolLeader);
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
+		$role->status = $this->userStatusService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
 	}
 }

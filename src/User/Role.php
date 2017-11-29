@@ -2,14 +2,15 @@
 
 namespace kissj\User;
 
-use kissj\User\User;
 use LeanMapper\Entity;
 
 /**
- * @property int       $id
- * @property string    $name
- * @property User      $user m:hasOne
+ * @property int    $id
+ * @property string $name
+ * @property string $event
+ * @property string $status
+ * @property User   $user m:hasOne
  */
 class Role extends Entity {
-	
+
 }

@@ -12,7 +12,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
-		if (!$this->userService->isUserRoleValid($role)) {
+		if (!$this->userService->isUserRoleNameValid($role)) {
 			throw new Exception('User role "'.$role.'" is not valid');
 		}
 		// TODO translator for roles
@@ -21,6 +21,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	})->setName('registration');
 	
 	$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
+		$this->flashMessages->success('Dostal jsi se sem!');
+		$this->flashMessages->warning('Not done yet!');
+		$this->flashMessages->error('Něco se pokazilo!');
+		$this->flashMessages->info('Jsi krásný!');
+		
 		return $this->view->render($response, 'registrationLostSoul.twig');
 	})->setName('registrationLostSoul');
 	
@@ -28,7 +33,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
-		if (!$this->userService->isUserRoleValid($role)) {
+		if (!$this->userService->isUserRoleNameValid($role)) {
 			throw new Exception('User role "'.$role.'" is not valid');
 		}
 		$email = $request->getParsedBodyParam("email");
@@ -113,28 +118,33 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	
 	$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-		$role = $this->userService->getRole($request->getAttribute('user'));
-		if (is_null($role)) {
+		
+		if (is_null($request->getAttribute('user'))) {
 			$this->flashMessages->error('Sorry, you are not logged');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+		}
+		
+		$roleName = $this->userService->getRole($request->getAttribute('user'))->name;
+		if (!$this->userService->isUserRoleNameValid($roleName)) {
+			throw new Exception('Unknown role "'.$roleName.'"');
 		} else {
-			if (!$this->userService->isUserRoleValid($role)) {
-				throw new Exception('Unknown role "'.$role.'"');
-			} else {
-				switch ($role) {
-					case 'patrol-leader': {
+			switch ($roleName) {
+				case 'patrol-leader':
+					{
 						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 						break;
 					}
-					case 'ist': {
+				case 'ist':
+					{
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					}
-					default: {
-						throw new Exception('Non-implemented role "'.$role.'"!');
+				default:
+					{
+						throw new Exception('Non-implemented role "'.$roleName.'"!');
 					}
-				}
 			}
 		}
+		
 	})->setName('getDashboard');
 	
 	
@@ -148,7 +158,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$user = $request->getAttribute('user');
 			$patrolLeader = $this->patrolService->getPatrolLeader($user);
 			$allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
-			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'pDetails' => $allParticipants]);
+			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'allPDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
 		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
@@ -211,11 +221,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
 			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
 			if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
-				// TODO close registration
-				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email, jakmile bude schválena');
+				$this->patrolService->closeRegistration($patrolLeader);
+				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email s platebními údaji, jakmile bude schválena');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			} else {
-				$this->flashMessages->warning('Registraci ještě nelze uzavřít');
+				$this->flashMessages->error('Registraci ještě nelze uzavřít');
 				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 			}
 		})->setName('pl-confirmCloseRegistration');
@@ -232,7 +242,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
 				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
-				return $this->view->render($response, 'details-p.twig', ['pDetail' => $pDetails]);
+				return $this->view->render($response, 'details-p.twig', ['pDetails' => $pDetails]);
 			})->setName('p-changeDetails');
 			
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
@@ -309,7 +319,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
-		if ($this->userService->getRole($request->getAttribute('user')) != 'patrol-leader') {
+		if ($this->userService->getRole($request->getAttribute('user'))->name != 'patrol-leader') {
 			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
@@ -399,9 +409,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
 			$ist = $this->istService->getIst($request->getAttribute('user'));
-			if ($this->istService->isRegistrationValid($ist)) {
-				// TODO close registration
-				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email, jakmile bude schválena');
+			if ($this->istService->isCloseRegistrationValid($ist)) {
+				$this->istService->closeRegistration($ist);
+				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email s platebními údaji, jakmile bude schválena');
 				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 			} else {
 				$this->flashMessages->warning('Registraci ještě nelze uzavřít');
@@ -411,7 +421,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for IST
-		if ($this->userService->getRole($request->getAttribute('user')) != 'ist') {
+		if ($this->userService->getRole($request->getAttribute('user'))->name != 'ist') {
 			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
@@ -432,8 +442,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 // LANDING PAGE
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
-		$this->flashMessages->info('Welcome!');
-		
 		return $this->view->render($response, 'landing-page.twig');
 	})->setName("landing");
 });

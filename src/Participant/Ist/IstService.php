@@ -3,27 +3,38 @@
 namespace kissj\Participant\Ist;
 
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\User\Role;
+use kissj\User\RoleRepository;
 use kissj\User\User;
+use kissj\User\UserStatusService;
 
 class IstService {
 	/** @var IstRepository */
 	private $istRepository;
-	private $eventSettings;
+	/** @var \kissj\User\RoleRepository */
+	private $roleRepository;
+	private $userStatusService;
 	private $flashMessages;
+	private $eventSettings;
 	
 	public function __construct(IstRepository $istRepository,
+								RoleRepository $roleRepository,
+								UserStatusService $userStatusService,
 								FlashMessagesInterface $flashMessages,
-								$eventSettings) {
+								$eventSettings
+								) {
 		$this->istRepository = $istRepository;
+		$this->roleRepository = $roleRepository;
+		$this->userStatusService = $userStatusService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
+		
 	}
 	
 	public function getIst(User $user): Ist {
 		if ($this->istRepository->countBy(['user' => $user]) === 0) {
 			$ist = new Ist();
 			$ist->user = $user;
-			$ist->finished = false;
 			$this->istRepository->persist($ist);
 			return $ist;
 		}
@@ -33,26 +44,27 @@ class IstService {
 	}
 	
 	private function isIstValid(Ist $ist): bool {
-		return $this->isIstDetailsValid($ist->getFirstName(),
-			$ist->getLastName(),
-			$ist->getAllergies(),
-			($ist->getBirthDate() ? $ist->getBirthDate()->format('Y-m-d') : null),
-			$ist->getBirthPlace(),
-			$ist->getCountry(),
-			$ist->getGender(),
-			$ist->getPermanentResidence(),
-			$ist->getScoutUnit(),
-			$ist->getTelephoneNumber(),
-			$ist->getEmail(),
-			$ist->getFoodPreferences(),
-			$ist->getCardPassportNumber(),
-			$ist->getNotes(),
-			$ist->getPatrolName(),
-			$ist->getSkills(),
-			$ist->getLanguages(),
-			$ist->getArrivalDate(),
-			$ist->getLeavingDate(),
-			$ist->getCarRegistrationPlate());
+		return $this->isIstDetailsValid(
+			$ist->firstName,
+			$ist->lastName,
+			$ist->allergies,
+			($ist->birthDate ? $ist->birthDate->format('Y-m-d') : null),
+			$ist->birthPlace,
+			$ist->country,
+			$ist->gender,
+			$ist->permanentResidence,
+			$ist->scoutUnit,
+			$ist->telephoneNumber,
+			$ist->email,
+			$ist->foodPreferences,
+			$ist->cardPassportNumber,
+			$ist->notes,
+			$ist->workPreferences,
+			$ist->skills,
+			$ist->languages,
+			($ist->arrivalDate ? $ist->arrivalDate->format('Y-m-d') : null),
+			($ist->leavingDate ? $ist->leavingDate->format('Y-m-d') : null),
+			$ist->carRegistrationPlate);
 	}
 	
 	public function isIstDetailsValid(?string $firstName,
@@ -150,20 +162,22 @@ class IstService {
 			$validityFlag = false;
 		}
 		if ($this->getClosedIstsCount() > $this->eventSettings['maximalClosedIstsCount']) {
-			$this->flashMessages->warning('Je uzavřeno maximální počet IST. Počkej prosím na zvýšení limitu pro IST.');
+			$this->flashMessages->warning('Je zaregistrovaných maximální počet IST. Počkej prosím na zvýšení limitu pro IST.');
 			$validityFlag = false;
 		}
 		
 		return $validityFlag;
 	}
 	
-	private function getClosedIstsCount(): integer {
+	private function getClosedIstsCount(): int {
 		// TODO implement
 		return 100;
 	}
 	
 	public function closeRegistration(Ist $ist) {
-		$ist->finished = true;
-		$this->istRepository->persist($ist);
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
+		$role->status = $this->userStatusService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
 	}
 }

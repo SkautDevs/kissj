@@ -23,7 +23,17 @@ class UserService {
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, LoginTokenRepository $loginTokenRepository, MailerInterface $mailer, Router $router, Random $random, string $eventName, $renderer, array $possibleRoles) {
+	private $statusService;
+	
+	public function __construct(UserRepository $userRepository,
+								RoleRepository $roleRepository,
+								LoginTokenRepository $loginTokenRepository,
+								MailerInterface $mailer,
+								Router $router,
+								Random $random,
+								string $eventName,
+								$renderer,
+								array $possibleRoles) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
@@ -33,9 +43,11 @@ class UserService {
 		$this->renderer = $renderer;
 		$this->possibleRoles = $possibleRoles;
 		$this->roleRepository = $roleRepository;
+		
+		$this->statusService = new UserStatusService();
 	}
 	
-	public function isUserRoleValid(string $role): bool {
+	public function isUserRoleNameValid(string $role): bool {
 		return in_array($role, $this->possibleRoles);
 	}
 	
@@ -86,12 +98,8 @@ class UserService {
 		return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
 	}
 	
-	public function getRole(?User $user): string{
-		if (is_null($user)) {
-			return 'non-logged';
-		}
-		
-		return $this->roleRepository->findOneBy(['user' => $user])->getName();
+	public function getRole(User $user, string $event = 'cej2018'): Role {
+		return $this->roleRepository->findOneBy(['user' => $user]);
 	}
 	
 	public function saveUserIdIntoSession(User $user) {
@@ -110,11 +118,12 @@ class UserService {
 		unset($_SESSION['user']);
 	}
 	
-	// TODO add fixed event parameter
 	public function addRole(User $user, string $roleName) {
 		$role = new Role();
 		$role->name = $roleName;
 		$role->user = $user;
+		$role->event = $this->eventName;
+		$role->status = $this->statusService->getFirstStatus($roleName);
 		$this->roleRepository->persist($role);
 	}
 }

@@ -1,13 +1,11 @@
-CREATE TABLE user
-(
-	id      INTEGER PRIMARY KEY    autoincrement,
-	email   TEXT NOT NULL
+CREATE TABLE user (
+	id    INTEGER PRIMARY KEY    autoincrement,
+	email TEXT NOT NULL
 );
 
-CREATE TABLE patrolparticipant
-(
+CREATE TABLE patrolparticipant (
 	id                 INTEGER PRIMARY KEY autoincrement,
-  patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
+	patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
 	
 	firstName          TEXT,
 	lastName           TEXT,
@@ -25,11 +23,10 @@ CREATE TABLE patrolparticipant
 	notes              TEXT
 );
 
-CREATE TABLE patrolleader
-(
+CREATE TABLE patrolleader (
 	id                 INTEGER PRIMARY KEY autoincrement,
 	userId             INT CONSTRAINT patrolleader_userId_fk REFERENCES USER (id),
-	finished           BOOLEAN,
+	
 	patrolName         TEXT,
 	-- same as patrolparticipant
 	firstName          TEXT,
@@ -48,11 +45,10 @@ CREATE TABLE patrolleader
 	notes              TEXT
 );
 
-CREATE TABLE ist
-(
+CREATE TABLE ist (
 	id                   INTEGER PRIMARY KEY autoincrement,
 	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-	finished             BOOLEAN,
+	
 	workPreferences      TEXT,
 	skills               TEXT,
 	languages            TEXT,
@@ -62,10 +58,10 @@ CREATE TABLE ist
 	-- same as patrolparticipant
 	firstName            TEXT,
 	lastName             TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
+	permanentResidence   TEXT,
+	telephoneNumber      TEXT,
 	gender               TEXT,
-	country            TEXT,
+	country              TEXT,
 	email                TEXT,
 	scoutUnit            TEXT,
 	birthDate            DATETIME,
@@ -79,8 +75,7 @@ CREATE TABLE ist
 CREATE UNIQUE INDEX user_email_uindex
 	ON user (email);
 
-CREATE TABLE logintoken
-(
+CREATE TABLE logintoken (
 	id      INTEGER
 		PRIMARY KEY
 	autoincrement,
@@ -92,9 +87,10 @@ CREATE TABLE logintoken
 	used    BOOLEAN
 );
 
-CREATE TABLE role
-(
-	id      INTEGER PRIMARY KEY autoincrement,
-	name    TEXT,
-  userId  INT CONSTRAINT role_userId_fk REFERENCES user (id)
+CREATE TABLE role (
+	id     INTEGER PRIMARY KEY autoincrement,
+	name   TEXT,
+	event  TEXT NOT NULL,
+	status TEXT,
+	userId INT CONSTRAINT role_userId_fk REFERENCES user (id)
 );
