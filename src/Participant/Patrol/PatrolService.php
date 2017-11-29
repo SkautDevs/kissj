@@ -56,21 +56,21 @@ class PatrolService {
 		);
 	}
 	
-	public function isPatrolLeaderDetailsValid(string $firstName,
-											   string $lastName,
-											   string $allergies,
-											   string $birthDate,
-											   string $birthPlace,
-											   string $country,
-											   string $gender,
-											   string $permanentResidence,
-											   string $scoutUnit,
-											   string $telephoneNumber,
-											   string $email,
-											   string $foodPreferences,
-											   string $cardPassportNumber,
-											   string $notes,
-											   string $patrolName): bool {
+	public function isPatrolLeaderDetailsValid(?string $firstName,
+											   ?string $lastName,
+											   ?string $allergies,
+											   ?string $birthDate,
+											   ?string $birthPlace,
+											   ?string $country,
+											   ?string $gender,
+											   ?string $permanentResidence,
+											   ?string $scoutUnit,
+											   ?string $telephoneNumber,
+											   ?string $email,
+											   ?string $foodPreferences,
+											   ?string $cardPassportNumber,
+											   ?string $notes,
+											   ?string $patrolName): bool {
 		$validFlag = true;
 		
 		if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
@@ -88,21 +88,21 @@ class PatrolService {
 	}
 	
 	public function editPatrolLeaderInfo(PatrolLeader $patrolLeader,
-										 string $firstName,
-										 string $lastName,
-										 string $allergies,
-										 string $birthDate,
-										 string $birthPlace,
-										 string $country,
-										 string $gender,
-										 string $permanentResidence,
-										 string $scoutUnit,
-										 string $telephoneNumber,
-										 string $email,
-										 string $foodPreferences,
-										 string $cardPassportNumber,
-										 string $notes,
-										 string $patrolName) {
+										 ?string $firstName,
+										 ?string $lastName,
+										 ?string $allergies,
+										 ?string $birthDate,
+										 ?string $birthPlace,
+										 ?string $country,
+										 ?string $gender,
+										 ?string $permanentResidence,
+										 ?string $scoutUnit,
+										 ?string $telephoneNumber,
+										 ?string $email,
+										 ?string $foodPreferences,
+										 ?string $cardPassportNumber,
+										 ?string $notes,
+										 ?string $patrolName) {
 		$patrolLeader->firstName = $firstName;
 		$patrolLeader->lastName = $lastName;
 		$patrolLeader->allergies = $allergies;

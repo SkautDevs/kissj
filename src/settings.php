@@ -8,7 +8,8 @@ $settings = [
 		
 		// Renderer settings
 		'renderer' => [
-			'template_path' => __DIR__.'/../templates/',
+			'templates_path' => __DIR__.'/templates/',
+			'enable_cache' => true,
 		],
 		
 		// Monolog settings

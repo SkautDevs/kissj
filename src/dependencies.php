@@ -123,8 +123,10 @@ $container['flashMessages'] = function (C $c) {
 };
 
 $container['view'] = function (C $c) {
-	$view = new \Slim\Views\Twig(dirname(__FILE__).'/../templates/', [
-		'cache' => false ? dirname(__FILE__).'/../temp/twig' : false
+	$rendererSettings = $c->get('settings')['renderer'];
+	
+	$view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
+		'cache' => $rendererSettings['enable_cache'] ? dirname(__FILE__).'/../temp/twig' : false
 	]);
 	
 	// Instantiate and add Slim specific extension
@@ -132,8 +134,8 @@ $container['view'] = function (C $c) {
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
 	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost();
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
-	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']->dumpMessagesIntoArray());
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
+	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
 	
 	return $view;
 };
