@@ -5,8 +5,8 @@ namespace kissj\Participant\Ist;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
+use kissj\User\RoleService;
 use kissj\User\User;
-use kissj\User\UserStatusService;
 
 class IstService {
 	/** @var IstRepository */
@@ -19,7 +19,7 @@ class IstService {
 	
 	public function __construct(IstRepository $istRepository,
 								RoleRepository $roleRepository,
-								UserStatusService $userStatusService,
+								RoleService $userStatusService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings
 								) {

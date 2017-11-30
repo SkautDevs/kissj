@@ -1,27 +1,54 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8"/>
-		<title>CEJ 2018 Landing Page</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-		<link
+<head>
+	<meta charset="utf-8"/>
+	<title>Registrace CEJ 2018 - kissj</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+		  integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<link
 			rel="stylesheet"
 			href="{{ base_url() }}/styles.css">
-	</head>
-	<body>
-		<h1 class="text-center">KISSJ - CEJ 2018</h1>
-		<div class="flash-wrapper">
-			{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
-				<div class="alert alert-{{ flashMessage['type'] }}">
-					{{ flashMessage['message'] }}
-				</div>
-			{% endfor %}
+</head>
+<body>
+<h1 class="text-center">KISSJ - CEJ 2018</h1>
+<div class="user">
+	{% if user is not null %}
+		Tvůj email: {{ user.email }}, tvoje současná role: {{ userRole.name }} a tvůj status: {{ userRole.status }}
+		{% set userStatus = userRole.status %}
+		{% else %}
+		{% set userStatus = "unregistred" %}
+	{% endif %}
+	<br/>
+</div>
+<div class="ribbon">
+	<table class="table table-bordered">
+		<tr>
+			<td class="{% if userStatus == 'unregistred' %}table-primary{% endif %}">Registrace</td>
+			<td class="{% if userStatus == 'open' %}table-primary{% endif %}">Vyplnění údajů</td>
+			<td class="{% if userStatus == 'closed' %}table-primary{% endif %}">Uzavření přihlášeky</td>
+			<td class="{% if userStatus == 'aprooved' %}table-primary{% endif %}">Schválení přihlášky</td>
+			<td class="{% if userStatus == 'paid' %}table-primary{% endif %}">Zaplacení</td>
+		</tr>
+	</table>
+</div>
+<div class="flash-wrapper">
+	{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
+		<div class="alert alert-{{ flashMessage['type'] }}">
+			{{ flashMessage['message'] }}
 		</div>
-		<main role="main" class="container">
-			{% block content %}{% endblock %}
-		</main>
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-	</body>
+	{% endfor %}
+</div>
+<main role="main" class="container">
+	{% block content %}{% endblock %}
+</main>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+		integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+		crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+		integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+		crossorigin="anonymous"></script>
+</body>
 </html>

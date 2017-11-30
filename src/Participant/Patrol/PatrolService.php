@@ -5,6 +5,7 @@ namespace kissj\Participant\Patrol;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
+use kissj\User\RoleService;
 use kissj\User\User;
 use kissj\User\UserStatusService;
 
@@ -13,23 +14,15 @@ class PatrolService {
 	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
-	/** @var RoleRepository */
-	private $roleRepository;
-	/** @var UserStatusService */
-	private $userStatusService;
 	private $eventSettings;
 	private $flashMessages;
 	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
 								PatrolLeaderRepository $patrolLeaderRepository,
-								RoleRepository $roleRepository,
-								UserStatusService $userStatusService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
-		$this->roleRepository = $roleRepository;
-		$this->userStatusService = $userStatusService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
 	}

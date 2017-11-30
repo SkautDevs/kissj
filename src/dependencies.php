@@ -96,21 +96,27 @@ $container['roleRepository'] = function (C $c) {
 };
 
 // services
+$container['userRegeneration'] = function (C $c) {
+	return new \kissj\User\UserRegeneration($c->get('userRepository'), $_SESSION['user'] ?? []);
+};
+
 $container['userService'] = function (C $c) {
 	return new UserService(
 		$c->get('userRepository'),
-		$c->get('roleRepository'),
 		$c->get('tokenRepository'),
 		$c->get('mailer'),
 		$c->get('router'),
 		$c->get('random'),
 		$c->get('settings')['eventName'],
-		$c->get('view'),
-		$c->get('settings')['possibleUserRoles']);
+		$c->get('view')
+	);
 };
 
-$container['userStatusService'] = function (C $c) {
-	return new \kissj\User\UserStatusService();
+$container['roleService'] = function (C $c) {
+	return new \kissj\User\RoleService(
+		$c->get('settings')['possibleUserRoles'],
+		$c->get('roleRepository'),
+		$c->get('settings')['eventName']);
 };
 
 $container['patrolService'] = function (C $c) {
@@ -118,8 +124,6 @@ $container['patrolService'] = function (C $c) {
 	return new PatrolService(
 		$c->get('patrolParticipantRepository'),
 		$c->get('patrolLeaderRepository'),
-		$c->get('roleRepository'),
-		$c->get('userStatusService'),
 		$c->get('flashMessages'),
 		$eventSettings);
 };
@@ -129,7 +133,7 @@ $container['istService'] = function (C $c) {
 	return new IstService(
 		$c->get('istRepository'),
 		$c->get('roleRepository'),
-		$c->get('userStatusService'),
+		$c->get('roleService'),
 		$c->get('flashMessages'),
 		$eventSettings);
 };
@@ -149,10 +153,15 @@ $container['view'] = function (C $c) {
 	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
+	
+	// Add few elements for rendering
 	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost();
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
+	$user = $c['userRegeneration']->getCurrentUser();
+	$view->getEnvironment()->addGlobal('user', $user);
+	$view->getEnvironment()->addGlobal('userRole', $c['roleService']->getRole($user));
 	
 	return $view;
 };

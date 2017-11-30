@@ -12,7 +12,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
-		if (!$this->userService->isUserRoleNameValid($role)) {
+		if (!$this->roleService->isUserRoleNameValid($role)) {
 			throw new Exception('User role "'.$role.'" is not valid');
 		}
 		// TODO translator for roles
@@ -33,7 +33,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	
 	$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
 		$role = $args['role'];
-		if (!$this->userService->isUserRoleNameValid($role)) {
+		if (!$this->roleService->isUserRoleNameValid($role)) {
 			throw new Exception('User role "'.$role.'" is not valid');
 		}
 		$email = $request->getParsedBodyParam("email");
@@ -44,7 +44,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		}
 		
 		$user = $this->userService->registerUser($email);
-		$this->userService->addRole($user, $role);
+		$this->roleService->addRole($user, $role);
 		try {
 			$this->userService->sendLoginTokenByMail($email);
 			return $response->withRedirect($this->router->pathFor('signupSuccess'));
@@ -99,7 +99,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$loginToken = $args['token'];
 		if ($this->userService->isLoginTokenValid($loginToken)) {
 			$user = $this->userService->getUserFromToken($loginToken);
-			$this->userService->saveUserIdIntoSession($user);
+			$this->userRegeneration->saveUserIdIntoSession($user);
 			
 			return $response->withRedirect($this->router->pathFor('getDashboard'));
 		} else {
@@ -124,8 +124,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		}
 		
-		$roleName = $this->userService->getRole($request->getAttribute('user'))->name;
-		if (!$this->userService->isUserRoleNameValid($roleName)) {
+		$roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
+		if (!$this->roleService->isUserRoleNameValid($roleName)) {
 			throw new Exception('Unknown role "'.$roleName.'"');
 		} else {
 			switch ($roleName) {
@@ -161,94 +161,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'allPDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
-		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
-			$plDetails = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			return $this->view->render($response, 'details-pl.twig', ['plInfo' => $plDetails]);
-		})->setName('pl-changeDetails');
-		
-		$this->post("/postDetails", function (Request $request, Response $response, array $args) {
-			$params = $request->getParams();
-			if ($this->patrolService->isPatrolLeaderDetailsValid(
-				$params['firstName'] ?? null,
-				$params['lastName'] ?? null,
-				$params['allergies'] ?? null,
-				$params['birthDate'] ?? null,
-				$params['birthPlace'] ?? null,
-				$params['country'] ?? null,
-				$params['gender'] ?? null,
-				$params['permanentResidence'] ?? null,
-				$params['scoutUnit'] ?? null,
-				$params['telephoneNumber'] ?? null,
-				$params['email'] ?? null,
-				$params['foodPreferences'] ?? null,
-				$params['cardPassportNumber'] ?? null,
-				$params['notes'] ?? null,
-				$params['patrolName'] ?? null)) {
-				
-				$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-				$this->patrolService->editPatrolLeaderInfo(
-					$patrolLeader,
-					$params['firstName'] ?? null,
-					$params['lastName'] ?? null,
-					$params['allergies'] ?? null,
-					$params['birthDate'] ?? null,
-					$params['birthPlace'] ?? null,
-					$params['country'] ?? null,
-					$params['gender'] ?? null,
-					$params['permanentResidence'] ?? null,
-					$params['scoutUnit'] ?? null,
-					$params['telephoneNumber'] ?? null,
-					$params['email'] ?? null,
-					$params['foodPreferences'] ?? null,
-					$params['cardPassportNumber'] ?? null,
-					$params['notes'] ?? null,
-					$params['patrolName'] ?? null);
-				
-				$this->flashMessages->success('Údaje úspěšně uloženy');
-				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			} else {
-				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
-				return $response->withRedirect($this->router->pathFor('pl-changeDetails'));
-			}
-		})->setName('pl-postDetails');
-		
-		$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
-			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			$this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
-			return $this->view->render($response, 'closeRegistration-pl.twig');
-		})->setName('pl-closeRegistration');
-		
-		$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
-			$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-			if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
-				$this->patrolService->closeRegistration($patrolLeader);
-				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email s platebními údaji, jakmile bude schválena');
-				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			} else {
-				$this->flashMessages->error('Registraci ještě nelze uzavřít');
-				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			}
-		})->setName('pl-confirmCloseRegistration');
-		
-		// PARTICIPANT
-		
-		$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
-			// create participant and reroute to edit him
-			$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
-			return $response->withRedirect($this->router->pathFor('p-changeDetails', ['participantId' => $newParticipant->getId()]));
-		})->setName('pl-addParticipant');
-		
-		$this->group("/participant/{participantId}", function () {
+		// open registration only
+		$this->group("", function () {
 			
 			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
-				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
-				return $this->view->render($response, 'details-p.twig', ['pDetails' => $pDetails]);
-			})->setName('p-changeDetails');
+				$plDetails = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+				return $this->view->render($response, 'details-pl.twig', ['plInfo' => $plDetails]);
+			})->setName('pl-changeDetails');
 			
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
 				$params = $request->getParams();
-				
-				if ($this->patrolService->isPatrolParticipantDetailsValid(
+				if ($this->patrolService->isPatrolLeaderDetailsValid(
 					$params['firstName'] ?? null,
 					$params['lastName'] ?? null,
 					$params['allergies'] ?? null,
@@ -265,8 +188,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$params['notes'] ?? null,
 					$params['patrolName'] ?? null)) {
 					
-					$this->patrolService->editPatrolParticipant(
-						$this->patrolService->getPatrolParticipant($args['participantId']),
+					$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+					$this->patrolService->editPatrolLeaderInfo(
+						$patrolLeader,
 						$params['firstName'] ?? null,
 						$params['lastName'] ?? null,
 						$params['allergies'] ?? null,
@@ -280,46 +204,140 @@ $app->group("/".$settings['settings']['eventName'], function () {
 						$params['email'] ?? null,
 						$params['foodPreferences'] ?? null,
 						$params['cardPassportNumber'] ?? null,
-						$params['notes'] ?? null);
+						$params['notes'] ?? null,
+						$params['patrolName'] ?? null);
 					
-					$this->flashMessages->success('Účastník úspěšně uložen');
+					$this->flashMessages->success('Údaje úspěšně uloženy');
 					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 				} else {
-					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus přidat účastníka znovu.');
-					return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+					return $response->withRedirect($this->router->pathFor('pl-changeDetails'));
 				}
-			})->setName('p-postDetails');
+			})->setName('pl-postDetails');
 			
-			$this->get("/delete", function (Request $request, Response $response, array $args) {
-				$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
-				return $this->view->render($response, 'delete-p.twig', ['pDetail' => $pDetails]);
-			})->setName('p-delete');
+			$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
+				$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+				$this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
+				return $this->view->render($response, 'closeRegistration-pl.twig');
+			})->setName('pl-closeRegistration');
 			
-			$this->post("/confirmDelete", function (Request $request, Response $response, array $args) {
-				$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
-				$this->patrolService->deletePatrolParticipant($patrolParticipant);
-				$this->flashMessages->success('Účastník úspěšně vymazán!');
-				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			})->setName('p-confirmDelete');
+			$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
+				$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+				if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
+					$this->patrolService->closeRegistration($patrolLeader);
+					$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
+					$this->flashMessages->info('Registraci ti musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+				} else {
+					$this->flashMessages->error('Registraci ještě nelze uzavřít');
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+				}
+			})->setName('pl-confirmCloseRegistration');
+			
+			// PARTICIPANT
+			
+			$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
+				// create participant and reroute to edit him
+				/** @var \kissj\Participant\Patrol\PatrolParticipant $newParticipant */
+				$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
+				return $response->withRedirect($this->router->pathFor('p-changeDetails', ['participantId' => $newParticipant->id]));
+			})->setName('pl-addParticipant');
+			
+			$this->group("/participant/{participantId}", function () {
+				
+				$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+					$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+					return $this->view->render($response, 'details-p.twig', ['pDetails' => $pDetails]);
+				})->setName('p-changeDetails');
+				
+				$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+					$params = $request->getParams();
+					
+					if ($this->patrolService->isPatrolParticipantDetailsValid(
+						$params['firstName'] ?? null,
+						$params['lastName'] ?? null,
+						$params['allergies'] ?? null,
+						$params['birthDate'] ?? null,
+						$params['birthPlace'] ?? null,
+						$params['country'] ?? null,
+						$params['gender'] ?? null,
+						$params['permanentResidence'] ?? null,
+						$params['scoutUnit'] ?? null,
+						$params['telephoneNumber'] ?? null,
+						$params['email'] ?? null,
+						$params['foodPreferences'] ?? null,
+						$params['cardPassportNumber'] ?? null,
+						$params['notes'] ?? null,
+						$params['patrolName'] ?? null)) {
+						
+						$this->patrolService->editPatrolParticipant(
+							$this->patrolService->getPatrolParticipant($args['participantId']),
+							$params['firstName'] ?? null,
+							$params['lastName'] ?? null,
+							$params['allergies'] ?? null,
+							$params['birthDate'] ?? null,
+							$params['birthPlace'] ?? null,
+							$params['country'] ?? null,
+							$params['gender'] ?? null,
+							$params['permanentResidence'] ?? null,
+							$params['scoutUnit'] ?? null,
+							$params['telephoneNumber'] ?? null,
+							$params['email'] ?? null,
+							$params['foodPreferences'] ?? null,
+							$params['cardPassportNumber'] ?? null,
+							$params['notes'] ?? null);
+						
+						$this->flashMessages->success('Účastník úspěšně uložen');
+						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+					} else {
+						$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus přidat účastníka znovu.');
+						return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+					}
+				})->setName('p-postDetails');
+				
+				$this->get("/delete", function (Request $request, Response $response, array $args) {
+					$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+					return $this->view->render($response, 'delete-p.twig', ['pDetail' => $pDetails]);
+				})->setName('p-delete');
+				
+				$this->post("/confirmDelete", function (Request $request, Response $response, array $args) {
+					$patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
+					$this->patrolService->deletePatrolParticipant($patrolParticipant);
+					$this->flashMessages->success('Účastník úspěšně vymazán!');
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+				})->setName('p-confirmDelete');
+				
+			})->add(function (Request $request, Response $response, callable $next) {
+				// participants actions are allowed only for their Patrol Leader
+				$routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature)
+				if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
+					$this->patrolService->getPatrolParticipant($routeParams['participantId']),
+					$this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
+					
+					$this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
+					return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+				} else {
+					$response = $next($request, $response);
+					return $response;
+				}
+			});
 			
 		})->add(function (Request $request, Response $response, callable $next) {
-			// participants actions are allowed only for their Patrol Leader
-			$routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature)
-			if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
-				$this->patrolService->getPatrolParticipant($routeParams['participantId']),
-				$this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
-				
-				$this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
-				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-			} else {
-				$response = $next($request, $response);
-				return $response;
+			// change data can only users with open registration
+			/** @var \kissj\User\Role $role */
+			$role = $request->getAttribute('role');
+			if ($role->status != 'open') {
+				$this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
+				throw new Exception('Nemůžeš měnit údaje když nejsi ve stavu zadávání údajů!');
 			}
+			
+			$response = $next($request, $response);
+			return $response;
 		});
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for Patrol Leaders
-		if ($this->userService->getRole($request->getAttribute('user'))->name != 'patrol-leader') {
+		if ($this->roleService->getRole($request->getAttribute('user'))->name != 'patrol-leader') {
 			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {
@@ -339,38 +357,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist]);
 		})->setName('ist-dashboard');
 		
-		$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
-			$istDetails = $this->istService->getIst($request->getAttribute('user'));
-			return $this->view->render($response, 'details-ist.twig', ['istDetails' => $istDetails]);
-		})->setName('ist-changeDetails');
-		
-		$this->post("/postDetails", function (Request $request, Response $response, array $args) {
-			$params = $request->getParams();
-			if ($this->istService->isIstDetailsValid(
-				$params['firstName'] ?? null,
-				$params['lastName'] ?? null,
-				$params['allergies'] ?? null,
-				$params['birthDate'] ?? null,
-				$params['birthPlace'] ?? null,
-				$params['country'] ?? null,
-				$params['gender'] ?? null,
-				$params['permanentResidence'] ?? null,
-				$params['scoutUnit'] ?? null,
-				$params['telephoneNumber'] ?? null,
-				$params['email'] ?? null,
-				$params['foodPreferences'] ?? null,
-				$params['cardPassportNumber'] ?? null,
-				$params['notes'] ?? null,
-				
-				$params['workPreferences'] ?? null,
-				$params['skills'] ?? null,
-				$params['languages'] ?? null,
-				$params['arrivalDate'] ?? null,
-				$params['leavingDate'] ?? null,
-				$params['carRegistrationPlate'] ?? null)) {
-				
-				$this->istService->editIstInfo(
-					$this->istService->getIst($request->getAttribute('user')),
+		// open registration only
+		$this->group("", function () {
+			
+			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+				$istDetails = $this->istService->getIst($request->getAttribute('user'));
+				return $this->view->render($response, 'details-ist.twig', ['istDetails' => $istDetails]);
+			})->setName('ist-changeDetails');
+			
+			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+				$params = $request->getParams();
+				if ($this->istService->isIstDetailsValid(
 					$params['firstName'] ?? null,
 					$params['lastName'] ?? null,
 					$params['allergies'] ?? null,
@@ -391,37 +388,75 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$params['languages'] ?? null,
 					$params['arrivalDate'] ?? null,
 					$params['leavingDate'] ?? null,
-					$params['carRegistrationPlate'] ?? null);
-				
-				$this->flashMessages->success('Údaje úspěšně uloženy');
-				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-			} else {
-				$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
-				return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
+					$params['carRegistrationPlate'] ?? null)) {
+					
+					$this->istService->editIstInfo(
+						$this->istService->getIst($request->getAttribute('user')),
+						$params['firstName'] ?? null,
+						$params['lastName'] ?? null,
+						$params['allergies'] ?? null,
+						$params['birthDate'] ?? null,
+						$params['birthPlace'] ?? null,
+						$params['country'] ?? null,
+						$params['gender'] ?? null,
+						$params['permanentResidence'] ?? null,
+						$params['scoutUnit'] ?? null,
+						$params['telephoneNumber'] ?? null,
+						$params['email'] ?? null,
+						$params['foodPreferences'] ?? null,
+						$params['cardPassportNumber'] ?? null,
+						$params['notes'] ?? null,
+						
+						$params['workPreferences'] ?? null,
+						$params['skills'] ?? null,
+						$params['languages'] ?? null,
+						$params['arrivalDate'] ?? null,
+						$params['leavingDate'] ?? null,
+						$params['carRegistrationPlate'] ?? null);
+					
+					$this->flashMessages->success('Údaje úspěšně uloženy');
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+				} else {
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+					return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
+				}
+			})->setName('ist-postDetails');
+			
+			$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
+				$ist = $this->istService->getIst($request->getAttribute('user'));
+				$this->istService->isCloseRegistrationValid($ist); // call because of warnings
+				return $this->view->render($response, 'closeRegistration-ist.twig');
+			})->setName('ist-closeRegistration');
+			
+			$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
+				$ist = $this->istService->getIst($request->getAttribute('user'));
+				if ($this->istService->isCloseRegistrationValid($ist)) {
+					$this->istService->closeRegistration($ist);
+					$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
+					$this->flashMessages->info('Registraci ti teď musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+				} else {
+					$this->flashMessages->warning('Registraci ještě nelze uzavřít');
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+				}
+			})->setName('ist-confirmCloseRegistration');
+			
+		})->add(function (Request $request, Response $response, callable $next) {
+			// change data can only users with open registration
+			/** @var \kissj\User\Role $role */
+			$role = $request->getAttribute('role');
+			if ($role->status != 'open') {
+				$this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
+				throw new Exception('You cannot change data if you have not opened registration!');
 			}
-		})->setName('ist-postDetails');
-		
-		$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
-			$ist = $this->istService->getIst($request->getAttribute('user'));
-			$this->istService->isCloseRegistrationValid($ist); // call because of warnings
-			return $this->view->render($response, 'closeRegistration-ist.twig');
-		})->setName('ist-closeRegistration');
-		
-		$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
-			$ist = $this->istService->getIst($request->getAttribute('user'));
-			if ($this->istService->isCloseRegistrationValid($ist)) {
-				$this->istService->closeRegistration($ist);
-				$this->flashMessages->success('Registrace úspěšně uzavřena - pošleme ti email s platebními údaji, jakmile bude schválena');
-				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-			} else {
-				$this->flashMessages->warning('Registraci ještě nelze uzavřít');
-				return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-			}
-		})->setName('ist-confirmCloseRegistration');
+			
+			$response = $next($request, $response);
+			return $response;
+		});
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for IST
-		if ($this->userService->getRole($request->getAttribute('user'))->name != 'ist') {
+		if ($this->roleService->getRole($request->getAttribute('user'))->name != 'ist') {
 			$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		} else {

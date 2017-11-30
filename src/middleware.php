@@ -7,7 +7,6 @@ use Slim\Http\Response;
 
 $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 
-
 // TRAILING SLASH REMOVER
 
 $app->add(function (Request $request, Response $response, callable $next) {
@@ -17,10 +16,9 @@ $app->add(function (Request $request, Response $response, callable $next) {
 		// permanently redirect paths with a trailing slash to their non-trailing counterpart
 		$uri = $uri->withPath(substr($path, 0, -1));
 		
-		if($request->getMethod() == 'GET') {
+		if ($request->getMethod() == 'GET') {
 			return $response->withRedirect((string)$uri, 301);
-		}
-		else {
+		} else {
 			return $next($request->withUri($uri), $response);
 		}
 	}
@@ -28,30 +26,26 @@ $app->add(function (Request $request, Response $response, callable $next) {
 	return $next($request, $response);
 });
 
-
 // LOCALIZATION NEGOTIATOR
-
 // https://github.com/tboronczyk/localization-middleware
 // https://github.com/willdurand/Negotiation
 
-
 // TRANSLATOR
-
 // https://symfony.com/doc/current/components/translation.html
 
 
 // CSRF PROTECTION
-
 // https://github.com/slimphp/Slim-Csrf
 
-
-// USER AUTHENTICATION MIDDLEWARE
+// USER AUTHENTICATION
 
 $app->add(function (Request $request, Response $response, callable $next) use ($container) {
-	$userSevice = $container->userService;
-	$canRecreateUserFromSession = $userSevice->canRecreateUserFromSession($_SESSION['user'] ?? null);
-	if ($canRecreateUserFromSession) {
-		$request = $request->withAttribute('user', $userSevice->createUserFromSession($_SESSION['user']));
+	$userRegeneration = $container->get('userRegeneration');
+	$user = $userRegeneration->getCurrentUser();
+	$request = $request->withAttribute('user', $user);
+	if (!is_null($user)) {
+		$roleRepository = $container->get('roleRepository');
+		$request = $request->withAttribute('role', $roleRepository->findOneBy(['userId' => $user->id]));
 	}
 	
 	$response = $next($request, $response);

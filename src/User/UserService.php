@@ -12,28 +12,21 @@ class UserService {
 	private $random;
 	private $eventName;
 	private $renderer;
-	private $possibleRoles;
 	
 	/** @var UserRepository */
 	private $userRepository;
-	/** @var RoleRepository */
-	private $roleRepository;
 	/** @var MailerInterface */
 	private $mailer;
 	/** @var LoginTokenRepository */
 	private $loginTokenRepository;
 	
-	private $statusService;
-	
 	public function __construct(UserRepository $userRepository,
-								RoleRepository $roleRepository,
 								LoginTokenRepository $loginTokenRepository,
 								MailerInterface $mailer,
 								Router $router,
 								Random $random,
 								string $eventName,
-								$renderer,
-								array $possibleRoles) {
+								$renderer) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;
@@ -41,14 +34,6 @@ class UserService {
 		$this->random = $random;
 		$this->eventName = $eventName;
 		$this->renderer = $renderer;
-		$this->possibleRoles = $possibleRoles;
-		$this->roleRepository = $roleRepository;
-		
-		$this->statusService = new UserStatusService();
-	}
-	
-	public function isUserRoleNameValid(string $role): bool {
-		return in_array($role, $this->possibleRoles);
 	}
 	
 	public function isEmailExisting(string $email): bool {
@@ -98,32 +83,7 @@ class UserService {
 		return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
 	}
 	
-	public function getRole(User $user, string $event = 'cej2018'): Role {
-		return $this->roleRepository->findOneBy(['user' => $user]);
-	}
-	
-	public function saveUserIdIntoSession(User $user) {
-		$_SESSION['user']['id'] = $user->id;
-	}
-	
-	public function canRecreateUserFromSession($possibleUserSession): bool {
-		return $this->userRepository->isExisting(['id' => $possibleUserSession['id'] ?? null]);
-	}
-	
-	public function createUserFromSession(array $sessionUser): User {
-		return $this->userRepository->findOneBy(['id' => $sessionUser['id']]);
-	}
-	
 	public function logoutUser() {
 		unset($_SESSION['user']);
-	}
-	
-	public function addRole(User $user, string $roleName) {
-		$role = new Role();
-		$role->name = $roleName;
-		$role->user = $user;
-		$role->event = $this->eventName;
-		$role->status = $this->statusService->getFirstStatus($roleName);
-		$this->roleRepository->persist($role);
 	}
 }
