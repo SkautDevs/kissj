@@ -124,6 +124,8 @@ $container['patrolService'] = function (C $c) {
 	return new PatrolService(
 		$c->get('patrolParticipantRepository'),
 		$c->get('patrolLeaderRepository'),
+		$c->get('roleRepository'),
+		$c->get('roleService'),
 		$c->get('flashMessages'),
 		$eventSettings);
 };

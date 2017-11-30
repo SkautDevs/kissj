@@ -13,7 +13,7 @@ class IstService {
 	private $istRepository;
 	/** @var \kissj\User\RoleRepository */
 	private $roleRepository;
-	private $userStatusService;
+	private $roleService;
 	private $flashMessages;
 	private $eventSettings;
 	
@@ -25,7 +25,7 @@ class IstService {
 								) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
-		$this->userStatusService = $userStatusService;
+		$this->roleService = $userStatusService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
 		
@@ -177,7 +177,7 @@ class IstService {
 	public function closeRegistration(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-		$role->status = $this->userStatusService->getNextStatus($role->status);
+		$role->status = $this->roleService->getNextStatus($role->status);
 		$this->roleRepository->persist($role);
 	}
 }

@@ -14,15 +14,22 @@ class PatrolService {
 	private $patrolParticipantRepository;
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
+	/** @var \kissj\User\RoleRepository */
+	private $roleRepository;
+	private $roleService;
 	private $eventSettings;
 	private $flashMessages;
 	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
 								PatrolLeaderRepository $patrolLeaderRepository,
+								RoleRepository $roleRepository,
+								RoleService $roleService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
+		$this->roleRepository = $roleRepository;
+		$this->roleService = $roleService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
 	}
@@ -282,7 +289,7 @@ class PatrolService {
 	public function closeRegistration(PatrolLeader $patrolLeader) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
-		$role->status = $this->userStatusService->getNextStatus($role->status);
+		$role->status = $this->roleService->getNextStatus($role->status);
 		$this->roleRepository->persist($role);
 	}
 }

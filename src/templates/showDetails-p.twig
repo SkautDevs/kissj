@@ -1,0 +1,23 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Přidat účastníka</h2>
+		Křestní: {{ pDetails.getFirstName }}<br/>
+		Příjmení: {{ pDetails.getLastName }}<br/>
+		Alergie: {{ pDetails.getAllergies }}<br/>
+		Datum narození: {{ pDetails.getBirthDate.format('Y-m-d') }}<br/>
+		Místo narození: {{ pDetails.getBirthPlace }}<br/>
+		Země: {{ pDetails.getCountry }}<br/>
+		Gender: {{ pDetails.getGender }}<br/>
+		Trvalá adresa: {{ pDetails.getPermanentResidence }}<br/>
+		Skautská jednotka: {{ pDetails.getScoutUnit }}<br/>
+		Telefoní kontakt (pouze čísta s možným + na začátku): {{ pDetails.getTelephoneNumber }}<br/>
+		Email: {{ pDetails.getEmail }}<br/>
+		Dieta: {{ pDetails.getFoodPreferences }}<br/>
+		Číslo pasu/OP: {{ pDetails.getCardPassportNumber }}<br/>
+		Poznámky: {{ pDetails.getNotes }}<br/>
+
+		<a href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>
+	</div>
+{% endblock %}

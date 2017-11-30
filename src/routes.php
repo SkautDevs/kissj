@@ -132,7 +132,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				case 'patrol-leader':
 					{
 						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-						break;
 					}
 				case 'ist':
 					{
@@ -161,12 +160,32 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'allPDetails' => $allParticipants]);
 		})->setName('pl-dashboard');
 		
-		// open registration only
+		// excluded from status registration only
+		// TODO rethink about more elegant solution
+		$this->get("/participant/{participantId}/showDetails", function (Request $request, Response $response, array $args) {
+			$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+			return $this->view->render($response, 'showDetails-p.twig', ['pDetails' => $pDetails]);
+		})->setName('p-showDetails')->add(function (Request $request, Response $response, callable $next) {
+			// participants actions are allowed only for their Patrol Leader
+			$routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature)
+			if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
+				$this->patrolService->getPatrolParticipant($routeParams['participantId']),
+				$this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
+				
+				$this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
+				return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+			} else {
+				$response = $next($request, $response);
+				return $response;
+			}
+		});
+		
+		// open status registration only
 		$this->group("", function () {
 			
 			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
 				$plDetails = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-				return $this->view->render($response, 'details-pl.twig', ['plInfo' => $plDetails]);
+				return $this->view->render($response, 'changeDetails-pl.twig', ['plInfo' => $plDetails]);
 			})->setName('pl-changeDetails');
 			
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {
@@ -238,7 +257,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			$this->get("/addParticipant", function (Request $request, Response $response, array $args) {
 				// create participant and reroute to edit him
-				/** @var \kissj\Participant\Patrol\PatrolParticipant $newParticipant */
 				$newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
 				return $response->withRedirect($this->router->pathFor('p-changeDetails', ['participantId' => $newParticipant->id]));
 			})->setName('pl-addParticipant');
@@ -247,7 +265,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
 					$pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
-					return $this->view->render($response, 'details-p.twig', ['pDetails' => $pDetails]);
+					return $this->view->render($response, 'changeDetails-p.twig', ['pDetails' => $pDetails]);
 				})->setName('p-changeDetails');
 				
 				$this->post("/postDetails", function (Request $request, Response $response, array $args) {
@@ -357,12 +375,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist]);
 		})->setName('ist-dashboard');
 		
-		// open registration only
+		// open registration status only
 		$this->group("", function () {
 			
 			$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
 				$istDetails = $this->istService->getIst($request->getAttribute('user'));
-				return $this->view->render($response, 'details-ist.twig', ['istDetails' => $istDetails]);
+				return $this->view->render($response, 'changeDetails-ist.twig', ['istDetails' => $istDetails]);
 			})->setName('ist-changeDetails');
 			
 			$this->post("/postDetails", function (Request $request, Response $response, array $args) {

@@ -31,9 +31,9 @@ class RoleService {
 		return in_array($role, $this->possibleRoles);
 	}
 	
-	public function getRole(?User $user, string $event = 'cej2018'): Role {
+	public function getRole(?User $user, string $event = 'cej2018'): ?Role {
 		if (is_null($user)) {
-			return new Role();
+			return null;
 		} else {
 			return $this->roleRepository->findOneBy(['user' => $user]);
 		}
@@ -52,18 +52,22 @@ class RoleService {
 	
 	// for rendering
 	
-	public function getHelpForRole(Role $role): string {
-		switch ($role->status) {
-			case 'open':
-				return 'Vyplň všechny údaje o sobě a potom klikni na Uzavřít registraci dole';
-			case 'closed':
-				return 'Tvoje registrace čeká na schválení (schvalovat začneme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
-			case 'aprooved':
-				return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže';
-			case 'paid':
-				return 'Registraci máš vyplněnou, odevzdanou, přijatou i zaplacenou. Těšíme se na tebe na akci!';
-			default:
-				throw new \Exception('Unknown role '.$role->status);
+	public function getHelpForRole(?Role $role): ?string {
+		if (is_null($role)) {
+			return null;
+		} else {
+			switch ($role->status) {
+				case 'open':
+					return 'Vyplň všechny údaje o sobě a potom klikni na Uzavřít registraci dole';
+				case 'closed':
+					return 'Tvoje registrace čeká na schválení (schvalovat začneme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
+				case 'aprooved':
+					return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže';
+				case 'paid':
+					return 'Registraci máš vyplněnou, odevzdanou, přijatou i zaplacenou. Těšíme se na tebe na akci!';
+				default:
+					throw new \Exception('Unknown role '.$role->status);
+			}
 		}
 	}
 	
