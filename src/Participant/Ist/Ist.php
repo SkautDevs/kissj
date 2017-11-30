@@ -29,7 +29,6 @@ use kissj\User\User;
  * @property \DateTime|null $leavingDate m:passThru(dateFromString|dateToString)
  * @property string|null    $carRegistrationPlate
  *
- * @property boolean        $finished
  * @property User           $user m:hasOne
  */
 class Ist extends Participant {

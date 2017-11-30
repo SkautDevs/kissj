@@ -7,7 +7,21 @@
 		Přihlášený s emailem: {{ user.email }}<br/>
 		<a class="btn btn-primary" href="{{ path_for('logout') }}">Odhlásit se</a><br/>
 		<h2>IST údaje o sobě</h2>
-		<a class="btn btn-primary" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/>
+		<div class="help">
+			<h4>
+				{{ userCustomHelp }}
+			</h4>
+		</div>
+		{% if userStatus == 'aprooved' %}
+			<div class="paymentInfo">
+				<h4>Částka: {{ totalPrice }}</h4>
+				<h4>Číslo účtu: {{ bankAccount }}</h4>
+				<h4>Variabilní symbol: {{ status.variableSymbol }}</h4>
+			</div>
+		{% endif %}
+		{% if userStatus == 'open' %}
+			<a class="btn btn-primary" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/>
+		{% endif %}
 		Křestní jméno: {{ istDetails.firstName }}<br/>
 		Příjmení: {{ istDetails.lastName }}<br/>
 		Alergie: {{ istDetails.allergies }}<br/>
@@ -30,6 +44,8 @@
 		Pokud přijedu autem, jeho poznávací značka: {{ istDetails.carRegistrationPlate }}<br/>
 		<br/>
 		<br/>
-		<a class="btn btn-danger" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
+		{% if userStatus == 'open' %}
+			<a class="btn btn-danger" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
+		{% endif %}
 	</div>
 {% endblock %}

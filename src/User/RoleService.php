@@ -52,8 +52,19 @@ class RoleService {
 	
 	// for rendering
 	
-	public function getUserStatus(User $user) {
-		$this->roleRepository->findOneBy(['User' => $user])->status;
+	public function getHelpForRole(Role $role): string {
+		switch ($role->status) {
+			case 'open':
+				return 'Vyplň všechny údaje o sobě a potom klikni na Uzavřít registraci dole';
+			case 'closed':
+				return 'Tvoje registrace čeká na schválení (schvalovat začneme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
+			case 'aprooved':
+				return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže';
+			case 'paid':
+				return 'Registraci máš vyplněnou, odevzdanou, přijatou i zaplacenou. Těšíme se na tebe na akci!';
+			default:
+				throw new \Exception('Unknown role '.$role->status);
+		}
 	}
 	
 	// for User class

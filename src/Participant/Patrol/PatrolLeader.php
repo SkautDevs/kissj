@@ -24,7 +24,6 @@ use kissj\User\User;
  *
  * @property string|null    $patrolName
  *
- * @property boolean        $finished
  * @property User           $user m:hasOne
  */
 class PatrolLeader extends Participant {
