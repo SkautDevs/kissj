@@ -2,6 +2,7 @@
 
 namespace kissj\User;
 
+use Dibi\Exception;
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
 use Slim\Router;
@@ -50,25 +51,38 @@ class UserService {
 	
 	public function sendLoginTokenByMail(string $email): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
-		$loginToken = new LoginToken();
+
+		// invalidate all not yet used login tokens
+        $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
+        foreach ($existingTokens as $token) {
+            $token->used = true;
+            $this->loginTokenRepository->persist($token);
+        }
+
+        // generate new token
+        $loginToken = new LoginToken();
 		$token = $this->random->generateToken();
 		$loginToken->token = $token;
 		$loginToken->user = $user;
 		$loginToken->created = new \DateTime();
 		$loginToken->used = false;
+
 		$this->loginTokenRepository->persist($loginToken);
-		
-		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
+
+        $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
-		// TODO invalidate all other tokens for this User
-		
+
 		return $token;
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
 		// TODO implement time gate (15 mins from settings preferably)
-		return !is_null($this->loginTokenRepository->findOneBy(['token' => $loginToken]));
+        try {
+            return !is_null($this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false]));
+        } catch (\Exception $e) {
+            return false;
+        }
 	}
 	
 	public function getUserFromToken(string $token): User {

@@ -64,7 +64,15 @@ class Repository extends BaseRepository {
 			} else if ($value instanceof Relation) {
                 $qb->where("$field " . $value->relation . " %s", $value->value);
             } else {
-				$qb->where("$field = %s", $value);
+			    if (is_bool($value)) {
+                    $qb->where("$field = %b", $value);
+                } else if (is_int($value)) {
+                    $qb->where("$field = %i", $value);
+                } else if (is_float($value)) {
+                    $qb->where("$field = %f", $value);
+                } else {
+                    $qb->where("$field = %s", $value);
+                }
 			}
 		}
 	}
