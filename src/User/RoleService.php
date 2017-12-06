@@ -25,6 +25,7 @@ class RoleService {
 			'paid'];
 	}
 	
+	
 	// ROLES
 	
 	public function isUserRoleNameValid(string $role): bool {
@@ -47,6 +48,7 @@ class RoleService {
 		$role->status = $this->getFirstStatus($roleName);
 		$this->roleRepository->persist($role);
 	}
+	
 	
 	// STATUSES
 	
@@ -71,6 +73,20 @@ class RoleService {
 		}
 	}
 	
+	
+	// for Payment class
+	
+	public function setPaid(User $user) {
+		// TODO implement
+		
+		// search for corrent Role with $this->eventName;
+		
+		// check if Role has status one before approoved with getPreviousStatus
+		
+		// set paid to Role
+	}
+	
+	
 	// for User class
 	
 	public function getFirstStatus($role): string {
@@ -78,29 +94,41 @@ class RoleService {
 		return $this->statuses[0];
 	}
 	
-	/**
-	 * @param $role
-	 * @return int
-	 * @throws \Exception
-	 */
-	public function getNextStatus($role): string {
-		if (!$this->isStatusValid($role)) {
-			throw new \Exception('Unknown status "'.$role.'"');
+	public function getNextStatus(string $status): string {
+		if (!$this->isStatusValid($status)) {
+			throw new \Exception('Unknown status "'.$status.'"');
 		}
-		if ($this->isStatusLast($role)) {
-			throw new \Exception('Last role in row');
+		if ($this->isStatusLast($status)) {
+			throw new \Exception('Last role possible');
 		}
 		
-		$key = array_search($role, $this->statuses);
+		$key = array_search($status, $this->statuses);
 		
 		return $this->statuses[$key + 1];
 	}
 	
-	public function isStatusValid($status): bool {
+	private function getPreviousStatus(string $status): string {
+		if (!$this->isStatusValid($status)) {
+			throw new \Exception('Unknown status "'.$status.'"');
+		}
+		if ($this->isStatusFirst($status)) {
+			throw new \Exception('First role possible');
+		}
+		
+		$key = array_search($status, $this->statuses);
+		
+		return $this->statuses[$key - 1];
+	}
+	
+	private function isStatusValid(string $status): bool {
 		return in_array($status, $this->statuses);
 	}
 	
-	public function isStatusLast($role): bool {
-		return $role == end($this->statuses);
+	private function isStatusLast(string $status): bool {
+		return $status == end($this->statuses);
+	}
+	
+	private function isStatusFirst(string $status): bool {
+		return $status == $this->statuses[0];
 	}
 }

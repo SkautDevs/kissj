@@ -34,7 +34,7 @@ class PaymentService {
 		$this->logger = $logger;
 	}
 	
-	function createNewPayment(User $user, string $event): Payment {
+	function createNewPayment(User $user): Payment {
 		$newVS = $this->random->generateVariableSymbol($this->settings['prefixVariableSymbol']);
 		
 		$newPayment = new Payment();
