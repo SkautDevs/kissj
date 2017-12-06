@@ -17,6 +17,10 @@ class UserRegeneration {
 		}
 	}
 	
+	public function getGuestUser(): User {
+		return new User();
+	}
+	
 	public function getCurrentUser(): ?User {
 		return $this->currentUser;
 	}
