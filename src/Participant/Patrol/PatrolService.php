@@ -3,6 +3,7 @@
 namespace kissj\Participant\Patrol;
 
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Orm\Relation;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
 use kissj\User\RoleService;
@@ -25,13 +26,15 @@ class PatrolService {
 								RoleRepository $roleRepository,
 								RoleService $roleService,
 								FlashMessagesInterface $flashMessages,
-								$eventSettings) {
+								$eventSettings,
+                                $eventName = 'cej2018') {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->roleRepository = $roleRepository;
 		$this->roleService = $roleService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
+		$this->eventName = $eventName;
 	}
 	
 	public function getPatrolLeader(User $user): PatrolLeader {
@@ -278,8 +281,11 @@ class PatrolService {
 	}
 	
 	private function getClosedPatrolsCount(): int {
-		// TODO implement
-		return 25;
+        return $this->roleRepository->countBy([
+            'name' => 'patrol-leader',
+            'event' => $this->eventName,
+            'status' => new Relation('open', '!=')
+        ]);
 	}
 	
 	/**

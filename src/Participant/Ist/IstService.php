@@ -2,6 +2,7 @@
 
 namespace kissj\Participant\Ist;
 
+use kissj\Orm\Relation;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
@@ -21,14 +22,15 @@ class IstService {
 								RoleRepository $roleRepository,
 								RoleService $userStatusService,
 								FlashMessagesInterface $flashMessages,
-								$eventSettings
+								$eventSettings,
+                                $eventName = 'cej2018'
 								) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
 		$this->roleService = $userStatusService;
 		$this->flashMessages = $flashMessages;
 		$this->eventSettings = $eventSettings;
-		
+		$this->eventName = $eventName;
 	}
 	
 	public function getIst(User $user): Ist {
@@ -38,7 +40,7 @@ class IstService {
 			$this->istRepository->persist($ist);
 			return $ist;
 		}
-		
+
 		$ist = $this->istRepository->findOneBy(['user' => $user]);
 		return $ist;
 	}
@@ -170,8 +172,11 @@ class IstService {
 	}
 	
 	private function getClosedIstsCount(): int {
-		// TODO implement
-		return 100;
+		return $this->roleRepository->countBy([
+		    'name' => 'ist',
+            'event' => $this->eventName,
+            'status' => new Relation('open', '!=')
+        ]);
 	}
 	
 	public function closeRegistration(Ist $ist) {
