@@ -4,3 +4,4 @@ logs/*
 /db.sqlite
 /db_test.sqlite
 /src/settings_custom.php
+temp/*
