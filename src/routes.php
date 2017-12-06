@@ -1,7 +1,5 @@
 <?php
 
-// TODO fix problem with "public" subdirectory in URI (not nice)
-
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -497,4 +495,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	$this->get("", function (Request $request, Response $response, array $args) {
 		return $this->view->render($response, 'landing-page.twig');
 	})->setName("landing");
+});
+
+$app->get("/", function (Request $request, Response $response, array $args) {
+	return $this->view->render($response, 'system/landing.twig');
 });
