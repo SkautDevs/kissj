@@ -25,21 +25,21 @@
 			<a class="btn btn-primary" href="{{ path_for('pl-changeDetails') }}">Změnit údaje o sobě</a><br/>
 		{% endif %}
 
-		Název patroly: {{ plDetails.patrolName }}<br/>
-		Křestní jméno: {{ plDetails.firstName }}<br/>
-		Příjmení: {{ plDetails.lastName }}<br/>
-		Alergie: {{ plDetails.allergies }}<br/>
-		Datum narození: {{ plDetails.birthDate.format('Y-m-d') }}<br/>
-		Místo narození: {{ plDetails.birthPlace }}<br/>
-		Země: {{ plDetails.country }}<br/>
-		Gender: {{ plDetails.gender }}<br/>
-		Trvalá adresa: {{ plDetails.permanentResidence }}<br/>
-		Skautská jednotka: {{ plDetails.scoutUnit }}<br/>
-		Telefoní kontakt: {{ plDetails.telephoneNumber }}<br/>
-		Email: {{ plDetails.email }}<br/>
-		Dieta: {{ plDetails.foodPreferences }}<br/>
-		Číslo pasu/OP: {{ plDetails.cardPassportNumber }}<br/>
-		Poznámky: {{ plDetails.notes }}<br/>
+		Název patroly: {{ plDetails.getPatrolName }}<br/>
+		Křestní jméno: {{ plDetails.getFirstName }}<br/>
+		Příjmení: {{ plDetails.getLastName }}<br/>
+		Alergie: {{ plDetails.getAllergies }}<br/>
+		Datum narození: {{ plDetails.getBirthDate.format('Y-m-d') }}<br/>
+		Místo narození: {{ plDetails.getBirthPlace }}<br/>
+		Země: {{ plDetails.getCountry }}<br/>
+		Gender: {{ plDetails.getGender }}<br/>
+		Trvalá adresa: {{ plDetails.getPermanentResidence }}<br/>
+		Skautská jednotka: {{ plDetails.getScoutUnit }}<br/>
+		Telefoní kontakt: {{ plDetails.getTelephoneNumber }}<br/>
+		Email: {{ plDetails.getEmail }}<br/>
+		Dieta: {{ plDetails.getFoodPreferences }}<br/>
+		Číslo pasu/OP: {{ plDetails.getCardPassportNumber }}<br/>
+		Poznámky: {{ plDetails.getNotes }}<br/>
 		<br/>
 		<h2>Seznam účastníků</h2>
 		{% if userStatus == 'open' %}

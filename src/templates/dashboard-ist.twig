@@ -22,26 +22,26 @@
 		{% if userStatus == 'open' %}
 			<a class="btn btn-primary" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/>
 		{% endif %}
-		Křestní jméno: {{ istDetails.firstName }}<br/>
-		Příjmení: {{ istDetails.lastName }}<br/>
-		Alergie: {{ istDetails.allergies }}<br/>
-		Datum narození: {{ istDetails.birthDate.format('Y-m-d') }}<br/>
-		Místo narození: {{ istDetails.birthPlace }}<br/>
-		Země: {{ istDetails.country }}<br/>
-		Gender: {{ istDetails.gender }}<br/>
-		Trvalá adresa: {{ istDetails.permanentResidence }}<br/>
-		Skautská jednotka: {{ istDetails.scoutUnit }}<br/>
-		Telefoní kontakt: {{ istDetails.telephoneNumber }}<br/>
-		Email: {{ istDetails.email }}<br/>
-		Dieta: {{ istDetails.foodPreferences }}<br/>
-		Číslo pasu/občanky: {{ istDetails.cardPassportNumber }}<br/>
-		Poznámky: {{ istDetails.notes }}<br/>
-		Preference práce: {{ istDetails.workPreferences }}<br/>
-		Skills: {{ istDetails.skills }}<br/>
-		Jazyky, kterými se domluvím: {{ istDetails.languages }}<br/>
-		Čas příjezdu: {{ istDetails.arrivalDate.format('Y-m-d') }}<br/>
-		Čas odjezdu: {{ istDetails.leavingDate.format('Y-m-d') }}<br/>
-		Pokud přijedu autem, jeho poznávací značka: {{ istDetails.carRegistrationPlate }}<br/>
+		Křestní jméno: {{ istDetails.getFirstName }}<br/>
+		Příjmení: {{ istDetails.getLastName }}<br/>
+		Alergie: {{ istDetails.getAllergies }}<br/>
+		Datum narození: {{ istDetails.getBirthDate.format('Y-m-d') }}<br/>
+		Místo narození: {{ istDetails.getBirthPlace }}<br/>
+		Země: {{ istDetails.getCountry }}<br/>
+		Gender: {{ istDetails.getGender }}<br/>
+		Trvalá adresa: {{ istDetails.getPermanentResidence }}<br/>
+		Skautská jednotka: {{ istDetails.getScoutUnit }}<br/>
+		Telefoní kontakt: {{ istDetails.getTelephoneNumber }}<br/>
+		Email: {{ istDetails.getEmail }}<br/>
+		Dieta: {{ istDetails.getFoodPreferences }}<br/>
+		Číslo pasu/občanky: {{ istDetails.getCardPassportNumber }}<br/>
+		Poznámky: {{ istDetails.getNotes }}<br/>
+		Preference práce: {{ istDetails.getWorkPreferences }}<br/>
+		Skills: {{ istDetails.getSkills }}<br/>
+		Jazyky, kterými se domluvím: {{ istDetails.getLanguages }}<br/>
+		Čas příjezdu: {{ istDetails.getArrivalDate.format('Y-m-d') }}<br/>
+		Čas odjezdu: {{ istDetails.getLeavingDate.format('Y-m-d') }}<br/>
+		Pokud přijedu autem, jeho poznávací značka: {{ istDetails.getCarRegistrationPlate }}<br/>
 		<br/>
 		<br/>
 		{% if userStatus == 'open' %}
