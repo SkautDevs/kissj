@@ -151,6 +151,7 @@ $container['paymentService'] = function (C $c) {
 	return new \kissj\Payment\PaymentService(
 		$paymentsSettings,
 		$c->get('paymentRepository'),
+		$c->get('roleRepository'),
 		$c->get('mailer'),
 		$c->get('view'),
 		$c->get('settings')['eventName'],
@@ -176,7 +177,12 @@ $container['view'] = function (C $c) {
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
 	
 	// Add few elements for rendering
-	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort();
+	$portString = '';
+	$port = $uri->getPort();
+	if (!is_null($port)) {
+		$portString .= ':'.$port;
+	}
+	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost().$portString;
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
