@@ -13,6 +13,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 	private $smtp_auth;
 	private $smtp_username;
 	private $smtp_password;
+	private $smtp_secure;
 	private $from_mail;
 	private $from_name;
 	private $bcc_mail;
@@ -26,11 +27,12 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$this->smtp_server = $mailerSettings['smtp_server'];
 		$this->smtp_auth = $mailerSettings['smtp_auth'];
 		$this->smtp_port = $mailerSettings['smtp_port'];
-		$this->smtp_username = $mailerSettings['smtp_password'];
-		$this->smtp_password = $mailerSettings['from_mail'];
+		$this->smtp_username = $mailerSettings['from_mail'];
+		$this->smtp_password = $mailerSettings['smtp_password'];
+		$this->smtp_secure = $mailerSettings['smtp_secure'];
 		$this->from_mail = $mailerSettings['from_mail'];
 		$this->from_name = $mailerSettings['from_name'];
-		$this->bcc_mail = $mailerSettings['from_mail'];
+		$this->bcc_mail = $mailerSettings['bcc_mail'];
 		$this->bcc_name = $mailerSettings['bcc_name'];
 		$this->disable_tls = $mailerSettings['disable_tls'];
 		$this->debugOutputLevel = $mailerSettings['debugOutoutLevel'];
@@ -41,7 +43,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$mailer = new PHPMailer();
 		
 		//Server settings
-		$mailer->SMTPDebug = 2;    // Enable debug output
+		$mailer->SMTPDebug = $this->debugOutputLevel; // Enable debug output
 		if ($this->smtp) {
 			$mailer->isSMTP();
 		} else {
@@ -61,12 +63,14 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$mailer->SMTPAuth = $this->smtp_auth;    // Enable SMTP authentication
 		$mailer->Username = $this->smtp_username;    // SMTP username
 		$mailer->Password = $this->smtp_password;    // SMTP password
-		$mailer->SMTPSecure = 'tls';    // Enable TLS encryption, `ssl` also accepted
+		$mailer->SMTPSecure = $this->smtp_secure;    // Enable TLS encryption, `ssl` also accepted
 		$mailer->CharSet = 'UTF-8';
 		
 		//Recipients
 		$mailer->setFrom($this->from_mail, $this->from_name);
-		$mailer->addCC($this->bcc_mail, $this->bcc_name);
+		if (!empty($this->bcc_mail)) {
+			$mailer->addCC($this->bcc_mail, $this->bcc_name);
+		}
 		
 		if ($this->sendMailToMainRecipient) {
 			$mailer->addAddress($recipientEmail);
@@ -78,11 +82,11 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$mailer->Subject = $subject;
 		$mailer->Body = $body;
 		$mailer->AltBody = strip_tags($body);
-
+		
 		$mailSent = $mailer->send();
-
+		
 		if ($mailSent === false) {
-		    throw new Exception("Error sending email");
-        }
+			throw new Exception("Error sending email");
+		}
 	}
 }

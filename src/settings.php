@@ -27,17 +27,18 @@ $settings = [
 			'smtp_port' => 587,
 			'smtp_username' => '',
 			'smtp_password' => '',
+			'smtp_secure' => 'ssl', // ssl for Gmail, tls also possible
 			
 			'from_mail' => 'registration@localhost.cz', // registration mail
 			'from_name' => 'Registrace Localhost',
 			
-			'bcc_mail' => 'registration@localhost.cz', // another mail
-			'bcc_name' => 'Registrační Asistentka',
+			'bcc_mail' => '', // another mail
+			'bcc_name' => '',
 			
 			// debugging settings
-			'disable_tls' => false, // turn off all certificate checksdebugOutoutLevel
-			'debugOutoutLevel' => 0, // print debug leve (0 min to 4 max)
-			'sendMailToMainRecipient' => true, // turn off in localhost
+			'disable_tls' => false, // turn off all certificate check
+			'debugOutoutLevel' => 0, // print debug level (0 min to 4 max)
+			'sendMailToMainRecipient' => true, // set false in localhost
 		],
 		
 		'db' => [
