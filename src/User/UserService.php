@@ -5,6 +5,7 @@ namespace kissj\User;
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
 use Slim\Router;
+use Slim\Views\Twig;
 
 class UserService {
 	
@@ -26,7 +27,7 @@ class UserService {
 								Router $router,
 								Random $random,
 								string $eventName,
-								$renderer) {
+								Twig $renderer) {
 		$this->userRepository = $userRepository;
 		$this->mailer = $mailer;
 		$this->loginTokenRepository = $loginTokenRepository;

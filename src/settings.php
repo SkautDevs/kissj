@@ -70,6 +70,10 @@ $settings = [
 			'maximalClosedPatrolsCount' => 25,
 			'maximalClosedIstsCount' => 100,
 		],
+		
+		'paymentSettings' => [
+			'prefixVariableSymbol' => '',
+		]
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {

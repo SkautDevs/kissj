@@ -6,6 +6,7 @@ use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
+use kissj\Payment\PaymentRepository;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -19,7 +20,6 @@ $container['logger'] = function (C $c) {
 	$logger = new Monolog\Logger($settings['name']);
 	$logger->pushProcessor(new Monolog\Processor\UidProcessor());
 	$logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
-	
 	return $logger;
 };
 
@@ -39,7 +39,6 @@ $container['db'] = function (C $c) {
 		'driver' => 'sqlite3',
 		'database' => $path,
 	]);
-	
 	return $connection;
 };
 
@@ -95,6 +94,13 @@ $container['roleRepository'] = function (C $c) {
 		$c->get('dbFactory'));
 };
 
+$container['paymentRepository'] = function (C $c) {
+	return new PaymentRepository(
+		$c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
+};
+
 // services
 $container['userRegeneration'] = function (C $c) {
 	return new \kissj\User\UserRegeneration($c->get('userRepository'), $_SESSION['user'] ?? []);
@@ -138,6 +144,19 @@ $container['istService'] = function (C $c) {
 		$c->get('roleService'),
 		$c->get('flashMessages'),
 		$eventSettings);
+};
+
+$container['paymentService'] = function (C $c) {
+	$paymentsSettings = $c->get('settings')['paymentSettings'];
+	return new \kissj\Payment\PaymentService(
+		$paymentsSettings,
+		$c->get('paymentRepository'),
+		$c->get('mailer'),
+		$c->get('view'),
+		$c->get('settings')['eventName'],
+		$c->get('random'),
+		$c->get('logger')
+	);
 };
 
 // views

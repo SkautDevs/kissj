@@ -94,3 +94,11 @@ CREATE TABLE role (
 	status TEXT,
 	userId INT CONSTRAINT role_userId_fk REFERENCES user (id)
 );
+
+CREATE TABLE payments (
+	id             INTEGER PRIMARY KEY autoincrement,
+	event          TEXT NOT NULL,
+	variableSymbol TEXT NOT NULL,
+	status         TEXT NOT NULL,
+	userId         INT CONSTRAINT role_userId_fk REFERENCES user (id)
+);
