@@ -10,3 +10,65 @@
 	max-width: 720px;
 	margin: 0 auto;
 }
+
+.progressbar {
+	display: flex;
+	list-style: none;
+	padding: 0;
+	margin: 0 auto;
+	flex-direction: column;
+	max-width: 20em;
+}
+
+@media (min-width: 776px) {
+	.progressbar {
+		max-width: 1200px;
+		flex-direction: row;
+	}
+	.progressbar-item::before {
+		content: '';
+	}
+}
+
+.progressbar-item {
+	flex-basis: 0;
+	flex-grow: 1;
+	background: var(--bgColor, blue);
+	text-align: center;
+	padding: 1em;
+	color: white;
+	font-size: 17px;
+	border-radius: 6px;
+	position: relative;
+}
+
+.progressbar-item:not(:first-child)::before {
+	display: block;
+	position: absolute;
+	left: -6px;
+	top: 0;
+	bottom: 0;
+	width: 1em;
+	background: var(--bgColor, blue);
+	z-index: -1;
+}
+
+.progressbar-item:nth-child(1) {
+	--bgColor: #a21f16;
+}
+.progressbar-item:nth-child(2) {
+	--bgColor: #a0067d;
+}
+.progressbar-item:nth-child(3) {
+	--bgColor: #5e2281;
+}
+.progressbar-item:nth-child(4) {
+	--bgColor: #172983;
+}
+.progressbar-item:nth-child(5) {
+	--bgColor: #1c860e;
+}
+
+.progressbar-item.is-active ~ .progressbar-item {
+	filter: grayscale(100%);
+}

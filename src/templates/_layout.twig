@@ -7,7 +7,7 @@
 		  integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 	<link
 			rel="stylesheet"
-			href="{{ base_url() }}/styles.css">
+			href="/public/styles.css">
 </head>
 <body>
 <h1 class="text-center">KISSJ - CEJ 2018</h1>
@@ -20,17 +20,13 @@
 	{% endif %}
 	<br/>
 </div>
-<div class="ribbon">
-	<table class="table table-bordered">
-		<tr>
-			<td class="{% if userStatus == 'unregistred' %}table-primary{% endif %}">Registrace</td>
-			<td class="{% if userStatus == 'open' %}table-primary{% endif %}">Vyplnění údajů</td>
-			<td class="{% if userStatus == 'closed' %}table-primary{% endif %}">Uzavřená přihláška</td>
-			<td class="{% if userStatus == 'aprooved' %}table-primary{% endif %}">Schválená přihlášky</td>
-			<td class="{% if userStatus == 'paid' %}table-primary{% endif %}">Zaplaceno!</td>
-		</tr>
-	</table>
-</div>
+<ul class="progressbar">
+	<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
+	<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
+	<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzavřená přihláška</li>
+	<li class="progressbar-item {% if userStatus == 'aprooved' %}is-active{% endif %}">Schválená přihlášky</li>
+	<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
+</ul>
 <div class="flash-wrapper">
 	{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
 		<div class="alert alert-{{ flashMessage['type'] }}">
