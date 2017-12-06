@@ -11,6 +11,14 @@
 			Service Team!</a><br/><br/>
 		<a href="{{ path_for('registrationLostSoul') }}" class="btn">Nemám Patrol Leadera a stejně chci jet jako účastník!</a><br/><br/>
 
-		<a href="{{ path_for('loginAskEmail') }}" class="btn btn-link">Přihlásit se</a>
+		<div class="text-center">
+			<form action="{{ path_for('loginScreenAfterSent') }}" method="post">
+				<div class="form-group">
+					<label for="form-email">Přihlásit se</label>
+					<input class="form-control" type="email" name="email" id="form-email" required/><br/>
+				</div>
+				<input type="submit" value="Poslat mail pro přihlášení" class="btn btn-primary"/>
+			</form>
+		</div>
 	</div>
 {% endblock %}
