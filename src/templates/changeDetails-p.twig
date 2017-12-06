@@ -1,27 +1,28 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="text-center">
+	<div class="card text-left signin-theme">
 		<h2>Přidat účastníka</h2>
 		<form method="POST" action="{{ path_for('p-postDetails', {'participantId': pDetails.getId}) }}">
-			Křestní: <input type="text" name="firstName" value="{{ pDetails.getFirstName }}"><br/>
-			Příjmení: <input type="text" name="lastName" value="{{ pDetails.getLastName }}"><br/>
-			Alergie: <input type="text" name="allergies" value="{{ pDetails.getAllergies }}"><br/>
-			Datum narození: <input type="date" name="birthDate" value="{{ pDetails.getBirthDate.format('Y-m-d') }}"><br/>
-			Místo narození: <input type="text" name="birthPlace" value="{{ pDetails.getBirthPlace }}"><br/>
-			Země: <input type="text" name="country" value="{{ pDetails.getCountry }}"><br/>
-			Gender: <input type="text" name="gender" value="{{ pDetails.getGender }}"><br/>
-			Trvalá adresa: <input type="text" name="permanentResidence" value="{{ pDetails.getPermanentResidence }}"><br/>
-			Skautská jednotka: <input type="text" name="scoutUnit" value="{{ pDetails.getScoutUnit }}"><br/>
-			Telefoní kontakt (pouze čísta s možným + na začátku): <input type="text" name="telephoneNumber"
-																		 value="{{ pDetails.getTelephoneNumber }}"><br/>
-			Email: <input type="email" name="email" value="{{ pDetails.getEmail }}"><br/>
-			Dieta: <input type="text" name="foodPreferences" value="{{ pDetails.getFoodPreferences }}"><br/>
-			Číslo pasu/OP: <input type="text" name="cardPassportNumber" value="{{ pDetails.getCardPassportNumber }}"><br/>
-			Poznámky: <input type="text" name="notes" value="{{ pDetails.getNotes }}"><br/>
+			<label class="form-group form-group-inline">Křestní: <input class="form-control" type="text" name="firstName" value="{{ pDetails.getFirstName }}"></label>
+			<label class="form-group form-group-inline">Příjmení: <input class="form-control" type="text" name="lastName" value="{{ pDetails.getLastName }}"></label>
+			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ pDetails.getAllergies }}"></label>
+			<label class="form-group form-group-inline">Datum narození: <input class="form-control" type="date" name="birthDate" value="{{ pDetails.getBirthDate.format('Y-m-d') }}"></label>
+			<label class="form-group form-group-inline">Místo narození: <input class="form-control" type="text" name="birthPlace" value="{{ pDetails.getBirthPlace }}"></label>
+			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" value="{{ pDetails.getCountry }}"></label>
+			<label class="form-group form-group-inline">Gender: <input class="form-control" type="text" name="gender" value="{{ pDetails.getGender }}"></label>
+			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ pDetails.getPermanentResidence }}"></label>
+			<label class="form-group form-group-inline">Skautská jednotka: <input class="form-control" type="text" name="scoutUnit" value="{{ pDetails.getScoutUnit }}"></label>
+			<label class="form-group form-group-inline">Telefoní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla případně '+' na začátku" value="{{ pDetails.getTelephoneNumber }}"></label>
+			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{{ pDetails.getEmail }}"></label>
+			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" value="{{ pDetails.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Číslo pasu/OP: <input class="form-control" type="text" name="cardPassportNumber" value="{{ pDetails.getCardPassportNumber }}"></label>
+			<label class="form-group form-group-inline">Poznámky: <input class="form-control" type="text" name="notes" value="{{ pDetails.getNotes }}"></label>
 
-			<input class="btn btn-primary" type="submit" value="Uložit">
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uložit">
+				<a class="btn btn-small btn-grey" href="{{ path_for('pl-dashboard') }}">Zpět</a>
+			</div>
 		</form>
-		<a href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>
 	</div>
 {% endblock %}
