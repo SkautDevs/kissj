@@ -21,9 +21,10 @@ class Repository extends BaseRepository {
 		return $this->findOneBy(['id' => $id]);
 	}
 	
-	public function findOneBy(array $criteria) {
+	public function findOneBy(array $criteria, array $orderBy = []) {
 		$qb = $this->createFluent();
 		$this->addConditions($qb, $criteria);
+        $this->addOrderBy($qb, $orderBy);
 		$row = $qb->fetch();
 		
 		if ($row === false) {
@@ -33,10 +34,11 @@ class Repository extends BaseRepository {
 		return $this->createEntity($row);
 	}
 
-	public function findBy(array $criteria): array {
+	public function findBy(array $criteria, array $orderBy = []): array {
 		$qb = $this->createFluent();
 		$this->addConditions($qb, $criteria);
-		$rows = $qb->fetchAll();
+        $this->addOrderBy($qb, $orderBy);
+        $rows = $qb->fetchAll();
 
 		$entities = [];
 
@@ -91,5 +93,17 @@ class Repository extends BaseRepository {
 				->fetchAll()
 		);
 	}
-	
+
+    /**
+     * @param $qb
+     * @param array $orderBy
+     */
+    protected function addOrderBy($qb, array $orderBy)
+    {
+        foreach ($orderBy as $order => $asc) {
+            $qb->orderBy($order);
+            $qb->asc($asc);
+        }
+    }
+
 }
