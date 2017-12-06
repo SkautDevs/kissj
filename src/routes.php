@@ -98,6 +98,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		if ($this->userService->isLoginTokenValid($loginToken)) {
 			$user = $this->userService->getUserFromToken($loginToken);
 			$this->userRegeneration->saveUserIdIntoSession($user);
+			$this->userService->invalidateAllLoginTokens($user);
 			
 			return $response->withRedirect($this->router->pathFor('getDashboard'));
 		} else {

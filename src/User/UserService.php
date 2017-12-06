@@ -51,13 +51,7 @@ class UserService {
 	
 	public function sendLoginTokenByMail(string $email): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
-
-		// invalidate all not yet used login tokens
-        $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
-        foreach ($existingTokens as $token) {
-            $token->used = true;
-            $this->loginTokenRepository->persist($token);
-        }
+        $this->invalidateAllLoginTokens($user);
 
         // generate new token
         $loginToken = new LoginToken();
@@ -109,4 +103,14 @@ class UserService {
 	public function logoutUser() {
 		unset($_SESSION['user']);
 	}
+
+    public function invalidateAllLoginTokens($user)
+    {
+        // invalidate all not yet used login tokens
+        $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
+        foreach ($existingTokens as $token) {
+            $token->used = true;
+            $this->loginTokenRepository->persist($token);
+        }
+    }
 }
