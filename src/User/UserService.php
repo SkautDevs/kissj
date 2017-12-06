@@ -77,9 +77,17 @@ class UserService {
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
-		// TODO implement time gate (15 mins from settings preferably)
         try {
-            return !is_null($this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false]));
+            $lastToken = $this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false], ['created' => false]);
+            if (is_null($lastToken))
+                return false;
+
+            $lastValidTime = new \DateTime();
+            $lastValidTime->modify("-15 minutes");
+            if ($lastToken->created < $lastValidTime)
+                return false;
+
+            return true;
         } catch (\Exception $e) {
             return false;
         }
