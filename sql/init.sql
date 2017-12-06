@@ -99,6 +99,9 @@ CREATE TABLE payments (
 	id             INTEGER PRIMARY KEY autoincrement,
 	event          TEXT NOT NULL,
 	variableSymbol TEXT NOT NULL,
+	price          TEXT NOT NULL,
+	currency       TEXT NOT NULL,
 	status         TEXT NOT NULL,
-	userId         INT CONSTRAINT role_userId_fk REFERENCES user (id)
+	purpose        TEXT NOT NULL,
+	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
 );

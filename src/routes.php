@@ -498,5 +498,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 });
 
 $app->get("/", function (Request $request, Response $response, array $args) {
-	return $this->view->render($response, 'system/landing.twig');
+	//return $this->view->render($response, 'system/landing.twig');
+	return $response->withRedirect($this->router->pathFor('landing'));
 });

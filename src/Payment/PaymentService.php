@@ -4,6 +4,7 @@ namespace kissj\Payment;
 
 use kissj\Mailer\MailerInterface;
 use kissj\Random;
+use kissj\User\RoleRepository;
 use kissj\User\User;
 use Monolog\Logger;
 use Slim\Views\Twig;
@@ -18,9 +19,12 @@ class PaymentService {
 	
 	/** @var PaymentRepository */
 	private $paymentRepository;
+	/** @var RoleRepository */
+	private $roleRepository;
 	
-	function __construct(array $paymentsSettings,
+	public function __construct(array $paymentsSettings,
 						 PaymentRepository $paymentRepository,
+						 RoleRepository $roleRepository,
 						 MailerInterface $mailer,
 						 Twig $renderer,
 						 string $eventName,
@@ -34,13 +38,16 @@ class PaymentService {
 		$this->logger = $logger;
 	}
 	
-	function createNewPayment(User $user): Payment {
+	public function createNewPayment(User $user, int $price): Payment {
 		$newVS = $this->random->generateVariableSymbol($this->settings['prefixVariableSymbol']);
 		
 		$newPayment = new Payment();
 		$newPayment->event = $this->eventName;
 		$newPayment->variableSymbol = $newVS;
+		$newPayment->price = $price;
+		$newPayment->currency = 'CZK';
 		$newPayment->status = 'waiting';
+		$newPayment->purpose = 'fee';
 		$newPayment->user = $user;
 		
 		$this->paymentRepository->persist($newPayment);
@@ -48,12 +55,19 @@ class PaymentService {
 		return $newPayment;
 	}
 	
-	// should we first create Payment object, or validate that from strings?
-	function isPaymentValid(string $variableSymbol, string $price): bool {
-		// TODO implement
+	public function getPayment(User $user, string $event) {
+		/** @var \kissj\User\Role $role */
+		$role = $this->roleRepository->findOneBy(['user' => $user->id]);
+		return $this->paymentRepository->findOneBy(['role' => $role->id]);
 	}
 	
-	function setPaymentPaid(Payment $payment) {
+	public function isPaymentValid(string $variableSymbol, string $price): bool {
+		return !is_null($this->paymentRepository->findOneBy([
+			'variableSymbol' => $variableSymbol,
+			'price' => $price]));
+	}
+	
+	public function setPaymentPaid(Payment $payment) {
 		// set payment valid in DB
 		$payment->status = 'paid';
 		$this->paymentRepository->persist($payment);
@@ -61,7 +75,7 @@ class PaymentService {
 		// get User from Payment
 		$userEmail = $payment->user->email;
 		
-		// set action into log
+		// write action into log
 		$this->logger->addInfo('Payment with ID: '.$payment->id.' is set to "paid"');
 		
 		// send mail to user

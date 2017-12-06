@@ -176,7 +176,7 @@ $container['view'] = function (C $c) {
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
 	
 	// Add few elements for rendering
-	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost();
+	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort();
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
