@@ -80,9 +80,9 @@ class RoleService {
 		// TODO implement
 		
 		// search for corrent Role with $this->eventName;
-		
+		$role = $this->getRole($user, $this->eventName);
 		// check if Role has status one before approoved with getPreviousStatus
-		
+
 		// set paid to Role
 	}
 	

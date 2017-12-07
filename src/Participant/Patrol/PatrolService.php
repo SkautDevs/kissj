@@ -42,6 +42,7 @@ class PatrolService {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
 			$this->patrolLeaderRepository->persist($patrolLeader);
+//			for some strage reason, I have to get entity from lean mapper to work correctly.
 		}
 		
 		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
