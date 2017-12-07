@@ -42,7 +42,6 @@ class PatrolService {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
 			$this->patrolLeaderRepository->persist($patrolLeader);
-			return $patrolLeader;
 		}
 		
 		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
