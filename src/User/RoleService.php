@@ -60,7 +60,7 @@ class RoleService {
 		} else {
 			switch ($role->status) {
 				case 'open':
-					return 'Vyplň všechny údaje o sobě a potom klikni na Uzavřít registraci dole';
+					return 'Vyplň všechny údaje o sobě a potom dole klikni na Uzavřít registraci';
 				case 'closed':
 					return 'Tvoje registrace čeká na schválení (schvalovat začneme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
 				case 'approved':

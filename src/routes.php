@@ -81,7 +81,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 				}
 				
-				$this->flashMessages->success('Posláno! Klikni na link v mailu a tím se přihlásíš!');
+				$this->flashMessages->success('Posláno! Klikni na odkaz v mailu a tím se přihlásíš!');
 				return $response->withRedirect($this->router->pathFor('landing'));
 				
 			} else {
