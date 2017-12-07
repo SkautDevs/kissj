@@ -1,23 +1,23 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card">
-		<h2>Přidat účastníka</h2>
-		Křestní: {{ pDetails.getFirstName }}<br/>
+	<div class="card signin-theme">
+		<h2>Detaily účastníka</h2>
+		Křestní jméno: {{ pDetails.getFirstName }}<br/>
 		Příjmení: {{ pDetails.getLastName }}<br/>
-		Alergie: {{ pDetails.getAllergies }}<br/>
+		Gender: {{ pDetails.getGender }}<br/>
 		Datum narození: {{ pDetails.getBirthDate.format('Y-m-d') }}<br/>
 		Místo narození: {{ pDetails.getBirthPlace }}<br/>
-		Země: {{ pDetails.getCountry }}<br/>
-		Gender: {{ pDetails.getGender }}<br/>
 		Trvalá adresa: {{ pDetails.getPermanentResidence }}<br/>
-		Skautská jednotka: {{ pDetails.getScoutUnit }}<br/>
-		Telefoní kontakt (pouze čísta s možným + na začátku): {{ pDetails.getTelephoneNumber }}<br/>
-		Email: {{ pDetails.getEmail }}<br/>
+		Země: {{ pDetails.getCountry }}<br/>
+		Číslo pasu/občanky: {{ pDetails.getCardPassportNumber }}<br/>
 		Dieta: {{ pDetails.getFoodPreferences }}<br/>
-		Číslo pasu/OP: {{ pDetails.getCardPassportNumber }}<br/>
+		Alergie: {{ pDetails.getAllergies }}<br/>
+		Telefoní kontakt: {{ pDetails.getTelephoneNumber }}<br/>
+		Email: {{ pDetails.getEmail }}<br/>
+		Skautská jednotka: {{ pDetails.getScoutUnit }}<br/>
 		Poznámky: {{ pDetails.getNotes }}<br/>
-
-		<a href="{{ path_for('pl-dashboard') }}">Zpět na dashboard</a>
+		<br/>
+		<a class="btn btn-grey btn-small" href="{{ path_for('pl-dashboard') }}">Zpět</a>
 	</div>
 {% endblock %}

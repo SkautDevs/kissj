@@ -1,13 +1,16 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="text-center">
-		<h2>Uzavřít registrace</h2>
-		<p>Skutečně chtete uzavřít registraci? Tato akce je nevratná!</p>
+	<div class="card signin-theme">
+		<h2>Uzavřít registraci IST</h2>
+		<p>Skutečně chceš uzavřít registraci? Tato akce je nevratná!</p>
 		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration') }}">
-			<input type="checkbox" required="required"> Souhlasím se vším, co tu bude v budoucnu napsané.
-			<input class="btn btn-primary" type="submit" value="Uzavřít registraci">
+			<label><input type="checkbox" required="required"> Souhlasím se vším, co tu bude v budoucnu napsané.</label><br/>
+			<br/>
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uzavřít registraci">
+				<a href="{{ path_for('ist-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
+			</div>
 		</form>
-		<a class="btn btn-default" href="{{ path_for('ist-dashboard') }}">Zpět na dashboard</a>
 	</div>
 {% endblock %}

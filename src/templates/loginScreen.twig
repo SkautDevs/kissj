@@ -1,14 +1,16 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="text-center">
+	<div class="card signin-theme">
 		<form action="{{ path_for('loginScreenAfterSent') }}" method="post">
-			<h2>Poslání emailu s přihlášením</h2>
+			<h2>Přihlásit se přes email</h2>
 			<div class="form-group">
 				<label for="form-email">Email</label>
 				<input class="form-control" type="email" name="email" id="form-email" required/><br/>
 			</div>
-			<input type="submit" value="Poslat mail pro přihlášení" class="btn btn-primary"/>
+			<input type="submit" value="Poslat mail pro přihlášení" class="btn btn-primary btn-small"/>
 		</form>
+		<br/>
+		<a href="{{ path_for('landing') }}" class="btn btn-grey btn-small">Zpět</a>
 	</div>
 {% endblock %}
