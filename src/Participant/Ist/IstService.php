@@ -38,7 +38,6 @@ class IstService {
 			$ist = new Ist();
 			$ist->user = $user;
 			$this->istRepository->persist($ist);
-			return $ist;
 		}
 
 		$ist = $this->istRepository->findOneBy(['user' => $user]);
