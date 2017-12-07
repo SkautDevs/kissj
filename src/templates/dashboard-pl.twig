@@ -2,49 +2,51 @@
 
 {% block content %}
 	<div class="card signin-theme">
-		<h2>Dashboard PL</h2>
+		<h2>Přehled patroly {{ plDetails.getPatrolName }}</h2>
 		<h4>
 			{{ userCustomHelp }}
 		</h4>
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
-				<h4>Částka: {{ totalPrice }}</h4>
 				<h4>Číslo účtu: {{ bankAccount }}</h4>
-				<h4>Variabilní symbol: {{ status.variableSymbol }}</h4>
+				<h4>Částka: {{ payment.price }}</h4>
+				<h4>Variabilní symbol: {{ payment.variableSymbol }}</h4>
 			</div>
 		{% endif %}
 		
 		<div class="card-divide">
 			<div>
-				<h2>PL údaje o sobě</h2>
-				<div class="text-left">
-					Název patroly: {{ plDetails.getPatrolName }}<br/>
+				<h2>Údaje o Patrol Leaderovi</h2>
+				{% if userStatus == 'open' %}
+					<a class="btn btn-small" href="{{ path_for('pl-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
+				{% endif %}
+				<div class="text-center">
 					Křestní jméno: {{ plDetails.getFirstName }}<br/>
 					Příjmení: {{ plDetails.getLastName }}<br/>
-					Alergie: {{ plDetails.getAllergies }}<br/>
+					Gender: {{ plDetails.getGender }}<br/>
 					Datum narození: {{ plDetails.getBirthDate.format('Y-m-d') }}<br/>
 					Místo narození: {{ plDetails.getBirthPlace }}<br/>
-					Země: {{ plDetails.getCountry }}<br/>
-					Gender: {{ plDetails.getGender }}<br/>
 					Trvalá adresa: {{ plDetails.getPermanentResidence }}<br/>
-					Skautská jednotka: {{ plDetails.getScoutUnit }}<br/>
+					Země: {{ plDetails.getCountry }}<br/>
+					Číslo pasu/občanky: {{ plDetails.getCardPassportNumber }}<br/>
+					Dieta: {{ plDetails.getFoodPreferences }}<br/>
+					Alergie: {{ plDetails.getAllergies }}<br/>
 					Telefoní kontakt: {{ plDetails.getTelephoneNumber }}<br/>
 					Email: {{ plDetails.getEmail }}<br/>
-					Dieta: {{ plDetails.getFoodPreferences }}<br/>
-					Číslo pasu/OP: {{ plDetails.getCardPassportNumber }}<br/>
+					Skautská jednotka: {{ plDetails.getScoutUnit }}<br/>
 					Poznámky: {{ plDetails.getNotes }}<br/>
+
+					Název patroly: {{ plDetails.getPatrolName }}<br/>
 				</div>
-				{% if userStatus == 'open' %}
-					<a class="btn btn-small" href="{{ path_for('pl-changeDetails') }}">Změnit údaje o sobě</a><br/>
-				{% endif %}
 			</div>
 			<div>
 				<h2>Seznam účastníků</h2>
 				{% if userStatus == 'open' %}
 					<a class="btn btn-small" href="{{ path_for('pl-addParticipant') }}">Přidat účastníka</a><br/>
+					<p>Pro platnou registraci je jich potřeba 9</p>
 				{% endif %}
 				{% set count = 1 %}
-				<ol class="text-left">
+				<ol class="text-center">
 					{% for participantDetails in allPDetails %}
 						{# why here must be full .getFirstName() instead of .firstName like elsewhere? #}
 						<li>účastník {{ participantDetails.getFirstName() }} {{ participantDetails.getLastName() }}

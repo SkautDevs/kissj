@@ -1,0 +1,18 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="text-center">
+		<h2>Způsob přihlašování se do systému</h2>
+		<h4>Jak to funguje?</h4>
+		<p>Přihlašování do registračního systému kissj probíhá výhradně přes email a není k tomu potřeba žádné heslo.</p>
+		<p>Při prvním přístupu do systému zadáš svůj email. Zároveň dostaneš email, kde bude jedinné tlačítko - po kliku na něj se přihlásíš, tedy uvidíš svojí stránku pro registraci na akci a můžeš začít vyplňovat údaje. </p>
+		<p>Pokud se nedohlásíš, tvoje stránka nikam nezmizí - vždy když otevřeš přihlašování znovu, opět se objeví. </p>
+		<p>Až se odhlásíš, nikdo cizí k tvým datům z tvého zařízení nemůže. </p>
+		<p>Pro přihlášení se zpět k tvojí stránce se všemi údaji opět vyplň email na přihlašovací stránce a potvrď. Znovu ti pošleme mail s přihlašovacím tlačítkem a ty se klikem na něj přihlásíš stejně jako poprvě.</p>
+		<p>Pozor, mail má platnost pouze 15 minut. Potom si musíš nechat poslat nový. Toto je ochrana proti tomu, kdyby se ti někdo dostal k tvým emailům, tak se nemůže ze starého emailu přihlásit. </p>
+		<p>Po přihlášení mail přestane být platný - pokud se tedy rychle příhlásíš i odhlásíš, </p>
+		<p>Všechno toto zabezpečení navíc má jedinný úkol - udržet tvoje údaje v co největším bezpečí, podobně jako to dělají třeba banky nebo jiné velké portály. </p>
+		<p>Kdybys měl s přihlášením nebo jinou soušístí systému jakýkoliv problém, napiš nám na mail a zkusíme ti pomoci, jak jen budeme moci. </p>
+		<a href="{{ path_for('landing') }}" class="btn btn-grey btn-small">Zpět</a>
+	</div>
+{% endblock %}
