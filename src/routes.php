@@ -17,7 +17,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				throw new Exception('User role "'.$role.'" is not valid');
 			}
 			
-			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'readableRole' => $this->roleService->getReadableRoleName($role)]);
+			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role, 'readableRole' => $this->roleService->getReadableRoleName($role)]);
 		})->setName('registration');
 		
 		$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
@@ -40,7 +40,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			if ($this->userService->isEmailExisting($email)) {
 				$this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email, ENT_QUOTES).', protože už takový existuje. Nechceš se spíš příhlásit?');
-				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+				return $response->withRedirect($this->router->pathFor('landing'));
 			}
 			
 			$user = $this->userService->registerUser($email);
@@ -132,7 +132,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		$this->get("/logout", function (Request $request, Response $response, array $args) {
 			$this->userService->logoutUser();
-			$this->flashMessages->info('Jsi úspěšně odhlášený');
+			$this->flashMessages->info('Odhlášení bylo úspěšné');
 			
 			return $response->withRedirect($this->router->pathFor('landing'));
 		})->setName('logout');
