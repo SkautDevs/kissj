@@ -47,16 +47,6 @@ $settings = [
 		
 		'eventName' => 'cej2018',
 		
-		'possibleUserRoles' => [
-			'patrol-leader',
-			'ist',
-			//'guest',
-			//'staff',
-			//'team',
-			//'event-chief',
-			//'contingent-chief',
-		],
-		
 		'adminer' => [
 			// change password & add this into your settings_custom please
 			// 'login' => 'superSecretUsername',

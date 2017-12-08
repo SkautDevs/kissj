@@ -3,8 +3,8 @@
 {% block content %}
 	<div class="text-center">
 		<p>Ahoj!</p>
-		<p>Přihlašuješ se do registrace na akci {{ eventName }} - přihlásíš se klikem na tento link: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
-		<p>Base host scheme: {{ baseHostScheme }}</p>
-		<p>Base url: {{ base_url() }}</p>
+		<p>Přihlašuješ se do registrace jako {{ readableRole }} na akci {{ eventName }}<br/>
+			<br/>
+			Přihlásíš se klikem na tento link: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
 	</div>
 {% endblock %}

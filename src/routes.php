@@ -16,7 +16,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			if (!$this->roleService->isUserRoleNameValid($role)) {
 				throw new Exception('User role "'.$role.'" is not valid');
 			}
-			// TODO translator for roles
 			
 			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role]);
 		})->setName('registration');
@@ -45,14 +44,16 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			}
 			
 			$user = $this->userService->registerUser($email);
+			
 			$this->roleService->addRole($user, $role);
+			$readableRole = $this->roleService->getReadableRoleName($role);
 			try {
-				$this->userService->sendLoginTokenByMail($email);
+				$this->userService->sendLoginTokenByMail($email, $readableRole);
 				return $response->withRedirect($this->router->pathFor('signupSuccess'));
 			} catch (Exception $e) {
 				$this->logger->addError("Error sending registration email to $email with token ".
 					$this->userService->getTokenForEmail($email), array($e));
-				$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkuste se prosím přihlásit znovu.");
+				$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.");
 				return $response->withRedirect($this->router->pathFor('landing'));
 			}
 		})->setName('signup');
@@ -73,7 +74,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$email = $request->getParam('email');
 			if ($this->userService->isEmailExisting($email)) {
 				try {
-					$this->userService->sendLoginTokenByMail($email);
+					// TODO refactor
+					$user = $this->userService->getUserFromEmail($email);
+					$role = $this->roleService->getRole($user);
+					$readableRole = $this->roleService->getReadableRoleName($role);
+					
+					$this->userService->sendLoginTokenByMail($email, $readableRole);
 				} catch (Exception $e) {
 					$this->logger->addError("Error sending login email to $email with token ".
 						$this->userService->getTokenForEmail($email), array($e));

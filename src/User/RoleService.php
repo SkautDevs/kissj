@@ -12,12 +12,19 @@ class RoleService {
 	private $eventName;
 	private $statuses;
 	
-	public function __construct(array $possibleRoles,
-								RoleRepository $roleRepository,
+	public function __construct(RoleRepository $roleRepository,
 								string $eventName) {
-		$this->possibleRoles = $possibleRoles;
 		$this->roleRepository = $roleRepository;
 		$this->eventName = $eventName;
+		$this->possibleRoles = [
+			'patrol-leader',
+			'ist',
+			//'guest',
+			//'staff',
+			//'team',
+			//'event-chief',
+			//'contingent-chief',
+		];
 		$this->statuses = [
 			'open',
 			'closed',
@@ -27,6 +34,17 @@ class RoleService {
 	
 	
 	// ROLES
+	
+	public function getReadableRoleName(string $role): string {
+		switch ($role) {
+			case 'patrol-leader':
+				return 'Patrol Leader';
+			case 'ist':
+				return 'International Service Team';
+			default:
+				throw new \Exception('Unknown role name');
+		}
+	}
 	
 	public function isUserRoleNameValid(string $role): bool {
 		return in_array($role, $this->possibleRoles);
@@ -82,7 +100,7 @@ class RoleService {
 		// search for corrent Role with $this->eventName;
 		$role = $this->getRole($user, $this->eventName);
 		// check if Role has status one before approoved with getPreviousStatus
-
+		
 		// set paid to Role
 	}
 	

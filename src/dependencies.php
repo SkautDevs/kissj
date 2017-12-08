@@ -120,7 +120,6 @@ $container['userService'] = function (C $c) {
 
 $container['roleService'] = function (C $c) {
 	return new \kissj\User\RoleService(
-		$c->get('settings')['possibleUserRoles'],
 		$c->get('roleRepository'),
 		$c->get('settings')['eventName']);
 };

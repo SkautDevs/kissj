@@ -49,7 +49,7 @@ class UserService {
 		return $user;
 	}
 	
-	public function sendLoginTokenByMail(string $email): string {
+	public function sendLoginTokenByMail(string $email, string $readableRole): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
         $this->invalidateAllLoginTokens($user);
 
@@ -64,7 +64,7 @@ class UserService {
 		$this->loginTokenRepository->persist($loginToken);
 
         $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName]);
+		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $this->eventName, 'readableRole' => $readableRole]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
 
 		return $token;
@@ -92,12 +92,16 @@ class UserService {
 	}
 	
 	public function getTokenForEmail(string $email): string {
-		$user = $this->userRepository->findOneBy(['email' => $email]);
+		$user = $this->getUserFromEmail($email);
 		return $this->getTokenForUser($user);
 	}
 	
 	public function getTokenForUser(User $user): string {
 		return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
+	}
+	
+	public function getUserFromEmail(string $email): string {
+		return $this->userRepository->findOneBy(['email' => $email]);
 	}
 	
 	public function logoutUser() {
