@@ -17,7 +17,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				throw new Exception('User role "'.$role.'" is not valid');
 			}
 			
-			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role]);
+			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'readableRole' => $this->roleService->getReadableRoleName($role)]);
 		})->setName('registration');
 		
 		$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
