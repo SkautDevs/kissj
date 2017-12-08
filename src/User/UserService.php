@@ -92,15 +92,14 @@ class UserService {
 	}
 	
 	public function getTokenForEmail(string $email): string {
-		$user = $this->getUserFromEmail($email);
-		return $this->getTokenForUser($user);
+		return $this->getTokenForUser($this->getUserFromEmail($email));
 	}
 	
 	public function getTokenForUser(User $user): string {
 		return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
 	}
 	
-	public function getUserFromEmail(string $email): string {
+	public function getUserFromEmail(string $email): User {
 		return $this->userRepository->findOneBy(['email' => $email]);
 	}
 	

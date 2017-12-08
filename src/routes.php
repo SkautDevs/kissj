@@ -77,7 +77,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					// TODO refactor
 					$user = $this->userService->getUserFromEmail($email);
 					$role = $this->roleService->getRole($user);
-					$readableRole = $this->roleService->getReadableRoleName($role);
+					$readableRole = $this->roleService->getReadableRoleName($role->name);
 					
 					$this->userService->sendLoginTokenByMail($email, $readableRole);
 				} catch (Exception $e) {
