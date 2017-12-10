@@ -6,6 +6,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # turn on when you want to force HTTPS
+  #RewriteCond %{HTTPS} !=on
+  #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
   # Some hosts may require you to use the `RewriteBase` directive.
   # Determine the RewriteBase automatically and set it as environment variable.
   # If you are using Apache aliases to do mass virtual hosting or installed the

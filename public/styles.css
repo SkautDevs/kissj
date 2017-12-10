@@ -157,6 +157,8 @@ h1, h2, h3 {
 	font-size: 17px;
 	border-radius: var(--borderRadius);
 	position: relative;
+
+	filter: grayscale(100%);
 }
 
 .progressbar-item:not(:first-child)::before {
@@ -186,8 +188,8 @@ h1, h2, h3 {
 	--bgColor: #1c860e;
 }
 
-.progressbar-item.is-active ~ .progressbar-item {
-	filter: grayscale(100%);
+.progressbar-item.is-active {
+	filter: grayscale(0%);
 }
 
 .registration-theme {
@@ -269,6 +271,9 @@ h1, h2, h3 {
 }
 .text-center {
 	text-align: center;
+}
+.text-right {
+	text-align: right;
 }
 
 .material-icons {
