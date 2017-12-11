@@ -11,8 +11,8 @@
 			<label class="form-group form-group-inline">Místo narození: <input class="form-control" type="text" name="birthPlace" value="{{ pDetails.getBirthPlace }}"></label>
 			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ pDetails.getPermanentResidence }}"></label>
 			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if pDetails.getCountry is empty %}Česká republika{% else %}{{ pDetails.getCountry }}{% endif %}"></label>
-			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" placeholder="nezapomeň zkontrolovat platnost!" value="{{ pDetails.getCardPassportNumber }}"></label>
-			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="popřípadě jiné omezení v jídle" value="{{ pDetails.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" placeholder="Nezapomeň zkontrolovat platnost!" value="{{ pDetails.getCardPassportNumber }}"></label>
+			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ pDetails.getFoodPreferences }}"></label>
 			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ pDetails.getAllergies }}"></label>
 			<label class="form-group form-group-inline">Telefoní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ pDetails.getTelephoneNumber }}"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{{ pDetails.getEmail }}"></label>

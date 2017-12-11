@@ -267,6 +267,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 						$this->patrolService->closeRegistration($patrolLeader);
 						$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
 						$this->flashMessages->info('Registraci ti musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
+						$this->logger->info('Closing registration for PatrolLeader with ID '.$patrolLeader->id);
 						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 					} else {
 						$this->flashMessages->error('Registraci ještě nelze uzavřít');
@@ -473,9 +474,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 						$this->istService->closeRegistration($ist);
 						$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
 						$this->flashMessages->info('Registraci ti teď musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
+						$this->logger->info('Closing registration for IST with ID '.$ist->id);
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					} else {
-						$this->flashMessages->warning('Registraci ještě nelze uzavřít');
+						$this->flashMessages->error('Registraci ještě nelze uzavřít');
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					}
 				})->setName('ist-confirmCloseRegistration');

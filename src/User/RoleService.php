@@ -78,15 +78,25 @@ class RoleService {
 		} else {
 			switch ($role->status) {
 				case 'open':
-					return 'Vyplň všechny údaje o sobě a potom dole klikni na Uzavřít registraci';
+					{
+						switch ($role->name) {
+							case 'patrol-leader':
+								return 'Vyplň všechny údaje o sobě, přidej správný počet účastníků, vyplň údaje i u nich a potom dole klikni na tlačítko Uzavřít registraci.';
+							case 'ist':
+								return 'Vyplň všechny údaje o sobě a potom dole klikni na Uzavřít registraci.';
+							default:
+								throw new \Exception('Unknown/unimplemented name of role: '.$role->name);
+						}
+						
+					}
 				case 'closed':
-					return 'Tvoje registrace čeká na schválení (schvalovat začneme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
+					return 'Tvoje registrace čeká na schválení (schvalovat začínáme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
 				case 'approved':
-					return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže';
+					return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže.';
 				case 'paid':
 					return 'Registraci máš vyplněnou, odevzdanou, přijatou i zaplacenou. Těšíme se na tebe na akci!';
 				default:
-					throw new \Exception('Unknown role '.$role->status);
+					throw new \Exception('Unknown role: '.$role->status);
 			}
 		}
 	}

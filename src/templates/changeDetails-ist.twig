@@ -12,7 +12,7 @@
 			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ istDetails.getPermanentResidence }}"></label>
 			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if istDetails.getCountry is empty %}Česká republika{% else %}{{ istDetails.getCountry }}{% endif %}"></label>
 			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" value="{{ istDetails.getCardPassportNumber }}"></label>
-			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="popřípadě jiné omezení v jídle" value="{{ istDetails.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ istDetails.getFoodPreferences }}"></label>
 			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ istDetails.getAllergies }}"></label>
 			<label class="form-group form-group-inline">Telefoní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ istDetails.getTelephoneNumber }}"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"></label>
@@ -20,7 +20,7 @@
 
 			<label class="form-group form-group-inline">Preference práce: <input class="form-control" type="text" name="workPreferences" placeholder="vaření, hlídání parkoviště, plavčík, plážový povaleč..." value="{{ istDetails.getWorkPreferences }}"></label>
 			<label class="form-group form-group-inline">Skills: <input class="form-control" type="text" name="skills" placeholder="šití, záchrana tonoucích, šplhání ve výškách, řezání řetězovou pilou..." value="{{ istDetails.getSkills }}"></label>
-			<label class="form-group form-group-inline">Jazyky, kterými se domluvím: <input class="form-control" type="text" name="languages" placeholder="česky, english, latinae..." value="{{ istDetails.getLanguages }}"></label>
+			<label class="form-group form-group-inline">Jazyky, kterými se domluvím: <input class="form-control" type="text" name="languages" placeholder="česky plynule, english quite good, latinae loquimur solum silvas et lupi..." value="{{ istDetails.getLanguages }}"></label>
 			<label class="form-group form-group-inline">Datum příjezdu: <input class="form-control" type="date" name="arrivalDate" value="{% if istDetails.getArrivalDate is empty %}2018-07-27{% else %}{{ istDetails.getArrivalDate.format('Y-m-d') }}{% endif %}"></label>
 			<label class="form-group form-group-inline">Datum odjezdu: <input class="form-control" type="date" name="leavingDate" value="{% if istDetails.getLeavingDate is empty %}2018-08-05{% else %}{{ istDetails.getLeavingDate.format('Y-m-d') }}{% endif %}"></label>
 			<label class="form-group form-group-inline">Pokud přijedu autem, jeho poznávací značka: <input class="form-control" type="text" name="carRegistrationPlate" value="{{ istDetails.getCarRegistrationPlate }}"></label>

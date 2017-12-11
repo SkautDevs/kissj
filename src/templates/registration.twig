@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="card registration-theme">
 		<form action="{{ path_for('signup', {'role': role}) }}" method="post">
-			<h2>Registrace s rolí {{ readableRole }} na CEJ 2018</h2>
+			<h2>Registrace jako {{ readableRole }} na CEJ 2018</h2>
 			<div class="form-group">
 				<label for="form-email">Email</label>
 				<input class="form-control" type="email" name="email" id="form-email" required/><br/>

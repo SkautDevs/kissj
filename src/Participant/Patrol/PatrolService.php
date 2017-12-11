@@ -258,11 +258,11 @@ class PatrolService {
 		$participants = $this->getAllParticipantsBelongsPatrolLeader($patrolLeader);
 		$participantsCount = count($participants);
 		if ($participantsCount < $this->eventSettings['minimalPatrolParticipantsCount']) {
-			$this->flashMessages->warning('Účastníků je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
+			$this->flashMessages->warning('Účastníků v patrole je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
 			$validityFlag = false;
 		}
 		if ($participantsCount > $this->eventSettings['maximalPatrolParticipantsCount']) {
-			$this->flashMessages->warning('Účastníků je moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
+			$this->flashMessages->warning('Účastníků je v patrole moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
 			$validityFlag = false;
 		}
 		foreach ($participants as $participant) {
@@ -272,8 +272,8 @@ class PatrolService {
 				$validityFlag = false;
 			}
 		}
-		if ($this->getClosedPatrolsCount() > $this->eventSettings['maximalClosedPatrolsCount']) {
-			$this->flashMessages->warning('Je zaregistrovaný maximální počet patrol. Počkej prosím na zvýšení limitu patrol. ');
+		if ($this->getClosedPatrolsCount() >= $this->eventSettings['maximalClosedPatrolsCount']) {
+			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných patrol a tvoje patrola se nevejde do počtu. Počkej prosím na zvýšení limitu pro patroly.');
 			$validityFlag = false;
 		}
 		

@@ -12,7 +12,7 @@
 			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ plInfo.getPermanentResidence }}"></label>
 			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if plInfo.getCountry is empty %}Česká republika{% else %}{{ plInfo.getCountry }}{% endif %}"></label>
 			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" value="{{ plInfo.getCardPassportNumber }}"></label>
-			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="popřípadě jiné omezení v jídle" value="{{ plInfo.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ plInfo.getFoodPreferences }}"></label>
 			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ plInfo.getAllergies }}"></label>
 			<label class="form-group form-group-inline">Telefoní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ plInfo.getTelephoneNumber }}"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{% if plInfo.getEmail is empty %}{{ user.email }}{% else %}{{ plInfo.getEmail }}{% endif %}"></label>

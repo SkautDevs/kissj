@@ -162,8 +162,8 @@ class IstService {
 			$this->flashMessages->warning('Údaje IST nejsou kompletní');
 			$validityFlag = false;
 		}
-		if ($this->getClosedIstsCount() > $this->eventSettings['maximalClosedIstsCount']) {
-			$this->flashMessages->warning('Je zaregistrovaných maximální počet IST. Počkej prosím na zvýšení limitu pro IST.');
+		if ($this->getClosedIstsCount() >= $this->eventSettings['maximalClosedIstsCount']) {
+			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných IST a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu pro IST.');
 			$validityFlag = false;
 		}
 		
