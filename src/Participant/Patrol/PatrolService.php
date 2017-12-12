@@ -90,9 +90,9 @@ class PatrolService {
 			$validFlag = false;
 		}
 		// check for numbers and plus sight up front only
-		if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
+		/* if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
 			$validFlag = false;
-		}
+		}*/
 		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			$validFlag = false;
 		}
@@ -193,9 +193,9 @@ class PatrolService {
 			$validFlag = false;
 		}
 		// check for numbers and plus sight up front only
-		if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
+		/*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
 			$validFlag = false;
-		}
+		}*/
 		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			$validFlag = false;
 		}

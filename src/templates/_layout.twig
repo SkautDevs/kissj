@@ -4,9 +4,11 @@
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111008480-1"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
-		function gtag(){
+
+		function gtag() {
 			dataLayer.push(arguments);
 		}
+
 		gtag('js', new Date());
 		gtag('config', 'UA-111008480-1');
 	</script>
@@ -14,40 +16,42 @@
 	<meta charset="utf-8"/>
 	<meta name="robots" content="noindex, nofollow">
 	<title>Registrace Central Europian Jamboree 2018 - kissj</title>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
+	<link rel="script" href="{{ base_url() }}/public/date-polyfill.js">
 </head>
 
 <body>
 <div class="wrapper">
-<h1 class="text-center">Registrace pro Central European Jamboree 2018</h1>
-<div class="user text-right">
-	{% if user is not null %}
-		{{ user.email }}
-		<a class="" href="{{ path_for('logout') }}">Odhlásit se</a>
-		{% set userStatus = userRole.status %}
-	{% else %}
-		{% set userStatus = "unregistred" %}
-	{% endif %}
-	<br/>
-</div>
-<ul class="progressbar">
-	<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
-	<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
-	<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzavřená přihláška</li>
-	<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Schválená přihláška</li>
-	<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
-</ul>
-<div class="flash-wrapper">
-	{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
-		<div class="alert alert-{{ flashMessage['type'] }}">
-			{{ flashMessage['message'] }}
-		</div>
-	{% endfor %}
-</div>
-<main role="main" class="container">
-	{% block content %}{% endblock %}
-</main>
+	<h1 class="text-center">Registrace pro Central European Jamboree 2018</h1>
+	<div class="user text-right">
+		{% if user is not null %}
+			{{ user.email }}
+			<a class="" href="{{ path_for('logout') }}">Odhlásit se</a>
+			{% set userStatus = userRole.status %}
+		{% else %}
+			{% set userStatus = "unregistred" %}
+		{% endif %}
+		<br/>
+	</div>
+	<ul class="progressbar">
+		<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
+		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
+		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzavřená přihláška</li>
+		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Schválená přihláška</li>
+		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
+	</ul>
+	<div class="flash-wrapper">
+		{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
+			<div class="alert alert-{{ flashMessage['type'] }}">
+				{{ flashMessage['message'] }}
+			</div>
+		{% endfor %}
+	</div>
+	<main role="main" class="container">
+		{% block content %}{% endblock %}
+	</main>
 </div>
 </body>
 </html>

@@ -1,14 +1,16 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card registration-theme">
+	<div class="card card-half registration-theme">
 		<form action="{{ path_for('signup', {'role': role}) }}" method="post">
 			<h2>Registrace jako {{ readableRole }} na CEJ 2018</h2>
 			<div class="form-group">
 				<label for="form-email">Email</label>
-				<input class="form-control" type="email" name="email" id="form-email" required/><br/>
+				<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
 			</div>
-			<input type="submit" value="Zaregistrovat se a poslat přihlašovací mail" class="btn "/>
+			<input type="submit" value="Zaregistrovat se &#13;&#10;a poslat přihlašovací mail" class="btn form-wide"/>
 		</form>
+		<br/>
+		<a href="{{ path_for('landing') }}" class="btn btn-grey btn-small">Zpět</a>
 	</div>
 {% endblock %}

@@ -4,19 +4,25 @@
 	<div class="card text-left signin-theme">
 		<h2>Upravit údaje účastníka</h2>
 		<form method="POST" action="{{ path_for('p-postDetails', {'participantId': pDetails.getId}) }}">
-			<label class="form-group form-group-inline">Křestní jméno: <input class="form-control" type="text" name="firstName" value="{{ pDetails.getFirstName }}"></label>
-			<label class="form-group form-group-inline">Příjmení: <input class="form-control" type="text" name="lastName" value="{{ pDetails.getLastName }}"></label>
-			<label class="form-group form-group-inline">Gender: <input class="form-control" type="text" name="gender" value="{{ pDetails.getGender }}"></label>
-			<label class="form-group form-group-inline">Datum narození: <input class="form-control" type="date" name="birthDate" value="{{ pDetails.getBirthDate.format('Y-m-d') }}"></label>
-			<label class="form-group form-group-inline">Místo narození: <input class="form-control" type="text" name="birthPlace" value="{{ pDetails.getBirthPlace }}"></label>
-			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ pDetails.getPermanentResidence }}"></label>
-			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if pDetails.getCountry is empty %}Česká republika{% else %}{{ pDetails.getCountry }}{% endif %}"></label>
+			<label class="form-group form-group-inline">Křestní jméno: <input class="form-control" type="text" name="firstName" value="{{ pDetails.getFirstName }}" required="required"></label>
+			<label class="form-group form-group-inline">Příjmení: <input class="form-control" type="text" name="lastName" value="{{ pDetails.getLastName }}" required="required"></label>
+			<label class="form-group form-group-inline">Gender:
+				<select class="form-control" name="gender" required="required">
+					<option value="muž" {% if pDetails.getGender == 'muž' %}selected="selected"{% endif %}>Muž</option>
+					<option value="žena" {% if pDetails.getGender == 'žena' %}selected="selected"{% endif %}>Žena</option>
+					<option value="jiné" {% if pDetails.getGender == 'jiné' %}selected="selected"{% endif %}>Jiné</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Datum narození: <input class="form-control" type="date" name="birthDate" value="{{ pDetails.getBirthDate.format('Y-m-d') }}" required="required"></label>
+			<label class="form-group form-group-inline">Místo narození: <input class="form-control" type="text" name="birthPlace" value="{{ pDetails.getBirthPlace }}" required="required"></label>
+			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ pDetails.getPermanentResidence }}" required="required"></label>
+			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if pDetails.getCountry is empty %}Česká republika{% else %}{{ pDetails.getCountry }}{% endif %}" required="required"></label>
 			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" placeholder="Nezapomeň zkontrolovat platnost!" value="{{ pDetails.getCardPassportNumber }}"></label>
 			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ pDetails.getFoodPreferences }}"></label>
 			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ pDetails.getAllergies }}"></label>
-			<label class="form-group form-group-inline">Telefoní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ pDetails.getTelephoneNumber }}"></label>
-			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{{ pDetails.getEmail }}"></label>
-			<label class="form-group form-group-inline">Skautská jednotka: <input class="form-control" type="text" name="scoutUnit" value="{{ pDetails.getScoutUnit }}"></label>
+			<label class="form-group form-group-inline">Telefonní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ pDetails.getTelephoneNumber }}" required="required"></label>
+			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{{ pDetails.getEmail }}" required="required"></label>
+			<label class="form-group form-group-inline">Skautská jednotka: <input class="form-control" type="text" name="scoutUnit" value="{{ pDetails.getScoutUnit }}" required="required"></label>
 			<label class="form-group form-group-inline">Poznámky: <input class="form-control" type="text" name="notes" placeholder="cokoliv dalšího?" value="{{ pDetails.getNotes }}"></label>
 
 			<div class="text-center">
