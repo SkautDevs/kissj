@@ -92,6 +92,11 @@ class IstService {
 	): bool {
 		$validFlag = true;
 		
+		
+		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($languages) || is_null($arrivalDate) || is_null($leavingDate)) {
+			$validFlag = false;
+		}
+		
 		foreach ([$birthDate, $arrivalDate, $leavingDate] as $date) {
 			if (!empty($date) && $date !== date('Y-m-d', strtotime($date))) {
 				$validFlag = false;

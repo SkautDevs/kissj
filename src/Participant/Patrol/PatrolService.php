@@ -27,7 +27,7 @@ class PatrolService {
 								RoleService $roleService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings,
-                                $eventName = 'cej2018') {
+								$eventName = 'cej2018') {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->roleRepository = $roleRepository;
@@ -85,6 +85,10 @@ class PatrolService {
 											   ?string $notes,
 											   ?string $patrolName): bool {
 		$validFlag = true;
+		
+		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($patrolName)) {
+			$validFlag = false;
+		}
 		
 		if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
 			$validFlag = false;
@@ -189,6 +193,10 @@ class PatrolService {
 													?string $notes): bool {
 		$validFlag = true;
 		
+		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email)) {
+			$validFlag = false;
+		}
+		
 		if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
 			$validFlag = false;
 		}
@@ -268,7 +276,7 @@ class PatrolService {
 		foreach ($participants as $participant) {
 			if (!$this->isPatrolParticipantValid($participant)) {
 				$participantName = $participant->getFirstName().' '.$participant->getLastName();
-				$this->flashMessages->warning('Údaje účastníka jménem '.$participantName.' nejsou kompletní');
+				$this->flashMessages->warning('Údaje účastníka '.$participantName.' nejsou kompletní');
 				$validityFlag = false;
 			}
 		}
@@ -281,11 +289,11 @@ class PatrolService {
 	}
 	
 	private function getClosedPatrolsCount(): int {
-        return $this->roleRepository->countBy([
-            'name' => 'patrol-leader',
-            'event' => $this->eventName,
-            'status' => new Relation('open', '!=')
-        ]);
+		return $this->roleRepository->countBy([
+			'name' => 'patrol-leader',
+			'event' => $this->eventName,
+			'status' => new Relation('open', '!=')
+		]);
 	}
 	
 	/**
