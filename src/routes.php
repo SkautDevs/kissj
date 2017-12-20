@@ -158,6 +158,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 						{
 							return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 						}
+					case 'admin':
+						{
+							return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+						}
 					default:
 						{
 							throw new Exception('Non-implemented role "'.$roleName.'"!');
@@ -387,7 +391,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		});
 
 
-// IST
+		// IST
 		
 		$this->group("/ist", function () {
 			
@@ -506,6 +510,35 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			}
 		});
 		
+		// ADMINISTRATION
+		
+		$this->group("/admin", function () {
+			
+			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
+				$patrols = $this->patrolService->getAllPatrols();
+				$ists = $this->istService->getAllIsts();
+				
+				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrols, 'ists' => $ists]);
+			})->setName('admin-dashboard');
+			
+			$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
+				$this->istService->approveIst($args['istId']);
+				
+				return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+			})->setName('approveIst');
+			
+		
+		})->add(function (Request $request, Response $response, callable $next) {
+			// protected area for Registration Admins
+			if ($this->roleService->getRole($request->getAttribute('user'))->name != 'admin') {
+				$this->flashMessages->error('Pardon, nejsi na akci vedený jako admin');
+				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+			} else {
+				$response = $next($request, $response);
+				return $response;
+			}
+		});
+		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for logged users only
 		if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
@@ -516,9 +549,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response;
 		}
 	});
-
-
-// ADMINISTRATION
 	
 	$this->any("/admin", function (Request $request, Response $response, array $args) {
 		global $adminerSettings;

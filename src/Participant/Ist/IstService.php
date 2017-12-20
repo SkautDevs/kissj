@@ -44,6 +44,12 @@ class IstService {
 		return $ist;
 	}
 	
+	public function getAllIsts(string $eventName = 'cej2018'): array {
+		$ists = $this->istRepository->findAll();
+		
+		return $ists;
+	}
+	
 	private function isIstValid(Ist $ist): bool {
 		return $this->isIstDetailsValid(
 			$ist->firstName,
@@ -183,7 +189,17 @@ class IstService {
         ]);
 	}
 	
+	// TODO refactor
 	public function closeRegistration(Ist $ist) {
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
+		$role->status = $this->roleService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
+	}
+	
+	public function approveIst(int $istId) {
+		/** @var Ist $ist */
+		$ist = $this->istRepository->findOneBy(['id' => $istId]);
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getNextStatus($role->status);
