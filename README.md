@@ -38,6 +38,10 @@ We use:
 - SQLite3 as database
 - & more in `composer.json`
 
+# Backlog
+
+Backlog is localized in wiki page named `Backlog`. 
+
 # Codestyle
 
 - tabs! (4 spaces wide)
