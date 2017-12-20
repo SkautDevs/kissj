@@ -5,7 +5,21 @@ use Slim\Http\Response;
 
 // DEBUGGER
 
-$app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
+if (($container['settings']['whoopsDebug'])) {
+	$app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
+} else {
+	$simplyErrorHandler = function (Exception $exception, $inspector, $run) {
+		$message = $exception->getMessage();
+		$title = $inspector->getExceptionName();
+		$code = $exception->getCode();
+		
+		// TODO make nicer page
+		echo "$title ($code) -> $message";
+		exit;
+	};
+	
+	$app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app, [$simplyErrorHandler]));
+}
 
 // TRAILING SLASH REMOVER
 
