@@ -66,7 +66,10 @@ class PaymentService {
 			'variableSymbol' => $variableSymbol,
 			'price' => $price]));
 	}
-	
+
+	# Jak vygenerovat hezci CSV z Money S3
+	/* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
+
 	public function setPaymentPaid(Payment $payment) {
 		// set payment valid in DB
 		$payment->status = 'paid';
