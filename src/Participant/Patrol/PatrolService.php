@@ -49,6 +49,13 @@ class PatrolService {
 		return $patrolLeader;
 	}
 	
+	public function getAllPatrols(string $eventName = 'cej2018'): array {
+		$patrolLeaders = $this->patrolLeaderRepository->findAll();
+		
+		// TODO add participants
+		return $patrolLeaders;
+	}
+	
 	private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
 		return $this->isPatrolLeaderDetailsValid(
 			$patrolLeader->firstName,

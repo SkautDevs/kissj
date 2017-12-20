@@ -2,9 +2,14 @@
 
 $settings = [
 	'settings' => [
-		'debug' => false, // disable Whoops debugger
-		'displayErrorDetails' => false, // false in production
-		'addContentLengthHeader' => false, // allow the web server to send the content-length header
+		'debug' => false, // true fires Whoops debugger, false keeps Slim debugger
+		
+		// Whoops debug part
+		'whoopsDebug' => false, // true enable Whoops nice debug page, false fires up custom error page
+		
+		// Slim debug part
+		'displayErrorDetails' => false, // set to false in production
+		'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 		
 		// Renderer settings
 		'renderer' => [

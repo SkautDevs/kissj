@@ -1,0 +1,27 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card">
+		<h2>Schvalování účastníků na akci {{ eventName }}</h2>
+
+		<div class="card-divide">
+			<div>
+				<h3>Patroly</h3>
+				{% for patrolLeader in patrols %}
+					{{ patrolLeader.patrolName }}<br/>
+				{% endfor %}
+			</div>
+
+			<div>
+				<h3>IST</h3>
+				{% for ist in ists %}
+					{{ ist.firstName }} {{ ist.lastName }}
+					<form method="post" action="{{ path_for('approveIst', {'istId': ist.id}) }}">
+						<input type="submit" value="Schválit">
+					</form>
+					<br/>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
