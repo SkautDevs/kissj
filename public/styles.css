@@ -122,7 +122,6 @@ h2, h3 {
 
 .btn-small {
 	display: inline-block;
-
 }
 
 .two-cards {
@@ -211,6 +210,10 @@ h2, h3 {
 .signin-theme {
 	color: #a0067d;
 	--color: #a0067d;
+}
+.approving-theme {
+	color: #5e2281;
+	--color: #5e2281;
 }
 
 .form-group {

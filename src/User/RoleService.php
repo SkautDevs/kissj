@@ -147,7 +147,7 @@ class RoleService {
 		return $this->statuses[$key + 1];
 	}
 	
-	private function getPreviousStatus(string $status): string {
+	public function getPreviousStatus(string $status): string {
 		if (!$this->isStatusValid($status)) {
 			throw new \Exception('Unknown status "'.$status.'"');
 		}

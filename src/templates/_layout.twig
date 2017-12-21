@@ -35,7 +35,6 @@
 		{% endif %}
 		<br/>
 	</div>
-	{% if userRole.name != "admin" %}
 	<ul class="progressbar">
 		<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
 		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
@@ -43,7 +42,6 @@
 		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Schválená přihláška</li>
 		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
 	</ul>
-	{% endif %}
 	<div class="flash-wrapper">
 		{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
 			<div class="alert alert-{{ flashMessage['type'] }}">

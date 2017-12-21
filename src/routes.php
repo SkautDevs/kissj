@@ -515,19 +515,58 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->group("/admin", function () {
 			
 			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-				$patrols = $this->patrolService->getAllPatrols();
-				$ists = $this->istService->getAllIsts();
 				
-				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrols, 'ists' => $ists]);
+				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018']);
 			})->setName('admin-dashboard');
+			
+			$this->get("/approving", function (Request $request, Response $response, array $args) {
+				$patrols = $this->patrolService->getAllClosedPatrols();
+				$closedIsts = $this->istService->getAllClosedIsts();
+				
+				return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrols, 'closedIsts' => $closedIsts]);
+			})->setName('admin-approving');
+			
+			$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+				$this->patrolService->approvePatrol($args['patrolLeaderId']);
+				$this->flashMessages->success('Patrola schválena');
+				// TODO generate payment and send email
+				
+				return $response->withRedirect($this->router->pathFor('admin-approving'));
+			})->setName('approvePatrolLeader');
+			
+			$this->get("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+			return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
+			})->setName('openPatrolLeader');
+			
+			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+				$this->patrolService->openPatrol($args['patrolLeaderId']);
+				$this->flashMessages->info('Patrola zamítnuta');
+				
+				return $response->withRedirect($this->router->pathFor('admin-approving'));
+			})->setName('openPatrolLeaderConfirmed');
+			
 			
 			$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
 				$this->istService->approveIst($args['istId']);
+				$this->flashMessages->success('Člen IST schválen');
+				// TODO generate payment and send email
 				
-				return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('approveIst');
 			
-		
+			$this->get("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+				$ist = $this->istService->getIstFromId($args['istId']);
+				return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
+			})->setName('openIst');
+			
+			$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+				$this->istService->openIst($args['istId']);
+				$this->flashMessages->info('Člen IST zamítnut');
+				
+				return $response->withRedirect($this->router->pathFor('admin-approving'));
+			})->setName('openIstConfirmed');
+			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// protected area for Registration Admins
 			if ($this->roleService->getRole($request->getAttribute('user'))->name != 'admin') {

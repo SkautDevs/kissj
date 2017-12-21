@@ -23,8 +23,8 @@ class IstService {
 								RoleService $userStatusService,
 								FlashMessagesInterface $flashMessages,
 								$eventSettings,
-                                $eventName = 'cej2018'
-								) {
+								$eventName = 'cej2018'
+	) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
 		$this->roleService = $userStatusService;
@@ -39,13 +39,25 @@ class IstService {
 			$ist->user = $user;
 			$this->istRepository->persist($ist);
 		}
-
+		
 		$ist = $this->istRepository->findOneBy(['user' => $user]);
 		return $ist;
 	}
 	
-	public function getAllIsts(string $eventName = 'cej2018'): array {
-		$ists = $this->istRepository->findAll();
+	public function getIstFromId (int $istId): Ist {
+		return $this->istRepository->findOneBy(['id' => $istId]);
+	}
+	
+	public function getAllClosedIsts(string $eventName = 'cej2018'): array {
+		$closedIsts = $this->roleRepository->findBy([
+			'event' => $eventName,
+			'name' => 'ist',
+			'status' => 'closed']);
+		$ists = [];
+		/** @var Role $closedIst */
+		foreach ($closedIsts as $closedIst) {
+			$ists[] = $this->istRepository->findOneBy(['userId' => $closedIst->user->id]);
+		}
 		
 		return $ists;
 	}
@@ -183,10 +195,10 @@ class IstService {
 	
 	private function getClosedIstsCount(): int {
 		return $this->roleRepository->countBy([
-		    'name' => 'ist',
-            'event' => $this->eventName,
-            'status' => new Relation('open', '!=')
-        ]);
+			'name' => 'ist',
+			'event' => $this->eventName,
+			'status' => new Relation('open', '!=')
+		]);
 	}
 	
 	// TODO refactor
@@ -203,6 +215,15 @@ class IstService {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
+	}
+	
+	public function openIst(int $istId) {
+		/** @var Ist $ist */
+		$ist = $this->istRepository->findOneBy(['id' => $istId]);
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
+		$role->status = $this->roleService->getPreviousStatus($role->status);
 		$this->roleRepository->persist($role);
 	}
 }

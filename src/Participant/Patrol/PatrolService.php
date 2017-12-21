@@ -49,12 +49,27 @@ class PatrolService {
 		return $patrolLeader;
 	}
 	
-	public function getAllPatrols(string $eventName = 'cej2018'): array {
-		$patrolLeaders = $this->patrolLeaderRepository->findAll();
-		
-		// TODO add participants
-		return $patrolLeaders;
+	public function getPatrolLeaderFromId(int $patrolLeaderId): PatrolLeader {
+		return $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
 	}
+	
+	public function getAllClosedPatrols(string $eventName = 'cej2018'): array {
+		$closedPatrols = $this->roleRepository->findBy([
+			'event' => $eventName,
+			'name' => 'patrol-leader',
+			'status' => 'closed']);
+		$patrols = [];
+		/** @var Role $closedPatrol */
+		foreach ($closedPatrols as $closedPatrol) {
+			$patrol['patrolLeader'] = $this->patrolLeaderRepository->findOneBy(['userId' => $closedPatrol->user->id]);
+			$patrol['patrolParticipants'] = $this->patrolParticipantRepository->findBy(['patrolLeaderId' => $closedPatrol->id]);
+			
+			$patrols[] = $patrol;
+		}
+		
+		return $patrols;
+	}
+	
 	
 	private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
 		return $this->isPatrolLeaderDetailsValid(
@@ -311,6 +326,25 @@ class PatrolService {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
 		$role->status = $this->roleService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
+	}
+	
+	public function approvePatrol(int $patrolLeaderId) {
+		/** @var PatrolLeaderRepository $patrol */
+		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
+		$role->status = $this->roleService->getNextStatus($role->status);
+		$this->roleRepository->persist($role);
+	}
+	
+	// TODO make more concrete - set right status directly
+	public function openPatrol(int $patrolLeaderId) {
+		/** @var PatrolLeaderRepository $patrol */
+		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
+		$role->status = $this->roleService->getPreviousStatus($role->status);
 		$this->roleRepository->persist($role);
 	}
 }
