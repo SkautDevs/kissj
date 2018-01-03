@@ -17,10 +17,13 @@ class PatrolService {
 	private $patrolLeaderRepository;
 	/** @var \kissj\User\RoleRepository */
 	private $roleRepository;
+	/** @var RoleService */
 	private $roleService;
 	private $eventSettings;
 	private $flashMessages;
-	
+
+	private $eventName;
+
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
 								PatrolLeaderRepository $patrolLeaderRepository,
 								RoleRepository $roleRepository,
@@ -42,9 +45,10 @@ class PatrolService {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
 			$this->patrolLeaderRepository->persist($patrolLeader);
-//			for some strage reason, I have to get entity from lean mapper to work correctly.
+
+			$this->roleService->addRole($user, 'patrol-leader');
 		}
-		
+
 		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
 		return $patrolLeader;
 	}

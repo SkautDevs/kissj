@@ -106,6 +106,10 @@ $container['userRegeneration'] = function (C $c) {
 	return new \kissj\User\UserRegeneration($c->get('userRepository'), $_SESSION['user'] ?? []);
 };
 
+$container['exportService'] = function (C $c) {
+	return new \kissj\Export\ExportService($c->get('patrolParticipantRepository'), $c->get('patrolLeaderRepository'), $c->get('istRepository'), $c->get('roleRepository'));
+};
+
 $container['userService'] = function (C $c) {
 	return new UserService(
 		$c->get('userRepository'),
