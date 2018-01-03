@@ -538,7 +538,26 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
 			return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
 			})->setName('openPatrolLeader');
-			
+
+			$this->get("/medical", function (Request $request, Response $response, array $args) {
+				$this->
+				$file =  ROOT_PATH . '/cache/files/file.csv';
+				$response->withHeader('Content-Type', 'application/force-download')
+					->withHeader('Content-Type', 'application/octet-stream')
+					->withHeader('Content-Type', 'application/download')
+					->withHeader('Content-Description', 'File Transfer')
+					->withHeader('Content-Transfer-Encoding', 'binary')
+					->withHeader('Content-Disposition', 'attachment; filename="'.basename($file).'"')
+					->withHeader('Expires', '0')
+					->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+					->withHeader('Pragma', 'public')
+					->withHeader('Content-Length', filesize($file));
+
+				readfile($file);
+				return $response;
+
+			})->setName('openPatrolLeader');
+
 			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
 				$this->patrolService->openPatrol($args['patrolLeaderId']);
 				$this->flashMessages->info('Patrola zamítnuta');
