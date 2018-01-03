@@ -155,6 +155,7 @@ $container['paymentService'] = function (C $c) {
 		$paymentsSettings,
 		$c->get('paymentRepository'),
 		$c->get('roleRepository'),
+		$c->get('userRepository'),
 		$c->get('mailer'),
 		$c->get('view'),
 		$c->get('settings')['eventName'],
@@ -199,6 +200,12 @@ $container['view'] = function (C $c) {
 	$role = $roleService->getRole($user);
 	$view->getEnvironment()->addGlobal('userRole', $role);
 	$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
+	
+	if ($c->get('settings')['useTestingSite']) {
+		$flashMessages = $c->get('flashMessages');
+		$flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
+		$flashMessages->info('Login pro administraci: admin, heslo: admin, link: '.$c->get('router')->pathFor('administration'));
+	}
 	
 	return $view;
 };

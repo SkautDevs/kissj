@@ -329,7 +329,7 @@ class PatrolService {
 	public function closeRegistration(PatrolLeader $patrolLeader) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
-		$role->status = $this->roleService->getNextStatus($role->status);
+		$role->status = $this->roleService->getCloseStatus();
 		$this->roleRepository->persist($role);
 	}
 	
@@ -338,17 +338,16 @@ class PatrolService {
 		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
-		$role->status = $this->roleService->getNextStatus($role->status);
+		$role->status = $this->roleService->getApproveStatus();
 		$this->roleRepository->persist($role);
 	}
 	
-	// TODO make more concrete - set right status directly
 	public function openPatrol(int $patrolLeaderId) {
 		/** @var PatrolLeaderRepository $patrol */
 		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
-		$role->status = $this->roleService->getPreviousStatus($role->status);
+		$role->status = $this->roleService->getOpenStatus();
 		$this->roleRepository->persist($role);
 	}
 }

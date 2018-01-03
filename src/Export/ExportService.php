@@ -68,13 +68,13 @@ class ExportService {
 
 		$rows = [];
 		foreach ($patrolLeaders as $leader) {
-			$rows[] = [$leader->firstName, $leader->lastName, $leader->birthDate, $leader->allergies];
+			$rows[] = [$leader->firstName, $leader->lastName, $leader->birthDate == null ? '' : $leader->birthDate->format('Y-m-d'), $leader->allergies];
 		}
 		foreach ($ists as $ist) {
-			$rows[] = [$ist->firstName, $ist->lastName, $ist->birthDate, $ist->allergies];
+			$rows[] = [$ist->firstName, $ist->lastName, $ist->birthDate == null ? '' : $ist->birthDate->format('Y-m-d'), $ist->allergies];
 		}
 		foreach ($partolParticipants as $participant) {
-			$rows[] = [$participant->firstName, $participant->lastName, $participant->birthDate, $participant->allergies];
+			$rows[] = [$participant->firstName, $participant->lastName, $participant->birthDate == null ? '' : $participant->birthDate->format('Y-m-d'), $participant->allergies];
 		}
 		return $rows;
 	}
