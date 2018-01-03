@@ -556,7 +556,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 				ob_start();
 				$csv->output();
-				$response->withBody(fopen('data://text/plain,' . ob_get_clean(),'r'));
+				$response->write(ob_get_clean());
 				return $response;
 
 			})->setName('admin-medical');
