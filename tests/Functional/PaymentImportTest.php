@@ -10,7 +10,7 @@ class PaymentImportTest extends BaseTestCase {
 	/**
 	 * Test that the index route returns a rendered response containing the text 'SlimFramework' but not a greeting
 	 */
-	public function testExportMedicalData() {
+	public function testImportPaymentData() {
 	    $importer = new MoneyS3CSV("money_s3.csv");
 	    list($payments, $errors) = $importer->getPayments();
 
