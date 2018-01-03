@@ -1,7 +1,5 @@
 <?php
 
-use League\Csv\Reader;
-use League\Csv\Writer;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -391,8 +389,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				return $response;
 			}
 		});
-
-
+		
+		
 		// IST
 		
 		$this->group("/ist", function () {
@@ -529,38 +527,43 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('admin-approving');
 			
 			$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				$this->patrolService->approvePatrol($args['patrolLeaderId']);
+				$patrolLeaderId = $args['patrolLeaderId'];
+				$this->patrolService->approvePatrol($patrolLeaderId);
+				/** @var \kissj\Payment\PaymentService $paymentService */
+				$paymentService = $this->paymentService;
+				$role = $this->roleService->getRole($this->patrolService->getPatrolLeaderFromId($patrolLeaderId)->user);
+				$payment = $paymentService->createNewPayment($role);
+				$paymentService->sendPaymentByMail($payment);
+				
 				$this->flashMessages->success('Patrola schválena');
-				// TODO generate payment and send email
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('approvePatrolLeader');
 			
 			$this->get("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
 				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-			return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
+				return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
 			})->setName('openPatrolLeader');
-
+			
 			$this->get("/medical", function (Request $request, Response $response, array $args) {
-				$data = $this->exportService->medicalDataToCSV('cej2018');
-
-				$response->withHeader('Content-Type', 'text/csv')
+				$this->
+				$file = ROOT_PATH.'/cache/files/file.csv';
+				$response->withHeader('Content-Type', 'application/force-download')
+					->withHeader('Content-Type', 'application/octet-stream')
+					->withHeader('Content-Type', 'application/download')
+					->withHeader('Content-Description', 'File Transfer')
+					->withHeader('Content-Transfer-Encoding', 'binary')
+					->withHeader('Content-Disposition', 'attachment; filename="'.basename($file).'"')
 					->withHeader('Expires', '0')
-					->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-					->withHeader('Pragma', 'no-cache');
-
-				$csv = Writer::createFromString('');
-				$csv->setDelimiter(',');
-				$csv->setOutputBOM(Reader::BOM_UTF8);
-				$csv->insertAll($data);
-
-				ob_start();
-				$csv->output();
-				$response->write(ob_get_clean());
+					->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+					->withHeader('Pragma', 'public')
+					->withHeader('Content-Length', filesize($file));
+				
+				readfile($file);
 				return $response;
-
-			})->setName('admin-medical');
-
+				
+			})->setName('openPatrolLeader');
+			
 			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
 				$this->patrolService->openPatrol($args['patrolLeaderId']);
 				$this->flashMessages->info('Patrola zamítnuta');
@@ -570,9 +573,15 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			
 			$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
-				$this->istService->approveIst($args['istId']);
+				$istId = $args['istId'];
+				$this->istService->approveIst($istId);
+				/** @var \kissj\Payment\PaymentService $paymentService */
+				$paymentService = $this->paymentService;
+				$role = $this->roleService->getRole($this->istService->getIstFromId($istId)->user);
+				$payment = $paymentService->createNewPayment($role);
+				$paymentService->sendPaymentByMail($payment);
+				
 				$this->flashMessages->success('Člen IST schválen');
-				// TODO generate payment and send email
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('approveIst');

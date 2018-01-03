@@ -5,6 +5,7 @@ namespace kissj\Orm;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Ist\Ist;
+use kissj\Payment\Payment;
 use kissj\User\LoginToken;
 use kissj\User\Role;
 use kissj\User\User;
@@ -47,6 +48,9 @@ class Mapper implements IMapper {
 		}
 		if ($table === 'role') {
 			return Role::class;
+		}
+		if ($table === 'payment') {
+			return Payment::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
 	}

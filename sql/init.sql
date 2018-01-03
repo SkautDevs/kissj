@@ -95,7 +95,7 @@ CREATE TABLE role (
 	userId INT CONSTRAINT role_userId_fk REFERENCES user (id)
 );
 
-CREATE TABLE payments (
+CREATE TABLE payment (
 	id             INTEGER PRIMARY KEY autoincrement,
 	event          TEXT NOT NULL,
 	variableSymbol TEXT NOT NULL,

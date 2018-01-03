@@ -70,8 +70,9 @@ $settings = [
 		],
 		
 		'paymentSettings' => [
-			'prefixVariableSymbol' => '',
-		]
+			'prefixVariableSymbol' => '00',
+			'accountNumber' => '0123456789',
+		],
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {

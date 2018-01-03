@@ -155,6 +155,7 @@ $container['paymentService'] = function (C $c) {
 		$paymentsSettings,
 		$c->get('paymentRepository'),
 		$c->get('roleRepository'),
+		$c->get('userRepository'),
 		$c->get('mailer'),
 		$c->get('view'),
 		$c->get('settings')['eventName'],

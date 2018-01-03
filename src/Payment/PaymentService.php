@@ -4,8 +4,10 @@ namespace kissj\Payment;
 
 use kissj\Mailer\MailerInterface;
 use kissj\Random;
+use kissj\User\Role;
 use kissj\User\RoleRepository;
 use kissj\User\User;
+use kissj\User\UserRepository;
 use Monolog\Logger;
 use Slim\Views\Twig;
 
@@ -21,16 +23,21 @@ class PaymentService {
 	private $paymentRepository;
 	/** @var RoleRepository */
 	private $roleRepository;
+	/** @var UserRepository */
+	private $userRepository;
 	
 	public function __construct(array $paymentsSettings,
-						 PaymentRepository $paymentRepository,
-						 RoleRepository $roleRepository,
-						 MailerInterface $mailer,
-						 Twig $renderer,
-						 string $eventName,
-						 Random $random,
-						 Logger $logger) {
+								PaymentRepository $paymentRepository,
+								RoleRepository $roleRepository,
+								UserRepository $userRepository,
+								MailerInterface $mailer,
+								Twig $renderer,
+								string $eventName,
+								Random $random,
+								Logger $logger) {
 		$this->settings = $paymentsSettings;
+		$this->paymentRepository = $paymentRepository;
+		$this->roleRepository = $roleRepository;
 		$this->mailer = $mailer;
 		$this->renderer = $renderer;
 		$this->eventName = $eventName;
@@ -38,8 +45,9 @@ class PaymentService {
 		$this->logger = $logger;
 	}
 	
-	public function createNewPayment(User $user, int $price): Payment {
-		$newVS = $this->random->generateVariableSymbol($this->settings['prefixVariableSymbol']);
+	public function createNewPayment(Role $role): Payment {
+		$newVS = $this->generateVariableSymbol($this->settings['prefixVariableSymbol']);
+		$price = $this->getPriceFor($role);
 		
 		$newPayment = new Payment();
 		$newPayment->event = $this->eventName;
@@ -48,15 +56,49 @@ class PaymentService {
 		$newPayment->currency = 'CZK';
 		$newPayment->status = 'waiting';
 		$newPayment->purpose = 'fee';
-		$newPayment->user = $user;
+		$newPayment->role = $role;
 		
 		$this->paymentRepository->persist($newPayment);
 		
 		return $newPayment;
 	}
 	
+	private function generateVariableSymbol(string $prefix): string {
+		do {
+			$variableNumber = $prefix.mt_rand(100000, 999999);
+		} while ($this->isVariableNumberExisting($variableNumber));
+		
+		return $variableNumber;
+	}
+	
+	private function isVariableNumberExisting(string $variableNumber): bool {
+		$isExisting = $this->paymentRepository->isExisting(['variableSymbol' => $variableNumber]);
+		return $isExisting;
+	}
+	
+	private function getPriceFor(Role $role): int {
+		switch ($role->name) {
+			case 'ist':
+				return 2900;
+			case 'patrol-leader':
+				return 57000;
+			default:
+				throw new \Exception('Unknown role: '.$role->name);
+		}
+	}
+	
+	public function sendPaymentByMail(Payment $payment) {
+		$message = $this->renderer->fetch('emails/payment-info.twig', [
+			'eventName' => 'CEJ 2018',
+			'accountNumber' => $this->settings['accountNumber'],
+			'price' => $payment->price,
+			'currency' => 'Kč',
+			'variableSymbol' => $payment->variableSymbol]);
+		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
+	}
+	
 	public function getPayment(User $user, string $event) {
-		/** @var \kissj\User\Role $role */
+		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['user' => $user->id]);
 		return $this->paymentRepository->findOneBy(['role' => $role->id]);
 	}
@@ -66,10 +108,10 @@ class PaymentService {
 			'variableSymbol' => $variableSymbol,
 			'price' => $price]));
 	}
-
+	
 	# Jak vygenerovat hezci CSV z Money S3
 	/* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
-
+	
 	public function setPaymentPaid(Payment $payment) {
 		// set payment valid in DB
 		$payment->status = 'paid';
