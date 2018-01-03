@@ -29,7 +29,7 @@ class ExportTest extends BaseTestCase {
 			$user = $userService->registerUser($email);
 			$patrolLeader = $patrolService->getPatrolLeader($user);
 			$patrolService->editPatrolLeaderInfo($patrolLeader,
-				'leader',
+				"leader$i",
 				'leaderový',
 				'burákové máslo' . $i,
 				(new \DateTime())->format(DATE_ISO8601),
@@ -48,13 +48,14 @@ class ExportTest extends BaseTestCase {
 		}
 
 		$rows = $exportService->medicalDataToCSV('cej2018');
-//		$email = 'test@example.com';
-//		$user = $userService->registerUser($email);
-//		$readableRole = 'Patrol Leader';
-//		$token = $userService->sendLoginTokenByMail($email, $readableRole);
-//		$loadedUser = $userService->getUserFromToken($token);
-
 
 		$this->assertCount(11, $rows);
+
+		$this->assertSame(null, $rows[0][0]);
+		$this->assertSame(null, $rows[0][1]);
+		$this->assertSame('leader0', $rows[1][0]);
+		$this->assertSame('leaderový', $rows[1][1]);
+		$this->assertSame('leader1', $rows[2][0]);
+		$this->assertSame('leaderový', $rows[2][1]);
 	}
 }
