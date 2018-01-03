@@ -11,6 +11,9 @@ $settings = [
 		'displayErrorDetails' => false, // set to false in production
 		'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 		
+		// Testing site
+		'useTestingSite' => false,
+		
 		// Renderer settings
 		'renderer' => [
 			'templates_path' => __DIR__.'/templates/',
@@ -67,8 +70,9 @@ $settings = [
 		],
 		
 		'paymentSettings' => [
-			'prefixVariableSymbol' => '',
-		]
+			'prefixVariableSymbol' => '00',
+			'accountNumber' => '0123456789',
+		],
 	],
 ];
 if (file_exists(__DIR__.'/settings_custom.php')) {

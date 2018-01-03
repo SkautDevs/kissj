@@ -1,0 +1,11 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+	<p>Ahoj!</p>
+	<p>Právě jsme na akci {{ eventName }} schválili tvou registraci!</p>
+	<p>Platební informace jsou:</p>
+	<h3>Číslo účtu: {{ accountNumber }}</h3>
+	<h3>Částka: {{ price }} {{ currency }}</h3>
+	<h3>Variabilní symbol: {{ variableSymbol }}</h3>
+	<p>Zaplať prosím do 16. 2. 2018 - potom budeme nuceni tvoje místo přepustit jinému zájemci. </p>
+{% endblock %}

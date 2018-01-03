@@ -201,11 +201,10 @@ class IstService {
 		]);
 	}
 	
-	// TODO refactor
 	public function closeRegistration(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-		$role->status = $this->roleService->getNextStatus($role->status);
+		$role->status = $this->roleService->getCloseStatus();
 		$this->roleRepository->persist($role);
 	}
 	
@@ -214,7 +213,7 @@ class IstService {
 		$ist = $this->istRepository->findOneBy(['id' => $istId]);
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-		$role->status = $this->roleService->getNextStatus($role->status);
+		$role->status = $this->roleService->getApproveStatus();
 		$this->roleRepository->persist($role);
 	}
 	
@@ -223,7 +222,7 @@ class IstService {
 		$ist = $this->istRepository->findOneBy(['id' => $istId]);
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-		$role->status = $this->roleService->getPreviousStatus($role->status);
+		$role->status = $this->roleService->getOpenStatus();
 		$this->roleRepository->persist($role);
 	}
 }

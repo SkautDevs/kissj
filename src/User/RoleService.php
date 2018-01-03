@@ -171,4 +171,16 @@ class RoleService {
 	private function isStatusFirst(string $status): bool {
 		return $status == $this->statuses[0];
 	}
+	
+	public function getOpenStatus(): string {
+		return 'open';
+	}
+	
+	public function getCloseStatus(): string {
+		return 'closed';
+	}
+	
+	public function getApproveStatus(): string {
+		return 'approved';
+	}
 }

@@ -51,40 +51,40 @@ class UserService {
 	
 	public function sendLoginTokenByMail(string $email, string $readableRole): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
-        $this->invalidateAllLoginTokens($user);
-
-        // generate new token
-        $loginToken = new LoginToken();
+		$this->invalidateAllLoginTokens($user);
+		
+		// generate new token
+		$loginToken = new LoginToken();
 		$token = $this->random->generateToken();
 		$loginToken->token = $token;
 		$loginToken->user = $user;
 		$loginToken->created = new \DateTime();
 		$loginToken->used = false;
-
+		
 		$this->loginTokenRepository->persist($loginToken);
-
-        $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
+		
+		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => 'CEJ 2018', 'readableRole' => $readableRole]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
-
+		
 		return $token;
 	}
 	
 	public function isLoginTokenValid(string $loginToken): bool {
-        try {
-            $lastToken = $this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false], ['created' => false]);
-            if (is_null($lastToken))
-                return false;
-
-            $lastValidTime = new \DateTime();
-            $lastValidTime->modify("-15 minutes");
-            if ($lastToken->created < $lastValidTime)
-                return false;
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+		try {
+			$lastToken = $this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false], ['created' => false]);
+			if (is_null($lastToken))
+				return false;
+			
+			$lastValidTime = new \DateTime();
+			$lastValidTime->modify("-15 minutes");
+			if ($lastToken->created < $lastValidTime)
+				return false;
+			
+			return true;
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 	
 	public function getUserFromToken(string $token): User {
@@ -106,14 +106,13 @@ class UserService {
 	public function logoutUser() {
 		unset($_SESSION['user']);
 	}
-
-    public function invalidateAllLoginTokens($user)
-    {
-        // invalidate all not yet used login tokens
-        $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
-        foreach ($existingTokens as $token) {
-            $token->used = true;
-            $this->loginTokenRepository->persist($token);
-        }
-    }
+	
+	public function invalidateAllLoginTokens($user) {
+		// invalidate all not yet used login tokens
+		$existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
+		foreach ($existingTokens as $token) {
+			$token->used = true;
+			$this->loginTokenRepository->persist($token);
+		}
+	}
 }
