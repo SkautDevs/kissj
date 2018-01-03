@@ -36,10 +36,14 @@ class Repository extends BaseRepository {
 
 	public function findBy(array $criteria, array $orderBy = []): array {
 		$qb = $this->createFluent();
+
 		$this->addConditions($qb, $criteria);
         $this->addOrderBy($qb, $orderBy);
-        $rows = $qb->fetchAll();
 
+//        this little boi dumps sql query
+//		$qb->getConnection()->test($qb->_export(null, ['%ofs %lmt', null, null]));
+
+        $rows = $qb->fetchAll();
 		$entities = [];
 
 		foreach ($rows as $row) {
@@ -64,7 +68,11 @@ class Repository extends BaseRepository {
 				$columnName = $this->mapper->getRelationshipColumn($this->table, $this->mapper->getTable(get_class($value)));
 				$qb->where("$columnName = %i", $value->id);
 			} else if ($value instanceof Relation) {
-                $qb->where("$field " . $value->relation . " %s", $value->value);
+				if ($value->relation === 'IN') {
+					$qb->where("$field $value->relation %in", $value->value);
+				} else {
+					$qb->where("$field $value->relation %s", $value->value);
+				}
             } else {
 			    if (is_bool($value)) {
                     $qb->where("$field = %b", $value);
