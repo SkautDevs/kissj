@@ -593,7 +593,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		global $adminerSettings;
 		$adminerSettings = $this->get('settings')['adminer'];
 		require __DIR__."/../admin/custom.php";
-	});
+	})->setName('administration');
 
 // LANDING PAGE
 	

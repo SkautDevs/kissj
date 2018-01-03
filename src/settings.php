@@ -11,6 +11,9 @@ $settings = [
 		'displayErrorDetails' => false, // set to false in production
 		'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 		
+		// Testing site
+		'useTestingSite' => false,
+		
 		// Renderer settings
 		'renderer' => [
 			'templates_path' => __DIR__.'/templates/',

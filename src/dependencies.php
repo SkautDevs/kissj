@@ -192,5 +192,11 @@ $container['view'] = function (C $c) {
 	$view->getEnvironment()->addGlobal('userRole', $role);
 	$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
 	
+	if ($c->get('settings')['useTestingSite']) {
+		$flashMessages = $c->get('flashMessages');
+		$flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
+		$flashMessages->info('Login pro administraci: admin, heslo: admin, link: '.$c->get('router')->pathFor('administration'));
+	}
+	
 	return $view;
 };
