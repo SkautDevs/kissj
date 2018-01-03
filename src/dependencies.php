@@ -163,6 +163,10 @@ $container['paymentService'] = function (C $c) {
 	);
 };
 
+$container['paymentMatcherService'] = function (C $c) {
+    return new \kissj\PaymentImport\PaymentMatcherService($c->get('paymentService'), $c->get('paymentRepository'));
+};
+
 // views
 $container['flashMessages'] = function (C $c) {
 	return new kissj\FlashMessages\FlashMessagesBySession();
