@@ -1,5 +1,7 @@
 <?php
 
+use League\Csv\Reader;
+use League\Csv\Writer;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -546,23 +548,24 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('openPatrolLeader');
 			
 			$this->get("/medical", function (Request $request, Response $response, array $args) {
-				$this->
-				$file = ROOT_PATH.'/cache/files/file.csv';
-				$response->withHeader('Content-Type', 'application/force-download')
-					->withHeader('Content-Type', 'application/octet-stream')
-					->withHeader('Content-Type', 'application/download')
-					->withHeader('Content-Description', 'File Transfer')
-					->withHeader('Content-Transfer-Encoding', 'binary')
-					->withHeader('Content-Disposition', 'attachment; filename="'.basename($file).'"')
+				$data = $this->exportService->medicalDataToCSV('cej2018');
+
+				$response->withHeader('Content-Type', 'text/csv')
 					->withHeader('Expires', '0')
-					->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
-					->withHeader('Pragma', 'public')
-					->withHeader('Content-Length', filesize($file));
-				
-				readfile($file);
+					->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+					->withHeader('Pragma', 'no-cache');
+
+				$csv = Writer::createFromString('');
+				$csv->setDelimiter(',');
+				$csv->setOutputBOM(Reader::BOM_UTF8);
+				$csv->insertAll($data);
+
+				ob_start();
+				$csv->output();
+				$response->write(ob_get_clean());
 				return $response;
-				
-			})->setName('openPatrolLeader');
+
+			})->setName('admin-medical');
 			
 			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
 				$this->patrolService->openPatrol($args['patrolLeaderId']);
