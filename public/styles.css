@@ -207,13 +207,25 @@ h2, h3 {
 	color: #a21f16;
 	--color: #a21f16;
 }
-.signin-theme {
+.open-theme {
 	color: #a0067d;
 	--color: #a0067d;
 }
-.approving-theme {
+.closed-theme {
 	color: #5e2281;
 	--color: #5e2281;
+}
+.approved-theme {
+	color: #172983;
+	--color: #172983;
+}
+.paid-theme {
+	color: #1c860e;
+	--color: #1c860e;
+}
+.admin-theme {
+	color: #333;
+	--color: #333;
 }
 
 .form-group {

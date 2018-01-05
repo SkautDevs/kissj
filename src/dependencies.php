@@ -125,7 +125,9 @@ $container['userService'] = function (C $c) {
 $container['roleService'] = function (C $c) {
 	return new \kissj\User\RoleService(
 		$c->get('roleRepository'),
-		$c->get('settings')['eventName']);
+		$c->get('paymentRepository'),
+		$c->get('settings')['eventName']
+	);
 };
 
 $container['patrolService'] = function (C $c) {
@@ -134,8 +136,11 @@ $container['patrolService'] = function (C $c) {
 		$c->get('patrolParticipantRepository'),
 		$c->get('patrolLeaderRepository'),
 		$c->get('roleRepository'),
+		$c->get('paymentRepository'),
 		$c->get('roleService'),
 		$c->get('flashMessages'),
+		$c->get('mailer'),
+		$c->get('view'),
 		$eventSettings);
 };
 
@@ -144,8 +149,11 @@ $container['istService'] = function (C $c) {
 	return new IstService(
 		$c->get('istRepository'),
 		$c->get('roleRepository'),
+		$c->get('paymentRepository'),
 		$c->get('roleService'),
 		$c->get('flashMessages'),
+		$c->get('mailer'),
+		$c->get('view'),
 		$eventSettings);
 };
 
@@ -165,7 +173,9 @@ $container['paymentService'] = function (C $c) {
 };
 
 $container['paymentMatcherService'] = function (C $c) {
-    return new \kissj\PaymentImport\PaymentMatcherService($c->get('paymentService'), $c->get('paymentRepository'));
+	return new \kissj\PaymentImport\PaymentMatcherService(
+		$c->get('paymentService'),
+		$c->get('paymentRepository'));
 };
 
 // views

@@ -1,16 +1,19 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card signin-theme">
+	<div class="card {{ userStatus }}-theme">
 		<h2>Přehled patroly {{ plDetails.getPatrolName }}</h2>
 		<h4>
 			{{ userCustomHelp }}
 		</h4>
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
-				<h4>Číslo účtu: {{ bankAccount }}</h4>
-				<h4>Částka: {{ payment.price }}</h4>
-				<h4>Variabilní symbol: {{ payment.variableSymbol }}</h4>
+				<h2>Platební údaje</h2>
+				Číslo účtu: {{ payment.getAccountNumber }}<br/>
+				Částka: {{ payment.getPrice }} Kč<br/>
+				Variabilní symbol: {{ payment.getVariableSymbol }}<br/>
+				Poznámka: CEJ 2018 {{ plDetails.getPatrolName }}<br/>
+				<br/>
 			</div>
 		{% endif %}
 		

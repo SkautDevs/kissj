@@ -57,6 +57,7 @@ class PaymentService {
 		$newPayment->status = 'waiting';
 		$newPayment->purpose = 'fee';
 		$newPayment->role = $role;
+		$newPayment->accountNumber = $this->settings['accountNumber'];
 		
 		$this->paymentRepository->persist($newPayment);
 		
@@ -65,7 +66,7 @@ class PaymentService {
 	
 	private function generateVariableSymbol(string $prefix): string {
 		do {
-			$variableNumber = $prefix.mt_rand(100000, 999999);
+			$variableNumber = $prefix.str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 		} while ($this->isVariableNumberExisting($variableNumber));
 		
 		return $variableNumber;
@@ -85,16 +86,6 @@ class PaymentService {
 			default:
 				throw new \Exception('Unknown role: '.$role->name);
 		}
-	}
-	
-	public function sendPaymentByMail(Payment $payment) {
-		$message = $this->renderer->fetch('emails/payment-info.twig', [
-			'eventName' => 'CEJ 2018',
-			'accountNumber' => $this->settings['accountNumber'],
-			'price' => $payment->price,
-			'currency' => 'Kč',
-			'variableSymbol' => $payment->variableSymbol]);
-		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
 	}
 	
 	public function getPayment(User $user, string $event) {

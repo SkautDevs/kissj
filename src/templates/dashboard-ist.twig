@@ -1,48 +1,52 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card signin-theme">
+	<div class="card {{ userStatus }}-theme">
 		<h2>International Service Team - přehled údajů</h2>
 		<h4>
 			{{ userCustomHelp }}
 		</h4>
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
-				<h4>Číslo účtu: {{ bankAccount }}</h4>
-				<h4>Částka: {{ payment.price }}</h4>
-				<h4>Variabilní symbol: {{ payment.variableSymbol }}</h4>
+				<h2>Platební údaje</h2>
+				Číslo účtu: {{ payment.getAccountNumber }}<br/>
+				Částka: {{ payment.getPrice }} Kč<br/>
+				Variabilní symbol: {{ payment.getVariableSymbol }}<br/>
+				Poznámka: CEJ 2018 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}<br/>
+				<br/>
 			</div>
 		{% endif %}
-			<div>
-				<h2>Údaje o IST</h2>
-				{% if userStatus == 'open' %}
-					<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
-				{% endif %}
-				<div class="text-center">
-					Křestní jméno: {{ istDetails.getFirstName }}<br/>
-					Příjmení: {{ istDetails.getLastName }}<br/>
-					Gender: {{ istDetails.getGender }}<br/>
-					Datum narození: {{ istDetails.getBirthDate.format('d. m. Y') }}<br/>
-					Místo narození: {{ istDetails.getBirthPlace }}<br/>
-					Trvalá adresa: {{ istDetails.getPermanentResidence }}<br/>
-					Země: {{ istDetails.getCountry }}<br/>
-					Číslo pasu/občanky: {{ istDetails.getCardPassportNumber }}<br/>
-					Dieta: {{ istDetails.getFoodPreferences }}<br/>
-					Alergie: {{ istDetails.getAllergies }}<br/>
-					Telefonní kontakt: {{ istDetails.getTelephoneNumber }}<br/>
-					Email: {{ istDetails.getEmail }}<br/>
-					Skautská jednotka: {{ istDetails.getScoutUnit }}<br/>
 
-					Preference práce: {{ istDetails.getWorkPreferences }}<br/>
-					Skills: {{ istDetails.getSkills }}<br/>
-					Jazyky, kterými se domluvím: {{ istDetails.getLanguages }}<br/>
-					Datum příjezdu: {{ istDetails.getArrivalDate.format('d. m. Y') }}<br/>
-					Datum odjezdu: {{ istDetails.getLeavingDate.format('d. m. Y') }}<br/>
-					Poznávací značka auta: {{ istDetails.getCarRegistrationPlate }}<br/>
+		<div>
+			<h2>Osobní údaje</h2>
+			{% if userStatus == 'open' %}
+				<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
+			{% endif %}
+			<div class="text-center">
+				Křestní jméno: {{ istDetails.getFirstName }}<br/>
+				Příjmení: {{ istDetails.getLastName }}<br/>
+				Gender: {{ istDetails.getGender }}<br/>
+				Datum narození: {{ istDetails.getBirthDate.format('d. m. Y') }}<br/>
+				Místo narození: {{ istDetails.getBirthPlace }}<br/>
+				Trvalá adresa: {{ istDetails.getPermanentResidence }}<br/>
+				Země: {{ istDetails.getCountry }}<br/>
+				Číslo pasu/občanky: {{ istDetails.getCardPassportNumber }}<br/>
+				Dieta: {{ istDetails.getFoodPreferences }}<br/>
+				Alergie: {{ istDetails.getAllergies }}<br/>
+				Telefonní kontakt: {{ istDetails.getTelephoneNumber }}<br/>
+				Email: {{ istDetails.getEmail }}<br/>
+				Skautská jednotka: {{ istDetails.getScoutUnit }}<br/>
 
-					Poznámky: {{ istDetails.getNotes }}<br/>
-					<br/>
-				</div>
+				Preference práce: {{ istDetails.getWorkPreferences }}<br/>
+				Skills: {{ istDetails.getSkills }}<br/>
+				Jazyky, kterými se domluvím: {{ istDetails.getLanguages }}<br/>
+				Datum příjezdu: {{ istDetails.getArrivalDate.format('d. m. Y') }}<br/>
+				Datum odjezdu: {{ istDetails.getLeavingDate.format('d. m. Y') }}<br/>
+				Poznávací značka auta: {{ istDetails.getCarRegistrationPlate }}<br/>
+
+				Poznámky: {{ istDetails.getNotes }}<br/>
+				<br/>
+			</div>
 		</div>
 
 		{% if userStatus == 'open' %}

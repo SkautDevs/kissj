@@ -3,28 +3,34 @@
 namespace kissj\User;
 
 
+use kissj\Payment\PaymentRepository;
+
 class RoleService {
 	
 	/** @var RoleRepository */
 	private $roleRepository;
+	/** @var PaymentRepository */
+	private $paymentRepository;
 	
 	private $possibleRoles;
 	private $eventName;
 	private $statuses;
 	
 	public function __construct(RoleRepository $roleRepository,
+								PaymentRepository $paymentRepository,
 								string $eventName) {
 		$this->roleRepository = $roleRepository;
+		$this->paymentRepository = $paymentRepository;
 		$this->eventName = $eventName;
 		$this->possibleRoles = [
-			'patrol-leader',
-			'ist',
+			'patrol-leader', // leader of whole patrol
+			'ist', // self-standing International Service Team
 			//'guest',
 			//'staff',
 			//'team',
 			//'event-chief',
 			//'contingent-chief',
-			'admin'
+			'admin' // for approving participants & getting useful info about them
 		];
 		$this->statuses = [
 			'open',
@@ -113,21 +119,8 @@ class RoleService {
 		}
 	}
 	
-	
-	// for Payment class
-	
-	public function setPaid(User $user) {
-		// TODO implement
-		
-		// search for corrent Role with $this->eventName;
-		$role = $this->getRole($user, $this->eventName);
-		// check if Role has status one before approoved with getPreviousStatus
-		
-		// set paid to Role
-	}
-	
-	
 	// for User class
+	// TODO check if used anywhere and delete after that
 	
 	public function getFirstStatus($role): string {
 		// TODO enhance for different roles

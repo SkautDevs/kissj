@@ -4,11 +4,14 @@ namespace kissj\Participant\Patrol;
 
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Orm\Relation;
+use kissj\Payment\PaymentRepository;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
 use kissj\User\RoleService;
 use kissj\User\User;
-use kissj\User\UserStatusService;
+use kissj\Mailer\MailerInterface;
+use Slim\Views\Twig;
+use kissj\Payment\Payment;
 
 class PatrolService {
 	/** @var PatrolParticipantRepository */
@@ -19,23 +22,31 @@ class PatrolService {
 	private $roleRepository;
 	/** @var RoleService */
 	private $roleService;
+	/** @var PaymentRepository */
+	private $paymentRepository;
 	private $eventSettings;
 	private $flashMessages;
-
+	
 	private $eventName;
-
+	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
 								PatrolLeaderRepository $patrolLeaderRepository,
 								RoleRepository $roleRepository,
+								PaymentRepository $paymentRepository,
 								RoleService $roleService,
 								FlashMessagesInterface $flashMessages,
+								MailerInterface $mailer,
+								Twig $renderer,
 								$eventSettings,
 								$eventName = 'cej2018') {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->roleRepository = $roleRepository;
+		$this->paymentRepository = $paymentRepository;
 		$this->roleService = $roleService;
 		$this->flashMessages = $flashMessages;
+		$this->mailer = $mailer;
+		$this->renderer = $renderer;
 		$this->eventSettings = $eventSettings;
 		$this->eventName = $eventName;
 	}
@@ -45,10 +56,10 @@ class PatrolService {
 			$patrolLeader = new PatrolLeader();
 			$patrolLeader->user = $user;
 			$this->patrolLeaderRepository->persist($patrolLeader);
-
+			
 			$this->roleService->addRole($user, 'patrol-leader');
 		}
-
+		
 		$patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
 		return $patrolLeader;
 	}
@@ -65,8 +76,9 @@ class PatrolService {
 		$patrols = [];
 		/** @var Role $closedPatrol */
 		foreach ($closedPatrols as $closedPatrol) {
-			$patrol['patrolLeader'] = $this->patrolLeaderRepository->findOneBy(['userId' => $closedPatrol->user->id]);
-			$patrol['patrolParticipants'] = $this->patrolParticipantRepository->findBy(['patrolLeaderId' => $closedPatrol->id]);
+			$patrolLeader = $this->patrolLeaderRepository->findOneBy(['userId' => $closedPatrol->user->id]);
+			$patrol['patrolLeader'] = $patrolLeader;
+			$patrol['patrolParticipants'] = $this->patrolParticipantRepository->findBy(['patrolLeaderId' => $patrolLeader->id]);
 			
 			$patrols[] = $patrol;
 		}
@@ -322,10 +334,28 @@ class PatrolService {
 		]);
 	}
 	
-	/**
-	 * @param PatrolLeader $patrolLeader
-	 * @throws \Exception
-	 */
+	public function sendPaymentByMail(Payment $payment, PatrolLeader $patrolLeader) {
+		$message = $this->renderer->fetch('emails/payment-info.twig', [
+			'eventName' => 'CEJ 2018',
+			'accountNumber' => $payment->accountNumber,
+			'price' => $payment->price,
+			'currency' => 'Kč',
+			'variableSymbol' => $payment->variableSymbol,
+			'role' => $payment->role->name,
+			'gender' => $patrolLeader->gender,
+			
+			'patrolName' => $patrolLeader->patrolName,
+		]);
+		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
+	}
+	
+	// TODO make this more clever
+	public function getOnePayment(PatrolLeader $patrolLeader): ?Payment {
+		if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id, 'event' => 'cej2018'])])) {
+			return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id, 'event' => 'cej2018'])]);
+		} else return null;
+	}
+	
 	public function closeRegistration(PatrolLeader $patrolLeader) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
@@ -333,20 +363,16 @@ class PatrolService {
 		$this->roleRepository->persist($role);
 	}
 	
-	public function approvePatrol(int $patrolLeaderId) {
-		/** @var PatrolLeaderRepository $patrol */
-		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
+	public function approvePatrol(PatrolLeader $patrolLeader) {
 		/** @var Role $role */
-		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
+		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
 		$role->status = $this->roleService->getApproveStatus();
 		$this->roleRepository->persist($role);
 	}
 	
-	public function openPatrol(int $patrolLeaderId) {
-		/** @var PatrolLeaderRepository $patrol */
-		$patrol = $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
+	public function openPatrol(PatrolLeader $patrolLeader) {
 		/** @var Role $role */
-		$role = $this->roleRepository->findOneBy(['userId' => $patrol->user->id]);
+		$role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
 		$role->status = $this->roleService->getOpenStatus();
 		$this->roleRepository->persist($role);
 	}

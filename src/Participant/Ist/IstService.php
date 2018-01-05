@@ -4,6 +4,10 @@ namespace kissj\Participant\Ist;
 
 use kissj\Orm\Relation;
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Mailer\MailerInterface;
+use kissj\Payment\PaymentRepository;
+use Slim\Views\Twig;
+use kissj\Payment\Payment;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
 use kissj\User\RoleService;
@@ -12,23 +16,33 @@ use kissj\User\User;
 class IstService {
 	/** @var IstRepository */
 	private $istRepository;
-	/** @var \kissj\User\RoleRepository */
+	/** @var RoleRepository */
 	private $roleRepository;
+	/** @var PaymentRepository */
+	private $paymentRepository;
 	private $roleService;
 	private $flashMessages;
+	private $renderer;
+	private $mailer;
 	private $eventSettings;
 	
 	public function __construct(IstRepository $istRepository,
 								RoleRepository $roleRepository,
+								PaymentRepository $paymentRepository,
 								RoleService $userStatusService,
 								FlashMessagesInterface $flashMessages,
+								MailerInterface $mailer,
+								Twig $renderer,
 								$eventSettings,
 								$eventName = 'cej2018'
 	) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
+		$this->paymentRepository = $paymentRepository;
 		$this->roleService = $userStatusService;
 		$this->flashMessages = $flashMessages;
+		$this->mailer = $mailer;
+		$this->renderer = $renderer;
 		$this->eventSettings = $eventSettings;
 		$this->eventName = $eventName;
 	}
@@ -44,7 +58,7 @@ class IstService {
 		return $ist;
 	}
 	
-	public function getIstFromId (int $istId): Ist {
+	public function getIstFromId(int $istId): Ist {
 		return $this->istRepository->findOneBy(['id' => $istId]);
 	}
 	
@@ -201,6 +215,28 @@ class IstService {
 		]);
 	}
 	
+	public function sendPaymentByMail(Payment $payment, Ist $ist) {
+		$message = $this->renderer->fetch('emails/payment-info.twig', [
+			'eventName' => 'CEJ 2018',
+			'accountNumber' => $payment->accountNumber,
+			'price' => $payment->price,
+			'currency' => 'Kč',
+			'variableSymbol' => $payment->variableSymbol,
+			'role' => $payment->role->name,
+			'gender' => $ist->gender,
+			
+			'istFullName' => $ist->firstName.' '.$ist->lastName]);
+		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
+	}
+	
+	// TODO make this more clever
+	public function getOnePayment(Ist $ist): ?Payment {
+		if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])])) {
+			return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])]);
+		} else return null;
+	}
+	
+	
 	public function closeRegistration(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
@@ -208,18 +244,14 @@ class IstService {
 		$this->roleRepository->persist($role);
 	}
 	
-	public function approveIst(int $istId) {
-		/** @var Ist $ist */
-		$ist = $this->istRepository->findOneBy(['id' => $istId]);
+	public function approveIst(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getApproveStatus();
 		$this->roleRepository->persist($role);
 	}
 	
-	public function openIst(int $istId) {
-		/** @var Ist $ist */
-		$ist = $this->istRepository->findOneBy(['id' => $istId]);
+	public function openIst(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getOpenStatus();

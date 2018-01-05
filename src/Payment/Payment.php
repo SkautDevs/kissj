@@ -13,6 +13,7 @@ use LeanMapper\Entity;
  * @property string $currency
  * @property string $status
  * @property string $purpose
+ * @property string $accountNumber
  * @property Role   $role m:hasOne
  */
 class Payment extends Entity {

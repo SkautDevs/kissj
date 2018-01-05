@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card text-left signin-theme">
+	<div class="card text-left open-theme">
 		<h2>Upravit údaje účastníka</h2>
 		<form method="POST" action="{{ path_for('p-postDetails', {'participantId': pDetails.getId}) }}">
 			<label class="form-group form-group-inline">Křestní jméno: <input class="form-control" type="text" name="firstName" value="{{ pDetails.getFirstName }}" required="required"></label>

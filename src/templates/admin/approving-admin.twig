@@ -1,17 +1,17 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card approving-theme">
+	<div class="card closed-theme">
 		<h2>Schvalování účastníků na akci {{ eventName }}</h2>
 	</div>
 	<br/>
 	{% if closedIsts is not empty %}
-		<div class="card approving-theme">
+		<div class="card closed-theme">
 			<h2>International Service Team</h2>
 		</div>
 		<br/>
 		{% for ist in closedIsts %}
-			<div class="card approving-theme">
+			<div class="card closed-theme">
 				<h4>{{ ist.getFirstName }} {{ ist.getLastName }}</h4>
 				Gender: <b>{{ ist.getGender }}</b><br/>
 				Datum narození: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
@@ -46,18 +46,18 @@
 			<br/>
 		{% endfor %}
 	{% else %}
-		<div class="card approving-theme">
+		<div class="card closed-theme">
 			<h3>Žádní IST nepotřebují schválit!</h3>
 		</div>
 		<br/>
 	{% endif %}
-	{% if closedIsts is not empty %}
-		<div class="card approving-theme">
+	{% if closedPatrols is not empty %}
+		<div class="card closed-theme">
 			<h2>Patroly</h2>
 		</div>
 		<br/>
-		{% for patrol in patrols %}
-			<div class="card approving-theme">
+		{% for patrol in closedPatrols %}
+			<div class="card closed-theme">
 				<h3>{{ patrol.patrolLeader.getPatrolName }}</h3>
 				<h4>{{ patrol.patrolLeader.getFirstName }} {{ patrol.patrolLeader.getLastName }}</h4>
 				Gender: <b>{{ patrol.patrolLeader.getGender }}</b><br/>

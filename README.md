@@ -4,8 +4,8 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 # Core features: 
 
-- get information from pariticipants as easy as possible
-- automatic generation informations for payment 
+- get information from participants as easy as possible
+- automatic generation informations for payment
 - currently supporting roles: Patrol (Patrol Leader + 9 Participants) & IST
 - backend full administration for event registration team - access to participants data with edit possibility
 - no use of clunky password int process of registration
@@ -52,10 +52,12 @@ Backlog is localized in wiki page named `Backlog`.
 # Possible problems & fixies + trivia
 
 #### Database could not be read
+
 - databasefile `db.sqlite` *and its directory* must be writable by execution programm
 
 #### STMP connection error
- - if TLS is not working corrently, try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
+
+ - if TLS is not working correctly, try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
 
 #### Local mail service at Linux/Mac
 
@@ -66,3 +68,6 @@ Backlog is localized in wiki page named `Backlog`.
         - installing procmail fixed it for me (instead of postfix)
     - easier than setting up thinderbird is just typing `mail` in commandline
  
+#### Used ACSII art generator
+
+http://patorjk.com/software/taag/#p=display&v=0&f=Banner&t=landing

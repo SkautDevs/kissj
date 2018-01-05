@@ -31,7 +31,16 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $this->view->render($response, 'registrationLostSoul.twig');
 		})->setName('registrationLostSoul');
 		
-		// REGISTRATION, LOGIN & LOGOUT
+		/*
+		
+		#    #  ####  ###### #####
+		#    # #      #      #    #
+		#    #  ####  #####  #    #
+		#    #      # #      #####
+		#    # #    # #      #   #
+		 ####   ####  ###### #    #
+		
+		*/
 		
 		$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
 			$role = $args['role'];
@@ -173,8 +182,16 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 		})->setName('getDashboard');
 		
+		/*
 		
-		// PATROL
+		#####    ##   ##### #####   ####  #
+		#    #  #  #    #   #    # #    # #
+		#    # #    #   #   #    # #    # #
+		#####  ######   #   #####  #    # #
+		#      #    #   #   #   #  #    # #
+		#      #    #   #   #    #  ####  ######
+		
+		*/
 		
 		$this->group("/patrol", function () {
 			
@@ -184,7 +201,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$user = $request->getAttribute('user');
 				$patrolLeader = $this->patrolService->getPatrolLeader($user);
 				$allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
-				return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'allPDetails' => $allParticipants]);
+				$onePayment = $this->patrolService->getOnePayment($patrolLeader);
+				return $this->view->render($response, 'dashboard-pl.twig', ['user' => $user, 'plDetails' => $patrolLeader, 'allPDetails' => $allParticipants, 'payment' => $onePayment]);
 			})->setName('pl-dashboard');
 			
 			// excluded from status registration only
@@ -392,15 +410,24 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			}
 		});
 		
+		/*
 		
-		// IST
+		#  ####  #####
+		# #        #
+		#  ####    #
+		#      #   #
+		# #    #   #
+		#  ####    #
+		
+		*/
 		
 		$this->group("/ist", function () {
 			
 			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
 				$user = $request->getAttribute('user');
 				$ist = $this->istService->getIst($user);
-				return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist]);
+				$possibleOnePayment = $this->istService->getOnePayment($ist);
+				return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist, 'payment' => $possibleOnePayment]);
 			})->setName('ist-dashboard');
 			
 			// open registration status only
@@ -512,7 +539,16 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			}
 		});
 		
-		// ADMINISTRATION
+		/*
+		  
+		  ##   #####  #    # # #    #
+		 #  #  #    # ##  ## # ##   #
+		#    # #    # # ## # # # #  #
+		###### #    # #    # # #  # #
+		#    # #    # #    # # #   ##
+		#    # #####  #    # # #    #
+		
+		*/
 		
 		$this->group("/admin", function () {
 			
@@ -521,23 +557,25 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018']);
 			})->setName('admin-dashboard');
 			
+			// APPROVING
+			
 			$this->get("/approving", function (Request $request, Response $response, array $args) {
-				$patrols = $this->patrolService->getAllClosedPatrols();
+				$closedPatrols = $this->patrolService->getAllClosedPatrols();
 				$closedIsts = $this->istService->getAllClosedIsts();
 				
-				return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrols, 'closedIsts' => $closedIsts]);
+				return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'closedPatrols' => $closedPatrols, 'closedIsts' => $closedIsts]);
 			})->setName('admin-approving');
 			
 			$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				$patrolLeaderId = $args['patrolLeaderId'];
-				$this->patrolService->approvePatrol($patrolLeaderId);
-				/** @var \kissj\Payment\PaymentService $paymentService */
-				$paymentService = $this->paymentService;
-				$role = $this->roleService->getRole($this->patrolService->getPatrolLeaderFromId($patrolLeaderId)->user);
-				$payment = $paymentService->createNewPayment($role);
-				$paymentService->sendPaymentByMail($payment);
+				/** @var \kissj\Participant\Patrol\PatrolService $patrolService */
+				$patrolService = $this->patrolService;
+				$patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+				$patrolService->approvePatrol($patrolLeader);
+				$role = $this->roleService->getRole($patrolLeader->user);
+				$payment = $this->paymentService->createNewPayment($role);
+				$patrolService->sendPaymentByMail($payment, $patrolLeader);
 				
-				$this->flashMessages->success('Patrola schválena');
+				$this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('approvePatrolLeader');
@@ -547,28 +585,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
 			})->setName('openPatrolLeader');
 			
-			$this->get("/medical", function (Request $request, Response $response, array $args) {
-				$data = $this->exportService->medicalDataToCSV('cej2018');
-
-				$response->withHeader('Content-Type', 'text/csv')
-					->withHeader('Expires', '0')
-					->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-					->withHeader('Pragma', 'no-cache');
-
-				$csv = Writer::createFromString('');
-				$csv->setDelimiter(',');
-				$csv->setOutputBOM(Reader::BOM_UTF8);
-				$csv->insertAll($data);
-
-				ob_start();
-				$csv->output();
-				$response->write(ob_get_clean());
-				return $response;
-
-			})->setName('admin-medical');
-			
 			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				$this->patrolService->openPatrol($args['patrolLeaderId']);
+				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+				$this->patrolService->openPatrol($patrolLeader);
 				$this->flashMessages->info('Patrola zamítnuta');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
@@ -576,15 +595,14 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			
 			
 			$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
-				$istId = $args['istId'];
-				$this->istService->approveIst($istId);
-				/** @var \kissj\Payment\PaymentService $paymentService */
-				$paymentService = $this->paymentService;
-				$role = $this->roleService->getRole($this->istService->getIstFromId($istId)->user);
-				$payment = $paymentService->createNewPayment($role);
-				$paymentService->sendPaymentByMail($payment);
-				
-				$this->flashMessages->success('Člen IST schválen');
+				/** @var \kissj\Participant\Ist\IstService $istService */
+				$istService = $this->istService;
+				$ist = $istService->getIstFromId($args['istId']);
+				$istService->approveIst($ist);
+				$role = $this->roleService->getRole($ist->user);
+				$payment = $this->paymentService->createNewPayment($role);
+				$istService->sendPaymentByMail($payment, $ist);
+				$this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('approveIst');
@@ -595,11 +613,34 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('openIst');
 			
 			$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
-				$this->istService->openIst($args['istId']);
+				$ist = $this->istService->getIstFromId($args['istId']);
+				$this->istService->openIst($ist);
 				$this->flashMessages->info('Člen IST zamítnut');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('openIstConfirmed');
+			
+			// MEDICAL
+			
+			$this->get("/medical", function (Request $request, Response $response, array $args) {
+				$data = $this->exportService->medicalDataToCSV('cej2018');
+				
+				$response->withHeader('Content-Type', 'text/csv')
+					->withHeader('Expires', '0')
+					->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+					->withHeader('Pragma', 'no-cache');
+				
+				$csv = Writer::createFromString('');
+				$csv->setDelimiter(',');
+				$csv->setOutputBOM(Reader::BOM_UTF8);
+				$csv->insertAll($data);
+				
+				ob_start();
+				$csv->output();
+				$response->write(ob_get_clean());
+				return $response;
+				
+			})->setName('admin-medical');
 			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// protected area for Registration Admins
@@ -628,8 +669,17 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$adminerSettings = $this->get('settings')['adminer'];
 		require __DIR__."/../admin/custom.php";
 	})->setName('administration');
-
-// LANDING PAGE
+	
+	/*
+	
+	 #        ##   #    # #####  # #    #  ####
+	 #       #  #  ##   # #    # # ##   # #    #
+	 #      #    # # #  # #    # # # #  # #
+	 #      ###### #  # # #    # # #  # # #  ###
+	 #      #    # #   ## #    # # #   ## #    #
+	 ###### #    # #    # #####  # #    #  ####
+	 
+	*/
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
 		return $this->view->render($response, 'landing-page.twig');

@@ -103,5 +103,6 @@ CREATE TABLE payment (
 	currency       TEXT NOT NULL,
 	status         TEXT NOT NULL,
 	purpose        TEXT NOT NULL,
+	accountNumber  TEXT NOT NULL,
 	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
 );
