@@ -1,11 +1,15 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card closed-theme">
+	<div class="card card-half closed-theme">
 		<h2>Zamítnout Patrolu</h2>
 		<p>Skutečně chceš patrolu <b>{{ patrolLeader.getPatrolName }}</b> zamítnout?</p>
-		<a href="{{ path_for('admin-approving') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
 		<form method="post" action="{{ path_for('openPatrolLeaderConfirmed', {'patrolLeaderId' : patrolLeader.getId}) }}">
+			<div class="form-group">
+				<label>Důvod zamítnutí: <input type="text" name="reason" id="form-reason" class="form-control form-wide" required="required"></label>
+			</div>
+			<br/>
+			<a href="{{ path_for('admin-approving') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
 			<input type="submit" value="Zamítnout" class="btn btn-small">
 		</form>
 	</div>

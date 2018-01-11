@@ -226,7 +226,18 @@ class IstService {
 			'gender' => $ist->gender,
 			
 			'istFullName' => $ist->firstName.' '.$ist->lastName]);
+		
 		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
+	}
+	
+	public function sendDenialMail(Ist $ist, string $reason) {
+		$message = $this->renderer->fetch('emails/denial.twig', [
+			'eventName' => 'CEJ 2018',
+			'role' => 'ist',
+			'reason' => $reason,
+		]);
+		
+		$this->mailer->sendMail($ist->user->email, 'Zamítnutí registrace na akci CEJ 2018', $message);
 	}
 	
 	// TODO make this more clever

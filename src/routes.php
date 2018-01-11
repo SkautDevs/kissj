@@ -23,10 +23,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		})->setName('registration');
 		
 		$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
-			/* $this->flashMessages->success('Dostal jsi se sem!');
-			$this->flashMessages->warning('Not done yet!');
-			$this->flashMessages->error('Něco se pokazilo!');
-			$this->flashMessages->info('Jsi krásný!'); */
+			if ($this->get('settings')['useTestingSite']) {
+				$this->flashMessages->success('Úspěch!');
+				$this->flashMessages->warning('Pozor!');
+				$this->flashMessages->error('Něco se pokazilo!');
+				$this->flashMessages->info('Informace.');
+			}
 			
 			return $this->view->render($response, 'registrationLostSoul.twig');
 		})->setName('registrationLostSoul');
@@ -574,7 +576,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$role = $this->roleService->getRole($patrolLeader->user);
 				$payment = $this->paymentService->createNewPayment($role);
 				$patrolService->sendPaymentByMail($payment, $patrolLeader);
-				
+				$this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
 				$this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
@@ -588,7 +590,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
 				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
 				$this->patrolService->openPatrol($patrolLeader);
-				$this->flashMessages->info('Patrola zamítnuta');
+				$reason = $request->getParsedBodyParam('reason');
+				$this->patrolService->sendDenialMail($patrolLeader, $reason);
+				$this->logger->info('Denied registration for IST with ID '.$patrolLeader->id.' with reason: '.$reason);
+				$this->flashMessages->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('openPatrolLeaderConfirmed');
@@ -602,6 +607,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$role = $this->roleService->getRole($ist->user);
 				$payment = $this->paymentService->createNewPayment($role);
 				$istService->sendPaymentByMail($payment, $ist);
+				$this->logger->info('Approved registration for IST with ID '.$ist->id);
 				$this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
@@ -615,7 +621,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
 				$ist = $this->istService->getIstFromId($args['istId']);
 				$this->istService->openIst($ist);
-				$this->flashMessages->info('Člen IST zamítnut');
+				$reason = $request->getParsedBodyParam('reason');
+				$this->istService->sendDenialMail($ist, $reason);
+				$this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
+				$this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('openIstConfirmed');

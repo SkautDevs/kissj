@@ -346,7 +346,18 @@ class PatrolService {
 			
 			'patrolName' => $patrolLeader->patrolName,
 		]);
+		
 		$this->mailer->sendMail($payment->role->user->email, 'Platební informace na akci CEJ 2018', $message);
+	}
+	
+	public function sendDenialMail(PatrolLeader $patrolLeader, string $reason) {
+		$message = $this->renderer->fetch('emails/denial.twig', [
+			'eventName' => 'CEJ 2018',
+			'role' => 'patrol-leader',
+			'reason' => $reason,
+		]);
+		
+		$this->mailer->sendMail($patrolLeader->user->email, 'Zamítnutí registrace na akci CEJ 2018', $message);
 	}
 	
 	// TODO make this more clever
