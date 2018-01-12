@@ -62,15 +62,31 @@ class IstService {
 		return $this->istRepository->findOneBy(['id' => $istId]);
 	}
 	
-	public function getAllClosedIsts(string $eventName = 'cej2018'): array {
+	public function getAllClosedIsts(): array {
 		$closedIsts = $this->roleRepository->findBy([
-			'event' => $eventName,
+			'event' => $this->eventName,
 			'name' => 'ist',
 			'status' => 'closed']);
 		$ists = [];
 		/** @var Role $closedIst */
 		foreach ($closedIsts as $closedIst) {
 			$ists[] = $this->istRepository->findOneBy(['userId' => $closedIst->user->id]);
+		}
+		
+		return $ists;
+	}
+	
+	public function getAllApprovedIstsWithPayment(): array {
+		$approvedIsts = $this->roleRepository->findBy([
+			'event' => $this->eventName,
+			'name' => 'ist',
+			'status' => 'approved']);
+		$ists = [];
+		/** @var Role $approvedIst */
+		foreach ($approvedIsts as $approvedIst) {
+			$ist['info'] = $this->istRepository->findOneBy(['user' => $approvedIst->user]);
+			$ist['payment'] = $this->getOnePayment($ist['info']);
+			$ists[] = $ist;
 		}
 		
 		return $ists;

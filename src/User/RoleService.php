@@ -176,4 +176,8 @@ class RoleService {
 	public function getApproveStatus(): string {
 		return 'approved';
 	}
+	
+	public function getPaidStatus(): string {
+		return 'paid';
+	}
 }

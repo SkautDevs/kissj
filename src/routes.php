@@ -562,6 +562,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('admin-dashboard');
 			
 			// APPROVING
+			// TODO make here group /approving
 			
 			$this->get("/approving", function (Request $request, Response $response, array $args) {
 				$closedPatrols = $this->patrolService->getAllClosedPatrols();
@@ -630,6 +631,30 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				return $response->withRedirect($this->router->pathFor('admin-approving'));
 			})->setName('openIstConfirmed');
+			
+			// PAYMENTS
+			
+			$this->group("/payments", function () {
+				
+				$this->get("", function (Request $request, Response $response, array $args) {
+					$approvedPatrols = $this->patrolService->getAllApprovedPatrolsWithPayment();
+					$approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
+					
+					$this->view->render($response, 'admin/payments-admin.twig', ['eventName' => 'CEJ 2018', 'approvedPatrols' => $approvedPatrols, 'approvedIsts' => $approvedIsts]);
+				})->setName('admin-payments');
+				
+				$this->post("/setPaymentPaid/{payment}", function (Request $request, Response $response, array $args) {
+					/** @var \kissj\Payment\PaymentService $paymentService */
+					$paymentService = $this->get('paymentService');
+					$paymentId = $args['payment'];
+					$paymentService->setPaymentPaid($paymentService->getPaymentFromId($paymentId));
+					$this->logger->info('Payment with ID '.$paymentId.' is set as paid by hand');
+					$this->flashMessages->success('Platba je označená jako zaplacená, mail o zaplacení odeslaný');
+					
+					return $response->withRedirect($this->router->pathFor('admin-payments'));
+				})->setName('setPaymentPaid');
+				
+			});
 			
 			// MEDICAL
 			

@@ -68,9 +68,9 @@ class PatrolService {
 		return $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
 	}
 	
-	public function getAllClosedPatrols(string $eventName = 'cej2018'): array {
+	public function getAllClosedPatrols(): array {
 		$closedPatrols = $this->roleRepository->findBy([
-			'event' => $eventName,
+			'event' => $this->eventName,
 			'name' => 'patrol-leader',
 			'status' => 'closed']);
 		$patrols = [];
@@ -84,6 +84,22 @@ class PatrolService {
 		}
 		
 		return $patrols;
+	}
+	
+	public function getAllApprovedPatrolsWithPayment(): array {
+		$approvedIsts = $this->roleRepository->findBy([
+			'event' => $this->eventName,
+			'name' => 'patrol-leader',
+			'status' => 'approved']);
+		$patrolLeaders = [];
+		/** @var Role $approvedPatrolLeader */
+		foreach ($approvedIsts as $approvedPatrolLeader) {
+			$patrolLeader['info'] = $this->patrolLeaderRepository->findOneBy(['user' => $approvedPatrolLeader->user]);
+			$patrolLeader['payment'] = $this->getOnePayment($patrolLeader['info']);
+			$patrolLeaders[] = $patrolLeader;
+		}
+		
+		return $patrolLeaders;
 	}
 	
 	

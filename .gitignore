@@ -6,3 +6,4 @@ logs/*
 /src/settings_custom.php
 temp/*
 backups/*
+forms/*

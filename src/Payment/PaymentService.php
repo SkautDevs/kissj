@@ -88,10 +88,8 @@ class PaymentService {
 		}
 	}
 	
-	public function getPayment(User $user, string $event) {
-		/** @var Role $role */
-		$role = $this->roleRepository->findOneBy(['user' => $user->id]);
-		return $this->paymentRepository->findOneBy(['role' => $role->id]);
+	public function getPaymentFromId(int $paymentId) {
+		return $this->paymentRepository->findOneBy(['id' => $paymentId]);
 	}
 	
 	public function isPaymentValid(string $variableSymbol, string $price): bool {
@@ -104,19 +102,21 @@ class PaymentService {
 	/* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
 	
 	public function setPaymentPaid(Payment $payment) {
-		// set payment valid in DB
+		// set payment paid in DB
 		$payment->status = 'paid';
 		$this->paymentRepository->persist($payment);
 		
-		// get User from Payment
-		$userEmail = $payment->user->email;
+		// set role as paid
+		$role = $payment->role;
+		$role->status = 'paid';
+		$this->roleRepository->persist($role);
 		
 		// write action into log
 		$this->logger->addInfo('Payment with ID: '.$payment->id.' is set to "paid"');
 		
 		// send mail to user
-		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => $this->eventName]);
-		$subject = $this->eventName.' - platba úspěšně přijata!';
-		$this->mailer->sendMail($userEmail, $subject, $message);
+		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => $this->eventName, 'roleName' => $role->name]);
+		$subject = 'Registrace '.$this->eventName.' - platba úspěšně přijata!';
+		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }
