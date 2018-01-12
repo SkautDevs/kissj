@@ -3,6 +3,24 @@
 {% block content %}
 	<div class="card approved-theme">
 		<h2>Dashboard administrátora na akci {{ eventName }}</h2>
+		<h3>Přehled přihlašování</h3>
+		<div class="card-divide">
+			<div>
+				<h3>Patroly</h3>
+				<p>Limit pro patroly: {{ patrols['limit'] }}</p>
+				<p>Uzavřených patrol: {{ patrols['closed'] }}</p>
+				<p>Schválených patrol: {{ patrols['approved'] }}</p>
+				<p>Zaplacených patrol: {{ patrols['paid'] }}</p>
+			</div>
+			<div>
+				<h3>IST</h3>
+				<p>Limit pro IST: {{ ists['limit'] }}</p>
+				<p>Uzavřených IST: {{ ists['closed'] }}</p>
+				<p>Schválených IST: {{ ists['approved'] }}</p>
+				<p>Zaplacených IST: {{ ists['paid'] }}</p>
+			</div>
+
+		</div>
 		<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
         <a href="{{ path_for('admin-medical') }}" class="btn">Export lékařských dat do CSV</a>
 	</div>

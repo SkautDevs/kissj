@@ -334,6 +334,30 @@ class PatrolService {
 		]);
 	}
 	
+	public function getAllPatrolsStatistics(): array {
+		$patrols['limit'] = $this->eventSettings['maximalClosedPatrolsCount'];
+		
+		$patrols['closed'] = $this->roleRepository->countBy([
+			'name' => 'patrol-leader',
+			'event' => $this->eventName,
+			'status' => new Relation('closed', '==')
+		]);
+		
+		$patrols['approved'] = $this->roleRepository->countBy([
+			'name' => 'patrol-leader',
+			'event' => $this->eventName,
+			'status' => new Relation('approved', '==')
+		]);
+		
+		$patrols['paid'] = $this->roleRepository->countBy([
+			'name' => 'patrol-leader',
+			'event' => $this->eventName,
+			'status' => new Relation('paid', '==')
+		]);
+		
+		return $patrols;
+	}
+	
 	public function sendPaymentByMail(Payment $payment, PatrolLeader $patrolLeader) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
 			'eventName' => 'CEJ 2018',

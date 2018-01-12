@@ -215,6 +215,29 @@ class IstService {
 		]);
 	}
 	
+	public function getAllIstsStatistics(): array {
+		$ists['limit'] = $this->eventSettings['maximalClosedIstsCount'];
+		$ists['closed'] = $this->roleRepository->countBy([
+			'name' => 'ist',
+			'event' => $this->eventName,
+			'status' => new Relation('closed', '==')
+		]);
+		
+		$ists['approved'] = $this->roleRepository->countBy([
+			'name' => 'ist',
+			'event' => $this->eventName,
+			'status' => new Relation('approved', '==')
+		]);
+		
+		$ists['paid'] = $this->roleRepository->countBy([
+			'name' => 'ist',
+			'event' => $this->eventName,
+			'status' => new Relation('paid', '==')
+		]);
+		
+		return $ists;
+	}
+	
 	public function sendPaymentByMail(Payment $payment, Ist $ist) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
 			'eventName' => 'CEJ 2018',

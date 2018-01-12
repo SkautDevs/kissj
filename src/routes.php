@@ -555,8 +555,10 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->group("/admin", function () {
 			
 			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
+				$patrolStatistics = $this->get('patrolService')->getAllPatrolsStatistics();
+				$istStatistics = $this->get('istService')->getAllIstsStatistics();
 				
-				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018']);
+				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrolStatistics, 'ists' => $istStatistics]);
 			})->setName('admin-dashboard');
 			
 			// APPROVING
