@@ -1,7 +1,5 @@
 <?php
 
-use League\Csv\Reader;
-use League\Csv\Writer;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -656,27 +654,28 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 			});
 			
-			// MEDICAL
+			// EXPORTS
 			
-			$this->get("/medical", function (Request $request, Response $response, array $args) {
-				$data = $this->exportService->medicalDataToCSV('cej2018');
+			$this->group("/export", function () {
 				
-				$response = $response->withHeader('Content-Type', 'text/csv');
-				$response = $response->withHeader('Content-Disposition', 'attachment; filename="cej2018medical.csv";');
-				$response = $response->withHeader('Expires', '0');
-				$response = $response->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-				$response = $response->withHeader('Pragma', 'no-cache');
+				$this->get("/medical", function (Request $request, Response $response, array $args) {
+					$csvRows = $this->exportService->medicalDataToCSV('cej2018');
+					
+					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
+				})->setName('admin-export-medical');
 				
-				$csv = Writer::createFromString('');
-				$csv->setDelimiter(',');
-				$csv->setOutputBOM(Reader::BOM_UTF8);
-				$csv->insertAll($data);
+				$this->get("/logistic", function (Request $request, Response $response, array $args) {
+					$csvRows = $this->exportService->logisticDataToCSVrandomized('cej2018');
+					
+					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
+				})->setName('admin-export-logistic');
 				
-				$body = $response->getBody();
-				$body->write($csv->output());
-				return $response->withBody($body);
-				
-			})->setName('admin-medical');
+				$this->get("/full", function (Request $request, Response $response, array $args) {
+					$csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
+					
+					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
+				})->setName('admin-export-full');
+			});
 			
 		})->add(function (Request $request, Response $response, callable $next) {
 			// protected area for Registration Admins

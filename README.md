@@ -5,10 +5,11 @@ kissj is scouts **registration system for national and international Scout Jambo
 # Core features: 
 
 - get information from participants as easy as possible
-- automatic generation informations for payment
+- administrator one-click approving with automatic payment generation
+- one-click exporting health, logistic and full information for later usage
 - currently supporting roles: Patrol (Patrol Leader + 9 Participants) & IST
 - backend full administration for event registration team - access to participants data with edit possibility
-- no use of clunky password int process of registration
+- no use of clunky & forgettable  password int process of registration
 
 # KISSJ is not: 
 
