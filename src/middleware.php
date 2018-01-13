@@ -2,19 +2,21 @@
 
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Whoops\Exception\Inspector;
 
 // DEBUGGER
 
 if (($container['settings']['whoopsDebug'])) {
 	$app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 } else {
-	$simplyErrorHandler = function (Exception $exception, $inspector, $run) {
-		$message = $exception->getMessage();
+	$simplyErrorHandler = function (Exception $exception, Inspector $inspector, $run) use ($container) {
 		$title = $inspector->getExceptionName();
 		$code = $exception->getCode();
+		$message = $inspector->getExceptionMessage();
 		
-		// TODO make nicer page
-		echo "$title ($code) -> $message";
+		$container->get('logger')->error('Exception! '.$title.'('.$code.') -> '.$message);
+		
+		require 'templates/exception.php';
 		exit;
 	};
 	

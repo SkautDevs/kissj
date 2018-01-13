@@ -2,10 +2,10 @@
 
 $settings = [
 	'settings' => [
-		'debug' => false, // true fires Whoops debugger, false keeps Slim debugger
+		'debug' => true, // true fires Whoops debugger, false falls into Slim debugger (keep true at all times)
 		
 		// Whoops debug part
-		'whoopsDebug' => false, // true enable Whoops nice debug page, false fires up custom error page
+		'whoopsDebug' => false, // true enable Whoops nice debug page, false fires up production error handle
 		
 		// Slim debug part
 		'displayErrorDetails' => false, // set to false in production
@@ -75,6 +75,7 @@ $settings = [
 		],
 	],
 ];
+
 if (file_exists(__DIR__.'/settings_custom.php')) {
 	$settings = array_replace_recursive($settings, require('settings_custom.php'));
 }

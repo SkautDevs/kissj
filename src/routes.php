@@ -660,25 +660,28 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				$this->get("/medical", function (Request $request, Response $response, array $args) {
 					$csvRows = $this->exportService->medicalDataToCSV('cej2018');
+					$this->logger->info('Downloaded current medical data');
 					
 					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
 				})->setName('admin-export-medical');
 				
 				$this->get("/logistic", function (Request $request, Response $response, array $args) {
 					$csvRows = $this->exportService->logisticDataToCSVrandomized('cej2018');
+					$this->logger->info('Downloaded current logistic data');
 					
 					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
 				})->setName('admin-export-logistic');
 				
 				$this->get("/full", function (Request $request, Response $response, array $args) {
 					$csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
+					$this->logger->info('Downloaded full current data about participants');
 					
 					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
 				})->setName('admin-export-full');
 			});
 			
 		})->add(function (Request $request, Response $response, callable $next) {
-			// protected area for Registration Admins
+			// protected area for Registration Admins only
 			if ($this->roleService->getRole($request->getAttribute('user'))->name != 'admin') {
 				$this->flashMessages->error('Pardon, nejsi na akci vedený jako admin');
 				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
