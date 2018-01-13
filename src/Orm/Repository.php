@@ -52,6 +52,24 @@ class Repository extends BaseRepository {
 
 		return $entities;
 	}
+	
+	public function findByMultiple(array $criterias, array $orderBy = []) : array {
+		$qb = $this->createFluent();
+		
+		foreach ($criterias as $criterium) {
+			$this->addConditions($qb, $criterium);
+		}
+		$this->addOrderBy($qb, $orderBy);
+		
+		$rows = $qb->fetchAll();
+		$entities = [];
+		
+		foreach ($rows as $row) {
+			$entities[] = $this->createEntity($row);
+		}
+		
+		return $entities;
+	}
 
 	public function countBy(array $criteria): int {
 		/** @var Fluent $qb */

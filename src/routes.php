@@ -661,20 +661,20 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->get("/medical", function (Request $request, Response $response, array $args) {
 				$data = $this->exportService->medicalDataToCSV('cej2018');
 				
-				$response->withHeader('Content-Type', 'text/csv')
-					->withHeader('Expires', '0')
-					->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-					->withHeader('Pragma', 'no-cache');
+				$response = $response->withHeader('Content-Type', 'text/csv');
+				$response = $response->withHeader('Content-Disposition', 'attachment; filename="cej2018medical.csv";');
+				$response = $response->withHeader('Expires', '0');
+				$response = $response->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+				$response = $response->withHeader('Pragma', 'no-cache');
 				
 				$csv = Writer::createFromString('');
 				$csv->setDelimiter(',');
 				$csv->setOutputBOM(Reader::BOM_UTF8);
 				$csv->insertAll($data);
 				
-				ob_start();
-				$csv->output();
-				$response->write(ob_get_clean());
-				return $response;
+				$body = $response->getBody();
+				$body->write($csv->output());
+				return $response->withBody($body);
 				
 			})->setName('admin-medical');
 			

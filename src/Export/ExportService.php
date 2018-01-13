@@ -14,33 +14,37 @@ use kissj\User\Role;
 use kissj\User\RoleRepository;
 
 class ExportService {
-
+	
 	/** @var PatrolParticipantRepository */
 	private $patrolParticipantRepository;
-
+	
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
-
+	
 	/** @var IstRepository */
 	private $istRepository;
-
+	
 	/** @var RoleRepository */
 	private $roleRepository;
-
+	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
-	                            PatrolLeaderRepository $patrolLeaderRepository, IstRepository $istRepository,
-	                            RoleRepository $roleRepository) {
+								PatrolLeaderRepository $patrolLeaderRepository, IstRepository $istRepository,
+								RoleRepository $roleRepository) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
 	}
-
+	
 	public function medicalDataToCSV(string $event): array {
 //		\dibi::test('SELECT * FROM article WHERE id IN %in', array(1,2,3))->test();
-
+		
 		/** @var Role[] $roles */
-		$roles = $this->roleRepository->findBy(['event' => $event]);
+		$roles = $this->roleRepository->findByMultiple([
+			['event' => $event,],
+			['status' => new Relation('admin', '!='),],
+			['status' => new Relation('open', '!='),],
+		]);
 		$patrolLeaderUserIds = [];
 		$istUserIds = [];
 		foreach ($roles as $role) {
@@ -54,9 +58,11 @@ class ExportService {
 		$patrolLeaders = $this->patrolLeaderRepository->findBy([
 			'userId' => new Relation($patrolLeaderUserIds, 'IN')
 		]);
-
-		$patrolLeaderIds = array_map(function(PatrolLeader $p) {return $p->id;}, $patrolLeaders);
-
+		
+		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
+			return $p->id;
+		}, $patrolLeaders);
+		
 		/** @var Ist[] $ists */
 		$ists = $this->istRepository->findBy([
 			'userId' => new Relation($istUserIds, 'IN')
@@ -65,7 +71,7 @@ class ExportService {
 		$partolParticipants = $this->patrolParticipantRepository->findBy([
 			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
 		]);
-
+		
 		$rows = [];
 		foreach ($patrolLeaders as $leader) {
 			$rows[] = [$leader->firstName, $leader->lastName, $leader->birthDate == null ? '' : $leader->birthDate->format('Y-m-d'), $leader->allergies];
@@ -78,5 +84,5 @@ class ExportService {
 		}
 		return $rows;
 	}
-
+	
 }
