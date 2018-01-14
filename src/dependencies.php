@@ -103,11 +103,17 @@ $container['paymentRepository'] = function (C $c) {
 
 // services
 $container['userRegeneration'] = function (C $c) {
-	return new \kissj\User\UserRegeneration($c->get('userRepository'), $_SESSION['user'] ?? []);
+	return new \kissj\User\UserRegeneration(
+		$c->get('userRepository'),
+		$_SESSION['user'] ?? []);
 };
 
 $container['exportService'] = function (C $c) {
-	return new \kissj\Export\ExportService($c->get('patrolParticipantRepository'), $c->get('patrolLeaderRepository'), $c->get('istRepository'), $c->get('roleRepository'));
+	return new \kissj\Export\ExportService(
+		$c->get('patrolParticipantRepository'),
+		$c->get('patrolLeaderRepository'),
+		$c->get('istRepository'),
+		$c->get('roleRepository'));
 };
 
 $container['userService'] = function (C $c) {
@@ -118,16 +124,14 @@ $container['userService'] = function (C $c) {
 		$c->get('router'),
 		$c->get('random'),
 		$c->get('settings')['eventName'],
-		$c->get('view')
-	);
+		$c->get('view'));
 };
 
 $container['roleService'] = function (C $c) {
 	return new \kissj\User\RoleService(
 		$c->get('roleRepository'),
 		$c->get('paymentRepository'),
-		$c->get('settings')['eventName']
-	);
+		$c->get('settings')['eventName']);
 };
 
 $container['patrolService'] = function (C $c) {
@@ -163,12 +167,10 @@ $container['paymentService'] = function (C $c) {
 		$paymentsSettings,
 		$c->get('paymentRepository'),
 		$c->get('roleRepository'),
-		$c->get('userRepository'),
 		$c->get('mailer'),
 		$c->get('view'),
 		$c->get('settings')['eventName'],
-		$c->get('random'),
-		$c->get('logger')
+		$c->get('random')
 	);
 };
 

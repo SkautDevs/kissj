@@ -314,17 +314,17 @@ class PatrolService {
 	public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
 		$validityFlag = true;
 		if (!$this->isPatrolLeaderValid($patrolLeader)) {
-			$this->flashMessages->warning('Údaje Patrol Leadera nejsou kompletní');
+			$this->flashMessages->warning('Nelze uzavřít registraci - údaje Patrol Leadera nejsou kompletní');
 			$validityFlag = false;
 		}
 		$participants = $this->getAllParticipantsBelongsPatrolLeader($patrolLeader);
 		$participantsCount = count($participants);
 		if ($participantsCount < $this->eventSettings['minimalPatrolParticipantsCount']) {
-			$this->flashMessages->warning('Účastníků v patrole je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
+			$this->flashMessages->warning('Nelze uzavřít registraci - účastníků v patrole je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
 			$validityFlag = false;
 		}
 		if ($participantsCount > $this->eventSettings['maximalPatrolParticipantsCount']) {
-			$this->flashMessages->warning('Účastníků je v patrole moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
+			$this->flashMessages->warning('Nelze uzavřít registraci - účastníků je v patrole moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
 			$validityFlag = false;
 		}
 		foreach ($participants as $participant) {

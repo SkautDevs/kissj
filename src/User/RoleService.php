@@ -107,7 +107,7 @@ class RoleService {
 								
 							}
 						case 'closed':
-							return 'Tvoje registrace čeká na schválení (schvalovat začínáme od 1.1.2018). Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
+							return 'Tvoje registrace čeká na schválení. Po schválení ti pošleme email s platebními údaji. Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
 						case 'approved':
 							return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže.';
 						case 'paid':

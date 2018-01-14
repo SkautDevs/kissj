@@ -212,7 +212,7 @@ class IstService {
 	public function isCloseRegistrationValid(Ist $ist): bool {
 		$validityFlag = true;
 		if (!$this->isIstValid($ist)) {
-			$this->flashMessages->warning('Údaje IST nejsou kompletní');
+			$this->flashMessages->warning('Nelze uzavřít registraci - údaje IST nejsou kompletní');
 			$validityFlag = false;
 		}
 		if ($this->getClosedIstsCount() >= $this->eventSettings['maximalClosedIstsCount']) {

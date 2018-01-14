@@ -17,24 +17,19 @@ class PaymentService {
 	private $renderer;
 	private $eventName;
 	private $random;
-	private $logger;
 	
 	/** @var PaymentRepository */
 	private $paymentRepository;
 	/** @var RoleRepository */
 	private $roleRepository;
-	/** @var UserRepository */
-	private $userRepository;
 	
 	public function __construct(array $paymentsSettings,
 								PaymentRepository $paymentRepository,
 								RoleRepository $roleRepository,
-								UserRepository $userRepository,
 								MailerInterface $mailer,
 								Twig $renderer,
 								string $eventName,
-								Random $random,
-								Logger $logger) {
+								Random $random) {
 		$this->settings = $paymentsSettings;
 		$this->paymentRepository = $paymentRepository;
 		$this->roleRepository = $roleRepository;
@@ -42,7 +37,6 @@ class PaymentService {
 		$this->renderer = $renderer;
 		$this->eventName = $eventName;
 		$this->random = $random;
-		$this->logger = $logger;
 	}
 	
 	public function createNewPayment(Role $role): Payment {
@@ -110,9 +104,6 @@ class PaymentService {
 		$role = $payment->role;
 		$role->status = 'paid';
 		$this->roleRepository->persist($role);
-		
-		// write action into log
-		$this->logger->addInfo('Payment with ID: '.$payment->id.' is set to "paid"');
 		
 		// send mail to user
 		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => $this->eventName, 'roleName' => $role->name]);

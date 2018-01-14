@@ -60,6 +60,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$readableRole = $this->roleService->getReadableRoleName($role);
 			try {
 				$this->userService->sendLoginTokenByMail($email, $readableRole);
+				$this->logger->info('Created new user with email '.$email);
 				return $response->withRedirect($this->router->pathFor('signupSuccess'));
 			} catch (Exception $e) {
 				$this->logger->addError("Error sending registration email to $email with token ".
@@ -84,12 +85,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->post("/login", function (Request $request, Response $response, array $args) {
 			$email = $request->getParam('email');
 			if ($this->userService->isEmailExisting($email)) {
+				$user = $this->userService->getUserFromEmail($email);
+				/** @var \kissj\User\Role $role */
+				$role = $this->roleService->getRole($user);
+				$readableRole = $this->roleService->getReadableRoleName($role->name);
 				try {
-					// TODO refactor
-					$user = $this->userService->getUserFromEmail($email);
-					$role = $this->roleService->getRole($user);
-					$readableRole = $this->roleService->getReadableRoleName($role->name);
-					
 					$this->userService->sendLoginTokenByMail($email, $readableRole);
 				} catch (Exception $e) {
 					$this->logger->addError("Error sending login email to $email with token ".
@@ -281,8 +281,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
 					$patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-					$this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
-					return $this->view->render($response, 'closeRegistration-pl.twig');
+					$validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
+					if ($validRegistration) {
+						return $this->view->render($response, 'closeRegistration-pl.twig');
+					} else {
+						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+					}
 				})->setName('pl-closeRegistration');
 				
 				$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
@@ -290,7 +294,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
 						$this->patrolService->closeRegistration($patrolLeader);
 						$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
-						$this->flashMessages->info('Registraci ti musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
 						$this->logger->info('Closing registration for PatrolLeader with ID '.$patrolLeader->id);
 						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
 					} else {
@@ -391,7 +394,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				/** @var \kissj\User\Role $role */
 				$role = $request->getAttribute('role');
 				if ($role->status != 'open') {
-					$this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
+					$this->logger->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
 					throw new Exception('Nemůžeš měnit údaje když nejsi ve stavu zadávání údajů!');
 				}
 				
@@ -497,8 +500,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIst($request->getAttribute('user'));
-					$this->istService->isCloseRegistrationValid($ist); // call because of warnings
-					return $this->view->render($response, 'closeRegistration-ist.twig');
+					$validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
+					if ($validRegistration) {
+						return $this->view->render($response, 'closeRegistration-ist.twig');
+					} else {
+						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+					}
 				})->setName('ist-closeRegistration');
 				
 				$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
@@ -506,7 +513,6 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					if ($this->istService->isCloseRegistrationValid($ist)) {
 						$this->istService->closeRegistration($ist);
 						$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
-						$this->flashMessages->info('Registraci ti teď musíme schválit - jakmile se tak stane, pošleme ti email s platebními údaji');
 						$this->logger->info('Closing registration for IST with ID '.$ist->id);
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					} else {
@@ -520,7 +526,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				/** @var \kissj\User\Role $role */
 				$role = $request->getAttribute('role');
 				if ($role->status != 'open') {
-					$this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
+					$this->logger->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
 					throw new Exception('You cannot change data if you have not opened registration!');
 				}
 				
@@ -560,75 +566,76 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('admin-dashboard');
 			
 			// APPROVING
-			// TODO make here group /approving
-			
-			$this->get("/approving", function (Request $request, Response $response, array $args) {
-				$closedPatrols = $this->patrolService->getAllClosedPatrols();
-				$closedIsts = $this->istService->getAllClosedIsts();
+			$this->group("/approving", function () {
 				
-				return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'closedPatrols' => $closedPatrols, 'closedIsts' => $closedIsts]);
-			})->setName('admin-approving');
-			
-			$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				/** @var \kissj\Participant\Patrol\PatrolService $patrolService */
-				$patrolService = $this->patrolService;
-				$patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-				$patrolService->approvePatrol($patrolLeader);
-				$role = $this->roleService->getRole($patrolLeader->user);
-				$payment = $this->paymentService->createNewPayment($role);
-				$patrolService->sendPaymentByMail($payment, $patrolLeader);
-				$this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
-				$this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
+				$this->get("", function (Request $request, Response $response, array $args) {
+					$closedPatrols = $this->patrolService->getAllClosedPatrols();
+					$closedIsts = $this->istService->getAllClosedIsts();
+					
+					return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'closedPatrols' => $closedPatrols, 'closedIsts' => $closedIsts]);
+				})->setName('admin-approving');
 				
-				return $response->withRedirect($this->router->pathFor('admin-approving'));
-			})->setName('approvePatrolLeader');
-			
-			$this->get("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-				return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
-			})->setName('openPatrolLeader');
-			
-			$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-				$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-				$this->patrolService->openPatrol($patrolLeader);
-				$reason = $request->getParsedBodyParam('reason');
-				$this->patrolService->sendDenialMail($patrolLeader, $reason);
-				$this->logger->info('Denied registration for IST with ID '.$patrolLeader->id.' with reason: '.$reason);
-				$this->flashMessages->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
+				$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+					/** @var \kissj\Participant\Patrol\PatrolService $patrolService */
+					$patrolService = $this->patrolService;
+					$patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+					$patrolService->approvePatrol($patrolLeader);
+					$role = $this->roleService->getRole($patrolLeader->user);
+					$payment = $this->paymentService->createNewPayment($role);
+					$patrolService->sendPaymentByMail($payment, $patrolLeader);
+					$this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
+					$this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
+					
+					return $response->withRedirect($this->router->pathFor('admin-approving'));
+				})->setName('approvePatrolLeader');
 				
-				return $response->withRedirect($this->router->pathFor('admin-approving'));
-			})->setName('openPatrolLeaderConfirmed');
-			
-			
-			$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
-				/** @var \kissj\Participant\Ist\IstService $istService */
-				$istService = $this->istService;
-				$ist = $istService->getIstFromId($args['istId']);
-				$istService->approveIst($ist);
-				$role = $this->roleService->getRole($ist->user);
-				$payment = $this->paymentService->createNewPayment($role);
-				$istService->sendPaymentByMail($payment, $ist);
-				$this->logger->info('Approved registration for IST with ID '.$ist->id);
-				$this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
+				$this->get("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+					$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+					return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
+				})->setName('openPatrolLeader');
 				
-				return $response->withRedirect($this->router->pathFor('admin-approving'));
-			})->setName('approveIst');
-			
-			$this->get("/openIst/{istId}", function (Request $request, Response $response, array $args) {
-				$ist = $this->istService->getIstFromId($args['istId']);
-				return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
-			})->setName('openIst');
-			
-			$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
-				$ist = $this->istService->getIstFromId($args['istId']);
-				$this->istService->openIst($ist);
-				$reason = $request->getParsedBodyParam('reason');
-				$this->istService->sendDenialMail($ist, $reason);
-				$this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
-				$this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
+				$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
+					$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+					$this->patrolService->openPatrol($patrolLeader);
+					$reason = $request->getParsedBodyParam('reason');
+					$this->patrolService->sendDenialMail($patrolLeader, $reason);
+					$this->flashMessages->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
+					$this->logger->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
+					
+					return $response->withRedirect($this->router->pathFor('admin-approving'));
+				})->setName('openPatrolLeaderConfirmed');
 				
-				return $response->withRedirect($this->router->pathFor('admin-approving'));
-			})->setName('openIstConfirmed');
+				
+				$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
+					/** @var \kissj\Participant\Ist\IstService $istService */
+					$istService = $this->istService;
+					$ist = $istService->getIstFromId($args['istId']);
+					$istService->approveIst($ist);
+					$role = $this->roleService->getRole($ist->user);
+					$payment = $this->paymentService->createNewPayment($role);
+					$istService->sendPaymentByMail($payment, $ist);
+					$this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
+					$this->logger->info('Approved registration for IST with ID '.$ist->id);
+					
+					return $response->withRedirect($this->router->pathFor('admin-approving'));
+				})->setName('approveIst');
+				
+				$this->get("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+					$ist = $this->istService->getIstFromId($args['istId']);
+					return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
+				})->setName('openIst');
+				
+				$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+					$ist = $this->istService->getIstFromId($args['istId']);
+					$this->istService->openIst($ist);
+					$reason = $request->getParsedBodyParam('reason');
+					$this->istService->sendDenialMail($ist, $reason);
+					$this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
+					$this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
+					
+					return $response->withRedirect($this->router->pathFor('admin-approving'));
+				})->setName('openIstConfirmed');
+			});
 			
 			// PAYMENTS
 			
@@ -646,12 +653,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$paymentService = $this->get('paymentService');
 					$paymentId = $args['payment'];
 					$paymentService->setPaymentPaid($paymentService->getPaymentFromId($paymentId));
-					$this->logger->info('Payment with ID '.$paymentId.' is set as paid by hand');
 					$this->flashMessages->success('Platba je označená jako zaplacená, mail o zaplacení odeslaný');
+					$this->logger->info('Payment with ID '.$paymentId.' is set as paid by hand');
 					
 					return $response->withRedirect($this->router->pathFor('admin-payments'));
 				})->setName('setPaymentPaid');
-				
 			});
 			
 			// EXPORTS
