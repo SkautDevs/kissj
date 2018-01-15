@@ -672,7 +672,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				})->setName('admin-export-medical');
 				
 				$this->get("/logistic", function (Request $request, Response $response, array $args) {
-					$csvRows = $this->exportService->logisticDataToCSVrandomized('cej2018');
+					$csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
 					$this->logger->info('Downloaded current logistic data');
 					
 					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');

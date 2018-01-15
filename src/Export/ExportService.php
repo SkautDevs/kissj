@@ -64,17 +64,14 @@ class ExportService {
 		return $response->withBody($body);
 	}
 	
-	public function logisticDataToCSVrandomized(string $event): array {
+	public function logisticDataPatrolsToCSV(string $event): array {
 		/** @var Role[] $roles */
 		$roles = $this->getExportRoles($event);
 		$patrolLeaderUserIds = [];
-		$istUserIds = [];
 		foreach ($roles as $role) {
 			if ($role->name === 'patrol-leader') {
 				$patrolLeaderUserIds[] = $role->user->id;
-			} elseif ($role->name === 'ist') {
-				$istUserIds[] = $role->user->id;
-			};
+			}
 		}
 		/** @var PatrolLeader[] $patrolLeaders */
 		$patrolLeaders = $this->patrolLeaderRepository->findBy([
@@ -85,10 +82,6 @@ class ExportService {
 			return $p->id;
 		}, $patrolLeaders);
 		
-		/** @var Ist[] $ists */
-		$ists = $this->istRepository->findBy([
-			'userId' => new Relation($istUserIds, 'IN')
-		]);
 		/** @var PatrolParticipant[] $partolParticipants */
 		$partolParticipants = $this->patrolParticipantRepository->findBy([
 			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
@@ -97,24 +90,21 @@ class ExportService {
 		$rows = [];
 		foreach ($patrolLeaders as $leader) {
 			$rows[] = [
+				$leader->id,
 				$leader->permanentResidence,
 				$leader->country,
-			];
-		}
-		foreach ($ists as $ist) {
-			$rows[] = [
-				$ist->permanentResidence,
-				$ist->country,
+				$leader->firstName.' '.$leader->lastName,
+				$leader->email,
 			];
 		}
 		foreach ($partolParticipants as $participant) {
 			$rows[] = [
+				$participant->patrolLeader->id,
 				$participant->permanentResidence,
 				$participant->country,
 			];
 		}
 		
-		shuffle($rows);
 		return $rows;
 	}
 	
