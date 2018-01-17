@@ -3,8 +3,49 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-// Routes
-$app->group("/".$settings['settings']['eventName'], function () {
+/*
+
+ ####  #   #  ####  ##### ###### #    #
+#       # #  #        #   #      ##  ##
+ ####    #    ####    #   #####  # ## #
+     #   #        #   #   #      #    #
+#    #   #   #    #   #   #      #    #
+ ####    #    ####    #   ###### #    #
+
+*/
+
+$app->get("/", function (Request $request, Response $response, array $args) {
+	return $response->withRedirect($this->router->pathFor('kissj-landing'));
+});
+
+$app->group("/kissj", function () {
+	
+	$this->get("", function (Request $request, Response $response, array $args) {
+		$events = ['cej2018' => [
+			'slug' => 'cej2018',
+			'readableNameShort' => 'CEJ 2018',
+			'readableNameLong' => 'Central Europian Jamboree 2018',
+		]];
+		return $this->view->render($response, 'kissj/landing.twig', ['events' => $events]);
+	})->setName('kissj-landing');
+	
+	$this->get("/registerEvent", function (Request $request, Response $response, array $args) {
+		return $this->view->render($response, 'kissj/registerEvent.twig');
+	})->setName('kissj-registerEvent');
+});
+
+/*
+
+###### #    # ###### #    # #####
+#      #    # #      ##   #   #
+#####  #    # #####  # #  #   #
+#      #    # #      #  # #   #
+#       #  #  #      #   ##   #
+######   ##   ###### #    #   #
+
+*/
+
+$app->group("/event/{eventName}", function () {
 	
 	// non-logged users only
 	$this->group("", function () {
@@ -699,7 +740,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 	})->add(function (Request $request, Response $response, callable $next) {
 		// protected area for logged users only
-		if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
+		if (is_null($this->roleService->getRole($request->getAttribute('user'), $request->getAttribute('routeInfo')[2]['eventName']))) {
 			$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím');
 			return $response->withRedirect($this->router->pathFor('landing'));
 		} else {
@@ -736,9 +777,4 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			return $response->withRedirect($this->router->pathFor('getDashboard'));
 		}
 	});
-});
-
-$app->get("/", function (Request $request, Response $response, array $args) {
-	//return $this->view->render($response, 'system/landing.twig');
-	return $response->withRedirect($this->router->pathFor('landing'));
 });
