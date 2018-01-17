@@ -95,6 +95,7 @@ class PaymentService {
 	# Jak vygenerovat hezci CSV z Money S3
 	/* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
 	
+	// TODO make separate function for mail sending
 	public function setPaymentPaid(Payment $payment) {
 		// set payment paid in DB
 		$payment->status = 'paid';
@@ -106,8 +107,8 @@ class PaymentService {
 		$this->roleRepository->persist($role);
 		
 		// send mail to user
-		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => $this->eventName, 'roleName' => $role->name]);
-		$subject = 'Registrace '.$this->eventName.' - platba úspěšně přijata!';
+		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'CEJ 2018', 'roleName' => $role->name]);
+		$subject = 'Registrace CEJ 2018 - platba úspěšně přijata!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }

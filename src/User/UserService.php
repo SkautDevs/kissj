@@ -65,7 +65,7 @@ class UserService {
 		
 		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
 		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => 'CEJ 2018', 'readableRole' => $readableRole]);
-		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
+		$this->mailer->sendMail($email, 'Registrace CEJ 2018 - přihlášení', $message);
 		
 		return $token;
 	}
