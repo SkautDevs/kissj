@@ -208,10 +208,6 @@ $container['view'] = function (C $c) {
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
 	$user = $c['userRegeneration']->getCurrentUser();
 	$view->getEnvironment()->addGlobal('user', $user);
-	$roleService = $c['roleService'];
-	$role = $roleService->getRole($user);
-	$view->getEnvironment()->addGlobal('userRole', $role);
-	$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
 	
 	if ($c->get('settings')['useTestingSite']) {
 		$flashMessages = $c->get('flashMessages');
