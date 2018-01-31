@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: peci1
- * Date: 6.12.17
- * Time: 21:31
- */
 
 namespace kissj\Orm;
 

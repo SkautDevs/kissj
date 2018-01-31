@@ -57,11 +57,11 @@ $app->add(function (Request $request, Response $response, callable $next) {
 
 $app->add(function (Request $request, Response $response, callable $next) use ($container) {
 	$userRegeneration = $container->get('userRegeneration');
-	$roleRepository = $container->get('roleRepository');
 	$user = $userRegeneration->getCurrentUser();
 	if (!is_null($user)) {
 		$request = $request->withAttribute('user', $user);
-		$request = $request->withAttribute('role', $roleRepository->findOneBy(['userId' => $user->id]));
+	} else {
+		$request = $request->withAttribute('user', null);
 	}
 	
 	$response = $next($request, $response);

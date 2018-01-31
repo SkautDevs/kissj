@@ -15,19 +15,29 @@
 			<br/>
 			<a href="">Jsi vývojář? Opencource kód pro KISSJ najdeš na github.com!</a>
 		</div>
-
-		<div class="card registration-theme">
-			<h2>Pořádáš akci? Přihlaš se a založ registraci pro svoje účastníky!</h2>
-			<form action="{{ path_for('loginScreenAfterSent',{'eventSlug': 'rng'}) }}" method="post">
-				<div class="form-group">
-					<label for="form-email">E-mail:</label>
-					<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
+		{% if user %}
+			<div class="card registration-theme">
+				<h2>Pořádáš akci?</h2>
+				<a href="{{ path_for('createEvent') }}" class="btn">Založ registraci pro svoje účastníky!</a>
+			</div>
+		{% else %}
+			<div class="card registration-theme">
+				<h2>Pořádáš akci? Založ registraci pro svoje účastníky!</h2>
+				<form action="{{ path_for('trySignup') }}" method="post">
+					<div class="form-group">
+						<label for="form-email">Email</label>
+						<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
+					</div>
+					<input type="submit" value="Zaregistrovat se &#13;&#10;a poslat přihlašovací mail"
+						   class="btn form-wide"/>
+				</form>
+				<br/>
+				<div class="open-theme">
+					<a href="{{ path_for('loginAskEmail') }}" class="btn">Přihlásit se</a>
 				</div>
-				<input type="submit" value="Poslat mail &#13;&#10;pro přihlášení" class="btn form-wide"/>
-			</form>
-			<br/>
-			<br/>
-			<a href="{{ path_for('kissj-loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>
-		</div>
+				<br/>
+				<a href="{{ path_for('kissj-loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}

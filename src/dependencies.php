@@ -101,6 +101,14 @@ $container['paymentRepository'] = function (C $c) {
 		$c->get('dbFactory'));
 };
 
+$container['eventRepository'] = function (C $c) {
+	return new \kissj\Event\EventRepository(
+		$c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory')
+	);
+};
+
 // services
 $container['userRegeneration'] = function (C $c) {
 	return new \kissj\User\UserRegeneration(
@@ -180,6 +188,12 @@ $container['paymentMatcherService'] = function (C $c) {
 		$c->get('paymentRepository'));
 };
 
+$container['eventService'] = function (C $c) {
+	return new \kissj\Event\EventService(
+		$c->get('eventRepository')
+	);
+};
+
 // views
 $container['flashMessages'] = function (C $c) {
 	return new kissj\FlashMessages\FlashMessagesBySession();
@@ -189,7 +203,7 @@ $container['view'] = function (C $c) {
 	$rendererSettings = $c->get('settings')['renderer'];
 	
 	$view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
-		'cache' => $rendererSettings['enable_cache'] ? dirname(__FILE__).'/../temp/twig' : false
+		'cache' => $rendererSettings['enable_cache'] ? dirname(__FILE__).'/../temp/twig' : false,
 	]);
 	
 	// Instantiate and add Slim specific extension

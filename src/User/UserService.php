@@ -2,7 +2,6 @@
 
 namespace kissj\User;
 
-use Dibi\Exception;
 use kissj\Random;
 use kissj\Mailer\MailerInterface;
 use Slim\Router;
@@ -49,7 +48,7 @@ class UserService {
 		return $user;
 	}
 	
-	public function sendLoginTokenByMail(string $email, string $readableRole): string {
+	public function sendLoginTokenByMail(string $email, ?string $readableRole = null, ?string $eventReadableNameLong = null): string {
 		$user = $this->userRepository->findOneBy(['email' => $email]);
 		$this->invalidateAllLoginTokens($user);
 		
@@ -64,7 +63,7 @@ class UserService {
 		$this->loginTokenRepository->persist($loginToken);
 		
 		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => 'CEJ 2018', 'readableRole' => $readableRole]);
+		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => $eventReadableNameLong, 'readableRole' => $readableRole]);
 		$this->mailer->sendMail($email, 'Link s přihlášením', $message);
 		
 		return $token;

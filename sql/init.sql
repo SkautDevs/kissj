@@ -88,11 +88,11 @@ CREATE TABLE logintoken (
 );
 
 CREATE TABLE role (
-	id     INTEGER PRIMARY KEY autoincrement,
-	name   TEXT,
-	event  TEXT NOT NULL,
-	status TEXT,
-	userId INT CONSTRAINT role_userId_fk REFERENCES user (id)
+	id      INTEGER PRIMARY KEY autoincrement,
+	name    TEXT,
+	eventId INT CONSTRAINT role_eventId_fk REFERENCES event (id),
+	status  TEXT,
+	userId  INT CONSTRAINT role_userId_fk REFERENCES user (id)
 );
 
 CREATE TABLE payment (
@@ -105,4 +105,21 @@ CREATE TABLE payment (
 	purpose        TEXT NOT NULL,
 	accountNumber  TEXT NOT NULL,
 	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
+);
+
+CREATE TABLE event (
+	id                             INTEGER PRIMARY KEY autoincrement,
+	slug                           TEXT NOT NULL,
+	readableName                   TEXT NOT NULL,
+	accountNumber                  TEXT NOT NULL,
+	prefixVariableSymbol           INT  NOT NULL,
+	automaticPaymentPairing        INT  NOT NULL,
+	bankId                         INT  NOT NULL,
+	bankApi                        TEXT,
+	allowPatrols                   INT  NOT NULL,
+	maximalClosedPatrolsCount      INT  NOT NULL,
+	minimalPatrolParticipantsCount INT  NOT NULL,
+	maximalPatrolParticipantsCount INT  NOT NULL,
+	allowIsts                      INT  NOT NULL,
+	maximalClosedIstsCount         INT  NOT NULL
 );

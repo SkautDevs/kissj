@@ -2,6 +2,7 @@
 
 namespace kissj\Orm;
 
+use kissj\Event\Event;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Ist\Ist;
@@ -51,6 +52,9 @@ class Mapper implements IMapper {
 		}
 		if ($table === 'payment') {
 			return Payment::class;
+		}
+		if ($table === 'event') {
+			return Event::class;
 		}
 		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
 	}

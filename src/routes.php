@@ -3,6 +3,73 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+$check['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
+	// protected area for non-logged users only
+	if (is_null($request->getAttribute('user'))) {
+		$response = $next($request, $response);
+		return $response;
+	} else {
+		/** @var \kissj\Event\Event $event */
+		if ($event = $request->getAttribute('event')) {
+			return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $event->slug]));
+		} else {
+			return $response->withRedirect($this->router->pathFor('createEvent'));
+		}
+	}
+};
+
+$check['loggedOnly'] = function (Request $request, Response $response, callable $next) {
+	// protected area for logged users only
+	if (is_null($request->getAttribute('user'))) {
+		$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
+		/** @var \kissj\Event\Event $event */
+		if ($event = $request->getAttribute('event')) {
+			return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
+		} else {
+			return $response->withRedirect($this->router->pathFor('kissj-landing'));
+		}
+	} else {
+		$response = $next($request, $response);
+		return $response;
+	}
+};
+
+$check['addRoleEventInfoIntoRequest'] = function (Request $request, Response $response, callable $next) {
+	if (!is_null($request->getAttribute('user'))) {
+		// add interesting info about logged role and current event from router into request
+		
+		/** @var \kissj\Event\Event $event */
+		$event = $this->get('eventService')->getEventFromSlug($request->getAttribute('route')->getArguments()['eventSlug']);
+		$request = $request->withAttribute('event', $event);
+		
+		// TODO continue
+		
+		/** @var \kissj\User\RoleRepository $roleRepository */
+		$roleRepository = $this->get('roleRepository');
+		/** @var \kissj\User\RoleService $roleService */
+		$roleService = $this->get('roleService');
+		/** @var \kissj\User\User $user */
+		$user = $request->getAttribute('user');
+		
+		if ($roleRepository->isExisting(['userId' => $user->id, 'event' => $event->id])) {
+			$role = $roleService->getRole($request->getAttribute('user'));
+			$request = $request->withAttribute('role', $roleRepository->findOneBy(['userId' => $user->id])
+			);
+		} else {
+			$request = $request->withAttribute('role', null);
+		}
+		/** @var \Slim\Views\Twig $view */
+		$view = $this->get('view');
+		$view->getEnvironment()->addGlobal('userRole', $role);
+		$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
+		$view->getEnvironment()->addGlobal('eventSlug', $event->slug);
+	}
+	
+	$response = $next($request, $response);
+	return $response;
+};
+
+
 /*
 
 #    # ###### #####   ##
@@ -20,7 +87,7 @@ $app->get("/", function (Request $request, Response $response, array $args) {
 
 // API VERSION
 
-$app->group("/v1", function () {
+$app->group("/v1", function () use ($check) {
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
 		return $response->withRedirect($this->router->pathFor('kissj-landing'));
@@ -28,10 +95,7 @@ $app->group("/v1", function () {
 	
 	// LANGUAGE
 	
-	$this->group("/cs", function () {
-		$this->get("/", function (Request $request, Response $response, array $args) {
-			return $response->withRedirect($this->router->pathFor('kissj-landing'));
-		});
+	$this->group("/cs", function () use ($check) {
 		
 		$this->get("", function (Request $request, Response $response, array $args) {
 			return $response->withRedirect($this->router->pathFor('kissj-landing'));
@@ -48,33 +112,241 @@ $app->group("/v1", function () {
 		
 		*/
 		
-		$this->group("/kissj", function () {
+		$this->group("/kissj", function () use ($check) {
 			
 			$this->get("", function (Request $request, Response $response, array $args) {
-				$events = [
-					'cej2018' => [
-						'slug' => 'cej2018',
-						'readableNameShort' => 'CEJ 2018',
-						'readableNameLong' => 'Central Europian Jamboree 2018',
-					],
-					'intercamp2018' => [
-						'slug' => 'intercamp2018',
-						'readableNameShort' => 'Intercamp 2018',
-						'readableNameLong' => 'Intercamp 2018',
-					],
-				];
-				return $this->view->render($response, 'kissj/landing.twig', ['events' => $events]);
+				return $this->view->render($response, 'kissj/landing.twig');
 			})->setName('kissj-landing');
 			
 			
 			$this->get('/loginHelp', function (Request $request, Response $response, array $args) {
 				return $this->view->render($response, 'kissj/loginHelp.twig');
-			})->setName('kissj-loginHelp');
+			})->setName('kissj-loginHelp')->add($check['nonLoggedOnly']);
+			
+			// non-logged users only
+			$this->group("", function () use ($check) {
+				
+				/*
+		
+				#    #  ####  ###### #####
+				#    # #      #      #    #
+				#    #  ####  #####  #    #
+				#    #      # #      #####
+				#    # #    # #      #   #
+				 ####   ####  ###### #    #
+				
+				*/
+				
+				
+				$this->post("/trySignup", function (Request $request, Response $response, array $args) {
+					$parameters = $request->getParsedBody();
+					$email = $parameters['email'];
+					
+					if ($this->userService->isEmailExisting($email)) {
+						$this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email, ENT_QUOTES).', protože už takový existuje. Nechceš se spíš přihlásit?');
+						if (isset($parameters['eventSlug'])) {
+							$pathForRedirect = $this->router->pathFor('landing', ['eventSlug' => $parameters['eventSlug']]);
+						} else {
+							$pathForRedirect = $this->router->pathFor('kissj-landing');
+						}
+						return $response->withRedirect($pathForRedirect);
+					}
+					
+					$user = $this->userService->registerUser($email);
+					$this->logger->info('Created new user with email '.$email);
+					
+					if (isset($parameters['role'], $parameters['eventSlug'])) {
+						// participant signup
+						
+						$role = $parameters['role'];
+						if (!$this->roleService->isUserRoleNameValid($role)) {
+							throw new Exception('User role "'.$role.'" is not valid');
+						}
+						
+						$this->roleService->addRole($user, $role);
+						/** @var kissj\Event\Event $event */
+						$event = $this->eventService->getEventFromSlug($parameters['eventSlug']);
+						try {
+							$this->userService->sendLoginTokenByMail(
+								$email,
+								$this->roleService->getReadableRoleName($role),
+								$event->readableNameLong);
+							return $response->withRedirect($this->router->pathFor('signupSuccess'));
+						} catch (Exception $e) {
+							$this->logger->addError("Error sending registration email to $email to event $event->slug with token ".$this->userService->getTokenForEmail($email), array($e));
+							$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.");
+							return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
+						}
+					} else {
+						// new event registration signup
+						try {
+							$this->userService->sendLoginTokenByMail($email);
+							return $response->withRedirect($this->router->pathFor('kissj-signupSuccess'));
+						} catch (Exception $e) {
+							$this->logger->addError("Error sending registration email to $email with token ".$this->userService->getTokenForEmail($email), array($e));
+							$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email )-:");
+							return $response->withRedirect($this->router->pathFor('kissj-landing'));
+						}
+						
+					}
+				})->setName('trySignup');
+				
+				
+				$this->get("/signupSuccess", function (Request $request, Response $response, array $args) {
+					$this->flashMessages->success('Úspěšně zadána emailová adresa!');
+					return $this->view->render($response, 'signupSuccess.twig');
+				})->setName('signupSuccess');
+				
+				
+				$this->get("/registrationSignupSuccess", function (Request $request, Response $response, array $args) {
+					$this->flashMessages->success('Úspěšně zadána emailová adresa!');
+					return $this->view->render($response, 'kissj/signupSuccess.twig');
+				})->setName('kissj-signupSuccess');
+				
+				
+				$this->get("/login/{token}[/{eventSlug}]", function (Request $request, Response $response, array $args) {
+					$loginToken = $args['token'];
+					if ($this->userService->isLoginTokenValid($loginToken)) {
+						$user = $this->userService->getUserFromToken($loginToken);
+						$this->userRegeneration->saveUserIdIntoSession($user);
+						$this->userService->invalidateAllLoginTokens($user);
+						if (isset($args['eventSlug'])) {
+							return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $args['eventSlug']]));
+						} else {
+							return $response->withRedirect($this->router->pathFor('createEvent'));
+						}
+					} else {
+						$this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
+						if (isset($args['eventSlug'])) {
+							return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+						} else {
+							return $response->withRedirect($this->router->pathFor('kissj-landing'));
+						}
+					}
+				})->setName('loginWithToken');
+				
+			})->add($check['nonLoggedOnly']);
 			
 			
-			$this->get("/registerEvent", function (Request $request, Response $response, array $args) {
-				return $this->view->render($response, 'kissj/registerEvent.twig');
-			})->setName('kissj-registerEvent');
+			$this->get("/logout", function (Request $request, Response $response, array $args) {
+				$this->userService->logoutUser();
+				$this->flashMessages->info('Odhlášení bylo úspěšné');
+				
+				/** @var \kissj\Event\Event $event */
+				if ($event = $request->getAttribute('event')) {
+					$pathForRedirect = $this->router->pathFor('landing', ['eventSlug' => $event->slug]);
+				} else {
+					$pathForRedirect = $this->router->pathFor('kissj-landing');
+				}
+				
+				return $response->withRedirect($pathForRedirect);
+			})->setName('logout')->add($check['loggedOnly']);
+			
+			
+			$this->get("/createEvent", function (Request $request, Response $response, array $args) {
+				$banks = [
+					['name' => 'FioBanka', 'id' => 222],
+					['name' => 'Komerční banka', 'id' => 111],
+				];
+				return $this->view->render($response, 'kissj/createEvent.twig', ['banks' => $banks]);
+			})->setName('createEvent')->add($check['loggedOnly']);
+			
+			
+			$this->post("/createEvent", function (Request $request, Response $response, array $args) {
+				$params = $request->getParams();
+				if ($this->eventService->isEventDetailsValid(
+					$params['slug'] ?? null,
+					$params['readableName'] ?? null,
+					$params['accountNumber'] ?? null,
+					$params['prefixVariableSymbol'] ?? null,
+					$params['automaticPaymentPairing'] ?? null,
+					$params['bankId'] ?? null,
+					$params['bankApi'] ?? null,
+					$params['allowPatrols'] ?? null,
+					$params['maximalClosedPatrolsCount'] ?? null,
+					$params['minimalPatrolParticipantsCount'] ?? null,
+					$params['maximalPatrolParticipantsCount'] ?? null,
+					$params['allowIsts'] ?? null,
+					$params['maximalClosedIstsCount'] ?? null)) {
+					
+					/** @var \kissj\Event\Event $newEvent */
+					$newEvent = $this->eventService->createEvent(
+						$params['slug'] ?? null,
+						$params['readableName'] ?? null,
+						$params['accountNumber'] ?? null,
+						$params['prefixVariableSymbol'] ?? null,
+						$params['automaticPaymentPairing'] ?? null,
+						$params['bankId'] ?? null,
+						$params['bankApi'] ?? null,
+						$params['allowPatrols'] ?? null,
+						$params['maximalClosedPatrolsCount'] ?? null,
+						$params['minimalPatrolParticipantsCount'] ?? null,
+						$params['maximalPatrolParticipantsCount'] ?? null,
+						$params['allowIsts'] ?? null,
+						$params['maximalClosedIstsCount'] ?? null);
+					
+					$this->flashMessages->success('Registrace je úspěšně vytvořená!');
+					$this->logger->info('Created event with ID '.$newEvent->id.' and slug '.$newEvent->slug);
+					
+					return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $newEvent->slug]));
+				} else {
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+					return $response->withRedirect($this->router->pathFor('createEvent'));
+				}
+				// TODO add event-admins (roles table?)
+			})->setName('postCreateEvent')->add($check['loggedOnly']);
+			
+			// from events only - TODO shift that fcs down
+			
+			$this->get("/login", function (Request $request, Response $response, array $args) {
+				return $this->view->render($response, 'kissj/loginScreen.twig', ['eventSlug' => 'cej2018']);
+			})->setName('loginAskEmail')->add($check['nonLoggedOnly']);
+			
+			
+			$this->post("/login", function (Request $request, Response $response, array $args) {
+				$email = $request->getParam('email');
+				if ($this->userService->isEmailExisting($email)) {
+					$user = $this->userService->getUserFromEmail($email);
+					/** @var \kissj\User\Role $role */
+					$role = $this->roleService->getRole($user);
+					$readableRole = $this->roleService->getReadableRoleName($role->name);
+					try {
+						$this->userService->sendLoginTokenByMail($email, $readableRole);
+					} catch (Exception $e) {
+						$this->logger->addError("Error sending login email to $email with token ".
+							$this->userService->getTokenForEmail($email), array($e));
+						$this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.");
+						return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+					}
+					
+					$this->flashMessages->success('Posláno! Klikni na odkaz v mailu a tím se přihlásíš!');
+					return $response->withRedirect($this->router->pathFor('landing'));
+					
+				} else {
+					$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
+					return $response->withRedirect($this->router->pathFor('landing'));
+				}
+				
+			})->setName('loginScreenAfterSent')->add($check['nonLoggedOnly']);
+			
+			
+			$this->get("/registration/{eventSlug}/{role}", function (Request $request, Response $response, array $args) {
+				$role = $args['role'];
+				if (!$this->roleService->isUserRoleNameValid($role)) {
+					throw new Exception('User role "'.$role.'" is not valid');
+				}
+				
+				/** @var kissj\Event\Event $event */
+				$event = $this->eventService->getEventFromSlug($args['event']);
+				
+				return $this->view->render($response, 'registration.twig', [
+					'role' => $role,
+					'readableRole' => $this->roleService->getReadableRoleName($role),
+					'eventSlug' => $event->slug,
+					'eventReadableName' => $event->readableNameLong,
+				]);
+			})->setName('registration')->add($check['nonLoggedOnly']);
+			
 		});
 		
 		/*
@@ -88,178 +360,38 @@ $app->group("/v1", function () {
 		
 		*/
 		
-		$this->group("/event/{eventSlug}", function () {
+		$this->group("/event/{eventSlug}", function () use ($check) {
 			
-			// non-logged users only
-			$this->group("", function () {
-				
-				/*
-				
-				 #        ##   #    # #####  # #    #  ####
-				 #       #  #  ##   # #    # # ##   # #    #
-				 #      #    # # #  # #    # # # #  # #
-				 #      ###### #  # # #    # # #  # # #  ###
-				 #      #    # #   ## #    # # #   ## #    #
-				 ###### #    # #    # #####  # #    #  ####
-				 
-				*/
-				
-				$this->get("", function (Request $request, Response $response, array $args) {
-					$view = $this->view;
-					
-					return $this->view->render($response, 'landing-page.twig');
-				})->setName("landing")->add(function (Request $request, Response $response, callable $next) {
-					// protected area for non-logged users only
-					if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
-						$response = $next($request, $response);
-						return $response;
-					} else {
-						return $response->withRedirect($this->router->pathFor('getDashboard'));
-					}
-				});
-				
-				
-				$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
-					if ($this->get('settings')['useTestingSite']) {
-						$this->flashMessages->success('Úspěch!');
-						$this->flashMessages->warning('Pozor!');
-						$this->flashMessages->error('Něco se pokazilo!');
-						$this->flashMessages->info('Informace.');
-					}
-					
-					return $this->view->render($response, 'registrationLostSoul.twig');
-				})->setName('registrationLostSoul');
-				
-				/*
-				
-				#    #  ####  ###### #####
-				#    # #      #      #    #
-				#    #  ####  #####  #    #
-				#    #      # #      #####
-				#    # #    # #      #   #
-				 ####   ####  ###### #    #
-				
-				*/
-				
-				$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
-					$role = $args['role'];
-					if (!$this->roleService->isUserRoleNameValid($role)) {
-						throw new Exception('User role "'.$role.'" is not valid');
-					}
-					
-					return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role, 'readableRole' => $this->roleService->getReadableRoleName($role)]);
-				})->setName('registration');
-				
-				
-				$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
-					$role = $args['role'];
-					if (!$this->roleService->isUserRoleNameValid($role)) {
-						throw new Exception('User role "'.$role.'" is not valid');
-					}
-					$email = $request->getParsedBodyParam("email");
-					
-					if ($this->userService->isEmailExisting($email)) {
-						$this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email, ENT_QUOTES).', protože už takový existuje. Nechceš se spíš příhlásit?');
-						return $response->withRedirect($this->router->pathFor('landing'));
-					}
-					
-					$user = $this->userService->registerUser($email);
-					
-					$this->roleService->addRole($user, $role);
-					$readableRole = $this->roleService->getReadableRoleName($role);
-					try {
-						$this->userService->sendLoginTokenByMail($email, $readableRole);
-						$this->logger->info('Created new user with email '.$email);
-						return $response->withRedirect($this->router->pathFor('signupSuccess'));
-					} catch (Exception $e) {
-						$this->logger->addError("Error sending registration email to $email with token ".
-							$this->userService->getTokenForEmail($email), array($e));
-						$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.");
-						return $response->withRedirect($this->router->pathFor('landing'));
-					}
-				})->setName('signup');
-				
-				
-				$this->get("/signupSuccess", function (Request $request, Response $response, array $args) {
-					$this->flashMessages->success('Úspěšně zadána emailová adresa!');
-					return $this->view->render($response, 'signupSuccess.twig', []);
-				})->setName('signupSuccess');
-				
-				
-				$this->get("/login", function (Request $request, Response $response, array $args) {
-					return $this->view->render($response, 'loginScreen.twig', []);
-				})->setName('loginAskEmail');
-				
-				
-				$this->post("/login", function (Request $request, Response $response, array $args) {
-					$email = $request->getParam('email');
-					if ($this->userService->isEmailExisting($email)) {
-						$user = $this->userService->getUserFromEmail($email);
-						/** @var \kissj\User\Role $role */
-						$role = $this->roleService->getRole($user);
-						$readableRole = $this->roleService->getReadableRoleName($role->name);
-						try {
-							$this->userService->sendLoginTokenByMail($email, $readableRole);
-						} catch (Exception $e) {
-							$this->logger->addError("Error sending login email to $email with token ".
-								$this->userService->getTokenForEmail($email), array($e));
-							$this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.");
-							return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-						}
-						
-						$this->flashMessages->success('Posláno! Klikni na odkaz v mailu a tím se přihlásíš!');
-						return $response->withRedirect($this->router->pathFor('landing'));
-						
-					} else {
-						$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
-						return $response->withRedirect($this->router->pathFor('landing'));
-					}
-					
-				})->setName('loginScreenAfterSent');
-				
-				
-				$this->get("/login/{token}", function (Request $request, Response $response, array $args) {
-					$loginToken = $args['token'];
-					if ($this->userService->isLoginTokenValid($loginToken)) {
-						$user = $this->userService->getUserFromToken($loginToken);
-						$this->userRegeneration->saveUserIdIntoSession($user);
-						$this->userService->invalidateAllLoginTokens($user);
-						
-						return $response->withRedirect($this->router->pathFor('getDashboard'));
-					} else {
-						$this->flashMessages->warning('Token není platný. Nech si prosím poslat nový přihlašovací email.');
-						return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-					}
-				})->setName('loginWithToken');
-				
-			})->add(function (Request $request, Response $response, callable $next) {
-				// protected area for non-logged users only
-				if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
-					$response = $next($request, $response);
-					return $response;
-				} else {
-					return $response->withRedirect($this->router->pathFor('getDashboard'));
+			/*
+			
+			 #        ##   #    # #####  # #    #  ####
+			 #       #  #  ##   # #    # # ##   # #    #
+			 #      #    # # #  # #    # # # #  # #
+			 #      ###### #  # # #    # # #  # # #  ###
+			 #      #    # #   ## #    # # #   ## #    #
+			 ###### #    # #    # #####  # #    #  ####
+			 
+			*/
+			
+			$this->get("", function (Request $request, Response $response, array $args) {
+				return $this->view->render($response, 'landing-page.twig');
+			})->setName("landing")->add($check['nonLoggedOnly']);
+			
+			$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
+				if ($this->get('settings')['useTestingSite']) {
+					$this->flashMessages->success('Úspěch!');
+					$this->flashMessages->warning('Pozor!');
+					$this->flashMessages->error('Něco se pokazilo!');
+					$this->flashMessages->info('Informace.');
 				}
-			});
+				
+				return $this->view->render($response, 'registrationLostSoul.twig');
+			})->setName('registrationLostSoul')->add($check['nonLoggedOnly']);
 			
 			// logged users only
-			$this->group("", function () {
-				
-				$this->get("/logout", function (Request $request, Response $response, array $args) {
-					$this->userService->logoutUser();
-					$this->flashMessages->info('Odhlášení bylo úspěšné');
-					
-					return $response->withRedirect($this->router->pathFor('landing'));
-				})->setName('logout');
-				
+			$this->group("", function () use ($check) {
 				
 				$this->get("/getDashboard", function (Request $request, Response $response, array $args) {
-					
-					if (is_null($request->getAttribute('user'))) {
-						$this->flashMessages->error('Sorry, you are not logged');
-						return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-					}
-					
 					$roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
 					if (!$this->roleService->isUserRoleNameValid($roleName)) {
 						throw new Exception('Unknown role "'.$roleName.'"');
@@ -801,26 +933,7 @@ $app->group("/v1", function () {
 					}
 				});
 				
-			})->add(function (Request $request, Response $response, callable $next) {
-				// protected area for logged users only
-				$eventSlug = $request->getAttribute('eventSlug');
-				if (is_null($this->roleService->getRole($request->getAttribute('user'), $eventSlug))) {
-					$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím');
-					return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $eventSlug]));
-				} else {
-					// add interesting info about logged role from router into
-					/** @var \kissj\User\RoleService $roleService */
-					$roleService = $this->get('roleService');
-					$role = $roleService->getRole($request->getAttribute('user'));
-					/** @var \Slim\Views\Twig $view */
-					$view = $this->get('view');
-					$view->getEnvironment()->addGlobal('userRole', $role);
-					$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
-					
-					$response = $next($request, $response);
-					return $response;
-				}
-			});
+			})->add($check['loggedOnly']);
 			
 			$this->any("/admin", function (Request $request, Response $response, array $args) {
 				global $adminerSettings;
@@ -828,14 +941,6 @@ $app->group("/v1", function () {
 				require __DIR__."/../admin/custom.php";
 			})->setName('administration');
 			
-		})->add(function (Request $request, Response $response, callable $next) {
-			// add information about event slug into request + view for proper linking
-			$eventSlug = $request->getAttribute('route')->getArguments()['eventSlug'];
-			$request = $request->withAttribute('eventSlug', $eventSlug);
-			$this->view->getEnvironment()->addGlobal('eventSlug', $eventSlug);
-			
-			$response = $next($request, $response);
-			return $response;
-		});
+		})->add($check['addRoleEventInfoIntoRequest']);
 	});
 });

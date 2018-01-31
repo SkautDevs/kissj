@@ -24,7 +24,7 @@ class Repository extends BaseRepository {
 	public function findOneBy(array $criteria, array $orderBy = []) {
 		$qb = $this->createFluent();
 		$this->addConditions($qb, $criteria);
-        $this->addOrderBy($qb, $orderBy);
+		$this->addOrderBy($qb, $orderBy);
 		$row = $qb->fetch();
 		
 		if ($row === false) {
@@ -33,27 +33,27 @@ class Repository extends BaseRepository {
 		// second part
 		return $this->createEntity($row);
 	}
-
+	
 	public function findBy(array $criteria, array $orderBy = []): array {
 		$qb = $this->createFluent();
-
+		
 		$this->addConditions($qb, $criteria);
-        $this->addOrderBy($qb, $orderBy);
+		$this->addOrderBy($qb, $orderBy);
 
 //        this little boi dumps sql query
 //		$qb->getConnection()->test($qb->_export(null, ['%ofs %lmt', null, null]));
-
-        $rows = $qb->fetchAll();
+		
+		$rows = $qb->fetchAll();
 		$entities = [];
-
+		
 		foreach ($rows as $row) {
 			$entities[] = $this->createEntity($row);
 		}
-
+		
 		return $entities;
 	}
 	
-	public function findByMultiple(array $criterias, array $orderBy = []) : array {
+	public function findByMultiple(array $criterias, array $orderBy = []): array {
 		$qb = $this->createFluent();
 		
 		foreach ($criterias as $criterium) {
@@ -70,7 +70,7 @@ class Repository extends BaseRepository {
 		
 		return $entities;
 	}
-
+	
 	public function countBy(array $criteria): int {
 		/** @var Fluent $qb */
 		$qb = $this->connection->select('count(*)')->from($this->getTable());
@@ -85,22 +85,22 @@ class Repository extends BaseRepository {
 			if ($value instanceof Entity) {
 				$columnName = $this->mapper->getRelationshipColumn($this->table, $this->mapper->getTable(get_class($value)));
 				$qb->where("$columnName = %i", $value->id);
-			} else if ($value instanceof Relation) {
+			} elseif ($value instanceof Relation) {
 				if ($value->relation === 'IN') {
 					$qb->where("$field $value->relation %in", $value->value);
 				} else {
 					$qb->where("$field $value->relation %s", $value->value);
 				}
-            } else {
-			    if (is_bool($value)) {
-                    $qb->where("$field = %b", $value);
-                } else if (is_int($value)) {
-                    $qb->where("$field = %i", $value);
-                } else if (is_float($value)) {
-                    $qb->where("$field = %f", $value);
-                } else {
-                    $qb->where("$field = %s", $value);
-                }
+			} else {
+				if (is_bool($value)) {
+					$qb->where("$field = %b", $value);
+				} elseif (is_int($value)) {
+					$qb->where("$field = %i", $value);
+				} elseif (is_float($value)) {
+					$qb->where("$field = %f", $value);
+				} else {
+					$qb->where("$field = %s", $value);
+				}
 			}
 		}
 	}
@@ -119,17 +119,16 @@ class Repository extends BaseRepository {
 				->fetchAll()
 		);
 	}
-
-    /**
-     * @param $qb
-     * @param array $orderBy
-     */
-    protected function addOrderBy($qb, array $orderBy)
-    {
-        foreach ($orderBy as $order => $asc) {
-            $qb->orderBy($order);
-            $qb->asc($asc);
-        }
-    }
-
+	
+	/**
+	 * @param       $qb
+	 * @param array $orderBy
+	 */
+	protected function addOrderBy($qb, array $orderBy) {
+		foreach ($orderBy as $order => $asc) {
+			$qb->orderBy($order);
+			$qb->asc($asc);
+		}
+	}
+	
 }
