@@ -20,14 +20,15 @@ kissj is scouts **registration system for national and international Scout Jambo
 # Installation (yet)
 
 1. Download project
-`git clone [this repository]`
+	- `git clone [this repository]`
 2. Install dependencies
-`composer install`
+	- `composer install`
 3. Prepare database
-	- Copy `db_init.sqlite` to `db.sqlite` 
+	- Copy `db_init.sqlite` to `db.sqlite` and
 	- Run `sql/init.sql` to `db.sqlite`
+	- **OR** in root directory run `sqlite3 db.sqlite < sql/init.sql`
 4. Create local config
-	Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
+	- copy `src/settings_custom_empty.php` to `src/settings_custom.php` and edit appropriately
 
 And you are good to go!
 

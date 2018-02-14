@@ -17,8 +17,8 @@ class EventService {
 	public function isEventDetailsValid(?string $slug,
 										?string $readableName,
 										?string $accountNumber,
-										?int $prefixVariableSymbol,
 										?bool $automaticPaymentPairing,
+										?int $prefixVariableSymbol,
 										?int $bankId,
 										?string $bankApi,
 										?bool $allowPatrols,
@@ -27,10 +27,28 @@ class EventService {
 										?int $maximalPatrolParticipantsCount,
 										?bool $allowIsts,
 										?int $maximalClosedIstsCount): bool {
-		// TODO check nonempty
-		// TODO regex slug
-		// TODO conditional check if allowed then chech Patrols + ISTs
-		// and probably some more
+		if (is_null($slug) || is_null($readableName) || !is_null($accountNumber) || is_null($automaticPaymentPairing) || is_null($allowPatrols) || is_null($allowIsts)) {
+			return false;
+		}
+		
+		// TODO check if correct
+		if (!preg_match('/^[A-Za-z0-9\-]+$/', $slug)) {
+			return false;
+		}
+		
+		if ($automaticPaymentPairing &&
+			(is_null($bankId) || is_null($bankApi) || !is_numeric($prefixVariableSymbol))) {
+			return false;
+		}
+		
+		if ($allowPatrols &&
+			(!is_numeric($maximalClosedPatrolsCount) || !is_numeric($minimalPatrolParticipantsCount) || !is_numeric($maximalPatrolParticipantsCount))) {
+			return false;
+		}
+		
+		if ($allowIsts && !is_numeric($maximalClosedIstsCount)) {
+			return false;
+		}
 		
 		return true;
 	}
@@ -69,8 +87,7 @@ class EventService {
 	}
 	
 	public function getEventFromSlug(string $eventSlug): Event {
-		$event = new Event();
-		// TODO
-		return $event;
+		$event = $this->eventRepository->findBy(['slug' => $eventSlug]);
+		return $event[0];
 	}
 }

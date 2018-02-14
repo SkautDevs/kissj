@@ -3,7 +3,7 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$check['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
+$helper['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
 	// protected area for non-logged users only
 	if (is_null($request->getAttribute('user'))) {
 		$response = $next($request, $response);
@@ -18,7 +18,7 @@ $check['nonLoggedOnly'] = function (Request $request, Response $response, callab
 	}
 };
 
-$check['loggedOnly'] = function (Request $request, Response $response, callable $next) {
+$helper['loggedOnly'] = function (Request $request, Response $response, callable $next) {
 	// protected area for logged users only
 	if (is_null($request->getAttribute('user'))) {
 		$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
@@ -34,22 +34,26 @@ $check['loggedOnly'] = function (Request $request, Response $response, callable 
 	}
 };
 
-$check['addRoleEventInfoIntoRequest'] = function (Request $request, Response $response, callable $next) {
-	if (!is_null($request->getAttribute('user'))) {
-		// add interesting info about logged role and current event from router into request
-		
-		/** @var \kissj\Event\Event $event */
-		$event = $this->get('eventService')->getEventFromSlug($request->getAttribute('route')->getArguments()['eventSlug']);
-		$request = $request->withAttribute('event', $event);
-		
-		// TODO continue
-		
+$helper['addEventInfoIntoRequest'] = function (Request $request, Response $response, callable $next) {
+	/** @var \kissj\Event\Event $event */
+	$event = $this->get('eventService')->getEventFromSlug($request->getAttribute('route')->getArguments()['eventSlug']);
+	$request = $request->withAttribute('event', $event);
+	
+	$response = $next($request, $response);
+	return $response;
+};
+
+$helper['addRoleInfoIntoRequest'] = function (Request $request, Response $response, callable $next) {
+	/** @var \kissj\User\User $user */
+	$user = $request->getAttribute('user');
+	/** @var \kissj\Event\Event $event */
+	$event = $request->getAttribute('event');
+	
+	if (!is_null($user) && !is_null($event)) {
 		/** @var \kissj\User\RoleRepository $roleRepository */
 		$roleRepository = $this->get('roleRepository');
 		/** @var \kissj\User\RoleService $roleService */
 		$roleService = $this->get('roleService');
-		/** @var \kissj\User\User $user */
-		$user = $request->getAttribute('user');
 		
 		if ($roleRepository->isExisting(['userId' => $user->id, 'event' => $event->id])) {
 			$role = $roleService->getRole($request->getAttribute('user'));
@@ -58,6 +62,7 @@ $check['addRoleEventInfoIntoRequest'] = function (Request $request, Response $re
 		} else {
 			$request = $request->withAttribute('role', null);
 		}
+		
 		/** @var \Slim\Views\Twig $view */
 		$view = $this->get('view');
 		$view->getEnvironment()->addGlobal('userRole', $role);
@@ -87,7 +92,7 @@ $app->get("/", function (Request $request, Response $response, array $args) {
 
 // API VERSION
 
-$app->group("/v1", function () use ($check) {
+$app->group("/v1", function () use ($helper) {
 	
 	$this->get("", function (Request $request, Response $response, array $args) {
 		return $response->withRedirect($this->router->pathFor('kissj-landing'));
@@ -95,7 +100,7 @@ $app->group("/v1", function () use ($check) {
 	
 	// LANGUAGE
 	
-	$this->group("/cs", function () use ($check) {
+	$this->group("/cs", function () use ($helper) {
 		
 		$this->get("", function (Request $request, Response $response, array $args) {
 			return $response->withRedirect($this->router->pathFor('kissj-landing'));
@@ -112,7 +117,7 @@ $app->group("/v1", function () use ($check) {
 		
 		*/
 		
-		$this->group("/kissj", function () use ($check) {
+		$this->group("/kissj", function () use ($helper) {
 			
 			$this->get("", function (Request $request, Response $response, array $args) {
 				return $this->view->render($response, 'kissj/landing.twig');
@@ -121,10 +126,10 @@ $app->group("/v1", function () use ($check) {
 			
 			$this->get('/loginHelp', function (Request $request, Response $response, array $args) {
 				return $this->view->render($response, 'kissj/loginHelp.twig');
-			})->setName('kissj-loginHelp')->add($check['nonLoggedOnly']);
+			})->setName('kissj-loginHelp')->add($helper['nonLoggedOnly']);
 			
 			// non-logged users only
-			$this->group("", function () use ($check) {
+			$this->group("", function () use ($helper) {
 				
 				/*
 		
@@ -225,7 +230,7 @@ $app->group("/v1", function () use ($check) {
 					}
 				})->setName('loginWithToken');
 				
-			})->add($check['nonLoggedOnly']);
+			})->add($helper['nonLoggedOnly']);
 			
 			
 			$this->get("/logout", function (Request $request, Response $response, array $args) {
@@ -240,7 +245,7 @@ $app->group("/v1", function () use ($check) {
 				}
 				
 				return $response->withRedirect($pathForRedirect);
-			})->setName('logout')->add($check['loggedOnly']);
+			})->setName('logout')->add($helper['loggedOnly']);
 			
 			
 			$this->get("/createEvent", function (Request $request, Response $response, array $args) {
@@ -249,7 +254,7 @@ $app->group("/v1", function () use ($check) {
 					['name' => 'Komerční banka', 'id' => 111],
 				];
 				return $this->view->render($response, 'kissj/createEvent.twig', ['banks' => $banks]);
-			})->setName('createEvent')->add($check['loggedOnly']);
+			})->setName('createEvent')->add($helper['loggedOnly']);
 			
 			
 			$this->post("/createEvent", function (Request $request, Response $response, array $args) {
@@ -258,8 +263,8 @@ $app->group("/v1", function () use ($check) {
 					$params['slug'] ?? null,
 					$params['readableName'] ?? null,
 					$params['accountNumber'] ?? null,
-					$params['prefixVariableSymbol'] ?? null,
 					$params['automaticPaymentPairing'] ?? null,
+					$params['prefixVariableSymbol'] ?? null,
 					$params['bankId'] ?? null,
 					$params['bankApi'] ?? null,
 					$params['allowPatrols'] ?? null,
@@ -290,17 +295,17 @@ $app->group("/v1", function () use ($check) {
 					
 					return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $newEvent->slug]));
 				} else {
-					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus zadání údajů znovu.');
 					return $response->withRedirect($this->router->pathFor('createEvent'));
 				}
 				// TODO add event-admins (roles table?)
-			})->setName('postCreateEvent')->add($check['loggedOnly']);
+			})->setName('postCreateEvent')->add($helper['loggedOnly']);
 			
 			// from events only - TODO shift that fcs down
 			
 			$this->get("/login", function (Request $request, Response $response, array $args) {
 				return $this->view->render($response, 'kissj/loginScreen.twig', ['eventSlug' => 'cej2018']);
-			})->setName('loginAskEmail')->add($check['nonLoggedOnly']);
+			})->setName('loginAskEmail')->add($helper['nonLoggedOnly']);
 			
 			
 			$this->post("/login", function (Request $request, Response $response, array $args) {
@@ -327,7 +332,7 @@ $app->group("/v1", function () use ($check) {
 					return $response->withRedirect($this->router->pathFor('landing'));
 				}
 				
-			})->setName('loginScreenAfterSent')->add($check['nonLoggedOnly']);
+			})->setName('loginScreenAfterSent')->add($helper['nonLoggedOnly']);
 			
 			
 			$this->get("/registration/{eventSlug}/{role}", function (Request $request, Response $response, array $args) {
@@ -345,7 +350,7 @@ $app->group("/v1", function () use ($check) {
 					'eventSlug' => $event->slug,
 					'eventReadableName' => $event->readableNameLong,
 				]);
-			})->setName('registration')->add($check['nonLoggedOnly']);
+			})->setName('registration')->add($helper['nonLoggedOnly']);
 			
 		});
 		
@@ -360,7 +365,7 @@ $app->group("/v1", function () use ($check) {
 		
 		*/
 		
-		$this->group("/event/{eventSlug}", function () use ($check) {
+		$this->group("/event/{eventSlug}", function () use ($helper) {
 			
 			/*
 			
@@ -375,7 +380,7 @@ $app->group("/v1", function () use ($check) {
 			
 			$this->get("", function (Request $request, Response $response, array $args) {
 				return $this->view->render($response, 'landing-page.twig');
-			})->setName("landing")->add($check['nonLoggedOnly']);
+			})->setName("landing")->add($helper['nonLoggedOnly']);
 			
 			$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
 				if ($this->get('settings')['useTestingSite']) {
@@ -386,10 +391,10 @@ $app->group("/v1", function () use ($check) {
 				}
 				
 				return $this->view->render($response, 'registrationLostSoul.twig');
-			})->setName('registrationLostSoul')->add($check['nonLoggedOnly']);
+			})->setName('registrationLostSoul')->add($helper['nonLoggedOnly']);
 			
 			// logged users only
-			$this->group("", function () use ($check) {
+			$this->group("", function () use ($helper) {
 				
 				$this->get("/getDashboard", function (Request $request, Response $response, array $args) {
 					$roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
@@ -933,7 +938,7 @@ $app->group("/v1", function () use ($check) {
 					}
 				});
 				
-			})->add($check['loggedOnly']);
+			})->add($helper['loggedOnly']);
 			
 			$this->any("/admin", function (Request $request, Response $response, array $args) {
 				global $adminerSettings;
@@ -941,6 +946,6 @@ $app->group("/v1", function () use ($check) {
 				require __DIR__."/../admin/custom.php";
 			})->setName('administration');
 			
-		})->add($check['addRoleEventInfoIntoRequest']);
+		})->add($helper['addEventInfoIntoRequest'])->add($helper['addRoleInfoIntoRequest']);
 	});
 });

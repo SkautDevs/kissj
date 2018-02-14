@@ -2,7 +2,7 @@
 
 namespace kissj\User;
 
-
+use kissj\Event\Event;
 use kissj\Payment\PaymentRepository;
 
 class RoleService {
@@ -13,15 +13,12 @@ class RoleService {
 	private $paymentRepository;
 	
 	private $possibleRoles;
-	private $eventName;
 	private $statuses;
 	
 	public function __construct(RoleRepository $roleRepository,
-								PaymentRepository $paymentRepository,
-								string $eventName) {
+								PaymentRepository $paymentRepository) {
 		$this->roleRepository = $roleRepository;
 		$this->paymentRepository = $paymentRepository;
-		$this->eventName = $eventName;
 		$this->possibleRoles = [
 			'patrol-leader', // leader of whole patrol
 			'ist', // self-standing International Service Team
@@ -59,20 +56,20 @@ class RoleService {
 		return in_array($role, $this->possibleRoles);
 	}
 	
-	public function getRole(?User $user): ?Role {
+	public function getRole(?User $user, ?Event $event): ?Role {
 		if (is_null($user)) {
 			return null;
 		} else {
-			return $this->roleRepository->findOneBy(['user' => $user, 'event' => $this->eventName]);
+			return $this->roleRepository->findOneBy(['user' => $user, 'event' => $event->slug]);
 		}
 	}
 	
-	public function addRole(User $user, string $roleName) {
+	public function addRole(User $user, string $roleName, Event $event) {
 		$role = new Role();
 		$role->name = $roleName;
 		$role->user = $user;
-		$role->event = $this->eventName;
-		$role->status = $this->getFirstStatus($roleName);
+		$role->event = $event->slug;
+		$role->status = 'open';
 		$this->roleRepository->persist($role);
 	}
 	
@@ -120,49 +117,9 @@ class RoleService {
 	}
 	
 	// for User class
-	// TODO check if used anywhere and delete after that
-	
-	public function getFirstStatus($role): string {
-		// TODO enhance for different roles
-		return $this->statuses[0];
-	}
-	
-	public function getNextStatus(string $status): string {
-		if (!$this->isStatusValid($status)) {
-			throw new \Exception('Unknown status "'.$status.'"');
-		}
-		if ($this->isStatusLast($status)) {
-			throw new \Exception('Last role possible');
-		}
-		
-		$key = array_search($status, $this->statuses);
-		
-		return $this->statuses[$key + 1];
-	}
-	
-	public function getPreviousStatus(string $status): string {
-		if (!$this->isStatusValid($status)) {
-			throw new \Exception('Unknown status "'.$status.'"');
-		}
-		if ($this->isStatusFirst($status)) {
-			throw new \Exception('First role possible');
-		}
-		
-		$key = array_search($status, $this->statuses);
-		
-		return $this->statuses[$key - 1];
-	}
 	
 	private function isStatusValid(string $status): bool {
 		return in_array($status, $this->statuses);
-	}
-	
-	private function isStatusLast(string $status): bool {
-		return $status == end($this->statuses);
-	}
-	
-	private function isStatusFirst(string $status): bool {
-		return $status == $this->statuses[0];
 	}
 	
 	public function getOpenStatus(): string {
