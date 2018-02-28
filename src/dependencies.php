@@ -138,8 +138,11 @@ $container['userService'] = function (C $c) {
 $container['roleService'] = function (C $c) {
 	return new \kissj\User\RoleService(
 		$c->get('roleRepository'),
-		$c->get('paymentRepository'),
-		$c->get('settings')['eventName']);
+		$c->get('paymentRepository'));
+};
+
+$container['statusService'] = function (C $c) {
+	return new \kissj\User\StatusService();
 };
 
 $container['patrolService'] = function (C $c) {

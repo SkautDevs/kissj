@@ -54,19 +54,22 @@ $helper['addRoleInfoIntoRequest'] = function (Request $request, Response $respon
 		$roleRepository = $this->get('roleRepository');
 		/** @var \kissj\User\RoleService $roleService */
 		$roleService = $this->get('roleService');
+		/** @var \kissj\User\StatusService $statusService */
+		$statusService = $this->get('statusService');
 		
 		if ($roleRepository->isExisting(['userId' => $user->id, 'event' => $event->id])) {
-			$role = $roleService->getRole($request->getAttribute('user'));
+			$role = $roleService->getRole($user, $event);
 			$request = $request->withAttribute('role', $roleRepository->findOneBy(['userId' => $user->id])
 			);
 		} else {
+			$role = null;
 			$request = $request->withAttribute('role', null);
 		}
 		
 		/** @var \Slim\Views\Twig $view */
 		$view = $this->get('view');
 		$view->getEnvironment()->addGlobal('userRole', $role);
-		$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
+		$view->getEnvironment()->addGlobal('userCustomHelp', $statusService->getHelpForRole($role));
 		$view->getEnvironment()->addGlobal('eventSlug', $event->slug);
 	}
 	
@@ -175,7 +178,7 @@ $app->group("/v1", function () use ($helper) {
 							$this->userService->sendLoginTokenByMail(
 								$email,
 								$this->roleService->getReadableRoleName($role),
-								$event->readableNameLong);
+								$event->readableName);
 							return $response->withRedirect($this->router->pathFor('signupSuccess'));
 						} catch (Exception $e) {
 							$this->logger->addError("Error sending registration email to $email to event $event->slug with token ".$this->userService->getTokenForEmail($email), array($e));
@@ -312,15 +315,22 @@ $app->group("/v1", function () use ($helper) {
 				$email = $request->getParam('email');
 				if ($this->userService->isEmailExisting($email)) {
 					$user = $this->userService->getUserFromEmail($email);
-					/** @var \kissj\User\Role $role */
-					$role = $this->roleService->getRole($user);
-					$readableRole = $this->roleService->getReadableRoleName($role->name);
+					/** @var \kissj\Event\Event $event */
+					if ($event = $request->getAttribute('event')) {
+						/** @var \kissj\User\Role $role */
+						$role = $this->roleService->getRole($user, $event);
+						$readableRole = $this->roleService->getReadableRoleName($role->name);
+					} else {
+						// TODO needed more elegant solution
+						$readableRole = '';
+					}
 					try {
 						$this->userService->sendLoginTokenByMail($email, $readableRole);
 					} catch (Exception $e) {
 						$this->logger->addError("Error sending login email to $email with token ".
 							$this->userService->getTokenForEmail($email), array($e));
 						$this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.");
+						
 						return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 					}
 					
@@ -329,6 +339,7 @@ $app->group("/v1", function () use ($helper) {
 					
 				} else {
 					$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
+					
 					return $response->withRedirect($this->router->pathFor('landing'));
 				}
 				
@@ -348,7 +359,7 @@ $app->group("/v1", function () use ($helper) {
 					'role' => $role,
 					'readableRole' => $this->roleService->getReadableRoleName($role),
 					'eventSlug' => $event->slug,
-					'eventReadableName' => $event->readableNameLong,
+					'eventReadableName' => $event->readableName,
 				]);
 			})->setName('registration')->add($helper['nonLoggedOnly']);
 			
