@@ -2,21 +2,14 @@
 
 {% block content %}
 	<p>Ahoj,</p>
-	<p>bohužel jsme museli
-		{% if role == 'ist' %}tvojí {% endif %}
-		registraci
-		{% if role == 'patrol-leader' %}tvojí patroly {{ patrolName }}{% endif %}
-		na akci {{ eventName }} zamítnout, protože
-		{% if role == 'ist' %}nesplňuješ{% endif %}
-		{% if role == 'patrol-leader' %}tvoje patrola nesplňuje{% endif %}
-		všechny podmínky akce. </p>
+	<p>bohužel jsme museli tvojí registraci na akci {{ eventName }} zamítnout, protože nesplňuješ všechny podmínky akce. </p>
 
 	<p>Důvod: {{ reason }}.</p>
 
-	<p>V případě jakýchkoliv nejasností se můžeš podívat na web <a href="https://cej2018.skaut.cz/">https://cej2018.skaut.cz</a>
+	<p>V případě jakýchkoliv nejasností se můžeš podívat na web <a href="https://korbo.skauting.cz/">https://korbo.skauting.cz</a>
 		nebo
-		nám napiš na mail <a href="mailto:cej2018@skaut.cz">cej2018@skaut.cz</a><span class="noselect">.</span></p>
+		nám napiš na mail <a href="mailto:korbo@skaut.cz">korbo@skaut.cz</a><span class="noselect">.</span></p>
 
 	<p>S pozdravem<br/>
-		registrační tým českého kontingentu CEJ 2018</p>
+		Korbo tým 2018</p>
 {% endblock %}

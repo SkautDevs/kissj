@@ -559,52 +559,19 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		$this->group("/admin", function () {
 			
 			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
-				$patrolStatistics = $this->get('patrolService')->getAllPatrolsStatistics();
 				$istStatistics = $this->get('istService')->getAllIstsStatistics();
 				
-				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'CEJ 2018', 'patrols' => $patrolStatistics, 'ists' => $istStatistics]);
+				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'Korbo 2018', 'ists' => $istStatistics]);
 			})->setName('admin-dashboard');
 			
 			// APPROVING
 			$this->group("/approving", function () {
 				
 				$this->get("", function (Request $request, Response $response, array $args) {
-					$closedPatrols = $this->patrolService->getAllClosedPatrols();
 					$closedIsts = $this->istService->getAllClosedIsts();
 					
-					return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'CEJ 2018', 'closedPatrols' => $closedPatrols, 'closedIsts' => $closedIsts]);
+					return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'Korbo 2018', 'closedIsts' => $closedIsts]);
 				})->setName('admin-approving');
-				
-				$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-					/** @var \kissj\Participant\Patrol\PatrolService $patrolService */
-					$patrolService = $this->patrolService;
-					$patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-					$patrolService->approvePatrol($patrolLeader);
-					$role = $this->roleService->getRole($patrolLeader->user);
-					$payment = $this->paymentService->createNewPayment($role);
-					$patrolService->sendPaymentByMail($payment, $patrolLeader);
-					$this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
-					$this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
-					
-					return $response->withRedirect($this->router->pathFor('admin-approving'));
-				})->setName('approvePatrolLeader');
-				
-				$this->get("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-					$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-					return $this->view->render($response, 'admin/openPatrolLeader.twig', ['patrolLeader' => $patrolLeader]);
-				})->setName('openPatrolLeader');
-				
-				$this->post("/openPatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-					$patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
-					$this->patrolService->openPatrol($patrolLeader);
-					$reason = $request->getParsedBodyParam('reason');
-					$this->patrolService->sendDenialMail($patrolLeader, $reason);
-					$this->flashMessages->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
-					$this->logger->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
-					
-					return $response->withRedirect($this->router->pathFor('admin-approving'));
-				})->setName('openPatrolLeaderConfirmed');
-				
 				
 				$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
 					/** @var \kissj\Participant\Ist\IstService $istService */
@@ -614,7 +581,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$role = $this->roleService->getRole($ist->user);
 					$payment = $this->paymentService->createNewPayment($role);
 					$istService->sendPaymentByMail($payment, $ist);
-					$this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
+					$this->flashMessages->success('Účastník schválen, platba vygenerována a mail odeslán');
 					$this->logger->info('Approved registration for IST with ID '.$ist->id);
 					
 					return $response->withRedirect($this->router->pathFor('admin-approving'));
@@ -630,8 +597,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$this->istService->openIst($ist);
 					$reason = $request->getParsedBodyParam('reason');
 					$this->istService->sendDenialMail($ist, $reason);
-					$this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
-					$this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
+					$this->flashMessages->info('Účastník zamítnut, email o zamítnutí poslán');
+					$this->logger->info('Denied registration for attendee with ID '.$ist->id.' with reason: '.$reason);
 					
 					return $response->withRedirect($this->router->pathFor('admin-approving'));
 				})->setName('openIstConfirmed');
@@ -642,10 +609,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->group("/payments", function () {
 				
 				$this->get("", function (Request $request, Response $response, array $args) {
-					$approvedPatrols = $this->patrolService->getAllApprovedPatrolsWithPayment();
 					$approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
 					
-					$this->view->render($response, 'admin/payments-admin.twig', ['eventName' => 'CEJ 2018', 'approvedPatrols' => $approvedPatrols, 'approvedIsts' => $approvedIsts]);
+					$this->view->render($response, 'admin/payments-admin.twig', ['eventName' => 'Korbo 2018', 'approvedIsts' => $approvedIsts]);
 				})->setName('admin-payments');
 				
 				$this->post("/setPaymentPaid/{payment}", function (Request $request, Response $response, array $args) {
@@ -665,24 +631,27 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->group("/export", function () {
 				
 				$this->get("/medical", function (Request $request, Response $response, array $args) {
-					$csvRows = $this->exportService->medicalDataToCSV('cej2018');
+					$eventName = $this->get('settings')['eventName'];
+					$csvRows = $this->exportService->medicalDataToCSV($eventName);
 					$this->logger->info('Downloaded current medical data');
 					
-					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
+					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_medical');
 				})->setName('admin-export-medical');
 				
 				$this->get("/logistic", function (Request $request, Response $response, array $args) {
-					$csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
+					$eventName = $this->get('settings')['eventName'];
+					$csvRows = $this->exportService->logisticDataPatrolsToCSV($eventName);
 					$this->logger->info('Downloaded current logistic data');
 					
-					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
+					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_logistic');
 				})->setName('admin-export-logistic');
 				
 				$this->get("/full", function (Request $request, Response $response, array $args) {
-					$csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
+					$eventName = $this->get('settings')['eventName'];
+					$csvRows = $this->exportService->allRegistrationDataToCSV($eventName);
 					$this->logger->info('Downloaded full current data about participants');
 					
-					return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
+					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_full');
 				})->setName('admin-export-full');
 			});
 			

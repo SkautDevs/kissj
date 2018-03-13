@@ -16,25 +16,14 @@ use League\Csv\Reader;
 use League\Csv\Writer;
 
 class ExportService {
-	
-	/** @var PatrolParticipantRepository */
-	private $patrolParticipantRepository;
-	
-	/** @var PatrolLeaderRepository */
-	private $patrolLeaderRepository;
-	
 	/** @var IstRepository */
 	private $istRepository;
 	
 	/** @var RoleRepository */
 	private $roleRepository;
 	
-	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
-								PatrolLeaderRepository $patrolLeaderRepository,
-								IstRepository $istRepository,
+	public function __construct(IstRepository $istRepository,
 								RoleRepository $roleRepository) {
-		$this->patrolParticipantRepository = $patrolParticipantRepository;
-		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
 	}
@@ -64,50 +53,6 @@ class ExportService {
 		return $response->withBody($body);
 	}
 	
-	public function logisticDataPatrolsToCSV(string $event): array {
-		/** @var Role[] $roles */
-		$roles = $this->getExportRoles($event);
-		$patrolLeaderUserIds = [];
-		foreach ($roles as $role) {
-			if ($role->name === 'patrol-leader') {
-				$patrolLeaderUserIds[] = $role->user->id;
-			}
-		}
-		/** @var PatrolLeader[] $patrolLeaders */
-		$patrolLeaders = $this->patrolLeaderRepository->findBy([
-			'userId' => new Relation($patrolLeaderUserIds, 'IN')
-		]);
-		
-		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
-			return $p->id;
-		}, $patrolLeaders);
-		
-		/** @var PatrolParticipant[] $partolParticipants */
-		$partolParticipants = $this->patrolParticipantRepository->findBy([
-			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
-		]);
-		
-		$rows = [];
-		foreach ($patrolLeaders as $leader) {
-			$rows[] = [
-				$leader->id,
-				$leader->permanentResidence,
-				$leader->country,
-				$leader->firstName.' '.$leader->lastName,
-				$leader->email,
-			];
-		}
-		foreach ($partolParticipants as $participant) {
-			$rows[] = [
-				$participant->patrolLeader->id,
-				$participant->permanentResidence,
-				$participant->country,
-			];
-		}
-		
-		return $rows;
-	}
-	
 	public function medicalDataToCSV(string $event): array {
 		/** @var Role[] $roles */
 		$roles = $this->getExportRoles($event);
@@ -120,47 +65,19 @@ class ExportService {
 				$istUserIds[] = $role->user->id;
 			};
 		}
-		/** @var PatrolLeader[] $patrolLeaders */
-		$patrolLeaders = $this->patrolLeaderRepository->findBy([
-			'userId' => new Relation($patrolLeaderUserIds, 'IN')
-		]);
-		
-		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
-			return $p->id;
-		}, $patrolLeaders);
 		
 		/** @var Ist[] $ists */
 		$ists = $this->istRepository->findBy([
 			'userId' => new Relation($istUserIds, 'IN')
 		]);
-		/** @var PatrolParticipant[] $partolParticipants */
-		$partolParticipants = $this->patrolParticipantRepository->findBy([
-			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
-		]);
 		
 		$rows = [];
-		foreach ($patrolLeaders as $leader) {
-			$rows[] = [
-				$leader->firstName,
-				$leader->lastName,
-				$leader->birthDate == null ? '' : $leader->birthDate->format('Y-m-d'),
-				$leader->allergies,
-			];
-		}
 		foreach ($ists as $ist) {
 			$rows[] = [
 				$ist->firstName,
 				$ist->lastName,
 				$ist->birthDate == null ? '' : $ist->birthDate->format('Y-m-d'),
 				$ist->allergies,
-			];
-		}
-		foreach ($partolParticipants as $participant) {
-			$rows[] = [
-				$participant->firstName,
-				$participant->lastName,
-				$participant->birthDate == null ? '' : $participant->birthDate->format('Y-m-d'),
-				$participant->allergies,
 			];
 		}
 		return $rows;
@@ -178,15 +95,6 @@ class ExportService {
 				$istUserIds[] = $role->user->id;
 			};
 		}
-		/** @var PatrolLeader[] $patrolLeaders */
-		$patrolLeaders = $this->patrolLeaderRepository->findBy([
-			'userId' => new Relation($patrolLeaderUserIds, 'IN')
-		]);
-		
-		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
-			return $p->id;
-		}, $patrolLeaders);
-		
 		/** @var Ist[] $ists */
 		$ists = $this->istRepository->findBy([
 			'userId' => new Relation($istUserIds, 'IN')
@@ -226,75 +134,6 @@ class ExportService {
 			'Additional info',
 		];
 		$counter = 0;
-		$patrolCounter = 0;
-		// first leaders with their participants, ...
-		foreach ($patrolLeaders as $leader) {
-			$rows[] = [
-				++$counter,
-				++$patrolCounter,
-				'Patrol Leader',
-				$leader->firstName,
-				$leader->lastName,
-				$leader->country,
-				$leader->gender,
-				$leader->email,
-				$leader->telephoneNumber,
-				$leader->birthDate->format('d. m. Y'),
-				$leader->birthPlace,
-				$leader->country,
-				'', // ZIP code
-				'', // city
-				$leader->permanentResidence,
-				$leader->cardPassportNumber,
-				$leader->foodPreferences,
-				'yes', // ability to swim
-				'via. medical info', // meeded medicine
-				$leader->allergies,
-				$leader->patrolName,
-				'', // Area',
-				'', // Skills',
-				'', // Arrival Date',
-				'', // Leaving Date',
-				'', // Car Registration Number',
-				$leader->notes,
-			];
-			
-			/** @var PatrolParticipant[] $partolParticipants */
-			$partolParticipants = $this->patrolParticipantRepository->findBy([
-				'patrolleaderId' => $leader->id]);
-			
-			foreach ($partolParticipants as $participant) {
-				$rows[] = [
-					++$counter,
-					$patrolCounter,
-					'Patrol Participant',
-					$participant->firstName,
-					$participant->lastName,
-					$participant->country,
-					$participant->gender,
-					$participant->email,
-					$participant->telephoneNumber,
-					$participant->birthDate->format('d. m. Y'),
-					$participant->birthPlace,
-					$participant->country,
-					'', // ZIP code
-					'', // city
-					$participant->permanentResidence,
-					$participant->cardPassportNumber,
-					$participant->foodPreferences,
-					'yes', // ability to swim
-					'via. medical info', // meeded medicine
-					$participant->allergies,
-					$leader->patrolName,
-					'', // 'Area',
-					'', // 'Skills',
-					'', // 'Arrival Date',
-					'', // 'Leaving Date',
-					'', // 'Car Registration Number',
-					$participant->notes,
-				];
-			}
-		}
 		
 		// ...second ISTs
 		$counter = 0; // from the top

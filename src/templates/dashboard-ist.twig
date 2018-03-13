@@ -2,7 +2,7 @@
 
 {% block content %}
 	<div class="card {{ userStatus }}-theme">
-		<h2>International Service Team - přehled údajů</h2>
+		<h2>Účastník - přehled údajů</h2>
 		<h4>
 			{{ userCustomHelp }}
 		</h4>
@@ -12,7 +12,7 @@
 				Číslo účtu: {{ payment.getAccountNumber }}<br/>
 				Částka: {{ payment.getPrice }} Kč<br/>
 				Variabilní symbol: {{ payment.getVariableSymbol }}<br/>
-				Poznámka: CEJ 2018 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}<br/>
+				Poznámka: Korbo 2018 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}<br/>
 				<br/>
 			</div>
 		{% endif %}

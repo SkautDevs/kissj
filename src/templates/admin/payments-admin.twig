@@ -7,7 +7,7 @@
 	<br/>
 	{% if approvedIsts is not empty %}
 		<div class="card approved-theme">
-			<h2>International Service Team</h2>
+			<h2>Účastníci</h2>
 		</div>
 		<br/>
 		{% for ist in approvedIsts %}
@@ -24,30 +24,8 @@
 		{% endfor %}
 	{% else %}
 		<div class="card approved-theme">
-			<h3>Žádní IST nepotřebují potvrdit platbu!</h3>
+			<h3>Žádní účastníci nepotřebují potvrdit platbu!</h3>
 		</div>
 		<br/>
-	{% endif %}
-	{% if approvedPatrols is not empty %}
-		<div class="card approved-theme">
-			<h2>Patroly</h2>
-		</div>
-		<br/>
-		{% for patrol in approvedPatrols %}
-			<div class="card approved-theme">
-				<h3>{{ patrol.info.getPatrolName }} - {{ patrol.info.getFirstName }} {{ patrol.info.getLastName }}</h3>
-				Variabilní symbol: <b>{{ patrol.payment.getVariableSymbol }}</b><br/>
-				Částka: <b>{{ patrol.payment.getPrice}} Kč</b><br/>
-				<br/>
-				<form method="post" action="{{ path_for('setPaymentPaid', {'payment': patrol.payment.getId}) }}">
-					<input type="submit" value="Potvrdit platbu" class="btn btn-small">
-				</form>
-			</div>
-			<br/>
-		{% endfor %}
-	{% else %}
-		<div class="card approved-theme">
-			<h3>Žádné patroly nepotřebují potvrdit platbu!</h3>
-		</div>
 	{% endif %}
 {% endblock %}

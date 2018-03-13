@@ -66,20 +66,6 @@ $container['tokenRepository'] = function (C $c) {
 		$c->get('dbFactory'));
 };
 
-$container['patrolParticipantRepository'] = function (C $c) {
-	return new PatrolParticipantRepository(
-		$c->get('db'),
-		$c->get('dbMapper'),
-		$c->get('dbFactory'));
-};
-
-$container['patrolLeaderRepository'] = function (C $c) {
-	return new PatrolLeaderRepository(
-		$c->get('db'),
-		$c->get('dbMapper'),
-		$c->get('dbFactory'));
-};
-
 $container['istRepository'] = function (C $c) {
 	return new IstRepository(
 		$c->get('db'),
@@ -110,8 +96,6 @@ $container['userRegeneration'] = function (C $c) {
 
 $container['exportService'] = function (C $c) {
 	return new \kissj\Export\ExportService(
-		$c->get('patrolParticipantRepository'),
-		$c->get('patrolLeaderRepository'),
 		$c->get('istRepository'),
 		$c->get('roleRepository'));
 };
@@ -132,20 +116,6 @@ $container['roleService'] = function (C $c) {
 		$c->get('roleRepository'),
 		$c->get('paymentRepository'),
 		$c->get('settings')['eventName']);
-};
-
-$container['patrolService'] = function (C $c) {
-	$eventSettings = $c->get('settings')['event'];
-	return new PatrolService(
-		$c->get('patrolParticipantRepository'),
-		$c->get('patrolLeaderRepository'),
-		$c->get('roleRepository'),
-		$c->get('paymentRepository'),
-		$c->get('roleService'),
-		$c->get('flashMessages'),
-		$c->get('mailer'),
-		$c->get('view'),
-		$eventSettings);
 };
 
 $container['istService'] = function (C $c) {

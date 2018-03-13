@@ -34,7 +34,7 @@ class IstService {
 								MailerInterface $mailer,
 								Twig $renderer,
 								$eventSettings,
-								$eventName = 'cej2018'
+								$eventName = 'korbo2018'
 	) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
@@ -256,7 +256,7 @@ class IstService {
 	
 	public function sendPaymentByMail(Payment $payment, Ist $ist) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
-			'eventName' => 'CEJ 2018',
+			'eventName' => 'Korbo 2018',
 			'accountNumber' => $payment->accountNumber,
 			'price' => $payment->price,
 			'currency' => 'Kč',
@@ -266,23 +266,23 @@ class IstService {
 			
 			'istFullName' => $ist->firstName.' '.$ist->lastName]);
 		
-		$this->mailer->sendMail($payment->role->user->email, 'Registrace CEJ 2018 - platební informace', $message);
+		$this->mailer->sendMail($payment->role->user->email, 'Registrace Korbo 2018 - platební informace', $message);
 	}
 	
 	public function sendDenialMail(Ist $ist, string $reason) {
 		$message = $this->renderer->fetch('emails/denial.twig', [
-			'eventName' => 'CEJ 2018',
+			'eventName' => 'Korbo 2018',
 			'role' => 'ist',
 			'reason' => $reason,
 		]);
 		
-		$this->mailer->sendMail($ist->user->email, 'Registrace CEJ 2018 - zamítnutí registrace', $message);
+		$this->mailer->sendMail($ist->user->email, 'Registrace Korbo 2018 - zamítnutí registrace', $message);
 	}
 	
 	// TODO make this more clever
 	public function getOnePayment(Ist $ist): ?Payment {
-		if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])])) {
-			return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])]);
+		if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2018'])])) {
+			return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2018'])]);
 		} else return null;
 	}
 	

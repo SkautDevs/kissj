@@ -7,7 +7,7 @@
 	<br/>
 	{% if closedIsts is not empty %}
 		<div class="card closed-theme">
-			<h2>International Service Team</h2>
+			<h2>Účastníci</h2>
 		</div>
 		<br/>
 		{% for ist in closedIsts %}
@@ -47,66 +47,8 @@
 		{% endfor %}
 	{% else %}
 		<div class="card closed-theme">
-			<h3>Žádní IST nepotřebují schválit!</h3>
+			<h3>Žádní účastníci nepotřebují schválit!</h3>
 		</div>
 		<br/>
-	{% endif %}
-	{% if closedPatrols is not empty %}
-		<div class="card closed-theme">
-			<h2>Patroly</h2>
-		</div>
-		<br/>
-		{% for patrol in closedPatrols %}
-			<div class="card closed-theme">
-				<h3>{{ patrol.patrolLeader.getPatrolName }}</h3>
-				<h4>{{ patrol.patrolLeader.getFirstName }} {{ patrol.patrolLeader.getLastName }}</h4>
-				Gender: <b>{{ patrol.patrolLeader.getGender }}</b><br/>
-				Datum narození: <b>{{ patrol.patrolLeader.getBirthDate.format('d. m. Y') }}</b><br/>
-				Místo narození: <b>{{ patrol.patrolLeader.getBirthPlace }}</b><br/>
-				Trvalá adresa: <b>{{ patrol.patrolLeader.getPermanentResidence }}</b><br/>
-				Země: <b>{{ patrol.patrolLeader.getCountry }}</b><br/>
-				Číslo pasu/občanky: <b>{{ patrol.patrolLeader.getCardPassportNumber }}</b><br/>
-				Dieta: <b>{{ patrol.patrolLeader.getFoodPreferences }}</b><br/>
-				Alergie: <b>{{ patrol.patrolLeader.getAllergies }}</b><br/>
-				Telefonní kontakt: <b>{{ patrol.patrolLeader.getTelephoneNumber }}</b><br/>
-				Email: <b>{{ patrol.patrolLeader.getEmail }}</b><br/>
-				Skautská jednotka: <b>{{ patrol.patrolLeader.getScoutUnit }}</b><br/>
-
-				Poznámky: <b>{{ patrol.patrolLeader.getNotes }}</b><br/><br/>
-				<br/>
-
-				<h3>Účastníci</h3>
-				{% for participant in patrol.patrolParticipants %}
-					<h4>{{ participant.getFirstName }} {{ participant.getLastName }}</h4>
-					Gender: <b>{{ participant.getGender }}</b><br/>
-					Datum narození: <b>{{ participant.getBirthDate.format('d. m. Y') }}</b><br/>
-					Místo narození: <b>{{ participant.getBirthPlace }}</b><br/>
-					Trvalá adresa: <b>{{ participant.getPermanentResidence }}</b><br/>
-					Země: <b>{{ participant.getCountry }}</b><br/>
-					Číslo pasu/občanky: <b>{{ participant.getCardPassportNumber }}</b><br/>
-					Dieta: <b>{{ participant.getFoodPreferences }}</b><br/>
-					Alergie: <b>{{ participant.getAllergies }}</b><br/>
-					Telefonní kontakt: <b>{{ participant.getTelephoneNumber }}</b><br/>
-					Email: <b>{{ participant.getEmail }}</b><br/>
-					Skautská jednotka: <b>{{ participant.getScoutUnit }}</b><br/>
-
-					Poznámky: <b>{{ participant.getNotes }}</b><br/><br/>
-				{% endfor %}
-				<a href="{{ path_for('openPatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}" class="btn btn-grey btn-small">
-					Zamítnout
-				</a>
-				<br/>
-				<br/>
-				<form method="post"
-					  action="{{ path_for('approvePatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}">
-					<input type="submit" value="Schválit" class="btn btn-small">
-				</form>
-			</div>
-			<br/>
-		{% endfor %}
-	{% else %}
-		<div class="card approving-theme">
-			<h3>Žádné patroly nepotřebují schválit!</h3>
-		</div>
 	{% endif %}
 {% endblock %}

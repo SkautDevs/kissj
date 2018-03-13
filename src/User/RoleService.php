@@ -59,7 +59,7 @@ class RoleService {
 		return in_array($role, $this->possibleRoles);
 	}
 	
-	public function getRole(?User $user, string $event = 'cej2018'): ?Role {
+	public function getRole(?User $user, string $event = 'korbo2018'): ?Role {
 		if (is_null($user)) {
 			return null;
 		} else {
@@ -107,7 +107,7 @@ class RoleService {
 								
 							}
 						case 'closed':
-							return 'Tvoje registrace čeká na schválení. Po schválení ti pošleme email s platebními údaji. Pokud to trvá moc dlouho, ozvi se nám na mail cej2018@skaut.cz';
+							return 'Tvoje registrace čeká na schválení. Po schválení ti pošleme email s platebními údaji. Pokud to trvá moc dlouho, ozvi se nám na mail korbo@skaut.cz';
 						case 'approved':
 							return 'Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže.';
 						case 'paid':

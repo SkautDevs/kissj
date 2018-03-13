@@ -3,48 +3,6 @@ CREATE TABLE user (
 	email TEXT NOT NULL
 );
 
-CREATE TABLE patrolparticipant (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
-	
-	firstName          TEXT,
-	lastName           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	notes              TEXT
-);
-
-CREATE TABLE patrolleader (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	userId             INT CONSTRAINT patrolleader_userId_fk REFERENCES USER (id),
-	
-	patrolName         TEXT,
-	-- same as patrolparticipant
-	firstName          TEXT,
-	lastName           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	notes              TEXT
-);
-
 CREATE TABLE ist (
 	id                   INTEGER PRIMARY KEY autoincrement,
 	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),

@@ -4,33 +4,22 @@
 	<div class="card approved-theme">
 		<h2>Dashboard administrátora na akci {{ eventName }}</h2>
 		<h3>Přehled přihlašování</h3>
-		<div class="card-divide">
-			<div>
-				<h3>Patroly</h3>
-				<p>Limit pro patroly: {{ patrols['limit'] }}</p>
-				<p>Uzavřených patrol: {{ patrols['closed'] }}</p>
-				<p>Schválených patrol: {{ patrols['approved'] }}</p>
-				<p>Zaplacených patrol: {{ patrols['paid'] }}</p>
-			</div>
-			<div>
-				<h3>IST</h3>
-				<p>Limit pro IST: {{ ists['limit'] }}</p>
-				<p>Uzavřených IST: {{ ists['closed'] }}</p>
-				<p>Schválených IST: {{ ists['approved'] }}</p>
-				<p>Zaplacených IST: {{ ists['paid'] }}</p>
-			</div>
-
+		<div>
+			<h3>Účastníci</h3>
+			<p>Limit pro účastníky: {{ ists['limit'] }}</p>
+			<p>Uzavřených účastníků: {{ ists['closed'] }}</p>
+			<p>Schválených účastníků: {{ ists['approved'] }}</p>
+			<p>Zaplacených účastníků: {{ ists['paid'] }}</p>
 		</div>
 		<h3>Administrátorské akce</h3>
 		<div class="card-divide">
 			<div>
 				<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
-				<a href="" class="btn">Automatické potvrzování plateb</a><br/>
+				<a href="" class="btn btn-grey">Automatické potvrzování plateb</a><br/>
 				<a href="{{ path_for('admin-payments') }}" class="btn">Ruční potvrzování plateb</a><br/>
 			</div>
 			<div>
 				<a href="{{ path_for('admin-export-medical') }}" class="btn">Export lékařských dat do CSV</a><br/>
-				<a href="{{ path_for('admin-export-logistic') }}" class="btn">Export logistických dat Patrol do CSV</a><br/>
 				<a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
 			</div>
 		</div>

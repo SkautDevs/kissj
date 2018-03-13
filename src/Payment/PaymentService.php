@@ -74,9 +74,8 @@ class PaymentService {
 	private function getPriceFor(Role $role): int {
 		switch ($role->name) {
 			case 'ist':
-				return 2900;
-			case 'patrol-leader':
-				return 57000;
+				// před 1.7. 300, při a po 1.7. 450
+				return 300;
 			default:
 				throw new \Exception('Unknown role: '.$role->name);
 		}
@@ -107,8 +106,8 @@ class PaymentService {
 		$this->roleRepository->persist($role);
 		
 		// send mail to user
-		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'CEJ 2018', 'roleName' => $role->name]);
-		$subject = 'Registrace CEJ 2018 - platba úspěšně přijata!';
+		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'Korbo 2018', 'roleName' => $role->name]);
+		$subject = 'Registrace Korbo 2018 - platba úspěšně přijata!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }
