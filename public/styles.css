@@ -105,6 +105,7 @@ h2, h3 {
 }
 
 .btn {
+	background: #a21f16;
 	background: var(--color);
 	color: white;
 	border-radius: var(--borderRadius);
@@ -161,6 +162,7 @@ h2, h3 {
 .progressbar-item {
 	flex-basis: 0;
 	flex-grow: 1;
+	background: blue;
 	background: var(--bgColor, blue);
 	text-align: center;
 	padding: 1em;
@@ -262,6 +264,7 @@ h2, h3 {
 	margin-bottom: 1em;
 	padding: 1em;
 	text-align: center;
+	background: red;
 	background: var(--color, blue);
 }
 
@@ -287,14 +290,15 @@ h2, h3 {
 	position: relative;
 	margin-bottom: 30px;
 }
-
-.card-divide::before {
-	height: 100%;
-	width: 1px;
-	position: absolute;
-	left: 50%;
-	background: #ccc;
-	content: '';
+@supports(display: grid) {
+	.card-divide::before {
+		height: 100%;
+		width: 1px;
+		position: absolute;
+		left: 50%;
+		background: #ccc;
+		content: '';
+	}
 }
 
 .text-left {
