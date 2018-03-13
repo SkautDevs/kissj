@@ -20,7 +20,7 @@
 			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" value="{{ plInfo.getCardPassportNumber }}"></label>
 			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ plInfo.getFoodPreferences }}"></label>
 			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ plInfo.getAllergies }}"></label>
-			<label class="form-group form-group-inline">Telefonní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla bez mezer s případným '+' na začátku" value="{{ plInfo.getTelephoneNumber }}" required="required"></label>
+			<label class="form-group form-group-inline">Telefonní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla s případným '+' na začátku" pattern="^\+?[0-9 ]+$" value="{{ plInfo.getTelephoneNumber }}" required="required"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{% if plInfo.getEmail is empty %}{{ user.email }}{% else %}{{ plInfo.getEmail }}{% endif %}" required="required"></label>
 			<label class="form-group form-group-inline">Skautská jednotka: <input class="form-control" type="text" name="scoutUnit" value="{{ plInfo.getScoutUnit }}" required="required"></label>
 			<label class="form-group form-group-inline">Poznámky: <input class="form-control" type="text" name="notes" placeholder="cokoliv dalšího?" value="{{ plInfo.getNotes }}"></label>
