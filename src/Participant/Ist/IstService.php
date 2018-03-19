@@ -96,65 +96,41 @@ class IstService {
 		return $this->isIstDetailsValid(
 			$ist->firstName,
 			$ist->lastName,
-			$ist->allergies,
+			$ist->nickname,
 			($ist->birthDate ? $ist->birthDate->format('Y-m-d') : null),
-			$ist->birthPlace,
-			$ist->country,
 			$ist->gender,
 			$ist->permanentResidence,
-			$ist->scoutUnit,
-			$ist->telephoneNumber,
 			$ist->email,
-			$ist->foodPreferences,
-			$ist->cardPassportNumber,
-			$ist->notes,
-			$ist->workPreferences,
-			$ist->skills,
-			$ist->languages,
-			($ist->arrivalDate ? $ist->arrivalDate->format('Y-m-d') : null),
-			($ist->leavingDate ? $ist->leavingDate->format('Y-m-d') : null),
-			$ist->carRegistrationPlate);
+			$ist->legalRepresestative,
+			$ist->scarf,
+			$ist->notes);
 	}
 	
 	public function isIstDetailsValid(?string $firstName,
 									  ?string $lastName,
-									  ?string $allergies,
+									  ?string $nickname,
 									  ?string $birthDate,
-									  ?string $birthPlace,
-									  ?string $country,
 									  ?string $gender,
 									  ?string $permanentResidence,
-									  ?string $scoutUnit,
-									  ?string $telephoneNumber,
 									  ?string $email,
-									  ?string $foodPreferences,
-									  ?string $cardPassportNumber,
-									  ?string $notes,
-	
-									  ?string $workPreferences,
-									  ?string $skills,
-									  ?string $languages,
-									  ?string $arrivalDate,
-									  ?string $leavingDate,
-									  ?string $carRegistrationPlate
+									  ?string $legalRepresestative,
+									  ?string $scarf,
+									  ?string $notes
 	): bool {
 		$validFlag = true;
 		
 		
-		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($languages) || is_null($arrivalDate) || is_null($leavingDate)) {
+		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($gender) || is_null($permanentResidence) || is_null($email) || is_null($scarf)) {
 			$validFlag = false;
 		}
 		
-		foreach ([$birthDate, $arrivalDate, $leavingDate] as $date) {
+		foreach ([$birthDate] as $date) {
 			if (!empty($date) && $date !== date('Y-m-d', strtotime($date))) {
 				$validFlag = false;
 				break;
 			}
 		}
-		// check for numbers and plus sight up front only
-		/*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
-			$validFlag = false;
-		}*/
+		
 		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			$validFlag = false;
 		}
@@ -165,46 +141,24 @@ class IstService {
 	public function editIstInfo(Ist $ist,
 								?string $firstName,
 								?string $lastName,
-								?string $allergies,
+								?string $nickname,
 								?string $birthDate,
-								?string $birthPlace,
-								?string $country,
 								?string $gender,
 								?string $permanentResidence,
-								?string $scoutUnit,
-								?string $telephoneNumber,
 								?string $email,
-								?string $foodPreferences,
-								?string $cardPassportNumber,
-								?string $notes,
-	
-								?string $workPreferences,
-								?string $skills,
-								?string $languages,
-								?string $arrivalDate,
-								?string $leavingDate,
-								?string $carRegistrationPlate) {
+								?string $legalRepresestative,
+								?string $scarf,
+								?string $notes) {
 		$ist->firstName = $firstName;
 		$ist->lastName = $lastName;
-		$ist->allergies = $allergies;
+		$ist->nickname = $nickname;
 		$ist->birthDate = new \DateTime($birthDate);
-		$ist->birthPlace = $birthPlace;
-		$ist->country = $country;
 		$ist->gender = $gender;
 		$ist->permanentResidence = $permanentResidence;
-		$ist->scoutUnit = $scoutUnit;
-		$ist->telephoneNumber = $telephoneNumber;
 		$ist->email = $email;
-		$ist->foodPreferences = $foodPreferences;
-		$ist->cardPassportNumber = $cardPassportNumber;
+		$ist->legalRepresestative = $legalRepresestative;
+		$ist->scarf = $scarf;
 		$ist->notes = $notes;
-		
-		$ist->workPreferences = $workPreferences;
-		$ist->skills = $skills;
-		$ist->languages = $languages;
-		$ist->arrivalDate = new \DateTime($arrivalDate);
-		$ist->leavingDate = new \DateTime($leavingDate);
-		$ist->carRegistrationPlate = $carRegistrationPlate;
 		
 		$this->istRepository->persist($ist);
 	}
@@ -227,7 +181,7 @@ class IstService {
 		return $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('open', '!=')
+			'status' => new Relation('open', '!='),
 		]);
 	}
 	
@@ -236,19 +190,19 @@ class IstService {
 		$ists['closed'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('closed', '==')
+			'status' => new Relation('closed', '=='),
 		]);
 		
 		$ists['approved'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('approved', '==')
+			'status' => new Relation('approved', '=='),
 		]);
 		
 		$ists['paid'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('paid', '==')
+			'status' => new Relation('paid', '=='),
 		]);
 		
 		return $ists;

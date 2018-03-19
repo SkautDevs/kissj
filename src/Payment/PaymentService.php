@@ -39,14 +39,16 @@ class PaymentService {
 		$this->random = $random;
 	}
 	
-	public function createNewPayment(Role $role): Payment {
+	public function createNewPayment(Role $role, bool $extraScarf): Payment {
 		$newVS = $this->generateVariableSymbol($this->settings['prefixVariableSymbol']);
-		$price = $this->getPriceFor($role);
-		
 		$newPayment = new Payment();
 		$newPayment->event = $this->eventName;
 		$newPayment->variableSymbol = $newVS;
-		$newPayment->price = $price;
+		$newPayment->price = $this->getPriceFor($role);
+		// YAGNI!
+		if ($extraScarf) {
+			$newPayment->price += $this->settings['scarfPrice'];
+		}
 		$newPayment->currency = 'CZK';
 		$newPayment->status = 'waiting';
 		$newPayment->purpose = 'fee';

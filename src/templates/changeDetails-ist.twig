@@ -6,6 +6,7 @@
 		<form method="POST" action="{{ path_for('ist-postDetails') }}">
 			<label class="form-group form-group-inline">Křestní jméno: <input class="form-control" type="text" name="firstName" value="{{ istDetails.getFirstName }}" required="required"></label>
 			<label class="form-group form-group-inline">Příjmení: <input class="form-control" type="text" name="lastName" value="{{ istDetails.getLastName }}" required="required"></label>
+			<label class="form-group form-group-inline">Přezdívka: <input class="form-control" type="text" name="nickname" value="{{ istDetails.getNickname }}"></label>
 			<label class="form-group form-group-inline">Gender:
 				<select class="form-control" name="gender" required="required">
 					<option value="muž" {% if istDetails.getGender == 'muž' %}selected="selected"{% endif %}>Muž</option>
@@ -14,22 +15,15 @@
 				</select>
 			</label>
 			<label class="form-group form-group-inline">Datum narození: <input class="form-control" type="date" name="birthDate" value="{{ istDetails.getBirthDate.format('Y-m-d') }}" required="required"></label>
-			<label class="form-group form-group-inline">Místo narození: <input class="form-control" type="text" name="birthPlace" value="{{ istDetails.getBirthPlace }}" required="required"></label>
 			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ istDetails.getPermanentResidence }}" required="required"></label>
-			<label class="form-group form-group-inline">Země: <input class="form-control" type="text" name="country" placeholder="země původu" value="{% if istDetails.getCountry is empty %}Česká republika{% else %}{{ istDetails.getCountry }}{% endif %}" required="required"></label>
-			<label class="form-group form-group-inline">Číslo pasu nebo občanky: <input class="form-control" type="text" name="cardPassportNumber" value="{{ istDetails.getCardPassportNumber }}"></label>
-			<label class="form-group form-group-inline">Dieta: <input class="form-control" type="text" name="foodPreferences" placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..." value="{{ istDetails.getFoodPreferences }}"></label>
-			<label class="form-group form-group-inline">Alergie: <input class="form-control" type="text" name="allergies" value="{{ istDetails.getAllergies }}"></label>
-			<label class="form-group form-group-inline">Telefonní kontakt: <input class="form-control" type="text" name="telephoneNumber" placeholder="pouze čísla s případným '+' na začátku" value="{{ istDetails.getTelephoneNumber }}" pattern="^\+?[0-9 ]+$" required="required"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}" required="required"></label>
-			<label class="form-group form-group-inline">Skautská jednotka: <input class="form-control" type="text" name="scoutUnit" value="{{ istDetails.getScoutUnit }}" required="required"></label>
-
-			<label class="form-group form-group-inline">Preference práce: <input class="form-control" type="text" name="workPreferences" placeholder="vaření, hlídání parkoviště, plavčík, plážový povaleč..." value="{{ istDetails.getWorkPreferences }}"></label>
-			<label class="form-group form-group-inline">Skills: <input class="form-control" type="text" name="skills" placeholder="šití, záchrana tonoucích, šplhání ve výškách, řezání řetězovou pilou..." value="{{ istDetails.getSkills }}"></label>
-			<label class="form-group form-group-inline">Jazyky, kterými se domluvím: <input class="form-control" type="text" name="languages" placeholder="česky plynule, english quite good, latinae loquimur solum silvas et lupi..." value="{{ istDetails.getLanguages }}" required="required"></label>
-			<label class="form-group form-group-inline">Datum příjezdu: <input class="form-control" type="date" name="arrivalDate" value="{% if istDetails.getArrivalDate is empty %}2018-07-27{% else %}{{ istDetails.getArrivalDate.format('Y-m-d') }}{% endif %}" required="required"></label>
-			<label class="form-group form-group-inline">Datum odjezdu: <input class="form-control" type="date" name="leavingDate" value="{% if istDetails.getLeavingDate is empty %}2018-08-05{% else %}{{ istDetails.getLeavingDate.format('Y-m-d') }}{% endif %}" required="required"></label>
-			<label class="form-group form-group-inline">Pokud přijedu autem, jeho poznávací značka: <input class="form-control" type="text" name="carRegistrationPlate" value="{{ istDetails.getCarRegistrationPlate }}"></label>
+			<label class="form-group form-group-inline">Zákonný zástupce (pouze do 18 let): <input class="form-control" type="text" name="legalRepresestative" placeholder="jméno a příjmení" value="{{ istDetails.getLegalRepresestative }}"></label>
+			<label class="form-group form-group-inline">Korbo šátek:
+				<select class="form-control" name="scarf" required="required">
+					<option value="ne" {% if istDetails.getScarf == 'ne' %}selected="selected"{% endif %}>Nechci...</option>
+					<option value="ano" {% if istDetails.getScarf == 'ano' %}selected="selected"{% endif %}>Chci za 70 Kč!</option>
+				</select>
+			</label>
 
 			<label class="form-group form-group-inline">Poznámky: <input class="form-control" type="text" name="notes" placeholder="cokoliv dalšího?" value="{{ istDetails.getNotes }}"></label>
 

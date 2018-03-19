@@ -13,25 +13,13 @@
 		{% for ist in closedIsts %}
 			<div class="card closed-theme">
 				<h4>{{ ist.getFirstName }} {{ ist.getLastName }}</h4>
+				Přezdívka: <b>{{ ist.getNickname }}</b><br/>
 				Gender: <b>{{ ist.getGender }}</b><br/>
 				Datum narození: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-				Místo narození: <b>{{ ist.getBirthPlace }}</b><br/>
 				Trvalá adresa: <b>{{ ist.getPermanentResidence }}</b><br/>
-				Země: <b>{{ ist.getCountry }}</b><br/>
-				Číslo pasu/občanky: <b>{{ ist.getCardPassportNumber }}</b><br/>
-				Dieta: <b>{{ ist.getFoodPreferences }}</b><br/>
-				Alergie: <b>{{ ist.getAllergies }}</b><br/>
-				Telefonní kontakt: <b>{{ ist.getTelephoneNumber }}</b><br/>
 				Email: <b>{{ ist.getEmail }}</b><br/>
-				Skautská jednotka: <b>{{ ist.getScoutUnit }}</b><br/>
-
-				Preference práce: <b>{{ ist.getWorkPreferences }}</b><br/>
-				Skills: <b>{{ ist.getSkills }}</b><br/>
-				Jazyky, kterými se domluvím: <b>{{ ist.getLanguages }}</b><br/>
-				Datum příjezdu: <b>{{ ist.getArrivalDate.format('d. m. Y') }}</b><br/>
-				Datum odjezdu: <b>{{ ist.getLeavingDate.format('d. m. Y') }}</b><br/>
-				Poznávací značka auta: <b>{{ ist.getCarRegistrationPlate }}</b><br/>
-
+				Zákonný zástupce do 18: <b>{{ ist.getLegalRepresestative }}</b><br/>
+				Šátek: <b>{{ ist.getScarf }}</b><br/>
 				Poznámky: <b>{{ ist.getNotes }}</b><br/>
 				<br/>
 				<a href="{{ path_for('openIst', {'istId': ist.getId}) }}" class="btn btn-grey btn-small">

@@ -25,25 +25,13 @@
 			<div class="text-center">
 				Křestní jméno: {{ istDetails.getFirstName }}<br/>
 				Příjmení: {{ istDetails.getLastName }}<br/>
+				Přezdívka: {{ istDetails.getNickname }}<br/>
 				Gender: {{ istDetails.getGender }}<br/>
 				Datum narození: {{ istDetails.getBirthDate.format('d. m. Y') }}<br/>
-				Místo narození: {{ istDetails.getBirthPlace }}<br/>
-				Trvalá adresa: {{ istDetails.getPermanentResidence }}<br/>
-				Země: {{ istDetails.getCountry }}<br/>
-				Číslo pasu/občanky: {{ istDetails.getCardPassportNumber }}<br/>
-				Dieta: {{ istDetails.getFoodPreferences }}<br/>
-				Alergie: {{ istDetails.getAllergies }}<br/>
-				Telefonní kontakt: {{ istDetails.getTelephoneNumber }}<br/>
+				Adresa: {{ istDetails.getPermanentResidence }}<br/>
 				Email: {{ istDetails.getEmail }}<br/>
-				Skautská jednotka: {{ istDetails.getScoutUnit }}<br/>
-
-				Preference práce: {{ istDetails.getWorkPreferences }}<br/>
-				Skills: {{ istDetails.getSkills }}<br/>
-				Jazyky, kterými se domluvím: {{ istDetails.getLanguages }}<br/>
-				Datum příjezdu: {{ istDetails.getArrivalDate.format('d. m. Y') }}<br/>
-				Datum odjezdu: {{ istDetails.getLeavingDate.format('d. m. Y') }}<br/>
-				Poznávací značka auta: {{ istDetails.getCarRegistrationPlate }}<br/>
-
+				Jméno a přijmení zákonného zástupce (pouze do 18 let): {{ istDetails.getLegalRepresestative }}<br/>
+				Šátek: {{ istDetails.getScarf }}<br/>
 				Poznámky: {{ istDetails.getNotes }}<br/>
 				<br/>
 			</div>

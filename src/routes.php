@@ -443,52 +443,32 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				
 				$this->post("/postDetails", function (Request $request, Response $response, array $args) {
 					$params = $request->getParams();
-					if ($this->istService->isIstDetailsValid(
+					/** @var \kissj\Participant\Ist\IstService $istService */
+					$istService = $this->istService;
+					if ($istService->isIstDetailsValid(
 						$params['firstName'] ?? null,
 						$params['lastName'] ?? null,
-						$params['allergies'] ?? null,
+						$params['nickname'] ?? null,
 						$params['birthDate'] ?? null,
-						$params['birthPlace'] ?? null,
-						$params['country'] ?? null,
 						$params['gender'] ?? null,
 						$params['permanentResidence'] ?? null,
-						$params['scoutUnit'] ?? null,
-						$params['telephoneNumber'] ?? null,
 						$params['email'] ?? null,
-						$params['foodPreferences'] ?? null,
-						$params['cardPassportNumber'] ?? null,
-						$params['notes'] ?? null,
+						$params['legalRepresestative'] ?? null,
+						$params['scarf'] ?? null,
+						$params['notes'] ?? null)) {
 						
-						$params['workPreferences'] ?? null,
-						$params['skills'] ?? null,
-						$params['languages'] ?? null,
-						$params['arrivalDate'] ?? null,
-						$params['leavingDate'] ?? null,
-						$params['carRegistrationPlate'] ?? null)) {
-						
-						$this->istService->editIstInfo(
+						$istService->editIstInfo(
 							$this->istService->getIst($request->getAttribute('user')),
 							$params['firstName'] ?? null,
 							$params['lastName'] ?? null,
-							$params['allergies'] ?? null,
+							$params['nickname'] ?? null,
 							$params['birthDate'] ?? null,
-							$params['birthPlace'] ?? null,
-							$params['country'] ?? null,
 							$params['gender'] ?? null,
 							$params['permanentResidence'] ?? null,
-							$params['scoutUnit'] ?? null,
-							$params['telephoneNumber'] ?? null,
 							$params['email'] ?? null,
-							$params['foodPreferences'] ?? null,
-							$params['cardPassportNumber'] ?? null,
-							$params['notes'] ?? null,
-							
-							$params['workPreferences'] ?? null,
-							$params['skills'] ?? null,
-							$params['languages'] ?? null,
-							$params['arrivalDate'] ?? null,
-							$params['leavingDate'] ?? null,
-							$params['carRegistrationPlate'] ?? null);
+							$params['legalRepresestative'] ?? null,
+							$params['scarf'] ?? null,
+							$params['notes'] ?? null);
 						
 						$this->flashMessages->success('Údaje úspěšně uloženy');
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
@@ -565,6 +545,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('admin-dashboard');
 			
 			// APPROVING
+			
 			$this->group("/approving", function () {
 				
 				$this->get("", function (Request $request, Response $response, array $args) {
@@ -579,7 +560,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$ist = $istService->getIstFromId($args['istId']);
 					$istService->approveIst($ist);
 					$role = $this->roleService->getRole($ist->user);
-					$payment = $this->paymentService->createNewPayment($role);
+					$extraScarf = $ist->scarf === 'ano'; // YAGNI in practise
+					$payment = $this->paymentService->createNewPayment($role, $extraScarf);
 					$istService->sendPaymentByMail($payment, $ist);
 					$this->flashMessages->success('Účastník schválen, platba vygenerována a mail odeslán');
 					$this->logger->info('Approved registration for IST with ID '.$ist->id);

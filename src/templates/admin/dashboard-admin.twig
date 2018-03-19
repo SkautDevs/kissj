@@ -3,23 +3,21 @@
 {% block content %}
 	<div class="card approved-theme">
 		<h2>Dashboard administrátora na akci {{ eventName }}</h2>
-		<h3>Přehled přihlašování</h3>
-		<div>
-			<h3>Účastníci</h3>
-			<p>Limit pro účastníky: {{ ists['limit'] }}</p>
-			<p>Uzavřených účastníků: {{ ists['closed'] }}</p>
-			<p>Schválených účastníků: {{ ists['approved'] }}</p>
-			<p>Zaplacených účastníků: {{ ists['paid'] }}</p>
-		</div>
+		<h3>Přehled přihlašování účastníků</h3>
+		<p>Limit pro účastníky: {{ ists['limit'] }}</p>
+		<p>Uzavřených účastníků: {{ ists['closed'] }}</p>
+		<p>Schválených účastníků: {{ ists['approved'] }}</p>
+		<p>Zaplacených účastníků: {{ ists['paid'] }}</p>
+		<br/>
 		<h3>Administrátorské akce</h3>
 		<div class="card-divide">
 			<div>
 				<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
-				<a href="" class="btn btn-grey">Automatické potvrzování plateb</a><br/>
+				<a class="btn btn-grey">Automatické potvrzování plateb</a><br/>
 				<a href="{{ path_for('admin-payments') }}" class="btn">Ruční potvrzování plateb</a><br/>
 			</div>
 			<div>
-				<a href="{{ path_for('admin-export-medical') }}" class="btn">Export lékařských dat do CSV</a><br/>
+				<a class="btn btn-grey">Export lékařských dat do CSV</a><br/>
 				<a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
 			</div>
 		</div>

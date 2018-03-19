@@ -105,66 +105,31 @@ class ExportService {
 		// nulls headers
 		
 		$rows[] = [
-			'No.',
-			'Patrol',
-			'Role',
-			'First Name',
-			'Last Name',
-			'Nationality',
+			'ID',
+			'Křestní jméno',
+			'Příjmení',
+			'Přezdívka',
 			'Gender',
-			'Email Address',
-			'Phone Number',
-			'Birthdate',
-			'Birthplace',
-			'Country',
-			'Zip code',
-			'City',
-			'Address',
-			'Passport / ID number',
-			'Food preferences',
-			'Ability to swim',
-			'Needed medicine',
-			'Allergies',
-			'Patrol name',
-			'Area',
-			'Skills',
-			'Arrival Date',
-			'Leaving Date',
-			'Car Registration Number',
-			'Additional info',
+			'Email',
+			'Datum narození',
+			'Addresa',
+			'Zákonný zástupce do 18',
+			'Šátek',
+			'Poznámky',
 		];
-		$counter = 0;
 		
-		// ...second ISTs
-		$counter = 0; // from the top
 		foreach ($ists as $ist) {
 			$rows[] = [
-				++$counter,
-				'', // patrol counter
-				'IST',
+				$ist->id,
 				$ist->firstName,
 				$ist->lastName,
-				$ist->country,
+				$ist->nickname,
 				$ist->gender,
 				$ist->email,
-				$ist->telephoneNumber,
 				$ist->birthDate->format('d. m. Y'),
-				$ist->birthPlace,
-				$ist->country,
-				'', // ZIP code
-				'', // city
 				$ist->permanentResidence,
-				$ist->cardPassportNumber,
-				$ist->foodPreferences,
-				'yes', // ability to swim
-				'via. medical info', // meeded medicine
-				$ist->allergies,
-				'', // patrol name
-				$ist->workPreferences,
-				$ist->skills,
-				$ist->arrivalDate->format('d. m. Y'),
-				$ist->leavingDate->format('d. m. Y'),
-				$ist->carRegistrationPlate,
+				$ist->legalRepresestative,
+				$ist->scarf,
 				$ist->notes,
 			];
 		}
