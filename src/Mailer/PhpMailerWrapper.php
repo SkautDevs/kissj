@@ -85,6 +85,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		
 		$mailSent = $mailer->send();
 		
+		// TODO add reason into exception
 		if ($mailSent === false) {
 			throw new Exception("Error sending email");
 		}
