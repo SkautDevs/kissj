@@ -166,11 +166,11 @@ class IstService {
 	public function isCloseRegistrationValid(Ist $ist): bool {
 		$validityFlag = true;
 		if (!$this->isIstValid($ist)) {
-			$this->flashMessages->warning('Nelze uzavřít registraci - údaje IST nejsou kompletní');
+			$this->flashMessages->warning('Nelze uzavřít registraci - údaje nejsou kompletní');
 			$validityFlag = false;
 		}
 		if ($this->getClosedIstsCount() >= $this->eventSettings['maximalClosedIstsCount']) {
-			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných IST a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu pro IST.');
+			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných účastníků a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu.');
 			$validityFlag = false;
 		}
 		
