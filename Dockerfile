@@ -3,6 +3,11 @@ FROM php:7.1-apache
 # Preparation
 RUN apt-get update
 
+# Git installation
+RUN apt-get install -y \
+	git \
+	zip
+
 # Apache2
 RUN a2enmod rewrite
 
