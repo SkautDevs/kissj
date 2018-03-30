@@ -108,8 +108,8 @@ class PaymentService {
 		$this->roleRepository->persist($role);
 		
 		// send mail to user
-		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'Korbo 2018', 'roleName' => $role->name]);
-		$subject = 'Registrace Korbo 2018 - platba úspěšně přijata!';
+		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'KORBO 2018', 'roleName' => $role->name]);
+		$subject = 'Registrace KORBO 2018 - platba úspěšně přijata!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }

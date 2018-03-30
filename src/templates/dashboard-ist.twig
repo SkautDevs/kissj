@@ -9,10 +9,10 @@
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
 				<h2>Platební údaje</h2>
-				Číslo účtu: {{ payment.getAccountNumber }}<br/>
-				Částka: {{ payment.getPrice }} Kč<br/>
-				Variabilní symbol: {{ payment.getVariableSymbol }}<br/>
-				Poznámka: Korbo 2018 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}<br/>
+				Číslo účtu: <b>{{ payment.getAccountNumber }}</b><br/>
+				Částka: <b>{{ payment.getPrice }} Kč</b><br/>
+				Variabilní symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
+				Poznámka: <b>KORBO 2018 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}</b><br/>
 				<br/>
 			</div>
 		{% endif %}
@@ -23,16 +23,16 @@
 				<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
 			{% endif %}
 			<div class="text-center">
-				Křestní jméno: {{ istDetails.getFirstName }}<br/>
-				Příjmení: {{ istDetails.getLastName }}<br/>
-				Přezdívka: {{ istDetails.getNickname }}<br/>
-				Gender: {{ istDetails.getGender }}<br/>
-				Datum narození: {{ istDetails.getBirthDate.format('d. m. Y') }}<br/>
-				Adresa: {{ istDetails.getPermanentResidence }}<br/>
-				Email: {{ istDetails.getEmail }}<br/>
-				Jméno a přijmení zákonného zástupce (pouze do 18 let): {{ istDetails.getLegalRepresestative }}<br/>
-				Šátek: {{ istDetails.getScarf }}<br/>
-				Poznámky: {{ istDetails.getNotes }}<br/>
+				Křestní jméno: <b>{{ istDetails.getFirstName }}</b><br/>
+				Příjmení: <b>{{ istDetails.getLastName }}</b><br/>
+				Přezdívka: <b>{{ istDetails.getNickname }}</b><br/>
+				Gender: <b>{{ istDetails.getGender }}</b><br/>
+				Datum narození: <b>{{ istDetails.getBirthDate.format('d. m. Y') }}</b><br/>
+				Adresa: <b>{{ istDetails.getPermanentResidence }}</b><br/>
+				Email: <b>{{ istDetails.getEmail }}</b><br/>
+				Jméno a přijmení doprovodu (povinné do 18 let): <b>{{ istDetails.getLegalRepresestative }}</b><br/>
+				Šátek: <b>{{ istDetails.getScarf }}</b><br/>
+				Poznámky: <b>{{ istDetails.getNotes }}</b><br/>
 				<br/>
 			</div>
 		</div>

@@ -17,7 +17,7 @@
 			<label class="form-group form-group-inline">Datum narození: <input class="form-control" type="date" name="birthDate" value="{{ istDetails.getBirthDate.format('Y-m-d') }}" required="required"></label>
 			<label class="form-group form-group-inline">Trvalá adresa: <input class="form-control" type="text" name="permanentResidence" value="{{ istDetails.getPermanentResidence }}" required="required"></label>
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email" value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}" required="required"></label>
-			<label class="form-group form-group-inline">Zákonný zástupce (pouze do 18 let): <input class="form-control" type="text" name="legalRepresestative" placeholder="jméno a příjmení" value="{{ istDetails.getLegalRepresestative }}"></label>
+			<label class="form-group form-group-inline">Doprovod (povinný do 18 let): <input class="form-control" type="text" name="legalRepresestative" placeholder="jméno a příjmení" value="{{ istDetails.getLegalRepresestative }}"></label>
 			<label class="form-group form-group-inline">Korbo šátek:
 				<select class="form-control" name="scarf" required="required">
 					<option value="ne" {% if istDetails.getScarf == 'ne' %}selected="selected"{% endif %}>Nechci...</option>

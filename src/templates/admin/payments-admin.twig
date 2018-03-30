@@ -3,6 +3,7 @@
 {% block content %}
 	<div class="card approved-theme">
 		<h2>Ruční potvrzování plateb na akci {{ eventName }}</h2>
+		<a href="{{ path_for('admin-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
 	</div>
 	<br/>
 	{% if approvedIsts is not empty %}

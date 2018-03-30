@@ -48,13 +48,13 @@
 	<br/>
 	<br/>
 	<br/>
-	<h3>S čím ti může pomoci přípravný tým před akcí při přípravě aktivit:</h3>
+	<h3>Čím ti může pomoci přípravný tým před akcí při přípravě aktivit:</h3>
 	<input required type="radio" name="3" id="31" <?php if ($_POST['3'] == 31) echo('checked'); ?> value="31"><label
 			for="31">Konzultací</label><br/>
 	<input type="radio" name="3" id="32" <?php if ($_POST['3'] == 32) echo('checked'); ?> value="32"><label for="32">Penězi</label><br/>
 	<input type="radio" name="3" id="33" <?php if ($_POST['3'] == 33) echo('checked'); ?> value="33"><label for="33">Sehnáním a dopravou materiálu</label><br/>
 	<input class="t" type="radio" name="3" id="34" <?php if ($_POST['3'] == 34) echo('checked'); ?> value="34"><label
-			for="34">Vše výše zmíněné</label><br/>
+			for="34">Vším výše zmíněným</label><br/>
 	<br/>
 	<?php if (empty($_POST)) echo('<input type="submit" class="btn form-wide" value="Zkontrolovat test">');
 	else echo('<p>Děkujeme za vyplnění testu! Teď můžeš pokračovat</p>

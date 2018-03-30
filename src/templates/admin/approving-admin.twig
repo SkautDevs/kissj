@@ -3,6 +3,7 @@
 {% block content %}
 	<div class="card closed-theme">
 		<h2>Schvalování účastníků na akci {{ eventName }}</h2>
+		<a href="{{ path_for('admin-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
 	</div>
 	<br/>
 	{% if closedIsts is not empty %}
