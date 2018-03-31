@@ -54,7 +54,8 @@ class PaymentService {
 		$newPayment->purpose = 'fee';
 		$newPayment->role = $role;
 		$newPayment->accountNumber = $this->settings['accountNumber'];
-		
+		$newPayment->generatedDate = new \DateTime();
+
 		$this->paymentRepository->persist($newPayment);
 		
 		return $newPayment;

@@ -86,6 +86,9 @@ class IstService {
 		foreach ($approvedIsts as $approvedIst) {
 			$ist['info'] = $this->istRepository->findOneBy(['user' => $approvedIst->user]);
 			$ist['payment'] = $this->getOnePayment($ist['info']);
+			// TODO discuss moving this piece of logic elsewhere
+			$ist['elapsedPaymentDays'] = $ist['payment']->generatedDate->diff(new \DateTime());
+			$ist['elapsedPaymentDays'] = $ist['elapsedPaymentDays']->days;
 			$ists[] = $ist;
 		}
 		

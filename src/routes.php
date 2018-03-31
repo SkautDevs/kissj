@@ -362,7 +362,11 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->get("", function (Request $request, Response $response, array $args) {
 					$approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
 					
-					$this->view->render($response, 'admin/payments-admin.twig', ['eventName' => 'Korbo 2018', 'approvedIsts' => $approvedIsts]);
+					$this->view->render($response, 'admin/payments-admin.twig', [
+						'eventName' => 'KORBO 2018',
+						'approvedIsts' => $approvedIsts,
+						'maxElapsedPaymentDays' => $this->get('settings')['paymentSettings']['maxElapsedPaymentDays'],
+					]);
 				})->setName('admin-payments');
 				
 				$this->post("/setPaymentPaid/{payment}", function (Request $request, Response $response, array $args) {

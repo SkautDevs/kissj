@@ -14,8 +14,13 @@
 		{% for ist in approvedIsts %}
 			<div class="card approved-theme">
 				<h3>{{ ist.info.getFirstName }} {{ ist.info.getLastName }}</h3>
+				Datum vygenerování platby: <b>{{ ist.payment.getGeneratedDate.format('d. m. Y') }}</b><br/>
+				Uběhlo: <b><span class="
+					{% if ist.elapsedPaymentDays > maxElapsedPaymentDays %}registration-theme{% endif %}
+					">{{ ist.elapsedPaymentDays }} dní</span>
+				</b><br/>
 				Variabilní symbol: <b>{{ ist.payment.getVariableSymbol }}</b><br/>
-				Částka: <b>{{ ist.payment.getPrice}} Kč</b><br/>
+				Částka: <b>{{ ist.payment.getPrice }} Kč</b><br/>
 				<br/>
 				<form method="post" action="{{ path_for('setPaymentPaid', {'payment': ist.payment.getId}) }}">
 					<input type="submit" value="Potvrdit platbu" class="btn btn-small">

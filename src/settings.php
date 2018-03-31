@@ -70,6 +70,7 @@ $settings = [
 		],
 		
 		'paymentSettings' => [
+			'maxElapsedPaymentDays' => 14,
 			'prefixVariableSymbol' => '00',
 			'accountNumber' => '0123456789',
 		],

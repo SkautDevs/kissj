@@ -6,7 +6,6 @@ CREATE TABLE user (
 CREATE TABLE ist (
 	id                  INTEGER PRIMARY KEY autoincrement,
 	userId              INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-	
 	firstName           TEXT,
 	lastName            TEXT,
 	nickname            TEXT,
@@ -51,5 +50,6 @@ CREATE TABLE payment (
 	status         TEXT NOT NULL,
 	purpose        TEXT NOT NULL,
 	accountNumber  TEXT NOT NULL,
+	generatedDate  DATETIME NOT NULL,
 	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
 );
