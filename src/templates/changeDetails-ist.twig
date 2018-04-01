@@ -20,8 +20,8 @@
 			<label class="form-group form-group-inline">Doprovod (povinný do 18 let): <input class="form-control" type="text" name="legalRepresestative" placeholder="jméno a příjmení" value="{{ istDetails.getLegalRepresestative }}"></label>
 			<label class="form-group form-group-inline">Korbo šátek:
 				<select class="form-control" name="scarf" required="required">
-					<option value="ne" {% if istDetails.getScarf == 'ne' %}selected="selected"{% endif %}>Nechci...</option>
-					<option value="ano" {% if istDetails.getScarf == 'ano' %}selected="selected"{% endif %}>Chci za 70 Kč!</option>
+					<option value="ne" {% if istDetails.getScarf == 'ne' %}selected="selected"{% endif %}>Už mám a nechci...</option>
+					<option value="ano" {% if istDetails.getScarf == 'ano' %}selected="selected"{% endif %}>Nemám a za 70 Kč beru!</option>
 				</select>
 			</label>
 

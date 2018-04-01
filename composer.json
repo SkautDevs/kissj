@@ -31,7 +31,8 @@
     "league/csv": "^9.1",
   	"ext-sqlite3": "*",
   	"ext-mbstring": "*",
-  	"ext-dom": "*"
+  	"ext-dom": "*",
+    "h4kuna/fio": "^1.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5"
