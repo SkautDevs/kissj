@@ -13,7 +13,8 @@
 		<br/>
 		{% for ist in approvedIsts %}
 			<div class="card approved-theme">
-				<h3>{{ ist.info.getFirstName }} {{ ist.info.getLastName }}</h3>
+				<h3>{{ ist.info.getFirstName }} {{ ist.info.getLastName }} - {{ ist.info.getNickname }}</h3>
+				Mail: <b>{{ ist.info.getEmail }}</b><br/>
 				Datum vygenerování platby: <b>{{ ist.payment.getGeneratedDate.format('d. m. Y') }}</b><br/>
 				Uběhlo: <b><span class="
 					{% if ist.elapsedPaymentDays > maxElapsedPaymentDays %}registration-theme{% endif %}
