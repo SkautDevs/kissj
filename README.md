@@ -19,17 +19,18 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 # Installation (yet)
 
+0. get PHP somewhere 
+	- for example `https://launchpad.net/~ondrej/+archive/ubuntu/php`
 1. Download project
-`git clone [this repository]`
+	- `git clone [this repository]`
 2. Install dependencies
-`composer install`
+	- `composer install`
 3. Prepare database
 	- Copy `db_init.sqlite` to `db.sqlite` 
 	- Run `sql/init.sql` to `db.sqlite`
 4. Create local config
-	Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
-
-And you are good to go!
+	- Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
+5. run `composer start` and visit `localhost:8080` or use your favourite webserver. And you are good to go!
 
 # Devstack
 
@@ -41,7 +42,7 @@ We use:
 
 # Backlog
 
-Backlog is localized in wiki page named `Backlog`. 
+Backlog is in project github issues
 
 # Codestyle
 
@@ -55,6 +56,10 @@ Backlog is localized in wiki page named `Backlog`.
 #### Database could not be read
 
 - databasefile `db.sqlite` *and its directory* must be writable by execution programm
+
+#### Random errors on DB
+
+- make sure you have all PHP extensions by running `composer update`
 
 #### STMP connection error
 

@@ -164,8 +164,7 @@ $container['view'] = function (C $c) {
 	
 	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
-	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
-	
+	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
 	// Add few elements for rendering
 	$portString = '';
 	$port = $uri->getPort();
