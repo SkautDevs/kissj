@@ -3,7 +3,7 @@ FROM php:7.1-apache
 # Preparation
 RUN apt-get update
 
-# Git installation
+# Tools installation
 RUN apt-get install -y \
 	git \
 	zip
@@ -18,6 +18,6 @@ RUN apt-get -y install curl nano && \
 # Copy files
 COPY . /var/www/html/
 
-# Get dependencies
+# Get dependencies from code
 RUN composer install --no-interaction
 
