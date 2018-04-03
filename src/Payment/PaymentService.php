@@ -109,7 +109,6 @@ class PaymentService {
 	# Jak vygenerovat hezci CSV z Money S3
 	/* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
 
-	// TODO make separate function for mail sending
 	public function setPaymentPaid(Payment $payment): void {
 		// set payment paid in DB
 		$payment->status = 'paid';
@@ -123,27 +122,31 @@ class PaymentService {
 		$this->sendSuccesfulPaymentEmail($role);
 	}
 
-	public function pairNewPayments($approvedIstPayments) {
-		// get list of new payments
-		$list = $this->paymentAutoMatcherFio->lastDownload();
+	public function pairNewPayments(array $approvedIstPayments) {
+		// get list of new payments from bank
+		$transactionsList = $this->paymentAutoMatcherFio->lastDownload();
 
-		// iterate and try find a match
 		$counterSetPaid = 0;
 		$counterUnknownPayment = 0;
+		$counterWasPaid = 0;
+		// iterate and try find a match
 		/** @var $transaction \h4kuna\Fio\Response\Read\Transaction */
-		foreach ($list as $transaction) {
+		foreach ($transactionsList as $transaction) {
 			$paidFlag = false;
-			/** @var Payment $payment */
 			foreach ($approvedIstPayments as $payment) {
-				if ($payment->variableSymbol === $transaction->variableSymbol && $payment->price === $transaction->volume) {
+				/** @var Payment $payment */
+				$payment = $payment['payment'];
+				if ($payment->variableSymbol == $transaction->variableSymbol && $payment->price == $transaction->volume) {
 					// match!
-					$payment->status = 'paid';
-					$this->paymentRepository->persist($payment);
-
-					$this->sendSuccesfulPaymentEmail($payment->role);
-
-					$this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
-					$counterSetPaid++;
+					if ($payment->status != 'paid') {
+						// not paid already
+						$this->setPaymentPaid($payment);
+						// TODO find a better place - all other logging is in controllers now
+						$this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
+						$counterSetPaid++;
+					} else {
+						$counterWasPaid++;
+					}
 					$paidFlag = true;
 					break;
 				}
@@ -153,14 +156,28 @@ class PaymentService {
 				$counterUnknownPayment++;
 				// TODO better system for this warning
 				$this->flashMessages->warning(htmlspecialchars('Nerozeznaná platba: '.
-					$transaction->volume.' Kč, VS: '.$transaction->variableSymbol.', poznámka: '.$transaction->note, ENT_QUOTES));
+					$transaction->volume.' Kč, VS: '
+					.($transaction->variableSymbol ?? 'není').', od: '
+					.($transaction->whoDone ?? 'plátce neznámý').', poznámka: '
+					.($transaction->note ?? 'není'), ENT_QUOTES));
 			}
 		}
 
-		// TODO better system for... :/
-		// output counts
-		$this->flashMessages->success('Spárováno '.$counterSetPaid.' plateb s transakcemi z banky, nerozeznáno '.
-			$counterUnknownPayment.' bankovních transakcí. ');
+		// TODO better system for outputting these
+		if ($counterSetPaid) {
+			$this->flashMessages->success('Spárováno '.$counterSetPaid.' plateb s transakcemi z banky!');
+		}
+
+		if ($counterUnknownPayment) {
+			$this->flashMessages->info('Nerozeznáno celkem '.$counterUnknownPayment.' bankovních transakcí.');
+		}
+
+		$counterUnpayedPayments = count($approvedIstPayments) - $counterWasPaid - $counterSetPaid;
+		if ($counterUnpayedPayments) {
+			$this->flashMessages->info('Zbývá zaplatit celkem '.$counterUnpayedPayments.' plateb.');
+		} else {
+			$this->flashMessages->success('Na zaplacení nezbývají žádné platby!');
+		}
 	}
 
 	public function setLastDate(string $date): void {
