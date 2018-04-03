@@ -120,10 +120,7 @@ class PaymentService {
 		$role->status = 'paid';
 		$this->roleRepository->persist($role);
 
-		// send mail to user
-		$message = $this->renderer->fetch('emails/payment-successful.twig', ['eventName' => 'KORBO 2018', 'roleName' => $role->name]);
-		$subject = 'Registrace KORBO 2018 - platba úspěšně přijata!';
-		$this->mailer->sendMail($role->user->email, $subject, $message);
+		$this->sendSuccesfulPaymentEmail($role);
 	}
 
 	public function pairNewPayments($approvedIstPayments) {
@@ -142,6 +139,9 @@ class PaymentService {
 					// match!
 					$payment->status = 'paid';
 					$this->paymentRepository->persist($payment);
+
+					$this->sendSuccesfulPaymentEmail($payment->role);
+
 					$this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
 					$counterSetPaid++;
 					$paidFlag = true;
@@ -165,5 +165,12 @@ class PaymentService {
 
 	public function setLastDate(string $date): void {
 		$this->paymentAutoMatcherFio->setLastDate('2017-01-01');
+	}
+
+	private function sendSuccesfulPaymentEmail(Role $role) {
+		// send mail to user
+		$message = $this->renderer->fetch('emails/payment-successful.twig', []);
+		$subject = 'Registrace KORBO 2018 - platba úspěšně přijata!';
+		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }
