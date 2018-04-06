@@ -409,7 +409,8 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->get("/medical", function (Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->medicalDataToCSV($eventName);
-					$this->logger->info('Downloaded current medical data');
+					$this->logger->info('User ID '.$request->getAttribute('user')->id
+						.' downloaded current medical data');
 
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_medical');
 				})->setName('admin-export-medical');
@@ -417,15 +418,26 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->get("/logistic", function (Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->logisticDataPatrolsToCSV($eventName);
-					$this->logger->info('Downloaded current logistic data');
+					$this->logger->info('User ID '.$request->getAttribute('user')->id
+						.' downloaded current logistic data');
 
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_logistic');
 				})->setName('admin-export-logistic');
 
+				$this->get("/paid", function (Request $request, Response $response, array $args) {
+					$eventName = $this->get('settings')['eventName'];
+					$csvRows = $this->exportService->paidContactDataToCSV($eventName);
+					$this->logger->info('User ID '.$request->getAttribute('user')->id
+					.' downloaded current contact data about paid participants');
+
+					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_paid');
+				})->setName('admin-export-paid');
+
 				$this->get("/full", function (Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->allRegistrationDataToCSV($eventName);
-					$this->logger->info('Downloaded full current data about participants');
+					$this->logger->info('User ID '.$request->getAttribute('user')->id
+						.' downloaded full current data about participants');
 
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_full');
 				})->setName('admin-export-full');
