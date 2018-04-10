@@ -155,11 +155,12 @@ class PaymentService {
 			if ($paidFlag === false) {
 				$counterUnknownPayment++;
 				// TODO better system for this warning
-				$this->flashMessages->warning(htmlspecialchars('Nerozeznaná platba: '.
-					$transaction->volume.' Kč, VS: '
-					.($transaction->variableSymbol ?? 'není').', od: '
-					.($transaction->whoDone ?? 'plátce neznámý').', poznámka: '
-					.($transaction->note ?? 'není'), ENT_QUOTES));
+				$this->flashMessages->warning(htmlspecialchars(
+					'Nerozeznaná platba: '.$transaction->volume.
+					' Kč, VS: '.($transaction->variableSymbol ?? 'není').
+					', od: '.($transaction->nameAccountTo ?? 'plátce neznámý').
+					', poznámka: '.($transaction->messageTo ?? 'není'),
+					ENT_QUOTES));
 			}
 		}
 
