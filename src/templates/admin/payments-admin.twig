@@ -23,6 +23,11 @@
 				Variabilní symbol: <b>{{ ist.payment.getVariableSymbol }}</b><br/>
 				Částka: <b>{{ ist.payment.getPrice }} Kč</b><br/>
 				<br/>
+				<a href="{{ path_for('cancel-ist-payment', {'paymentId': ist.payment.getId}) }}" class="btn btn-grey btn-small">
+					Zrušit platbu
+				</a>
+				<br/>
+				<br/>
 				<form method="post" action="{{ path_for('setPaymentPaid', {'payment': ist.payment.getId}) }}">
 					<input type="submit" value="Potvrdit platbu" class="btn btn-small">
 				</form>

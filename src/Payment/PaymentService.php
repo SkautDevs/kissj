@@ -123,6 +123,7 @@ class PaymentService {
 	}
 
 	public function pairNewPayments(array $approvedIstPayments) {
+		$canceledPayments = $this->getCanceledPayments('korbo2018');
 		// get list of new payments from bank
 		$transactionsList = $this->paymentAutoMatcherFio->lastDownload();
 
@@ -138,13 +139,14 @@ class PaymentService {
 				$payment = $payment['payment'];
 				if ($payment->variableSymbol == $transaction->variableSymbol && $payment->price == $transaction->volume) {
 					// match!
-					if ($payment->status != 'paid') {
-						// not paid already
+					if ($payment->status == 'waiting') {
+						// not canceler or paid already
 						$this->setPaymentPaid($payment);
 						// TODO find a better place - all other logging is in controllers now
 						$this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
 						$counterSetPaid++;
-					} else {
+					} elseif ($payment->status == 'paid') {
+						// because of re-check from bank
 						$counterWasPaid++;
 					}
 					$paidFlag = true;
@@ -154,6 +156,24 @@ class PaymentService {
 			// nonrecognized transaction
 			if ($paidFlag === false) {
 				$counterUnknownPayment++;
+
+				$canceledFlag = false;
+				/** @var Payment $canceledPayment */
+				foreach ($canceledPayments as $canceledPayment) {
+					if ($canceledPayment->variableSymbol == $transaction->variableSymbol && $canceledPayment->price == $transaction->volume) {
+						// TODO better system for this warning
+						$this->flashMessages->error(htmlspecialchars(
+							'Zaplacená zrušená platba: '.$transaction->volume.
+							' Kč, VS: '.($transaction->variableSymbol).
+							', zaplatil účastník registrovaný mailem: '.$canceledPayment->role->user->email,
+							ENT_QUOTES));
+
+						$canceledFlag = true;
+						break;
+					}
+				}
+
+				if ($canceledFlag === false) {
 				// TODO better system for this warning
 				$this->flashMessages->warning(htmlspecialchars(
 					'Nerozeznaná platba: '.$transaction->volume.
@@ -161,6 +181,7 @@ class PaymentService {
 					', od: '.($transaction->nameAccountTo ?? 'plátce neznámý').
 					', poznámka: '.($transaction->messageTo ?? 'není'),
 					ENT_QUOTES));
+				}
 			}
 		}
 
@@ -183,6 +204,29 @@ class PaymentService {
 
 	public function setLastDate(string $date): void {
 		$this->paymentAutoMatcherFio->setLastDate('2017-01-01');
+	}
+
+	/**
+	 * @param string $event
+	 * @return Payment[]
+	 */
+	private function getCanceledPayments(string $event): array {
+		return $this->paymentRepository->findBy(['event' => $event, 'status' => 'canceled']);
+	}
+
+	public function cancelPayment(Payment $payment): void {
+		if ($payment->status != 'waiting') {
+			throw new \Exception('Payment cancelation is allow only for payments with status "waiting"');
+		}
+
+		$payment->status = 'canceled';
+		$this->paymentRepository->persist($payment);
+	}
+
+	public function sendCancelPaymentMail(Role $role, string $reason): void {
+		$message = $this->renderer->fetch('emails/cancel-payment.twig', ['reason' => $reason]);
+		$subject = 'Registrace KORBO 2018 - zrušení platby!';
+		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 
 	private function sendSuccesfulPaymentEmail(Role $role) {

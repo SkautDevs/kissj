@@ -198,7 +198,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
 				$user = $request->getAttribute('user');
 				$ist = $this->istService->getIst($user);
-				$possibleOnePayment = $this->istService->getOnePayment($ist);
+				$possibleOnePayment = $this->istService->getOneValidPayment($ist);
 				return $this->view->render($response, 'dashboard-ist.twig', ['user' => $user, 'istDetails' => $ist, 'payment' => $possibleOnePayment]);
 			})->setName('ist-dashboard');
 
@@ -340,7 +340,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 				$this->get("/openIst/{istId}", function (Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIstFromId($args['istId']);
-					return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
+					return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
 				})->setName('openIst');
 
 				$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
@@ -379,6 +379,32 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 					return $response->withRedirect($this->router->pathFor('admin-payments-manually'));
 				})->setName('setPaymentPaid');
+
+				$this->get("/cancelIstPayment/{paymentId}", function (Request $request, Response $response, array $args) {
+					/** @var \kissj\Payment\Payment $payment */
+					$payment = $this->paymentService->getPaymentFromId($args['paymentId']);
+					$ist = $this->istService->getIst($payment->role->user);
+					return $this->view->render($response, 'admin/cancelIstPayment-admin.twig', ['ist' => $ist, 'payment' => $payment]);
+				})->setName('cancel-ist-payment');
+
+				$this->post("/cancelIstPayment/{paymentId}", function (Request $request, Response $response, array $args) {
+					/** @var \kissj\Payment\PaymentService $paymentService */
+					$paymentService = $this->get('paymentService');
+					/** @var \kissj\Payment\Payment $payment */
+					$payment = $paymentService->getPaymentFromId($args['paymentId']);
+					/** @var \kissj\Participant\Ist\IstService $istService */
+					$istService = $this->get('istService');
+					/** @var \kissj\Participant\Ist\Ist $ist */
+					$ist = $istService->getIst($payment->role->user);
+
+					$paymentService->cancelPayment($payment);
+					$istService->cancelApprovementIst($ist);
+					$this->paymentService->sendCancelPaymentMail($payment->role, $request->getParsedBodyParam('reason'));
+					$this->flashMessages->info('Platba zrušena, email o zrušení poslán');
+					$this->logger->info('Cancel payment for attendee with ID '.$ist->id.' with reason: '.$request->getParsedBodyParam('reason'));
+
+					return $response->withRedirect($this->router->pathFor('admin-payments-manually'));
+				})->setName('cancel-ist-payment-confirmed');
 
 				$this->group("/auto", function () {
 
@@ -428,7 +454,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->paidContactDataToCSV($eventName);
 					$this->logger->info('User ID '.$request->getAttribute('user')->id
-					.' downloaded current contact data about paid participants');
+						.' downloaded current contact data about paid participants');
 
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_paid');
 				})->setName('admin-export-paid');
