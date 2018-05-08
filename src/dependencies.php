@@ -204,21 +204,17 @@ $container['flashMessages'] = function (C $c) {
 
 $container['view'] = function (C $c) {
 	$rendererSettings = $c->get('settings')['renderer'];
-	
+
 	$view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
 		'cache' => $rendererSettings['enable_cache'] ? dirname(__FILE__).'/../temp/twig' : false,
 	]);
-	
+
 	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
-	
+
 	// Add few elements for rendering
-	$portString = '';
-	$port = $uri->getPort();
-	if (!is_null($port)) {
-		$portString .= ':'.$port;
-	}
+	$portString = $uri->getPort() ?? '';
 	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost().$portString;
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
@@ -231,6 +227,6 @@ $container['view'] = function (C $c) {
 		$flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
 		$flashMessages->info('Login pro administraci: admin, heslo: admin, link: '.$c->get('router')->pathFor('administration'));
 	}
-	
+
 	return $view;
 };

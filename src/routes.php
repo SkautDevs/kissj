@@ -202,13 +202,13 @@ $app->group("/v1", function () use ($helper) {
 				
 				$this->get("/signupSuccess", function (Request $request, Response $response, array $args) {
 					$this->flashMessages->success('Úspěšně zadána emailová adresa!');
-					return $this->view->render($response, 'signupSuccess.twig');
+					return $this->view->render($response, 'loginLinkSent.twig');
 				})->setName('signupSuccess');
 				
 				
 				$this->get("/registrationSignupSuccess", function (Request $request, Response $response, array $args) {
 					$this->flashMessages->success('Úspěšně zadána emailová adresa!');
-					return $this->view->render($response, 'kissj/signupSuccess.twig');
+					return $this->view->render($response, 'kissj/loginLinkSent.twig');
 				})->setName('kissj-signupSuccess');
 				
 				
@@ -262,7 +262,9 @@ $app->group("/v1", function () use ($helper) {
 			
 			$this->post("/createEvent", function (Request $request, Response $response, array $args) {
 				$params = $request->getParams();
-				if ($this->eventService->isEventDetailsValid(
+				/** @var \kissj\Event\EventService $eventService */
+				$eventService = $this->eventService;
+				if ($eventService->isEventDetailsValid(
 					$params['slug'] ?? null,
 					$params['readableName'] ?? null,
 					$params['accountNumber'] ?? null,
@@ -278,7 +280,7 @@ $app->group("/v1", function () use ($helper) {
 					$params['maximalClosedIstsCount'] ?? null)) {
 					
 					/** @var \kissj\Event\Event $newEvent */
-					$newEvent = $this->eventService->createEvent(
+					$newEvent = $eventService->createEvent(
 						$params['slug'] ?? null,
 						$params['readableName'] ?? null,
 						$params['accountNumber'] ?? null,
