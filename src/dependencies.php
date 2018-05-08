@@ -32,6 +32,10 @@ $container['random'] = function (C $c) {
 	return new \kissj\Random();
 };
 
+$container['banks'] = function (C $c) {
+    return new \kissj\Payment\Banks();
+};
+
 // db
 $container['db'] = function (C $c) {
 	$path = $c->get('settings')['db']['path'];

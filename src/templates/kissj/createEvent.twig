@@ -56,6 +56,15 @@
 				<input class="form-control" type="text" name="accountNumber" required="required"
 					   placeholder="bez čtyřčíslí za lomítkem, třeba 34-12345678">
 			</label>
+			<label class="form-group form-group-inline">Banka:
+				<select class="form-control" name="bankId" required="required">
+                    {% for key, bank in banks %}
+						<option value="{{ key }}">
+                            {{ bank.name }}
+						</option>
+                    {% endfor %}
+				</select>
+			</label>
 			<label class="form-group form-group-inline">
 				Číselná předvolba variabilního symbolu
 				<input class="form-control" type="number" name="prefixVariableSymbol" min="0" required="required"
@@ -65,15 +74,6 @@
 			<label class="form-group form-group-inline">
 				Automaticky párovat platby z banky:
 				<input class="form-control" type="checkbox" name="automaticPaymentPairing" checked>
-			</label>
-			<label class="form-group form-group-inline">Banka:
-				<select class="form-control" name="bankId" required="required">
-					{% for bank in banks %}
-						<option value="{{ bank.id }}">
-							{{ bank.name }}
-						</option>
-					{% endfor %}
-				</select>
 			</label>
 			<label class="form-group form-group-inline">
 				API klíč od banky: <a href="" target="_blank">(jak získám API klíč?)</a>

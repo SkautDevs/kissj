@@ -1,11 +1,11 @@
 <?php
 
-namespace kissj\PaymentImport;
+namespace kissj\ManualPaymentImport;
 
-use kissj\PaymentImport\PaymentImporter;
+use kissj\PaymentImport\ManualPaymentImporter;
 use kissj\PaymentImport\Payment;
 
-class MoneyS3CSV implements PaymentImporter
+class MoneyS3CSV implements ManualPaymentImporter
 {
 
     protected $file;
