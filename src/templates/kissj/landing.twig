@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="two-cards">
 		<div class="card approved-theme">
-			<h2>Proč registrovat tvojí akci pomocí skautského systému KISSJ?</h2>
+			<h2>KISSJ umí dvě věci - sbírá data od účastníků a stará se o příchozí platby</h2>
 			<ul>
 				<li>Registraci máš vytvořenou za míň než minutu</li>
 				<li>Emaily účastníkům chodí samy</li>
@@ -13,7 +13,7 @@
 			<p>KISSJ už používá třeba český i slovenský kontingest CEJ, KORBO a další</p>
 			<a href="https://kissj.skauting.cz" class="btn">Vyzkoušej teď na <br/><b>kissj.skauting.cz!</b></a>
 			<br/>
-			<a href="">Jsi vývojář? Opencource kód pro KISSJ najdeš na github.com!</a>
+			<a target="_blank" href="https://github.com/SkautDevs/kissj">Jsi vývojář? Opencource kód pro KISSJ najdeš na github.com!</a>
 		</div>
 		{% if user %}
 			<div class="card registration-theme">
@@ -28,12 +28,12 @@
 						<label for="form-email">Email</label>
 						<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
 					</div>
-					<input type="submit" value="Zaregistrovat se &#13;&#10;a poslat přihlašovací mail"
+					<input type="submit" value="Zaregistruj akci &#13;&#10;a pošli mi přihlašovací mail"
 						   class="btn form-wide"/>
 				</form>
 				<br/>
 				<div class="open-theme">
-					<a href="{{ path_for('loginAskEmail') }}" class="btn">Přihlásit se</a>
+					<a href="{{ path_for('loginAskEmail') }}" class="btn">Přihlaš se do své akce</a>
 				</div>
 				<br/>
 				<a href="{{ path_for('kissj-loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>

@@ -5,15 +5,15 @@ namespace kissj\Event;
 use kissj\User\User;
 
 class EventService {
-	
+
 	/** @var EventRepository */
 	private $eventRepository;
-	
+
 	public function __construct(EventRepository $eventRepository) {
 		$this->eventRepository = $eventRepository;
 	}
-	
-	
+
+
 	public function isEventDetailsValid(?string $slug,
 										?string $readableName,
 										?string $accountNumber,
@@ -27,32 +27,35 @@ class EventService {
 										?int $maximalPatrolParticipantsCount,
 										?bool $allowIsts,
 										?int $maximalClosedIstsCount): bool {
-		if (is_null($slug) || is_null($readableName) || !is_null($accountNumber) || is_null($automaticPaymentPairing) || is_null($allowPatrols) || is_null($allowIsts)) {
+		if (is_null($slug) || is_null($readableName) || is_null($accountNumber) || is_null($automaticPaymentPairing) || is_null($allowPatrols) || is_null($allowIsts)) {
 			return false;
 		}
-		
+
 		// TODO check if correct
 		if (!preg_match('/^[A-Za-z0-9\-]+$/', $slug)) {
 			return false;
 		}
-		
+
 		if ($automaticPaymentPairing &&
 			(is_null($bankId) || is_null($bankApi) || !is_numeric($prefixVariableSymbol))) {
 			return false;
 		}
-		
+
 		if ($allowPatrols &&
-			(!is_numeric($maximalClosedPatrolsCount) || !is_numeric($minimalPatrolParticipantsCount) || !is_numeric($maximalPatrolParticipantsCount))) {
+			(!is_numeric($maximalClosedPatrolsCount) ||
+				!is_numeric($minimalPatrolParticipantsCount) ||
+				!is_numeric($maximalPatrolParticipantsCount ||
+					$minimalPatrolParticipantsCount > $maximalPatrolParticipantsCount))) {
 			return false;
 		}
-		
+
 		if ($allowIsts && !is_numeric($maximalClosedIstsCount)) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public function createEvent(string $slug,
 								string $readableName,
 								string $accountNumber,
@@ -80,12 +83,12 @@ class EventService {
 		$newEvent->maximalPatrolParticipantsCount = $maximalPatrolParticipantsCount;
 		$newEvent->allowIsts = $allowIsts;
 		$newEvent->maximalClosedIstsCount = $maximalClosedIstsCount;
-		
+
 		$this->eventRepository->persist($newEvent);
-		
+
 		return $newEvent;
 	}
-	
+
 	public function getEventFromSlug(string $eventSlug): Event {
 		$event = $this->eventRepository->findBy(['slug' => $eventSlug]);
 		return $event[0];
