@@ -89,8 +89,8 @@ class EventService {
 		return $newEvent;
 	}
 
-	public function getEventFromSlug(string $eventSlug): Event {
+	public function getEventFromSlug(string $eventSlug): ?Event {
 		$event = $this->eventRepository->findBy(['slug' => $eventSlug]);
-		return $event[0];
+		return $event[0] ?? null;
 	}
 }
