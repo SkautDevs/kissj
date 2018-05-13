@@ -16,16 +16,16 @@ use League\Csv\Reader;
 use League\Csv\Writer;
 
 class ExportService {
-	
+
 	/** @var PatrolParticipantRepository */
 	private $patrolParticipantRepository;
-	
+
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
-	
+
 	/** @var IstRepository */
 	private $istRepository;
-	
+
 	/** @var RoleRepository */
 	private $roleRepository;
 	
@@ -38,7 +38,7 @@ class ExportService {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
 	}
-	
+
 	public function createCSVresponse(Response $response,
 									  array $csvRows,
 									  string $fileName,
@@ -46,24 +46,24 @@ class ExportService {
 		if ($amendTimestamp) {
 			$fileName .= '_'.date(DATE_ISO8601, time());
 		}
-		
+
 		$response = $response->withHeader('Content-Type', 'text/csv');
 		$response = $response->withHeader('Content-Disposition', 'attachment; filename="'.$fileName.'.csv";');
 		$response = $response->withHeader('Expires', '0');
 		$response = $response->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 		$response = $response->withHeader('Pragma', 'no-cache');
-		
+
 		$csv = Writer::createFromFileObject(new \SplTempFileObject());
 		$csv->setDelimiter(',');
 		$csv->setOutputBOM(Reader::BOM_UTF8);
 		$csv->insertAll($csvRows);
-		
+
 		$body = $response->getBody();
 		$body->write($csv->getContent());
-		
+
 		return $response->withBody($body);
 	}
-	
+
 	public function logisticDataPatrolsToCSV(string $event): array {
 		/** @var Role[] $roles */
 		$roles = $this->getExportRoles($event);
@@ -77,16 +77,16 @@ class ExportService {
 		$patrolLeaders = $this->patrolLeaderRepository->findBy([
 			'userId' => new Relation($patrolLeaderUserIds, 'IN')
 		]);
-		
+
 		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
 			return $p->id;
 		}, $patrolLeaders);
-		
+
 		/** @var PatrolParticipant[] $partolParticipants */
 		$partolParticipants = $this->patrolParticipantRepository->findBy([
 			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
 		]);
-		
+
 		$rows = [];
 		foreach ($patrolLeaders as $leader) {
 			$rows[] = [
@@ -104,10 +104,10 @@ class ExportService {
 				$participant->country,
 			];
 		}
-		
+
 		return $rows;
 	}
-	
+
 	public function medicalDataToCSV(string $event): array {
 		/** @var Role[] $roles */
 		$roles = $this->getExportRoles($event);
@@ -124,11 +124,11 @@ class ExportService {
 		$patrolLeaders = $this->patrolLeaderRepository->findBy([
 			'userId' => new Relation($patrolLeaderUserIds, 'IN')
 		]);
-		
+
 		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
 			return $p->id;
 		}, $patrolLeaders);
-		
+
 		/** @var Ist[] $ists */
 		$ists = $this->istRepository->findBy([
 			'userId' => new Relation($istUserIds, 'IN')
@@ -137,7 +137,7 @@ class ExportService {
 		$partolParticipants = $this->patrolParticipantRepository->findBy([
 			'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
 		]);
-		
+
 		$rows = [];
 		foreach ($patrolLeaders as $leader) {
 			$rows[] = [
@@ -165,7 +165,45 @@ class ExportService {
 		}
 		return $rows;
 	}
-	
+
+	public function paidContactDataToCSV(string $event): array {
+		// TODO now IST only - add PL
+		/** @var Role[] $roles */
+		$roles = $this->roleRepository->findByMultiple([
+			['event' => $event,],
+			['status' => 'paid',],
+		]);
+		$istUserIds = [];
+		foreach ($roles as $role) {
+			$istUserIds[] = $role->user->id;
+		}
+		/** @var Ist[] $ists */
+		$ists = $this->istRepository->findBy([
+			'userId' => new Relation($istUserIds, 'IN')
+		]);
+
+		$rows = [];
+
+		$rows[] = [
+			'ID',
+			'Křestní jméno',
+			'Příjmení',
+			'Přezdívka',
+			'Email',
+		];
+
+		foreach ($ists as $ist) {
+			$rows[] = [
+				$ist->id,
+				$ist->firstName,
+				$ist->lastName,
+				$ist->nickname,
+				$ist->email,
+			];
+		}
+		return $rows;
+	}
+
 	public function allRegistrationDataToCSV(string $event): array {
 		/** @var Role[] $roles */
 		$roles = $this->getExportRoles($event);
@@ -182,20 +220,20 @@ class ExportService {
 		$patrolLeaders = $this->patrolLeaderRepository->findBy([
 			'userId' => new Relation($patrolLeaderUserIds, 'IN')
 		]);
-		
+
 		$patrolLeaderIds = array_map(function (PatrolLeader $p) {
 			return $p->id;
 		}, $patrolLeaders);
-		
+
 		/** @var Ist[] $ists */
 		$ists = $this->istRepository->findBy([
 			'userId' => new Relation($istUserIds, 'IN')
 		]);
-		
+
 		$rows = [];
-		
+
 		// nulls headers
-		
+
 		$rows[] = [
 			'No.',
 			'Patrol',
@@ -258,11 +296,11 @@ class ExportService {
 				'', // Car Registration Number',
 				$leader->notes,
 			];
-			
+
 			/** @var PatrolParticipant[] $partolParticipants */
 			$partolParticipants = $this->patrolParticipantRepository->findBy([
 				'patrolleaderId' => $leader->id]);
-			
+
 			foreach ($partolParticipants as $participant) {
 				$rows[] = [
 					++$counter,
@@ -295,7 +333,7 @@ class ExportService {
 				];
 			}
 		}
-		
+
 		// ...second ISTs
 		$counter = 0; // from the top
 		foreach ($ists as $ist) {
@@ -331,7 +369,7 @@ class ExportService {
 		}
 		return $rows;
 	}
-	
+
 	private function getExportRoles(string $event): array {
 		// TODO rewirte with use of whitelist ('closed', 'approved', 'paid' only)
 		return $this->roleRepository->findByMultiple([

@@ -4,6 +4,7 @@ namespace kissj\Participant;
 
 use LeanMapper\Entity;
 
+// TODO rename class and move elsewhere more appropriate
 class Participant extends Entity {
 	
 	public function dateToString(?\DateTime $val): ?string {

@@ -25,7 +25,7 @@ class IstService {
 	private $renderer;
 	private $mailer;
 	private $eventSettings;
-	
+
 	public function __construct(IstRepository $istRepository,
 								RoleRepository $roleRepository,
 								PaymentRepository $paymentRepository,
@@ -46,22 +46,22 @@ class IstService {
 		$this->eventSettings = $eventSettings;
 		$this->eventName = $eventName;
 	}
-	
+
 	public function getIst(User $user): Ist {
 		if ($this->istRepository->countBy(['user' => $user]) === 0) {
 			$ist = new Ist();
 			$ist->user = $user;
 			$this->istRepository->persist($ist);
 		}
-		
+
 		$ist = $this->istRepository->findOneBy(['user' => $user]);
 		return $ist;
 	}
-	
+
 	public function getIstFromId(int $istId): Ist {
 		return $this->istRepository->findOneBy(['id' => $istId]);
 	}
-	
+
 	public function getAllClosedIsts(): array {
 		$closedIsts = $this->roleRepository->findBy([
 			'event' => $this->eventName,
@@ -72,10 +72,10 @@ class IstService {
 		foreach ($closedIsts as $closedIst) {
 			$ists[] = $this->istRepository->findOneBy(['userId' => $closedIst->user->id]);
 		}
-		
+
 		return $ists;
 	}
-	
+
 	public function getAllApprovedIstsWithPayment(): array {
 		$approvedIsts = $this->roleRepository->findBy([
 			'event' => $this->eventName,
@@ -85,13 +85,16 @@ class IstService {
 		/** @var Role $approvedIst */
 		foreach ($approvedIsts as $approvedIst) {
 			$ist['info'] = $this->istRepository->findOneBy(['user' => $approvedIst->user]);
-			$ist['payment'] = $this->getOnePayment($ist['info']);
+			$ist['payment'] = $this->getOneValidPayment($ist['info']);
+			// TODO discuss moving this piece of logic elsewhere
+			$ist['elapsedPaymentDays'] = $ist['payment']->generatedDate->diff(new \DateTime());
+			$ist['elapsedPaymentDays'] = $ist['elapsedPaymentDays']->days;
 			$ists[] = $ist;
 		}
-		
+
 		return $ists;
 	}
-	
+
 	private function isIstValid(Ist $ist): bool {
 		return $this->isIstDetailsValid(
 			$ist->firstName,
@@ -115,7 +118,7 @@ class IstService {
 			($ist->leavingDate ? $ist->leavingDate->format('Y-m-d') : null),
 			$ist->carRegistrationPlate);
 	}
-	
+
 	public function isIstDetailsValid(?string $firstName,
 									  ?string $lastName,
 									  ?string $allergies,
@@ -130,7 +133,7 @@ class IstService {
 									  ?string $foodPreferences,
 									  ?string $cardPassportNumber,
 									  ?string $notes,
-	
+
 									  ?string $workPreferences,
 									  ?string $skills,
 									  ?string $languages,
@@ -155,13 +158,14 @@ class IstService {
 		/*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
 			$validFlag = false;
 		}*/
+
 		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			$validFlag = false;
 		}
-		
+
 		return $validFlag;
 	}
-	
+
 	public function editIstInfo(Ist $ist,
 								?string $firstName,
 								?string $lastName,
@@ -177,7 +181,7 @@ class IstService {
 								?string $foodPreferences,
 								?string $cardPassportNumber,
 								?string $notes,
-	
+
 								?string $workPreferences,
 								?string $skills,
 								?string $languages,
@@ -198,17 +202,17 @@ class IstService {
 		$ist->foodPreferences = $foodPreferences;
 		$ist->cardPassportNumber = $cardPassportNumber;
 		$ist->notes = $notes;
-		
+
 		$ist->workPreferences = $workPreferences;
 		$ist->skills = $skills;
 		$ist->languages = $languages;
 		$ist->arrivalDate = new \DateTime($arrivalDate);
 		$ist->leavingDate = new \DateTime($leavingDate);
 		$ist->carRegistrationPlate = $carRegistrationPlate;
-		
+
 		$this->istRepository->persist($ist);
 	}
-	
+
 	public function isCloseRegistrationValid(Ist $ist): bool {
 		$validityFlag = true;
 		if (!$this->isIstValid($ist)) {
@@ -219,41 +223,41 @@ class IstService {
 			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných IST a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu pro IST.');
 			$validityFlag = false;
 		}
-		
+
 		return $validityFlag;
 	}
-	
+
 	private function getClosedIstsCount(): int {
 		return $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('open', '!=')
+			'status' => new Relation('open', '!='),
 		]);
 	}
-	
+
 	public function getAllIstsStatistics(): array {
 		$ists['limit'] = $this->eventSettings['maximalClosedIstsCount'];
 		$ists['closed'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('closed', '==')
+			'status' => new Relation('closed', '=='),
 		]);
-		
+
 		$ists['approved'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('approved', '==')
+			'status' => new Relation('approved', '=='),
 		]);
-		
+
 		$ists['paid'] = $this->roleRepository->countBy([
 			'name' => 'ist',
 			'event' => $this->eventName,
-			'status' => new Relation('paid', '==')
+			'status' => new Relation('paid', '=='),
 		]);
-		
+
 		return $ists;
 	}
-	
+
 	public function sendPaymentByMail(Payment $payment, Ist $ist) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
 			'eventName' => 'CEJ 2018',
@@ -263,48 +267,64 @@ class IstService {
 			'variableSymbol' => $payment->variableSymbol,
 			'role' => $payment->role->name,
 			'gender' => $ist->gender,
-			
+
 			'istFullName' => $ist->firstName.' '.$ist->lastName]);
-		
+
 		$this->mailer->sendMail($payment->role->user->email, 'Registrace CEJ 2018 - platební informace', $message);
 	}
-	
+
 	public function sendDenialMail(Ist $ist, string $reason) {
 		$message = $this->renderer->fetch('emails/denial.twig', [
 			'eventName' => 'CEJ 2018',
 			'role' => 'ist',
 			'reason' => $reason,
 		]);
-		
+
 		$this->mailer->sendMail($ist->user->email, 'Registrace CEJ 2018 - zamítnutí registrace', $message);
 	}
-	
-	// TODO make this more clever
-	public function getOnePayment(Ist $ist): ?Payment {
-		if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])])) {
-			return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'cej2018'])]);
-		} else return null;
+
+	public function getOneValidPayment(Ist $ist): ?Payment {
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2018']);
+		$payments = $this->paymentRepository->findByMultiple([
+			['roleId' => $role],
+			['event' => 'korbo2018'],
+			['status' => new Relation('canceled', '!=')],
+		]);
+
+		if (count($payments) > 1) {
+			throw new \Exception('It exists more payments than we expected on roleId '.$role->id);
+		}
+
+		return $payments[0] ?? null;
 	}
-	
-	
+
+	// TODO clean up this four functions
 	public function closeRegistration(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getCloseStatus();
 		$this->roleRepository->persist($role);
 	}
-	
+
 	public function approveIst(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getApproveStatus();
 		$this->roleRepository->persist($role);
 	}
-	
+
 	public function openIst(Ist $ist) {
 		/** @var Role $role */
 		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
 		$role->status = $this->roleService->getOpenStatus();
+		$this->roleRepository->persist($role);
+	}
+
+	public function cancelApprovementIst(Ist $ist) {
+		/** @var Role $role */
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
+		$role->status = $this->roleService->getCloseStatus();
 		$this->roleRepository->persist($role);
 	}
 }

@@ -166,9 +166,12 @@ $container['paymentService'] = function (C $c) {
 	return new \kissj\Payment\PaymentService(
 		$paymentsSettings,
 		$c->get('paymentRepository'),
+		$c->get('paymentAutoMatcherFio'),
 		$c->get('roleRepository'),
 		$c->get('mailer'),
 		$c->get('view'),
+		$c->get('flashMessages'),
+		$c->get('logger'),
 		$c->get('settings')['eventName'],
 		$c->get('random')
 	);
@@ -178,6 +181,19 @@ $container['paymentMatcherService'] = function (C $c) {
 	return new \kissj\PaymentImport\PaymentMatcherService(
 		$c->get('paymentService'),
 		$c->get('paymentRepository'));
+};
+
+$container['paymentAutoMatcherFio'] = function (C $c) {
+	// using h4kuna/fio - https://github.com/h4kuna/fio
+	$paymentSettings = $c->get('settings')['paymentSettings'];
+	$fioFactory = new \h4kuna\Fio\Utils\FioFactory([
+		'mainAccount' => [
+			'account' => $paymentSettings['accountNumber'],
+			'token' => $paymentSettings['fioApiToken'],
+		]
+	]);
+
+	return $fioFactory->createFioRead('mainAccount');
 };
 
 // views
@@ -194,8 +210,7 @@ $container['view'] = function (C $c) {
 	
 	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
-	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().$uri->getBasePath()), '/');
-	
+	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
 	// Add few elements for rendering
 	$portString = '';
 	$port = $uri->getPort();

@@ -68,10 +68,13 @@ $settings = [
 			'maximalClosedPatrolsCount' => 25,
 			'maximalClosedIstsCount' => 100,
 		],
-		
+
+		// TODO rename to 'payment'
 		'paymentSettings' => [
 			'prefixVariableSymbol' => '00',
+			'fioApiToken' => 'fio API token',
 			'accountNumber' => '0123456789',
+			'scarfPrice' => 70,
 		],
 	],
 ];

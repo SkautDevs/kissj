@@ -25,12 +25,13 @@
 		<div class="card-divide">
 			<div>
 				<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
-				<a href="" class="btn">Automatické potvrzování plateb</a><br/>
-				<a href="{{ path_for('admin-payments') }}" class="btn">Ruční potvrzování plateb</a><br/>
+				<a href="{{ path_for('admin-payments-auto') }}" class="btn">ASpárovat nové platby s bankou</a><br/>
+				<a href="{{ path_for('admin-payments-manually') }}" class="btn">Ruční potvrzování plateb</a><br/>
+				<a href="{{ path_for('admin-payments-setbreakpoint') }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>
 			</div>
 			<div>
-				<a href="{{ path_for('admin-export-medical') }}" class="btn">Export lékařských dat do CSV</a><br/>
-				<a href="{{ path_for('admin-export-logistic') }}" class="btn">Export logistických dat Patrol do CSV</a><br/>
+				<a href="{{ path_for('admin-export-paid') }}" class="btn">Export zaplacených účasníků do CSV</a><br/>
+				<a class="btn btn-grey">Export lékařských dat do CSV</a><br/>
 				<a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
 			</div>
 		</div>
