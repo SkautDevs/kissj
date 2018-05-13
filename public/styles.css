@@ -254,6 +254,14 @@ h2, h3 {
 	outline: none;
 }
 
+.form-control:valid {
+	box-shadow: 1px 1px 1px #1c860e;
+}
+
+.form-control:invalid {
+	box-shadow: 1px 1px 1px #e53434;
+}
+
 .form-wide{
 	width: 100%;
 }
@@ -279,7 +287,7 @@ h2, h3 {
 	--color: #ffcc00;
 }
 .alert-error {
-	--color: #e53434;
+	--color: #a21f16;
 	color: white;
 }
 

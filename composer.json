@@ -47,7 +47,7 @@
 	"process-timeout": 0
   },
   "scripts": {
-	"start": "php -S localhost:8080 -t . index.php",
+	"start": "php -S localhost:80 -t . index.php",
 	"test": "phpunit"
   }
 }
