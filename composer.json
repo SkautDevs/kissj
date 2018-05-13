@@ -28,7 +28,11 @@
 	"tharos/leanmapper": "^3.1",
 	"zeuxisoo/slim-whoops": "0.6.*",
 	"slim/twig-view": "^2.3",
-    "league/csv": "^9.1"
+    "league/csv": "^9.1",
+  	"ext-sqlite3": "*",
+  	"ext-mbstring": "*",
+  	"ext-dom": "*",
+    "h4kuna/fio": "^1.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5"
@@ -43,7 +47,7 @@
 	"process-timeout": 0
   },
   "scripts": {
-	"start": "php -S localhost:8080 -t / index.php",
+	"start": "php -S localhost:80 -t . index.php",
 	"test": "phpunit"
   }
 }
