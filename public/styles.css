@@ -71,6 +71,12 @@
 	background: #e6ebed;
 }
 
+footer {
+	display: flex;
+	justify-content: center;
+	margin-top: 8px;
+}
+
 input, textarea, select, button {
 	font-family: 'themix', sans-serif;
 }
