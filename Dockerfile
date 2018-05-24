@@ -8,16 +8,22 @@ RUN apt-get install -y \
 	git \
 	zip
 
+# it needs to be here, no clue why
+RUN apt-get update
+
+RUN apt-get install -y sqlite3 curl nano
+
 # Apache2
 RUN a2enmod rewrite
 
 # Composer
-RUN apt-get -y install curl nano && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy files
-COPY . /var/www/html/
+# Get database
+COPY ./db_init.sqlite /var/www/html/db.sqlite
+COPY ./sql/init.sql /var/init.sql
+RUN sqlite3 db.sqlite3 < /var/init.sql
 
-# Get dependencies from code
+# Get composer
+COPY ./composer.json /var/www/html/
 RUN composer install --no-interaction
-
