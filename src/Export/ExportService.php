@@ -255,6 +255,7 @@ class ExportService {
 			'Ability to swim',
 			'Needed medicine',
 			'Allergies',
+			'Languages',
 			'Patrol name',
 			'Area',
 			'Skills',
@@ -288,6 +289,7 @@ class ExportService {
 				'yes', // ability to swim
 				'via. medical info', // meeded medicine
 				$leader->allergies,
+				'', // Languages
 				$leader->patrolName,
 				'', // Area',
 				'', // Skills',
@@ -323,6 +325,7 @@ class ExportService {
 					'yes', // ability to swim
 					'via. medical info', // meeded medicine
 					$participant->allergies,
+					'', // Languages
 					$leader->patrolName,
 					'', // 'Area',
 					'', // 'Skills',
@@ -358,6 +361,7 @@ class ExportService {
 				'yes', // ability to swim
 				'via. medical info', // meeded medicine
 				$ist->allergies,
+				$ist->languages,
 				'', // patrol name
 				$ist->workPreferences,
 				$ist->skills,
