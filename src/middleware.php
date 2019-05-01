@@ -6,7 +6,7 @@ use Whoops\Exception\Inspector;
 
 // DEBUGGER
 
-if (($container['settings']['whoopsDebug'])) {
+if ($container['settings']['whoopsDebug']) {
 	$app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 } else {
 	$simplyErrorHandler = function (Exception $exception, Inspector $inspector, $run) use ($container) {
@@ -28,15 +28,15 @@ if (($container['settings']['whoopsDebug'])) {
 $app->add(function (Request $request, Response $response, callable $next) {
 	$uri = $request->getUri();
 	$path = $uri->getPath();
-	if ($path != '/' && substr($path, -1) == '/') {
+	if ($path !== '/' && substr($path, -1) === '/') {
 		// permanently redirect paths with a trailing slash to their non-trailing counterpart
 		$uri = $uri->withPath(substr($path, 0, -1));
 		
-		if ($request->getMethod() == 'GET') {
+		if ($request->getMethod() === 'GET') {
 			return $response->withRedirect((string)$uri, 301);
-		} else {
-			return $next($request->withUri($uri), $response);
 		}
+
+		return $next($request->withUri($uri), $response);
 	}
 	
 	return $next($request, $response);
@@ -59,7 +59,7 @@ $app->add(function (Request $request, Response $response, callable $next) use ($
 	$userRegeneration = $container->get('userRegeneration');
 	$roleRepository = $container->get('roleRepository');
 	$user = $userRegeneration->getCurrentUser();
-	if (!is_null($user)) {
+	if ($user !== null) {
 		$request = $request->withAttribute('user', $user);
 		$request = $request->withAttribute('role', $roleRepository->findOneBy(['userId' => $user->id]));
 	}

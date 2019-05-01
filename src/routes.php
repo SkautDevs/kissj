@@ -3,24 +3,25 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+
 // Routes
-$app->group("/".$settings['settings']['eventName'], function () {
+$app->group('/'.$settings['settings']['eventName'], function() {
 
 	// non-logged users only
-	$this->group("", function () {
+	$this->group('', function() {
 
 		// LANDING, LEGAL & RANDOM
 
-		$this->get("/registration/{role}", function (Request $request, Response $response, array $args) {
+		$this->get('/registration/{role}', function(Request $request, Response $response, array $args) {
 			$role = $args['role'];
 			if (!$this->roleService->isUserRoleNameValid($role)) {
-				throw new Exception('User role "'.$role.'" is not valid');
+				throw new \RuntimeException('User role "'.$role.'" is not valid');
 			}
 
 			return $this->view->render($response, 'registration.twig', ['router' => $this->router, 'role' => $role, 'readableRole' => $this->roleService->getReadableRoleName($role)]);
 		})->setName('registration');
 
-		$this->get("/registrationLostSoul", function (Request $request, Response $response, array $args) {
+		$this->get('/registrationLostSoul', function(Request $request, Response $response, array $args) {
 			if ($this->get('settings')['useTestingSite']) {
 				$this->flashMessages->success('Úspěch!');
 				$this->flashMessages->warning('Pozor!');
@@ -42,12 +43,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		*/
 
-		$this->post("/signup/{role}", function (Request $request, Response $response, array $args) {
+		$this->post('/signup/{role}', function(Request $request, Response $response, array $args) {
 			$role = $args['role'];
 			if (!$this->roleService->isUserRoleNameValid($role)) {
-				throw new Exception('User role "'.$role.'" is not valid');
+				throw new \RuntimeException('User role "'.$role.'" is not valid');
 			}
-			$email = $request->getParsedBodyParam("email");
+			$email = $request->getParsedBodyParam('email');
 
 			if ($this->userService->isEmailExisting($email)) {
 				$this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email, ENT_QUOTES).', protože už takový existuje. Nechceš se spíš příhlásit?');
@@ -65,24 +66,24 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			} catch (Exception $e) {
 				$this->logger->addError("Error sending registration email to $email with token ".
 					$this->userService->getTokenForEmail($email), array ($e));
-				$this->flashMessages->error("Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.");
+				$this->flashMessages->error('Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.');
 				return $response->withRedirect($this->router->pathFor('landing'));
 			}
 		})->setName('signup');
 
 
-		$this->get("/signupSuccess", function (Request $request, Response $response, array $args) {
+		$this->get('/signupSuccess', function(Request $request, Response $response, array $args) {
 			$this->flashMessages->success('Úspěšně zadána emailová adresa!');
 			return $this->view->render($response, 'signupSuccess.twig', []);
 		})->setName('signupSuccess');
 
 
-		$this->get("/login", function (Request $request, Response $response, array $args) {
+		$this->get('/login', function(Request $request, Response $response, array $args) {
 			return $this->view->render($response, 'loginScreen.twig', []);
 		})->setName('loginAskEmail');
 
 
-		$this->post("/login", function (Request $request, Response $response, array $args) {
+		$this->post('/login', function(Request $request, Response $response, array $args) {
 			$email = $request->getParam('email');
 			if ($this->userService->isEmailExisting($email)) {
 				$user = $this->userService->getUserFromEmail($email);
@@ -94,27 +95,27 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				} catch (Exception $e) {
 					$this->logger->addError("Error sending login email to $email with token ".
 						$this->userService->getTokenForEmail($email), array ($e));
-					$this->flashMessages->error("Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.");
+					$this->flashMessages->error('Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.');
 					return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 				}
 
 				$this->flashMessages->success('Posláno! Klikni na odkaz v mailu a tím se přihlásíš!');
 				return $response->withRedirect($this->router->pathFor('landing'));
 
-			} else {
-				$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
-				return $response->withRedirect($this->router->pathFor('landing'));
 			}
+
+			$this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
+			return $response->withRedirect($this->router->pathFor('landing'));
 
 		})->setName('loginScreenAfterSent');
 
 
-		$this->get('/loginHelp', function (Request $request, Response $response, array $args) {
+		$this->get('/loginHelp', function(Request $request, Response $response, array $args) {
 			return $this->view->render($response, 'loginHelp.twig', []);
 		})->setName('loginHelp');
 
 
-		$this->get("/login/{token}", function (Request $request, Response $response, array $args) {
+		$this->get('/login/{token}', function(Request $request, Response $response, array $args) {
 			$loginToken = $args['token'];
 			if ($this->userService->isLoginTokenValid($loginToken)) {
 				$user = $this->userService->getUserFromToken($loginToken);
@@ -122,26 +123,26 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				$this->userService->invalidateAllLoginTokens($user);
 
 				return $response->withRedirect($this->router->pathFor('getDashboard'));
-			} else {
-				$this->flashMessages->warning('Token není platný. Nech si prosím poslat nový přihlašovací email.');
-				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 			}
+
+			$this->flashMessages->warning('Token není platný. Nech si prosím poslat nový přihlašovací email.');
+			return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 		})->setName('loginWithToken');
 
-	})->add(function (Request $request, Response $response, callable $next) {
+	})->add(function(Request $request, Response $response, callable $next) {
 		// protected area for non-logged users only
-		if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
+		if ($this->roleService->getRole($request->getAttribute('user')) === null) {
 			$response = $next($request, $response);
 			return $response;
-		} else {
-			return $response->withRedirect($this->router->pathFor('getDashboard'));
 		}
+
+		return $response->withRedirect($this->router->pathFor('getDashboard'));
 	});
 
 	// logged users only
-	$this->group("", function () {
+	$this->group('', function() {
 
-		$this->get("/logout", function (Request $request, Response $response, array $args) {
+		$this->get('/logout', function(Request $request, Response $response, array $args) {
 			$this->userService->logoutUser();
 			$this->flashMessages->info('Odhlášení bylo úspěšné');
 
@@ -149,35 +150,35 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		})->setName('logout');
 
 
-		$this->get("/getDashboard", function (Request $request, Response $response, array $args) {
+		$this->get('/getDashboard', function(Request $request, Response $response, array $args) {
 
-			if (is_null($request->getAttribute('user'))) {
+			if ($request->getAttribute('user') === null) {
 				$this->flashMessages->error('Sorry, you are not logged');
 				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
 			}
 
 			$roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
 			if (!$this->roleService->isUserRoleNameValid($roleName)) {
-				throw new Exception('Unknown role "'.$roleName.'"');
-			} else {
-				switch ($roleName) {
-					case 'patrol-leader':
-						{
-							return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-						}
-					case 'ist':
-						{
-							return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-						}
-					case 'admin':
-						{
-							return $response->withRedirect($this->router->pathFor('admin-dashboard'));
-						}
-					default:
-						{
-							throw new Exception('Non-implemented role "'.$roleName.'"!');
-						}
-				}
+				throw new \RuntimeException('Unknown role "'.$roleName.'"');
+			}
+
+			switch ($roleName) {
+				case 'patrol-leader':
+					{
+						return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+					}
+				case 'ist':
+					{
+						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+					}
+				case 'admin':
+					{
+						return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+					}
+				default:
+					{
+						throw new \RuntimeException('Non-implemented role "'.$roleName.'"!');
+					}
 			}
 
 		})->setName('getDashboard');
@@ -193,9 +194,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		*/
 
-		$this->group("/ist", function () {
+		$this->group('/ist', function() {
 
-			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
+			$this->get('/dashboard', function(Request $request, Response $response, array $args) {
 				$user = $request->getAttribute('user');
 				$ist = $this->istService->getIst($user);
 				$possibleOnePayment = $this->istService->getOneValidPayment($ist);
@@ -203,14 +204,14 @@ $app->group("/".$settings['settings']['eventName'], function () {
 			})->setName('ist-dashboard');
 
 			// open registration status only
-			$this->group("", function () {
+			$this->group('', function() {
 
-				$this->get("/changeDetails", function (Request $request, Response $response, array $args) {
+				$this->get('/changeDetails', function(Request $request, Response $response, array $args) {
 					$istDetails = $this->istService->getIst($request->getAttribute('user'));
 					return $this->view->render($response, 'changeDetails-ist.twig', ['istDetails' => $istDetails]);
 				})->setName('ist-changeDetails');
 
-				$this->post("/postDetails", function (Request $request, Response $response, array $args) {
+				$this->post('/postDetails', function(Request $request, Response $response, array $args) {
 					$params = $request->getParams();
 					/** @var \kissj\Participant\Ist\IstService $istService */
 					$istService = $this->istService;
@@ -241,57 +242,57 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 						$this->flashMessages->success('Údaje úspěšně uloženy');
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-					} else {
-						$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
-						return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
 					}
+
+					$this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
+					return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
 				})->setName('ist-postDetails');
 
-				$this->get("/closeRegistration", function (Request $request, Response $response, array $args) {
+				$this->get('/closeRegistration', function(Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIst($request->getAttribute('user'));
 					$validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
 					if ($validRegistration) {
 						return $this->view->render($response, 'closeRegistration-ist.twig');
-					} else {
-						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					}
+
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 				})->setName('ist-closeRegistration');
 
-				$this->post("/confirmCloseRegistration", function (Request $request, Response $response, array $args) {
+				$this->post('/confirmCloseRegistration', function(Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIst($request->getAttribute('user'));
 					if ($this->istService->isCloseRegistrationValid($ist)) {
 						$this->istService->closeRegistration($ist);
 						$this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
 						$this->logger->info('Closing registration for IST with ID '.$ist->id);
 						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-					} else {
-						$this->flashMessages->error('Registraci ještě nelze uzavřít');
-						return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 					}
+
+					$this->flashMessages->error('Registraci ještě nelze uzavřít');
+					return $response->withRedirect($this->router->pathFor('ist-dashboard'));
 				})->setName('ist-confirmCloseRegistration');
 
-			})->add(function (Request $request, Response $response, callable $next) {
+			})->add(function(Request $request, Response $response, callable $next) {
 				// change data can only users with open registration
 				/** @var \kissj\User\Role $role */
 				$role = $request->getAttribute('role');
-				if ($role->status != 'open') {
+				if ($role->status !== 'open') {
 					$this->logger->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
-					throw new Exception('You cannot change data if you have not opened registration!');
+					throw new \RuntimeException('You cannot change data if you have not opened registration!');
 				}
 
 				$response = $next($request, $response);
 				return $response;
 			});
 
-		})->add(function (Request $request, Response $response, callable $next) {
+		})->add(function(Request $request, Response $response, callable $next) {
 			// protected area for IST
-			if ($this->roleService->getRole($request->getAttribute('user'))->name != 'ist') {
+			if ($this->roleService->getRole($request->getAttribute('user'))->name !== 'ist') {
 				$this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-			} else {
-				$response = $next($request, $response);
-				return $response;
 			}
+
+			$response = $next($request, $response);
+			return $response;
 		});
 
 		/*
@@ -305,25 +306,25 @@ $app->group("/".$settings['settings']['eventName'], function () {
 		
 		*/
 
-		$this->group("/admin", function () {
+		$this->group('/admin', function() {
 
-			$this->get("/dashboard", function (Request $request, Response $response, array $args) {
+			$this->get('/dashboard', function(Request $request, Response $response, array $args) {
 				$istStatistics = $this->get('istService')->getAllIstsStatistics();
 
-				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'Korbo 2018', 'ists' => $istStatistics]);
+				return $this->view->render($response, 'admin/dashboard-admin.twig', ['eventName' => 'Korbo 2019', 'ists' => $istStatistics]);
 			})->setName('admin-dashboard');
 
 			// APPROVING
 
-			$this->group("/approving", function () {
+			$this->group('/approving', function() {
 
-				$this->get("", function (Request $request, Response $response, array $args) {
+				$this->get('', function(Request $request, Response $response, array $args) {
 					$closedIsts = $this->istService->getAllClosedIsts();
 
-					return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'Korbo 2018', 'closedIsts' => $closedIsts]);
+					return $this->view->render($response, 'admin/approving-admin.twig', ['eventName' => 'Korbo 2019', 'closedIsts' => $closedIsts]);
 				})->setName('admin-approving');
 
-				$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
+				$this->post('/approveIst/{istId}', function(Request $request, Response $response, array $args) {
 					/** @var \kissj\Participant\Ist\IstService $istService */
 					$istService = $this->istService;
 					$ist = $istService->getIstFromId($args['istId']);
@@ -338,12 +339,12 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $response->withRedirect($this->router->pathFor('admin-approving'));
 				})->setName('approveIst');
 
-				$this->get("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+				$this->get('/openIst/{istId}', function(Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIstFromId($args['istId']);
 					return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
 				})->setName('openIst');
 
-				$this->post("/openIst/{istId}", function (Request $request, Response $response, array $args) {
+				$this->post('/openIst/{istId}', function(Request $request, Response $response, array $args) {
 					$ist = $this->istService->getIstFromId($args['istId']);
 					$this->istService->openIst($ist);
 					$reason = $request->getParsedBodyParam('reason');
@@ -357,19 +358,19 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 			// PAYMENTS
 
-			$this->group("/payments", function () {
+			$this->group('/payments', function() {
 
-				$this->get("/manually", function (Request $request, Response $response, array $args) {
+				$this->get('/manually', function(Request $request, Response $response, array $args) {
 					$approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
 
 					$this->view->render($response, 'admin/payments-admin.twig', [
-						'eventName' => 'KORBO 2018',
+						'eventName' => 'Korbo 2019',
 						'approvedIsts' => $approvedIsts,
 						'maxElapsedPaymentDays' => $this->get('settings')['paymentSettings']['maxElapsedPaymentDays'],
 					]);
 				})->setName('admin-payments-manually');
 
-				$this->post("/setPaymentPaid/{payment}", function (Request $request, Response $response, array $args) {
+				$this->post('/setPaymentPaid/{payment}', function(Request $request, Response $response, array $args) {
 					/** @var \kissj\Payment\PaymentService $paymentService */
 					$paymentService = $this->get('paymentService');
 					$paymentId = $args['payment'];
@@ -380,14 +381,14 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $response->withRedirect($this->router->pathFor('admin-payments-manually'));
 				})->setName('setPaymentPaid');
 
-				$this->get("/cancelIstPayment/{paymentId}", function (Request $request, Response $response, array $args) {
+				$this->get('/cancelIstPayment/{paymentId}', function(Request $request, Response $response, array $args) {
 					/** @var \kissj\Payment\Payment $payment */
 					$payment = $this->paymentService->getPaymentFromId($args['paymentId']);
 					$ist = $this->istService->getIst($payment->role->user);
 					return $this->view->render($response, 'admin/cancelIstPayment-admin.twig', ['ist' => $ist, 'payment' => $payment]);
 				})->setName('cancel-ist-payment');
 
-				$this->post("/cancelIstPayment/{paymentId}", function (Request $request, Response $response, array $args) {
+				$this->post('/cancelIstPayment/{paymentId}', function(Request $request, Response $response, array $args) {
 					/** @var \kissj\Payment\PaymentService $paymentService */
 					$paymentService = $this->get('paymentService');
 					/** @var \kissj\Payment\Payment $payment */
@@ -406,9 +407,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $response->withRedirect($this->router->pathFor('admin-payments-manually'));
 				})->setName('cancel-ist-payment-confirmed');
 
-				$this->group("/auto", function () {
+				$this->group('/auto', function() {
 
-					$this->get("/sinceLastUpdate", function (Request $request, Response $response, array $args) {
+					$this->get('/sinceLastUpdate', function(Request $request, Response $response, array $args) {
 						/** @var \kissj\Payment\PaymentService $paymentService */
 						$paymentService = $this->get('paymentService');
 						// TODO optimalite with new function (getAllIstsPayments() or so)
@@ -418,7 +419,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 						return $response->withRedirect($this->router->pathFor('admin-dashboard'));
 					})->setName('admin-payments-auto');
 
-					$this->get("setBreakpoint", function (Request $request, Response $response, array $args) {
+					$this->get('setBreakpoint', function(Request $request, Response $response, array $args) {
 						/** @var \kissj\Payment\PaymentService */
 						$this->get('paymentService')->setLastDate('2016-01-01');
 						$this->get('flashMessages')->success('Poslední break point banky posunut na začátek akce');
@@ -430,9 +431,9 @@ $app->group("/".$settings['settings']['eventName'], function () {
 
 			// EXPORTS
 
-			$this->group("/export", function () {
+			$this->group('/export', function() {
 
-				$this->get("/medical", function (Request $request, Response $response, array $args) {
+				$this->get('/medical', function(Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->medicalDataToCSV($eventName);
 					$this->logger->info('User ID '.$request->getAttribute('user')->id
@@ -441,7 +442,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_medical');
 				})->setName('admin-export-medical');
 
-				$this->get("/logistic", function (Request $request, Response $response, array $args) {
+				$this->get('/logistic', function(Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->logisticDataPatrolsToCSV($eventName);
 					$this->logger->info('User ID '.$request->getAttribute('user')->id
@@ -450,7 +451,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_logistic');
 				})->setName('admin-export-logistic');
 
-				$this->get("/paid", function (Request $request, Response $response, array $args) {
+				$this->get('/paid', function(Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->paidContactDataToCSV($eventName);
 					$this->logger->info('User ID '.$request->getAttribute('user')->id
@@ -459,7 +460,7 @@ $app->group("/".$settings['settings']['eventName'], function () {
 					return $this->exportService->createCSVresponse($response, $csvRows, $eventName.'_paid');
 				})->setName('admin-export-paid');
 
-				$this->get("/full", function (Request $request, Response $response, array $args) {
+				$this->get('/full', function(Request $request, Response $response, array $args) {
 					$eventName = $this->get('settings')['eventName'];
 					$csvRows = $this->exportService->allRegistrationDataToCSV($eventName);
 					$this->logger->info('User ID '.$request->getAttribute('user')->id
@@ -469,32 +470,32 @@ $app->group("/".$settings['settings']['eventName'], function () {
 				})->setName('admin-export-full');
 			});
 
-		})->add(function (Request $request, Response $response, callable $next) {
+		})->add(function(Request $request, Response $response, callable $next) {
 			// protected area for Registration Admins only
-			if ($this->roleService->getRole($request->getAttribute('user'))->name != 'admin') {
+			if ($this->roleService->getRole($request->getAttribute('user'))->name !== 'admin') {
 				$this->flashMessages->error('Pardon, nejsi na akci vedený jako admin');
 				return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-			} else {
-				$response = $next($request, $response);
-				return $response;
 			}
-		});
 
-	})->add(function (Request $request, Response $response, callable $next) {
-		// protected area for logged users only
-		if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
-			$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím');
-			return $response->withRedirect($this->router->pathFor('landing'));
-		} else {
 			$response = $next($request, $response);
 			return $response;
+		});
+
+	})->add(function(Request $request, Response $response, callable $next) {
+		// protected area for logged users only
+		if ($this->roleService->getRole($request->getAttribute('user')) === null) {
+			$this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím');
+			return $response->withRedirect($this->router->pathFor('landing'));
 		}
+
+		$response = $next($request, $response);
+		return $response;
 	});
 
-	$this->any("/admin", function (Request $request, Response $response, array $args) {
+	$this->any('/admin', function(Request $request, Response $response, array $args) {
 		global $adminerSettings;
 		$adminerSettings = $this->get('settings')['adminer'];
-		require __DIR__."/../admin/custom.php";
+		require __DIR__.'/../admin/custom.php';
 	})->setName('administration');
 
 	/*
@@ -508,20 +509,20 @@ $app->group("/".$settings['settings']['eventName'], function () {
 	 
 	*/
 
-	$this->get("", function (Request $request, Response $response, array $args) {
+	$this->get('', function(Request $request, Response $response, array $args) {
 		return $this->view->render($response, 'landing-page.twig');
-	})->setName("landing")->add(function (Request $request, Response $response, callable $next) {
+	})->setName('landing')->add(function(Request $request, Response $response, callable $next) {
 		// protected area for non-logged users only
-		if (is_null($this->roleService->getRole($request->getAttribute('user')))) {
+		if ($this->roleService->getRole($request->getAttribute('user')) === null) {
 			$response = $next($request, $response);
 			return $response;
-		} else {
-			return $response->withRedirect($this->router->pathFor('getDashboard'));
 		}
+
+		return $response->withRedirect($this->router->pathFor('getDashboard'));
 	});
 });
 
-$app->get("/", function (Request $request, Response $response, array $args) {
+$app->get('/', function(Request $request, Response $response, array $args) {
 	//return $this->view->render($response, 'system/landing.twig');
 	return $response->withRedirect($this->router->pathFor('landing'));
 });

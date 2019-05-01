@@ -64,8 +64,8 @@ class UserService {
 		$this->loginTokenRepository->persist($loginToken);
 		
 		$link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => 'Korbo 2018', 'readableRole' => $readableRole]);
-		$this->mailer->sendMail($email, 'Registrace Korbo 2018 - přihlášení', $message);
+		$message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link, 'eventName' => 'Korbo 2019', 'readableRole' => $readableRole]);
+		$this->mailer->sendMail($email, 'Registrace Korbo 2019 - přihlášení', $message);
 		
 		return $token;
 	}

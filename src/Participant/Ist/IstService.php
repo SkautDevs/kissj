@@ -13,6 +13,7 @@ use kissj\User\RoleRepository;
 use kissj\User\RoleService;
 use kissj\User\User;
 
+
 class IstService {
 	/** @var IstRepository */
 	private $istRepository;
@@ -34,7 +35,7 @@ class IstService {
 								MailerInterface $mailer,
 								Twig $renderer,
 								$eventSettings,
-								$eventName = 'korbo2018'
+								$eventName = 'korbo2019'
 	) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
@@ -213,7 +214,7 @@ class IstService {
 
 	public function sendPaymentByMail(Payment $payment, Ist $ist) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
-			'eventName' => 'Korbo 2018',
+			'eventName' => 'Korbo 2019',
 			'accountNumber' => $payment->accountNumber,
 			'price' => $payment->price,
 			'currency' => 'Kč',
@@ -223,25 +224,25 @@ class IstService {
 
 			'istFullName' => $ist->firstName.' '.$ist->lastName]);
 
-		$this->mailer->sendMail($payment->role->user->email, 'Registrace Korbo 2018 - platební informace', $message);
+		$this->mailer->sendMail($payment->role->user->email, 'Registrace Korbo 2019 - platební informace', $message);
 	}
 
 	public function sendDenialMail(Ist $ist, string $reason) {
 		$message = $this->renderer->fetch('emails/denial.twig', [
-			'eventName' => 'Korbo 2018',
+			'eventName' => 'Korbo 2019',
 			'role' => 'ist',
 			'reason' => $reason,
 		]);
 
-		$this->mailer->sendMail($ist->user->email, 'Registrace Korbo 2018 - zamítnutí registrace', $message);
+		$this->mailer->sendMail($ist->user->email, 'Registrace Korbo 2019 - zamítnutí registrace', $message);
 	}
 
 	public function getOneValidPayment(Ist $ist): ?Payment {
 		/** @var Role $role */
-		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2018']);
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2019']); // TODO fix eventname
 		$payments = $this->paymentRepository->findByMultiple([
 			['roleId' => $role],
-			['event' => 'korbo2018'],
+			['event' => 'korbo2019'],
 			['status' => new Relation('canceled', '!=')],
 		]);
 

@@ -2,64 +2,32 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>KORBO test</title>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<title>Korbo test</title>
 	<link rel="stylesheet" href="public/styles.css">
-	<style>
-		input[type=radio]:checked + label {
-			color: #1c860e;
-			font-weight: 800;
-		}
-
-		form.showResults input[type=radio]:checked + label {
-			color: #761c19;
-			font-weight: 800;
-		}
-
-		form.showResults input[type=radio].t + label {
-			color: #1c860e;
-			font-weight: 800;
-		}
-	</style>
 </head>
 <body class="approved-theme">
-<h1 class="text-center">Registrace Korbo 2018</h1>
-<form action="" method="POST" class="card-half card<?php if (!empty($_POST)) echo(' showResults') ?>">
-	<p>Na registraci na KORBO jseš tu správně, předtím je ale třeba absolvovat malý testík!</p>
-	<h3>Témata akce jsou:</h3>
-	<input required type="radio" name="1" id="11" <?php if ($_POST['1'] == 11) echo('checked'); ?> value="11"><label
-			for="11">Svoboda</label><br/>
-	<input type="radio" name="1" id="12" <?php if ($_POST['1'] == 12) echo('checked'); ?> value="12"><label for="12">Skauting</label><br/>
-	<input type="radio" name="1" id="13" <?php if ($_POST['1'] == 13) echo('checked'); ?> value="13"><label for="13">Zodpovědnost</label><br/>
-	<input class="t" type="radio" name="1" id="14" <?php if ($_POST['1'] == 14) echo('checked'); ?> value="14"><label
-			for="14">Vše výše zmíněné</label>
+<h1 class="text-center">Registrace Korbo 2019</h1>
+<form action="<?php if (!empty($_POST['wish'])): ?>test.php/..<?php endif ?>"
+	  method="<?php if (!empty($_POST['wish'])): ?>GET<?php else: ?>POST<?php endif ?>"
+	  class="card card-half">
+	<p>Na registraci na Korbo 2019 jseš tu správně, nejdřív tě ale poprosíme o zodpovězení jedné otázky.</p>
+	<h2><label for="wish">Co by sis na Korbu 2019 přál?</label></h2>
+	<?php if (empty($_POST['wish'])) {
+		echo('<br/>
+	<input required type="text" name="wish" class="form-control form-wide" autofocus>
 	<br/>
+	<input type="submit" class="btn form-wide" value="Odeslat odpověď">
+	');
+	} else {
+		echo('
+
+	<p>'.htmlspecialchars($_POST['wish'], ENT_QUOTES).'</p>
+	<h2><label for="wish">Co konkrétně pro to uděláš?</label></h2>
+	<input required type="text" name="wish" class="form-control form-wide" autofocus>
 	<br/>
-	<br/>
-	<h3>Kdo má zodpovědnost za úklid tábořiště a setřepání toiek?</h3>
-	<input required type="radio" name="2" id="21" <?php if ($_POST['2'] == 21) echo('checked'); ?> value="21"><label
-			for="21">Nikdo</label><br/>
-	<input type="radio" name="2" id="22" <?php if ($_POST['2'] == 22) echo('checked'); ?> value="22"><label for="22">Organizační
-		tým</label><br/>
-	<input type="radio" name="2" id="23" <?php if ($_POST['2'] == 23) echo('checked'); ?> value="23"><label for="23">Servis
-		tým</label><br/>
-	<input class="t" type="radio" name="2" id="24" <?php if ($_POST['2'] == 24) echo('checked'); ?> value="24"><label
-			for="24">Všichni</label>
-	<br/>
-	<br/>
-	<br/>
-	<h3>Čím ti může pomoci přípravný tým před akcí při přípravě aktivit:</h3>
-	<input required type="radio" name="3" id="31" <?php if ($_POST['3'] == 31) echo('checked'); ?> value="31"><label
-			for="31">Konzultací</label><br/>
-	<input type="radio" name="3" id="32" <?php if ($_POST['3'] == 32) echo('checked'); ?> value="32"><label for="32">Penězi</label><br/>
-	<input type="radio" name="3" id="33" <?php if ($_POST['3'] == 33) echo('checked'); ?> value="33"><label for="33">Sehnáním a dopravou materiálu</label><br/>
-	<input class="t" type="radio" name="3" id="34" <?php if ($_POST['3'] == 34) echo('checked'); ?> value="34"><label
-			for="34">Vším výše zmíněným</label><br/>
-	<br/>
-	<?php if (empty($_POST)) echo('<input type="submit" class="btn form-wide" value="Zkontrolovat test">');
-	else echo('<p>Děkujeme za vyplnění testu! Teď můžeš pokračovat</p>
-<a href="test.php/.." class="btn btn-wide">Do registrace!</a>');
-	?>
+	<input type="submit" class="btn form-wide" value="Odeslat a do registrace!">
+	');
+	} ?>
 </form>
 </body>
 </html>

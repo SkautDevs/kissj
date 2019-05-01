@@ -59,7 +59,7 @@ class RoleService {
 		return in_array($role, $this->possibleRoles);
 	}
 	
-	public function getRole(?User $user, string $event = 'korbo2018'): ?Role {
+	public function getRole(?User $user, string $event = 'korbo2019'): ?Role {
 		if (is_null($user)) {
 			return null;
 		} else {

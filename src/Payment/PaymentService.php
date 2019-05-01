@@ -123,7 +123,7 @@ class PaymentService {
 	}
 
 	public function pairNewPayments(array $approvedIstPayments) {
-		$canceledPayments = $this->getCanceledPayments('korbo2018');
+		$canceledPayments = $this->getCanceledPayments('korbo2019');
 		// get list of new payments from bank
 		$transactionsList = $this->paymentAutoMatcherFio->lastDownload();
 
@@ -225,14 +225,14 @@ class PaymentService {
 
 	public function sendCancelPaymentMail(Role $role, string $reason): void {
 		$message = $this->renderer->fetch('emails/cancel-payment.twig', ['reason' => $reason]);
-		$subject = 'Registrace KORBO 2018 - zrušení platby!';
+		$subject = 'Registrace Korbo 2019 - zrušení platby!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 
 	private function sendSuccesfulPaymentEmail(Role $role) {
 		// send mail to user
 		$message = $this->renderer->fetch('emails/payment-successful.twig', []);
-		$subject = 'Registrace KORBO 2018 - platba úspěšně přijata!';
+		$subject = 'Registrace Korbo 2019 - platba úspěšně přijata!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }

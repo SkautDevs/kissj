@@ -1,9 +1,6 @@
 <?php
 
 use kissj\Orm\Mapper;
-use kissj\Participant\Patrol\PatrolParticipantRepository;
-use kissj\Participant\Patrol\PatrolService;
-use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
 use kissj\Payment\PaymentRepository;
@@ -173,36 +170,37 @@ $container['flashMessages'] = function (C $c) {
 
 $container['view'] = function (C $c) {
 	$rendererSettings = $c->get('settings')['renderer'];
-	
+
 	$view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
-		'cache' => $rendererSettings['enable_cache'] ? dirname(__FILE__).'/../temp/twig' : false
+		'cache' => $rendererSettings['enable_cache'] ? __DIR__.'/../temp/twig' : false
 	]);
-	
-	// Instantiate and add Slim specific extension
+
 	$uri = $c['request']->getUri();
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
 	// Add few elements for rendering
 	$portString = '';
 	$port = $uri->getPort();
-	if (!is_null($port)) {
+	if ($port !== null) {
 		$portString .= ':'.$port;
 	}
 	$baseHostScheme = $uri->getScheme().'://'.$uri->getHost().$portString;
 	$view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
 	$view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
 	$view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
+	/** @var \kissj\User\User $user */
 	$user = $c['userRegeneration']->getCurrentUser();
 	$view->getEnvironment()->addGlobal('user', $user);
+	/** @var \kissj\User\RoleService $roleService */
 	$roleService = $c['roleService'];
 	$role = $roleService->getRole($user);
 	$view->getEnvironment()->addGlobal('userRole', $role);
 	$view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($role));
-	
+
 	if ($c->get('settings')['useTestingSite']) {
 		$flashMessages = $c->get('flashMessages');
 		$flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
 		$flashMessages->info('Login pro administraci: admin, heslo: admin, link: '.$c->get('router')->pathFor('administration'));
 	}
-	
+
 	return $view;
 };

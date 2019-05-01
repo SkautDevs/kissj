@@ -17,7 +17,7 @@ kissj is scouts **registration system for national and international Scout Jambo
 - System for food distribution, health information or safety incidents repository
 - bloatware
 
-# Installation (yet)
+# Installation for dev
 
 0. get PHP somewhere 
 	- for example `https://launchpad.net/~ondrej/+archive/ubuntu/php`
@@ -30,7 +30,7 @@ kissj is scouts **registration system for national and international Scout Jambo
 	- Run `sql/init.sql` to `db.sqlite`
 4. Create local config
 	- Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
-5. run `composer start` and visit `localhost:8080` or use your favourite webserver. And you are good to go!
+5. run `composer start` OR `docker-compose up` or use your favourite webserver and visit `localhost:8080`. And you are good to go!
 
 # Devstack
 

@@ -149,10 +149,9 @@ h2, h3 {
 	display: flex;
 	list-style: none;
 	padding: 0;
-	margin: 0 auto;
 	flex-direction: column;
 	max-width: 20em;
-	margin-bottom: 13px;
+	margin: 0 auto 13px;
 }
 
 @media (min-width: 776px) {
@@ -265,7 +264,7 @@ h2, h3 {
 }
 
 .form-control:invalid {
-	box-shadow: 1px 1px 1px #e53434;
+	box-shadow: 2px 2px 2px #e53434;
 }
 
 .form-wide{
