@@ -11,6 +11,6 @@
 			<input type="submit" value="Poslat mail pro přihlášení" class="btn form-wide"/>
 		</form>
 		<br/>
-		<a href="{{ path_for('landing') }}" class="btn btn-grey btn-small">Zpět</a>
+		<a href="{{ path_for('landing', {'eventSlug': eventSlug}) }}" class="btn btn-grey btn-small">Zpět</a>
 	</div>
 {% endblock %}

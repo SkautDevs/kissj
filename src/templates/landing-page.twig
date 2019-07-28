@@ -4,22 +4,27 @@
 	<div class="two-cards">
 		<div class="card registration-theme">
 			<h2>Jseš tu poprvé? Registrace!</h2>
-			<a href="{{ path_for('registration', {'role': 'ist'}) }}" class="btn">Registruj se jako<br>
-				účastník KORBA!</a><br/><br/>
+			<a href="{{ path_for('registration', {'role': 'patrol-leader', 'eventSlug': eventSlug}) }}" class="btn">Registruj se
+				jako<br>
+				Patrol Leader!</a><br/><br/>
+			<a href="{{ path_for('registration', {'role': 'ist', 'eventSlug': eventSlug}) }}" class="btn">Registruj se jako<br>
+				International Service Team!</a><br/><br/>
+			<a href="{{ path_for('registrationLostSoul', {'eventSlug': eventSlug}) }}" class="btn">Nemám Patrol Leadera a stejně chci jet jako
+				účastník!</a><br/><br/>
 		</div>
 
 		<div class="card open-theme">
 			<h2>Vracíš se zpět? Přihlášení!</h2>
-			<form action="{{ path_for('loginScreenAfterSent') }}" method="post">
+			<form action="{{ path_for('loginScreenAfterSent', {'eventSlug': eventSlug}) }}" method="post">
 				<div class="form-group">
 					<label for="form-email">E-mail:</label>
-					<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
+					<input class="form-control form-wide" type="email" name="email" id="form-email" required autocapitalize="none" autocorrect="off"/><br/>
 				</div>
 				<input type="submit" value="Poslat mail &#13;&#10;pro přihlášení" class="btn form-wide"/>
 			</form>
 			<br/>
 			<br/>
-			<a href="{{ path_for('loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>
+			<a href="{{ path_for('kissj-loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>
 		</div>
 	</div>
 {% endblock %}

@@ -1,6 +1,9 @@
 <?php
 
 use kissj\Orm\Mapper;
+use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
 use kissj\Payment\PaymentRepository;
@@ -63,6 +66,20 @@ $container['tokenRepository'] = function (C $c) {
 		$c->get('dbFactory'));
 };
 
+$container['patrolParticipantRepository'] = function (C $c) {
+	return new PatrolParticipantRepository(
+		$c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
+};
+
+$container['patrolLeaderRepository'] = function (C $c) {
+	return new PatrolLeaderRepository(
+		$c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory'));
+};
+
 $container['istRepository'] = function (C $c) {
 	return new IstRepository(
 		$c->get('db'),
@@ -84,6 +101,14 @@ $container['paymentRepository'] = function (C $c) {
 		$c->get('dbFactory'));
 };
 
+$container['eventRepository'] = function (C $c) {
+	return new \kissj\Event\EventRepository(
+		$c->get('db'),
+		$c->get('dbMapper'),
+		$c->get('dbFactory')
+	);
+};
+
 // services
 $container['userRegeneration'] = function (C $c) {
 	return new \kissj\User\UserRegeneration(
@@ -93,6 +118,8 @@ $container['userRegeneration'] = function (C $c) {
 
 $container['exportService'] = function (C $c) {
 	return new \kissj\Export\ExportService(
+		$c->get('patrolParticipantRepository'),
+		$c->get('patrolLeaderRepository'),
 		$c->get('istRepository'),
 		$c->get('roleRepository'));
 };
@@ -111,8 +138,25 @@ $container['userService'] = function (C $c) {
 $container['roleService'] = function (C $c) {
 	return new \kissj\User\RoleService(
 		$c->get('roleRepository'),
+		$c->get('paymentRepository'));
+};
+
+$container['statusService'] = function (C $c) {
+	return new \kissj\User\StatusService();
+};
+
+$container['patrolService'] = function (C $c) {
+	$eventSettings = $c->get('settings')['event'];
+	return new PatrolService(
+		$c->get('patrolParticipantRepository'),
+		$c->get('patrolLeaderRepository'),
+		$c->get('roleRepository'),
 		$c->get('paymentRepository'),
-		$c->get('settings')['eventName']);
+		$c->get('roleService'),
+		$c->get('flashMessages'),
+		$c->get('mailer'),
+		$c->get('view'),
+		$eventSettings);
 };
 
 $container['istService'] = function (C $c) {
@@ -163,6 +207,12 @@ $container['paymentAutoMatcherFio'] = function (C $c) {
 	return $fioFactory->createFioRead('mainAccount');
 };
 
+$container['eventService'] = function (C $c) {
+	return new \kissj\Event\EventService(
+		$c->get('eventRepository')
+	);
+};
+
 // views
 $container['flashMessages'] = function (C $c) {
 	return new kissj\FlashMessages\FlashMessagesBySession();
@@ -172,11 +222,13 @@ $container['view'] = function (C $c) {
 	$rendererSettings = $c->get('settings')['renderer'];
 
 	$view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
-		'cache' => $rendererSettings['enable_cache'] ? __DIR__.'/../temp/twig' : false
+		'cache' => $rendererSettings['enable_cache'] ? __DIR__.'/../temp/twig' : false,
 	]);
 
+	// Instantiate and add Slim specific extension
 	$uri = $c['request']->getUri();
 	$basePath = rtrim(str_ireplace('index.php', '', $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
+	
 	// Add few elements for rendering
 	$portString = '';
 	$port = $uri->getPort();

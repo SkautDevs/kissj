@@ -2,7 +2,7 @@
 
 namespace kissj\User;
 
-
+use kissj\Event\Event;
 use kissj\Payment\PaymentRepository;
 
 class RoleService {
@@ -17,20 +17,19 @@ class RoleService {
 	private $statuses;
 	
 	public function __construct(RoleRepository $roleRepository,
-								PaymentRepository $paymentRepository,
-								string $eventName) {
+								PaymentRepository $paymentRepository) {
 		$this->roleRepository = $roleRepository;
 		$this->paymentRepository = $paymentRepository;
 		$this->eventName = $eventName;
 		$this->possibleRoles = [
 			'patrol-leader', // leader of whole patrol
 			'ist', // self-standing International Service Team
-			//'guest',
-			//'staff',
-			//'team',
-			//'event-chief',
-			//'contingent-chief',
-			'admin' // for approving participants & getting useful info about them
+			//'attendee' // self-standing participant with less informations
+			//'guest', // one-day visitor
+			//'staff', // worker from external services
+			//'team', // organizators
+			//'contingent-chief', // chief of one contingent only
+			'admin' // chief of event - for approving participants & getting useful info about them
 		];
 		$this->statuses = [
 			'open',
@@ -38,10 +37,7 @@ class RoleService {
 			'approved',
 			'paid'];
 	}
-	
-	
-	// ROLES
-	
+
 	public function getReadableRoleName(string $role): string {
 		switch ($role) {
 			case 'patrol-leader':
@@ -59,20 +55,20 @@ class RoleService {
 		return in_array($role, $this->possibleRoles);
 	}
 	
-	public function getRole(?User $user, string $event = 'korbo2019'): ?Role {
+	public function getRole(?User $user, ?Event $event): ?Role {
 		if (is_null($user)) {
 			return null;
 		} else {
-			return $this->roleRepository->findOneBy(['user' => $user]);
+			return $this->roleRepository->findOneBy(['user' => $user, 'event' => $event->slug]);
 		}
 	}
 	
-	public function addRole(User $user, string $roleName) {
+	public function addRole(User $user, string $roleName, Event $event) {
 		$role = new Role();
 		$role->name = $roleName;
 		$role->user = $user;
-		$role->event = $this->eventName;
-		$role->status = $this->getFirstStatus($roleName);
+		$role->event = $event->slug;
+		$role->status = 'open';
 		$this->roleRepository->persist($role);
 	}
 	

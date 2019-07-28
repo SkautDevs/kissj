@@ -1,0 +1,89 @@
+{% extends "kissj/_layout.twig" %}
+
+{% block content %}
+	<div class="card registration-theme">
+		<h2>Založení registrace akce</h2>
+
+		<form method="POST" action="{{ path_for('postCreateEvent') }}">
+			<label class="form-group form-group-inline">
+				Název akce:
+				<input class="form-control" type="text" name="readableName" required="required"
+					   placeholder="například Central European Jamboree 2018">
+			</label>
+			<label class="form-group form-group-inline">
+				Zkratka akce (slug):
+				<input class="form-control" type="text" name="slug" required="required"
+					   placeholder="povolená jsou pouze písmena, čísla a pomlčka - třeba cej2018">
+			</label>
+
+			<br/>
+			<h3>Účastníci</h3>
+			<label class="form-group form-group-inline">
+				<b>Patrola</b> se skládá z jednoho vůdce a několika účastníků. Povolit účast:
+				<input class="form-control" type="checkbox" name="allowPatrols" checked>
+			</label>
+			<label class="form-group form-group-inline">
+				Maximální povolený počet patrol na akci:
+				<input class="form-control form-narrow" type="number" min="1" name="maximalClosedPatrolsCount"
+					   required="required">
+			</label>
+			<label class="form-group form-group-inline">
+				Minimální počet účastníků v patrole:
+				<input class="form-control form-narrow" type="number" min="1" name="minimalPatrolParticipantsCount"
+					   required="required">
+			</label>
+			<label class="form-group form-group-inline">
+				Maximální počet účastníků v patrole:
+				<input class="form-control form-narrow" type="number" min="1" name="maximalPatrolParticipantsCount"
+					   required="required">
+			</label>
+
+			<br/>
+
+			<label class="form-group form-group-inline">
+				<b>IST - International Service Team</b> je mezinárodní servis na akci. Povolit účast:
+				<input class="form-control" type="checkbox" name="allowIsts" checked>
+			</label>
+			<label class="form-group form-group-inline">
+				Maximální povolený počet IST na akci:
+				<input class="form-control" type="number" min="1" name="maximalClosedIstsCount" required="required">
+			</label>
+
+			<br/>
+			<h3>Platby</h3>
+			<label class="form-group form-group-inline">
+				Číslo účtu:
+				<input class="form-control" type="text" name="accountNumber" required="required"
+					   placeholder="bez čtyřčíslí za lomítkem, třeba 34-12345678">
+			</label>
+			<label class="form-group form-group-inline">
+				Číselná předvolba variabilního symbolu
+				<input class="form-control" type="number" name="prefixVariableSymbol" min="0" required="required"
+					   placeholder="číslo před každým var. symbolem (např. rok)">
+			</label>
+
+			<label class="form-group form-group-inline">
+				Automaticky párovat platby z banky:
+				<input class="form-control" type="checkbox" name="automaticPaymentPairing" checked>
+			</label>
+			<label class="form-group form-group-inline">Banka:
+				<select class="form-control" name="bankId" required="required">
+					{% for bank in banks %}
+						<option value="{{ bank.id }}">
+							{{ bank.name }}
+						</option>
+					{% endfor %}
+				</select>
+			</label>
+			<label class="form-group form-group-inline">
+				API klíč od banky: <a href="" target="_blank">(jak získám API klíč?)</a>
+				<input class="form-control" type="text" name="bankApi" required="required"
+					   placeholder="třeba Q554WrEvdvR4TffvZ3U3IOP">
+			</label>
+
+			<br/>
+			<input type="submit" value="Založit registraci" class="btn btn-small">
+		</form>
+
+	</div>
+{% endblock %}

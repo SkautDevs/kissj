@@ -1,10 +1,15 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-	<p>Ahoj,</p>
-	<p>přihlašuješ se do registrace jako účastník na akci Korbo 2019.</p>
+	<p>Ahoj!</p>
+	{% if eventName %}
+		<p>Přihlašuješ se do registrace jako {{ readableRole }} na akci {{ eventName }}.</p>
+	{% else %}
+		<p>Přihlašuješ se do založení registrace na webu <b>r.skauting.cz</b>.</p>
+	{% endif %}
 	<a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}">Přihlásit!</a>
-	<p>Pokud Ti tlačítko nefunguje nebo se Ti nezobrazuje, zkus následující odkaz zkopírovat do adresního řádku
-		prohlížeče: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
-	<p>Více informací najdeš na <a href="https://korbo.skauting.cz/">https://korbo.skauting.cz/</a></p>
+	<p>Pokud ti tlačítko nefunguje nebo se ti nezobrazuje, zkus následující odkaz zkopírovat do adresního řádku
+		prohlížeče: <a
+				href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
+	<p>Více informací najdeš na <a href="https://r.skauting.cz/">https://cej2018.skaut.cz/</a></p>
 {% endblock %}

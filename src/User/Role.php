@@ -2,12 +2,13 @@
 
 namespace kissj\User;
 
+use kissj\Event\Event;
 use LeanMapper\Entity;
 
 /**
  * @property int    $id
  * @property string $name
- * @property string $event
+ * @property Event  $event m:hasOne
  * @property string $status
  * @property User   $user m:hasOne
  */
