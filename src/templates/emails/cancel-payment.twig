@@ -2,12 +2,14 @@
 
 {% block content %}
 	<p>Ahoj,</p>
-	<p>bohužel jsme museli Tvoji platbu pro akci {{ event.name }} zamítnout. </p>
+	<p>bohužel jsme museli Tvoji platbu pro akci Korbo 2019 zamítnout. </p>
 	<p>Důvod: {{ reason }}.</p>
-	<p><b>Neplať se starými údaji!</b> Pokud chceš i přesto jet, napiš nám a dostaneš údaje k nové platbě. </p>
-	<p>V případě jakýchkoliv nejasností se můžeš podívat na web <a href="{{ event.web }}">{{ event.web }}</a>
-		nebo
-		nám napiš na mail <a href="mailto:{{ event.email }}">{{ event.email }}</a><span class="noselect">.</span></p>
+	<p><b>Neplať se starými údaji!</b> Chceš i přesto jet? Znovu si v systému uzavři registraci na
+		<a href="{{ event.web }}">{{ event.web }} (údaje tam máš stále uložené),
+		my tě znovu schválíme a pošleme ti nové údaje k nové platbě. </p>
+	<p>V případě jakýchkoliv nejasností se můžeš podívat na web
+		<a href="https://korbo.skauting.cz/">https://korbo.skauting.cz</a>
+		nebo nám napiš na mail <a href="mailto:korbo@skaut.cz">korbo@skaut.cz</a><span class="noselect">.</span></p>
 
 	<p>S pozdravem<br/>
 		{{ event.gooodbye }}</p>

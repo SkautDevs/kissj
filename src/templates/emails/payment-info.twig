@@ -3,32 +3,25 @@
 {% block content %}
 	<p>Ahoj,</p>
 	<p>právě jsme schválili
-		{% if role == 'ist' %}tvojí {% endif %}
-		registraci
-		{% if role == 'patrol-leader' %}tvojí patroly {{ patrolName }}{% endif %}
-		na akci <b>{{ eventName }}</b>! Jako další krok potřebujeme, abys
-		{% if role == 'patrol-leader' %}za patrolu {% endif %}
-		zaplatil{% if gender == 'žena' %}a{% endif %}
-		účastnický poplatek.</p>
+		Tvoji registraci na <b>Korbo 2019</b>! K plnohodnotné registraci Ti chybí už jen jediný krok, a to do <b>sedmi
+			dní</b> zaplatit účastnický poplatek.</p>
 
 	<h3><u>Platební informace</u></h3>
-	<h3>Číslo účtu: {{ accountNumber }}</h3>
-	<h3>Částka: {{ price }} {{ currency }}</h3>
+	<h3>Číslo transparentního účtu: <a href="https://ib.fio.cz/ib/transparent?a=2501628268">{{ accountNumber }}</a>
+	</h3>
+	<h3>Částka: minimálně {{ price }} {{ currency }}</h3>
 	<h3>Variabilní symbol: {{ variableSymbol }}</h3>
-	<h3>Poznámka: CEJ18
-		{% if role == 'patrol-leader' %}{{ patrolName }}{% endif %}
-		{% if role == 'ist' %}{{ istFullName }}{% endif %}
+	<h3>Poznámka: Korbo 2019 {{ istFullName }}
 	</h3>
 
-	<p>
-		{% if role == 'patrol-leader' %}Peníze pošli za celou patrolu dohromady. {% endif %}
-		<b>Zaplať prosím do 16.2.</b> -
-		po tomto termínu nabídneme tvoje místo v kontingentu dalšímu zájemci.</p>
+	<p>V případě, že nesouhlasíš s tím, že by se Tvá platba měla objevit na transparentním účtu Korba, <b>zatím neplať</b> a
+		napiš nám prosím na mail <a href="mailto:korbo@skaut.cz">korbo@skaut.cz</a><span class="noselect">.</span></p>
 
-	<p>V případě jakýchkoliv nejasností se můžeš podívat do registrace: <a href="https://r.skauting.cz/cej2018">https://r.skauting.cz/cej2018</a><span
-				class="noselect">, </span>na web <a href="https://cej2018.skaut.cz/">https://cej2018.skaut.cz</a> nebo
-		nám napiš na mail <a href="mailto:cej2018@skaut.cz">cej2018@skaut.cz</a><span class="noselect">.</span></p>
+	<p>V případě jakýchkoliv nejasností se můžeš podívat do registrace:
+		<a href="https://korbo.skauting.cz/registrace">https://korbo.skauting.cz/registrace</a>
+		<span class="noselect">, </span>na web: <a href="https://korbo.skauting.cz">https://korbo.skauting.cz</a>
+		nebo nebo nám napsat na výše uvedený Korbo mail.</p>
 
-	<p>S pozdravem<br/>
-		registrační tým českého kontingentu CEJ 2018</p>
+	<p>Děkujeme, <br/>
+		Korbo tým 2019</p>
 {% endblock %}

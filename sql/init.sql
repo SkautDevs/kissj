@@ -3,73 +3,19 @@ CREATE TABLE user (
 	email TEXT NOT NULL
 );
 
-CREATE TABLE patrolparticipant (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
-	
-	firstName          TEXT,
-	lastName           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	notes              TEXT
-);
-
-CREATE TABLE patrolleader (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	userId             INT CONSTRAINT patrolleader_userId_fk REFERENCES USER (id),
-	
-	patrolName         TEXT,
-	-- same as patrolparticipant
-	firstName          TEXT,
-	lastName           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	notes              TEXT
-);
-
 CREATE TABLE ist (
-	id                   INTEGER PRIMARY KEY autoincrement,
-	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-	
-	workPreferences      TEXT,
-	skills               TEXT,
-	languages            TEXT,
-	arrivalDate          DATETIME,
-	leavingDate          DATETIME,
-	carRegistrationPlate TEXT,
-	-- same as patrolparticipant
-	firstName            TEXT,
-	lastName             TEXT,
-	permanentResidence   TEXT,
-	telephoneNumber      TEXT,
-	gender               TEXT,
-	country              TEXT,
-	email                TEXT,
-	scoutUnit            TEXT,
-	birthDate            DATETIME,
-	birthPlace           TEXT,
-	allergies            TEXT,
-	foodPreferences      TEXT,
-	cardPassportNumber   TEXT,
-	notes                TEXT
+	id                  INTEGER PRIMARY KEY autoincrement,
+	userId              INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
+	firstName           TEXT,
+	lastName            TEXT,
+	nickname            TEXT,
+	permanentResidence  TEXT,
+	gender              TEXT,
+	email               TEXT,
+	legalRepresestative TEXT,
+	birthDate           DATETIME,
+	scarf               TEXT,
+	notes               TEXT
 );
 
 CREATE UNIQUE INDEX user_email_uindex
@@ -81,8 +27,8 @@ CREATE TABLE logintoken (
 	autoincrement,
 	token   TEXT NOT NULL,
 	userId  INT
-	CONSTRAINT login_tokens_users_id_fk
-	REFERENCES USER (id),
+		CONSTRAINT login_tokens_users_id_fk
+		REFERENCES USER (id),
 	created DATETIME,
 	used    BOOLEAN
 );
@@ -104,5 +50,6 @@ CREATE TABLE payment (
 	status         TEXT NOT NULL,
 	purpose        TEXT NOT NULL,
 	accountNumber  TEXT NOT NULL,
+	generatedDate  DATETIME NOT NULL,
 	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
 );

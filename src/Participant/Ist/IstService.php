@@ -13,6 +13,7 @@ use kissj\User\RoleRepository;
 use kissj\User\RoleService;
 use kissj\User\User;
 
+
 class IstService {
 	/** @var IstRepository */
 	private $istRepository;
@@ -34,7 +35,7 @@ class IstService {
 								MailerInterface $mailer,
 								Twig $renderer,
 								$eventSettings,
-								$eventName = 'cej2018'
+								$eventName = 'korbo2019'
 	) {
 		$this->istRepository = $istRepository;
 		$this->roleRepository = $roleRepository;
@@ -99,65 +100,40 @@ class IstService {
 		return $this->isIstDetailsValid(
 			$ist->firstName,
 			$ist->lastName,
-			$ist->allergies,
+			$ist->nickname,
 			($ist->birthDate ? $ist->birthDate->format('Y-m-d') : null),
-			$ist->birthPlace,
-			$ist->country,
 			$ist->gender,
 			$ist->permanentResidence,
-			$ist->scoutUnit,
-			$ist->telephoneNumber,
 			$ist->email,
-			$ist->foodPreferences,
-			$ist->cardPassportNumber,
-			$ist->notes,
-			$ist->workPreferences,
-			$ist->skills,
-			$ist->languages,
-			($ist->arrivalDate ? $ist->arrivalDate->format('Y-m-d') : null),
-			($ist->leavingDate ? $ist->leavingDate->format('Y-m-d') : null),
-			$ist->carRegistrationPlate);
+			$ist->legalRepresestative,
+			$ist->scarf,
+			$ist->notes);
 	}
 
 	public function isIstDetailsValid(?string $firstName,
 									  ?string $lastName,
-									  ?string $allergies,
+									  ?string $nickname,
 									  ?string $birthDate,
-									  ?string $birthPlace,
-									  ?string $country,
 									  ?string $gender,
 									  ?string $permanentResidence,
-									  ?string $scoutUnit,
-									  ?string $telephoneNumber,
 									  ?string $email,
-									  ?string $foodPreferences,
-									  ?string $cardPassportNumber,
-									  ?string $notes,
-
-									  ?string $workPreferences,
-									  ?string $skills,
-									  ?string $languages,
-									  ?string $arrivalDate,
-									  ?string $leavingDate,
-									  ?string $carRegistrationPlate
+									  ?string $legalRepresestative,
+									  ?string $scarf,
+									  ?string $notes
 	): bool {
 		$validFlag = true;
-		
-		
-		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($languages) || is_null($arrivalDate) || is_null($leavingDate)) {
+
+
+		if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($gender) || is_null($permanentResidence) || is_null($email) || is_null($scarf)) {
 			$validFlag = false;
 		}
-		
-		foreach ([$birthDate, $arrivalDate, $leavingDate] as $date) {
+
+		foreach ([$birthDate] as $date) {
 			if (!empty($date) && $date !== date('Y-m-d', strtotime($date))) {
 				$validFlag = false;
 				break;
 			}
 		}
-		// check for numbers and plus sight up front only
-		/*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
-			$validFlag = false;
-		}*/
 
 		if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			$validFlag = false;
@@ -169,46 +145,24 @@ class IstService {
 	public function editIstInfo(Ist $ist,
 								?string $firstName,
 								?string $lastName,
-								?string $allergies,
+								?string $nickname,
 								?string $birthDate,
-								?string $birthPlace,
-								?string $country,
 								?string $gender,
 								?string $permanentResidence,
-								?string $scoutUnit,
-								?string $telephoneNumber,
 								?string $email,
-								?string $foodPreferences,
-								?string $cardPassportNumber,
-								?string $notes,
-
-								?string $workPreferences,
-								?string $skills,
-								?string $languages,
-								?string $arrivalDate,
-								?string $leavingDate,
-								?string $carRegistrationPlate) {
+								?string $legalRepresestative,
+								?string $scarf,
+								?string $notes) {
 		$ist->firstName = $firstName;
 		$ist->lastName = $lastName;
-		$ist->allergies = $allergies;
+		$ist->nickname = $nickname;
 		$ist->birthDate = new \DateTime($birthDate);
-		$ist->birthPlace = $birthPlace;
-		$ist->country = $country;
 		$ist->gender = $gender;
 		$ist->permanentResidence = $permanentResidence;
-		$ist->scoutUnit = $scoutUnit;
-		$ist->telephoneNumber = $telephoneNumber;
 		$ist->email = $email;
-		$ist->foodPreferences = $foodPreferences;
-		$ist->cardPassportNumber = $cardPassportNumber;
+		$ist->legalRepresestative = $legalRepresestative;
+		$ist->scarf = $scarf;
 		$ist->notes = $notes;
-
-		$ist->workPreferences = $workPreferences;
-		$ist->skills = $skills;
-		$ist->languages = $languages;
-		$ist->arrivalDate = new \DateTime($arrivalDate);
-		$ist->leavingDate = new \DateTime($leavingDate);
-		$ist->carRegistrationPlate = $carRegistrationPlate;
 
 		$this->istRepository->persist($ist);
 	}
@@ -216,11 +170,11 @@ class IstService {
 	public function isCloseRegistrationValid(Ist $ist): bool {
 		$validityFlag = true;
 		if (!$this->isIstValid($ist)) {
-			$this->flashMessages->warning('Nelze uzavřít registraci - údaje IST nejsou kompletní');
+			$this->flashMessages->warning('Nelze uzavřít registraci - údaje nejsou kompletní');
 			$validityFlag = false;
 		}
 		if ($this->getClosedIstsCount() >= $this->eventSettings['maximalClosedIstsCount']) {
-			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných IST a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu pro IST.');
+			$this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných účastníků a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu.');
 			$validityFlag = false;
 		}
 
@@ -260,7 +214,7 @@ class IstService {
 
 	public function sendPaymentByMail(Payment $payment, Ist $ist) {
 		$message = $this->renderer->fetch('emails/payment-info.twig', [
-			'eventName' => 'CEJ 2018',
+			'eventName' => 'Korbo 2019',
 			'accountNumber' => $payment->accountNumber,
 			'price' => $payment->price,
 			'currency' => 'Kč',
@@ -270,25 +224,25 @@ class IstService {
 
 			'istFullName' => $ist->firstName.' '.$ist->lastName]);
 
-		$this->mailer->sendMail($payment->role->user->email, 'Registrace CEJ 2018 - platební informace', $message);
+		$this->mailer->sendMail($payment->role->user->email, 'Registrace Korbo 2019 - platební informace', $message);
 	}
 
 	public function sendDenialMail(Ist $ist, string $reason) {
 		$message = $this->renderer->fetch('emails/denial.twig', [
-			'eventName' => 'CEJ 2018',
+			'eventName' => 'Korbo 2019',
 			'role' => 'ist',
 			'reason' => $reason,
 		]);
 
-		$this->mailer->sendMail($ist->user->email, 'Registrace CEJ 2018 - zamítnutí registrace', $message);
+		$this->mailer->sendMail($ist->user->email, 'Registrace Korbo 2019 - zamítnutí registrace', $message);
 	}
 
 	public function getOneValidPayment(Ist $ist): ?Payment {
 		/** @var Role $role */
-		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2018']);
+		$role = $this->roleRepository->findOneBy(['userId' => $ist->user->id, 'event' => 'korbo2019']); // TODO fix eventname
 		$payments = $this->paymentRepository->findByMultiple([
 			['roleId' => $role],
-			['event' => 'korbo2018'],
+			['event' => 'korbo2019'],
 			['status' => new Relation('canceled', '!=')],
 		]);
 

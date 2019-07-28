@@ -1,9 +1,10 @@
-vendor/*
-logs/*
-.idea/*
+/vendor/*
+/logs/*
+/.idea/*
 /db.sqlite
 /db_test.sqlite
 /src/settings_custom.php
-temp/*
-backups/*
-forms/*
+/temp/*
+/backups/*
+/forms/*
+/docs

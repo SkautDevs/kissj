@@ -51,19 +51,22 @@ class PaymentService {
 		$this->random = $random;
 	}
 
-	public function createNewPayment(Role $role): Payment {
+	public function createNewPayment(Role $role, bool $extraScarf): Payment {
 		$newVS = $this->generateVariableSymbol($this->settings['prefixVariableSymbol']);
-		$price = $this->getPriceFor($role);
-
 		$newPayment = new Payment();
 		$newPayment->event = $this->eventName;
 		$newPayment->variableSymbol = $newVS;
-		$newPayment->price = $price;
+		$newPayment->price = $this->getPriceFor($role);
+		// YAGNI!
+		if ($extraScarf) {
+			$newPayment->price += $this->settings['scarfPrice'];
+		}
 		$newPayment->currency = 'CZK';
 		$newPayment->status = 'waiting';
 		$newPayment->purpose = 'fee';
 		$newPayment->role = $role;
 		$newPayment->accountNumber = $this->settings['accountNumber'];
+		$newPayment->generatedDate = new \DateTime();
 
 		$this->paymentRepository->persist($newPayment);
 
@@ -86,9 +89,8 @@ class PaymentService {
 	private function getPriceFor(Role $role): int {
 		switch ($role->name) {
 			case 'ist':
-				return 2900;
-			case 'patrol-leader':
-				return 57000;
+				// před 1.7. 300, při a po 1.7. 450
+				return 300;
 			default:
 				throw new \Exception('Unknown role: '.$role->name);
 		}
@@ -121,7 +123,7 @@ class PaymentService {
 	}
 
 	public function pairNewPayments(array $approvedIstPayments) {
-		$canceledPayments = $this->getCanceledPayments('korbo2018');
+		$canceledPayments = $this->getCanceledPayments('korbo2019');
 		// get list of new payments from bank
 		$transactionsList = $this->paymentAutoMatcherFio->lastDownload();
 
@@ -223,14 +225,14 @@ class PaymentService {
 
 	public function sendCancelPaymentMail(Role $role, string $reason): void {
 		$message = $this->renderer->fetch('emails/cancel-payment.twig', ['reason' => $reason]);
-		$subject = 'Registrace KORBO 2018 - zrušení platby!';
+		$subject = 'Registrace Korbo 2019 - zrušení platby!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 
 	private function sendSuccesfulPaymentEmail(Role $role) {
 		// send mail to user
 		$message = $this->renderer->fetch('emails/payment-successful.twig', []);
-		$subject = 'Registrace KORBO 2018 - platba úspěšně přijata!';
+		$subject = 'Registrace Korbo 2019 - platba úspěšně přijata!';
 		$this->mailer->sendMail($role->user->email, $subject, $message);
 	}
 }
