@@ -17,7 +17,8 @@ kissj is scouts **registration system for national and international Scout Jambo
 - System for food distribution, health information or safety incidents repository
 - bloatware
 
-# Installation (yet)
+# Installation
+## Bare metal with Apache2
 
 0. get PHP somewhere 
 	- for example `https://launchpad.net/~ondrej/+archive/ubuntu/php`
@@ -31,6 +32,14 @@ kissj is scouts **registration system for national and international Scout Jambo
 4. Create local config
 	- Copy `src/settings_custom_empty.php` to `src/settings_custom.php` 
 5. run `composer start` and visit `localhost` or use your favourite webserver. And you are good to go!
+
+## Docker
+1. Get latest Docker and docker-compose
+ - Latest Docker Unix command: `curl -sSL https://get.docker.com/ | sh`
+ - Install script for latest docker-compose `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh` 
+2. run `docker-compose build && docker-compose up`
+3. visit `localhost:8000`
+
 
 # Devstack
 

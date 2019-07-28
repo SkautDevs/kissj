@@ -84,6 +84,8 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
 		$mailer->AltBody = strip_tags($body);
 		
 		$mailSent = $mailer->send();
+		var_dump($mailSent);
+		die();
 		
 		// TODO add reason into exception
 		if ($mailSent === false) {
