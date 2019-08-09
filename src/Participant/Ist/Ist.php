@@ -18,7 +18,7 @@ use kissj\User\User;
  * @property string|null    $scarf
  * @property string|null    $notes
  *
- * @property User           $user m:hasOne
+ * @property User           $user      m:hasOne
  */
 class Ist extends Participant {
 

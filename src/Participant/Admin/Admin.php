@@ -1,12 +1,12 @@
 <?php
 
-namespace kissj\Participant\Guest;
+namespace kissj\Participant\Admin;
 
 use kissj\Participant\Participant;
 
 /**
  * @property int $id
  */
-class Guest extends Participant {
+class Admin extends Participant {
 
 }

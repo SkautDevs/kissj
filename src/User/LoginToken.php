@@ -6,28 +6,26 @@ use LeanMapper\Entity;
 
 /**
  * Class User
- * @property int $id
- * @property string $token
- * @property User $user m:hasOne
- * @property boolean $used
+ * @property int       $id
+ * @property string    $token
+ * @property User      $user    m:hasOne
+ * @property boolean   $used
  * @property \DateTime $created m:passThru(dateFromString|dateToString)
  */
 class LoginToken extends Entity {
-
     public function dateToString(?\DateTime $val): ?string {
-        if (is_null($val)) {
+        if ($val === null) {
             return null;
-        } else {
-            return $val->format(DATE_ISO8601);
         }
+
+        return $val->format(DATE_ATOM);
     }
 
     public function dateFromString(?string $val): ?\DateTime {
         if (empty($val)) {
             return null;
-        } else {
-            return new \DateTime($val);
         }
-    }
 
+        return new \DateTime($val);
+    }
 }

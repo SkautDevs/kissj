@@ -4,7 +4,6 @@ namespace kissj\Participant\Patrol;
 
 use kissj\Orm\Repository;
 
-
 /**
  * Class LoginTokenRepository
  * @method PatrolLeader findOneBy(array $criteria)

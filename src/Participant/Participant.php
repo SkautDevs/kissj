@@ -5,10 +5,8 @@ namespace kissj\Participant;
 use kissj\User\User;
 use LeanMapper\Entity;
 
-
 /**
  * @property int         $id
- *
  * @property string|null $firstName
  * @property string|null $lastName
  * @property string|null $permanentResidence
@@ -25,23 +23,23 @@ use LeanMapper\Entity;
  * @property string|null $tshirtSize
  * @property string|null $notes
  *
- * @property User        $user m:hasOne
+ * @property User|null   $user m:hasOne
  */
 class Participant extends Entity {
 
-	public function dateToString(?\DateTime $val): ?string {
-		if ($val === null) {
-			return null;
-		}
+    public function dateToString(?\DateTime $val): ?string {
+        if ($val === null) {
+            return null;
+        }
 
-		return $val->format(DATE_ATOM);
-	}
+        return $val->format(DATE_ATOM);
+    }
 
-	public function dateFromString(?string $val): ?\DateTime {
-		if (empty($val)) {
-			return null;
-		}
+    public function dateFromString(?string $val): ?\DateTime {
+        if (empty($val)) {
+            return null;
+        }
 
-		return new \DateTime($val);
-	}
+        return new \DateTime($val);
+    }
 }

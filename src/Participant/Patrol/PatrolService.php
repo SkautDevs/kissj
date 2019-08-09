@@ -7,22 +7,14 @@ use kissj\Mailer\MailerInterface;
 use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
-use kissj\User\Role;
-use kissj\User\RoleRepository;
-use kissj\User\RoleService;
 use kissj\User\User;
 use Slim\Views\Twig;
-
 
 class PatrolService {
     /** @var PatrolParticipantRepository */
     private $patrolParticipantRepository;
     /** @var PatrolLeaderRepository */
     private $patrolLeaderRepository;
-    /** @var \kissj\User\RoleRepository */
-    private $roleRepository;
-    /** @var RoleService */
-    private $roleService;
     /** @var PaymentRepository */
     private $paymentRepository;
     private $eventSettings;
@@ -30,21 +22,19 @@ class PatrolService {
 
     private $eventName;
 
-    public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
-                                PatrolLeaderRepository $patrolLeaderRepository,
-                                RoleRepository $roleRepository,
-                                PaymentRepository $paymentRepository,
-                                RoleService $roleService,
-                                FlashMessagesInterface $flashMessages,
-                                MailerInterface $mailer,
-                                Twig $renderer,
-                                $eventSettings,
-                                $eventName = 'cej2018') {
+    public function __construct(
+        PatrolParticipantRepository $patrolParticipantRepository,
+        PatrolLeaderRepository $patrolLeaderRepository,
+        PaymentRepository $paymentRepository,
+        FlashMessagesInterface $flashMessages,
+        MailerInterface $mailer,
+        Twig $renderer,
+        $eventSettings,
+        $eventName
+    ) {
         $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->patrolLeaderRepository = $patrolLeaderRepository;
-        $this->roleRepository = $roleRepository;
         $this->paymentRepository = $paymentRepository;
-        $this->roleService = $roleService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
         $this->renderer = $renderer;
@@ -62,6 +52,7 @@ class PatrolService {
         }
 
         $patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
+
         return $patrolLeader;
     }
 
@@ -73,7 +64,8 @@ class PatrolService {
         $closedPatrols = $this->roleRepository->findBy([
             'event' => $this->eventName,
             'name' => 'patrol-leader',
-            'status' => 'closed']);
+            'status' => 'closed',
+        ]);
         $patrols = [];
         /** @var Role $closedPatrol */
         foreach ($closedPatrols as $closedPatrol) {
@@ -91,7 +83,8 @@ class PatrolService {
         $approvedIsts = $this->roleRepository->findBy([
             'event' => $this->eventName,
             'name' => 'patrol-leader',
-            'status' => 'approved']);
+            'status' => 'approved',
+        ]);
         $patrolLeaders = [];
         /** @var Role $approvedPatrolLeader */
         foreach ($approvedIsts as $approvedPatrolLeader) {
@@ -102,7 +95,6 @@ class PatrolService {
 
         return $patrolLeaders;
     }
-
 
     private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
         return $this->isPatrolLeaderDetailsValid(
@@ -124,21 +116,23 @@ class PatrolService {
         );
     }
 
-    public function isPatrolLeaderDetailsValid(?string $firstName,
-                                               ?string $lastName,
-                                               ?string $allergies,
-                                               ?string $birthDate,
-                                               ?string $birthPlace,
-                                               ?string $country,
-                                               ?string $gender,
-                                               ?string $permanentResidence,
-                                               ?string $scoutUnit,
-                                               ?string $telephoneNumber,
-                                               ?string $email,
-                                               ?string $foodPreferences,
-                                               ?string $cardPassportNumber,
-                                               ?string $notes,
-                                               ?string $patrolName): bool {
+    public function isPatrolLeaderDetailsValid(
+        ?string $firstName,
+        ?string $lastName,
+        ?string $allergies,
+        ?string $birthDate,
+        ?string $birthPlace,
+        ?string $country,
+        ?string $gender,
+        ?string $permanentResidence,
+        ?string $scoutUnit,
+        ?string $telephoneNumber,
+        ?string $email,
+        ?string $foodPreferences,
+        ?string $cardPassportNumber,
+        ?string $notes,
+        ?string $patrolName
+    ): bool {
         $validFlag = true;
 
         if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($patrolName)) {
@@ -159,22 +153,24 @@ class PatrolService {
         return $validFlag;
     }
 
-    public function editPatrolLeaderInfo(PatrolLeader $patrolLeader,
-                                         ?string $firstName,
-                                         ?string $lastName,
-                                         ?string $allergies,
-                                         ?string $birthDate,
-                                         ?string $birthPlace,
-                                         ?string $country,
-                                         ?string $gender,
-                                         ?string $permanentResidence,
-                                         ?string $scoutUnit,
-                                         ?string $telephoneNumber,
-                                         ?string $email,
-                                         ?string $foodPreferences,
-                                         ?string $cardPassportNumber,
-                                         ?string $notes,
-                                         ?string $patrolName) {
+    public function editPatrolLeaderInfo(
+        PatrolLeader $patrolLeader,
+        ?string $firstName,
+        ?string $lastName,
+        ?string $allergies,
+        ?string $birthDate,
+        ?string $birthPlace,
+        ?string $country,
+        ?string $gender,
+        ?string $permanentResidence,
+        ?string $scoutUnit,
+        ?string $telephoneNumber,
+        ?string $email,
+        ?string $foodPreferences,
+        ?string $cardPassportNumber,
+        ?string $notes,
+        ?string $patrolName
+    ) {
         $patrolLeader->firstName = $firstName;
         $patrolLeader->lastName = $lastName;
         $patrolLeader->allergies = $allergies;
@@ -232,20 +228,22 @@ class PatrolService {
         );
     }
 
-    public function isPatrolParticipantDetailsValid(?string $firstName,
-                                                    ?string $lastName,
-                                                    ?string $allergies,
-                                                    ?string $birthDate,
-                                                    ?string $birthPlace,
-                                                    ?string $country,
-                                                    ?string $gender,
-                                                    ?string $permanentResidence,
-                                                    ?string $scoutUnit,
-                                                    ?string $telephoneNumber,
-                                                    ?string $email,
-                                                    ?string $foodPreferences,
-                                                    ?string $cardPassportNumber,
-                                                    ?string $notes): bool {
+    public function isPatrolParticipantDetailsValid(
+        ?string $firstName,
+        ?string $lastName,
+        ?string $allergies,
+        ?string $birthDate,
+        ?string $birthPlace,
+        ?string $country,
+        ?string $gender,
+        ?string $permanentResidence,
+        ?string $scoutUnit,
+        ?string $telephoneNumber,
+        ?string $email,
+        ?string $foodPreferences,
+        ?string $cardPassportNumber,
+        ?string $notes
+    ): bool {
         $validFlag = true;
 
         if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email)) {
@@ -266,21 +264,23 @@ class PatrolService {
         return $validFlag;
     }
 
-    public function editPatrolParticipant(PatrolParticipant $patrolParticipant,
-                                          ?string $firstName,
-                                          ?string $lastName,
-                                          ?string $allergies,
-                                          ?string $birthDate,
-                                          ?string $birthPlace,
-                                          ?string $country,
-                                          ?string $gender,
-                                          ?string $permanentResidence,
-                                          ?string $scoutUnit,
-                                          ?string $telephoneNumber,
-                                          ?string $email,
-                                          ?string $foodPreferences,
-                                          ?string $cardPassportNumber,
-                                          ?string $notes) {
+    public function editPatrolParticipant(
+        PatrolParticipant $patrolParticipant,
+        ?string $firstName,
+        ?string $lastName,
+        ?string $allergies,
+        ?string $birthDate,
+        ?string $birthPlace,
+        ?string $country,
+        ?string $gender,
+        ?string $permanentResidence,
+        ?string $scoutUnit,
+        ?string $telephoneNumber,
+        ?string $email,
+        ?string $foodPreferences,
+        ?string $cardPassportNumber,
+        ?string $notes
+    ) {
         $patrolParticipant->firstName = $firstName;
         $patrolParticipant->lastName = $lastName;
         $patrolParticipant->allergies = $allergies;
@@ -307,8 +307,10 @@ class PatrolService {
         $this->patrolParticipantRepository->delete($patrolParticipant);
     }
 
-    public function patrolParticipantBelongsPatrolLeader(PatrolParticipant $patrolParticipant,
-                                                         PatrolLeader $patrolLeader): bool {
+    public function patrolParticipantBelongsPatrolLeader(
+        PatrolParticipant $patrolParticipant,
+        PatrolLeader $patrolLeader
+    ): bool {
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
     }
 
@@ -347,7 +349,7 @@ class PatrolService {
         return $this->roleRepository->countBy([
             'name' => 'patrol-leader',
             'event' => $this->eventName,
-            'status' => new Relation('open', '!=')
+            'status' => new Relation('open', '!='),
         ]);
     }
 
@@ -357,19 +359,19 @@ class PatrolService {
         $patrols['closed'] = $this->roleRepository->countBy([
             'name' => 'patrol-leader',
             'event' => $this->eventName,
-            'status' => new Relation('closed', '==')
+            'status' => new Relation('closed', '=='),
         ]);
 
         $patrols['approved'] = $this->roleRepository->countBy([
             'name' => 'patrol-leader',
             'event' => $this->eventName,
-            'status' => new Relation('approved', '==')
+            'status' => new Relation('approved', '=='),
         ]);
 
         $patrols['paid'] = $this->roleRepository->countBy([
             'name' => 'patrol-leader',
             'event' => $this->eventName,
-            'status' => new Relation('paid', '==')
+            'status' => new Relation('paid', '=='),
         ]);
 
         return $patrols;
@@ -403,9 +405,21 @@ class PatrolService {
 
     // TODO make this more clever
     public function getOnePayment(PatrolLeader $patrolLeader): ?Payment {
-        if ($this->paymentRepository->isExisting(['roleId' => $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id, 'event' => 'cej2018'])])) {
-            return $this->paymentRepository->findOneBy(['roleId' => $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id, 'event' => 'cej2018'])]);
-        } else return null;
+        if ($this->paymentRepository->isExisting([
+            'roleId' => $this->roleRepository->findOneBy([
+                'userId' => $patrolLeader->user->id,
+                'event' => 'cej2018',
+            ]),
+        ])) {
+            return $this->paymentRepository->findOneBy([
+                'roleId' => $this->roleRepository->findOneBy([
+                    'userId' => $patrolLeader->user->id,
+                    'event' => 'cej2018',
+                ]),
+            ]);
+        } else {
+            return null;
+        }
     }
 
     public function closeRegistration(PatrolLeader $patrolLeader) {
