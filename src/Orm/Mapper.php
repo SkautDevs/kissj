@@ -3,9 +3,9 @@
 namespace kissj\Orm;
 
 use kissj\Event\Event;
-use kissj\Participant\Patrol\PatrolParticipant;
-use kissj\Participant\Patrol\PatrolLeader;
-use kissj\Participant\Ist\Ist;
+use kissj\Participants\Ist\Ist;
+use kissj\Participants\Patrol\PatrolLeader;
+use kissj\Participants\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
 use kissj\User\LoginToken;
 use kissj\User\Role;
@@ -14,6 +14,7 @@ use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
 use LeanMapper\Row;
+
 
 class Mapper implements IMapper {
 

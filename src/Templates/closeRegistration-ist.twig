@@ -1,0 +1,18 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card open-theme">
+		<h2>Uzavřít registraci</h2>
+		<p>Skutečně chceš uzavřít registraci? <b>Tato akce je nevratná a zadané údaje už nepůjdou změnit!</b></p>
+		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration') }}">
+			<label><input type="checkbox" required="required">Souhlasím s ustanoveními o Ochraně osobních údajů a o
+				Právní odpovědnosti umístněnými na <a target="_blank" href="https://korbo.skauting.cz/pravni-aspekty/">https://korbo.skauting.cz/pravni-aspekty/</a>.
+			</label><br/>
+			<br/>
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uzavřít registraci">
+				<a href="{{ path_for('ist-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
+			</div>
+		</form>
+	</div>
+{% endblock %}

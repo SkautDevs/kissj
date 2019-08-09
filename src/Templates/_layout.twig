@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Korbo measuring tag -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115639191-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+
+		gtag('js', new Date());
+
+		gtag('config', 'UA-115639191-1');
+	</script>
+
+	<!-- Korbo tag manager -->
+	<script>(function (w, d, s, l, i) {
+			w[l] = w[l] || [];
+			w[l].push({
+				'gtm.start':
+					new Date().getTime(), event: 'gtm.js'
+			});
+			var f = d.getElementsByTagName(s)[0],
+				j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+			j.async = true;
+			j.src =
+				'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+			f.parentNode.insertBefore(j, f);
+		})(window, document, 'script', 'dataLayer', 'GTM-5LGV55C');</script>
+
+	<meta charset="utf-8"/>
+	<meta name="robots" content="noindex, nofollow">
+
+	<title>Registrace Korbo 2019 - kissj</title>
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
+
+	<script src="{{ base_url() }}/public/date-polyfill.js" defer></script>
+</head>
+
+<body lang="cs">
+<div class="wrapper">
+	<h1 class="text-center">Registrace na Korbo 2019</h1>
+	<div class="user text-right">
+		{% if user is not null %}
+			{{ user.email }}
+			<a class="" href="{{ path_for('logout') }}">Odhlásit se</a>
+			{% set userStatus = userRole.status %}
+		{% else %}
+			{% set userStatus = "unregistred" %}
+		{% endif %}
+		<br/>
+	</div>
+	<ul class="progressbar">
+		<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
+		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
+		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzavřená přihláška</li>
+		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Schválená přihláška</li>
+		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
+	</ul>
+	<div class="flash-wrapper">
+		{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
+			<div class="alert alert-{{ flashMessage['type'] }}">
+				{{ flashMessage['message'] }}
+			</div>
+		{% endfor %}
+	</div>
+	<main role="main" class="container">
+		{% block content %}{% endblock %}
+	</main>
+	<footer>
+		<a href="https://devs.skauting.cz/">S ♥ vybrousil Lung</a>
+	</footer>
+</div>
+</body>
+</html>

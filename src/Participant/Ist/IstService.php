@@ -15,7 +15,7 @@ use kissj\User\User;
 
 
 class IstService {
-	/** @var IstRepository */
+	/** @var GuestRepository */
 	private $istRepository;
 	/** @var RoleRepository */
 	private $roleRepository;
@@ -27,7 +27,7 @@ class IstService {
 	private $mailer;
 	private $eventSettings;
 
-	public function __construct(IstRepository $istRepository,
+	public function __construct(GuestRepository $istRepository,
 								RoleRepository $roleRepository,
 								PaymentRepository $paymentRepository,
 								RoleService $userStatusService,

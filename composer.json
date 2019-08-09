@@ -1,53 +1,54 @@
 {
-  "name": "skaut/kissj",
-  "description": "Scout registration system for jamborees",
-  "keywords": [
-	"registraton",
-	"system",
-	"scouts",
-	"skaut"
-  ],
-  "homepage": "http://github.com/skaut/kissj",
-  "license": "MIT",
-  "authors": [
-	{
-	  "name": "Lung",
-	  "email": "lung@skaut.cz"
+	"name": "skaut/kissj",
+	"description": "Scout registration system for jamborees",
+	"keywords": [
+		"registraton",
+		"system",
+		"scouts",
+		"skaut"
+	],
+	"homepage": "http://github.com/skaut/kissj",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Lung",
+			"email": "lung@skaut.cz"
+		},
+		{
+			"name": "Matěj",
+			"email": "racinmat@fel.cvut.cz"
+		}
+	],
+	"require": {
+		"php": "^7.1",
+		"slim/slim": "^3.1",
+		"slim/php-view": "^2.0",
+		"monolog/monolog": "^1.17",
+		"phpmailer/phpmailer": "^6.0",
+		"tharos/leanmapper": "^3.1",
+		"zeuxisoo/slim-whoops": "0.6.*",
+		"slim/twig-view": "^2.3",
+		"league/csv": "^9.1",
+		"h4kuna/fio": "^1.3",
+		"ext-sqlite3": "*",
+		"ext-mbstring": "*",
+		"ext-dom": "*"
 	},
-	{
-	  "name": "Matěj",
-	  "email": "racinmat@fel.cvut.cz"
+	"require-dev": {
+		"roave/security-advisories": "dev-master",
+		"phpunit/phpunit": "^6.5"
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "Tests/",
+			"kissj\\": "src/"
+		}
+	},
+	"config": {
+		"process-timeout": 0
+	},
+	"scripts": {
+		"start": "php -S localhost:80 -t . index.php",
+		"test": "phpunit"
 	}
-  ],
-  "require": {
-	"php": "^7.1",
-	"slim/slim": "^3.1",
-	"slim/php-view": "^2.0",
-	"monolog/monolog": "^1.17",
-	"phpmailer/phpmailer": "^6.0",
-	"tharos/leanmapper": "^3.1",
-	"zeuxisoo/slim-whoops": "0.6.*",
-	"slim/twig-view": "^2.3",
-    "league/csv": "^9.1",
-  	"ext-sqlite3": "*",
-  	"ext-mbstring": "*",
-  	"ext-dom": "*",
-    "h4kuna/fio": "^1.3"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.5"
-  },
-  "autoload-dev": {
-	"psr-4": {
-	  "Tests\\": "tests/",
-	  "kissj\\": "src/"
-	}
-  },
-  "config": {
-	"process-timeout": 0
-  },
-  "scripts": {
-	"start": "php -S localhost:80 -t . index.php",
-	"test": "phpunit"
-  }
 }

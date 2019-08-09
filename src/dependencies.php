@@ -1,17 +1,18 @@
 <?php
 
 use kissj\Orm\Mapper;
+use kissj\Participant\Ist\GuestRepository;
+use kissj\Participant\Ist\GuestService;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
-use kissj\Participant\Patrol\PatrolLeaderRepository;
-use kissj\Participant\Ist\IstRepository;
-use kissj\Participant\Ist\IstService;
 use kissj\Payment\PaymentRepository;
 use kissj\User\LoginTokenRepository;
+use kissj\User\RoleRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
-use \kissj\User\RoleRepository;
-use \Psr\Container\ContainerInterface as C;
+use Psr\Container\ContainerInterface as C;
+
 
 $container = $app->getContainer();
 
@@ -85,7 +86,7 @@ $container['patrolLeaderRepository'] = function (C $c) {
 };
 
 $container['istRepository'] = function (C $c) {
-	return new IstRepository(
+    return new GuestRepository(
 		$c->get('db'),
 		$c->get('dbMapper'),
 		$c->get('dbFactory'));
@@ -165,7 +166,7 @@ $container['patrolService'] = function (C $c) {
 
 $container['istService'] = function (C $c) {
 	$eventSettings = $c->get('settings')['event'];
-	return new IstService(
+    return new GuestService(
 		$c->get('istRepository'),
 		$c->get('roleRepository'),
 		$c->get('paymentRepository'),

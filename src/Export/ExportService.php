@@ -3,17 +3,18 @@
 namespace kissj\Export;
 
 use kissj\Orm\Relation;
+use kissj\Participant\Ist\GuestRepository;
 use kissj\Participant\Ist\Ist;
-use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\User\Role;
 use kissj\User\RoleRepository;
-use Slim\Http\Response;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use Slim\Http\Response;
+
 
 class ExportService {
 
@@ -23,16 +24,16 @@ class ExportService {
 	/** @var PatrolLeaderRepository */
 	private $patrolLeaderRepository;
 
-	/** @var IstRepository */
+    /** @var GuestRepository */
 	private $istRepository;
 
 	/** @var RoleRepository */
 	private $roleRepository;
 	
 	public function __construct(PatrolParticipantRepository $patrolParticipantRepository,
-								PatrolLeaderRepository $patrolLeaderRepository,
-								IstRepository $istRepository,
-								RoleRepository $roleRepository) {
+                                PatrolLeaderRepository $patrolLeaderRepository,
+                                GuestRepository $istRepository,
+                                RoleRepository $roleRepository) {
 		$this->patrolParticipantRepository = $patrolParticipantRepository;
 		$this->patrolLeaderRepository = $patrolLeaderRepository;
 		$this->istRepository = $istRepository;

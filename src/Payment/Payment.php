@@ -2,8 +2,9 @@
 
 namespace kissj\Payment;
 
+use kissj\Participants\Participant;
 use kissj\User\Role;
-use kissj\Participant\Participant;
+
 
 /**
  * @property int       $id

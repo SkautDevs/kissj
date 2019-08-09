@@ -1,8 +1,7 @@
 /vendor/*
 /logs/*
 /.idea/*
-/db.sqlite
-/db_test.sqlite
+*.sqlite
 /src/settings_custom.php
 /temp/*
 /backups/*

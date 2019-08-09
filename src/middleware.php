@@ -4,6 +4,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Whoops\Exception\Inspector;
 
+
 // DEBUGGER
 
 if ($container['settings']['whoopsDebug']) {
@@ -15,8 +16,8 @@ if ($container['settings']['whoopsDebug']) {
 		$message = $inspector->getExceptionMessage();
 		
 		$container->get('logger')->error('Exception! '.$title.'('.$code.') -> '.$message);
-		
-		require 'templates/exception.php';
+
+        require 'Templates/exception.php';
 		exit;
 	};
 	

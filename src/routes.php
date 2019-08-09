@@ -3,6 +3,7 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+
 $helper['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
 	// protected area for non-logged users only
 	if (is_null($request->getAttribute('user'))) {
@@ -827,7 +828,7 @@ $app->group("/v1", function () use ($helper) {
 						})->setName('admin-approving');
 						
 						$this->post("/approvePatrolLeader/{patrolLeaderId}", function (Request $request, Response $response, array $args) {
-							/** @var \kissj\Participant\Patrol\PatrolService $patrolService */
+                            /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
 							$patrolService = $this->patrolService;
 							$patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
 							$patrolService->approvePatrol($patrolLeader);
@@ -858,7 +859,7 @@ $app->group("/v1", function () use ($helper) {
 						
 						
 						$this->post("/approveIst/{istId}", function (Request $request, Response $response, array $args) {
-							/** @var \kissj\Participant\Ist\IstService $istService */
+                            /** @var \kissj\Participant\Ist\GuestService $istService */
 							$istService = $this->istService;
 							$ist = $istService->getIstFromId($args['istId']);
 							$istService->approveIst($ist);
@@ -953,7 +954,7 @@ $app->group("/v1", function () use ($helper) {
 			$this->any("/admin", function (Request $request, Response $response, array $args) {
 				global $adminerSettings;
 				$adminerSettings = $this->get('settings')['adminer'];
-				require __DIR__."/../admin/custom.php";
+                require __DIR__."/../admin/custom.php";
 			})->setName('administration');
 			
 		})->add($helper['addEventInfoIntoRequest'])->add($helper['addRoleInfoIntoRequest']);

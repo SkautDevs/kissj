@@ -1,9 +1,10 @@
 <?php
 
-namespace kissj\Participant\Ist;
+namespace kissj\Participant\Guest;
 
 use kissj\Participant\Participant;
 use kissj\User\User;
+
 
 /**
  * @property int            $id
@@ -18,8 +19,8 @@ use kissj\User\User;
  * @property string|null    $scarf
  * @property string|null    $notes
  *
- * @property User           $user m:hasOne
+ * @property User           $user      m:hasOne
  */
-class Ist extends Participant {
+class Guest extends Participant {
 
 }

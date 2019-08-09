@@ -16,7 +16,7 @@ $settings = [
 
 		// Renderer settings
 		'renderer' => [
-			'templates_path' => __DIR__.'/templates/',
+            'templates_path' => __DIR__.'/Templates/',
 			'enable_cache' => true,
 		],
 

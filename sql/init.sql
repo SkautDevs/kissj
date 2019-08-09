@@ -1,49 +1,131 @@
 CREATE TABLE user (
-	id    INTEGER PRIMARY KEY    autoincrement,
-	email TEXT NOT NULL
-);
-
-CREATE TABLE ist (
-	id                  INTEGER PRIMARY KEY autoincrement,
-	userId              INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-	firstName           TEXT,
-	lastName            TEXT,
-	nickname            TEXT,
-	permanentResidence  TEXT,
-	gender              TEXT,
-	email               TEXT,
-	legalRepresestative TEXT,
-	birthDate           DATETIME,
-	scarf               TEXT,
-	notes               TEXT
+	id     INTEGER PRIMARY KEY AUTOINCREMENT,
+	email  TEXT NOT NULL,
+	event  TEXT NOT NULL,
+	status TEXT NOT NULL
 );
 
 CREATE UNIQUE INDEX user_email_uindex
 	ON user (email);
 
 CREATE TABLE logintoken (
-	id      INTEGER
-		PRIMARY KEY
-	autoincrement,
+	id      INTEGER PRIMARY KEY AUTOINCREMENT,
 	token   TEXT NOT NULL,
-	userId  INT
-		CONSTRAINT login_tokens_users_id_fk
-		REFERENCES USER (id),
+	userId  INT CONSTRAINT login_tokens_users_id_fk REFERENCES USER (id),
 	created DATETIME,
 	used    BOOLEAN
 );
 
-CREATE TABLE role (
-	id      INTEGER PRIMARY KEY autoincrement,
-	name    TEXT,
-	eventId INT CONSTRAINT role_eventId_fk REFERENCES event (id),
-	status  TEXT,
-	userId  INT CONSTRAINT role_userId_fk REFERENCES user (id)
+CREATE TABLE patrolparticipant (
+	id                 INTEGER PRIMARY KEY autoincrement,
+	patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
+
+	firstName          TEXT,
+	lastName           TEXT,
+	nickname           TEXT,
+	permanentResidence TEXT,
+	telephoneNumber    TEXT,
+	gender             TEXT,
+	country            TEXT,
+	email              TEXT,
+	scoutUnit          TEXT,
+	birthDate          DATETIME,
+	birthPlace         TEXT,
+	allergies          TEXT,
+	foodPreferences    TEXT,
+	cardPassportNumber TEXT,
+	tshirtSize         TEXT,
+	scarf              TEXT,
+	notes              TEXT
+);
+
+CREATE TABLE patrolleader (
+	id                 INTEGER PRIMARY KEY autoincrement,
+	userId             INT CONSTRAINT patrolleader_userId_fk REFERENCES USER (id),
+
+	patrolName         TEXT,
+	-- same as patrolparticipant
+	firstName          TEXT,
+	lastName           TEXT,
+	nickname           TEXT,
+	permanentResidence TEXT,
+	telephoneNumber    TEXT,
+	gender             TEXT,
+	country            TEXT,
+	email              TEXT,
+	scoutUnit          TEXT,
+	birthDate          DATETIME,
+	birthPlace         TEXT,
+	allergies          TEXT,
+	foodPreferences    TEXT,
+	cardPassportNumber TEXT,
+	tshirtSize         TEXT,
+	scarf              TEXT,
+	notes              TEXT
+);
+
+CREATE TABLE ist (
+	id                   INTEGER PRIMARY KEY autoincrement,
+	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
+
+	workPreferences      TEXT,
+	skills               TEXT,
+	languages            TEXT,
+	arrivalDate          DATETIME,
+	leavingDate          DATETIME,
+	carRegistrationPlate TEXT,
+	-- same as patrolparticipant
+	firstName            TEXT,
+	lastName             TEXT,
+	nickname             TEXT,
+	permanentResidence   TEXT,
+	telephoneNumber      TEXT,
+	gender               TEXT,
+	country              TEXT,
+	email                TEXT,
+	scoutUnit            TEXT,
+	birthDate            DATETIME,
+	birthPlace           TEXT,
+	allergies            TEXT,
+	foodPreferences      TEXT,
+	cardPassportNumber   TEXT,
+	tshirtSize           TEXT,
+	scarf                TEXT,
+	notes                TEXT
+);
+
+CREATE TABLE guest (
+	id                   INTEGER PRIMARY KEY autoincrement,
+	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
+
+	workPreferences      TEXT,
+	skills               TEXT,
+	languages            TEXT,
+	arrivalDate          DATETIME,
+	leavingDate          DATETIME,
+	carRegistrationPlate TEXT,
+	-- same as patrolparticipant
+	firstName            TEXT,
+	lastName             TEXT,
+	nickname             TEXT,
+	permanentResidence   TEXT,
+	telephoneNumber      TEXT,
+	gender               TEXT,
+	country              TEXT,
+	email                TEXT,
+	scoutUnit            TEXT,
+	birthDate            DATETIME,
+	birthPlace           TEXT,
+	allergies            TEXT,
+	foodPreferences      TEXT,
+	cardPassportNumber   TEXT,
+	tshirtSize           TEXT,
+	scarf                TEXT,
+	notes                TEXT
 );
 
 CREATE TABLE payment (
 	id             INTEGER PRIMARY KEY autoincrement,
-	event          TEXT NOT NULL,
 	variableSymbol TEXT NOT NULL,
 	price          TEXT NOT NULL,
 	currency       TEXT NOT NULL,
