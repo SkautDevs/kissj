@@ -41,7 +41,7 @@ function adminer_object() {
         }
 
         function database() {
-            return __DIR__.'/../db.sqlite';
+            return __DIR__.'/../src/db.sqlite';
         }
 
         function login($login, $password) {

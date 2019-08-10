@@ -29,15 +29,10 @@ $container['mailer'] = function (C $c) {
     return new \kissj\Mailer\PhpMailerWrapper($settings['mailer']);
 };
 
-$container['random'] = function (C $c) {
-    return new \kissj\Random();
-};
-
 $container['banks'] = function (C $c) {
     return new \kissj\Payment\Banks();
 };
 
-// db
 $container['db'] = function (C $c) {
     $path = $c->get('settings')['db']['path'];
     $connection = new LeanMapper\Connection([
@@ -48,7 +43,6 @@ $container['db'] = function (C $c) {
     return $connection;
 };
 
-// db_mapper
 $container['dbMapper'] = function (C $c) {
     return new Mapper();
 };
@@ -146,47 +140,35 @@ $container['userService'] = function (C $c) {
         $c->get('tokenRepository'),
         $c->get('mailer'),
         $c->get('router'),
-        $c->get('random'),
-        $c->get('settings')['eventName'],
         $c->get('view')
     );
 };
 
 $container['istService'] = function (C $c) {
-    $eventSettings = $c->get('settings')['event'];
-
     return new IstService(
         $c->get('istRepository'),
-        $c->get('roleRepository'),
         $c->get('paymentRepository'),
-        $c->get('roleService'),
         $c->get('flashMessages'),
         $c->get('mailer'),
         $c->get('view'),
-        $eventSettings);
+        $c->get('settings')['event']);
 };
 
 $container['patrolService'] = function (C $c) {
-    $eventSettings = $c->get('settings')['event'];
-
     return new PatrolService(
         $c->get('patrolParticipantRepository'),
         $c->get('patrolLeaderRepository'),
-        $c->get('roleRepository'),
         $c->get('paymentRepository'),
-        $c->get('roleService'),
         $c->get('flashMessages'),
         $c->get('mailer'),
         $c->get('view'),
-        $eventSettings);
+        $c->get('settings')['event']);
 };
 
 
 $container['paymentService'] = function (C $c) {
-    $paymentsSettings = $c->get('settings')['paymentSettings'];
-
     return new \kissj\Payment\PaymentService(
-        $paymentsSettings,
+        $c->get('settings')['payment'],
         $c->get('paymentRepository'),
         $c->get('paymentAutoMatcherFio'),
         $c->get('roleRepository'),
@@ -225,20 +207,24 @@ $container['eventService'] = function (C $c) {
     );
 };
 
-// views
 $container['flashMessages'] = function (C $c) {
     return new kissj\FlashMessages\FlashMessagesBySession();
+};
+
+$container['event'] = function (C $c): \kissj\Event\Event {
+    return $c->get('eventService')->getEventFromSlug('cej');
 };
 
 $container['view'] = function (C $c) {
     $rendererSettings = $c->get('settings')['renderer'];
 
     $view = new \Slim\Views\Twig($rendererSettings['templates_path'], [
-        'cache' => $rendererSettings['enable_cache'] ? __DIR__.'/../temp/twig' : false,
+        'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
     ]);
 
-    // Instantiate and add Slim specific extension
-    $uri = $c['request']->getUri();
+    /** @var \Slim\Http\Request $request */
+    $request = $c['request'];
+    $uri = $request->getUri();
     $basePath = rtrim(str_ireplace('index.php', '',
         $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
 
@@ -252,11 +238,10 @@ $container['view'] = function (C $c) {
     $view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
     $view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
     $view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
+    $view->getEnvironment()->addGlobal('event', $c['event']);
     /** @var \kissj\User\User $user */
     $user = $c['userRegeneration']->getCurrentUser();
     $view->getEnvironment()->addGlobal('user', $user);
-    $view->getEnvironment()->addGlobal('userRole', $user->role);
-    $view->getEnvironment()->addGlobal('userCustomHelp', $roleService->getHelpForRole($user->role));
 
     if ($c->get('settings')['useTestingSite']) {
         $flashMessages = $c->get('flashMessages');

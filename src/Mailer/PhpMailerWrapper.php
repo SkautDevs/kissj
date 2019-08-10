@@ -5,7 +5,7 @@ namespace kissj\Mailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
+class PhpMailerWrapper implements MailerInterface {
 
     private $smtp;
     private $smtp_server;
@@ -39,10 +39,10 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
         $this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
     }
 
-    public function sendMail($recipientEmail, $subject, $body) {
-        $mailer = new PHPMailer();
+    public function sendMail($recipientEmail, $subject, $body): void {
+        $mailer = new PHPMailer(true);
 
-        //Server settings
+        try {
         $mailer->SMTPDebug = $this->debugOutputLevel; // Enable debug output
         if ($this->smtp) {
             $mailer->isSMTP();
@@ -63,7 +63,7 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
         $mailer->SMTPAuth = $this->smtp_auth;    // Enable SMTP authentication
         $mailer->Username = $this->smtp_username;    // SMTP username
         $mailer->Password = $this->smtp_password;    // SMTP password
-        $mailer->SMTPSecure = $this->smtp_secure;    // Enable TLS encryption, `ssl` also accepted
+            $mailer->SMTPSecure = $this->smtp_secure;    // Enable TLS encryption, `ssl` or null also accepted
         $mailer->CharSet = 'UTF-8';
 
         //Recipients
@@ -77,19 +77,14 @@ class PhpMailerWrapper implements \kissj\Mailer\MailerInterface {
         }
 
         // Content
-        $mailer->isHTML(true);
-
+            $mailer->isHTML();
         $mailer->Subject = $subject;
         $mailer->Body = $body;
         $mailer->AltBody = strip_tags($body);
 
-        $mailSent = $mailer->send();
-        var_dump($mailSent);
-        die();
-
-        // TODO add reason into exception
-        if ($mailSent === false) {
-            throw new Exception("Error sending email");
+            $mailer->send();
+        } catch (\Exception $e) {
+            throw new Exception('Error sending email', $e->getCode(), $e);
         }
     }
 }

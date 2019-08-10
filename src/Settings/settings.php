@@ -16,8 +16,9 @@ $settings = [
 
 		// Renderer settings
 		'renderer' => [
-            'templates_path' => __DIR__.'/Templates/',
+            'templates_path' => __DIR__.'/../Templates/',
 			'enable_cache' => true,
+            'cache_path' => __DIR__.'/../../temp/twig',
 		],
 
 		// Monolog settings
@@ -27,17 +28,17 @@ $settings = [
 			'level' => \Monolog\Logger::DEBUG,
 		],
 
-		// PHPmailer settings
+        // PHPmailer settings - MailHog
 		'mailer' => [
-			'smtp' => true,
-			'smtp_server' => 'localhost',
-			'smtp_auth' => true,    // SMTP authentication
-			'smtp_port' => 587,
-			'smtp_username' => '',
-			'smtp_password' => '',
-			'smtp_secure' => 'ssl', // ssl for Gmail, tls also possible
+            'smtp' => true,
+            'smtp_server' => 'mailhog',
+            'smtp_auth' => true,    // SMTP authentication
+            'smtp_port' => 1025,
+            'smtp_username' => '',
+            'smtp_password' => '',
+            'smtp_secure' => null, // ssl for Gmail, tls or nullalso possible
 
-			'from_mail' => 'registration@localhost.cz', // registration mail
+            'from_mail' => 'registration@localhost', // registration mail
 			'from_name' => 'Registrace Localhost',
 
 			'bcc_mail' => '', // another mail
@@ -46,36 +47,17 @@ $settings = [
 			// debugging settings
 			'disable_tls' => false, // turn off all certificate check
 			'debugOutoutLevel' => 0, // print debug level (0 min to 4 max)
-			'sendMailToMainRecipient' => true, // set false in localhost
+            'sendMailToMainRecipient' => true, // set false in dev
 		],
 
 		'db' => [
 			'path' => __DIR__.'/../db.sqlite'
 		],
 
-		'eventName' => 'cej2018',
-
 		'adminer' => [
 			// change password & add this into your settings_custom please
 			// 'login' => 'superSecretUsername',
 			// 'password' => 'superSecretPassword',
-		],
-
-		'event' => [
-			'minimalPatrolParticipantsCount' => 9,
-			'maximalPatrolParticipantsCount' => 9,
-
-			'maximalClosedPatrolsCount' => 25,
-			'maximalClosedIstsCount' => 100,
-		],
-
-		// TODO rename to 'payment'
-		'paymentSettings' => [
-			'maxElapsedPaymentDays' => 14,
-			'prefixVariableSymbol' => '00',
-			'fioApiToken' => 'fio API token',
-			'accountNumber' => '0123456789',
-			'scarfPrice' => 70,
 		],
 	],
 ];

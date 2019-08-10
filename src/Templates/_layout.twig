@@ -26,9 +26,11 @@
 		<br/>
 	</div>
 	<ul class="progressbar">
-		<li class="progressbar-item {% if userStatus == 'unregistred' %}is-active{% endif %}">Registrace</li>
+		<li class="progressbar-item progressbar-item-registration progressbar-arrow-right {% if userStatus == 'unregistred' %}is-active{% endif %}">
+			Registrace
+		</li>
 		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Vyplnění údajů</li>
-		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzavřená přihláška</li>
+		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Uzamčeená přihláška</li>
 		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Schválená přihláška</li>
 		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Zaplaceno!</li>
 	</ul>

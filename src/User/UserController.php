@@ -2,7 +2,41 @@
 
 namespace kissj\User;
 
-class UserController {
+use kissj\AbstractController;
+use Psr\Container\ContainerInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
+
+class UserController extends AbstractController {
+    /** @var UserService */
+    protected $userService;
+
+    public function __construct(ContainerInterface $c) {
+        $this->userService = $c->get('userService');
+        parent::__construct($c);
+    }
+
+    public function sendLoginEmail(Request $request, Response $response, array $args) {
+        $email = $request->getParam('email');
+        if (!$this->userService->isEmailExisting($email)) {
+            $this->userService->registerUser($email);
+        }
+
+        try {
+            $this->userService->sendLoginTokenByMail($email);
+        } catch (\RuntimeException $e) {
+            $this->logger->addError("Error sending login email to $email with token ".
+                $this->userService->getTokenForEmail($email), array ($e));
+            $this->flashMessages->error('Nezdařilo se odeslat přihlašovací email. Zkus to prosím za chvíli znovu.');
+
+            return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+        }
+
+        $this->flashMessages->success('Mail odeslán! Klikni na odkaz v mailu a tím se přihlásíš!');
+
+        return $response->withRedirect($this->router->pathFor('loginAfterLinkSent'));
+    }
+
     public function tryLogin(Request $request, Response $response, array $args) {
         $loginToken = $args['token'];
         if ($this->userService->isLoginTokenValid($loginToken)) {
@@ -15,62 +49,21 @@ class UserController {
             }
 
             return $response->withRedirect($this->router->pathFor('createEvent'));
-        } else {
-            $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
-            if (isset($args['eventSlug'])) {
-                return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-            }
-
-            return $response->withRedirect($this->router->pathFor('kissj-landing'));
-        }
-    }
-
-    public function sendEmail(Request $request, Response $response, array $args) {
-        $email = $request->getParam('email');
-        if ($this->userService->isEmailExisting($email)) {
-            $user = $this->userService->getUserFromEmail($email);
-            /** @var \kissj\Event\Event $event */
-            if ($event = $request->getAttribute('event')) {
-                $role = $this->roleService->getRole($user, $event);
-                $readableRole = $this->roleService->getReadableRoleName($role->name);
-            } else {
-                // TODO needed more elegant solution
-                $readableRole = '';
-            }
-            try {
-                $this->userService->sendLoginTokenByMail($email, $readableRole);
-            } catch (Exception $e) {
-                $this->logger->addError("Error sending login email to $email with token ".
-                    $this->userService->getTokenForEmail($email), array ($e));
-                $this->flashMessages->error('Nezdařilo se odeslat přihlašovací email. Zkus to prosím znovu.');
-
-                return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-            }
-
-            $this->flashMessages->success('Posláno! Klikni na odkaz v mailu a tím se přihlásíš!');
-
-            return $response->withRedirect($this->router->pathFor('landing'));
-
         }
 
-        $this->flashMessages->error('Pardon, tvůj přihlašovací email tu nemáme. Nechceš se spíš zaregistrovat?');
+        $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
+        if (isset($args['eventSlug'])) {
+            return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+        }
 
         return $response->withRedirect($this->router->pathFor('landing'));
-
     }
 
     public function logout(Request $request, Response $response, array $args) {
         $this->userService->logoutUser();
         $this->flashMessages->info('Odhlášení bylo úspěšné');
 
-        /** @var \kissj\Event\Event $event */
-        if ($event = $request->getAttribute('event')) {
-            $pathForRedirect = $this->router->pathFor('landing', ['eventSlug' => $event->slug]);
-        } else {
-            $pathForRedirect = $this->router->pathFor('kissj-landing');
-        }
-
-        return $response->withRedirect($pathForRedirect);
+        return $response->withRedirect($this->router->pathFor('landing'));
     }
 
     protected function trySignup(Request $request, Response $response, array $args) {
@@ -102,7 +95,7 @@ class UserController {
             }
 
             $this->roleService->addRole($user, $role);
-            /** @var kissj\Event\Event $event */
+            /** @var \kissj\Event $event */
             $event = $this->eventService->getEventFromSlug($parameters['eventSlug']);
             try {
                 $this->userService->sendLoginTokenByMail(
@@ -111,7 +104,7 @@ class UserController {
                     $event->readableName);
 
                 return $response->withRedirect($this->router->pathFor('signupSuccess'));
-            } catch (Exception $e) {
+            } catch (\RuntimeException $e) {
                 $this->logger->addError("Error sending registration email to $email to event $event->slug with token ".$this->userService->getTokenForEmail($email),
                     array ($e));
                 $this->flashMessages->error('Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.');
@@ -125,7 +118,7 @@ class UserController {
                 $this->userService->sendLoginTokenByMail($email);
 
                 return $response->withRedirect($this->router->pathFor('kissj-signupSuccess'));
-            } catch (Exception $e) {
+            } catch (\RuntimeException $e) {
                 $this->logger->addError("Error sending registration email to $email with token ".$this->userService->getTokenForEmail($email),
                     array ($e));
                 $this->flashMessages->error('Registrace se povedla, ale nezdařilo se odeslat přihlašovací email )-:');

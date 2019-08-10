@@ -29,8 +29,7 @@ class PatrolService {
         FlashMessagesInterface $flashMessages,
         MailerInterface $mailer,
         Twig $renderer,
-        $eventSettings,
-        $eventName
+        $eventSettings
     ) {
         $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->patrolLeaderRepository = $patrolLeaderRepository;

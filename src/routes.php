@@ -32,7 +32,7 @@ $helper['loggedOnly'] = function (Request $request, Response $response, callable
             return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
         }
 
-        return $response->withRedirect($this->router->pathFor('kissj-landing'));
+        return $response->withRedirect($this->router->pathFor('landing'));
     }
 
     $response = $next($request, $response);
@@ -54,7 +54,7 @@ $helper['choosedRoleOnly'] = function (Request $request, Response $response, cal
             return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
         }
 
-        return $response->withRedirect($this->router->pathFor('kissj-landing'));
+        return $response->withRedirect($this->router->pathFor('landing'));
     }
 
     $response = $next($request, $response);
@@ -86,7 +86,7 @@ $helper['addEventInfoIntoRequest'] = function (Request $request, Response $respo
 };
 
 $app->get('/', function (Request $request, Response $response, array $args) {
-    return $response->withRedirect($this->router->pathFor('kissj-landing'));
+    return $response->withRedirect($this->router->pathFor('landing'));
 });
 
 $app->group('/v1', function () use ($helper) {
@@ -101,24 +101,32 @@ $app->group('/v1', function () use ($helper) {
 
         $this->group('/kissj', function () use ($helper) {
             $this->get('', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/landing.twig');
+                return $response->withRedirect($this->router->pathFor('loginAskEmail'));
             })->setName('landing');
 
-            $this->get('/loginHelp', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/loginHelp.twig');
-            })->setName('loginHelp');
-
             $this->get('/login', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/loginScreen.twig', ['eventSlug' => 'cej2018']);
-            })->setName('loginAskEmail')->add($helper['nonLoggedOnly']);
+                return $this->view->render($response, 'kissj/login.twig');
+            })->add($helper['nonLoggedOnly'])->setName('loginAskEmail');
 
-            $this->post('/login/{token}', UserController::class.':tryLogin')
+            $this->post('/login', UserController::class.':sendLoginEmail')
+                ->add($helper['nonLoggedOnly'])
+                ->setName('sendLoginEmail');
+
+            $this->get('/loginAfterLinkSent', function (Request $request, Response $response, array $args) {
+                return $this->view->render($response, 'kissj/loginLinkSent.twig');
+            })->setName('loginAfterLinkSent');
+
+            $this->get('/login/{token}', UserController::class.':tryLogin')
                 ->add($helper['nonLoggedOnly'])
                 ->setName('loginWithToken');
 
             $this->post('/logout', UserController::class.':logout')
                 ->add($helper['loggedOnly'])
                 ->setName('logout');
+
+            $this->get('/loginHelp', function (Request $request, Response $response, array $args) {
+                return $this->view->render($response, 'kissj/loginHelp.twig');
+            })->setName('loginHelp');
 
             $this->get('/createEvent', function (Request $request, Response $response, array $args) {
                 return $this->view->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
@@ -340,7 +348,7 @@ $app->group('/v1', function () use ($helper) {
             $this->any('/administration', function (Request $request, Response $response, array $args) {
                 global $adminerSettings;
                 $adminerSettings = $this->get('settings')['adminer'];
-                require __DIR__.'/../admin/customAdminerEditor.php';
+                require __DIR__.'/../adminer/customAdminerEditor.php';
             })->setName('administration');
 
         })->add($helper['addEventInfoIntoRequest'])->add($helper['loggedOnly']);

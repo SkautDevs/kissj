@@ -6,16 +6,22 @@ use LeanMapper\Entity;
 use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
 
+/**
+ * @property array onBeforeCreate
+ * @property array onBeforePersist
+ */
 class Repository extends BaseRepository {
+    public function initEvents(): void {
+        $this->onBeforeCreate[] = EntityDatetime::class.'::setCreatedAtBeforeCreate';
+        $this->onBeforePersist[] = EntityDatetime::class.'::setUpdatedAtBeforePersist';
+    }
 
     public function isExisting(array $criteria): bool {
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
         $row = $qb->fetch();
 
-        $b = $row !== false;
-
-        return ($b);
+        return $row !== false;
     }
 
     public function find(int $id) {
@@ -29,7 +35,7 @@ class Repository extends BaseRepository {
         $row = $qb->fetch();
 
         if ($row === false) {
-            throw new \Exception('Entity was not found.');
+            throw new \RuntimeException('Entity was not found.');
         }
 
         // second part

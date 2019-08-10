@@ -1,9 +1,11 @@
-/vendor/*
-/logs/*
 /.idea/*
-*.sqlite
-/src/settings_custom.php
-/temp/*
+/attachments/*
 /backups/*
-/forms/*
 /docs
+/logs/*
+/src/Settings/settings_custom.php
+/temp/*
+/vendor/*
+
+*.sqlite
+!db_init.sqlite

@@ -1,9 +1,9 @@
-{% extends "../_layout.twig" %}
+{% extends "_layout.twig" %}
 
 {% block content %}
 	<div class="text-center">
 		<h2>Způsob přihlašování se do systému kissj</h2>
-		<h4>Jak to funguje, podrobně?</h4>
+		<h3>Jak to funguje, podrobně?</h3>
 		<p>Přihlašování do registračního systému kissj probíhá výhradně přes email a není k tomu potřeba žádné
 			heslo. </p>
 		<p>Při prvním přístupu do systému zadáš svůj email. Zároveň dostaneš email, kde bude jediné tlačítko s odkazem -
@@ -12,16 +12,18 @@
 		<p>Až se odhlásíš, nikdo cizí k tvým datům z tvého zařízení nemůže. </p>
 		<p>Pro přihlášení se zpět k tvým údajům vyplň email na přihlašovací stránce a potvrď. Znovu ti pošleme mail s
 			přihlašovacím tlačítkem a ty se klikem na něj přihlásíš stejně jako poprvě. </p>
-		<h4>Časová expirace</h4>
+		<h3>Časová expirace</h3>
 		<p>Pozor, mail má platnost pouze 15 minut. Potom si musíš nechat poslat nový. Toto je ochrana proti tomu, kdyby
 			se ti někdo dostal do tvé emailové schránky, tak se nemůže přihlásit emailu, z kterého jsi se již k
 			přihlášení proklikl. </p>
 		<p>Po přihlášení mail přestane být platný - pokud se tedy rychle příhlásíš i odhlásíš, další přihlášení ze
 			stejného emailu nebude možné - musíš si nechat poslat další přihlašovací email. </p>
-		<h4>Dotazy?</h4>
+		<h3>Dotazy?</h3>
 		<p>Všechno toto zabezpečení navíc má jediný úkol - udržet tvoje údaje v co největším bezpečí, podobně jako to
 			dělají třeba banky a další velké portály. </p>
 		<p>Kdyby byl s přihlášením nebo jinou součástí systému jakýkoliv problém, napiš na mail organizátorů ti ti zkusí
 			pomoci, jak jen to bude možné. </p>
+		<br>
+		<a href="{{ path_for('landing') }}" class="btn btn-small btn-grey btn text-center">Zpět na přihlášení</a>
 	</div>
 {% endblock %}

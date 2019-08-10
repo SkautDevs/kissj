@@ -1,7 +1,7 @@
 CREATE TABLE user (
 	id     INTEGER PRIMARY KEY AUTOINCREMENT,
 	email  TEXT NOT NULL,
-	event  TEXT NOT NULL,
+	event  INT  NOT NULL,
 	status TEXT NOT NULL
 );
 

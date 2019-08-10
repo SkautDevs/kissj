@@ -11,21 +11,29 @@ class EventService {
         $this->eventRepository = $eventRepository;
     }
 
-
-    public function isEventDetailsValid(?string $slug,
-                                        ?string $readableName,
-                                        ?string $accountNumber,
-                                        ?bool $automaticPaymentPairing,
-                                        ?int $prefixVariableSymbol,
-                                        ?int $bankId,
-                                        ?string $bankApi,
-                                        ?bool $allowPatrols,
-                                        ?int $maximalClosedPatrolsCount,
-                                        ?int $minimalPatrolParticipantsCount,
-                                        ?int $maximalPatrolParticipantsCount,
-                                        ?bool $allowIsts,
-                                        ?int $maximalClosedIstsCount): bool {
-        if (is_null($slug) || is_null($readableName) || is_null($accountNumber) || is_null($automaticPaymentPairing) || is_null($allowPatrols) || is_null($allowIsts)) {
+    public function isEventDetailsValid(
+        ?string $slug,
+        ?string $readableName,
+        ?string $accountNumber,
+        ?bool $automaticPaymentPairing,
+        ?int $prefixVariableSymbol,
+        ?int $bankId,
+        ?string $bankApi,
+        ?bool $allowPatrols,
+        ?int $maximalClosedPatrolsCount,
+        ?int $minimalPatrolParticipantsCount,
+        ?int $maximalPatrolParticipantsCount,
+        ?bool $allowIsts,
+        ?int $maximalClosedIstsCount
+    ): bool {
+        if (
+            $slug === null
+            || $readableName === null
+            || $accountNumber === null
+            || $automaticPaymentPairing === null
+            || $allowPatrols === null
+            || $allowIsts === null
+        ) {
             return false;
         }
 
@@ -34,16 +42,22 @@ class EventService {
             return false;
         }
 
-        if ($automaticPaymentPairing &&
-            (is_null($bankId) || is_null($bankApi) || !is_numeric($prefixVariableSymbol))) {
+        if ($automaticPaymentPairing && (
+                $bankId === null
+                || $bankApi === null
+                || !is_numeric($prefixVariableSymbol))
+        ) {
             return false;
         }
 
-        if ($allowPatrols &&
-            (!is_numeric($maximalClosedPatrolsCount) ||
+        if ($allowPatrols && (
+                !is_numeric($maximalClosedPatrolsCount) ||
                 !is_numeric($minimalPatrolParticipantsCount) ||
-                !is_numeric($maximalPatrolParticipantsCount ||
-                    $minimalPatrolParticipantsCount > $maximalPatrolParticipantsCount))) {
+                !is_numeric(
+                    $maximalPatrolParticipantsCount ||
+                    $minimalPatrolParticipantsCount > $maximalPatrolParticipantsCount)
+            )
+        ) {
             return false;
         }
 
@@ -54,19 +68,21 @@ class EventService {
         return true;
     }
 
-    public function createEvent(string $slug,
-                                string $readableName,
-                                string $accountNumber,
-                                int $prefixVariableSymbol,
-                                bool $automaticPaymentPairing,
-                                int $bankId,
-                                string $bankApi,
-                                bool $allowPatrols,
-                                int $maximalClosedPatrolsCount,
-                                int $minimalPatrolParticipantsCount,
-                                int $maximalPatrolParticipantsCount,
-                                bool $allowIsts,
-                                int $maximalClosedIstsCount): Event {
+    public function createEvent(
+        string $slug,
+        string $readableName,
+        string $accountNumber,
+        int $prefixVariableSymbol,
+        bool $automaticPaymentPairing,
+        int $bankId,
+        string $bankApi,
+        bool $allowPatrols,
+        int $maximalClosedPatrolsCount,
+        int $minimalPatrolParticipantsCount,
+        int $maximalPatrolParticipantsCount,
+        bool $allowIsts,
+        int $maximalClosedIstsCount
+    ): Event {
         $newEvent = new Event();
         $newEvent->slug = $slug;
         $newEvent->readableName = $readableName;
@@ -89,6 +105,7 @@ class EventService {
 
     public function getEventFromSlug(string $eventSlug): ?Event {
         $event = $this->eventRepository->findBy(['slug' => $eventSlug]);
+
         return $event[0] ?? null;
     }
 }

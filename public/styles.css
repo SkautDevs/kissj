@@ -179,7 +179,7 @@ h2, h3 {
 	filter: grayscale(100%);
 }
 
-.progressbar-item:not(:first-child)::before {
+li.progressbar-item:not(:first-child)::before {
 	display: block;
 	position: absolute;
 	left: calc(-1 * var(--borderRadius));
@@ -190,24 +190,41 @@ h2, h3 {
 	z-index: -1;
 }
 
-.progressbar-item:nth-child(1) {
+li.progressbar-item-registration {
 	--bgColor: #a21f16;
 }
-.progressbar-item:nth-child(2) {
+
+li.progressbar-item:nth-child(2) {
 	--bgColor: #a0067d;
 }
-.progressbar-item:nth-child(3) {
+
+li.progressbar-item:nth-child(3) {
 	--bgColor: #5e2281;
 }
-.progressbar-item:nth-child(4) {
+
+li.progressbar-item:nth-child(4) {
 	--bgColor: #172983;
 }
-.progressbar-item:nth-child(5) {
+
+li.progressbar-item:nth-child(5) {
 	--bgColor: #1c860e;
 }
 
-.progressbar-item.is-active {
+li.progressbar-item.is-active {
 	filter: grayscale(0%);
+}
+
+li.progressbar-arrow-right:after {
+	left: 100%;
+	top: 50%;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border: 40px solid transparent;
+	border-left-color: inherit;
+	margin-top: -40px;
 }
 
 .registration-theme {
