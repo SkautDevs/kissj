@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="two-cards">
 		<div class="card registration-theme">
-			<h2>Jseš tu poprvé? Registrace!</h2>
+			<h2>Vyber roli!</h2>
 			<a href="{{ path_for('registration', {'role': 'patrol-leader', 'eventSlug': eventSlug}) }}" class="btn">Registruj
 				se
 				jako<br>
@@ -17,18 +17,8 @@
 		</div>
 
 		<div class="card open-theme">
-			<h2>Vracíš se zpět? Přihlášení!</h2>
-			<form action="{{ path_for('loginScreenAfterSent', {'eventSlug': eventSlug}) }}" method="post">
-				<div class="form-group">
-					<label for="form-email">E-mail:</label>
-					<input class="form-control form-wide" type="email" name="email" id="form-email" required
-						   autocapitalize="none" autocorrect="off"/><br/>
-				</div>
-				<input type="submit" value="Poslat mail &#13;&#10;pro přihlášení" class="btn form-wide"/>
-			</form>
-			<br/>
-			<br/>
-			<a href="{{ path_for('kissj-loginHelp') }}" class="btn btn-grey">Jak funguje přihlášení přes mail?</a>
+			<h2>Nápověda dk rolím</h2>
+			<p></p>
 		</div>
 	</div>
 {% endblock %}

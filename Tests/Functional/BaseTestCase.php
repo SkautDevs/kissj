@@ -37,7 +37,7 @@ class BaseTestCase extends TestCase {
         $environment = Environment::mock(
             [
                 'REQUEST_METHOD' => $requestMethod,
-                'REQUEST_URI' => $requestUri
+                'REQUEST_URI' => $requestUri,
             ]
         );
 
@@ -81,7 +81,7 @@ class BaseTestCase extends TestCase {
         require __DIR__.'/../../src/dependencies.php';
 
         //mock mailer
-        $app->getContainer()['mailer'] = function() {
+        $app->getContainer()['mailer'] = function () {
             return new \kissj\Mailer\MockMailer();
         };
 
