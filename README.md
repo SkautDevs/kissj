@@ -34,7 +34,7 @@ kissj is scouts **registration system for national and international Scout Jambo
  - Install script for latest docker-compose `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh` 
 2. Create local config in `src/Settings/settings_custom.php` and override main `settings.php`
 3. run `docker-compose build && docker-compose up`
-4. visit `localhost:8000`
+4. visit `localhost` for app, `localhost:8025` for mails sent from app
 
 
 # Devstack
