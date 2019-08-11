@@ -1,5 +1,6 @@
 <?php
 
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Whoops\Exception\Inspector;
@@ -25,7 +26,7 @@ if ($container['settings']['whoopsDebug']) {
 
 // TRAILING SLASH REMOVER
 
-$app->add(function (Request $request, Response $response, callable $next) {
+$app->add(function (Request $request, Response $response, callable $next): ResponseInterface {
     $uri = $request->getUri();
     $path = $uri->getPath();
     if ($path !== '/' && substr($path, -1) === '/') {
@@ -39,7 +40,9 @@ $app->add(function (Request $request, Response $response, callable $next) {
         return $next($request->withUri($uri), $response);
     }
 
-    return $next($request, $response);
+    $response = $next($request, $response);
+
+    return $response;
 });
 
 // LOCALIZATION NEGOTIATOR
@@ -55,7 +58,8 @@ $app->add(function (Request $request, Response $response, callable $next) {
 
 // USER AUTHENTICATION
 
-$app->add(function (Request $request, Response $response, callable $next) use ($container) {
+$app->add(function (Request $request, Response $response, callable $next) use ($container): ResponseInterface {
+    /** @var \kissj\User\UserRegeneration $userRegeneration */
     $userRegeneration = $container->get('userRegeneration');
     $user = $userRegeneration->getCurrentUser();
     if ($user !== null) {

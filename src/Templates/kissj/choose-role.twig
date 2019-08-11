@@ -1,0 +1,29 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="two-cards">
+		<div class="card registration-theme">
+			<h2>Vyber roli!</h2>
+			<form method="POST" target="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+				<input type="hidden" name="role" value="pl">
+				<input type="submit" class="btn" value="Registruj se jako Patrol Leader!">
+			</form>
+			<br/>
+			<form target="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+				<input type="hidden" name="role" value="pl">
+				<input type="submit" class="btn" value="Registruj se jako Servis Tým!">
+			</form>
+			<br/>
+			<form target="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+				<input type="hidden" name="role" value="pl">
+				<input type="submit" class="btn" value="Registruj se jako host!">
+			</form>
+			<br/>
+		</div>
+
+		<div class="card approved-theme">
+			<h2>Nápověda k rolím</h2>
+			<p>Účastníci se registrují skrz svého Patrol Leadera</p>
+		</div>
+	</div>
+{% endblock %}

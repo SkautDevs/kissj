@@ -54,10 +54,6 @@ class EventController {
         // TODO add event-admins (roles table?)
     }
 
-    public function setRole(Request $request, Response $response, array $args) {
-
-    }
-
     public function getDashboard(Request $request, Response $response, array $args) {
         $roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
         if (!$this->roleService->isUserRoleNameValid($roleName)) {

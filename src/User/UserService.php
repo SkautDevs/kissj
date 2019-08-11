@@ -70,20 +70,22 @@ class UserService {
     }
 
     public function isLoginTokenValid(string $loginToken): bool {
-        try {
-            $lastToken = $this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false],
-                ['created' => false]);
-            if ($lastToken === null) {
-                return false;
-            }
-
-            $lastValidTime = new \DateTime();
-            $lastValidTime->modify('-15 minutes');
-
-            return !($lastToken->created < $lastValidTime);
-        } catch (\Exception $e) {
+        $criteria = ['token' => $loginToken, 'used' => false];
+        if (!$this->loginTokenRepository->isExisting($criteria)) {
             return false;
         }
+        $lastToken = $this->loginTokenRepository->findOneBy(
+            $criteria,
+            ['createdAt' => false]
+        );
+        if ($lastToken === null) {
+            return false;
+        }
+
+        $lastValidTime = new \DateTime();
+        $lastValidTime->modify('-15 minutes');
+
+        return !($lastToken->createdAt < $lastValidTime);
     }
 
     public function getUserFromToken(string $token): User {
@@ -106,25 +108,12 @@ class UserService {
         unset($_SESSION['user']);
     }
 
-    public function invalidateAllLoginTokens($user): void {
+    public function invalidateAllLoginTokens(User $user): void {
         // invalidate all not yet used login tokens
         $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
         foreach ($existingTokens as $token) {
             $token->used = true;
             $this->loginTokenRepository->persist($token);
-        }
-    }
-
-    public function getReadableRoleName(string $role): string {
-        switch ($role) {
-            case 'patrol-leader':
-                return 'Patrol Leader';
-            case 'ist':
-                return 'International Service Team';
-            case 'admin':
-                return 'administrator';
-            default:
-                throw new \Exception('Unknown role name');
         }
     }
 

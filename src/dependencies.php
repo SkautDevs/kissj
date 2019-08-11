@@ -2,7 +2,9 @@
 
 use kissj\Orm\Mapper;
 use kissj\Participant\Guest\GuestRepository;
+use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
@@ -68,6 +70,14 @@ $container['tokenRepository'] = function (C $c) {
     );
 };
 
+$container['participantRepository'] = function (C $c) {
+    return new ParticipantRepository(
+        $c->get('db'),
+        $c->get('dbMapper'),
+        $c->get('dbFactory')
+    );
+};
+
 $container['guestRepository'] = function (C $c) {
     return new GuestRepository(
         $c->get('db'),
@@ -77,7 +87,7 @@ $container['guestRepository'] = function (C $c) {
 };
 
 $container['istRepository'] = function (C $c) {
-    return new GuestRepository(
+    return new IstRepository(
         $c->get('db'),
         $c->get('dbMapper'),
         $c->get('dbFactory')
@@ -141,6 +151,16 @@ $container['userService'] = function (C $c) {
         $c->get('mailer'),
         $c->get('router'),
         $c->get('view')
+    );
+};
+
+$container['participantService'] = function (C $c) {
+    return new \kissj\Participant\ParticipantService(
+        $c->get('participantRepository'),
+        $c->get('istRepository'),
+        $c->get('guestRepository'),
+        $c->get('patrolLeaderRepository'),
+        $c->get('patrolParticipantRepository')
     );
 };
 
@@ -211,10 +231,6 @@ $container['flashMessages'] = function (C $c) {
     return new kissj\FlashMessages\FlashMessagesBySession();
 };
 
-$container['event'] = function (C $c): \kissj\Event\Event {
-    return $c->get('eventService')->getEventFromSlug('cej');
-};
-
 $container['view'] = function (C $c) {
     $rendererSettings = $c->get('settings')['renderer'];
 
@@ -238,7 +254,6 @@ $container['view'] = function (C $c) {
     $view->addExtension(new \Slim\Views\TwigExtension($c['router'], $basePath));
     $view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
     $view->getEnvironment()->addGlobal('flashMessages', $c['flashMessages']);
-    $view->getEnvironment()->addGlobal('event', $c['event']);
     /** @var \kissj\User\User $user */
     $user = $c['userRegeneration']->getCurrentUser();
     $view->getEnvironment()->addGlobal('user', $user);

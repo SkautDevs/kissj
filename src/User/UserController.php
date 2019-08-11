@@ -3,6 +3,9 @@
 namespace kissj\User;
 
 use kissj\AbstractController;
+use kissj\Event\Event;
+use kissj\Participant\ParticipantService;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -10,10 +13,32 @@ use Slim\Http\Response;
 class UserController extends AbstractController {
     /** @var UserService */
     protected $userService;
+    /** @var UserRegeneration */
+    protected $userRegeneration;
+    /** @var ParticipantService */
+    protected $participantService;
 
     public function __construct(ContainerInterface $c) {
         $this->userService = $c->get('userService');
+        $this->userRegeneration = $c->get('userRegeneration');
+        $this->participantService = $c->get('participantService');
         parent::__construct($c);
+    }
+
+    public function landing(Request $request, Response $response, array $args) {
+        $user = $request->getAttribute('user');
+        $event = $request->getAttribute('event');
+        if ($user !== null && $event !== null) {
+            /** @var User $user */
+            /** @var Event $event */
+            if ($this->participantService->getUserRole($user) !== null) {
+                $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $event->slug]));
+            }
+
+            return $response->withRedirect($this->router->pathFor('chooseRole', ['eventSlug' => $event->slug]));
+        }
+
+        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }
 
     public function sendLoginEmail(Request $request, Response $response, array $args) {
@@ -37,26 +62,19 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('loginAfterLinkSent'));
     }
 
-    public function tryLogin(Request $request, Response $response, array $args) {
+    public function tryLoginWithToken(Request $request, Response $response, array $args) {
         $loginToken = $args['token'];
         if ($this->userService->isLoginTokenValid($loginToken)) {
             $user = $this->userService->getUserFromToken($loginToken);
             $this->userRegeneration->saveUserIdIntoSession($user);
             $this->userService->invalidateAllLoginTokens($user);
-            if (isset($args['eventSlug'])) {
-                return $response->withRedirect($this->router->pathFor('getDashboard',
-                    ['eventSlug' => $args['eventSlug']]));
-            }
 
-            return $response->withRedirect($this->router->pathFor('createEvent'));
+            return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
         }
 
         $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
-        if (isset($args['eventSlug'])) {
-            return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-        }
 
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }
 
     public function logout(Request $request, Response $response, array $args) {
@@ -66,6 +84,35 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('landing'));
     }
 
+    public function setRole(Request $request, Response $response, array $args) {
+        echo $request->getParam('role');
+    }
+
+    public function getDashboard(Request $request, Response $response, array $args) {
+        /** @var User */
+        $user = $request->getAttribute('user');
+        $role = $this->participantService->getUserRole($user);
+
+        $routerEventSlug = ['eventSlug' => $user->event->slug];
+        switch ($role) {
+            case null:
+                return $response->withRedirect($this->router->pathFor('chooseRole', $routerEventSlug));
+
+            case User::ROLE_IST:
+                return $response->withRedirect($this->router->pathFor('ist-dashboard', $routerEventSlug));
+
+            case User::ROLE_PATROL_LEADER:
+                return $response->withRedirect($this->router->pathFor('pl-dashboard', $routerEventSlug));
+
+            case User::ROLE_GUEST:
+                return $response->withRedirect($this->router->pathFor('guest-dashboard', $routerEventSlug));
+
+            default:
+                throw new RuntimeException('got unknown role for User id '.$user->id.': '.$role);
+        }
+    }
+
+    // TODO
     protected function trySignup(Request $request, Response $response, array $args) {
         $parameters = $request->getParsedBody();
         $email = $parameters['email'];

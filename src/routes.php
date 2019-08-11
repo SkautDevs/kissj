@@ -1,62 +1,62 @@
 <?php
 
-use kissj\Event\EventController;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Ist\IstController;
 use kissj\Participant\Patrol\PatrolController;
+use kissj\User\User;
 use kissj\User\UserController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 $helper['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for non-logged users only
-    if ($request->getAttribute('user') === null) {
-        $response = $next($request, $response);
+    if ($request->getAttribute('user') !== null) {
+        $this->flashMessages->warning('Pardon, ale jsi přihlášený - nejdříve se odhlaš prosím');
 
-        return $response;
+        return $response->withRedirect($this->router->pathFor('landing'));
     }
+    $response = $next($request, $response);
 
-    if ($event = $request->getAttribute('event')) {
-        return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $event->slug]));
-    }
-
-    return $response->withRedirect($this->router->pathFor('createEvent'));
+    return $response;
 };
 
 $helper['loggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for logged users only
     if ($request->getAttribute('user') === null) {
         $this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
-        /** @var \kissj\Event\Event $event */
-        if ($event = $request->getAttribute('event')) {
-            return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
-        }
 
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }
-
     $response = $next($request, $response);
 
     return $response;
 };
 
 $helper['nonChoosedRoleOnly'] = function (Request $request, Response $response, callable $next) {
+    // protected area for users with already choosed role
+    /** @var User $user */
+    $user = $request->getAttribute('user');
 
+    if ($user->status !== User::STATUS_WITHOUT_ROLE) {
+        $this->flashMessages->warning('Pardon, roli na akci už máš'); // TODO when nonnlogged
+
+        return $response->withRedirect($this->router->pathFor('landing'));
+    }
+    $response = $next($request, $response);
+
+    return $response;
 };
 
 $helper['choosedRoleOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for users with already choosed role
-    // TODO
-    if ($request->getAttribute('user') === null) {
-        $this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
-        /** @var \kissj\Event\Event $event */
-        if ($event = $request->getAttribute('event')) {
-            return $response->withRedirect($this->router->pathFor('landing', ['eventSlug' => $event->slug]));
-        }
+    /** @var User $user */
+    $user = $request->getAttribute('user');
+
+    if ($user->status === User::STATUS_WITHOUT_ROLE) {
+        $this->flashMessages->warning('Pardon, nejdřív si musíš vybrat roli');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
-
     $response = $next($request, $response);
 
     return $response;
@@ -69,17 +69,7 @@ $helper['openStatusOnly'] = function (Request $request, Response $response, call
         $this->logger->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
         throw new \RuntimeException('Nemůžeš měnit údaje když nejsi ve stavu zadávání údajů!');
     }
-
-    $response = $next($request, $response);
-
-    return $response;
-};
-
-$helper['addEventInfoIntoRequest'] = function (Request $request, Response $response, callable $next) {
-    /** @var \kissj\Event\Event $event */
-    $event = $this->get('eventService')->getEventFromSlug($request->getAttribute('route')->getArguments()['eventSlug']);
-    $request = $request->withAttribute('event', $event);
-
+// TODO
     $response = $next($request, $response);
 
     return $response;
@@ -100,34 +90,32 @@ $app->group('/v1', function () use ($helper) {
         });
 
         $this->group('/kissj', function () use ($helper) {
-            $this->get('', function (Request $request, Response $response, array $args) {
-                return $response->withRedirect($this->router->pathFor('loginAskEmail'));
-            })->setName('landing');
+            $this->get('', UserController::class.':landing')->setName('landing');
 
             $this->get('/login', function (Request $request, Response $response, array $args) {
                 return $this->view->render($response, 'kissj/login.twig');
-            })->add($helper['nonLoggedOnly'])->setName('loginAskEmail');
+            })->add($helper['nonLoggedOnly'])
+                ->setName('loginAskEmail');
 
             $this->post('/login', UserController::class.':sendLoginEmail')
                 ->add($helper['nonLoggedOnly'])
                 ->setName('sendLoginEmail');
 
             $this->get('/loginAfterLinkSent', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/loginLinkSent.twig');
+                return $this->view->render($response, 'kissj/login-link-sent.twig');
             })->setName('loginAfterLinkSent');
 
-            $this->get('/login/{token}', UserController::class.':tryLogin')
-                ->add($helper['nonLoggedOnly'])
+            $this->get('/login/{token}', UserController::class.':tryLoginWithToken')
                 ->setName('loginWithToken');
 
-            $this->post('/logout', UserController::class.':logout')
+            $this->get('/logout', UserController::class.':logout')
                 ->add($helper['loggedOnly'])
                 ->setName('logout');
 
             $this->get('/loginHelp', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/loginHelp.twig');
+                return $this->view->render($response, 'kissj/login-help.twig');
             })->setName('loginHelp');
-
+            /*
             $this->get('/createEvent', function (Request $request, Response $response, array $args) {
                 return $this->view->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
             })->setName('createEvent')->add($helper['loggedOnly']);
@@ -135,23 +123,28 @@ $app->group('/v1', function () use ($helper) {
             $this->post('/createEvent', EventController::class.'createEvent')
                 ->add($helper['loggedOnly'])
                 ->setName('postCreateEvent');
+            */
         });
 
         $this->group('/event/{eventSlug}', function () use ($helper) {
-            $this->get('chooseRole', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'event/chooseRole.twig');
-            })->add($helper['nonChoosedRoleOnly'])->setName('chooseRole');
+            $this->get('/chooseRole', function (Request $request, Response $response, array $args) {
+                $event = $request->getAttribute('user')->event;
 
-            $this->post('setRole', EventController::class.':setRole')
+                return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $event]);
+            })->add($helper['nonChoosedRoleOnly'])
+                ->setName('chooseRole');
+
+            $this->post('/setRole', UserController::class.':setRole')
                 ->add($helper['nonChoosedRoleOnly'])
                 ->setName('setRole');
 
             $this->group('', function () use ($helper) {
-                $this->get('/getDashboard', EventController::class.':getDashboard')
+                $this->get('/getDashboard', UserController::class.':getDashboard')
                     ->setName('getDashboard');
 
                 $this->group('/patrol', function () use ($helper) {
-                    $this->get('/dashboard', PatrolController::class.':showLeaderDashboard')->setName('pl-dashboard');
+                    $this->get('/dashboard', PatrolController::class.':showLeaderDashboard')
+                        ->setName('pl-dashboard');
 
                     $this->group('', function () {
                         $this->get('/changeDetails', PatrolController::class.':showDetailsLeaderChangeable')
@@ -351,6 +344,6 @@ $app->group('/v1', function () use ($helper) {
                 require __DIR__.'/../adminer/customAdminerEditor.php';
             })->setName('administration');
 
-        })->add($helper['addEventInfoIntoRequest'])->add($helper['loggedOnly']);
+        });
     });
 });
