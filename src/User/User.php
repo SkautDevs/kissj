@@ -8,6 +8,7 @@ use kissj\Orm\EntityDatetime;
 /**
  * @property int    $id
  * @property string $email
+ * @property string $role
  * @property Event  $event  m:hasOne
  * @property string $status m:enum(self::STATUS_*) m:default('withoutRole')
  */

@@ -62,11 +62,7 @@ $app->add(function (Request $request, Response $response, callable $next) use ($
     /** @var \kissj\User\UserRegeneration $userRegeneration */
     $userRegeneration = $container->get('userRegeneration');
     $user = $userRegeneration->getCurrentUser();
-    if ($user !== null) {
-        $request = $request->withAttribute('user', $user);
-    } else {
-        $request = $request->withAttribute('user', null);
-    }
+    $request = $request->withAttribute('user', $user);
 
     $response = $next($request, $response);
 

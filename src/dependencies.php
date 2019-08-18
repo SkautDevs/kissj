@@ -146,8 +146,9 @@ $container['exportService'] = function (C $c) {
 
 $container['userService'] = function (C $c) {
     return new UserService(
-        $c->get('userRepository'),
         $c->get('tokenRepository'),
+        $c->get('participantRepository'),
+        $c->get('userRepository'),
         $c->get('mailer'),
         $c->get('router'),
         $c->get('view')

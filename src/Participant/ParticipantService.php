@@ -16,8 +16,6 @@ class ParticipantService {
     private $istRepository;
     /** @var GuestRepository */
     private $guestRepository;
-    /** @var PatrolParticipantRepository */
-    private $patrolParticipantRepository;
     /** @var PatrolLeaderRepository */
     private $patrolLeaderRepository;
 
@@ -32,7 +30,6 @@ class ParticipantService {
         $this->istRepository = $istRepository;
         $this->guestRepository = $guestRepository;
         $this->patrolLeaderRepository = $patrolLeaderRepository;
-        $this->patrolParticipantRepository = $patrolParticipantRepository;
     }
 
     public function getUserRole(User $user): ?string {

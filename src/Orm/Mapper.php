@@ -3,100 +3,108 @@
 namespace kissj\Orm;
 
 use kissj\Event\Event;
-use kissj\Participants\Ist\Ist;
-use kissj\Participants\Patrol\PatrolLeader;
-use kissj\Participants\Patrol\PatrolParticipant;
+use kissj\Participant\Guest\Guest;
+use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
 use kissj\User\LoginToken;
-use kissj\User\Role;
 use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
 use LeanMapper\Row;
 
-
 class Mapper implements IMapper {
+    protected $defaultEntityNamespace = 'kissj';
+    protected $relationshipTableGlue = '_';
 
-	/** @var string */
-	protected $defaultEntityNamespace = 'kissj';
+    public function getPrimaryKey($table): string {
+        return 'id';
+    }
 
-	/** @var string */
-	protected $relationshipTableGlue = '_';
+    public function getTable($entityClass): string {
+        return $this->toUnderScore($this->trimNamespace($entityClass));
+    }
 
-	public function getPrimaryKey($table) {
-		return 'id';
-	}
+    public function getEntityClass($table, Row $row = null): string {
+        switch ($table) {
+            case 'user':
+                return User::class;
 
-	public function getTable($entityClass) {
-		return strtolower($this->trimNamespace($entityClass));
-	}
+            case 'logintoken':
+                return LoginToken::class;
 
-	public function getEntityClass($table, Row $row = null) {
-		if ($table === 'user') {
-			return User::class;
-		}
-		if ($table === 'logintoken') {
-			return LoginToken::class;
-		}
-		if ($table === 'patrolleader') {
-			return PatrolLeader::class;
-		}
-		if ($table === 'patrolparticipant') {
-			return PatrolParticipant::class;
-		}
-		if ($table === 'ist') {
-			return Ist::class;
-		}
-		if ($table === 'role') {
-			return Role::class;
-		}
-		if ($table === 'payment') {
-			return Payment::class;
-		}
-		if ($table === 'event') {
-			return Event::class;
-		}
-		return ($this->defaultEntityNamespace !== null ? $this->defaultEntityNamespace . '\\' : '') . ucfirst($table);
-	}
+            case 'patrolleader':
+                return PatrolLeader::class;
 
-	public function getColumn($entityClass, $field) {
-		return $field;
-	}
+            case 'patrolparticipant':
+                return PatrolParticipant::class;
 
-	public function getEntityField($table, $column) {
-		return $column;
-	}
+            case 'ist':
+                return Ist::class;
 
-	public function getRelationshipTable($sourceTable, $targetTable) {
-		return $sourceTable . $this->relationshipTableGlue . $targetTable;
-	}
+            case 'guest':
+                return Guest::class;
 
-	public function getRelationshipColumn($sourceTable, $targetTable) {
-		return $targetTable . ucfirst($this->getPrimaryKey($targetTable));
-	}
+            case 'payment':
+                return Payment::class;
 
-	public function getTableByRepositoryClass($repositoryClass) {
-		$matches = [];
-		if (preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches)) {
-			return strtolower($matches[1]);
-		}
-		throw new InvalidStateException('Cannot determine table name.');
-	}
+            case 'event':
+                return Event::class;
 
-	public function getImplicitFilters($entityClass, Caller $caller = null) {
-		return [];
-	}
+            case 'participant':
+                return Participant::class;
 
-	/**
-	 * Trims namespace part from fully qualified class name
-	 *
-	 * @param $class
-	 * @return string
-	 */
-	protected function trimNamespace($class) {
-		$class = explode('\\', $class);
-		return end($class);
-	}
+            default:
+                throw new \UnexpectedValueException('Got unknown table name: '.$table);
+        }
+    }
 
+    public function getColumn($entityClass, $field): string {
+        return $this->toUnderScore($field);
+    }
+
+    public function getEntityField($table, $column): string {
+        return $this->toCamelCase($column);
+    }
+
+    public function getRelationshipTable($sourceTable, $targetTable): string {
+        return $sourceTable.$this->relationshipTableGlue.$targetTable;
+    }
+
+    public function getRelationshipColumn($sourceTable, $targetTable): string {
+        return $targetTable.ucfirst($this->getPrimaryKey($targetTable));
+    }
+
+    public function getTableByRepositoryClass($repositoryClass): string {
+        $matches = [];
+        if (preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches)) {
+            return strtolower($matches[1]);
+        }
+        throw new InvalidStateException('Cannot determine table name.');
+    }
+
+    public function getImplicitFilters($entityClass, Caller $caller = null) {
+        return [];
+    }
+
+    protected function trimNamespace($class): string {
+        $class = explode('\\', $class);
+
+        return end($class);
+    }
+
+    protected function toUnderScore(string $string): string {
+        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', function ($m) {
+            return '_'.strtolower($m[1]);
+        }, $string));
+    }
+
+    protected function toCamelCase(string $string): string {
+        return preg_replace_callback('#_(.)#', function ($m) {
+            return strtoupper($m[1]);
+        }, $string);
+    }
 }

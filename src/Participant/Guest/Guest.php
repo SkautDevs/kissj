@@ -5,8 +5,7 @@ namespace kissj\Participant\Guest;
 use kissj\Participant\Participant;
 
 /**
- * @property int         $id
- * @property Participant $participant m:belongsToOne
+ * @table participant
  */
 class Guest extends Participant {
 

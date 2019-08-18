@@ -3,7 +3,6 @@
 namespace kissj\User;
 
 use kissj\AbstractController;
-use kissj\Event\Event;
 use kissj\Participant\ParticipantService;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Container\ContainerInterface;
@@ -26,19 +25,18 @@ class UserController extends AbstractController {
     }
 
     public function landing(Request $request, Response $response, array $args) {
+        /** @var User $user */
         $user = $request->getAttribute('user');
-        $event = $request->getAttribute('event');
-        if ($user !== null && $event !== null) {
-            /** @var User $user */
-            /** @var Event $event */
-            if ($this->participantService->getUserRole($user) !== null) {
-                $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $event->slug]));
-            }
 
-            return $response->withRedirect($this->router->pathFor('chooseRole', ['eventSlug' => $event->slug]));
+        if ($user === null) {
+            return $response->withRedirect($this->router->pathFor('loginAskEmail'));
         }
 
-        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+        if ($this->participantService->getUserRole($user) === null) {
+            return $response->withRedirect($this->router->pathFor('chooseRole', ['eventSlug' => $user->event->slug]));
+        }
+
+        return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
     public function sendLoginEmail(Request $request, Response $response, array $args) {
@@ -74,7 +72,7 @@ class UserController extends AbstractController {
 
         $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
 
-        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+        return $response->withRedirect($this->router->pathFor('loginAskEmail', ['email' => $loginToken->user->email]));
     }
 
     public function logout(Request $request, Response $response, array $args) {
@@ -85,7 +83,10 @@ class UserController extends AbstractController {
     }
 
     public function setRole(Request $request, Response $response, array $args) {
-        echo $request->getParam('role');
+        $user = $request->getAttribute('user');
+        $this->userService->setRole($user, $request->getParam('role'));
+
+        return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
     public function getDashboard(Request $request, Response $response, array $args) {
@@ -112,7 +113,7 @@ class UserController extends AbstractController {
         }
     }
 
-    // TODO
+    // TODO clear
     protected function trySignup(Request $request, Response $response, array $args) {
         $parameters = $request->getParsedBody();
         $email = $parameters['email'];

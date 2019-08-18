@@ -3,6 +3,12 @@
 namespace kissj\User;
 
 use kissj\Mailer\MailerInterface;
+use kissj\Participant\Guest\Guest;
+use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\Patrol\PatrolLeader;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use Slim\Router;
 use Slim\Views\Twig;
 
@@ -17,17 +23,21 @@ class UserService {
     private $mailer;
     /** @var LoginTokenRepository */
     private $loginTokenRepository;
+    /** @var ParticipantRepository */
+    private $participantRepository;
 
     public function __construct(
-        UserRepository $userRepository,
         LoginTokenRepository $loginTokenRepository,
+        ParticipantRepository $participantRepository,
+        UserRepository $userRepository,
         MailerInterface $mailer,
         Router $router,
         Twig $renderer
     ) {
+        $this->loginTokenRepository = $loginTokenRepository;
+        $this->participantRepository = $participantRepository;
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
-        $this->loginTokenRepository = $loginTokenRepository;
         $this->router = $router;
         $this->renderer = $renderer;
     }
@@ -50,7 +60,7 @@ class UserService {
 
         // generate new token
         $loginToken = new LoginToken();
-        $token = $this->generateToken();
+        $token = $this->generateTokenString();
         $loginToken->token = $token;
         $loginToken->user = $user;
         $loginToken->used = false;
@@ -65,7 +75,7 @@ class UserService {
         return $token;
     }
 
-    public function generateToken(): string {
+    public function generateTokenString(): string {
         return md5(random_int(PHP_INT_MIN, PHP_INT_MAX));
     }
 
@@ -117,6 +127,39 @@ class UserService {
         }
     }
 
+    public function setRole(User $user, string $role): void {
+        if (!$this->isRoleValid($role)) {
+            throw new RuntimeException('Role '.$role.' is not valid!');
+        }
+
+        $participant = new Participant();
+        $this->participantRepository->persist($participant); // persist before associations
+        $participant->user = $user;
+        $this->participantRepository->persist($participant);
+
+        switch ($role) {
+            case User::ROLE_IST:
+                $ist = new Ist();
+                $ist->user = $user;
+                break;
+
+            case User::ROLE_GUEST:
+                $guest = new Guest();
+                $guest->user = $user;
+                break;
+
+            case User::ROLE_PATROL_LEADER:
+                $pl = new PatrolLeader();
+                $pl->user = $user;
+                break;
+        }
+    }
+
+    protected function isRoleValid(string $role): bool {
+        return in_array($role, [User::ROLE_IST, User::ROLE_PATROL_LEADER, User::ROLE_GUEST], true);
+    }
+
+    // TODO move to template
     public function getHelpForRole(
         ?Role $role
     ): ?string {

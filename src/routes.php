@@ -38,10 +38,11 @@ $helper['nonChoosedRoleOnly'] = function (Request $request, Response $response, 
     $user = $request->getAttribute('user');
 
     if ($user->status !== User::STATUS_WITHOUT_ROLE) {
-        $this->flashMessages->warning('Pardon, roli na akci už máš'); // TODO when nonnlogged
+        $this->flashMessages->warning('Pardon, roli na akci už máš');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
+
     $response = $next($request, $response);
 
     return $response;
@@ -92,8 +93,8 @@ $app->group('/v1', function () use ($helper) {
         $this->group('/kissj', function () use ($helper) {
             $this->get('', UserController::class.':landing')->setName('landing');
 
-            $this->get('/login', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/login.twig');
+            $this->get('/login[/{email}]', function (Request $request, Response $response, array $args) {
+                return $this->view->render($response, 'kissj/login.twig', ['email' => $args['email']]);
             })->add($helper['nonLoggedOnly'])
                 ->setName('loginAskEmail');
 
@@ -105,7 +106,7 @@ $app->group('/v1', function () use ($helper) {
                 return $this->view->render($response, 'kissj/login-link-sent.twig');
             })->setName('loginAfterLinkSent');
 
-            $this->get('/login/{token}', UserController::class.':tryLoginWithToken')
+            $this->get('/tryLogin/{token}', UserController::class.':tryLoginWithToken')
                 ->setName('loginWithToken');
 
             $this->get('/logout', UserController::class.':logout')
@@ -128,13 +129,15 @@ $app->group('/v1', function () use ($helper) {
 
         $this->group('/event/{eventSlug}', function () use ($helper) {
             $this->get('/chooseRole', function (Request $request, Response $response, array $args) {
-                $event = $request->getAttribute('user')->event;
-
-                return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $event]);
-            })->add($helper['nonChoosedRoleOnly'])
+                return $this->view->render($response, 'kissj/choose-role.twig', [
+                    'event' => $request->getAttribute('user')->event,
+                ]);
+            })->add($helper['loggedOnly'])
+                ->add($helper['nonChoosedRoleOnly'])
                 ->setName('chooseRole');
 
             $this->post('/setRole', UserController::class.':setRole')
+                ->add($helper['loggedOnly'])
                 ->add($helper['nonChoosedRoleOnly'])
                 ->setName('setRole');
 

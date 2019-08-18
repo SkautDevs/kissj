@@ -6,6 +6,9 @@ use kissj\Orm\EntityDatetime;
 use kissj\User\User;
 
 /**
+ * Master table for all participants, using Single Table Inheritance
+ * All commons are here, entitis are seaprated of course (:
+ *
  * @property int         $id
  * @property User|null   $user      m:belongsToOne
  * @property string|null $firstName
