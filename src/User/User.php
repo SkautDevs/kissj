@@ -22,4 +22,6 @@ class User extends EntityDateTime {
     public const ROLE_IST = 'ist';
     public const ROLE_PATROL_LEADER = 'pl';
     public const ROLE_GUEST = 'guest';
+
+    public const ROLE_ADMIN = 'admin';
 }

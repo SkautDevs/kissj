@@ -139,8 +139,7 @@ $container['exportService'] = function (C $c) {
     return new \kissj\Export\ExportService(
         $c->get('patrolParticipantRepository'),
         $c->get('patrolLeaderRepository'),
-        $c->get('istRepository'),
-        $c->get('roleRepository')
+        $c->get('istRepository')
     );
 };
 

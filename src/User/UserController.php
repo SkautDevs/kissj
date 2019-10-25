@@ -32,7 +32,7 @@ class UserController extends AbstractController {
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
         }
 
-        if ($this->participantService->getUserRole($user) === null) {
+        if ($user->role === User::STATUS_WITHOUT_ROLE) {
             return $response->withRedirect($this->router->pathFor('chooseRole', ['eventSlug' => $user->event->slug]));
         }
 
@@ -92,10 +92,9 @@ class UserController extends AbstractController {
     public function getDashboard(Request $request, Response $response, array $args) {
         /** @var User */
         $user = $request->getAttribute('user');
-        $role = $this->participantService->getUserRole($user);
 
         $routerEventSlug = ['eventSlug' => $user->event->slug];
-        switch ($role) {
+        switch ($user->role) {
             case null:
                 return $response->withRedirect($this->router->pathFor('chooseRole', $routerEventSlug));
 
@@ -109,7 +108,7 @@ class UserController extends AbstractController {
                 return $response->withRedirect($this->router->pathFor('guest-dashboard', $routerEventSlug));
 
             default:
-                throw new RuntimeException('got unknown role for User id '.$user->id.': '.$role);
+                throw new RuntimeException('got unknown role for User id '.$user->id.' with role '.$user->role);
         }
     }
 

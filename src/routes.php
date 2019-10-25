@@ -54,7 +54,7 @@ $helper['choosedRoleOnly'] = function (Request $request, Response $response, cal
     $user = $request->getAttribute('user');
 
     if ($user->status === User::STATUS_WITHOUT_ROLE) {
-        $this->flashMessages->warning('Pardon, nejdřív si musíš vybrat roli');
+        $this->flashMessages->info('Nejdřív si musíš vybrat roli');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
@@ -93,8 +93,10 @@ $app->group('/v1', function () use ($helper) {
         $this->group('/kissj', function () use ($helper) {
             $this->get('', UserController::class.':landing')->setName('landing');
 
-            $this->get('/login[/{email}]', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/login.twig', ['email' => $args['email']]);
+            $this->get('/login', function (Request $request, Response $response, array $args) {
+                return $this->view->render(
+                    $response, 'kissj/login.twig', ['event' => $request->getAttribute('user')->event]
+                );
             })->add($helper['nonLoggedOnly'])
                 ->setName('loginAskEmail');
 
@@ -198,7 +200,7 @@ $app->group('/v1', function () use ($helper) {
 
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for Patrol Leaders
-                    if ($this->roleService->getRole($request->getAttribute('user'))->name !== 'patrol-leader') {
+                    if ($request->getAttribute('user')->role !== User::ROLE_PATROL_LEADER) {
                         $this->flashMessages->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
 
                         return $response->withRedirect($this->router->pathFor('loginAskEmail'));
@@ -230,7 +232,7 @@ $app->group('/v1', function () use ($helper) {
 
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for IST
-                    if ($this->roleService->getRole($request->getAttribute('user'))->name !== 'ist') {
+                    if ($request->getAttribute('user')->role !== User::ROLE_IST) {
                         $this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
 
                         return $response->withRedirect($this->router->pathFor('loginAskEmail'));
@@ -256,8 +258,7 @@ $app->group('/v1', function () use ($helper) {
                                 $patrolService = $this->patrolService;
                                 $patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
                                 $patrolService->approvePatrol($patrolLeader);
-                                $role = $this->roleService->getRole($patrolLeader->user);
-                                $payment = $this->paymentService->createNewPayment($role);
+                                $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
                                 $patrolService->sendPaymentByMail($payment, $patrolLeader);
                                 $this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
                                 $this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
@@ -329,7 +330,7 @@ $app->group('/v1', function () use ($helper) {
 
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for Admins only
-                    if ($this->roleService->getRole($request->getAttribute('user'))->name !== 'admin') {
+                    if ($request->getAttribute('user')->role !== User::ROLE_ADMIN) {
                         $this->flashMessages->error('Pardon, nejsi na akci vedený jako admin');
 
                         return $response->withRedirect($this->router->pathFor('loginAskEmail'));

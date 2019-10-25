@@ -7,6 +7,9 @@ use kissj\Participant\Participant;
 /**
  * @table participant
  *
+ * @property string|null $skills
+ * @property string|null $preferredPosition
+ * @property string|null $driversLicense
  * @property string|null $arrivalDate  m:passThru(dateFromString|dateToString)
  * @property string|null $departueDate m:passThru(dateFromString|dateToString)
  */

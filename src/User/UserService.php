@@ -3,11 +3,8 @@
 namespace kissj\User;
 
 use kissj\Mailer\MailerInterface;
-use kissj\Participant\Guest\Guest;
-use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\Participant\Patrol\PatrolLeader;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use Slim\Router;
 use Slim\Views\Twig;
@@ -86,7 +83,7 @@ class UserService {
         }
         $lastToken = $this->loginTokenRepository->findOneBy(
             $criteria,
-            ['createdAt' => false]
+            ['created_at' => false]
         );
         if ($lastToken === null) {
             return false;
@@ -133,26 +130,13 @@ class UserService {
         }
 
         $participant = new Participant();
-        $this->participantRepository->persist($participant); // persist before associations
+        //$participant->setUser($user);
         $participant->user = $user;
         $this->participantRepository->persist($participant);
 
-        switch ($role) {
-            case User::ROLE_IST:
-                $ist = new Ist();
-                $ist->user = $user;
-                break;
-
-            case User::ROLE_GUEST:
-                $guest = new Guest();
-                $guest->user = $user;
-                break;
-
-            case User::ROLE_PATROL_LEADER:
-                $pl = new PatrolLeader();
-                $pl->user = $user;
-                break;
-        }
+        $user->role = $role;
+        $user->status = User::STATUS_OPEN;
+        $this->userRepository->persist($user);
     }
 
     protected function isRoleValid(string $role): bool {

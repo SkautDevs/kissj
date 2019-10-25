@@ -20,6 +20,7 @@ use kissj\User\User;
  * @property string|null $country
  * @property string|null $email
  * @property string|null $scoutUnit
+ * @property string|null $languages
  * @property string|null $birthDate m:passThru(dateFromString|dateToString)
  * @property string|null $birthPlace
  * @property string|null $healthProblems
@@ -30,5 +31,10 @@ use kissj\User\User;
  * @property string|null $notes
  */
 class Participant extends EntityDatetime {
-
+    public function setUser(User $user): void {
+        // else  LeanMapper \ Exception \ MemberAccessException
+        // Cannot write to read-only property 'user' in entity kissj\Participant\Participant.
+        $this->row->user_id = $user->id;
+        $this->row->cleanReferencedRowsCache('user', 'user_id');
+    }
 }

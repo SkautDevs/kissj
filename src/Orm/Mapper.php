@@ -25,6 +25,16 @@ class Mapper implements IMapper {
     }
 
     public function getTable($entityClass): string {
+        $participantVariants = [
+            PatrolLeader::class,
+            PatrolParticipant::class,
+            Ist::class,
+            Guest::class,
+        ];
+        if (in_array($entityClass, $participantVariants, true)) {
+            return explode('\\', Participant::class)[0];
+        }
+
         return $this->toUnderScore($this->trimNamespace($entityClass));
     }
 
@@ -75,7 +85,7 @@ class Mapper implements IMapper {
     }
 
     public function getRelationshipColumn($sourceTable, $targetTable): string {
-        return $targetTable.ucfirst($this->getPrimaryKey($targetTable));
+        return $targetTable.'_'.$this->getPrimaryKey($targetTable);
     }
 
     public function getTableByRepositoryClass($repositoryClass): string {
