@@ -5,8 +5,6 @@ namespace kissj\Participant\Ist;
 use kissj\Participant\Participant;
 
 /**
- * @table participant
- *
  * @property string|null $skills
  * @property string|null $preferredPosition
  * @property string|null $driversLicense

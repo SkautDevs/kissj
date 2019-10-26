@@ -1,0 +1,43 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card {{ userStatus }}-theme">
+		<h2>IST - details</h2>
+		<h4>
+			{{ userCustomHelp }}
+		</h4>
+		{% if userStatus == 'approved' %}
+			<div class="paymentInfo">
+				<h2>Payment information</h2>
+				Account number: <b>{{ payment.getAccountNumber }}</b><br/>
+				Amount: <b>{{ payment.getPrice }} EUR</b><br/>
+				Variabile symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
+				Note: <b>{{ ist.user.event.readableName }} {{ ist.getFirstName }} {{ ist.getLastName }}</b><br/>
+				<br/>
+			</div>
+		{% endif %}
+
+		<div>
+			<h2>Personal information</h2>
+			{% if userStatus == 'open' %}
+				<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Edit my details</a><br/><br/>
+			{% endif %}
+			<div class="text-center">
+				First name: <b>{{ ist.getFirstName }}</b><br/>
+				Surname: <b>{{ ist.getLastName }}</b><br/>
+				Scout nickname: <b>{{ ist.getNickname }}</b><br/>
+				Gender: <b>{{ ist.getGender }}</b><br/>
+				Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+				Address: <b>{{ ist.getPermanentResidence }}</b><br/>
+				Email: <b>{{ ist.getEmail }}</b><br/>
+				Korbo šátek: <b>{{ ist.getScarf }}</b><br/>
+				Notes: <b>{{ ist.getNotes }}</b><br/>
+				<br/>
+			</div>
+		</div>
+
+		{% if userStatus == 'open' %}
+			<a class="btn btn-small" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
+		{% endif %}
+	</div>
+{% endblock %}

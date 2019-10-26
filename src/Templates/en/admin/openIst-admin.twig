@@ -1,0 +1,18 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card card-half closed-theme">
+		<h2>Zamítnout účastníka</h2>
+		<p>Skutečně chceš účastníka <b>{{ ist.getFirstName }} {{ ist.getLastName }}</b> zamítnout?</p>
+		<form method="post" action="{{ path_for('openIstConfirmed', {'istId' : ist.getId}) }}">
+			<div class="form-group">
+				<label>Důvod zamítnutí (bude mu poslán mailem): <br/><br/>
+					<input type="text" name="reason" id="form-reason" class="form-control form-wide"
+						   required="required"></label>
+			</div>
+			<br/>
+			<a href="{{ path_for('admin-approving') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
+			<input type="submit" value="Zamítnout" class="btn btn-small">
+		</form>
+	</div>
+{% endblock %}

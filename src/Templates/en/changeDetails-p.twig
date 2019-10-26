@@ -1,0 +1,72 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card text-left open-theme">
+		<h2>Edit participant details</h2>
+		<form method="POST" action="{{ path_for('p-postDetails', {'participantId': pDetails.getId}) }}">
+			<label class="form-group form-group-inline">First name: <input class="form-control" type="text"
+																		   name="firstName"
+																		   value="{{ pDetails.getFirstName }}"
+																		   required="required"></label>
+			<label class="form-group form-group-inline">Surname: <input class="form-control" type="text" name="lastName"
+																		value="{{ pDetails.getLastName }}"
+																		required="required"></label>
+			<label class="form-group form-group-inline">Gender:
+				<select class="form-control" name="gender" required="required">
+					<option value="muž" {% if pDetails.getGender == 'muž' %}selected="selected"{% endif %}>Muž</option>
+					<option value="žena" {% if pDetails.getGender == 'žena' %}selected="selected"{% endif %}>Žena
+					</option>
+					<option value="jiné" {% if pDetails.getGender == 'jiné' %}selected="selected"{% endif %}>Jiné
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
+																			  name="birthDate"
+																			  value="{{ pDetails.getBirthDate.format('Y-m-d') }}"
+																			  required="required"></label>
+			<label class="form-group form-group-inline">Place of birth: <input class="form-control" type="text"
+																			   name="birthPlace"
+																			   value="{{ pDetails.getBirthPlace }}"
+																			   required="required"></label>
+			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
+																				  name="permanentResidence"
+																				  value="{{ pDetails.getPermanentResidence }}"
+																				  required="required"></label>
+			<label class="form-group form-group-inline">Country: <input class="form-control" type="text" name="country"
+																		placeholder="Where are you from?"
+																		value="{% if pDetails.getCountry is empty %}Česká republika{% else %}{{ pDetails.getCountry }}{% endif %}"
+																		required="required"></label>
+			<label class="form-group form-group-inline">ID/passport number: <input class="form-control" type="text"
+																				   name="cardPassportNumber"
+																				   placeholder="Don't forget to check expiration date!"
+																				   value="{{ pDetails.getCardPassportNumber }}"></label>
+			<label class="form-group form-group-inline">Diet restriction: <input class="form-control" type="text"
+																				 name="foodPreferences"
+																				 placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..."
+																				 value="{{ pDetails.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Alergies: <input class="form-control" type="text"
+																		 name="allergies"
+																		 value="{{ pDetails.getAllergies }}"></label>
+			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
+																			 name="telephoneNumber"
+																			 placeholder="digits including country dial-in code"
+																			 value="{{ pDetails.getTelephoneNumber }}"
+																			 pattern="^\+?[0-9 ]+$" required="required"></label>
+			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+																	  value="{{ pDetails.getEmail }}"
+																	  required="required"></label>
+			<label class="form-group form-group-inline">Scout group: <input class="form-control" type="text"
+																			name="scoutUnit"
+																			value="{{ pDetails.getScoutUnit }}"
+																			required="required"></label>
+			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
+																	 placeholder="anything else?"
+																	 value="{{ pDetails.getNotes }}"></label>
+
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uložit">
+				<a class="btn btn-small btn-grey" href="{{ path_for('pl-dashboard') }}">Back</a>
+			</div>
+		</form>
+	</div>
+{% endblock %}

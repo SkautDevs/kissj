@@ -11,9 +11,9 @@ use Slim\Http\Response;
 $helper['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for non-logged users only
     if ($request->getAttribute('user') !== null) {
-        $this->flashMessages->warning('Pardon, ale jsi přihlášený - nejdříve se odhlaš prosím');
+        $this->get('flashMessages')->warning('Pardon, ale jsi přihlášený - nejdříve se odhlaš prosím');
 
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
     $response = $next($request, $response);
 
@@ -23,9 +23,9 @@ $helper['nonLoggedOnly'] = function (Request $request, Response $response, calla
 $helper['loggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for logged users only
     if ($request->getAttribute('user') === null) {
-        $this->flashMessages->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
+        $this->get('flashMessages')->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
 
-        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
     }
     $response = $next($request, $response);
 
@@ -38,9 +38,9 @@ $helper['nonChoosedRoleOnly'] = function (Request $request, Response $response, 
     $user = $request->getAttribute('user');
 
     if ($user->status !== User::STATUS_WITHOUT_ROLE) {
-        $this->flashMessages->warning('Pardon, roli na akci už máš');
+        $this->get('flashMessages')->warning('Pardon, roli na akci už máš');
 
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
 
     $response = $next($request, $response);
@@ -54,9 +54,9 @@ $helper['choosedRoleOnly'] = function (Request $request, Response $response, cal
     $user = $request->getAttribute('user');
 
     if ($user->status === User::STATUS_WITHOUT_ROLE) {
-        $this->flashMessages->info('Nejdřív si musíš vybrat roli');
+        $this->get('flashMessages')->info('Nejdřív si musíš vybrat roli');
 
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
     $response = $next($request, $response);
 
@@ -67,7 +67,7 @@ $helper['openStatusOnly'] = function (Request $request, Response $response, call
     // change data can only users with open registration
     $role = $request->getAttribute('role');
     if ($role->status !== 'open') {
-        $this->logger->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
+        $this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
         throw new \RuntimeException('Nemůžeš měnit údaje když nejsi ve stavu zadávání údajů!');
     }
 // TODO
@@ -77,17 +77,17 @@ $helper['openStatusOnly'] = function (Request $request, Response $response, call
 };
 
 $app->get('/', function (Request $request, Response $response) {
-    return $response->withRedirect($this->router->pathFor('landing'));
+    return $response->withRedirect($this->get('router')->pathFor('landing'));
 });
 
 $app->group('/v1', function () use ($helper) {
     $this->get('', function (Request $request, Response $response) {
-        return $response->withRedirect($this->router->pathFor('landing'));
+        return $response->withRedirect($this->get('router')->pathFor('landing'));
     });
 
-    $this->group('/cs', function () use ($helper) {
+    $this->group('/en', function () use ($helper) {
         $this->get('', function (Request $request, Response $response) {
-            return $response->withRedirect($this->router->pathFor('landing'));
+            return $response->withRedirect($this->get('router')->pathFor('landing'));
         });
 
         $this->group('/kissj', function () use ($helper) {
@@ -187,9 +187,9 @@ $app->group('/v1', function () use ($helper) {
                                 $this->patrolService->getPatrolParticipant($routeParams['participantId']),
                                 $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
 
-                                $this->flashMessages->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
+                                $this->get('flashMessages')->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
 
-                                return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+                                return $response->withRedirect($this->get('router')->pathFor('pl-dashboard'));
                             }
 
                             $response = $next($request, $response);
@@ -201,9 +201,9 @@ $app->group('/v1', function () use ($helper) {
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for Patrol Leaders
                     if ($request->getAttribute('user')->role !== User::ROLE_PATROL_LEADER) {
-                        $this->flashMessages->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
+                        $this->get('flashMessages')->error('Pardon, nejsi na akci přihlášený jako Patrol Leader');
 
-                        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+                        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
                     }
 
                     $response = $next($request, $response);
@@ -233,9 +233,9 @@ $app->group('/v1', function () use ($helper) {
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for IST
                     if ($request->getAttribute('user')->role !== User::ROLE_IST) {
-                        $this->flashMessages->error('Pardon, nejsi na akci přihlášený jako IST');
+                        $this->get('flashMessages')->error('Pardon, nejsi na akci přihlášený jako IST');
 
-                        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+                        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
                     }
 
                     $response = $next($request, $response);
@@ -260,10 +260,10 @@ $app->group('/v1', function () use ($helper) {
                                 $patrolService->approvePatrol($patrolLeader);
                                 $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
                                 $patrolService->sendPaymentByMail($payment, $patrolLeader);
-                                $this->flashMessages->success('Patrola schválena, platba vygenerována a mail odeslán');
-                                $this->logger->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
+                                $this->get('flashMessages')->success('Patrola schválena, platba vygenerována a mail odeslán');
+                                $this->get('logger')->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
 
-                                return $response->withRedirect($this->router->pathFor('admin-approving'));
+                                return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
                             })->setName('approvePatrolLeader');
 
                         $this->get('/openPatrolLeader/{patrolLeaderId}',
@@ -280,10 +280,10 @@ $app->group('/v1', function () use ($helper) {
                                 $this->patrolService->openPatrol($patrolLeader);
                                 $reason = $request->getParsedBodyParam('reason');
                                 $this->patrolService->sendDenialMail($patrolLeader, $reason);
-                                $this->flashMessages->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
-                                $this->logger->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
+                                $this->get('flashMessages')->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
+                                $this->get('logger')->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
 
-                                return $response->withRedirect($this->router->pathFor('admin-approving'));
+                                return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
                             })->setName('openPatrolLeaderConfirmed');
 
 
@@ -308,21 +308,21 @@ $app->group('/v1', function () use ($helper) {
                     $this->group('/export', function () {
                         $this->get('/medical', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->medicalDataToCSV('cej2018');
-                            $this->logger->info('Downloaded current medical data');
+                            $this->get('logger')->info('Downloaded current medical data');
 
                             return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
                         })->setName('admin-export-medical');
 
                         $this->get('/logistic', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
-                            $this->logger->info('Downloaded current logistic data');
+                            $this->get('logger')->info('Downloaded current logistic data');
 
                             return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
                         })->setName('admin-export-logistic');
 
                         $this->get('/full', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
-                            $this->logger->info('Downloaded full current data about participants');
+                            $this->get('logger')->info('Downloaded full current data about participants');
 
                             return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
                         })->setName('admin-export-full');
@@ -331,9 +331,9 @@ $app->group('/v1', function () use ($helper) {
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for Admins only
                     if ($request->getAttribute('user')->role !== User::ROLE_ADMIN) {
-                        $this->flashMessages->error('Pardon, nejsi na akci vedený jako admin');
+                        $this->get('flashMessages')->error('Pardon, nejsi na akci vedený jako admin');
 
-                        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
+                        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
                     }
 
                     $response = $next($request, $response);

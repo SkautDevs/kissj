@@ -1,0 +1,19 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card open-theme">
+		<h2>Send patrol registration</h2>
+		<p>Do you really want to send patrol registration for approval? You won't be able to undo this action!</p>
+		<form method="POST" action="{{ path_for('pl-confirmCloseRegistration') }}">
+			<label><input type="checkbox" required="required">I understand that for proper registration completion I
+				have to bring onto the event a <b>Registration supplement</b> for every participant in my patrol, signed
+				by their parent/legal representative (the supplement will be available when the registration is
+				approved). </label><br/>
+			<br/>
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uzavřít registraci">
+				<a class="btn btn-grey btn-small" href="{{ path_for('pl-dashboard') }}">Back</a>
+			</div>
+		</form>
+	</div>
+{% endblock %}

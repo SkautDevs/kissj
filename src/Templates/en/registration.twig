@@ -1,0 +1,18 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card card-half registration-theme">
+		<h2>Registration as {{ readableRole }} na {{ eventReadableName }}</h2>
+		<form action="{{ path_for('trySignup') }}" method="post">
+			<div class="form-group">
+				<input type="hidden" name="role" value="{{ role }}">
+				<input type="hidden" name="eventSlug" value="{{ eventSlug }}">
+				<label for="form-email">Email</label>
+				<input class="form-control form-wide" type="email" name="email" id="form-email" required/><br/>
+			</div>
+			<input type="submit" value="Zaregistrovat se &#13;&#10;a poslat přihlašovací mail" class="btn form-wide"/>
+		</form>
+		<br/>
+		<a href="{{ path_for('landing', {'event': eventSlug}) }}" class="btn btn-grey btn-small">Back</a>
+	</div>
+{% endblock %}

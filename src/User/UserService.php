@@ -43,6 +43,7 @@ class UserService {
     }
 
     public function sendLoginTokenByMail(string $email): string {
+        /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => $email]);
         $this->invalidateAllLoginTokens($user);
 
@@ -56,8 +57,8 @@ class UserService {
         $this->loginTokenRepository->persist($loginToken);
 
         $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-        $this->mailer->sendMailFromTemplate($email, 'Registrace './*$event->readableName.*/
-            '- Link s přihlášením', 'login-token', ['link' => $link]);
+        $this->mailer->sendMailFromTemplate($email, 'Registrace '.$user->event->readableName.
+            ' - Link s přihlášením', 'login-token', ['link' => $link, 'event' => $user->event]);
 
         return $token;
     }
@@ -85,8 +86,8 @@ class UserService {
         return !($lastToken->createdAt < $lastValidTime);
     }
 
-    public function getUserFromToken(string $token): User {
-        return $this->loginTokenRepository->findOneBy(['token' => $token])->user;
+    public function getLoginTokenFromStringToken(string $token): LoginToken {
+        return $this->loginTokenRepository->findOneBy(['token' => $token]);
     }
 
     public function getTokenForEmail(string $email): string {
@@ -120,8 +121,8 @@ class UserService {
         }
 
         $participant = new Participant();
-        //$participant->setUser($user);
         $participant->user = $user;
+        $participant->role = $role;
         $this->participantRepository->persist($participant);
 
         $user->role = $role;

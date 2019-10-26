@@ -1,0 +1,14 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card open-theme">
+		<h2>Delete participant</h2>
+		<p>Do you really want to delete
+			participant {% if pDetail.getFirstName is not empty %} {{ pDetail.getFirstName }} {{ pDetail.getLastName }}{% endif %}
+			? You won't be able to undo this action!</p>
+		<form method="POST" action="{{ path_for('p-confirmDelete', {'participantId': pDetail.getId}) }}">
+			<input class="btn btn-small" type="submit" value="Smazat účastníka">
+			<a href="{{ path_for('pl-dashboard') }}" class="btn btn-grey btn-small">Back</a>
+		</form>
+	</div>
+{% endblock %}

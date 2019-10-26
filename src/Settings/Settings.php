@@ -5,6 +5,7 @@ namespace kissj\Settings;
 use DI\Bridge\Slim\CallableResolver;
 use DI\Bridge\Slim\ControllerInvoker;
 use DI\Container;
+use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\AssociativeArrayResolver;
@@ -62,7 +63,7 @@ class Settings {
 
                 // Renderer settings
                 'renderer' => [
-                    'templates_path' => __DIR__.'/../Templates/',
+                    'templates_path' => __DIR__.'/../Templates/en',
                     'enable_cache' => true,
                     'cache_path' => __DIR__.'/../../temp/twig',
                 ],
@@ -134,6 +135,7 @@ class Settings {
             'environment' => function () {
                 return new Environment($_SERVER);
             },
+            'flashMessages' => autowire(FlashMessagesBySession::class),
             'request' => function (ContainerInterface $c) {
                 return Request::createFromEnvironment($c->get('environment'));
             },
@@ -170,6 +172,7 @@ class Settings {
 
             return $logger;
         };
+        $container[Logger::class] = get('logger');
 
         $container[Connection::class] = function () use ($settings): Connection {
             $connection = new Connection([
@@ -198,6 +201,8 @@ class Settings {
 
             return $fioFactory->createFioRead('mainAccount');
         };
+
+        $container[FioRead::class] = 'need to implement';
 
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,

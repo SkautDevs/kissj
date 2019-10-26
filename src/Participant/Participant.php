@@ -10,7 +10,8 @@ use kissj\User\User;
  * All commons are here, entitis are seaprated of course (:
  *
  * @property int         $id
- * @property User|null   $user      m:belongsToOne
+ * @property User|null   $user      m:hasOne
+ * @property string|null $role      needed for DB working faster
  * @property string|null $firstName
  * @property string|null $lastName
  * @property string|null $nickname

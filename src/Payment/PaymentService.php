@@ -2,59 +2,46 @@
 
 namespace kissj\Payment;
 
-use h4kuna\Fio\FioRead;
-use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerInterface;
 use kissj\Participant\Participant;
-use kissj\Random;
-use kissj\User\Role;
-use kissj\User\RoleRepository;
 use Monolog\Logger;
-use Slim\Views\Twig;
 
 class PaymentService {
     private $settings;
     private $mailer;
     private $renderer;
     private $eventName;
-    private $random;
 
-    /** @var PaymentRepository */
     private $paymentRepository;
-    /** @var FioRead */
     private $paymentAutoMatcherFio;
-    /** @var FlashMessagesInterface $flashMessages */
     private $flashMessages;
-    /** @var Logger $logger */
     private $logger;
 
     public function __construct(
-        array $paymentsSettings,
         PaymentRepository $paymentRepository,
-        FioRead $paymentAutoMatcherFio,
-        Twig $renderer,
-        FlashMessagesInterface $flashMessages,
+        //FioRead $paymentAutoMatcherFio,
+        FlashMessagesBySession $flashMessages,
         Logger $logger,
-        string $eventName,
-        MailerInterface $mailer,
-        Random $random
+        MailerInterface $mailer
     ) {
-        $this->settings = $paymentsSettings;
         $this->paymentRepository = $paymentRepository;
-        $this->paymentAutoMatcherFio = $paymentAutoMatcherFio;
+        //$this->paymentAutoMatcherFio = $paymentAutoMatcherFio;
         $this->mailer = $mailer;
-        $this->renderer = $renderer;
         $this->flashMessages = $flashMessages;
         $this->logger = $logger;
-        $this->eventName = $eventName;
-        $this->random = $random;
     }
 
     public function findLastPayment(Participant $participant): ?Payment {
-        return $this->paymentRepository->findOneBy(
-            ['event' => $participant->user->event, 'user' => $participant->user],
-            ['created_at' => 'DESC']
-        );
+        $criteria = ['participant' => $participant];
+        if ($this->paymentRepository->isExisting($criteria)) {
+            return $this->paymentRepository->findOneBy(
+                $criteria,
+                ['created_at' => false]
+            );
+        }
+
+        return null;
     }
 
     public function createNewPayment(Role $role, bool $extraScarf): Payment {

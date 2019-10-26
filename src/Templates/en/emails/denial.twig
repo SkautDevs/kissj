@@ -1,0 +1,16 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+	<p>Ahoy,</p>
+	<p>unfortunatelly, we have denied your registration for AQUA 2020, as you hadn't met all the requirements. </p>
+
+	<p>Reason is: {{ reason }}. Please, add or edit missing details in registration system and don't forget to send your
+		registration for approval. </p>
+
+	<p>If you have any questions, you may seek the answer at our webpage
+		<a href="http://aqua.sk/en//">https://auqa.sk</a>
+		or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
+
+	<p>Fair winds and following seas from AQUA team
+	</p>
+{% endblock %}

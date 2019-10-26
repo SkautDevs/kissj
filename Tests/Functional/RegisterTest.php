@@ -20,7 +20,7 @@ class RegisterTest extends BaseTestCase {
         $user = $userService->registerUser($email);
         $readableRole = 'Patrol Leader';
         $token = $userService->sendLoginTokenByMail($email, $readableRole);
-        $loadedUser = $userService->getUserFromToken($token);
+        $loadedUser = $userService->getLoginTokenFromStringToken($token)->user;
 
         $this->assertEquals($user->id, $loadedUser->id);
     }

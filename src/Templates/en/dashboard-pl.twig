@@ -1,0 +1,80 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card {{ userStatus }}-theme">
+		<h2>{{ plDetails.getPatrolName }} patrol details</h2>
+		<h4>
+			{{ userCustomHelp }}
+		</h4>
+		{% if userStatus == 'approved' %}
+			<div class="paymentInfo">
+				<h2>Payment details</h2>
+				Account number: {{ payment.getAccountNumber }}<br/>
+				Amount: {{ payment.getPrice }} EUR<br/>
+				Variable symbol: {{ payment.getVariableSymbol }}<br/>
+				Note: AQUA 2020 {{ plDetails.getPatrolName }}<br/>
+				<br/>
+			</div>
+		{% endif %}
+
+		<div class="card-divide">
+			<div>
+				<h2>Patrol Leader details</h2>
+				{% if userStatus == 'open' %}
+					<a class="btn btn-small" href="{{ path_for('pl-changeDetails') }}">Edit your details</a><br/><br/>
+				{% endif %}
+				<div class="text-center">
+					First name: {{ plDetails.getFirstName }}<br/>
+					Surname: {{ plDetails.getLastName }}<br/>
+					Gender: {{ plDetails.getGender }}<br/>
+					Year of birth: {{ plDetails.getBirthDate.format('d. m. Y') }}<br/>
+					Place of birth: {{ plDetails.getBirthPlace }}<br/>
+					Permament address: {{ plDetails.getPermanentResidence }}<br/>
+					Country: {{ plDetails.getCountry }}<br/>
+					ID/passport number: {{ plDetails.getCardPassportNumber }}<br/>
+					Diet restriction: {{ plDetails.getFoodPreferences }}<br/>
+					Health issues: {{ plDetails.getAllergies }}<br/>
+					Phone number: {{ plDetails.getTelephoneNumber }}<br/>
+					Email: {{ plDetails.getEmail }}<br/>
+					Scout group: {{ plDetails.getScoutUnit }}<br/>
+					Note: {{ plDetails.getNotes }}<br/>
+
+					Patrol name: {{ plDetails.getPatrolName }}<br/>
+				</div>
+			</div>
+			<div>
+				<h2>List of participants</h2>
+				{% if userStatus == 'open' %}
+					<a class="btn btn-small" href="{{ path_for('pl-addParticipant') }}">Add a participant</a><br/>
+					<p>You need 9 participants for valid registration</p>
+				{% endif %}
+				{% set count = 1 %}
+				<ol class="text-center">
+					{% for participantDetails in allPDetails %}
+						{# why here must be full .getFirstName() instead of .firstName like elsewhere? #}
+						<li>participant {{ participantDetails.getFirstName() }} {{ participantDetails.getLastName() }}
+							{% if userStatus == 'open' %}
+								<!-- edit --><a
+									href="{{ path_for('p-changeDetails',{'participantId': participantDetails.id}) }}"><i
+										class="material-icons">edit</i></a>
+								<!-- delete --><a
+									href="{{ path_for('p-delete',{'participantId': participantDetails.id}) }}"><i
+										class="material-icons">delete</i></a>
+							{% else %}
+								<!-- show --><a
+									href="{{ path_for('p-showDetails',{'participantId': participantDetails.id}) }}"><i
+										class="material-icons">search</i></a>
+							{% endif %}
+
+						</li>
+						{% set count = count + 1 %}
+					{% endfor %}
+				</ol>
+			</div>
+		</div>
+
+		{% if userStatus == 'open' %}
+			<a class="btn btn-small" href="{{ path_for('pl-closeRegistration') }}">Send registration</a>
+		{% endif %}
+	</div>
+{% endblock %}

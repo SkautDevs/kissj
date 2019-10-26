@@ -6,6 +6,7 @@ use DI\Annotation\Inject;
 use kissj\FlashMessages;
 use Monolog\Logger;
 use Slim\Interfaces\RouterInterface;
+use Slim\Views\Twig;
 
 abstract class AbstractController {
     /**
@@ -25,4 +26,10 @@ abstract class AbstractController {
      * @var Logger
      */
     protected $logger;
+
+    /**
+     * @Inject("view")
+     * @var Twig
+     */
+    protected $view;
 }

@@ -2,39 +2,30 @@
 
 namespace kissj\Participant\Ist;
 
-use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerInterface;
 use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\User\User;
-use Slim\Views\Twig;
 
 class IstService {
+    private $istRepository;
     private $paymentRepository;
     private $roleService;
     private $flashMessages;
-    private $renderer;
     private $mailer;
-    private $eventSettings;
 
     public function __construct(
+        IstRepository $istRepository,
         PaymentRepository $paymentRepository,
-        FlashMessagesInterface $flashMessages,
-        MailerInterface $mailer,
-        Twig $renderer,
-        $eventSettings,
-        $eventName
+        FlashMessagesBySession $flashMessages,
+        MailerInterface $mailer
     ) {
         $this->istRepository = $istRepository;
-        $this->roleRepository = $roleRepository;
         $this->paymentRepository = $paymentRepository;
-        $this->roleService = $userStatusService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
-        $this->renderer = $renderer;
-        $this->eventSettings = $eventSettings;
-        $this->eventName = $eventName;
     }
 
     public function getIst(User $user): Ist {
@@ -44,9 +35,7 @@ class IstService {
             $this->istRepository->persist($ist);
         }
 
-        $ist = $this->istRepository->findOneBy(['user' => $user]);
-
-        return $ist;
+        return $this->istRepository->findOneBy(['user' => $user]);
     }
 
     public function getAllClosedIsts(): array {

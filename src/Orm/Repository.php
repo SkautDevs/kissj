@@ -138,4 +138,12 @@ class Repository extends BaseRepository {
             $qb->orderBy($order)->asc($asc);
         }
     }
+
+    protected function overloadEntityIfNeeded(): ?string {
+        if ($this->getTable() === 'participant') {
+            return static::class;
+        }
+
+        return null;
+    }
 }

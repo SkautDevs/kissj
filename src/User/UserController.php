@@ -19,7 +19,7 @@ class UserController extends AbstractController {
         $this->userRegeneration = $userRegeneration;
     }
 
-    public function landing(Request $request, Response $response, ?User $user) {
+    public function landing(Response $response, ?User $user) {
         /** @var User $user */
         //$user = $request->getAttribute('user');
 
@@ -34,8 +34,8 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
-    public function sendLoginEmail(Request $request, Response $response, string $email) {
-        //$email = $request->getParam('email');
+    public function sendLoginEmail(Request $request, Response $response) {
+        $email = $request->getParam('email');
         if (!$this->userService->isEmailExisting($email)) {
             $this->userService->registerUser($email);
         }
@@ -57,9 +57,9 @@ class UserController extends AbstractController {
 
     public function tryLoginWithToken(Response $response, string $token) {
         //$loginToken = $args['token'];
-        $loginToken = $token;
-        if ($this->userService->isLoginTokenValid($loginToken)) {
-            $user = $this->userService->getUserFromToken($loginToken);
+        if ($this->userService->isLoginTokenValid($token)) {
+            $loginToken = $this->userService->getLoginTokenFromStringToken($token);
+            $user = $loginToken->user;
             $this->userRegeneration->saveUserIdIntoSession($user);
             $this->userService->invalidateAllLoginTokens($user);
 
@@ -68,7 +68,7 @@ class UserController extends AbstractController {
 
         $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
 
-        return $response->withRedirect($this->router->pathFor('loginAskEmail', ['email' => $loginToken->user->email]));
+        return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }
 
     public function logout(Request $request, Response $response) {

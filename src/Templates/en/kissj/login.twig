@@ -1,0 +1,29 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="two-cards">
+		<div class="card registration-theme">
+			<form action="{{ path_for('sendLoginEmail') }}" method="post">
+				<h2>Registration for the {{ event.readableName }}</h2>
+				<div class="form-group">
+					<label for="form-email">Email</label>
+					<input class="form-control form-wide" type="email" name="email" id="form-email" value="email"
+						   required/><br/>
+				</div>
+				<input type="submit" value="Poslat mail pro přihlášení" class="btn form-wide"/>
+			</form>
+		</div>
+		<div class="card approved-theme">
+			<h2>How does logging-in work?</h2>
+			<ul>
+				<li>Submit you E-mail</li>
+				<li>Follow an access button in your E-mail</li>
+				<li>Fill in your deatils</li>
+				<li>Send your registration for approval</li>
+			</ul>
+			<br/>
+			<a href="{{ path_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">More information about
+				registration system</a>
+		</div>
+	</div>
+{% endblock %}

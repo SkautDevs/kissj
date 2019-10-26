@@ -32,7 +32,7 @@ class Mapper implements IMapper {
             Guest::class,
         ];
         if (in_array($entityClass, $participantVariants, true)) {
-            return explode('\\', Participant::class)[0];
+            $entityClass = Participant::class;
         }
 
         return $this->toUnderScore($this->trimNamespace($entityClass));
@@ -46,18 +46,6 @@ class Mapper implements IMapper {
             case 'logintoken':
                 return LoginToken::class;
 
-            case 'patrolleader':
-                return PatrolLeader::class;
-
-            case 'patrolparticipant':
-                return PatrolParticipant::class;
-
-            case 'ist':
-                return Ist::class;
-
-            case 'guest':
-                return Guest::class;
-
             case 'payment':
                 return Payment::class;
 
@@ -65,7 +53,25 @@ class Mapper implements IMapper {
                 return Event::class;
 
             case 'participant':
-                return Participant::class;
+                if ($row === null) {
+                    return Participant::class;
+                }
+                switch ($row->getData()['role']) {
+                    case User::ROLE_PATROL_LEADER:
+                        return PatrolLeader::class;
+
+                    case User::ROLE_PATROL_PARTICIPANT:
+                        return PatrolParticipant::class;
+
+                    case User::ROLE_IST:
+                        return Ist::class;
+
+                    case User::ROLE_GUEST:
+                        return Guest::class;
+
+                    default:
+                        throw new \UnexpectedValueException('Got unknown Participant role: '.$row->getData()['role']);
+                }
 
             default:
                 throw new \UnexpectedValueException('Got unknown table name: '.$table);

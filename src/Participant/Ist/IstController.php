@@ -2,27 +2,38 @@
 
 namespace kissj\Participant\Ist;
 
+use kissj\AbstractController;
+use kissj\Payment\PaymentService;
+use kissj\User\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class IstController {
-    public function showDashboard(Request $request, Response $response, array $args) {
-        $user = $request->getAttribute('user');
+class IstController extends AbstractController {
+    private $istService;
+    private $paymentService;
+
+    public function __construct(IstService $istService, PaymentService $paymentService) {
+        $this->istService = $istService;
+        $this->paymentService = $paymentService;
+    }
+
+    public function showDashboard(Request $request, Response $response, User $user) {
+        //$user = $request->getAttribute('user');
         $ist = $this->istService->getIst($user);
         $possibleOnePayment = $this->paymentService->findLastPayment($ist);
 
         return $this->view->render($response, 'dashboard-ist.twig',
-            ['user' => $user, 'istDetails' => $ist, 'payment' => $possibleOnePayment]);
+            ['user' => $user, 'ist' => $ist, 'payment' => $possibleOnePayment]);
     }
 
-    public function showDetailsChangeable(Request $request, Response $response, array $args) {
+    public function showDetailsChangeable(Request $request, Response $response) {
         $istDetails = $this->istService->getIst($request->getAttribute('user'));
 
         return $this->view->render($response, 'changeDetails-ist.twig',
             ['istDetails' => $istDetails]);
     }
 
-    public function changeDetails(Request $request, Response $response, array $args) {
+    public function changeDetails(Request $request, Response $response) {
         $params = $request->getParams();
         if ($this->istService->isIstDetailsValid(
             $params['firstName'] ?? null,
@@ -81,7 +92,7 @@ class IstController {
         return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
     }
 
-    public function showCloseRegistration(Request $request, Response $response, array $args) {
+    public function showCloseRegistration(Request $request, Response $response) {
         $ist = $this->istService->getIst($request->getAttribute('user'));
         $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
@@ -91,7 +102,7 @@ class IstController {
         return $response->withRedirect($this->router->pathFor('ist-dashboard'));
     }
 
-    public function closeRegistration(Request $request, Response $response, array $args) {
+    public function closeRegistration(Request $request, Response $response) {
         $ist = $this->istService->getIst($request->getAttribute('user'));
         if ($this->istService->isCloseRegistrationValid($ist)) {
             $this->istService->closeRegistration($ist);
@@ -106,27 +117,24 @@ class IstController {
         return $response->withRedirect($this->router->pathFor('ist-dashboard'));
     }
 
-    public function approveIst(Request $request, Response $response, array $args) {
-        /** @var \kissj\Participant\Ist\IstService $istService */
-        $istService = $this->istService;
-        $ist = $istService->getIstFromId($args['istId']);
-        $istService->approveIst($ist);
-        $role = $this->roleService->getRole($ist->user);
-        $payment = $this->paymentService->createNewPayment($role);
-        $istService->sendPaymentByMail($payment, $ist);
+    public function approveIst(Request $request, Response $response, int $istId) {
+        $ist = $this->istService->getIstFromId($istId);
+        $this->istService->approveIst($ist);
+        $payment = $this->paymentService->createNewPayment($ist->user->role);
+        $this->istService->sendPaymentByMail($payment, $ist);
         $this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
         $this->logger->info('Approved registration for IST with ID '.$ist->id);
 
         return $response->withRedirect($this->router->pathFor('admin-approving'));
     }
 
-    public function showOpenIst(Request $request, Response $response, array $args) {
+    public function showOpenIst(Request $request, Response $response) {
         $ist = $this->istService->getIstFromId($args['istId']);
 
         return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
     }
 
-    public function openIst(Request $request, Response $response, array $args) {
+    public function openIst(Request $request, Response $response) {
         $ist = $this->istService->getIstFromId($args['istId']);
         $this->istService->openIst($ist);
         $reason = $request->getParsedBodyParam('reason');

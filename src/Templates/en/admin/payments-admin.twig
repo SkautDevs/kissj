@@ -1,0 +1,50 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card approved-theme">
+		<h2>Ruční potvrzování plateb na akci {{ eventName }}</h2>
+		<a href="{{ path_for('admin-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
+	</div>
+	<br/>
+	{% if approvedIsts is not empty %}
+		<div class="card approved-theme">
+			<h2>Účastníci</h2>
+		</div>
+		<br/>
+		{% for ist in approvedIsts %}
+			<div class="card approved-theme">
+				<h3>{{ ist.info.getFirstName }} {{ ist.info.getLastName }} - {{ ist.info.getNickname }}</h3>
+				Mail: <b>{{ ist.info.getEmail }}</b><br/>
+				Datum vygenerování platby: <b>{{ ist.payment.getGeneratedDate.format('d. m. Y') }}</b><br/>
+				Uběhlo: <b><span class="
+					{% if ist.elapsedPaymentDays > maxElapsedPaymentDays %}registration-theme{% endif %}
+					">{{ ist.elapsedPaymentDays }} dní</span>
+				</b><br/>
+				Variabilní symbol: <b>{{ ist.payment.getVariableSymbol }}</b><br/>
+				Částka: <b>{{ ist.payment.getPrice }} Kč</b><br/>
+				<br/>
+				<a href="{{ path_for('cancel-ist-payment', {'paymentId': ist.payment.getId}) }}"
+				   class="btn btn-grey btn-small">
+					Zrušit platbu
+				</a>
+				<br/>
+				<br/>
+				<a href="{{ path_for('cancel-ist-payment', {'paymentId': ist.payment.getId}) }}"
+				   class="btn btn-grey btn-small">
+					Zrušit platbu
+				</a>
+				<br/>
+				<br/>
+				<form method="post" action="{{ path_for('setPaymentPaid', {'payment': ist.payment.getId}) }}">
+					<input type="submit" value="Potvrdit platbu" class="btn btn-small">
+				</form>
+			</div>
+			<br/>
+		{% endfor %}
+	{% else %}
+		<div class="card approved-theme">
+			<h3>Žádní účastníci nepotřebují potvrdit platbu!</h3>
+		</div>
+		<br/>
+	{% endif %}
+{% endblock %}

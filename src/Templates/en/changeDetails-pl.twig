@@ -1,0 +1,76 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card text-left open-theme">
+		<h2>Edit Patrol Leader details</h2>
+		<form method="POST" action="{{ path_for('pl-postDetails') }}">
+			<label class="form-group form-group-inline">First name: <input class="form-control" type="text"
+																		   name="firstName"
+																		   value="{{ plInfo.getFirstName }}"
+																		   required="required"></label>
+			<label class="form-group form-group-inline">Surname: <input class="form-control" type="text" name="lastName"
+																		value="{{ plInfo.getLastName }}"
+																		required="required"></label>
+			<label class="form-group form-group-inline">Gender:
+				<select class="form-control" name="gender" required="required">
+					<option value="muž" {% if plInfo.getGender == 'muž' %}selected="selected"{% endif %}>Muž</option>
+					<option value="žena" {% if plInfo.getGender == 'žena' %}selected="selected"{% endif %}>Žena</option>
+					<option value="jiné" {% if plInfo.getGender == 'jiné' %}selected="selected"{% endif %}>Jiné</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
+																			  name="birthDate"
+																			  value="{{ plInfo.getBirthDate.format('Y-m-d') }}"
+																			  required="required"></label>
+			<label class="form-group form-group-inline">Place of birth: <input class="form-control" type="text"
+																			   name="birthPlace"
+																			   value="{{ plInfo.getBirthPlace }}"
+																			   required="required"></label>
+			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
+																				  name="permanentResidence"
+																				  value="{{ plInfo.getPermanentResidence }}"
+																				  required="required"></label>
+			<label class="form-group form-group-inline">Country: <input class="form-control" type="text" name="country"
+																		placeholder="Where are you from?"
+																		value="{% if plInfo.getCountry is empty %}Česká republika{% else %}{{ plInfo.getCountry }}{% endif %}"
+																		required="required"></label>
+			<label class="form-group form-group-inline">ID/passport number: <input class="form-control" type="text"
+																				   name="cardPassportNumber"
+																				   placeholder="Don't forget to check expiration date!"
+																				   value="{{ plInfo.getCardPassportNumber }}"></label>
+			<label class="form-group form-group-inline">Diet restriction: <input class="form-control" type="text"
+																				 name="foodPreferences"
+																				 placeholder="vegetarián, pouze kosher, bez lepku, popřípadě jiné omezení v jídle..."
+																				 value="{{ plInfo.getFoodPreferences }}"></label>
+			<label class="form-group form-group-inline">Alergies: <input class="form-control" type="text"
+																		 name="allergies"
+																		 value="{{ plInfo.getAllergies }}"></label>
+			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
+																			 name="telephoneNumber"
+																			 placeholder="digits including country dial-in code"
+																			 pattern="^\+?[0-9 ]+$"
+																			 value="{{ plInfo.getTelephoneNumber }}"
+																			 required="required"></label>
+			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+																	  value="{% if plInfo.getEmail is empty %}{{ user.email }}{% else %}{{ plInfo.getEmail }}{% endif %}"
+																	  required="required"></label>
+			<label class="form-group form-group-inline">Scout group: <input class="form-control" type="text"
+																			name="scoutUnit"
+																			value="{{ plInfo.getScoutUnit }}"
+																			required="required"></label>
+			<label class="form-group form-group-inline">Notes: <input class="form-control" type="text" name="notes"
+																	  placeholder="anything else?"
+																	  value="{{ plInfo.getNotes }}"></label>
+			<br/>
+			<label class="form-group form-group-inline">Patrol name: <input class="form-control" type="text"
+																			name="patrolName"
+																			value="{{ plInfo.getPatrolName }}"
+																			required="required"></label>
+
+			<div class="text-center">
+				<input class="btn btn-small" type="submit" value="Uložit">
+				<a class="btn btn-small btn-grey" href="{{ path_for('pl-dashboard') }}">Back</a>
+			</div>
+		</form>
+	</div>
+{% endblock %}
