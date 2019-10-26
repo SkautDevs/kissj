@@ -6,7 +6,8 @@ class UserRegeneration {
     private $userRepository;
     private $currentUser;
 
-    public function __construct(UserRepository $userRepository, array $possibleUserSession) {
+    public function __construct(UserRepository $userRepository) {
+        $possibleUserSession = $_SESSION['user'] ?? [];
         $this->userRepository = $userRepository;
 
         if ($this->canRecreateUserFromSession($possibleUserSession)) {

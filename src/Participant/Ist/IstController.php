@@ -9,7 +9,7 @@ class IstController {
     public function showDashboard(Request $request, Response $response, array $args) {
         $user = $request->getAttribute('user');
         $ist = $this->istService->getIst($user);
-        $possibleOnePayment = $this->istService->getOnePayment($ist);
+        $possibleOnePayment = $this->paymentService->findLastPayment($ist);
 
         return $this->view->render($response, 'dashboard-ist.twig',
             ['user' => $user, 'istDetails' => $ist, 'payment' => $possibleOnePayment]);
@@ -107,7 +107,7 @@ class IstController {
     }
 
     public function approveIst(Request $request, Response $response, array $args) {
-        /** @var \kissj\Participant\Guest\GuestService $istService */
+        /** @var \kissj\Participant\Ist\IstService $istService */
         $istService = $this->istService;
         $ist = $istService->getIstFromId($args['istId']);
         $istService->approveIst($ist);

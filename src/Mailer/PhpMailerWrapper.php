@@ -4,8 +4,10 @@ namespace kissj\Mailer;
 
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Slim\Views\Twig;
 
 class PhpMailerWrapper implements MailerInterface {
+    private $renderer;
 
     private $smtp;
     private $smtp_server;
@@ -22,7 +24,9 @@ class PhpMailerWrapper implements MailerInterface {
     private $debugOutputLevel;
     private $sendMailToMainRecipient;
 
-    public function __construct(array $mailerSettings) {
+    public function __construct(Twig $renderer, array $mailerSettings) {
+        $this->renderer = $renderer;
+        // TODO refactor
         $this->smtp = $mailerSettings['smtp'];
         $this->smtp_server = $mailerSettings['smtp_server'];
         $this->smtp_auth = $mailerSettings['smtp_auth'];
@@ -39,48 +43,54 @@ class PhpMailerWrapper implements MailerInterface {
         $this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
     }
 
-    public function sendMail($recipientEmail, $subject, $body): void {
+    public function sendMailFromTemplate(
+        string $recipientEmail,
+        string $subject,
+        string $templateName,
+        array $parameters
+    ): void {
+        $messageBody = $this->renderer->fetch('emails/'.$templateName.'.twig', $parameters);
         $mailer = new PHPMailer(true);
 
         try {
-        $mailer->SMTPDebug = $this->debugOutputLevel; // Enable debug output
-        if ($this->smtp) {
-            $mailer->isSMTP();
-        } else {
-            $mailer->isMail();
-        }
-        if ($this->disable_tls) {
-            $mailer->SMTPOptions = array (
-                'ssl' => array (
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true,
-                ),
-            );
-        }
-        $mailer->Host = $this->smtp_server;    // Specify main and backup SMTP servers
-        $mailer->Port = $this->smtp_port;    // TCP port to connect to
-        $mailer->SMTPAuth = $this->smtp_auth;    // Enable SMTP authentication
-        $mailer->Username = $this->smtp_username;    // SMTP username
-        $mailer->Password = $this->smtp_password;    // SMTP password
+            $mailer->SMTPDebug = $this->debugOutputLevel; // Enable debug output
+            if ($this->smtp) {
+                $mailer->isSMTP();
+            } else {
+                $mailer->isMail();
+            }
+            if ($this->disable_tls) {
+                $mailer->SMTPOptions = array (
+                    'ssl' => array (
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ),
+                );
+            }
+            $mailer->Host = $this->smtp_server;    // Specify main and backup SMTP servers
+            $mailer->Port = $this->smtp_port;    // TCP port to connect to
+            $mailer->SMTPAuth = $this->smtp_auth;    // Enable SMTP authentication
+            $mailer->Username = $this->smtp_username;    // SMTP username
+            $mailer->Password = $this->smtp_password;    // SMTP password
             $mailer->SMTPSecure = $this->smtp_secure;    // Enable TLS encryption, `ssl` or null also accepted
-        $mailer->CharSet = 'UTF-8';
+            $mailer->CharSet = 'UTF-8';
 
-        //Recipients
-        $mailer->setFrom($this->from_mail, $this->from_name);
-        if (!empty($this->bcc_mail)) {
-            $mailer->addCC($this->bcc_mail, $this->bcc_name);
-        }
+            //Recipients
+            $mailer->setFrom($this->from_mail, $this->from_name);
+            if (!empty($this->bcc_mail)) {
+                $mailer->addCC($this->bcc_mail, $this->bcc_name);
+            }
 
-        if ($this->sendMailToMainRecipient) {
-            $mailer->addAddress($recipientEmail);
-        }
+            if ($this->sendMailToMainRecipient) {
+                $mailer->addAddress($recipientEmail);
+            }
 
-        // Content
+            // Content
             $mailer->isHTML();
-        $mailer->Subject = $subject;
-        $mailer->Body = $body;
-        $mailer->AltBody = strip_tags($body);
+            $mailer->Subject = $subject;
+            $mailer->Body = $messageBody;
+            $mailer->AltBody = strip_tags($messageBody);
 
             $mailer->send();
         } catch (\Exception $e) {

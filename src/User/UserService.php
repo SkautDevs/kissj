@@ -7,20 +7,13 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use Slim\Router;
-use Slim\Views\Twig;
 
 class UserService {
-
     private $router;
-    private $renderer;
 
-    /** @var UserRepository */
     private $userRepository;
-    /** @var MailerInterface */
     private $mailer;
-    /** @var LoginTokenRepository */
     private $loginTokenRepository;
-    /** @var ParticipantRepository */
     private $participantRepository;
 
     public function __construct(
@@ -28,15 +21,13 @@ class UserService {
         ParticipantRepository $participantRepository,
         UserRepository $userRepository,
         MailerInterface $mailer,
-        Router $router,
-        Twig $renderer
+        Router $router
     ) {
         $this->loginTokenRepository = $loginTokenRepository;
         $this->participantRepository = $participantRepository;
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
         $this->router = $router;
-        $this->renderer = $renderer;
     }
 
     public function isEmailExisting(string $email): bool {
@@ -65,9 +56,8 @@ class UserService {
         $this->loginTokenRepository->persist($loginToken);
 
         $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-        $message = $this->renderer->fetch('emails/login-token.twig', ['link' => $link]);
-        $this->mailer->sendMail($email, 'Registrace './*$event->readableName.*/
-            '- Link s přihlášením', $message);
+        $this->mailer->sendMailFromTemplate($email, 'Registrace './*$event->readableName.*/
+            '- Link s přihlášením', 'login-token', ['link' => $link]);
 
         return $token;
     }

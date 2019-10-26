@@ -2,9 +2,9 @@
 
 namespace kissj\Mailer;
 
-class MockMailer implements \kissj\Mailer\MailerInterface {
+class MockMailer implements MailerInterface {
 
-    public function sendMail($recipientEmail, $subject, $body) {
+    public function sendMailFromTemplate($recipientEmail, $subject, $tempalteName, $parameters) {
 
     }
 }

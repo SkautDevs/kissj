@@ -2,13 +2,12 @@
 
 namespace kissj\Payment;
 
-use kissj\Participants\Participant;
-use kissj\User\Role;
+use kissj\Event\Event;
+use kissj\User\User;
 
 
 /**
  * @property int       $id
- * @property string    $event
  * @property string    $variableSymbol
  * @property string    $price
  * @property string    $currency
@@ -16,8 +15,9 @@ use kissj\User\Role;
  * @property string    $purpose
  * @property string    $accountNumber
  * @property \DateTime $generatedDate m:passThru(dateFromString|dateToString)
- * @property Role      $role          m:hasOne
+ * @property User      $user          m:hasOne
+ * @property Event     $event         m:hasOne
  */
-class Payment extends Participant {
+class Payment {
 
 }

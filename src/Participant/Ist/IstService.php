@@ -49,10 +49,6 @@ class IstService {
         return $ist;
     }
 
-    public function getIstFromId(int $istId): Ist {
-        return $this->istRepository->findOneBy(['id' => $istId]);
-    }
-
     public function getAllClosedIsts(): array {
         $closedIsts = $this->roleRepository->findBy([
             'event' => $this->eventName,
@@ -220,7 +216,8 @@ class IstService {
             'istFullName' => $ist->firstName.' '.$ist->lastName,
         ]);
 
-        $this->mailer->sendMail($payment->role->user->email, 'Registrace Korbo 2019 - platební informace', $message);
+        $this->mailer->sendMailFromTemplate($payment->role->user->email, 'Registrace Korbo 2019 - platební informace',
+            $message);
     }
 
     public function sendDenialMail(Ist $ist, string $reason) {
@@ -230,26 +227,8 @@ class IstService {
             'reason' => $reason,
         ]);
 
-        $this->mailer->sendMail($ist->user->email, 'Registrace Korbo 2019 - zamítnutí registrace', $message);
-    }
-
-    public function getOneValidPayment(Ist $ist): ?Payment {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy([
-            'userId' => $ist->user->id,
-            'event' => 'korbo2019',
-        ]); // TODO fix eventname
-        $payments = $this->paymentRepository->findByMultiple([
-            ['roleId' => $role],
-            ['event' => 'korbo2019'],
-            ['status' => new Relation('canceled', '!=')],
-        ]);
-
-        if (count($payments) > 1) {
-            throw new \Exception('It exists more payments than we expected on roleId '.$role->id);
-        }
-
-        return $payments[0] ?? null;
+        $this->mailer->sendMailFromTemplate($ist->user->email, 'Registrace Korbo 2019 - zamítnutí registrace',
+            $message);
     }
 
     // TODO clean up this four functions

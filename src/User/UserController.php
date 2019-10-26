@@ -3,30 +3,25 @@
 namespace kissj\User;
 
 use kissj\AbstractController;
-use kissj\Participant\ParticipantService;
 use PHPUnit\Framework\MockObject\RuntimeException;
-use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class UserController extends AbstractController {
-    /** @var UserService */
     protected $userService;
-    /** @var UserRegeneration */
     protected $userRegeneration;
-    /** @var ParticipantService */
-    protected $participantService;
 
-    public function __construct(ContainerInterface $c) {
-        $this->userService = $c->get('userService');
-        $this->userRegeneration = $c->get('userRegeneration');
-        $this->participantService = $c->get('participantService');
-        parent::__construct($c);
+    public function __construct(
+        UserService $userService,
+        UserRegeneration $userRegeneration
+    ) {
+        $this->userService = $userService;
+        $this->userRegeneration = $userRegeneration;
     }
 
-    public function landing(Request $request, Response $response, array $args) {
+    public function landing(Request $request, Response $response, ?User $user) {
         /** @var User $user */
-        $user = $request->getAttribute('user');
+        //$user = $request->getAttribute('user');
 
         if ($user === null) {
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
@@ -39,8 +34,8 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
-    public function sendLoginEmail(Request $request, Response $response, array $args) {
-        $email = $request->getParam('email');
+    public function sendLoginEmail(Request $request, Response $response, string $email) {
+        //$email = $request->getParam('email');
         if (!$this->userService->isEmailExisting($email)) {
             $this->userService->registerUser($email);
         }
@@ -60,8 +55,9 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('loginAfterLinkSent'));
     }
 
-    public function tryLoginWithToken(Request $request, Response $response, array $args) {
-        $loginToken = $args['token'];
+    public function tryLoginWithToken(Response $response, string $token) {
+        //$loginToken = $args['token'];
+        $loginToken = $token;
         if ($this->userService->isLoginTokenValid($loginToken)) {
             $user = $this->userService->getUserFromToken($loginToken);
             $this->userRegeneration->saveUserIdIntoSession($user);
@@ -75,21 +71,21 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('loginAskEmail', ['email' => $loginToken->user->email]));
     }
 
-    public function logout(Request $request, Response $response, array $args) {
+    public function logout(Request $request, Response $response) {
         $this->userService->logoutUser();
         $this->flashMessages->info('Odhlášení bylo úspěšné');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
 
-    public function setRole(Request $request, Response $response, array $args) {
+    public function setRole(Request $request, Response $response) {
         $user = $request->getAttribute('user');
         $this->userService->setRole($user, $request->getParam('role'));
 
         return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
-    public function getDashboard(Request $request, Response $response, array $args) {
+    public function getDashboard(Request $request, Response $response) {
         /** @var User */
         $user = $request->getAttribute('user');
 
@@ -113,7 +109,7 @@ class UserController extends AbstractController {
     }
 
     // TODO clear
-    protected function trySignup(Request $request, Response $response, array $args) {
+    protected function trySignup(Request $request, Response $response) {
         $parameters = $request->getParsedBody();
         $email = $parameters['email'];
 

@@ -8,13 +8,9 @@ use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 
 class ParticipantService {
-    /** @var ParticipantRepository */
     private $participantRepository;
-    /** @var IstRepository */
     private $istRepository;
-    /** @var GuestRepository */
     private $guestRepository;
-    /** @var PatrolLeaderRepository */
     private $patrolLeaderRepository;
 
     public function __construct(

@@ -2,22 +2,27 @@
 
 namespace kissj;
 
-use kissj\FlashMessages\FlashMessagesInterface;
+use DI\Annotation\Inject;
+use kissj\FlashMessages;
 use Monolog\Logger;
-use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 
-class AbstractController {
-    /** @var RouterInterface */
+abstract class AbstractController {
+    /**
+     * @Inject()
+     * @var RouterInterface
+     */
     protected $router;
-    /** @var FlashMessagesInterface */
-    protected $flashMessages;
-    /** @var Logger */
-    protected $logger;
 
-    public function __construct(ContainerInterface $c) {
-        $this->router = $c->get('router');
-        $this->flashMessages = $c->get('flashMessages');
-        $this->logger = $c->get('logger');
-    }
+    /**
+     * @Inject()
+     * @var FlashMessages\FlashMessagesBySession
+     */
+    protected $flashMessages;
+
+    /**
+     * @Inject("logger")
+     * @var Logger
+     */
+    protected $logger;
 }

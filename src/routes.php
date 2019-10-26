@@ -76,51 +76,51 @@ $helper['openStatusOnly'] = function (Request $request, Response $response, call
     return $response;
 };
 
-$app->get('/', function (Request $request, Response $response, array $args) {
+$app->get('/', function (Request $request, Response $response) {
     return $response->withRedirect($this->router->pathFor('landing'));
 });
 
 $app->group('/v1', function () use ($helper) {
-    $this->get('', function (Request $request, Response $response, array $args) {
+    $this->get('', function (Request $request, Response $response) {
         return $response->withRedirect($this->router->pathFor('landing'));
     });
 
     $this->group('/cs', function () use ($helper) {
-        $this->get('', function (Request $request, Response $response, array $args) {
+        $this->get('', function (Request $request, Response $response) {
             return $response->withRedirect($this->router->pathFor('landing'));
         });
 
         $this->group('/kissj', function () use ($helper) {
-            $this->get('', UserController::class.':landing')->setName('landing');
+            $this->get('', UserController::class.'::landing')->setName('landing');
 
-            $this->get('/login', function (Request $request, Response $response, array $args) {
-                return $this->view->render(
+            $this->get('/login', function (Request $request, Response $response) {
+                return $this->get('view')->render(
                     $response, 'kissj/login.twig', ['event' => $request->getAttribute('user')->event]
                 );
             })->add($helper['nonLoggedOnly'])
                 ->setName('loginAskEmail');
 
-            $this->post('/login', UserController::class.':sendLoginEmail')
+            $this->post('/login', UserController::class.'::sendLoginEmail')
                 ->add($helper['nonLoggedOnly'])
                 ->setName('sendLoginEmail');
 
-            $this->get('/loginAfterLinkSent', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/login-link-sent.twig');
+            $this->get('/loginAfterLinkSent', function (Request $request, Response $response) {
+                return $this->get('view')->render($response, 'kissj/login-link-sent.twig');
             })->setName('loginAfterLinkSent');
 
-            $this->get('/tryLogin/{token}', UserController::class.':tryLoginWithToken')
+            $this->get('/tryLogin/{token}', UserController::class.'::tryLoginWithToken')
                 ->setName('loginWithToken');
 
-            $this->get('/logout', UserController::class.':logout')
+            $this->get('/logout', UserController::class.'::logout')
                 ->add($helper['loggedOnly'])
                 ->setName('logout');
 
-            $this->get('/loginHelp', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/login-help.twig');
+            $this->get('/loginHelp', function (Request $request, Response $response) {
+                return $this->get('view')->render($response, 'kissj/login-help.twig');
             })->setName('loginHelp');
             /*
-            $this->get('/createEvent', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
+            $this->get('/createEvent', function (Request $request, Response $response) {
+                return $this->get('view')->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
             })->setName('createEvent')->add($helper['loggedOnly']);
 
             $this->post('/createEvent', EventController::class.'createEvent')
@@ -130,54 +130,54 @@ $app->group('/v1', function () use ($helper) {
         });
 
         $this->group('/event/{eventSlug}', function () use ($helper) {
-            $this->get('/chooseRole', function (Request $request, Response $response, array $args) {
-                return $this->view->render($response, 'kissj/choose-role.twig', [
+            $this->get('/chooseRole', function (Request $request, Response $response) {
+                return $this->get('view')->render($response, 'kissj/choose-role.twig', [
                     'event' => $request->getAttribute('user')->event,
                 ]);
             })->add($helper['loggedOnly'])
                 ->add($helper['nonChoosedRoleOnly'])
                 ->setName('chooseRole');
 
-            $this->post('/setRole', UserController::class.':setRole')
+            $this->post('/setRole', UserController::class.'::setRole')
                 ->add($helper['loggedOnly'])
                 ->add($helper['nonChoosedRoleOnly'])
                 ->setName('setRole');
 
             $this->group('', function () use ($helper) {
-                $this->get('/getDashboard', UserController::class.':getDashboard')
+                $this->get('/getDashboard', UserController::class.'::getDashboard')
                     ->setName('getDashboard');
 
                 $this->group('/patrol', function () use ($helper) {
-                    $this->get('/dashboard', PatrolController::class.':showLeaderDashboard')
+                    $this->get('/dashboard', PatrolController::class.'::showLeaderDashboard')
                         ->setName('pl-dashboard');
 
                     $this->group('', function () {
-                        $this->get('/changeDetails', PatrolController::class.':showDetailsLeaderChangeable')
+                        $this->get('/changeDetails', PatrolController::class.'::showDetailsLeaderChangeable')
                             ->setName('pl-showDetailsChangeable');
 
-                        $this->post('/changeDetails', PatrolController::class.':changeDetailsLeader')
+                        $this->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
                             ->setName('pl-changeDetails');
 
-                        $this->get('/closeRegistration', PatrolController::class.':showCloseRegistration')
+                        $this->get('/closeRegistration', PatrolController::class.'::showCloseRegistration')
                             ->setName('pl-showCloseRegistration');
 
-                        $this->post('/closeRegistration', PatrolController::class.':closeRegistration')
+                        $this->post('/closeRegistration', PatrolController::class.'::closeRegistration')
                             ->setName('pl-closeRegistration');
 
-                        $this->post('/addParticipant', PatrolController::class.':addParticipant')
+                        $this->post('/addParticipant', PatrolController::class.'::addParticipant')
                             ->setName('pl-addParticipant');
 
                         $this->group('/participant/{participantId}', function () {
-                            $this->get('/showChangeDetails', PatrolController::class.':showChangeDetailsParticipant')
+                            $this->get('/showChangeDetails', PatrolController::class.'::showChangeDetailsParticipant')
                                 ->setName('p-showChangeDetails');
 
-                            $this->post('/changeDetails', PatrolController::class.':changeDetailsParticipant')
+                            $this->post('/changeDetails', PatrolController::class.'::changeDetailsParticipant')
                                 ->setName('p-changeDetails');
 
-                            $this->get('/showDelete', PatrolController::class.':showDeleteParticipant')
+                            $this->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
                                 ->setName('p-showDelete');
 
-                            $this->post('/delete', PatrolController::class.':deleteParticipant')
+                            $this->post('/delete', PatrolController::class.'::deleteParticipant')
                                 ->setName('p-delete');
 
                         })->add(function (Request $request, Response $response, callable $next) {
@@ -212,20 +212,20 @@ $app->group('/v1', function () use ($helper) {
                 });
 
                 $this->group('/ist', function () use ($helper) {
-                    $this->get('/dashboard', IstController::class.':showDashboard')
+                    $this->get('/dashboard', IstController::class.'::showDashboard')
                         ->setName('ist-dashboard');
 
                     $this->group('', function () {
-                        $this->get('/showChangeDetails', IstController::class.':showDetailsChangeable')
+                        $this->get('/showChangeDetails', IstController::class.'::showDetailsChangeable')
                             ->setName('ist-showDetailsChangeable');
 
-                        $this->post('/changeDetails', IstController::class.':changeDetails')
+                        $this->post('/changeDetails', IstController::class.'::changeDetails')
                             ->setName('ist-changeDetails');
 
-                        $this->get('/closeRegistration', IstController::class.':showCloseRegistration')
+                        $this->get('/closeRegistration', IstController::class.'::showCloseRegistration')
                             ->setName('ist-showCloseRegistration');
 
-                        $this->post('/closeRegistration', IstController::class.':closeRegistration')
+                        $this->post('/closeRegistration', IstController::class.'::closeRegistration')
                             ->setName('ist-confirmCloseRegistration');
 
                     })->add($helper['openStatusOnly']);
@@ -244,19 +244,19 @@ $app->group('/v1', function () use ($helper) {
                 });
 
                 $this->group('/admin', function () {
-                    $this->get('/dashboard', AdminController::class.':showDashboard')
+                    $this->get('/dashboard', AdminController::class.'::showDashboard')
                         ->setName('admin-dashboard');
 
                     $this->group('/approving', function () {
-                        $this->get('', AdminController::class.':showApproving')
+                        $this->get('', AdminController::class.'::showApproving')
                             ->setName('admin-approving');
 
                         // TODO
                         $this->post('/approvePatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, array $args) {
+                            function (Request $request, Response $response, int $patrolLeaderId) {
                                 /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
                                 $patrolService = $this->patrolService;
-                                $patrolLeader = $patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+                                $patrolLeader = $patrolService->getPatrolLeaderFromId($patrolLeaderId);
                                 $patrolService->approvePatrol($patrolLeader);
                                 $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
                                 $patrolService->sendPaymentByMail($payment, $patrolLeader);
@@ -267,16 +267,16 @@ $app->group('/v1', function () use ($helper) {
                             })->setName('approvePatrolLeader');
 
                         $this->get('/openPatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, array $args) {
-                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+                            function (Request $request, Response $response, int $patrolLeaderId) {
+                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
 
-                                return $this->view->render($response, 'admin/openPatrolLeader.twig',
+                                return $this->get('view')->render($response, 'admin/openPatrolLeader.twig',
                                     ['patrolLeader' => $patrolLeader]);
                             })->setName('openPatrolLeader');
 
                         $this->post('/openPatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, array $args) {
-                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($args['patrolLeaderId']);
+                            function (Request $request, Response $response, int $patrolLeaderId) {
+                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
                                 $this->patrolService->openPatrol($patrolLeader);
                                 $reason = $request->getParsedBodyParam('reason');
                                 $this->patrolService->sendDenialMail($patrolLeader, $reason);
@@ -287,40 +287,40 @@ $app->group('/v1', function () use ($helper) {
                             })->setName('openPatrolLeaderConfirmed');
 
 
-                        $this->post('/approveIst/{istId}', IstController::class.':approveIst')
+                        $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
                             ->setName('approveIst');
 
                         $this->get('/openIst/{istId}', IstController::class.'showOpenIst')
                             ->setName('showOpenIst');
 
-                        $this->post('/openIst/{istId}', IstController::class.':openIst')
+                        $this->post('/openIst/{istId}', IstController::class.'::openIst')
                             ->setName('openIst');
                     });
 
                     $this->group('/payments', function () {
-                        $this->get('', AdminController::class.':showPayments')
+                        $this->get('', AdminController::class.'::showPayments')
                             ->setName('admin-payments');
 
-                        $this->post('/setPaymentPaid/{payment}', AdminController::class.':setPaymentPaid')
+                        $this->post('/setPaymentPaid/{payment}', AdminController::class.'::setPaymentPaid')
                             ->setName('setPaymentPaid');
                     });
 
                     $this->group('/export', function () {
-                        $this->get('/medical', function (Request $request, Response $response, array $args) {
+                        $this->get('/medical', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->medicalDataToCSV('cej2018');
                             $this->logger->info('Downloaded current medical data');
 
                             return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
                         })->setName('admin-export-medical');
 
-                        $this->get('/logistic', function (Request $request, Response $response, array $args) {
+                        $this->get('/logistic', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
                             $this->logger->info('Downloaded current logistic data');
 
                             return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
                         })->setName('admin-export-logistic');
 
-                        $this->get('/full', function (Request $request, Response $response, array $args) {
+                        $this->get('/full', function (Request $request, Response $response) {
                             $csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
                             $this->logger->info('Downloaded full current data about participants');
 
@@ -342,7 +342,7 @@ $app->group('/v1', function () use ($helper) {
                 });
             })->add($helper['loggedOnly'])->add($helper['choosedRoleOnly']);
 
-            $this->any('/administration', function (Request $request, Response $response, array $args) {
+            $this->any('/administration', function (Request $request, Response $response) {
                 global $adminerSettings;
                 $adminerSettings = $this->get('settings')['adminer'];
                 require __DIR__.'/../adminer/customAdminerEditor.php';

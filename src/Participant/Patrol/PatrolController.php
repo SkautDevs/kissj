@@ -3,7 +3,7 @@
 namespace kissj\Participant\Patrol;
 
 class PatrolController {
-    public function getLeaderDashboard(Request $request, Response $response, array $args) {
+    public function showLeaderDashboard(Request $request, Response $response, array $args) {
         $user = $request->getAttribute('user');
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
         $allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);

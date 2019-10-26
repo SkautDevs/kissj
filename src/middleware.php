@@ -5,9 +5,10 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Whoops\Exception\Inspector;
 
+$container = $app->getContainer();
 // DEBUGGER
 
-if ($container['settings']['whoopsDebug']) {
+if ($container->get('settings')['whoopsDebug']) {
     $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 } else {
     $simplyErrorHandler = function (Exception $exception, Inspector $inspector, $run) use ($container) {
@@ -60,7 +61,7 @@ $app->add(function (Request $request, Response $response, callable $next): Respo
 
 $app->add(function (Request $request, Response $response, callable $next) use ($container): ResponseInterface {
     /** @var \kissj\User\UserRegeneration $userRegeneration */
-    $userRegeneration = $container->get('userRegeneration');
+    $userRegeneration = $container->get(\kissj\User\UserRegeneration::class);
     $user = $userRegeneration->getCurrentUser();
     $request = $request->withAttribute('user', $user);
 

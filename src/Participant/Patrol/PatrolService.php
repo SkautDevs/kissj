@@ -389,7 +389,8 @@ class PatrolService {
             'patrolName' => $patrolLeader->patrolName,
         ]);
 
-        $this->mailer->sendMail($payment->role->user->email, 'Registrace CEJ 2018 - platební informace', $message);
+        $this->mailer->sendMailFromTemplate($payment->role->user->email, 'Registrace CEJ 2018 - platební informace',
+            $message);
     }
 
     public function sendDenialMail(PatrolLeader $patrolLeader, string $reason) {
@@ -399,7 +400,8 @@ class PatrolService {
             'reason' => $reason,
         ]);
 
-        $this->mailer->sendMail($patrolLeader->user->email, 'Registrace CEJ 2018 - zamítnutí registrace', $message);
+        $this->mailer->sendMailFromTemplate($patrolLeader->user->email, 'Registrace CEJ 2018 - zamítnutí registrace',
+            $message);
     }
 
     // TODO make this more clever
