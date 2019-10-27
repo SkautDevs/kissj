@@ -5,7 +5,6 @@ namespace kissj\Participant\Ist;
 use kissj\AbstractController;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
-use kissj\User\UserService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -13,18 +12,15 @@ class IstController extends AbstractController {
     private $istService;
     private $istRepository;
     private $paymentService;
-    private $userService;
 
     public function __construct(
         IstService $istService,
         IstRepository $istRepository,
-        PaymentService $paymentService,
-        UserService $userService
+        PaymentService $paymentService
     ) {
         $this->istService = $istService;
         $this->istRepository = $istRepository;
         $this->paymentService = $paymentService;
-        $this->userService = $userService;
     }
 
     public function showDashboard(Response $response, User $user) {

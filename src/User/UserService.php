@@ -156,6 +156,13 @@ class UserService {
         return $user;
     }
 
+    public function payRegistration(User $user): User {
+        $user->status = User::STATUS_PAID;
+        $this->userRepository->persist($user);
+
+        return $user;
+    }
+
     // TODO move to template
     public function getHelpForRole(
         ?Role $role

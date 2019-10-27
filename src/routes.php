@@ -1,6 +1,7 @@
 <?php
 
 use kissj\Participant\Admin\AdminController;
+use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\User\User;
@@ -233,9 +234,41 @@ $app->group('/v1', function () use ($helper) {
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for IST
                     if ($request->getAttribute('user')->role !== User::ROLE_IST) {
-                        $this->get('flashMessages')->error('Pardon, nejsi na akci přihlášený jako IST');
+                        $this->get('flashMessages')->error('Pardon, you are not registred as IST');
 
-                        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
+                        return $response->withRedirect($this->get('router')->pathFor('landing'));
+                    }
+
+                    $response = $next($request, $response);
+
+                    return $response;
+                });
+
+                $this->group('/guest', function () use ($helper) {
+                    $this->get('/dashboard', GuestController::class.'::showDashboard')
+                        ->setName('guest-dashboard');
+
+                    $this->group('', function () {
+                        $this->get('/showChangeDetails', GuestController::class.'::showDetailsChangeable')
+                            ->setName('guest-showDetailsChangeable');
+
+                        $this->post('/changeDetails', GuestController::class.'::changeDetails')
+                            ->setName('guest-changeDetails');
+
+                        $this->get('/closeRegistration', GuestController::class.'::showCloseRegistration')
+                            ->setName('guest-showCloseRegistration');
+
+                        $this->post('/closeRegistration', GuestController::class.'::closeRegistration')
+                            ->setName('guest-confirmCloseRegistration');
+
+                    })->add($helper['openStatusOnly']);
+
+                })->add(function (Request $request, Response $response, callable $next) {
+                    // protected area for guests
+                    if ($request->getAttribute('user')->role !== User::ROLE_GUEST) {
+                        $this->get('flashMessages')->error('Pardon, you are not registred as guest');
+
+                        return $response->withRedirect($this->get('router')->pathFor('landing'));
                     }
 
                     $response = $next($request, $response);

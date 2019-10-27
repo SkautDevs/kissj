@@ -13,7 +13,6 @@ use kissj\User\UserService;
 class IstService {
     private $istRepository;
     private $paymentRepository;
-    private $roleService;
     private $flashMessages;
     private $mailer;
     private $userService;
@@ -55,7 +54,7 @@ class IstService {
         $ist->permanentResidence = $params['permanentResidence'] ?? null;
         $ist->country = $params['country'] ?? null;
         $ist->scoutUnit = $params['scoutUnit'] ?? null;
-        $ist->setTshirt(($params['tshirtShape'] ?? null), ($params['tshirtSize'] ?? null));
+        $ist->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
         $ist->foodPreferences = $params['foodPreferences'] ?? null;
         $ist->healthProblems = $params['healthProblems'] ?? null;
         $ist->languages = $params['languages'] ?? null;
@@ -99,7 +98,7 @@ class IstService {
 
     public function isCloseRegistrationValid(Ist $ist): bool {
         if (!$this->isIstValidForClose($ist)) {
-            $this->flashMessages->warning('Nelze uzavřít registraci - některé údaje jsou špatně');
+            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing');
 
             return false;
         }

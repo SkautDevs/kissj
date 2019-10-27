@@ -30,6 +30,8 @@ use kissj\User\User;
  * @property string|null $scarf
  * @property string|null $swimming
  * @property string|null $tshirt    m:useMethods
+ * @property string|null $arrivalDate  m:passThru(dateFromString|dateToString)
+ * @property string|null $departueDate m:passThru(dateFromString|dateToString)
  * @property string|null $notes
  */
 class Participant extends EntityDatetime {
