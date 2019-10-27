@@ -11,7 +11,7 @@ use Slim\Http\Response;
 $helper['nonLoggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for non-logged users only
     if ($request->getAttribute('user') !== null) {
-        $this->get('flashMessages')->warning('Pardon, ale jsi přihlášený - nejdříve se odhlaš prosím');
+        $this->get('flashMessages')->warning('Pardon, but your are logged - you need to sign off first');
 
         return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
@@ -23,7 +23,7 @@ $helper['nonLoggedOnly'] = function (Request $request, Response $response, calla
 $helper['loggedOnly'] = function (Request $request, Response $response, callable $next) {
     // protected area for logged users only
     if ($request->getAttribute('user') === null) {
-        $this->get('flashMessages')->warning('Pardon, ale nejsi přihlášený. Přihlaš se prosím zadáním emailu');
+        $this->get('flashMessages')->warning('Pardon, but you are not logged. Please log yourself via entering your email');
 
         return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
     }
@@ -38,7 +38,7 @@ $helper['nonChoosedRoleOnly'] = function (Request $request, Response $response, 
     $user = $request->getAttribute('user');
 
     if ($user->status !== User::STATUS_WITHOUT_ROLE) {
-        $this->get('flashMessages')->warning('Pardon, roli na akci už máš');
+        $this->get('flashMessages')->warning('Pardon, you already choosed your role for this event');
 
         return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
@@ -65,12 +65,12 @@ $helper['choosedRoleOnly'] = function (Request $request, Response $response, cal
 
 $helper['openStatusOnly'] = function (Request $request, Response $response, callable $next) {
     // change data can only users with open registration
-    $role = $request->getAttribute('role');
-    if ($role->status !== 'open') {
-        $this->get('logger')->warning('User '.$request->getAttribute('user')->email.' is trying to change data, even he has role "'.$role->name.'"');
-        throw new \RuntimeException('Nemůžeš měnit údaje když nejsi ve stavu zadávání údajů!');
+    /** @var User $user */
+    $user = $request->getAttribute('user');
+    if ($user->status !== User::STATUS_OPEN) {
+        $this->get('logger')->warning('User '.$user->email.' is trying to change data, even he has role "'.$user->status.'"');
+        throw new \RuntimeException('You cannot change your data when you are not in editing status');
     }
-// TODO
     $response = $next($request, $response);
 
     return $response;

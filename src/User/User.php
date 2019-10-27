@@ -8,7 +8,7 @@ use kissj\Orm\EntityDatetime;
 /**
  * @property int    $id
  * @property string $email
- * @property string $role
+ * @property string $role   m:enum(self::ROLE_*)
  * @property Event  $event  m:hasOne
  * @property string $status m:enum(self::STATUS_*) m:default('withoutRole')
  */
@@ -24,5 +24,6 @@ class User extends EntityDateTime {
     public const ROLE_PATROL_PARTICIPANT = 'pp';
     public const ROLE_GUEST = 'guest';
 
+    public const ROLE_WITHOUT_ROLE = 'withoutRole';
     public const ROLE_ADMIN = 'admin';
 }

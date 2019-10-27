@@ -14,12 +14,12 @@
 
 <body lang="cs">
 <div class="wrapper">
-	<h1 class="text-center">Registration to AQUA 2020</h1>
+	<h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2022' }}{# TODO make dynamic #}</h1>
 	<div class="user text-right">
 		{% if user is not null %}
 			{{ user.email }}
 			<a class="" href="{{ path_for('logout') }}">Log out</a>
-			{% set userStatus = userRole.status %}
+			{% set userStatus = user.status %}
 		{% else %}
 			{% set userStatus = "unregistred" %}
 		{% endif %}
@@ -27,7 +27,7 @@
 	</div>
 	<ul class="progressbar">
 		<li class="progressbar-item progressbar-item-registration progressbar-arrow-right {% if userStatus == 'unregistred' %}is-active{% endif %}">
-			Registrace
+			Registration
 		</li>
 		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Filling in the details</li>
 		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Registration sent</li>

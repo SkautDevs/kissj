@@ -3,6 +3,7 @@
 namespace kissj\User;
 
 use kissj\Mailer\MailerInterface;
+use kissj\Orm\Relation;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use PHPUnit\Framework\MockObject\RuntimeException;
@@ -10,7 +11,6 @@ use Slim\Router;
 
 class UserService {
     private $router;
-
     private $userRepository;
     private $mailer;
     private $loginTokenRepository;
@@ -130,8 +130,30 @@ class UserService {
         $this->userRepository->persist($user);
     }
 
+    public function getClosedIstsCount(): int {
+        return $this->userRepository->countBy([
+            'role' => USER::ROLE_IST,
+            //'event' => $this->eventName, // TODO fix
+            'status' => new Relation(User::STATUS_OPEN, '!='),
+        ]);
+    }
+
     protected function isRoleValid(string $role): bool {
         return in_array($role, [User::ROLE_IST, User::ROLE_PATROL_LEADER, User::ROLE_GUEST], true);
+    }
+
+    public function closeRegistration(User $user): User {
+        $user->status = User::STATUS_CLOSED;
+        $this->userRepository->persist($user);
+
+        return $user;
+    }
+
+    public function approveRegistration(User $user): User {
+        $user->status = User::STATUS_APPROVED;
+        $this->userRepository->persist($user);
+
+        return $user;
     }
 
     // TODO move to template

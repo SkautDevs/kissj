@@ -1,10 +1,11 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+	{% set userStatus = ist.user.status %}
 	<div class="card {{ userStatus }}-theme">
 		<h2>IST - details</h2>
 		<h4>
-			{{ userCustomHelp }}
+			{{ userCustomHelp }} {# TODO continue #}
 		</h4>
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
@@ -20,24 +21,36 @@
 		<div>
 			<h2>Personal information</h2>
 			{% if userStatus == 'open' %}
-				<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Edit my details</a><br/><br/>
+				<a class="btn btn-small" href="{{ path_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+					Edit my details</a><br/><br/>
 			{% endif %}
 			<div class="text-center">
 				First name: <b>{{ ist.getFirstName }}</b><br/>
 				Surname: <b>{{ ist.getLastName }}</b><br/>
 				Scout nickname: <b>{{ ist.getNickname }}</b><br/>
-				Gender: <b>{{ ist.getGender }}</b><br/>
 				Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-				Address: <b>{{ ist.getPermanentResidence }}</b><br/>
+				Gender: <b>{{ ist.getGender }}</b><br/>
 				Email: <b>{{ ist.getEmail }}</b><br/>
-				Korbo šátek: <b>{{ ist.getScarf }}</b><br/>
+				Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>
+				Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
+				Country: <b>{{ ist.getCountry }}</b><br/>
+				Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
+				T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
+				Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>
+				Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
+				Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+				Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
+				Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
+				Skills: <b>{{ ist.getSkills }}</b><br/>
+				Preferred position: <b>{{ ist.getPreferredPosition }}</b><br/>
 				Notes: <b>{{ ist.getNotes }}</b><br/>
 				<br/>
 			</div>
 		</div>
 
 		{% if userStatus == 'open' %}
-			<a class="btn btn-small" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
+			<a class="btn btn-small" href="{{ path_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
+				Lock registration</a>
 		{% endif %}
 	</div>
 {% endblock %}

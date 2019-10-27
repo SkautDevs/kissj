@@ -5,20 +5,29 @@ namespace kissj\Participant\Ist;
 use kissj\AbstractController;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
+use kissj\User\UserService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class IstController extends AbstractController {
     private $istService;
+    private $istRepository;
     private $paymentService;
+    private $userService;
 
-    public function __construct(IstService $istService, PaymentService $paymentService) {
+    public function __construct(
+        IstService $istService,
+        IstRepository $istRepository,
+        PaymentService $paymentService,
+        UserService $userService
+    ) {
         $this->istService = $istService;
+        $this->istRepository = $istRepository;
         $this->paymentService = $paymentService;
+        $this->userService = $userService;
     }
 
-    public function showDashboard(Request $request, Response $response, User $user) {
-        //$user = $request->getAttribute('user');
+    public function showDashboard(Response $response, User $user) {
         $ist = $this->istService->getIst($user);
         $possibleOnePayment = $this->paymentService->findLastPayment($ist);
 
@@ -34,87 +43,44 @@ class IstController extends AbstractController {
     }
 
     public function changeDetails(Request $request, Response $response) {
-        $params = $request->getParams();
-        if ($this->istService->isIstDetailsValid(
-            $params['firstName'] ?? null,
-            $params['lastName'] ?? null,
-            $params['allergies'] ?? null,
-            $params['birthDate'] ?? null,
-            $params['birthPlace'] ?? null,
-            $params['country'] ?? null,
-            $params['gender'] ?? null,
-            $params['permanentResidence'] ?? null,
-            $params['scoutUnit'] ?? null,
-            $params['telephoneNumber'] ?? null,
-            $params['email'] ?? null,
-            $params['foodPreferences'] ?? null,
-            $params['cardPassportNumber'] ?? null,
-            $params['notes'] ?? null,
+        $ist = $this->istService->addParamsIntoIst(
+            $this->istService->getIst($request->getAttribute('user')),
+            $request->getParams()
+        );
 
-            $params['workPreferences'] ?? null,
-            $params['skills'] ?? null,
-            $params['languages'] ?? null,
-            $params['arrivalDate'] ?? null,
-            $params['leavingDate'] ?? null,
-            $params['carRegistrationPlate'] ?? null)) {
+        $this->istRepository->persist($ist);
+        $this->flashMessages->success('Details successfully saved. ');
 
-            $this->istService->editIstInfo(
-                $this->istService->getIst($request->getAttribute('user')),
-                $params['firstName'] ?? null,
-                $params['lastName'] ?? null,
-                $params['allergies'] ?? null,
-                $params['birthDate'] ?? null,
-                $params['birthPlace'] ?? null,
-                $params['country'] ?? null,
-                $params['gender'] ?? null,
-                $params['permanentResidence'] ?? null,
-                $params['scoutUnit'] ?? null,
-                $params['telephoneNumber'] ?? null,
-                $params['email'] ?? null,
-                $params['foodPreferences'] ?? null,
-                $params['cardPassportNumber'] ?? null,
-                $params['notes'] ?? null,
-
-                $params['workPreferences'] ?? null,
-                $params['skills'] ?? null,
-                $params['languages'] ?? null,
-                $params['arrivalDate'] ?? null,
-                $params['leavingDate'] ?? null,
-                $params['carRegistrationPlate'] ?? null);
-
-            $this->flashMessages->success('Údaje úspěšně uloženy');
-
-            return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-        }
-
-        $this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
-
-        return $response->withRedirect($this->router->pathFor('ist-changeDetails'));
+        return $response->withRedirect($this->router->pathFor('ist-dashboard',
+            ['eventSlug' => $ist->user->event->slug]));
     }
 
     public function showCloseRegistration(Request $request, Response $response) {
         $ist = $this->istService->getIst($request->getAttribute('user'));
         $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
-            return $this->view->render($response, 'closeRegistration-ist.twig');
+            return $this->view->render($response, 'closeRegistration-ist.twig',
+                ['dataProtectionUrl' => $ist->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+        return $response->withRedirect($this->router->pathFor('ist-dashboard',
+            ['eventSlug' => $ist->user->event->slug]
+        ));
     }
 
     public function closeRegistration(Request $request, Response $response) {
         $ist = $this->istService->getIst($request->getAttribute('user'));
-        if ($this->istService->isCloseRegistrationValid($ist)) {
-            $this->istService->closeRegistration($ist);
-            $this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
-            $this->logger->info('Closing registration for IST with ID '.$ist->id);
+        $ist = $this->istService->closeRegistration($ist);
 
-            return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+        if ($ist->user->status === User::STATUS_CLOSED) {
+            $this->flashMessages->success('Registration successfully locked and send');
+            $this->logger->info('Locked registration for IST with ID '.$ist->id.', user ID '.$ist->user->id);
+        } else {
+            $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        $this->flashMessages->error('Registraci ještě nelze uzavřít');
-
-        return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+        return $response->withRedirect($this->router->pathFor('ist-dashboard',
+            ['eventSlug' => $ist->user->event->slug]));
     }
 
     public function approveIst(Request $request, Response $response, int $istId) {

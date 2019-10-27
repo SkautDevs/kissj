@@ -8,6 +8,7 @@ use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\User\User;
+use kissj\User\UserService;
 
 class IstService {
     private $istRepository;
@@ -15,17 +16,20 @@ class IstService {
     private $roleService;
     private $flashMessages;
     private $mailer;
+    private $userService;
 
     public function __construct(
         IstRepository $istRepository,
         PaymentRepository $paymentRepository,
         FlashMessagesBySession $flashMessages,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        UserService $userService
     ) {
         $this->istRepository = $istRepository;
         $this->paymentRepository = $paymentRepository;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
+        $this->userService = $userService;
     }
 
     public function getIst(User $user): Ist {
@@ -36,6 +40,85 @@ class IstService {
         }
 
         return $this->istRepository->findOneBy(['user' => $user]);
+    }
+
+    public function addParamsIntoIst(Ist $ist, array $params): Ist {
+        $ist->firstName = $params['firstName'] ?? null;
+        $ist->lastName = $params['lastName'] ?? null;
+        $ist->nickname = $params['nickname'] ?? null;
+        if ($params['birthDate'] !== null) {
+            $ist->birthDate = new \DateTime($params['birthDate']);
+        }
+        $ist->gender = $params['gender'] ?? null;
+        $ist->email = $params['email'] ?? null;
+        $ist->telephoneNumber = $params['telephoneNumber'] ?? null;
+        $ist->permanentResidence = $params['permanentResidence'] ?? null;
+        $ist->country = $params['country'] ?? null;
+        $ist->scoutUnit = $params['scoutUnit'] ?? null;
+        $ist->setTshirt(($params['tshirtShape'] ?? null), ($params['tshirtSize'] ?? null));
+        $ist->foodPreferences = $params['foodPreferences'] ?? null;
+        $ist->healthProblems = $params['healthProblems'] ?? null;
+        $ist->languages = $params['languages'] ?? null;
+        $ist->swimming = $params['swimming'] ?? null;
+        $ist->driversLicense = $params['driversLicense'] ?? null;
+        $ist->skills = $params['skills'] ?? null;
+        $ist->preferredPosition = $params['preferredPosition'] ?? null;
+        $ist->notes = $params['notes'] ?? null;
+
+        return $ist;
+    }
+
+    public function isIstValidForClose(Ist $ist): bool {
+        if (
+            $ist->firstName === null
+            || $ist->lastName === null
+            || $ist->birthDate === null
+            || $ist->gender === null
+            || $ist->email === null
+            || $ist->telephoneNumber === null
+            || $ist->permanentResidence === null
+            || $ist->country === null
+            || $ist->scoutUnit === null
+            || $ist->foodPreferences === null
+            || $ist->languages === null
+            || $ist->swimming === null
+            || $ist->driversLicense === null
+            || $ist->preferredPosition === null
+            || $ist->getTshirtShape() === null
+            || $ist->getTshirtSize() === null
+        ) {
+            return false;
+        }
+
+        if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isCloseRegistrationValid(Ist $ist): bool {
+        if (!$this->isIstValidForClose($ist)) {
+            $this->flashMessages->warning('Nelze uzavřít registraci - některé údaje jsou špatně');
+
+            return false;
+        }
+        if ($this->userService->getClosedIstsCount() >= $ist->user->event->maximalClosedIstsCount) {
+            $this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných účastníků a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu.');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function closeRegistration(Ist $ist): Ist {
+        if ($this->isCloseRegistrationValid($ist)) {
+            $this->userService->closeRegistration($ist->user);
+            $this->mailer->sendMailFromTemplate($ist->user->email, 'closed registration', 'closed', []);
+        }
+
+        return $ist;
     }
 
     public function getAllClosedIsts(): array {
@@ -71,102 +154,6 @@ class IstService {
         }
 
         return $ists;
-    }
-
-    private function isIstValid(Ist $ist): bool {
-        return $this->isIstDetailsValid(
-            $ist->firstName,
-            $ist->lastName,
-            $ist->nickname,
-            ($ist->birthDate ? $ist->birthDate->format('Y-m-d') : null),
-            $ist->gender,
-            $ist->permanentResidence,
-            $ist->email,
-            $ist->legalRepresestative,
-            $ist->scarf,
-            $ist->notes);
-    }
-
-    public function isIstDetailsValid(
-        ?string $firstName,
-        ?string $lastName,
-        ?string $nickname,
-        ?string $birthDate,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $email,
-        ?string $legalRepresestative,
-        ?string $scarf,
-        ?string $notes
-    ): bool {
-        $validFlag = true;
-
-
-        if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($gender) || is_null($permanentResidence) || is_null($email) || is_null($scarf)) {
-            $validFlag = false;
-        }
-
-        foreach ([$birthDate] as $date) {
-            if (!empty($date) && $date !== date('Y-m-d', strtotime($date))) {
-                $validFlag = false;
-                break;
-            }
-        }
-
-        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            $validFlag = false;
-        }
-
-        return $validFlag;
-    }
-
-    public function editIstInfo(
-        Ist $ist,
-        ?string $firstName,
-        ?string $lastName,
-        ?string $nickname,
-        ?string $birthDate,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $email,
-        ?string $legalRepresestative,
-        ?string $scarf,
-        ?string $notes
-    ) {
-        $ist->firstName = $firstName;
-        $ist->lastName = $lastName;
-        $ist->nickname = $nickname;
-        $ist->birthDate = new \DateTime($birthDate);
-        $ist->gender = $gender;
-        $ist->permanentResidence = $permanentResidence;
-        $ist->email = $email;
-        $ist->legalRepresestative = $legalRepresestative;
-        $ist->scarf = $scarf;
-        $ist->notes = $notes;
-
-        $this->istRepository->persist($ist);
-    }
-
-    public function isCloseRegistrationValid(Ist $ist): bool {
-        $validityFlag = true;
-        if (!$this->isIstValid($ist)) {
-            $this->flashMessages->warning('Nelze uzavřít registraci - údaje nejsou kompletní');
-            $validityFlag = false;
-        }
-        if ($this->getClosedIstsCount() >= $this->eventSettings['maximalClosedIstsCount']) {
-            $this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných účastníků a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu.');
-            $validityFlag = false;
-        }
-
-        return $validityFlag;
-    }
-
-    private function getClosedIstsCount(): int {
-        return $this->roleRepository->countBy([
-            'name' => 'ist',
-            'event' => $this->eventName,
-            'status' => new Relation('open', '!='),
-        ]);
     }
 
     public function getAllIstsStatistics(): array {
@@ -220,21 +207,7 @@ class IstService {
             $message);
     }
 
-    // TODO clean up this four functions
-    public function closeRegistration(Ist $ist) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-        $role->status = $this->roleService->getCloseStatus();
-        $this->roleRepository->persist($role);
-    }
-
-    public function approveIst(Ist $ist) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-        $role->status = $this->roleService->getApproveStatus();
-        $this->roleRepository->persist($role);
-    }
-
+    // TODO clear
     public function openIst(Ist $ist) {
         /** @var Role $role */
         $role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);

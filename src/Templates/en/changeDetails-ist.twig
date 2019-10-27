@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="card text-left open-theme">
 		<h2>Edit your details</h2>
-		<form method="POST" action="{{ path_for('ist-postDetails') }}">
+		<form method="POST" action="{{ path_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
 			<label class="form-group form-group-inline">First name: <input class="form-control" type="text"
 																		   name="firstName"
 																		   value="{{ istDetails.getFirstName }}"
@@ -15,50 +15,182 @@
 			<label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
 																			   name="nickname"
 																			   value="{{ istDetails.getNickname }}"></label>
-			<label class="form-group form-group-inline">Gender:
-				<select class="form-control" name="gender" required="required">
-					<option value="muž" {% if istDetails.getGender == 'muž' %}selected="selected"{% endif %}>Muž
-					</option>
-					<option value="žena" {% if istDetails.getGender == 'žena' %}selected="selected"{% endif %}>Žena
-					</option>
-					<option value="jiné" {% if istDetails.getGender == 'jiné' %}selected="selected"{% endif %}>Jiné
-					</option>
-				</select>
-			</label>
 			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
 																			  name="birthDate"
 																			  value="{{ istDetails.getBirthDate.format('Y-m-d') }}"
 																			  required="required"></label>
-			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
-																				  name="permanentResidence"
-																				  value="{{ istDetails.getPermanentResidence }}"
-																				  required="required"></label>
-			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
-																	  value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"
-																	  required="required"></label>
-			<label class="form-group form-group-inline">Doprovod (povinný do 18 let): <input class="form-control"
-																							 type="text"
-																							 name="legalRepresestative"
-																							 placeholder="jméno a příjmení"
-																							 value="{{ istDetails.getLegalRepresestative }}"></label>
-			<label class="form-group form-group-inline">Korbo šátek:
-				<select class="form-control" name="scarf" required="required">
-					<option value="ne" {% if istDetails.getScarf == 'ne' %}selected="selected"{% endif %}>Už mám a
-						nechci...
+			<label class="form-group form-group-inline">Gender:
+				<select class="form-control" name="gender" required="required">
+					<option value="man" {% if istDetails.getGender == 'man' %}selected="selected"{% endif %}>
+						Man
 					</option>
-					<option value="ano" {% if istDetails.getScarf == 'ano' %}selected="selected"{% endif %}>Nemám a za
-						70 Kč beru!
+					<option value="woman" {% if istDetails.getGender == 'woman' %}selected="selected"{% endif %}>
+						Woman
+					</option>
+					<option value="other" {% if istDetails.getGender == 'other' %}selected="selected"{% endif %}>
+						Other
 					</option>
 				</select>
 			</label>
-
+			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+																	  value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"
+																	  required="required"></label>
+			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
+																			 name="telephoneNumber"
+																			 value="{{ istDetails.getTelephoneNumber }}"
+																			 required="required"></label>
+			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
+																				  name="permanentResidence"
+																				  value="{{ istDetails.getPermanentResidence }}"
+																				  placeholder="Street and no., city, postal code"
+																				  required="required"></label>
+			<label class="form-group form-group-inline">Country: <input class="form-control" type="text"
+																		name="country"
+																		value="{{ istDetails.getCountry }}"
+																		placeholder="Slovakia/Czechia/fill your country"
+																		required="required"></label>
+			<label class="form-group form-group-inline">Scout unit: <input class="form-control" type="text"
+																		   name="scoutUnit"
+																		   value="{{ istDetails.getScoutUnit }}"
+																		   required="required"></label>
+			<label class="form-group form-group-inline">T-shirt shape:
+				<select class="form-control" name="tshirtShape" required="required">
+					<option value="lady" {% if istDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
+						ladies
+					</option>
+					<option value="gentleman"
+							{% if istDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
+						gentleman
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">T-shirt size:
+				<select class="form-control" name="tshirtSize" required="required">
+					<option value="s" {% if istDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
+						S - small
+					</option>
+					<option value="m" {% if istDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
+						M - medium
+					</option>
+					<option value="l" {% if istDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
+						L - large
+					</option>
+					<option value="xl" {% if istDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
+						XL - larger
+					</option>
+					<option value="xxl" {% if istDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
+						XXL - largest
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Diet restriction:
+				<select class="form-control" name="foodPreferences" required="required">
+					<option value="no restriction"
+							{% if istDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
+						no restriction
+					</option>
+					<option value="vegetarian"
+							{% if istDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
+						vegetarian
+					</option>
+					<option value="lactoseFree"
+							{% if istDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
+						lactose-free
+					</option>
+					<option value="glutenFree"
+							{% if istDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
+						gluten-free
+					</option>
+					<option value="other"
+							{% if istDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
+						other
+					</option>
+				</select>
+			</label>
+			if choosed other - we arrange only above stated options of diet restriction; in case of
+			other restrictions, you have to arrange all the food for whole event yourself and your
+			participant fee will be reduced
+			<label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
+																			  name="healthProblems"
+																			  placeholder="allergies, ..."
+																			  value="{{ istDetails.getHealthProblems }}">
+			</label>
+			<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
+																							type="text"
+																							name="languages"
+																							required="required"
+																							value="{{ istDetails.getLanguages }}">
+			</label>
+			<label class="form-group form-group-inline">Swimming skill:
+				<select class="form-control" name="swimming" required="required">
+					<option value="no swim"
+							{% if istDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
+						I can't swim :(
+					</option>
+					<option value="less than 50 meters"
+							{% if istDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
+						less than 50 meters
+					</option>
+					<option value="more than 50 meters"
+							{% if istDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
+						more than 50 meters
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Driver's licence:
+				<select class="form-control" name="driversLicense" required="required">
+					<option value="dont"
+							{% if istDetails.getDriversLicense == 'dont' %}selected="selected"{% endif %}>
+						I don't have it or I don't want to drive on event
+					</option>
+					<option value="less 10000 km"
+							{% if istDetails.getDriversLicense == 'less 10000 km' %}selected="selected"{% endif %}>
+						I have it, but have not driven more than 10 000 km
+					</option>
+					<option value="more 10000 km"
+							{% if istDetails.getDriversLicense == 'more 10000 km' %}selected="selected"{% endif %}>
+						I have it and have driven more than 10 000 km
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Skills: <input class="form-control" type="text"
+																	   name="skills"
+																	   placeholder="sailing; food handling certificate; advanced first aid; ..."
+																	   value="{{ istDetails.getSkills }}">
+			</label>
+			<label class="form-group form-group-inline">Preferred position:
+				<select class="form-control" name="preferredPosition" required="required">
+					<option value="technical support"
+							{% if istDetails.getTshirtShape == 'technical support' %}selected="selected"{% endif %}>
+						technical support
+					</option>
+					<option value="kitchen"
+							{% if istDetails.getTshirtShape == 'kitchen' %}selected="selected"{% endif %}>
+						kitchen
+					</option>
+					<option value="main program"
+							{% if istDetails.getTshirtShape == 'main program' %}selected="selected"{% endif %}>
+						main program
+					</option>
+					<option value="leisure acitvities"
+							{% if istDetails.getTshirtShape == 'leisure acitvities' %}selected="selected"{% endif %}>
+						leisure acitvities
+					</option>
+					<option value="central servicies"
+							{% if istDetails.getTshirtShape == 'central servicies' %}selected="selected"{% endif %}>
+						central servicies
+					</option>
+				</select>
+			</label>
 			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
-																	 placeholder="cokoliv dalšího?"
-																	 value="{{ istDetails.getNotes }}"></label>
+																	 placeholder="anything else?"
+																	 value="{{ istDetails.getNotes }}">
+			</label>
 
 			<div class="text-center">
-				<input class="btn btn-small" type="submit" value="Uložit">
-				<a class="btn btn-small btn-grey" href="{{ path_for('ist-dashboard') }}">Back</a>
+				<a class="btn btn-small btn-grey"
+				   href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+				<input class="btn btn-small" type="submit" value="Save">
 			</div>
 		</form>
 	</div>

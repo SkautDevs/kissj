@@ -20,9 +20,6 @@ class UserController extends AbstractController {
     }
 
     public function landing(Response $response, ?User $user) {
-        /** @var User $user */
-        //$user = $request->getAttribute('user');
-
         if ($user === null) {
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
         }

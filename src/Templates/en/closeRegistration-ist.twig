@@ -3,16 +3,19 @@
 {% block content %}
 	<div class="card open-theme">
 		<h2>Send registration</h2>
-		<p>Do you really want to send your registration for approval? <b>This step is irreversible and submitted details
+		<p>Do you really want to lock your registration and send for approval to us? <b>This step is irreversible and
+				submitted details
 				cannot be changed afterward!</b></p>
-		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration') }}">
+		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
 			<label><input type="checkbox" required="required">Souhlasím s ustanoveními o Ochraně osobních údajů a o
-				Právní odpovědnosti umístněnými na <a target="_blank" href="https://korbo.skauting.cz/pravni-aspekty/">https://korbo.skauting.cz/pravni-aspekty/</a>.
+				Právní odpovědnosti umístněnými na <a target="_blank"
+													  href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
 			</label><br/>
 			<br/>
 			<div class="text-center">
-				<input class="btn btn-small" type="submit" value="Uzavřít registraci">
-				<a href="{{ path_for('ist-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
+				<input class="btn btn-small" type="submit" value="Lock registration">
+				<a href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}"
+				   class="btn btn-grey btn-small">Back</a>
 			</div>
 		</form>
 	</div>

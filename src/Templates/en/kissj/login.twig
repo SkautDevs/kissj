@@ -4,13 +4,13 @@
 	<div class="two-cards">
 		<div class="card registration-theme">
 			<form action="{{ path_for('sendLoginEmail') }}" method="post">
-				<h2>Registration for the {{ event.readableName }}</h2>
+				<h2>Registration for the {{ event.readableName ?? 'AQUA 2022' }}{# TODO make dynamic #}</h2>
 				<div class="form-group">
 					<label for="form-email">Email</label>
-					<input class="form-control form-wide" type="email" name="email" id="form-email" value="email"
+					<input class="form-control form-wide" type="email" name="email" id="form-email"
 						   required/><br/>
 				</div>
-				<input type="submit" value="Poslat mail pro přihlášení" class="btn form-wide"/>
+				<input type="submit" value="Send me an email for register" class="btn form-wide"/>
 			</form>
 		</div>
 		<div class="card approved-theme">
@@ -20,6 +20,8 @@
 				<li>Follow an access button in your E-mail</li>
 				<li>Fill in your deatils</li>
 				<li>Send your registration for approval</li>
+				<li>Wait for approving and payment info</li>
+				<li>Pay and you are goot to go!</li>
 			</ul>
 			<br/>
 			<a href="{{ path_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">More information about

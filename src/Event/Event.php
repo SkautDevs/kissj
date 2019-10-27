@@ -9,6 +9,7 @@ use LeanMapper\Entity;
  * @property string      $slug
  * @property string      $readableName
  * @property string      $webUrl
+ * @property string      $dataProtectionUrl
  *
  * @property string      $accountNumber
  * @property int         $prefixVariableSymbol

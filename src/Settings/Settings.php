@@ -233,7 +233,10 @@ class Settings {
             /** @var \kissj\User\User $user */
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
-
+            if ($user !== null) {
+                $view->getEnvironment()->addGlobal('event', $user->event);
+            }
+            // TODO move into middleware
             if ($settings['useTestingSite']) {
                 $flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
                 $flashMessages->info('Login pro administraci: admin, heslo: admin, link: '
