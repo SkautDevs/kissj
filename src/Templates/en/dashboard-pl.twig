@@ -2,7 +2,7 @@
 
 {% block content %}
 	<div class="card {{ userStatus }}-theme">
-		<h2>{{ plDetails.getPatrolName }} patrol details</h2>
+		<h2>{{ pl.getPatrolName }} patrol details</h2>
 		<h4>
 			{{ userCustomHelp }}
 		</h4>
@@ -19,50 +19,55 @@
 
 		<div class="card-divide">
 			<div>
-				<h2>Patrol Leader details</h2>
+				<h2>Patrol Leader {{ pl.getFullName }}</h2>
 				{% if userStatus == 'open' %}
-					<a class="btn btn-small" href="{{ path_for('pl-changeDetails') }}">Edit your details</a><br/><br/>
+					<a class="btn btn-small" href="{{ path_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
+						Edit your own details</a><br/><br/>
 				{% endif %}
 				<div class="text-center">
-					First name: {{ plDetails.getFirstName }}<br/>
-					Surname: {{ plDetails.getLastName }}<br/>
-					Gender: {{ plDetails.getGender }}<br/>
-					Year of birth: {{ plDetails.getBirthDate.format('d. m. Y') }}<br/>
-					Place of birth: {{ plDetails.getBirthPlace }}<br/>
-					Permament address: {{ plDetails.getPermanentResidence }}<br/>
-					Country: {{ plDetails.getCountry }}<br/>
-					ID/passport number: {{ plDetails.getCardPassportNumber }}<br/>
-					Diet restriction: {{ plDetails.getFoodPreferences }}<br/>
-					Health issues: {{ plDetails.getAllergies }}<br/>
-					Phone number: {{ plDetails.getTelephoneNumber }}<br/>
-					Email: {{ plDetails.getEmail }}<br/>
-					Scout group: {{ plDetails.getScoutUnit }}<br/>
-					Note: {{ plDetails.getNotes }}<br/>
-
-					Patrol name: {{ plDetails.getPatrolName }}<br/>
+					Patrol name: <b>{{ pl.getPatrolName }}</b><br/>
+					<br/>
+					First name: <b>{{ pl.getFirstName }}</b><br/>
+					Surname: <b>{{ pl.getLastName }}</b><br/>
+					Scout nickname: <b>{{ pl.getNickname }}</b><br/>
+					Date of birth: <b>{{ pl.getBirthDate.format('d. m. Y') }}</b><br/>
+					Gender: <b>{{ pl.getGender }}</b><br/>
+					Email: <b>{{ pl.getEmail }}</b><br/>
+					Phone number: <b>{{ pl.getTelephoneNumber }}</b><br/>
+					Permanent Address: <b>{{ pl.getPermanentResidence }}</b><br/>
+					Country: <b>{{ pl.getCountry }}</b><br/>
+					Scout unit: <b>{{ pl.getScoutUnit }}</b><br/>
+					T-shirt size: <b>{{ pl.getTshirt }}</b><br/>
+					Diet Restriction: <b>{{ pl.getFoodPreferences }}</b><br/>
+					Health issues: <b>{{ pl.getHealthProblems }}</b><br/>
+					Languages you speak + level: <b>{{ pl.getLanguages }}</b><br/>
+					Swimming skill: <b>{{ pl.getSwimming }}</b><br/>
+					Notes: <b>{{ pl.getNotes }}</b><br/>
 				</div>
 			</div>
 			<div>
 				<h2>List of participants</h2>
 				{% if userStatus == 'open' %}
-					<a class="btn btn-small" href="{{ path_for('pl-addParticipant') }}">Add a participant</a><br/>
-					<p>You need 9 participants for valid registration</p>
+					<form method="POST" action="{{ path_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
+						<input type="submit" value="Add a participant" class="btn btn-small">
+					</form>
+					<br/>
 				{% endif %}
 				{% set count = 1 %}
 				<ol class="text-center">
-					{% for participantDetails in allPDetails %}
-						{# why here must be full .getFirstName() instead of .firstName like elsewhere? #}
-						<li>participant {{ participantDetails.getFirstName() }} {{ participantDetails.getLastName() }}
+					{% for p in particiants %}
+						<li>
+							participant - <b>{{ p.getFullName }}</b>
 							{% if userStatus == 'open' %}
 								<!-- edit --><a
-									href="{{ path_for('p-changeDetails',{'participantId': participantDetails.id}) }}"><i
+									href="{{ path_for('p-showChangeDetails',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
 										class="material-icons">edit</i></a>
 								<!-- delete --><a
-									href="{{ path_for('p-delete',{'participantId': participantDetails.id}) }}"><i
+									href="{{ path_for('p-showDelete',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
 										class="material-icons">delete</i></a>
 							{% else %}
 								<!-- show --><a
-									href="{{ path_for('p-showDetails',{'participantId': participantDetails.id}) }}"><i
+									href="{{ path_for('p-show',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
 										class="material-icons">search</i></a>
 							{% endif %}
 
@@ -70,11 +75,25 @@
 						{% set count = count + 1 %}
 					{% endfor %}
 				</ol>
+				{% if userStatus == 'open' %}
+					<p>
+						You need
+						{% if event.minimalPatrolParticipantsCount == event.maximalPatrolParticipantsCount %}
+							exactly {{ event.minimalPatrolParticipantsCount }}
+						{% else %}
+							minimally {{ event.minimalPatrolParticipantsCount }}
+							and maximally {{ event.maximalPatrolParticipantsCount }}
+						{% endif %}
+						participants for valid registration
+					</p>
+				{% endif %}
 			</div>
 		</div>
 
 		{% if userStatus == 'open' %}
-			<a class="btn btn-small" href="{{ path_for('pl-closeRegistration') }}">Send registration</a>
+			<a class="btn btn-small" href="{{ path_for('pl-showCloseRegistration', {'eventSlug': event.slug}) }}">
+				Send registration
+			</a>
 		{% endif %}
 	</div>
 {% endblock %}

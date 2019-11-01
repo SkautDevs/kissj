@@ -2,43 +2,36 @@
 
 namespace kissj\Participant\Patrol;
 
-use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerInterface;
 use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\User\User;
-use Slim\Views\Twig;
+use kissj\User\UserService;
 
 class PatrolService {
-    /** @var PatrolParticipantRepository */
-    private $patrolParticipantRepository;
-    /** @var PatrolLeaderRepository */
     private $patrolLeaderRepository;
-    /** @var PaymentRepository */
+    private $patrolParticipantRepository;
     private $paymentRepository;
-    private $eventSettings;
     private $flashMessages;
-
-    private $eventName;
+    private $mailer;
+    private $userService;
 
     public function __construct(
-        PatrolParticipantRepository $patrolParticipantRepository,
         PatrolLeaderRepository $patrolLeaderRepository,
+        PatrolParticipantRepository $patrolParticipantRepository,
         PaymentRepository $paymentRepository,
-        FlashMessagesInterface $flashMessages,
+        FlashMessagesBySession $flashMessages,
         MailerInterface $mailer,
-        Twig $renderer,
-        $eventSettings
+        UserService $userService
     ) {
-        $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->patrolLeaderRepository = $patrolLeaderRepository;
+        $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->paymentRepository = $paymentRepository;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
-        $this->renderer = $renderer;
-        $this->eventSettings = $eventSettings;
-        $this->eventName = $eventName;
+        $this->userService = $userService;
     }
 
     public function getPatrolLeader(User $user): PatrolLeader {
@@ -46,151 +39,61 @@ class PatrolService {
             $patrolLeader = new PatrolLeader();
             $patrolLeader->user = $user;
             $this->patrolLeaderRepository->persist($patrolLeader);
-
-            $this->roleService->addRole($user, 'patrol-leader');
         }
 
-        $patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
-
-        return $patrolLeader;
+        return $this->patrolLeaderRepository->findOneBy(['user' => $user]);
     }
 
-    public function getPatrolLeaderFromId(int $patrolLeaderId): PatrolLeader {
-        return $this->patrolLeaderRepository->findOneBy(['id' => $patrolLeaderId]);
+    public function addParamsIntoPatrolLeader(PatrolLeader $pl, array $params): PatrolLeader {
+        $pl->firstName = $params['firstName'] ?? null;
+        $pl->lastName = $params['lastName'] ?? null;
+        $pl->nickname = $params['nickname'] ?? null;
+        if ($params['birthDate'] !== null) {
+            $pl->birthDate = new \DateTime($params['birthDate']);
+        }
+        $pl->gender = $params['gender'] ?? null;
+        $pl->email = $params['email'] ?? null;
+        $pl->telephoneNumber = $params['telephoneNumber'] ?? null;
+        $pl->permanentResidence = $params['permanentResidence'] ?? null;
+        $pl->country = $params['country'] ?? null;
+        $pl->scoutUnit = $params['scoutUnit'] ?? null;
+        $pl->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
+        $pl->foodPreferences = $params['foodPreferences'] ?? null;
+        $pl->healthProblems = $params['healthProblems'] ?? null;
+        $pl->languages = $params['languages'] ?? null;
+        $pl->swimming = $params['swimming'] ?? null;
+        $pl->patrolName = $params['patrolName'] ?? null;
+        $pl->notes = $params['notes'] ?? null;
+
+        return $pl;
     }
 
-    public function getAllClosedPatrols(): array {
-        $closedPatrols = $this->roleRepository->findBy([
-            'event' => $this->eventName,
-            'name' => 'patrol-leader',
-            'status' => 'closed',
-        ]);
-        $patrols = [];
-        /** @var Role $closedPatrol */
-        foreach ($closedPatrols as $closedPatrol) {
-            $patrolLeader = $this->patrolLeaderRepository->findOneBy(['userId' => $closedPatrol->user->id]);
-            $patrol['patrolLeader'] = $patrolLeader;
-            $patrol['patrolParticipants'] = $this->patrolParticipantRepository->findBy(['patrolLeaderId' => $patrolLeader->id]);
-
-            $patrols[] = $patrol;
+    public function isPatrolLeaderValidForClose(PatrolLeader $pl): bool {
+        if (
+            $pl->patrolName === null
+            || $pl->firstName === null
+            || $pl->lastName === null
+            || $pl->birthDate === null
+            || $pl->gender === null
+            || $pl->email === null
+            || $pl->telephoneNumber === null
+            || $pl->permanentResidence === null
+            || $pl->country === null
+            || $pl->scoutUnit === null
+            || $pl->foodPreferences === null
+            || $pl->languages === null
+            || $pl->swimming === null
+            || $pl->getTshirtShape() === null
+            || $pl->getTshirtSize() === null
+        ) {
+            return false;
         }
 
-        return $patrols;
-    }
-
-    public function getAllApprovedPatrolsWithPayment(): array {
-        $approvedIsts = $this->roleRepository->findBy([
-            'event' => $this->eventName,
-            'name' => 'patrol-leader',
-            'status' => 'approved',
-        ]);
-        $patrolLeaders = [];
-        /** @var Role $approvedPatrolLeader */
-        foreach ($approvedIsts as $approvedPatrolLeader) {
-            $patrolLeader['info'] = $this->patrolLeaderRepository->findOneBy(['user' => $approvedPatrolLeader->user]);
-            $patrolLeader['payment'] = $this->getOnePayment($patrolLeader['info']);
-            $patrolLeaders[] = $patrolLeader;
+        if (!empty($pl->email) && filter_var($pl->email, FILTER_VALIDATE_EMAIL) === false) {
+            return false;
         }
 
-        return $patrolLeaders;
-    }
-
-    private function isPatrolLeaderValid(PatrolLeader $patrolLeader): bool {
-        return $this->isPatrolLeaderDetailsValid(
-            $patrolLeader->firstName,
-            $patrolLeader->lastName,
-            $patrolLeader->allergies,
-            ($patrolLeader->birthDate ? $patrolLeader->birthDate->format('Y-m-d') : null),
-            $patrolLeader->birthPlace,
-            $patrolLeader->country,
-            $patrolLeader->gender,
-            $patrolLeader->permanentResidence,
-            $patrolLeader->scoutUnit,
-            $patrolLeader->telephoneNumber,
-            $patrolLeader->email,
-            $patrolLeader->foodPreferences,
-            $patrolLeader->cardPassportNumber,
-            $patrolLeader->notes,
-            $patrolLeader->patrolName
-        );
-    }
-
-    public function isPatrolLeaderDetailsValid(
-        ?string $firstName,
-        ?string $lastName,
-        ?string $allergies,
-        ?string $birthDate,
-        ?string $birthPlace,
-        ?string $country,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $scoutUnit,
-        ?string $telephoneNumber,
-        ?string $email,
-        ?string $foodPreferences,
-        ?string $cardPassportNumber,
-        ?string $notes,
-        ?string $patrolName
-    ): bool {
-        $validFlag = true;
-
-        if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email) || is_null($patrolName)) {
-            $validFlag = false;
-        }
-
-        if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
-            $validFlag = false;
-        }
-        // check for numbers and plus sight up front only
-        /* if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
-            $validFlag = false;
-        }*/
-        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            $validFlag = false;
-        }
-
-        return $validFlag;
-    }
-
-    public function editPatrolLeaderInfo(
-        PatrolLeader $patrolLeader,
-        ?string $firstName,
-        ?string $lastName,
-        ?string $allergies,
-        ?string $birthDate,
-        ?string $birthPlace,
-        ?string $country,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $scoutUnit,
-        ?string $telephoneNumber,
-        ?string $email,
-        ?string $foodPreferences,
-        ?string $cardPassportNumber,
-        ?string $notes,
-        ?string $patrolName
-    ) {
-        $patrolLeader->firstName = $firstName;
-        $patrolLeader->lastName = $lastName;
-        $patrolLeader->allergies = $allergies;
-        $patrolLeader->birthDate = new \DateTime($birthDate);
-        $patrolLeader->birthPlace = $birthPlace;
-        $patrolLeader->country = $country;
-        $patrolLeader->gender = $gender;
-        $patrolLeader->permanentResidence = $permanentResidence;
-        $patrolLeader->scoutUnit = $scoutUnit;
-        $patrolLeader->telephoneNumber = $telephoneNumber;
-        $patrolLeader->email = $email;
-        $patrolLeader->foodPreferences = $foodPreferences;
-        $patrolLeader->cardPassportNumber = $cardPassportNumber;
-        $patrolLeader->notes = $notes;
-        $patrolLeader->patrolName = $patrolName;
-
-        $this->patrolLeaderRepository->persist($patrolLeader);
-    }
-
-    public function getAllParticipantsBelongsPatrolLeader(PatrolLeader $patrolLeader): array {
-        return $this->patrolParticipantRepository->findBy(['patrolleader' => $patrolLeader]);
+        return true;
     }
 
     public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant {
@@ -208,95 +111,61 @@ class PatrolService {
         return $patrolParticipant;
     }
 
-    private function isPatrolParticipantValid(PatrolParticipant $participant): bool {
-        return $this->isPatrolParticipantDetailsValid(
-            $participant->firstName,
-            $participant->lastName,
-            $participant->allergies,
-            ($participant->birthDate ? $participant->birthDate->format('Y-m-d') : null),
-            $participant->birthPlace,
-            $participant->country,
-            $participant->gender,
-            $participant->permanentResidence,
-            $participant->scoutUnit,
-            $participant->telephoneNumber,
-            $participant->email,
-            $participant->foodPreferences,
-            $participant->cardPassportNumber,
-            $participant->notes
-        );
+    public function addParamsIntoPatrolParticipant(PatrolParticipant $p, array $params): PatrolParticipant {
+        $p->firstName = $params['firstName'] ?? null;
+        $p->lastName = $params['lastName'] ?? null;
+        $p->nickname = $params['nickname'] ?? null;
+        if ($params['birthDate'] !== null) {
+            $p->birthDate = new \DateTime($params['birthDate']);
+        }
+        $p->gender = $params['gender'] ?? null;
+        $p->email = $params['email'] ?? null;
+        $p->telephoneNumber = $params['telephoneNumber'] ?? null;
+        $p->permanentResidence = $params['permanentResidence'] ?? null;
+        $p->country = $params['country'] ?? null;
+        $p->scoutUnit = $params['scoutUnit'] ?? null;
+        $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
+        $p->foodPreferences = $params['foodPreferences'] ?? null;
+        $p->healthProblems = $params['healthProblems'] ?? null;
+        $p->languages = $params['languages'] ?? null;
+        $p->swimming = $params['swimming'] ?? null;
+        $p->notes = $params['notes'] ?? null;
+
+        return $p;
     }
 
-    public function isPatrolParticipantDetailsValid(
-        ?string $firstName,
-        ?string $lastName,
-        ?string $allergies,
-        ?string $birthDate,
-        ?string $birthPlace,
-        ?string $country,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $scoutUnit,
-        ?string $telephoneNumber,
-        ?string $email,
-        ?string $foodPreferences,
-        ?string $cardPassportNumber,
-        ?string $notes
-    ): bool {
-        $validFlag = true;
-
-        if (is_null($firstName) || is_null($lastName) || is_null($birthDate) || is_null($birthPlace) || is_null($country) || is_null($gender) || is_null($permanentResidence) || is_null($scoutUnit) || is_null($telephoneNumber) || is_null($email)) {
-            $validFlag = false;
+    public function isPatrolParticipantValidForClose(PatrolParticipant $p): bool {
+        if (
+            $p->firstName === null
+            || $p->lastName === null
+            || $p->birthDate === null
+            || $p->gender === null
+            || $p->email === null
+            || $p->telephoneNumber === null
+            || $p->permanentResidence === null
+            || $p->country === null
+            || $p->scoutUnit === null
+            || $p->foodPreferences === null
+            || $p->languages === null
+            || $p->swimming === null
+            || $p->getTshirtShape() === null
+            || $p->getTshirtSize() === null
+        ) {
+            return false;
         }
 
-        if (!empty($birthDate) && $birthDate !== date('Y-m-d', strtotime($birthDate))) {
-            $validFlag = false;
-        }
-        // check for numbers and plus sight up front only
-        /*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
-            $validFlag = false;
-        }*/
-        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            $validFlag = false;
+        if (!empty($p->email) && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
+            return false;
         }
 
-        return $validFlag;
+        return true;
     }
 
-    public function editPatrolParticipant(
-        PatrolParticipant $patrolParticipant,
-        ?string $firstName,
-        ?string $lastName,
-        ?string $allergies,
-        ?string $birthDate,
-        ?string $birthPlace,
-        ?string $country,
-        ?string $gender,
-        ?string $permanentResidence,
-        ?string $scoutUnit,
-        ?string $telephoneNumber,
-        ?string $email,
-        ?string $foodPreferences,
-        ?string $cardPassportNumber,
-        ?string $notes
-    ) {
-        $patrolParticipant->firstName = $firstName;
-        $patrolParticipant->lastName = $lastName;
-        $patrolParticipant->allergies = $allergies;
-        $patrolParticipant->birthDate = new \DateTime($birthDate);
-        $patrolParticipant->birthPlace = $birthPlace;
-        $patrolParticipant->country = $country;
-        $patrolParticipant->gender = $gender;
-        $patrolParticipant->permanentResidence = $permanentResidence;
-        $patrolParticipant->scoutUnit = $scoutUnit;
-        $patrolParticipant->telephoneNumber = $telephoneNumber;
-        $patrolParticipant->email = $email;
-        $patrolParticipant->foodPreferences = $foodPreferences;
-        $patrolParticipant->cardPassportNumber = $cardPassportNumber;
-        $patrolParticipant->notes = $notes;
-
-        $this->patrolParticipantRepository->persist($patrolParticipant);
-    }
+    // TODO add telephone check 
+    // check for numbers and plus sight up front only
+    /*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
+        $validFlag = false;
+    }*/
 
     /**
      * @param PatrolParticipant $patrolParticipant
@@ -314,36 +183,58 @@ class PatrolService {
     }
 
     public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
+        $event = $patrolLeader->user->event;
+        if ($this->userService->getClosedPatrolsCount() >= $event->maximalClosedPatrolsCount) {
+            $this->flashMessages->warning('Cannot lock the registration - for Patrols we have full registration now. Please wait for limit rise');
+
+            return false;
+        }
+
         $validityFlag = true;
-        if (!$this->isPatrolLeaderValid($patrolLeader)) {
-            $this->flashMessages->warning('Nelze uzavřít registraci - údaje Patrol Leadera nejsou kompletní');
+        if (!$this->isPatrolLeaderValidForClose($patrolLeader)) {
+            $this->flashMessages->warning('Cannot lock the registration - some of your details are wrong or missing (probably email or some date)');
+
             $validityFlag = false;
         }
-        $participants = $this->getAllParticipantsBelongsPatrolLeader($patrolLeader);
+
+        $participants = $this->patrolParticipantRepository->findBy(['patrol_leader_id' => $patrolLeader->id]);
         $participantsCount = count($participants);
-        if ($participantsCount < $this->eventSettings['minimalPatrolParticipantsCount']) {
-            $this->flashMessages->warning('Nelze uzavřít registraci - účastníků v patrole je příliš málo - je jich jen '.$participantsCount.' z '.$this->eventSettings['minimalPatrolParticipantsCount']);
+        if ($participantsCount < $event->minimalPatrolParticipantsCount) {
+            $this->flashMessages->warning('Cannot lock the registration - too few participants, they are only '
+                .$participantsCount.' from '.$event->minimalPatrolParticipantsCount.' needed');
+
             $validityFlag = false;
         }
-        if ($participantsCount > $this->eventSettings['maximalPatrolParticipantsCount']) {
-            $this->flashMessages->warning('Nelze uzavřít registraci - účastníků je v patrole moc - je jich '.$participantsCount.' místo '.$this->eventSettings['maximalPatrolParticipantsCount']);
+        if ($participantsCount > $event->maximalPatrolParticipantsCount) {
+            $this->flashMessages->warning('Cannot lock the registration - too many participants - they are '
+                .$participantsCount.' and you need '.$event->maximalPatrolParticipantsCount.' maximum');
+
             $validityFlag = false;
         }
+        /** @var PatrolParticipant $participant */
         foreach ($participants as $participant) {
-            if (!$this->isPatrolParticipantValid($participant)) {
-                $participantName = $participant->getFirstName().' '.$participant->getLastName();
-                $this->flashMessages->warning('Údaje účastníka '.$participantName.' nejsou kompletní');
+            if (!$this->isPatrolParticipantValidForClose($participant)) {
+                $this->flashMessages->warning('Cannot lock the registration - some of the '
+                    .$participant->getFullName().' details are wrong or missing (probably email or some date)');
+
                 $validityFlag = false;
             }
         }
-        if ($this->getClosedPatrolsCount() >= $this->eventSettings['maximalClosedPatrolsCount']) {
-            $this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných patrol a tvoje patrola se nevejde do počtu. Počkej prosím na zvýšení limitu pro patroly.');
-            $validityFlag = false;
-        }
 
+        // to show all warnings
         return $validityFlag;
     }
 
+    public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader {
+        if ($this->isCloseRegistrationValid($patrolLeader)) {
+            $this->userService->closeRegistration($patrolLeader->user);
+            $this->mailer->sendMailFromTemplate($patrolLeader->user->email, 'closed registration', 'closed', []);
+        }
+
+        return $patrolLeader;
+    }
+
+    // TODO fix
     private function getClosedPatrolsCount(): int {
         return $this->roleRepository->countBy([
             'name' => 'patrol-leader',
@@ -421,13 +312,6 @@ class PatrolService {
         } else {
             return null;
         }
-    }
-
-    public function closeRegistration(PatrolLeader $patrolLeader) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
-        $role->status = $this->roleService->getCloseStatus();
-        $this->roleRepository->persist($role);
     }
 
     public function approvePatrol(PatrolLeader $patrolLeader) {

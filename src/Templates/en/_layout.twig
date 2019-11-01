@@ -4,7 +4,7 @@
 	<meta charset="utf-8"/>
 	<meta name="robots" content="noindex, nofollow">
 
-	<title>Registration AQUA 2020 - kissj</title>
+	<title>Registration {{ event.readableName ?? 'AQUA 2020' }} - kissj</title>
 
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
@@ -14,7 +14,7 @@
 
 <body lang="cs">
 <div class="wrapper">
-	<h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2022' }}{# TODO make dynamic #}</h1>
+	<h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h1>
 	<div class="user text-right">
 		{% if user is not null %}
 			{{ user.email }}
@@ -31,7 +31,7 @@
 		</li>
 		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Filling in the details</li>
 		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Registration sent</li>
-		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Registration approved</li>
+		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Approved</li>
 		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Payed! ;)</li>
 	</ul>
 	<div class="flash-wrapper">
@@ -45,7 +45,7 @@
 		{% block content %}{% endblock %}
 	</main>
 	<footer>
-		<a href="https://devs.skauting.cz/">S ♥ vybrousil Lung</a>
+		<a href="https://devs.skauting.cz/" target="_blank">With ♥ created by Lung</a>
 	</footer>
 </div>
 </body>

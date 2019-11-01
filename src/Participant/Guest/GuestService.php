@@ -87,7 +87,7 @@ class GuestService {
 
     public function isCloseRegistrationValid(Guest $guest): bool {
         if (!$this->isGuestValidForClose($guest)) {
-            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing');
+            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably email or some date)');
 
             return false;
         }

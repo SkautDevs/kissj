@@ -79,31 +79,4 @@ class GuestController extends AbstractController {
     }
 
     // TODO
-    public function approveIst(Request $request, Response $response, int $istId) {
-        $ist = $this->guestService->getIstFromId($istId);
-        $this->guestService->approveIst($ist);
-        $payment = $this->paymentService->createNewPayment($ist->user->role);
-        $this->guestService->sendPaymentByMail($payment, $ist);
-        $this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
-        $this->logger->info('Approved registration for IST with ID '.$ist->id);
-
-        return $response->withRedirect($this->router->pathFor('admin-approving'));
-    }
-
-    public function showOpenIst(Request $request, Response $response) {
-        $ist = $this->guestService->getIstFromId($args['istId']);
-
-        return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
-    }
-
-    public function openIst(Request $request, Response $response) {
-        $ist = $this->guestService->getIstFromId($args['istId']);
-        $this->guestService->openIst($ist);
-        $reason = $request->getParsedBodyParam('reason');
-        $this->guestService->sendDenialMail($ist, $reason);
-        $this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
-        $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
-
-        return $response->withRedirect($this->router->pathFor('admin-approving'));
-    }
 }

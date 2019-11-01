@@ -98,12 +98,12 @@ class IstService {
 
     public function isCloseRegistrationValid(Ist $ist): bool {
         if (!$this->isIstValidForClose($ist)) {
-            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing');
+            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably email or some date)');
 
             return false;
         }
         if ($this->userService->getClosedIstsCount() >= $ist->user->event->maximalClosedIstsCount) {
-            $this->flashMessages->warning('Registraci už má uzavřenou maximální počet možných účastníků a ty se nevejdeš do počtu. Počkej prosím na zvýšení limitu.');
+            $this->flashMessages->warning('For IST we have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise');
 
             return false;
         }
@@ -119,6 +119,8 @@ class IstService {
 
         return $ist;
     }
+
+    // TODO fix
 
     public function getAllClosedIsts(): array {
         $closedIsts = $this->roleRepository->findBy([

@@ -2,173 +2,146 @@
 
 namespace kissj\Participant\Patrol;
 
-class PatrolController {
-    public function showLeaderDashboard(Request $request, Response $response, array $args) {
-        $user = $request->getAttribute('user');
+use kissj\AbstractController;
+use kissj\Participant\ParticipantRepository;
+use kissj\Payment\PaymentService;
+use kissj\User\User;
+use Slim\Http\Request;
+use Slim\Http\Response;
+
+class PatrolController extends AbstractController {
+    private $patrolService;
+    private $patrolLeaderRepository;
+    private $patrolParticipantRepository;
+    private $paymentService;
+
+    public function __construct(
+        PatrolService $patrolService,
+        PatrolLeaderRepository $patrolLeaderRepository,
+        PatrolParticipantRepository $patrolParticipantRepository,
+        PaymentService $paymentService
+    ) {
+        $this->patrolService = $patrolService;
+        $this->patrolLeaderRepository = $patrolParticipantRepository;
+        $this->patrolParticipantRepository = $patrolParticipantRepository;
+        $this->paymentService = $paymentService;
+    }
+
+    public function showDashboard(Response $response, User $user) {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
-        $allParticipants = $this->patrolService->getAllParticipantsBelongsPatrolLeader($patrolLeader);
-        $onePayment = $this->patrolService->getOnePayment($patrolLeader);
+        $possibleOnePayment = $this->paymentService->findLastPayment($patrolLeader);
+        $allLeadersParticipants = $this->patrolParticipantRepository->findBy(['patrol_leader_id' => $patrolLeader->id]);
 
-        return $this->view->render($response, 'dashboard-pl.twig', [
-            'user' => $user,
-            'plDetails' => $patrolLeader,
-            'allPDetails' => $allParticipants,
-            'payment' => $onePayment,
-        ]);
+        return $this->view->render($response, 'dashboard-pl.twig',
+            [
+                'user' => $user,
+                'pl' => $patrolLeader,
+                'payment' => $possibleOnePayment,
+                'particiants' => $allLeadersParticipants,
+            ]);
     }
 
-    public function showDetailsLeaderChangeable(Request $request, Response $response, array $args) {
-        $plDetails = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
+    public function showDetailsChangeableLeader(Request $request, Response $response) {
+        $patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
 
-        return $this->view->render($response, 'changeDetails-pl.twig', ['plInfo' => $plDetails]);
+        return $this->view->render($response, 'changeDetails-pl.twig',
+            ['plDetails' => $patrolLeader]);
     }
 
-    public function changeDetailsLeader(Request $request, Response $response, array $args) {
-        $params = $request->getParams();
-        if ($this->patrolService->isPatrolLeaderDetailsValid(
-            $params['firstName'] ?? null,
-            $params['lastName'] ?? null,
-            $params['allergies'] ?? null,
-            $params['birthDate'] ?? null,
-            $params['birthPlace'] ?? null,
-            $params['country'] ?? null,
-            $params['gender'] ?? null,
-            $params['permanentResidence'] ?? null,
-            $params['scoutUnit'] ?? null,
-            $params['telephoneNumber'] ?? null,
-            $params['email'] ?? null,
-            $params['foodPreferences'] ?? null,
-            $params['cardPassportNumber'] ?? null,
-            $params['notes'] ?? null,
-            $params['patrolName'] ?? null)) {
+    public function changeDetailsLeader(Request $request, Response $response) {
+        $patrolLeader = $this->patrolService->addParamsIntoPatrolLeader(
+            $this->patrolService->getPatrolLeader($request->getAttribute('user')),
+            $request->getParams()
+        );
 
-            $patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-            $this->patrolService->editPatrolLeaderInfo(
-                $patrolLeader,
-                $params['firstName'] ?? null,
-                $params['lastName'] ?? null,
-                $params['allergies'] ?? null,
-                $params['birthDate'] ?? null,
-                $params['birthPlace'] ?? null,
-                $params['country'] ?? null,
-                $params['gender'] ?? null,
-                $params['permanentResidence'] ?? null,
-                $params['scoutUnit'] ?? null,
-                $params['telephoneNumber'] ?? null,
-                $params['email'] ?? null,
-                $params['foodPreferences'] ?? null,
-                $params['cardPassportNumber'] ?? null,
-                $params['notes'] ?? null,
-                $params['patrolName'] ?? null);
+        $this->patrolLeaderRepository->persist($patrolLeader);
+        $this->flashMessages->success('Details successfully saved.');
 
-            $this->flashMessages->success('Údaje úspěšně uloženy');
-
-            return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-        }
-
-        $this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus úpravu údajů znovu.');
-
-        return $response->withRedirect($this->router->pathFor('pl-changeDetails'));
+        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+            ['eventSlug' => $patrolLeader->user->event->slug]));
     }
 
-    public function showCloseRegistration(Request $request, Response $response, array $args) {
+    public function showCloseRegistration(Request $request, Response $response) {
         $patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
         $validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
         if ($validRegistration) {
-            return $this->view->render($response, 'closeRegistration-pl.twig');
+            return $this->view->render($response, 'closeRegistration-pl.twig',
+                ['dataProtectionUrl' => $patrolLeader->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+            ['eventSlug' => $patrolLeader->user->event->slug]
+        ));
     }
 
-    public function closeRegistration(Request $request, Response $response, array $args) {
+    public function closeRegistration(Request $request, Response $response) {
         $patrolLeader = $this->patrolService->getPatrolLeader($request->getAttribute('user'));
-        if ($this->patrolService->isCloseRegistrationValid($patrolLeader)) {
-            $this->patrolService->closeRegistration($patrolLeader);
-            $this->flashMessages->success('Registrace úspěšně uzavřena, čeká na schválení');
-            $this->logger->info('Closing registration for PatrolLeader with ID '.$patrolLeader->id);
+        $patrolLeader = $this->patrolService->closeRegistration($patrolLeader);
 
-            return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+        if ($patrolLeader->user->status === User::STATUS_CLOSED) {
+            $this->flashMessages->success('Registration successfully locked and send');
+            $this->logger->info('Locked registration for Patrol Leader with ID '
+                .$patrolLeader->id.', user ID '.$patrolLeader->user->id);
+        } else {
+            $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        $this->flashMessages->error('Registraci ještě nelze uzavřít');
-
-        return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+            ['eventSlug' => $patrolLeader->user->event->slug]));
     }
 
-    public function addParticipant(Request $request, Response $response, array $args) {
-        // create participant and reroute to edit him
-        $newParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($request->getAttribute('user')));
+    public function addParticipant(Request $request, Response $response) {
+        /** @var User $user */
+        $user = $request->getAttribute('user');
+        $patrolParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($user));
 
-        return $response->withRedirect($this->router->pathFor('p-changeDetails',
-            ['participantId' => $newParticipant->id]));
+        return $response->withRedirect($this->router->pathFor(
+            'p-showChangeDetails', ['eventSlug' => $user->event->slug, 'participantId' => $patrolParticipant->id])
+        );
     }
 
-    public function showChangeDetailsParticipant(Request $request, Response $response, array $args) {
-        $pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+    public function showChangeDetailsPatrolParticipant(
+        int $participantId,
+        Response $response,
+        ParticipantRepository $participantRepository
+    ) {
+        /** @var PatrolParticipant $participant */
+        $participant = $participantRepository->find($participantId);
 
         return $this->view->render($response, 'changeDetails-p.twig',
-            ['pDetails' => $pDetails]);
+            ['pDetails' => $participant, 'plDetails' => $participant->patrolLeader]);
     }
 
-    public function cangeDetailsParticipant(Request $request, Response $response, array $args) {
-        $params = $request->getParams();
+    public function changeDetailsPatrolParticipant(int $participantId, Request $request, Response $response) {
+        $patrolParticipant = $this->patrolService->addParamsIntoPatrolParticipant(
+            $this->patrolService->getPatrolParticipant($participantId),
+            $request->getParams()
+        );
 
-        if ($this->patrolService->isPatrolParticipantDetailsValid(
-            $params['firstName'] ?? null,
-            $params['lastName'] ?? null,
-            $params['allergies'] ?? null,
-            $params['birthDate'] ?? null,
-            $params['birthPlace'] ?? null,
-            $params['country'] ?? null,
-            $params['gender'] ?? null,
-            $params['permanentResidence'] ?? null,
-            $params['scoutUnit'] ?? null,
-            $params['telephoneNumber'] ?? null,
-            $params['email'] ?? null,
-            $params['foodPreferences'] ?? null,
-            $params['cardPassportNumber'] ?? null,
-            $params['notes'] ?? null,
-            $params['patrolName'] ?? null)) {
+        $this->patrolLeaderRepository->persist($patrolParticipant);
+        $this->flashMessages->success('Details successfully saved.');
 
-            $this->patrolService->editPatrolParticipant(
-                $this->patrolService->getPatrolParticipant($args['participantId']),
-                $params['firstName'] ?? null,
-                $params['lastName'] ?? null,
-                $params['allergies'] ?? null,
-                $params['birthDate'] ?? null,
-                $params['birthPlace'] ?? null,
-                $params['country'] ?? null,
-                $params['gender'] ?? null,
-                $params['permanentResidence'] ?? null,
-                $params['scoutUnit'] ?? null,
-                $params['telephoneNumber'] ?? null,
-                $params['email'] ?? null,
-                $params['foodPreferences'] ?? null,
-                $params['cardPassportNumber'] ?? null,
-                $params['notes'] ?? null);
-
-            $this->flashMessages->success('Účastník úspěšně uložen');
-
-            return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-        }
-
-        $this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus přidat účastníka znovu.');
-
-        return $response->withRedirect($this->router->pathFor('pl-addParticipant'));
+        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+            ['eventSlug' => $patrolParticipant->patrolLeader->user->event->slug]));
     }
 
-    public function showDeleteParticipant(Request $request, Response $response, array $args) {
-        $pDetails = $this->patrolService->getPatrolParticipant($args['participantId']);
+    public function showDeleteParticipant(int $participantId, Response $response) {
+        $patrolParticipant = $this->patrolService->getPatrolParticipant($participantId);
 
-        return $this->view->render($response, 'delete-p.twig', ['pDetail' => $pDetails]);
+        return $this->view->render($response, 'delete-p.twig', ['pDetail' => $patrolParticipant]);
     }
 
-    public function deleteParticipant(Request $request, Response $response, array $args) {
-        $patrolParticipant = $this->patrolService->getPatrolParticipant($args['participantId']);
-        $this->patrolService->deletePatrolParticipant($patrolParticipant);
-        $this->flashMessages->success('Účastník úspěšně vymazán!');
+    public function deleteParticipant(int $participantId, Request $request, Response $response) {
+        $this->patrolService->deletePatrolParticipant($this->patrolService->getPatrolParticipant($participantId));
+        $this->flashMessages->info('Participant was deleted');
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]));
+    }
+
+    public function showParticipant(int $participantId, Response $response) {
+        $patrolParticipant = $this->patrolService->getPatrolParticipant($participantId);
+
+        return $this->view->render($response, 'show-p.twig', ['pDetail' => $patrolParticipant]);
     }
 }

@@ -2,17 +2,18 @@
 
 {% block content %}
 	<div class="card open-theme">
-		<h2>Send patrol registration</h2>
-		<p>Do you really want to send patrol registration for approval? You won't be able to undo this action!</p>
-		<form method="POST" action="{{ path_for('pl-confirmCloseRegistration') }}">
-			<label><input type="checkbox" required="required">I understand that for proper registration completion I
-				have to bring onto the event a <b>Registration supplement</b> for every participant in my patrol, signed
-				by their parent/legal representative (the supplement will be available when the registration is
-				approved). </label><br/>
+		<h2>Send Patrol registration</h2>
+		<p>Do you really want to lock your registration and send for approval to us? <b>This step is irreversible and
+				submitted details cannot be changed afterward!</b></p>
+		<form method="POST" action="{{ path_for('pl-closeRegistration', {'eventSlug': event.slug}) }}">
+			<label><input type="checkbox" required="required">I read and I agreed with data protection rules at
+				<a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
+			</label><br/>
 			<br/>
 			<div class="text-center">
-				<input class="btn btn-small" type="submit" value="Uzavřít registraci">
-				<a class="btn btn-grey btn-small" href="{{ path_for('pl-dashboard') }}">Back</a>
+				<a href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}"
+				   class="btn btn-grey btn-small">Back</a>
+				<input class="btn btn-small" type="submit" value="Lock registration">
 			</div>
 		</form>
 	</div>

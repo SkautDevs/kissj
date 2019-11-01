@@ -55,7 +55,7 @@ $helper['choosedRoleOnly'] = function (Request $request, Response $response, cal
     $user = $request->getAttribute('user');
 
     if ($user->status === User::STATUS_WITHOUT_ROLE) {
-        $this->get('flashMessages')->info('Nejdřív si musíš vybrat roli');
+        $this->get('flashMessages')->info('At first you need to choose your role on event');
 
         return $response->withRedirect($this->get('router')->pathFor('landing'));
     }
@@ -149,11 +149,14 @@ $app->group('/v1', function () use ($helper) {
                     ->setName('getDashboard');
 
                 $this->group('/patrol', function () use ($helper) {
-                    $this->get('/dashboard', PatrolController::class.'::showLeaderDashboard')
+                    $this->get('/dashboard', PatrolController::class.'::showDashboard')
                         ->setName('pl-dashboard');
 
-                    $this->group('', function () {
-                        $this->get('/changeDetails', PatrolController::class.'::showDetailsLeaderChangeable')
+                    $this->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
+                        ->setName('p-show');
+
+                    $this->group('', function () use ($helper) {
+                        $this->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
                             ->setName('pl-showDetailsChangeable');
 
                         $this->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
@@ -169,10 +172,11 @@ $app->group('/v1', function () use ($helper) {
                             ->setName('pl-addParticipant');
 
                         $this->group('/participant/{participantId}', function () {
-                            $this->get('/showChangeDetails', PatrolController::class.'::showChangeDetailsParticipant')
+                            $this->get('/showChangeDetails',
+                                PatrolController::class.'::showChangeDetailsPatrolParticipant')
                                 ->setName('p-showChangeDetails');
 
-                            $this->post('/changeDetails', PatrolController::class.'::changeDetailsParticipant')
+                            $this->post('/changeDetails', PatrolController::class.'::changeDetailsPatrolParticipant')
                                 ->setName('p-changeDetails');
 
                             $this->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
@@ -184,11 +188,13 @@ $app->group('/v1', function () use ($helper) {
                         })->add(function (Request $request, Response $response, callable $next) {
                             // participants actions are allowed only for their Patrol Leader
                             $routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature)
-                            if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
-                                $this->patrolService->getPatrolParticipant($routeParams['participantId']),
-                                $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
+                            /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
+                            $patrolService = $this->get(\kissj\Participant\Patrol\PatrolService::class);
+                            if (!$patrolService->patrolParticipantBelongsPatrolLeader(
+                                $patrolService->getPatrolParticipant($routeParams['participantId']),
+                                $patrolService->getPatrolLeader($request->getAttribute('user')))) {
 
-                                $this->get('flashMessages')->error('Bohužel, nemůžeš provádět akce s účastníky, které neregistruješ ty.');
+                                $this->get('flashMessages')->error('Pardon, but you cannot edit or view participants outside your patrol.');
 
                                 return $response->withRedirect($this->get('router')->pathFor('pl-dashboard'));
                             }
@@ -198,7 +204,6 @@ $app->group('/v1', function () use ($helper) {
                             return $response;
                         });
                     })->add($helper['openStatusOnly']);
-
                 })->add(function (Request $request, Response $response, callable $next) {
                     // protected area for Patrol Leaders
                     if ($request->getAttribute('user')->role !== User::ROLE_PATROL_LEADER) {
@@ -373,6 +378,10 @@ $app->group('/v1', function () use ($helper) {
 
                     return $response;
                 });
+
+                $this->get('', function (Request $request, Response $response) {
+                    return $response->withRedirect($this->get('router')->pathFor('landing'));
+                });
             })->add($helper['loggedOnly'])->add($helper['choosedRoleOnly']);
 
             $this->any('/administration', function (Request $request, Response $response) {
@@ -380,7 +389,6 @@ $app->group('/v1', function () use ($helper) {
                 $adminerSettings = $this->get('settings')['adminer'];
                 require __DIR__.'/../adminer/customAdminerEditor.php';
             })->setName('administration');
-
         });
     });
 });

@@ -6,15 +6,14 @@
 		<p>Do you really want to lock your registration and send for approval to us? <b>This step is irreversible and
 				submitted details cannot be changed afterward!</b></p>
 		<form method="POST" action="{{ path_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
-			<label><input type="checkbox" required="required">Souhlasím s ustanoveními o Ochraně osobních údajů a o
-				Právní odpovědnosti umístněnými na <a target="_blank"
-													  href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
+			<label><input type="checkbox" required="required">I read and I agreed with data protection rules at
+				<a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
 			</label><br/>
 			<br/>
 			<div class="text-center">
-				<input class="btn btn-small" type="submit" value="Lock registration">
 				<a href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}"
 				   class="btn btn-grey btn-small">Back</a>
+				<input class="btn btn-small" type="submit" value="Lock registration">
 			</div>
 		</form>
 	</div>

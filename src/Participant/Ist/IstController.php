@@ -79,6 +79,7 @@ class IstController extends AbstractController {
             ['eventSlug' => $ist->user->event->slug]));
     }
 
+    // TODO fix
     public function approveIst(Request $request, Response $response, int $istId) {
         $ist = $this->istService->getIstFromId($istId);
         $this->istService->approveIst($ist);

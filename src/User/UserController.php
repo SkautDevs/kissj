@@ -53,7 +53,6 @@ class UserController extends AbstractController {
     }
 
     public function tryLoginWithToken(Response $response, string $token) {
-        //$loginToken = $args['token'];
         if ($this->userService->isLoginTokenValid($token)) {
             $loginToken = $this->userService->getLoginTokenFromStringToken($token);
             $user = $loginToken->user;
@@ -68,24 +67,20 @@ class UserController extends AbstractController {
         return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }
 
-    public function logout(Request $request, Response $response) {
+    public function logout(Response $response) {
         $this->userService->logoutUser();
         $this->flashMessages->info('Odhlášení bylo úspěšné');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
 
-    public function setRole(Request $request, Response $response) {
-        $user = $request->getAttribute('user');
+    public function setRole(User $user, Request $request, Response $response) {
         $this->userService->setRole($user, $request->getParam('role'));
 
         return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
     }
 
-    public function getDashboard(Request $request, Response $response) {
-        /** @var User */
-        $user = $request->getAttribute('user');
-
+    public function getDashboard(User $user, Response $response) {
         $routerEventSlug = ['eventSlug' => $user->event->slug];
         switch ($user->role) {
             case null:
@@ -105,7 +100,7 @@ class UserController extends AbstractController {
         }
     }
 
-    // TODO clear
+    // TODO clear/remove
     protected function trySignup(Request $request, Response $response) {
         $parameters = $request->getParsedBody();
         $email = $parameters['email'];

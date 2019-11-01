@@ -19,6 +19,7 @@ use LeanMapper\Entity;
  * @property int         $maxElapsedPaymentDays
  * @property int|null    $scarfPrice
  * @property int|null    $thirtPrice
+ * @property int|null    $dietPrice
  *
  * @property bool        $allowPatrols
  * @property int|null    $maximalClosedPatrolsCount

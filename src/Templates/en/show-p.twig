@@ -1,0 +1,25 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+	<div class="card card-half closed-theme">
+		<h2>Participant details</h2>
+		First name: <b>{{ pDetail.getFirstName }}</b><br/>
+		Surname: <b>{{ pDetail.getLastName }}</b><br/>
+		Scout nickname: <b>{{ pDetail.getNickname }}</b><br/>
+		Date of birth: <b>{{ pDetail.getBirthDate.format('d. m. Y') }}</b><br/>
+		Gender: <b>{{ pDetail.getGender }}</b><br/>
+		Email: <b>{{ pDetail.getEmail }}</b><br/>
+		Phone number: <b>{{ pDetail.getTelephoneNumber }}</b><br/>
+		Permanent Address: <b>{{ pDetail.getPermanentResidence }}</b><br/>
+		Country: <b>{{ pDetail.getCountry }}</b><br/>
+		Scout unit: <b>{{ pDetail.getScoutUnit }}</b><br/>
+		T-shirt size: <b>{{ pDetail.getTshirt }}</b><br/>
+		Diet Restriction: <b>{{ pDetail.getFoodPreferences }}</b><br/>
+		Health issues: <b>{{ pDetail.getHealthProblems }}</b><br/>
+		Languages you speak + level: <b>{{ pDetail.getLanguages }}</b><br/>
+		Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
+		Notes: <b>{{ pDetail.getNotes }}</b><br/>
+		<br/>
+		<a class="btn btn-grey btn-small" href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+	</div>
+{% endblock %}

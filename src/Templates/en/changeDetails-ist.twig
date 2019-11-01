@@ -17,7 +17,7 @@
 																			   value="{{ istDetails.getNickname }}"></label>
 			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
 																			  name="birthDate"
-																			  value="{{ istDetails.getBirthDate.format('Y-m-d') }}"
+																			  value="{{ istDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
 																			  required="required"></label>
 			<label class="form-group form-group-inline">Gender:
 				<select class="form-control" name="gender" required="required">

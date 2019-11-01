@@ -138,6 +138,14 @@ class UserService {
         ]);
     }
 
+    public function getClosedPatrolsCount(): int {
+        return $this->userRepository->countBy([
+            'role' => USER::ROLE_PATROL_LEADER,
+            //'event' => $this->eventName, // TODO fix
+            'status' => new Relation(User::STATUS_OPEN, '!='),
+        ]);
+    }
+
     protected function isRoleValid(string $role): bool {
         return in_array($role, [User::ROLE_IST, User::ROLE_PATROL_LEADER, User::ROLE_GUEST], true);
     }

@@ -10,8 +10,8 @@ use kissj\User\User;
  * All commons are here, entitis are seaprated of course (:
  *
  * @property int         $id
- * @property User|null   $user      m:hasOne
- * @property string|null $role      needed for DB working faster
+ * @property User|null   $user         m:hasOne
+ * @property string|null $role         needed for DB working faster
  * @property string|null $firstName
  * @property string|null $lastName
  * @property string|null $nickname
@@ -22,14 +22,14 @@ use kissj\User\User;
  * @property string|null $email
  * @property string|null $scoutUnit
  * @property string|null $languages
- * @property string|null $birthDate m:passThru(dateFromString|dateToString)
+ * @property string|null $birthDate    m:passThru(dateFromString|dateToString)
  * @property string|null $birthPlace
  * @property string|null $healthProblems
  * @property string|null $foodPreferences
  * @property string|null $idNumber
  * @property string|null $scarf
  * @property string|null $swimming
- * @property string|null $tshirt    m:useMethods
+ * @property string|null $tshirt       m:useMethods
  * @property string|null $arrivalDate  m:passThru(dateFromString|dateToString)
  * @property string|null $departueDate m:passThru(dateFromString|dateToString)
  * @property string|null $notes
@@ -69,5 +69,9 @@ class Participant extends EntityDatetime {
         $tshirtFromDb = $this->getTshirt();
 
         return explode(self::TSHIRT_DELIMITER, $tshirtFromDb);
+    }
+
+    public function getFullName(): string {
+        return ($this->firstName ?? '').' '.($this->lastName ?? '');
     }
 }
