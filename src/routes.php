@@ -128,6 +128,12 @@ $app->group('/v1', function () use ($helper) {
                 ->add($helper['loggedOnly'])
                 ->setName('postCreateEvent');
             */
+
+            $this->any('/administration', function (Request $request, Response $response) {
+                global $adminerSettings;
+                $adminerSettings = $this->get('settings')['adminer'];
+                require __DIR__.'/../adminer/customAdminerEditor.php';
+            })->setName('administration');
         });
 
         $this->group('/event/{eventSlug}', function () use ($helper) {
@@ -155,7 +161,7 @@ $app->group('/v1', function () use ($helper) {
                     $this->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
                         ->setName('p-show');
 
-                    $this->group('', function () use ($helper) {
+                    $this->group('', function () {
                         $this->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
                             ->setName('pl-showDetailsChangeable');
 
@@ -383,12 +389,6 @@ $app->group('/v1', function () use ($helper) {
                     return $response->withRedirect($this->get('router')->pathFor('landing'));
                 });
             })->add($helper['loggedOnly'])->add($helper['choosedRoleOnly']);
-
-            $this->any('/administration', function (Request $request, Response $response) {
-                global $adminerSettings;
-                $adminerSettings = $this->get('settings')['adminer'];
-                require __DIR__.'/../adminer/customAdminerEditor.php';
-            })->setName('administration');
         });
     });
 });

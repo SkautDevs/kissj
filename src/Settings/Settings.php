@@ -238,8 +238,8 @@ class Settings {
             }
             // TODO move into middleware
             if ($settings['useTestingSite']) {
-                $flashMessages->info('Testovací verze - prosím nevkládej jakékoliv reálné osobní údaje!');
-                $flashMessages->info('Login pro administraci: admin, heslo: admin, link: '
+                $flashMessages->info('Test verzion - please do not imput any real personal details!');
+                $flashMessages->info('Administration login: admin, password: admin, link: '
                     .$router->pathFor('administration'));
             }
 
