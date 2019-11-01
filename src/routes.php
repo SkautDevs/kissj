@@ -96,7 +96,7 @@ $app->group('/v1', function () use ($helper) {
 
             $this->get('/login', function (Request $request, Response $response) {
                 return $this->get('view')->render(
-                    $response, 'kissj/login.twig', ['event' => $request->getAttribute('user')->event]
+                    $response, 'kissj/login.twig', ['event' => $request->getAttribute('user')->event ?? null]
                 );
             })->add($helper['nonLoggedOnly'])
                 ->setName('loginAskEmail');

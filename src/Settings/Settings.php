@@ -238,7 +238,7 @@ class Settings {
             }
             // TODO move into middleware
             if ($settings['useTestingSite']) {
-                $flashMessages->info('Test verzion - please do not imput any real personal details!');
+                $flashMessages->info('Test version - please do not imput any real personal details!');
                 $flashMessages->info('Administration login: admin, password: admin, link: '
                     .$router->pathFor('administration'));
             }

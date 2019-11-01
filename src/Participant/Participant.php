@@ -58,11 +58,11 @@ class Participant extends EntityDatetime {
     }
 
     public function getTshirtShape(): ?string {
-        return $this->getTshirtParsed()[0];
+        return $this->getTshirtParsed()[0] ?? null;
     }
 
     public function getTshirtSize(): ?string {
-        return $this->getTshirtParsed()[1];
+        return $this->getTshirtParsed()[1] ?? null;
     }
 
     protected function getTshirtParsed(): array {
