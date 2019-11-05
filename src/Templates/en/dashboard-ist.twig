@@ -42,7 +42,7 @@
 				Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
 				Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
 				Skills: <b>{{ ist.getSkills }}</b><br/>
-				Preferred position: <b>{{ ist.getPreferredPosition }}</b><br/>
+				Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>
 				Notes: <b>{{ ist.getNotes }}</b><br/>
 				<br/>
 			</div>

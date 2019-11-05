@@ -160,30 +160,74 @@
 																	   placeholder="sailing; food handling certificate; advanced first aid; ..."
 																	   value="{{ istDetails.getSkills }}">
 			</label>
-			<label class="form-group form-group-inline">Preferred position:
-				<select class="form-control" name="preferredPosition" required="required">
-					<option value="technical support"
-							{% if istDetails.getTshirtShape == 'technical support' %}selected="selected"{% endif %}>
-						technical support
-					</option>
-					<option value="kitchen"
-							{% if istDetails.getTshirtShape == 'kitchen' %}selected="selected"{% endif %}>
-						kitchen
-					</option>
-					<option value="main program"
-							{% if istDetails.getTshirtShape == 'main program' %}selected="selected"{% endif %}>
-						main program
-					</option>
-					<option value="leisure acitvities"
-							{% if istDetails.getTshirtShape == 'leisure acitvities' %}selected="selected"{% endif %}>
-						leisure acitvities
-					</option>
-					<option value="central servicies"
-							{% if istDetails.getTshirtShape == 'central servicies' %}selected="selected"{% endif %}>
-						central servicies
-					</option>
-				</select>
-			</label>
+			<div class="form-group">
+				Preffered position:
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="press"
+						   {% if 'press' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					press (newspaper, photography and other media...)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="central services"
+						   {% if 'central services' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					central services (registration, administration, info tent...)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="kitchen"
+						   {% if 'kitchen' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					kitchen (food preparation - you must have a valid food handling certificate)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="technical support"
+						   {% if 'technical support' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					technical support (material handling, storage or transport, fixing technical issues at the campsite)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - sailing"
+						   {% if 'program - sailing' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - sailing
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - canoeing"
+						   {% if 'program - canoeing' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - canoeing
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - community project"
+						   {% if 'program - community project' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - community project
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - rafting"
+						   {% if 'program - rafting' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - rafting
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - hiking"
+						   {% if 'program - hiking' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - hiking
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="program - workshops"
+						   {% if 'program - workshops' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					main program - workshops (feel free to state any insteresting skills into skill field)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="evening activities"
+						   {% if 'evening activities' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					evening leisure activities (ceremonials, dances, parties, debates...)
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="teahouse staff"
+						   {% if 'teahouse staff' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					teahouse staff
+				</label>
+				<label class="form-control">
+					<input type="checkbox" name="preferredPosition[]" value="subcamp leader"
+						   {% if 'subcamp leader' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
+					subcamp leader
+				</label>
+			</div>
 			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
 																	 placeholder="anything else?"
 																	 value="{{ istDetails.getNotes }}">

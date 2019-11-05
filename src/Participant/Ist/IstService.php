@@ -61,7 +61,7 @@ class IstService {
         $ist->swimming = $params['swimming'] ?? null;
         $ist->driversLicense = $params['driversLicense'] ?? null;
         $ist->skills = $params['skills'] ?? null;
-        $ist->preferredPosition = $params['preferredPosition'] ?? null;
+        $ist->preferredPosition = $params['preferredPosition'] ?? [];
         $ist->notes = $params['notes'] ?? null;
 
         return $ist;
