@@ -3,7 +3,7 @@
 namespace kissj\Participant\Ist;
 
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\MailerInterface;
+use kissj\Mailer\PhpMailerWrapper;
 use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
@@ -21,7 +21,7 @@ class IstService {
         IstRepository $istRepository,
         PaymentRepository $paymentRepository,
         FlashMessagesBySession $flashMessages,
-        MailerInterface $mailer,
+        PhpMailerWrapper $mailer,
         UserService $userService
     ) {
         $this->istRepository = $istRepository;
@@ -114,7 +114,7 @@ class IstService {
     public function closeRegistration(Ist $ist): Ist {
         if ($this->isCloseRegistrationValid($ist)) {
             $this->userService->closeRegistration($ist->user);
-            $this->mailer->sendMailFromTemplate($ist->user->email, 'closed registration', 'closed', []);
+            $this->mailer->sendRegistrationSentEmail($ist->user->email);
         }
 
         return $ist;

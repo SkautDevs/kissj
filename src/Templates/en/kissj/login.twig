@@ -4,7 +4,7 @@
 	<div class="two-cards">
 		<div class="card registration-theme">
 			<form action="{{ path_for('sendLoginEmail') }}" method="post">
-				<h2>Registration for the {{ event.readableName ?? 'AQUA 2022' }}{# TODO make dynamic #}</h2>
+				<h2>Registration for the {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
 				<div class="form-group">
 					<label for="form-email">Email</label>
 					<input class="form-control form-wide" type="email" name="email" id="form-email"

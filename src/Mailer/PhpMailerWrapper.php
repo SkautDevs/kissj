@@ -6,8 +6,9 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
 
-class PhpMailerWrapper implements MailerInterface {
+class PhpMailerWrapper {
     private $renderer;
+    private $eventName;
 
     private $smtp;
     private $smtp_server;
@@ -26,6 +27,8 @@ class PhpMailerWrapper implements MailerInterface {
 
     public function __construct(Twig $renderer, array $mailerSettings) {
         $this->renderer = $renderer;
+        $this->eventName = 'AQUA 2020'; // TODO make dynamic
+
         // TODO refactor
         $this->smtp = $mailerSettings['smtp'];
         $this->smtp_server = $mailerSettings['smtp_server'];
@@ -41,6 +44,10 @@ class PhpMailerWrapper implements MailerInterface {
         $this->disable_tls = $mailerSettings['disable_tls'];
         $this->debugOutputLevel = $mailerSettings['debugOutoutLevel'];
         $this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
+    }
+
+    public function sendRegistrationSentEmail(string $recipientEmail): void {
+        $this->sendMailFromTemplate($recipientEmail, 'registration sent', 'closed', []);
     }
 
     public function sendMailFromTemplate(
@@ -88,7 +95,7 @@ class PhpMailerWrapper implements MailerInterface {
 
             // Content
             $mailer->isHTML();
-            $mailer->Subject = $subject;
+            $mailer->Subject = $this->eventName.' - '.$subject;
             $mailer->Body = $messageBody;
             $mailer->AltBody = strip_tags($messageBody);
 

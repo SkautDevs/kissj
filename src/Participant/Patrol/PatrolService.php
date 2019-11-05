@@ -3,7 +3,7 @@
 namespace kissj\Participant\Patrol;
 
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\MailerInterface;
+use kissj\Mailer\PhpMailerWrapper;
 use kissj\Orm\Relation;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
@@ -23,7 +23,7 @@ class PatrolService {
         PatrolParticipantRepository $patrolParticipantRepository,
         PaymentRepository $paymentRepository,
         FlashMessagesBySession $flashMessages,
-        MailerInterface $mailer,
+        PhpMailerWrapper $mailer,
         UserService $userService
     ) {
         $this->patrolLeaderRepository = $patrolLeaderRepository;
@@ -226,7 +226,7 @@ class PatrolService {
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $this->userService->closeRegistration($patrolLeader->user);
-            $this->mailer->sendMailFromTemplate($patrolLeader->user->email, 'closed registration', 'closed', []);
+            $this->mailer->sendRegistrationSentEmail($patrolLeader->user->email);
         }
 
         return $patrolLeader;

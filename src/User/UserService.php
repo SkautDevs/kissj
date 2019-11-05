@@ -2,7 +2,7 @@
 
 namespace kissj\User;
 
-use kissj\Mailer\MailerInterface;
+use kissj\Mailer\PhpMailerWrapper;
 use kissj\Orm\Relation;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -20,7 +20,7 @@ class UserService {
         LoginTokenRepository $loginTokenRepository,
         ParticipantRepository $participantRepository,
         UserRepository $userRepository,
-        MailerInterface $mailer,
+        PhpMailerWrapper $mailer,
         Router $router
     ) {
         $this->loginTokenRepository = $loginTokenRepository;
@@ -57,8 +57,12 @@ class UserService {
         $this->loginTokenRepository->persist($loginToken);
 
         $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-        $this->mailer->sendMailFromTemplate($email, 'Registrace '.$user->event->readableName.
-            ' - Link s přihlášením', 'login-token', ['link' => $link, 'event' => $user->event]);
+        $this->mailer->sendMailFromTemplate(
+            $email,
+            'Link with login',
+            'login-token',
+            ['link' => $link, 'event' => $user->event]
+        );
 
         return $token;
     }

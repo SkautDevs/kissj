@@ -3,7 +3,7 @@
 namespace kissj\Participant\Guest;
 
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\MailerInterface;
+use kissj\Mailer\PhpMailerWrapper;
 use kissj\User\User;
 use kissj\User\UserService;
 
@@ -16,7 +16,7 @@ class GuestService {
     public function __construct(
         GuestRepository $guestRepository,
         FlashMessagesBySession $flashMessages,
-        MailerInterface $mailer,
+        PhpMailerWrapper $mailer,
         UserService $userService
     ) {
         $this->guestRepository = $guestRepository;
@@ -98,7 +98,7 @@ class GuestService {
     public function closeRegistration(Guest $guest): Guest {
         if ($this->isCloseRegistrationValid($guest)) {
             $this->userService->closeRegistration($guest->user);
-            $this->mailer->sendMailFromTemplate($guest->user->email, 'closed registration', 'closed', []);
+            $this->mailer->sendRegistrationSentEmail($guest->user->email);
         }
 
         return $guest;

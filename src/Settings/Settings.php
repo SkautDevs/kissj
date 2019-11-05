@@ -13,7 +13,6 @@ use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use Invoker\ParameterResolver\DefaultValueResolver;
 use Invoker\ParameterResolver\ResolverChain;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\MailerInterface;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Orm\Mapper;
 use kissj\User\UserRegeneration;
@@ -185,7 +184,7 @@ class Settings {
 
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-        $container[MailerInterface::class] = function (Twig $renderer) use ($settings) {
+        $container[PhpMailerWrapper::class] = function (Twig $renderer) use ($settings) {
             return new PhpMailerWrapper($renderer, $settings['mailer']);
         };
 
