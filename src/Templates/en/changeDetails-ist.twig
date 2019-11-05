@@ -38,6 +38,8 @@
 			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
 																			 name="telephoneNumber"
 																			 value="{{ istDetails.getTelephoneNumber }}"
+																			 placeholder="digits including country dial-in code"
+																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>
 			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
 																				  name="permanentResidence"
@@ -107,9 +109,9 @@
 					</option>
 				</select>
 			</label>
-			if choosed other - we arrange only above stated options of diet restriction; in case of
+			if chosen "other" - we arrange only above stated options of diet restriction; in case of
 			other restrictions, you have to arrange all the food for whole event yourself and your
-			participant fee will be reduced
+			participant fee will be reduced<br><br>
 			<label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
 																			  name="healthProblems"
 																			  placeholder="allergies, ..."

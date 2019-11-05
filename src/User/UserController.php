@@ -42,12 +42,12 @@ class UserController extends AbstractController {
         } catch (\RuntimeException $e) {
             $this->logger->addError("Error sending login email to $email with token ".
                 $this->userService->getTokenForEmail($email), array ($e));
-            $this->flashMessages->error('Nezdařilo se odeslat přihlašovací email. Zkus to prosím za chvíli znovu.');
+            $this->flashMessages->error('E-mail sending failed. Please try it in a couple of minutes. ');
 
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
         }
 
-        $this->flashMessages->success('Mail odeslán! Klikni na odkaz v mailu a tím se přihlásíš!');
+        $this->flashMessages->success('E-mail sent! Follow the link in it to log in.');
 
         return $response->withRedirect($this->router->pathFor('loginAfterLinkSent'));
     }
@@ -62,7 +62,7 @@ class UserController extends AbstractController {
             return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
         }
 
-        $this->flashMessages->warning('Token pro přihlášení není platný. Nech si prosím poslat nový přihlašovací email.');
+        $this->flashMessages->warning('Log-in button you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one.');
 
         return $response->withRedirect($this->router->pathFor('loginAskEmail'));
     }

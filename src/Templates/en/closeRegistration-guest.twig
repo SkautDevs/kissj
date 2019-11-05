@@ -6,7 +6,7 @@
 		<p>Do you really want to lock your registration and send for approval to us? <b>This step is irreversible and
 				submitted details cannot be changed afterward!</b></p>
 		<form method="POST" action="{{ path_for('guest-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
-			<label><input type="checkbox" required="required">I read and I agreed with data protection rules at
+			<label><input type="checkbox" required="required">I read and I agree with data protection rules at
 				<a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
 			</label><br/>
 			<br/>

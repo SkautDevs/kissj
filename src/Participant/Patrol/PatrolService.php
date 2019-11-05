@@ -127,7 +127,6 @@ class PatrolService {
         $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
         $p->foodPreferences = $params['foodPreferences'] ?? null;
         $p->healthProblems = $params['healthProblems'] ?? null;
-        $p->languages = $params['languages'] ?? null;
         $p->swimming = $params['swimming'] ?? null;
         $p->notes = $params['notes'] ?? null;
 
@@ -146,7 +145,6 @@ class PatrolService {
             || $p->country === null
             || $p->scoutUnit === null
             || $p->foodPreferences === null
-            || $p->languages === null
             || $p->swimming === null
             || $p->getTshirtShape() === null
             || $p->getTshirtSize() === null

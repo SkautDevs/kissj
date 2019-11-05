@@ -42,6 +42,8 @@
 			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
 																			 name="telephoneNumber"
 																			 value="{{ plDetails.getTelephoneNumber }}"
+																			 placeholder="digits including country dial-in code"
+																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>
 			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
 																				  name="permanentResidence"

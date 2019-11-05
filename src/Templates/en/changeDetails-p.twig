@@ -39,6 +39,8 @@
 			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
 																			 name="telephoneNumber"
 																			 value="{{ pDetails.getTelephoneNumber }}"
+																			 placeholder="digits including country dial-in code"
+																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>
 			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
 																				  name="permanentResidence"
@@ -115,12 +117,6 @@
 																			  name="healthProblems"
 																			  placeholder="allergies, ..."
 																			  value="{{ pDetails.getHealthProblems }}">
-			</label>
-			<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
-																							type="text"
-																							name="languages"
-																							required="required"
-																							value="{{ pDetails.getLanguages }}">
 			</label>
 			<label class="form-group form-group-inline">Swimming skill:
 				<select class="form-control" name="swimming" required="required">
