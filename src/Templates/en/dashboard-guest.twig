@@ -5,7 +5,7 @@
 	<div class="card {{ userStatus }}-theme">
 		<h2>Guest - details</h2>
 		<h4>
-			{{ userCustomHelp }} {# TODO continue #}
+			{% include('widgets/userCustomHelp.twig') with {'userRole': 'guest'} %}
 		</h4>
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">

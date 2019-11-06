@@ -1,0 +1,21 @@
+{% if userStatus == 'open' %}
+	{% if userRole == 'pl' %}
+		Vyplň všechny údaje o sobě, přidej správný počet účastníků, vyplň údaje i u nich a potom dole klikni na tlačítko Uzavřít registraci.
+	{% else %}
+		Vyplň všechny údaje o sobě a potom dole klikni na Uzavřít registraci.
+	{% endif %}
+{% elseif userStatus == 'closed' %}
+	{% if userRole == 'guest' %}
+		Tvoje registrace čeá na schávlení. Po schválení ti pošleme email že je všechno v pořádku
+	{% else %}
+		Tvoje registrace čeká na schválení. Po schválení ti pošleme email s platebními údaji. Pokud to trvá moc dlouho, ozvi se nám na mail korbo@skaut.cz
+	{% endif %}
+{% elseif userStatus == 'approved' %}
+	Tvoje registrace byla přijata! Teď nadchází placení. Tvoje platební údaje jsou níže.
+{% elseif userStatus == 'paid' %}
+	{% if userRole == 'guest' %}
+		Registraci máš vyplněnou, odevzdanou i potvrzenou.  Těšíme se na tebe na akci!
+	{% else %}
+		Registraci máš vyplněnou, odevzdanou, potvrzenou i zaplacenou. Těšíme se na tebe na akci!
+	{% endif %}
+{% endif %}
