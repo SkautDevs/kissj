@@ -41,11 +41,19 @@
 																			 placeholder="digits including country dial-in code"
 																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>
-			<label class="form-group form-group-inline">Country: <input class="form-control" type="text"
-																		name="country"
-																		value="{{ guestDetails.getCountry }}"
-																		placeholder="Slovakia/Czechia/fill your country"
-																		required="required"></label>
+			<label class="form-group form-group-inline">Country:
+				<select class="form-control" name="country">
+					<option value="Slovak"{% if guestDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
+						Slovak Republic
+					</option>
+					<option value="Czech"{% if guestDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
+						Czech Republic
+					</option>
+					<option value="other"{% if guestDetails.getCountry == 'other' %} selected="selected"{% endif %}>
+						other - please fill your country in note
+					</option>
+				</select>
+			</label>
 			<label class="form-group form-group-inline">T-shirt shape:
 				<select class="form-control" name="tshirtShape" required="required">
 					<option value="lady" {% if guestDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
