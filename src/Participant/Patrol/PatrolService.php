@@ -124,7 +124,6 @@ class PatrolService {
         $p->permanentResidence = $params['permanentResidence'] ?? null;
         $p->country = $params['country'] ?? null;
         $p->scoutUnit = $params['scoutUnit'] ?? null;
-        $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
         $p->foodPreferences = $params['foodPreferences'] ?? null;
         $p->healthProblems = $params['healthProblems'] ?? null;
         $p->swimming = $params['swimming'] ?? null;
@@ -146,8 +145,6 @@ class PatrolService {
             || $p->scoutUnit === null
             || $p->foodPreferences === null
             || $p->swimming === null
-            || $p->getTshirtShape() === null
-            || $p->getTshirtSize() === null
         ) {
             return false;
         }

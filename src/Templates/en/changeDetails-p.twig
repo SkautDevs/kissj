@@ -64,36 +64,6 @@
 																		   name="scoutUnit"
 																		   value="{{ pDetails.getScoutUnit ?? plDetails.getScoutUnit }}"
 																		   required="required"></label>
-			<label class="form-group form-group-inline">T-shirt shape:
-				<select class="form-control" name="tshirtShape" required="required">
-					<option value="lady" {% if pDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
-						ladies
-					</option>
-					<option value="gentleman"
-							{% if pDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
-						gentleman
-					</option>
-				</select>
-			</label>
-			<label class="form-group form-group-inline">T-shirt size:
-				<select class="form-control" name="tshirtSize" required="required">
-					<option value="s" {% if pDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
-						S - small
-					</option>
-					<option value="m" {% if pDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
-						M - medium
-					</option>
-					<option value="l" {% if pDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
-						L - large
-					</option>
-					<option value="xl" {% if pDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
-						XL - larger
-					</option>
-					<option value="xxl" {% if pDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
-						XXL - largest
-					</option>
-				</select>
-			</label>
 			<label class="form-group form-group-inline">Diet restriction:
 				<select class="form-control" name="foodPreferences" required="required">
 					<option value="no restriction"
