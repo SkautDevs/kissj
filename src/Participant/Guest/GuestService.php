@@ -46,7 +46,7 @@ class GuestService {
         $guest->email = $params['email'] ?? null;
         $guest->telephoneNumber = $params['telephoneNumber'] ?? null;
         $guest->country = $params['country'] ?? null;
-        $guest->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
+        /* $guest->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null); */
         $guest->foodPreferences = $params['foodPreferences'] ?? null;
         $guest->healthProblems = $params['healthProblems'] ?? null;
         if ($params['arrivalDate'] !== null) {
@@ -72,8 +72,8 @@ class GuestService {
             || $guest->foodPreferences === null
             || $guest->arrivalDate === null
             || $guest->departueDate === null
-            || $guest->getTshirtShape() === null
-            || $guest->getTshirtSize() === null
+            /*|| $guest->getTshirtShape() === null
+            || $guest->getTshirtSize() === null*/
         ) {
             return false;
         }

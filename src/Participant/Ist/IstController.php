@@ -69,7 +69,7 @@ class IstController extends AbstractController {
         $ist = $this->istService->closeRegistration($ist);
 
         if ($ist->user->status === User::STATUS_CLOSED) {
-            $this->flashMessages->success('Registration successfully locked and send');
+            $this->flashMessages->success('Registration successfully locked and sent');
             $this->logger->info('Locked registration for IST with ID '.$ist->id.', user ID '.$ist->user->id);
         } else {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');

@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="card open-theme">
 		<h2>Send guest registration</h2>
-		<p>Do you really want to lock your registration and send for approval to us? <b>This step is irreversible and
+		<p>Do you really want to lock your registration and send it to us for approval? <b>This step is irreversible and
 				submitted details cannot be changed afterward!</b></p>
 		<form method="POST" action="{{ path_for('guest-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
 			<label><input type="checkbox" required="required">I read and I agree with data protection rules at

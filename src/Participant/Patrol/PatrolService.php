@@ -57,7 +57,7 @@ class PatrolService {
         $pl->permanentResidence = $params['permanentResidence'] ?? null;
         $pl->country = $params['country'] ?? null;
         $pl->scoutUnit = $params['scoutUnit'] ?? null;
-        $pl->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
+        /* $pl->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null); */
         $pl->foodPreferences = $params['foodPreferences'] ?? null;
         $pl->healthProblems = $params['healthProblems'] ?? null;
         $pl->languages = $params['languages'] ?? null;
@@ -83,8 +83,8 @@ class PatrolService {
             || $pl->foodPreferences === null
             || $pl->languages === null
             || $pl->swimming === null
-            || $pl->getTshirtShape() === null
-            || $pl->getTshirtSize() === null
+            /*|| $pl->getTshirtShape() === null
+            || $pl->getTshirtSize() === null*/
         ) {
             return false;
         }

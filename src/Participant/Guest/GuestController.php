@@ -68,7 +68,7 @@ class GuestController extends AbstractController {
         $guest = $this->guestService->closeRegistration($guest);
 
         if ($guest->user->status === User::STATUS_CLOSED) {
-            $this->flashMessages->success('Registration successfully locked and send');
+            $this->flashMessages->success('Registration successfully locked and sent');
             $this->logger->info('Locked registration for Guest with ID '.$guest->id.', user ID '.$guest->user->id);
         } else {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');
