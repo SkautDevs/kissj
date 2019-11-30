@@ -11,7 +11,7 @@ use kissj\User\User;
  *
  * @property int         $id
  * @property User|null   $user         m:hasOne
- * @property string|null $role         needed for DB working faster
+ * @property string|null $role         needed for DB working (see Mapper.php)
  * @property string|null $firstName
  * @property string|null $lastName
  * @property string|null $nickname

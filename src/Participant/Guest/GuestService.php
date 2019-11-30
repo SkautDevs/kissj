@@ -4,6 +4,7 @@ namespace kissj\Participant\Guest;
 
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Admin\StatisticValueObject;
 use kissj\User\User;
 use kissj\User\UserService;
 
@@ -102,5 +103,11 @@ class GuestService {
         }
 
         return $guest;
+    }
+
+    public function getAllGuestsStatistics(): StatisticValueObject {
+        $ists = $this->guestRepository->findAll();
+
+        return new StatisticValueObject($ists);
     }
 }

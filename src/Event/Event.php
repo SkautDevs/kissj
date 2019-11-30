@@ -30,5 +30,5 @@ use LeanMapper\Entity;
  * @property int|null    $maximalClosedIstsCount
  */
 class Event extends Entity {
-
+    public $maximalClosedGuestsCount = 100; // TODO put into DB
 }

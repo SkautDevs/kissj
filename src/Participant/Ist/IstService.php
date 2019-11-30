@@ -4,7 +4,7 @@ namespace kissj\Participant\Ist;
 
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Orm\Relation;
+use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\User\User;
@@ -119,6 +119,12 @@ class IstService {
 
         return $ist;
     }
+    
+    public function getAllIstsStatistics(): StatisticValueObject {
+        $ists = $this->istRepository->findAll();
+
+        return new StatisticValueObject($ists);
+    }
 
     // TODO fix
 
@@ -157,29 +163,7 @@ class IstService {
         return $ists;
     }
 
-    public function getAllIstsStatistics(): array {
-        $ists['limit'] = $this->eventSettings['maximalClosedIstsCount'];
-        $ists['closed'] = $this->roleRepository->countBy([
-            'name' => 'ist',
-            'event' => $this->eventName,
-            'status' => new Relation('closed', '=='),
-        ]);
-
-        $ists['approved'] = $this->roleRepository->countBy([
-            'name' => 'ist',
-            'event' => $this->eventName,
-            'status' => new Relation('approved', '=='),
-        ]);
-
-        $ists['paid'] = $this->roleRepository->countBy([
-            'name' => 'ist',
-            'event' => $this->eventName,
-            'status' => new Relation('paid', '=='),
-        ]);
-
-        return $ists;
-    }
-
+    // TODO move
     public function sendPaymentByMail(Payment $payment, Ist $ist) {
         $message = $this->renderer->fetch('emails/payment-info.twig', [
             'eventName' => 'Korbo 2019',

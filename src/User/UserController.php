@@ -95,6 +95,9 @@ class UserController extends AbstractController {
             case User::ROLE_GUEST:
                 return $response->withRedirect($this->router->pathFor('guest-dashboard', $routerEventSlug));
 
+            case User::ROLE_ADMIN:
+                return $response->withRedirect($this->router->pathFor('admin-dashboard', $routerEventSlug));
+
             default:
                 throw new RuntimeException('got unknown role for User id '.$user->id.' with role '.$user->role);
         }

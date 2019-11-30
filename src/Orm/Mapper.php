@@ -3,6 +3,7 @@
 namespace kissj\Orm;
 
 use kissj\Event\Event;
+use kissj\Participant\Admin\Admin;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -68,6 +69,9 @@ class Mapper implements IMapper {
 
                     case User::ROLE_GUEST:
                         return Guest::class;
+
+                    case User::ROLE_ADMIN:
+                        return Admin::class;
 
                     default:
                         throw new \UnexpectedValueException('Got unknown Participant role: '.$row->getData()['role']);

@@ -287,108 +287,128 @@ $app->group('/v1', function () use ($helper) {
                     return $response;
                 });
 
-                $this->group('/admin', function () {
-                    $this->get('/dashboard', AdminController::class.'::showDashboard')
-                        ->setName('admin-dashboard');
-
-                    $this->group('/approving', function () {
-                        $this->get('', AdminController::class.'::showApproving')
-                            ->setName('admin-approving');
-
-                        // TODO
-                        $this->post('/approvePatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, int $patrolLeaderId) {
-                                /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
-                                $patrolService = $this->patrolService;
-                                $patrolLeader = $patrolService->getPatrolLeaderFromId($patrolLeaderId);
-                                $patrolService->approvePatrol($patrolLeader);
-                                $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
-                                $patrolService->sendPaymentByMail($payment, $patrolLeader);
-                                $this->get('flashMessages')->success('Patrola schválena, platba vygenerována a mail odeslán');
-                                $this->get('logger')->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
-
-                                return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
-                            })->setName('approvePatrolLeader');
-
-                        $this->get('/openPatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, int $patrolLeaderId) {
-                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
-
-                                return $this->get('view')->render($response, 'admin/openPatrolLeader.twig',
-                                    ['patrolLeader' => $patrolLeader]);
-                            })->setName('openPatrolLeader');
-
-                        $this->post('/openPatrolLeader/{patrolLeaderId}',
-                            function (Request $request, Response $response, int $patrolLeaderId) {
-                                $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
-                                $this->patrolService->openPatrol($patrolLeader);
-                                $reason = $request->getParsedBodyParam('reason');
-                                $this->patrolService->sendDenialMail($patrolLeader, $reason);
-                                $this->get('flashMessages')->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
-                                $this->get('logger')->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
-
-                                return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
-                            })->setName('openPatrolLeaderConfirmed');
-
-
-                        $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
-                            ->setName('approveIst');
-
-                        $this->get('/openIst/{istId}', IstController::class.'showOpenIst')
-                            ->setName('showOpenIst');
-
-                        $this->post('/openIst/{istId}', IstController::class.'::openIst')
-                            ->setName('openIst');
-                    });
-
-                    $this->group('/payments', function () {
-                        $this->get('', AdminController::class.'::showPayments')
-                            ->setName('admin-payments');
-
-                        $this->post('/setPaymentPaid/{payment}', AdminController::class.'::setPaymentPaid')
-                            ->setName('setPaymentPaid');
-                    });
-
-                    $this->group('/export', function () {
-                        $this->get('/medical', function (Request $request, Response $response) {
-                            $csvRows = $this->exportService->medicalDataToCSV('cej2018');
-                            $this->get('logger')->info('Downloaded current medical data');
-
-                            return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
-                        })->setName('admin-export-medical');
-
-                        $this->get('/logistic', function (Request $request, Response $response) {
-                            $csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
-                            $this->get('logger')->info('Downloaded current logistic data');
-
-                            return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
-                        })->setName('admin-export-logistic');
-
-                        $this->get('/full', function (Request $request, Response $response) {
-                            $csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
-                            $this->get('logger')->info('Downloaded full current data about participants');
-
-                            return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
-                        })->setName('admin-export-full');
-                    });
-
-                })->add(function (Request $request, Response $response, callable $next) {
-                    // protected area for Admins only
-                    if ($request->getAttribute('user')->role !== User::ROLE_ADMIN) {
-                        $this->get('flashMessages')->error('Pardon, nejsi na akci vedený jako admin');
-
-                        return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
-                    }
-
-                    $response = $next($request, $response);
-
-                    return $response;
-                });
-
                 $this->get('', function (Request $request, Response $response) {
                     return $response->withRedirect($this->get('router')->pathFor('landing'));
                 });
             })->add($helper['loggedOnly'])->add($helper['choosedRoleOnly']);
+
+            $this->group('/admin', function () {
+                $this->get('/dashboard', AdminController::class.'::showDashboard')
+                    ->setName('admin-dashboard');
+
+                $this->group('/approving', function () {
+                    $this->get('', AdminController::class.'::showApproving')
+                        ->setName('admin-show-approving');
+
+                    // TODO
+                    $this->post('/approvePatrolLeader/{patrolLeaderId}',
+                        function (Request $request, Response $response, int $patrolLeaderId) {
+                            /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
+                            $patrolService = $this->patrolService;
+                            $patrolLeader = $patrolService->getPatrolLeaderFromId($patrolLeaderId);
+                            $patrolService->approvePatrol($patrolLeader);
+                            $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
+                            $patrolService->sendPaymentByMail($payment, $patrolLeader);
+                            $this->get('flashMessages')->success('Patrola schválena, platba vygenerována a mail odeslán');
+                            $this->get('logger')->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
+
+                            return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
+                        })->setName('admin-approve-pl');
+
+                    $this->get('/openPatrolLeader/{patrolLeaderId}',
+                        function (Request $request, Response $response, int $patrolLeaderId) {
+                            $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
+
+                            return $this->get('view')->render($response, 'admin/openPatrolLeader.twig',
+                                ['patrolLeader' => $patrolLeader]);
+                        })->setName('admin-open-pl');
+
+                    $this->post('/openPatrolLeader/{patrolLeaderId}',
+                        function (Request $request, Response $response, int $patrolLeaderId) {
+                            $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
+                            $this->patrolService->openPatrol($patrolLeader);
+                            $reason = $request->getParsedBodyParam('reason');
+                            $this->patrolService->sendDenialMail($patrolLeader, $reason);
+                            $this->get('flashMessages')->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
+                            $this->get('logger')->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
+
+                            return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
+                        })->setName('openPatrolLeaderConfirmed');
+
+
+                    $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
+                        ->setName('admin-approve-ist');
+
+                    $this->get('/openIst/{istId}', IstController::class.'showOpenIst')
+                        ->setName('showOpenIst');
+
+                    $this->post('/openIst/{istId}', IstController::class.'::openIst')
+                        ->setName('admin-open-ist');
+                });
+
+                $this->group('/payments', function () {
+                    $this->get('', AdminController::class.'::showPayments')
+                        ->setName('admin-show-payments');
+
+                    $this->post('/setPaymentPaid/{payment}', AdminController::class.'::setPaymentPaid')
+                        ->setName('admin-set-payment-paid');
+
+                    $this->group('/auto', function () {
+                        $this->get('/sinceLastUpdate', function (Request $request, Response $response, array $args) {
+                            /** @var \kissj\Payment\PaymentService $paymentService */
+                            $paymentService = $this->get('paymentService');
+                            // TODO optimalite with new function (getAllIstsPayments() or so)
+                            $approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
+                            $paymentService->pairNewPayments($approvedIsts);
+
+                            return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+                        })->setName('admin-payments-autopay');
+
+                        $this->get('setBreakpoint', function (Request $request, Response $response, array $args) {
+                            /** @var \kissj\Payment\PaymentService */
+                            $this->get('paymentService')->setLastDate('2016-01-01');
+                            $this->get('flashMessages')->success('Poslední break point banky posunut na začátek akce');
+
+                            return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+                        })->setName('admin-payments-setbreakpoint');
+                    });
+                });
+
+                $this->group('/export', function () {
+                    $this->get('/medical', function (Request $request, Response $response) {
+                        $csvRows = $this->exportService->medicalDataToCSV('cej2018');
+                        $this->get('logger')->info('Downloaded current medical data');
+
+                        return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
+                    })->setName('admin-export-medical');
+
+                    $this->get('/logistic', function (Request $request, Response $response) {
+                        $csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
+                        $this->get('logger')->info('Downloaded current logistic data');
+
+                        return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
+                    })->setName('admin-export-logistic');
+
+                    $this->get('/full', function (Request $request, Response $response) {
+                        $csvRows = $this->exportService->allRegistrationDataToCSV('cej2018');
+                        $this->get('logger')->info('Downloaded full current data about participants');
+
+                        return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_full');
+                    })->setName('admin-export-full');
+                });
+
+            })->add(function (Request $request, Response $response, callable $next) {
+                // protected area for Admins only
+                if ($request->getAttribute('user')->role !== User::ROLE_ADMIN) {
+                    $this->get('flashMessages')->error('Pardon, nejsi na akci vedený jako admin');
+
+                    return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
+                }
+
+                $response = $next($request, $response);
+
+                return $response;
+            })->add($helper['loggedOnly']);
         });
     });
 });

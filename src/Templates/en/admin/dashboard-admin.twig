@@ -2,37 +2,51 @@
 
 {% block content %}
 	<div class="card approved-theme">
-		<h2>Dashboard administrátora na akci {{ eventName }}</h2>
-		<h3>Přehled přihlašování</h3>
+		<h2>Dashboard of event {{ eventName }} Administrator</h2>
+		<h3>Statistics</h3>
 		<div class="card-divide">
 			<div>
-				<h3>Patroly</h3>
-				<p>Limit pro patroly: {{ patrols['limit'] }}</p>
-				<p>Uzavřených patrol: {{ patrols['closed'] }}</p>
-				<p>Schválených patrol: {{ patrols['approved'] }}</p>
-				<p>Zaplacených patrol: {{ patrols['paid'] }}</p>
+				<h3>Patrols</h3>
+				<p>Limit for patrols: {{ event.maximalClosedPatrolsCount }}</p>
+				<p>Open patrols: {{ patrols.getOpenCount }}</p>
+				<p>Locked patrols: {{ patrols.getClosedCount }}</p>
+				<p>Approved patrols: {{ patrols.getApprovedCount }}</p>
+				<p>Paid patrols: {{ patrols.getPaidCount }}</p>
 			</div>
 			<div>
-				<h3>IST</h3>
-				<p>Limit pro IST: {{ ists['limit'] }}</p>
-				<p>Uzavřených IST: {{ ists['closed'] }}</p>
-				<p>Schválených IST: {{ ists['approved'] }}</p>
-				<p>Zaplacených IST: {{ ists['paid'] }}</p>
+				<h3>ISTs</h3>
+				<p>Limit for ISTs: {{ event.maximalClosedIstsCount }}</p>
+				<p>Open ISTs: {{ ists.getOpenCount }}</p>
+				<p>Locked ISTs: {{ ists.getClosedCount }}</p>
+				<p>Approved ISTs: {{ ists.getApprovedCount }}</p>
+				<p>Paid ISTs: {{ ists.getPaidCount }}</p>
+
+				<h3>Guest</h3>
+				<p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
+				<p>Open Guests: {{ guests.getOpenCount }}</p>
+				<p>Locked Guests: {{ guests.getClosedCount }}</p>
+				<p>Approved Guests: {{ guests.getApprovedCount }}</p>
+				<p>Paid Guests: {{ guests.getPaidCount }}</p>
 			</div>
 
+
 		</div>
-		<h3>Administrátorské akce</h3>
+		<h3>Administators actions</h3>
 		<div class="card-divide">
 			<div>
-				<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
-				<a href="{{ path_for('admin-payments-auto') }}" class="btn">Spárovat nové platby s bankou</a><br/>
-				<!--<a href="{{ path_for('admin-payments-setbreakpoint') }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-				<a href="{{ path_for('admin-payments-manually') }}" class="btn">Ruční potvrzování plateb</a><br/>
+				<a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
+					participants</a><br/>
+				<a href="{{ path_for('admin-payments-autopay', {'eventSlug': event.slug}) }}" class="btn">Pair new
+					payments with bank</a><br/>
+				<!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+				<a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Approving
+					payments by hand</a><br/>
 			</div>
 			<div>
-				<a href="{{ path_for('admin-export-paid') }}" class="btn">Export zaplacených účasníků do CSV</a><br/>
-				<a class="btn btn-grey">Export lékařských dat do CSV</a><br/>
-				<a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
+				<a class="btn btn-grey">Export paid participants into CSV</a><br/>
+				<a class="btn btn-grey">Export medical data into CSV</a><br/>
+				<a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
+					into CSV</a><br/>
 			</div>
 		</div>
 	</div>
