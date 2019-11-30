@@ -180,8 +180,30 @@ class PatrolService {
 
     public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
         $event = $patrolLeader->user->event;
-        if ($this->userService->getClosedPatrolsCount() >= $event->maximalClosedPatrolsCount) {
+        if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount()) {
             $this->flashMessages->warning('Cannot lock the registration - for Patrols we have full registration now. Please wait for limit rise');
+
+            return false;
+        }
+
+        switch ($patrolLeader->country) {
+            case 'Slovak':
+                $localMaxNumber = $event->maximalClosedPatrolsSlovakCount;
+                break;
+            case 'Czech':
+                $localMaxNumber = $event->maximalClosedPatrolsCzechCount;
+                break;
+            case 'other':
+                $localMaxNumber = $event->maximalClosedPatrolsOthersCount;
+                break;
+            default:
+                $this->flashMessages->error('Cannot determine your country properly, please contact organizators');
+
+                return false;
+        }
+        if ($localMaxNumber <= $this->userService->getClosedPatrolsCount()) {
+            $this->flashMessages->warning('Cannot lock the registration - for Patrols from your country 
+                we have full registration now. Please wait for limit rise');
 
             return false;
         }

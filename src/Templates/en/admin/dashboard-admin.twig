@@ -6,22 +6,26 @@
 		<h3>Statistics</h3>
 		<div class="card-divide">
 			<div>
-				<h3>Patrols</h3>
+				<h3>Patrol limits</h3>
 				<p>Limit for patrols: {{ event.maximalClosedPatrolsCount }}</p>
+				<p>Limit for SK patrols: {{ event.maximalClosedPatrolsSlovakCount }}</p>
+				<p>Limit for CZ patrols: {{ event.maximalClosedPatrolsCzechCount }}</p>
+				<p>Limit for other patrols: {{ event.maximalClosedPatrolsOthersCount }}</p>
+				<h3>Patrol counts</h3>
 				<p>Open patrols: {{ patrols.getOpenCount }}</p>
 				<p>Locked patrols: {{ patrols.getClosedCount }}</p>
 				<p>Approved patrols: {{ patrols.getApprovedCount }}</p>
 				<p>Paid patrols: {{ patrols.getPaidCount }}</p>
 			</div>
 			<div>
-				<h3>ISTs</h3>
+				<h3>ISTs counts</h3>
 				<p>Limit for ISTs: {{ event.maximalClosedIstsCount }}</p>
 				<p>Open ISTs: {{ ists.getOpenCount }}</p>
 				<p>Locked ISTs: {{ ists.getClosedCount }}</p>
 				<p>Approved ISTs: {{ ists.getApprovedCount }}</p>
 				<p>Paid ISTs: {{ ists.getPaidCount }}</p>
 
-				<h3>Guest</h3>
+				<h3>Guest counts</h3>
 				<p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
 				<p>Open Guests: {{ guests.getOpenCount }}</p>
 				<p>Locked Guests: {{ guests.getClosedCount }}</p>
