@@ -10,10 +10,12 @@
 		{% if userStatus == 'approved' %}
 			<div class="paymentInfo">
 				<h2>Payment information</h2>
-				Account number: <b>{{ payment.getAccountNumber }}</b><br/>
-				Amount: <b>{{ payment.getPrice }} EUR</b><br/>
-				Variabile symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
-				Note: <b>{{ ist.user.event.readableName }} {{ ist.getFirstName }} {{ ist.getLastName }}</b><br/>
+				International Bank Account Number (IBAN): {{ payment.getAccountNumber }}<br/>
+				SWIFT/BIC: TATRSKBX<br/>
+				Amount: {{ payment.getPrice }} EUR<br/>
+				Variable symbol: 51220 {# TODO fix for general event #}<br/>
+				Constant symbol (may be not available in your bank): 0558<br/>
+				Note: {{ payment.getNote }}<br/>
 				<br/>
 			</div>
 		{% endif %}

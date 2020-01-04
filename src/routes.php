@@ -317,6 +317,15 @@ $app->group('/v1', function () use ($helper) {
 
                     $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
                         ->setName('admin-approve-ist');
+
+                    $this->get('/openGuest/{guestId}', GuestController::class.'::showOpenGuest')
+                        ->setName('admin-open-guest-show');
+
+                    $this->post('/openGuest/{guestId}', GuestController::class.'::openGuest')
+                        ->setName('admin-open-guest');
+
+                    $this->post('/approveGuest/{guestId}', GuestController::class.'::approveGuest')
+                        ->setName('admin-approve-guest');
                 });
 
                 // TODO

@@ -35,11 +35,13 @@ class AdminController extends AbstractController {
     public function showApproving(
         Response $response,
         PatrolService $patrolService,
-        IstService $istService
+        IstService $istService,
+        GuestService $guestService
     ) {
         return $this->view->render($response, 'admin/approving-admin.twig', [
             'closedPatrolLeaders' => $patrolService->getAllClosedPatrolLeaders(),
             'closedIsts' => $istService->getAllClosedIsts(),
+            'closedGuests' => $guestService->getAllClosedGuests(),
         ]);
     }
 

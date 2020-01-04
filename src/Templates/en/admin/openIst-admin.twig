@@ -6,7 +6,7 @@
         <p>Want you really deny <b>{{ ist.getFullName }}</b>?</p>
         <form method="post" action="{{ path_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>Reason for deny (will be send through email): <br/><br/>
+                <label>Reason for denial (will be sent by email): <br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>

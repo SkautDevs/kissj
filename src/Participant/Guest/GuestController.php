@@ -4,23 +4,19 @@ namespace kissj\Participant\Guest;
 
 use kissj\AbstractController;
 use kissj\User\User;
-use kissj\User\UserService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class GuestController extends AbstractController {
     private $guestService;
     private $guestRepository;
-    private $userService;
 
     public function __construct(
         GuestService $istService,
-        GuestRepository $istRepository,
-        UserService $userService
+        GuestRepository $istRepository
     ) {
         $this->guestService = $istService;
         $this->guestRepository = $istRepository;
-        $this->userService = $userService;
     }
 
     public function showDashboard(Response $response, User $user) {
@@ -78,5 +74,34 @@ class GuestController extends AbstractController {
             ['eventSlug' => $guest->user->event->slug]));
     }
 
-    // TODO
+    public function showOpenGuest(int $guestId, Response $response) {
+        $guest = $this->guestRepository->find($guestId);
+
+        return $this->view->render($response, 'admin/openGuest-admin.twig', ['guest' => $guest]);
+    }
+
+    public function openGuest(int $guestId, Request $request, Response $response) {
+        $reason = htmlspecialchars($request->getParam('reason'), ENT_QUOTES);
+        /** @var Guest $guest */
+        $guest = $this->guestRepository->find($guestId);
+        $this->guestService->openRegistration($guest, $reason);
+        $this->flashMessages->info('guest participant denied, email successfully sent');
+        $this->logger->info('Denied registration for guest with ID '.$guest->id.' with reason: '.$reason);
+
+        return $response->withRedirect(
+            $this->router->pathFor('admin-show-approving', ['eventSlug' => $guest->user->event->slug])
+        );
+    }
+
+    public function approveGuest(int $guestId, Response $response) {
+        /** @var Guest $guest */
+        $guest = $this->guestRepository->find($guestId);
+        $this->guestService->finishRegistration($guest);
+        $this->flashMessages->success('guest participant is approved, mail was sent (withnout payment)');
+        $this->logger->info('Approved (no payment was sent) registration for guest with ID '.$guest->id);
+
+        return $response->withRedirect($this->router->pathFor(
+            'admin-show-approving', ['eventSlug' => $guest->user->event->slug])
+        );
+    }
 }

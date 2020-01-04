@@ -62,6 +62,15 @@ class PhpMailerWrapper {
         $this->sendMailFromTemplate($user->email, 'registration sent', 'closed', []);
     }
 
+    public function sendDeniedRegistration(Participant $participant, string $reason) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'registration returned',
+            'denial',
+            ['reason' => $reason, 'event' => $participant->user->event]
+        );
+    }
+
     public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment) {
         $this->sendMailFromTemplate(
             $participant->user->email,
@@ -75,12 +84,15 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendDeniedRegistration(Participant $participant, string $reason) {
+    public function sendGuestRegistrationFinished(Participant $participant) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'registration returned',
-            'denial',
-            ['reason' => $reason, 'event' => $participant->user->event]
+            'registration finished',
+            'finished',
+            [
+                'event' => $participant->user->event,
+                'participant' => $participant,
+            ]
         );
     }
 

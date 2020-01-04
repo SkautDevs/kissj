@@ -7,16 +7,6 @@
 		<h4>
 			{% include('widgets/userCustomHelp.twig') with {'userRole': 'guest'} %}
 		</h4>
-		{% if userStatus == 'approved' %}
-			<div class="paymentInfo">
-				<h2>Payment information</h2>
-				Account number: <b>{{ payment.getAccountNumber }}</b><br/>
-				Amount: <b>{{ payment.getPrice }} EUR</b><br/>
-				Variabile symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
-				Note: <b>{{ guest.user.event.readableName }} {{ guest.getFirstName }} {{ guest.getLastName }}</b><br/>
-				<br/>
-			</div>
-		{% endif %}
 
 		<div>
 			<h2>Personal information</h2>
@@ -34,7 +24,7 @@
 				Email: <b>{{ guest.getEmail }}</b><br/>
 				Phone number: <b>{{ guest.getTelephoneNumber }}</b><br/>
 				Country: <b>{{ guest.getCountry }}</b><br/>
-				T-shirt size: <b>{{ guest.getTshirt }}</b><br/>
+				{#T-shirt size: <b>{{ guest.getTshirt }}</b><br/>#}
 				Diet Restriction: <b>{{ guest.getFoodPreferences }}</b><br/>
 				Health issues: <b>{{ guest.getHealthProblems }}</b><br/>
 				Date of arrival: <b>{{ guest.getArrivalDate.format('d. m. Y') }}</b><br/>

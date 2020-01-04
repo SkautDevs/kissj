@@ -2,12 +2,12 @@
 
 {% block content %}
     <div class="card card-half closed-theme">
-        <h2>Deny Patrol</h2>
-        <p>Want you really deny patrol <b>{{ patrolLeader.patrolName }}</b> lead by {{ patrolLeader.fullName }}?</p>
+        <h2>Deny guest</h2>
+        <p>Want you really deny <b>{{ guest.getFullName }}</b>?</p>
         <form method="post"
-              action="{{ path_for('admin-open-pl', {'patrolLeaderId' : patrolLeader.getId, 'eventSlug': event.slug}) }}">
+              action="{{ path_for('admin-open-guest', {'guestId' : guest.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>Reason for denial (will be sent by email to patrol leader): <br/><br/>
+                <label>Reason for denial (will be sent by email): <br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
