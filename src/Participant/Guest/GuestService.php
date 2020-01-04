@@ -99,7 +99,7 @@ class GuestService {
     public function closeRegistration(Guest $guest): Guest {
         if ($this->isCloseRegistrationValid($guest)) {
             $this->userService->closeRegistration($guest->user);
-            $this->mailer->sendRegistrationSentEmail($guest->user->email);
+            $this->mailer->sendRegistrationClosed($guest->user);
         }
 
         return $guest;

@@ -1,18 +1,19 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card card-half closed-theme">
-		<h2>Zamítnout účastníka</h2>
-		<p>Skutečně chceš účastníka <b>{{ ist.getFirstName }} {{ ist.getLastName }}</b> zamítnout?</p>
-		<form method="post" action="{{ path_for('openIstConfirmed', {'istId' : ist.getId}) }}">
-			<div class="form-group">
-				<label>Důvod zamítnutí (bude mu poslán mailem): <br/><br/>
-					<input type="text" name="reason" id="form-reason" class="form-control form-wide"
-						   required="required"></label>
-			</div>
-			<br/>
-			<a href="{{ path_for('admin-approving') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
-			<input type="submit" value="Zamítnout" class="btn btn-small">
-		</form>
-	</div>
+    <div class="card card-half closed-theme">
+        <h2>Deny IST</h2>
+        <p>Want you really deny <b>{{ ist.getFullName }}</b>?</p>
+        <form method="post" action="{{ path_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
+            <div class="form-group">
+                <label>Reason for deny (will be send through email): <br/><br/>
+                    <input type="text" name="reason" id="form-reason" class="form-control form-wide"
+                           required="required"></label>
+            </div>
+            <br/>
+            <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+               class="btn btn-small btn-grey">Back</a><br/><br/>
+            <input type="submit" value="Deny and send email" class="btn btn-small">
+        </form>
+    </div>
 {% endblock %}

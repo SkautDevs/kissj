@@ -14,8 +14,15 @@ use kissj\Participant\Participant;
  * @property string      $status
  * @property string      $purpose
  * @property string      $accountNumber
- * @property Participant $participant   m:hasOne
+ * @property string      $note
+ * @property Participant $participant m:hasOne
  */
 class Payment extends EntityDatetime {
-
+    public const STATUS_WAITING = 'waiting';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_CANCELED = 'canceled';
 }
+
+/**
+ * TODO do not forget add note and rename conventions
+ */

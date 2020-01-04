@@ -4,15 +4,12 @@ namespace kissj\Payment;
 
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
+use kissj\Participant\Patrol\PatrolLeader;
 use Monolog\Logger;
 
 class PaymentService {
-    private $settings;
-    private $mailer;
-    private $renderer;
-    private $eventName;
-
     private $paymentRepository;
     private $paymentAutoMatcherFio;
     private $flashMessages;
@@ -27,10 +24,54 @@ class PaymentService {
     ) {
         $this->paymentRepository = $paymentRepository;
         //$this->paymentAutoMatcherFio = $paymentAutoMatcherFio;
-        $this->mailer = $mailer;
         $this->flashMessages = $flashMessages;
         $this->logger = $logger;
     }
+
+    /**
+     * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
+     * discount 40€ for self-eating participant
+     *
+     * @param Participant $participant
+     * @return int
+     */
+    public function getPrice(Participant $participant): int {
+
+        if ($participant instanceof PatrolLeader) {
+            $todayPrice = $this->getFullPriceForToday();
+            $patrolPriceSum = 0;
+            $fullPatrol = [$participant, $participant->patrolParticipants];
+            /** @var Participant $patrolParticipant */
+            foreach ($fullPatrol as $patrolParticipant) {
+                $patrolPriceSum += $todayPrice;
+                if ($patrolParticipant->foodPreferences === Participant::FOOD_OTHER) {
+                    $patrolPriceSum -= 40;
+                }
+            }
+
+            return $patrolPriceSum;
+        }
+
+        if ($participant instanceof Ist) {
+            return 50; // TODO check if other diet gets the discount
+        }
+
+        // TODO check what to do with guests
+
+        throw new \RuntimeException('Generating price for unknown role - participant ID: '.$participant->id);
+    }
+
+    private function getFullPriceForToday(): int {
+        $lastDiscountDay = new \DateTime('2020-03-15');
+
+        if (new \DateTime('now') <= $lastDiscountDay) {
+            return 150;
+        }
+
+        return 160;
+    }
+
+    // TODO clean
 
     public function findLastPayment(Participant $participant): ?Payment {
         $criteria = ['participant' => $participant];
@@ -42,52 +83,6 @@ class PaymentService {
         }
 
         return null;
-    }
-
-    public function createNewPayment(Role $role, bool $extraScarf): Payment {
-        $newVS = $this->generateVariableSymbol($this->settings['prefixVariableSymbol']);
-        $newPayment = new Payment();
-        $newPayment->event = $this->eventName;
-        $newPayment->variableSymbol = $newVS;
-        $newPayment->price = $this->getPriceFor($role);
-        // YAGNI!
-        if ($extraScarf) {
-            $newPayment->price += $this->settings['scarfPrice'];
-        }
-        $newPayment->currency = 'CZK';
-        $newPayment->status = 'waiting';
-        $newPayment->purpose = 'fee';
-        $newPayment->role = $role;
-        $newPayment->accountNumber = $this->settings['accountNumber'];
-        $newPayment->generatedDate = new \DateTime();
-
-        $this->paymentRepository->persist($newPayment);
-
-        return $newPayment;
-    }
-
-    private function generateVariableSymbol(string $prefix): string {
-        do {
-            $variableNumber = $prefix.str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        } while ($this->isVariableNumberExisting($variableNumber));
-
-        return $variableNumber;
-    }
-
-    private function isVariableNumberExisting(string $variableNumber): bool {
-        $isExisting = $this->paymentRepository->isExisting(['variableSymbol' => $variableNumber]);
-
-        return $isExisting;
-    }
-
-    private function getPriceFor(Role $role): int {
-        switch ($role->name) {
-            case 'ist':
-                // před 1.7. 300, při a po 1.7. 450
-                return 300;
-            default:
-                throw new \Exception('Unknown role: '.$role->name);
-        }
     }
 
     public function getPaymentFromId(int $paymentId) {
@@ -197,10 +192,6 @@ class PaymentService {
         }
     }
 
-    public function setLastDate(string $date): void {
-        $this->paymentAutoMatcherFio->setLastDate('2017-01-01');
-    }
-
     /**
      * @param string $event
      * @return Payment[]
@@ -216,18 +207,5 @@ class PaymentService {
 
         $payment->status = 'canceled';
         $this->paymentRepository->persist($payment);
-    }
-
-    public function sendCancelPaymentMail(Role $role, string $reason): void {
-        $message = $this->renderer->fetch('emails/cancel-payment.twig', ['reason' => $reason]);
-        $subject = 'Registrace Korbo 2019 - zrušení platby!';
-        $this->mailer->sendMailFromTemplate($role->user->email, $subject, $message);
-    }
-
-    private function sendSuccesfulPaymentEmail(Role $role) {
-        // send mail to user
-        $message = $this->renderer->fetch('emails/payment-successful.twig', []);
-        $subject = 'Registrace Korbo 2019 - platba úspěšně přijata!';
-        $this->mailer->sendMailFromTemplate($role->user->email, $subject, $message);
     }
 }

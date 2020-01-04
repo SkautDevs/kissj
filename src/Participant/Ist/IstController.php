@@ -52,7 +52,7 @@ class IstController extends AbstractController {
     }
 
     public function showCloseRegistration(Request $request, Response $response) {
-        $ist = $this->istService->getIst($request->getAttribute('user'));
+        $ist = $this->istService->getIst($request->getAttribute('user')); // TODO change to autowiring
         $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-ist.twig',
@@ -79,32 +79,34 @@ class IstController extends AbstractController {
             ['eventSlug' => $ist->user->event->slug]));
     }
 
-    // TODO fix
-    public function approveIst(Request $request, Response $response, int $istId) {
-        $ist = $this->istService->getIstFromId($istId);
-        $this->istService->approveIst($ist);
-        $payment = $this->paymentService->createNewPayment($ist->user->role);
-        $this->istService->sendPaymentByMail($payment, $ist);
-        $this->flashMessages->success('Člen IST schválen, platba vygenerována a mail odeslán');
-        $this->logger->info('Approved registration for IST with ID '.$ist->id);
+    public function showOpenIst(int $istId, Response $response) {
+        $ist = $this->istRepository->find($istId);
 
-        return $response->withRedirect($this->router->pathFor('admin-approving'));
+        return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
     }
 
-    public function showOpenIst(Request $request, Response $response) {
-        $ist = $this->istService->getIstFromId($args['istId']);
-
-        return $this->view->render($response, 'admin/openIst.twig', ['ist' => $ist]);
-    }
-
-    public function openIst(Request $request, Response $response) {
-        $ist = $this->istService->getIstFromId($args['istId']);
-        $this->istService->openIst($ist);
-        $reason = $request->getParsedBodyParam('reason');
-        $this->istService->sendDenialMail($ist, $reason);
-        $this->flashMessages->info('Člen IST zamítnut, email o zamítnutí poslán');
+    public function openIst(int $istId, Request $request, Response $response) {
+        $reason = htmlspecialchars($request->getParam('reason'), ENT_QUOTES);
+        /** @var Ist $ist */
+        $ist = $this->istRepository->find($istId);
+        $this->istService->openRegistration($ist, $reason);
+        $this->flashMessages->info('IST participant denied, email successfully sent');
         $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
 
-        return $response->withRedirect($this->router->pathFor('admin-approving'));
+        return $response->withRedirect(
+            $this->router->pathFor('admin-show-approving', ['eventSlug' => $ist->user->event->slug])
+        );
+    }
+
+    public function approveIst(int $istId, Request $request, Response $response) {
+        /** @var Ist $ist */
+        $ist = $this->istRepository->find($istId);
+        $this->istService->approveRegistration($ist);
+        $this->flashMessages->success('IST participant is approved, payment is generated and mail sent');
+        $this->logger->info('Approved registration for IST with ID '.$ist->id);
+
+        return $response->withRedirect($this->router->pathFor(
+            'admin-show-approving', ['eventSlug' => $ist->user->event->slug])
+        );
     }
 }

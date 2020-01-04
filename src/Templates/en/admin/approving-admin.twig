@@ -1,115 +1,110 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card closed-theme">
-		<h2>Schvalování účastníků na akci {{ eventName }}</h2>
-		<a href="{{ path_for('admin-dashboard') }}" class="btn btn-grey btn-small">Zpět</a>
-	</div>
-	<br/>
-	{% if closedIsts is not empty %}
-		<div class="card closed-theme">
-			<h2>International Service Team</h2>
-		</div>
-		<br/>
-		{% for ist in closedIsts %}
-			<div class="card closed-theme">
-				<h4>{{ ist.getFirstName }} {{ ist.getLastName }}</h4>
-				Přezdívka: <b>{{ ist.getNickname }}</b><br/>
-				Gender: <b>{{ ist.getGender }}</b><br/>
-				Datum narození: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-				Místo narození: <b>{{ ist.getBirthPlace }}</b><br/>
-				Trvalá adresa: <b>{{ ist.getPermanentResidence }}</b><br/>
-				Země: <b>{{ ist.getCountry }}</b><br/>
-				Číslo pasu/občanky: <b>{{ ist.getCardPassportNumber }}</b><br/>
-				Dieta: <b>{{ ist.getFoodPreferences }}</b><br/>
-				Alergie: <b>{{ ist.getAllergies }}</b><br/>
-				Telefonní kontakt: <b>{{ ist.getTelephoneNumber }}</b><br/>
-				Email: <b>{{ ist.getEmail }}</b><br/>
-				Skautská jednotka: <b>{{ ist.getScoutUnit }}</b><br/>
+    <div class="card closed-theme">
+        <h2>Approving participants on event {{ event.readableName }}</h2>
+        <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
+    </div>
+    <br/>
+    {% if closedIsts is not empty %}
+        <div class="card closed-theme">
+            <h2>International Service Team</h2>
+        </div>
+        <br/>
+        {% for ist in closedIsts %}
+            <div class="card closed-theme">
+                <h4>{{ ist.getFullName }}</h4>
+                Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+                Gender: <b>{{ ist.getGender }}</b><br/>
+                Email: <b>{{ ist.getEmail }}</b><br/>
+                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>
+                Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
+                Country: <b>{{ ist.getCountry }}</b><br/>
+                Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
+                T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
+                Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>
+                Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
+                Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+                Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
+                Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
+                Skills: <b>{{ ist.getSkills }}</b><br/>
+                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>
+                Notes: <b>{{ ist.getNotes }}</b><br/>
+                <br/>
+                <a href="{{ path_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">Deny</a>
+                <br/>
+                <br/>
+                <form method="post"
+                      action="{{ path_for('admin-approve-ist', {'istId': ist.getId, 'eventSlug': event.slug}) }}">
+                    <input type="submit" value="Approve" class="btn btn-small">
+                </form>
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>No ISTs are in need for approve</h2>
+        </div>
+        <br/>
+    {% endif %}
+    {% if closedPatrols is not empty %}
+        <div class="card closed-theme">
+            <h2>Patrols</h2>
+        </div>
+        <br/>
+        {% for patrol in closedPatrols %}
+            <div class="card closed-theme">
+                <h3>{{ patrol.patrolLeader.getPatrolName }}</h3>
+                <h4>{{ patrol.patrolLeader.getFirstName }} {{ patrol.patrolLeader.getLastName }}</h4>
+                Gender: <b>{{ patrol.patrolLeader.getGender }}</b><br/>
+                Datum narození: <b>{{ patrol.patrolLeader.getBirthDate.format('d. m. Y') }}</b><br/>
+                Místo narození: <b>{{ patrol.patrolLeader.getBirthPlace }}</b><br/>
+                Trvalá adresa: <b>{{ patrol.patrolLeader.getPermanentResidence }}</b><br/>
+                Země: <b>{{ patrol.patrolLeader.getCountry }}</b><br/>
+                Číslo pasu/občanky: <b>{{ patrol.patrolLeader.getCardPassportNumber }}</b><br/>
+                Dieta: <b>{{ patrol.patrolLeader.getFoodPreferences }}</b><br/>
+                Alergie: <b>{{ patrol.patrolLeader.getAllergies }}</b><br/>
+                Telefonní kontakt: <b>{{ patrol.patrolLeader.getTelephoneNumber }}</b><br/>
+                Email: <b>{{ patrol.patrolLeader.getEmail }}</b><br/>
+                Skautská jednotka: <b>{{ patrol.patrolLeader.getScoutUnit }}</b><br/>
 
-				Preference práce: <b>{{ ist.getWorkPreferences }}</b><br/>
-				Skills: <b>{{ ist.getSkills }}</b><br/>
-				Jazyky, kterými se domluvím: <b>{{ ist.getLanguages }}</b><br/>
-				Datum příjezdu: <b>{{ ist.getArrivalDate.format('d. m. Y') }}</b><br/>
-				Datum odjezdu: <b>{{ ist.getLeavingDate.format('d. m. Y') }}</b><br/>
-				Poznávací značka auta: <b>{{ ist.getCarRegistrationPlate }}</b><br/>
+                Poznámky: <b>{{ patrol.patrolLeader.getNotes }}</b><br/><br/>
+                <br/>
 
-				Poznámky: <b>{{ ist.getNotes }}</b><br/>
-				<br/>
-				<a href="{{ path_for('openIst', {'istId': ist.getId}) }}" class="btn btn-grey btn-small">
-					Zamítnout
-				</a>
-				<br/>
-				<br/>
-				<form method="post" action="{{ path_for('approveIst', {'istId': ist.getId}) }}">
-					<input type="submit" value="Schválit" class="btn btn-small">
-				</form>
-			</div>
-			<br/>
-		{% endfor %}
-	{% else %}
-		<div class="card closed-theme">
-			<h2>Žádní IST nepotřebují schválit!</h2>
-		</div>
-		<br/>
-	{% endif %}
-	{% if closedPatrols is not empty %}
-		<div class="card closed-theme">
-			<h2>Patroly</h2>
-		</div>
-		<br/>
-		{% for patrol in closedPatrols %}
-			<div class="card closed-theme">
-				<h3>{{ patrol.patrolLeader.getPatrolName }}</h3>
-				<h4>{{ patrol.patrolLeader.getFirstName }} {{ patrol.patrolLeader.getLastName }}</h4>
-				Gender: <b>{{ patrol.patrolLeader.getGender }}</b><br/>
-				Datum narození: <b>{{ patrol.patrolLeader.getBirthDate.format('d. m. Y') }}</b><br/>
-				Místo narození: <b>{{ patrol.patrolLeader.getBirthPlace }}</b><br/>
-				Trvalá adresa: <b>{{ patrol.patrolLeader.getPermanentResidence }}</b><br/>
-				Země: <b>{{ patrol.patrolLeader.getCountry }}</b><br/>
-				Číslo pasu/občanky: <b>{{ patrol.patrolLeader.getCardPassportNumber }}</b><br/>
-				Dieta: <b>{{ patrol.patrolLeader.getFoodPreferences }}</b><br/>
-				Alergie: <b>{{ patrol.patrolLeader.getAllergies }}</b><br/>
-				Telefonní kontakt: <b>{{ patrol.patrolLeader.getTelephoneNumber }}</b><br/>
-				Email: <b>{{ patrol.patrolLeader.getEmail }}</b><br/>
-				Skautská jednotka: <b>{{ patrol.patrolLeader.getScoutUnit }}</b><br/>
+                <h3>Účastníci</h3>
+                {% for participant in patrol.patrolParticipants %}
+                    <h4>{{ participant.getFirstName }} {{ participant.getLastName }}</h4>
+                    Gender: <b>{{ participant.getGender }}</b><br/>
+                    Datum narození: <b>{{ participant.getBirthDate.format('d. m. Y') }}</b><br/>
+                    Místo narození: <b>{{ participant.getBirthPlace }}</b><br/>
+                    Trvalá adresa: <b>{{ participant.getPermanentResidence }}</b><br/>
+                    Země: <b>{{ participant.getCountry }}</b><br/>
+                    Číslo pasu/občanky: <b>{{ participant.getCardPassportNumber }}</b><br/>
+                    Dieta: <b>{{ participant.getFoodPreferences }}</b><br/>
+                    Alergie: <b>{{ participant.getAllergies }}</b><br/>
+                    Telefonní kontakt: <b>{{ participant.getTelephoneNumber }}</b><br/>
+                    Email: <b>{{ participant.getEmail }}</b><br/>
+                    Skautská jednotka: <b>{{ participant.getScoutUnit }}</b><br/>
 
-				Poznámky: <b>{{ patrol.patrolLeader.getNotes }}</b><br/><br/>
-				<br/>
-
-				<h3>Účastníci</h3>
-				{% for participant in patrol.patrolParticipants %}
-					<h4>{{ participant.getFirstName }} {{ participant.getLastName }}</h4>
-					Gender: <b>{{ participant.getGender }}</b><br/>
-					Datum narození: <b>{{ participant.getBirthDate.format('d. m. Y') }}</b><br/>
-					Místo narození: <b>{{ participant.getBirthPlace }}</b><br/>
-					Trvalá adresa: <b>{{ participant.getPermanentResidence }}</b><br/>
-					Země: <b>{{ participant.getCountry }}</b><br/>
-					Číslo pasu/občanky: <b>{{ participant.getCardPassportNumber }}</b><br/>
-					Dieta: <b>{{ participant.getFoodPreferences }}</b><br/>
-					Alergie: <b>{{ participant.getAllergies }}</b><br/>
-					Telefonní kontakt: <b>{{ participant.getTelephoneNumber }}</b><br/>
-					Email: <b>{{ participant.getEmail }}</b><br/>
-					Skautská jednotka: <b>{{ participant.getScoutUnit }}</b><br/>
-
-					Poznámky: <b>{{ participant.getNotes }}</b><br/><br/>
-				{% endfor %}
-				<a href="{{ path_for('openPatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}"
-				   class="btn btn-grey btn-small">
-					Zamítnout
-				</a>
-				<br/>
-				<br/>
-				<form method="post"
-					  action="{{ path_for('approvePatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}">
-					<input type="submit" value="Schválit" class="btn btn-small">
-				</form>
-			</div>
-			<br/>
-		{% endfor %}
-	{% else %}
-		<div class="card approving-theme">
-			<h2>Žádné patroly nepotřebují schválit!</h2>
-		</div>
-	{% endif %}
+                    Poznámky: <b>{{ participant.getNotes }}</b><br/><br/>
+                {% endfor %}
+                <a href="{{ path_for('openPatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}"
+                   class="btn btn-grey btn-small">
+                    Zamítnout
+                </a>
+                <br/>
+                <br/>
+                <form method="post"
+                      action="{{ path_for('approvePatrolLeader', {'patrolLeaderId': patrol.patrolLeader.getId}) }}">
+                    <input type="submit" value="Schválit" class="btn btn-small">
+                </form>
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>No patrols are in need to approve</h2>
+        </div>
+    {% endif %}
 {% endblock %}

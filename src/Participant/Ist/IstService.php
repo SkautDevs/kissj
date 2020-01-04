@@ -5,13 +5,14 @@ namespace kissj\Participant\Ist;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
 
 class IstService {
     private $istRepository;
+    private $paymentService;
     private $paymentRepository;
     private $flashMessages;
     private $mailer;
@@ -19,12 +20,14 @@ class IstService {
 
     public function __construct(
         IstRepository $istRepository,
+        PaymentService $paymentService,
         PaymentRepository $paymentRepository,
         FlashMessagesBySession $flashMessages,
         PhpMailerWrapper $mailer,
         UserService $userService
     ) {
         $this->istRepository = $istRepository;
+        $this->paymentService = $paymentService;
         $this->paymentRepository = $paymentRepository;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
@@ -114,34 +117,50 @@ class IstService {
     public function closeRegistration(Ist $ist): Ist {
         if ($this->isCloseRegistrationValid($ist)) {
             $this->userService->closeRegistration($ist->user);
-            $this->mailer->sendRegistrationSentEmail($ist->user->email);
+            $this->mailer->sendRegistrationClosed($ist->user);
         }
 
         return $ist;
     }
-    
+
     public function getAllIstsStatistics(): StatisticValueObject {
         $ists = $this->istRepository->findAll();
 
         return new StatisticValueObject($ists);
     }
 
-    // TODO fix
-
     public function getAllClosedIsts(): array {
-        $closedIsts = $this->roleRepository->findBy([
-            'event' => $this->eventName,
-            'name' => 'ist',
-            'status' => 'closed',
-        ]);
-        $ists = [];
-        /** @var Role $closedIst */
-        foreach ($closedIsts as $closedIst) {
-            $ists[] = $this->istRepository->findOneBy(['userId' => $closedIst->user->id]);
+        /** @var Ist[] $ists */
+        $ists = $this->istRepository->findBy(['role' => User::ROLE_IST], ['id' => false]); // TODO fix order (reversed)
+
+        $closedIsts = [];
+        foreach ($ists as $ist) {
+            if ($ist->user->status === User::STATUS_CLOSED) {
+                $closedIsts[] = $ist;
+            }
         }
 
-        return $ists;
+        return $closedIsts;
     }
+
+    public function openRegistration(Ist $ist, $reason): Ist {
+        $this->mailer->sendDeniedRegistration($ist, $reason);
+        $this->userService->openRegistration($ist->user);
+
+        return $ist;
+    }
+
+    public function approveRegistration(Ist $ist): Ist {
+        $price = $this->paymentService->getPrice($ist);
+        $payment = $this->paymentRepository->createAndPersistNewPayment($ist, $price);
+
+        $this->mailer->sendRegistrationApprovedWithPayment($ist, $payment);
+        $this->userService->approveRegistration($ist->user);
+
+        return $ist;
+    }
+
+    // TODO fix
 
     public function getAllApprovedIstsWithPayment(): array {
         $approvedIsts = $this->roleRepository->findBy([
@@ -161,49 +180,5 @@ class IstService {
         }
 
         return $ists;
-    }
-
-    // TODO move
-    public function sendPaymentByMail(Payment $payment, Ist $ist) {
-        $message = $this->renderer->fetch('emails/payment-info.twig', [
-            'eventName' => 'Korbo 2019',
-            'accountNumber' => $payment->accountNumber,
-            'price' => $payment->price,
-            'currency' => 'Kč',
-            'variableSymbol' => $payment->variableSymbol,
-            'role' => $payment->role->name,
-            'gender' => $ist->gender,
-
-            'istFullName' => $ist->firstName.' '.$ist->lastName,
-        ]);
-
-        $this->mailer->sendMailFromTemplate($payment->role->user->email, 'Registrace Korbo 2019 - platební informace',
-            $message);
-    }
-
-    public function sendDenialMail(Ist $ist, string $reason) {
-        $message = $this->renderer->fetch('emails/denial.twig', [
-            'eventName' => 'Korbo 2019',
-            'role' => 'ist',
-            'reason' => $reason,
-        ]);
-
-        $this->mailer->sendMailFromTemplate($ist->user->email, 'Registrace Korbo 2019 - zamítnutí registrace',
-            $message);
-    }
-
-    // TODO clear
-    public function openIst(Ist $ist) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-        $role->status = $this->roleService->getOpenStatus();
-        $this->roleRepository->persist($role);
-    }
-
-    public function cancelApprovementIst(Ist $ist) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $ist->user->id]);
-        $role->status = $this->roleService->getCloseStatus();
-        $this->roleRepository->persist($role);
     }
 }

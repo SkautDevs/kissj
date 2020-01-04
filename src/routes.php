@@ -70,7 +70,7 @@ $helper['openStatusOnly'] = function (Request $request, Response $response, call
     $user = $request->getAttribute('user');
     if ($user->status !== User::STATUS_OPEN) {
         $this->get('logger')->warning('User '.$user->email.' is trying to change data, even he has role "'.$user->status.'"');
-        throw new \RuntimeException('You cannot change your data when you are not in editing status');
+        throw new RuntimeException('You cannot change your data when you are not in editing status');
     }
     $response = $next($request, $response);
 
@@ -335,15 +335,14 @@ $app->group('/v1', function () use ($helper) {
                             return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
                         })->setName('openPatrolLeaderConfirmed');
 
-
-                    $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
-                        ->setName('admin-approve-ist');
-
-                    $this->get('/openIst/{istId}', IstController::class.'showOpenIst')
-                        ->setName('showOpenIst');
+                    $this->get('/openIst/{istId}', IstController::class.'::showOpenIst')
+                        ->setName('admin-open-ist-show');
 
                     $this->post('/openIst/{istId}', IstController::class.'::openIst')
                         ->setName('admin-open-ist');
+
+                    $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
+                        ->setName('admin-approve-ist');
                 });
 
                 $this->group('/payments', function () {

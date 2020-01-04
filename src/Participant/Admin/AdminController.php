@@ -10,31 +10,36 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 class AdminController extends AbstractController {
-    public function showDashboard(
-        Response $response,
-        PatrolService $patrolService,
-        IstService $istService,
-        GuestService $guestService
-    ) {
+    public $patrolService;
+    public $istService;
+    public $guestService;
+
+    public function __construct(PatrolService $patrolService, IstService $istService, GuestService $guestService) {
+        $this->patrolService = $patrolService;
+        $this->istService = $istService;
+        $this->guestService = $guestService;
+    }
+
+    public function showDashboard(Response $response) {
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
             [
-                'patrols' => $patrolService->getAllPatrolsStatistics(),
-                'ists' => $istService->getAllIstsStatistics(),
-                'guests' => $guestService->getAllGuestsStatistics(),
+                'patrols' => $this->patrolService->getAllPatrolsStatistics(),
+                'ists' => $this->istService->getAllIstsStatistics(),
+                'guests' => $this->guestService->getAllGuestsStatistics(),
             ]
         );
     }
 
-    public function showApproving(Request $request, Response $response, array $args) {
-        $closedPatrols = $this->patrolService->getAllClosedPatrols();
-        $closedIsts = $this->istService->getAllClosedIsts();
-
+    public function showApproving(
+        Response $response,
+        PatrolService $patrolService,
+        IstService $istService
+    ) {
         return $this->view->render($response, 'admin/approving-admin.twig', [
-            'eventName' => 'CEJ 2018',
-            'closedPatrols' => $closedPatrols,
-            'closedIsts' => $closedIsts,
+            //'closedPatrols' => $patrolService->getAllClosedPatrols(), // TODO continue
+            'closedIsts' => $istService->getAllClosedIsts(),
         ]);
     }
 

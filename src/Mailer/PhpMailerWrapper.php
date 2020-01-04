@@ -2,6 +2,9 @@
 
 namespace kissj\Mailer;
 
+use kissj\Participant\Participant;
+use kissj\Payment\Payment;
+use kissj\User\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
@@ -46,11 +49,42 @@ class PhpMailerWrapper {
         $this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
     }
 
-    public function sendRegistrationSentEmail(string $recipientEmail): void {
-        $this->sendMailFromTemplate($recipientEmail, 'registration sent', 'closed', []);
+    public function sendLoginToken(User $user, string $link) {
+        $this->sendMailFromTemplate(
+            $user->email,
+            'link with login',
+            'login-token',
+            ['link' => $link, 'event' => $user->event]
+        );
     }
 
-    public function sendMailFromTemplate(
+    public function sendRegistrationClosed(User $user): void {
+        $this->sendMailFromTemplate($user->email, 'registration sent', 'closed', []);
+    }
+
+    public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'payment informations',
+            'payment-info',
+            [
+                'event' => $participant->user->event,
+                'participant' => $participant,
+                'payment' => $payment,
+            ]
+        );
+    }
+
+    public function sendDeniedRegistration(Participant $participant, string $reason) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'registration returned',
+            'denial',
+            ['reason' => $reason, 'event' => $participant->user->event]
+        );
+    }
+
+    private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,
         string $templateName,
@@ -67,8 +101,8 @@ class PhpMailerWrapper {
                 $mailer->isMail();
             }
             if ($this->disable_tls) {
-                $mailer->SMTPOptions = array (
-                    'ssl' => array (
+                $mailer->SMTPOptions = array(
+                    'ssl' => array(
                         'verify_peer' => false,
                         'verify_peer_name' => false,
                         'allow_self_signed' => true,

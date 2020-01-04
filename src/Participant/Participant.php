@@ -40,6 +40,8 @@ class Participant extends EntityDatetime {
 
     protected const TSHIRT_DELIMITER = '-';
 
+    public const FOOD_OTHER = 'other';
+
     public function setUser(User $user): void {
         // else  LeanMapper \ Exception \ MemberAccessException
         // Cannot write to read-only property 'user' in entity kissj\Participant\Participant.
@@ -72,6 +74,6 @@ class Participant extends EntityDatetime {
     }
 
     public function getFullName(): string {
-        return ($this->firstName ?? '').' '.($this->lastName ?? '');
+        return ($this->firstName ?? '').' '.($this->lastName ?? '').($this->nickname ? ' - '.$this->nickname : '');
     }
 }

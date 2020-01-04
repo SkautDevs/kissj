@@ -1,23 +1,22 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-	<p>Ahoy,</p>
-	<p>we have just approved
-		your registration for <b>AQUA 2020</b>! To finish your registration properly, there is only one more step - to
-		pay the
-		registration fee till <b>sedmi dní</b></p>
+    <p>Ahoy,</p>
+    <p>we have just approved
+        your registration for <b>{{ event.readableName }}</b>! To finish your registration properly, there is only one
+        more step - to pay the registration fee till <b>seven days</b>.</p>
 
-	<h3><u>Payment details</u></h3>
-	<h3>Bank account number <a href="https://ib.fio.cz/ib/transparent?a=2501628268">{{ accountNumber }}</a>
-	</h3>
-	<h3>Amount: {{ price }} {{ currency }}</h3>
-	<h3>Variable symbol: {{ variableSymbol }}</h3>
-	<h3>Note: AQUA 2020 {{ istFullName }}
-	</h3>
+    <h3><u>Payment details</u></h3>
+    <h4>International Bank Account Number (IBAN): {{ payment.accountNumber }}</h4>
+    <h4>SWIFT/BIC: TATRSKBX</h4>
+    <h4>Amount: {{ payment.price }} {{ payment.currency }}</h4>
+    <h4>Variable symbol: 51220</h4>
+    <h4>Constant symbol (may be not available in your bank): 0558</h4>
+    <h4>Note: {{ payment.note }}</h4>
 
-	<p>If you have any questions, you may seek the answer at our webpage
-		<a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
-		or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
+    <p>If you have any questions, you may seek the answer at our webpage
+        <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
+        or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
 
-	<p>Fair winds and following seas from AQUA team</p>
+    <p>Fair winds and following seas from AQUA team</p>
 {% endblock %}

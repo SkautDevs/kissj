@@ -57,12 +57,7 @@ class UserService {
         $this->loginTokenRepository->persist($loginToken);
 
         $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-        $this->mailer->sendMailFromTemplate(
-            $email,
-            'link with login',
-            'login-token',
-            ['link' => $link, 'event' => $user->event]
-        );
+        $this->mailer->sendLoginToken($user, $link);
 
         return $token;
     }
@@ -152,6 +147,13 @@ class UserService {
 
     protected function isRoleValid(string $role): bool {
         return in_array($role, [User::ROLE_IST, User::ROLE_PATROL_LEADER, User::ROLE_GUEST], true);
+    }
+
+    public function openRegistration(User $user): User {
+        $user->status = User::STATUS_OPEN;
+        $this->userRepository->persist($user);
+
+        return $user;
     }
 
     public function closeRegistration(User $user): User {

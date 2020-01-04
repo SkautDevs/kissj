@@ -246,7 +246,7 @@ class PatrolService {
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $this->userService->closeRegistration($patrolLeader->user);
-            $this->mailer->sendRegistrationSentEmail($patrolLeader->user->email);
+            $this->mailer->sendRegistrationClosed($patrolLeader->user);
         }
 
         return $patrolLeader;

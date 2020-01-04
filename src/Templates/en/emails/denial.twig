@@ -2,9 +2,10 @@
 
 {% block content %}
 	<p>Ahoy,</p>
-	<p>unfortunatelly, we have denied your registration for AQUA 2020, as you hadn't met all the requirements. </p>
+	<p>unfortunatelly, we have denied your registration for {{ event.readableName }}, as you hadn't met all the
+		requirements. </p>
 
-	<p>Reason is: {{ reason }}. Please, add or edit missing details in registration system and don't forget to send your
+	<p>Reason: {{ reason }}. Please, add or edit missing details in registration system and don't forget to send your
 		registration for approval. </p>
 
 	<p>If you have any questions, you may seek the answer at our webpage
