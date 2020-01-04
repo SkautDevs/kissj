@@ -299,41 +299,15 @@ $app->group('/v1', function () use ($helper) {
                 $this->group('/approving', function () {
                     $this->get('', AdminController::class.'::showApproving')
                         ->setName('admin-show-approving');
+                    
+                    $this->get('/openPatrolLeader/{patrolLeaderId}', PatrolController::class.'::showOpenPatrol')
+                        ->setName('admin-open-pl-show');
 
-                    // TODO
-                    $this->post('/approvePatrolLeader/{patrolLeaderId}',
-                        function (Request $request, Response $response, int $patrolLeaderId) {
-                            /** @var \kissj\Participant\Patrol\PatrolService $patrolService */
-                            $patrolService = $this->patrolService;
-                            $patrolLeader = $patrolService->getPatrolLeaderFromId($patrolLeaderId);
-                            $patrolService->approvePatrol($patrolLeader);
-                            $payment = $this->paymentService->createNewPayment($patrolLeader->user->role);
-                            $patrolService->sendPaymentByMail($payment, $patrolLeader);
-                            $this->get('flashMessages')->success('Patrola schválena, platba vygenerována a mail odeslán');
-                            $this->get('logger')->info('Approved registration for Patrol Leader with ID '.$patrolLeader->id);
+                    $this->post('/openPatrolLeader/{patrolLeaderId}', PatrolController::class.'::openPatrol')
+                        ->setName('admin-open-pl');
 
-                            return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
-                        })->setName('admin-approve-pl');
-
-                    $this->get('/openPatrolLeader/{patrolLeaderId}',
-                        function (Request $request, Response $response, int $patrolLeaderId) {
-                            $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
-
-                            return $this->get('view')->render($response, 'admin/openPatrolLeader.twig',
-                                ['patrolLeader' => $patrolLeader]);
-                        })->setName('admin-open-pl');
-
-                    $this->post('/openPatrolLeader/{patrolLeaderId}',
-                        function (Request $request, Response $response, int $patrolLeaderId) {
-                            $patrolLeader = $this->patrolService->getPatrolLeaderFromId($patrolLeaderId);
-                            $this->patrolService->openPatrol($patrolLeader);
-                            $reason = $request->getParsedBodyParam('reason');
-                            $this->patrolService->sendDenialMail($patrolLeader, $reason);
-                            $this->get('flashMessages')->info('Patrola zamítnuta, email o zamítnutí poslán Patrol Leaderovi');
-                            $this->get('logger')->info('Denied registration for Patrol Leader with ID '.$patrolLeader->id.' with reason: '.$reason);
-
-                            return $response->withRedirect($this->get('router')->pathFor('admin-approving'));
-                        })->setName('openPatrolLeaderConfirmed');
+                    $this->post('/approvePatrolLeader/{patrolLeaderId}', PatrolController::class.'::approvePatrol')
+                        ->setName('admin-approve-pl');
 
                     $this->get('/openIst/{istId}', IstController::class.'::showOpenIst')
                         ->setName('admin-open-ist-show');
@@ -345,6 +319,7 @@ $app->group('/v1', function () use ($helper) {
                         ->setName('admin-approve-ist');
                 });
 
+                // TODO
                 $this->group('/payments', function () {
                     $this->get('', AdminController::class.'::showPayments')
                         ->setName('admin-show-payments');

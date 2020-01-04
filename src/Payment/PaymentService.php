@@ -36,11 +36,10 @@ class PaymentService {
      * @return int
      */
     public function getPrice(Participant $participant): int {
-
         if ($participant instanceof PatrolLeader) {
             $todayPrice = $this->getFullPriceForToday();
             $patrolPriceSum = 0;
-            $fullPatrol = [$participant, $participant->patrolParticipants];
+            $fullPatrol = array_merge([$participant], $participant->patrolParticipants);
             /** @var Participant $patrolParticipant */
             foreach ($fullPatrol as $patrolParticipant) {
                 $patrolPriceSum += $todayPrice;

@@ -22,7 +22,7 @@ class PatrolController extends AbstractController {
         PaymentService $paymentService
     ) {
         $this->patrolService = $patrolService;
-        $this->patrolLeaderRepository = $patrolParticipantRepository;
+        $this->patrolLeaderRepository = $patrolLeaderRepository;
         $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->paymentService = $paymentService;
     }
@@ -143,5 +143,38 @@ class PatrolController extends AbstractController {
         $patrolParticipant = $this->patrolService->getPatrolParticipant($participantId);
 
         return $this->view->render($response, 'show-p.twig', ['pDetail' => $patrolParticipant]);
+    }
+
+    public function showOpenPatrol(int $patrolLeaderId, Response $response) {
+        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+
+        return $this->view->render($response, 'admin/openPatrol-admin.twig', ['patrolLeader' => $patrolLeader]);
+    }
+
+    public function openPatrol(int $patrolLeaderId, Request $request, Response $response) {
+        $reason = htmlspecialchars($request->getParam('reason'), ENT_QUOTES);
+        /** @var PatrolLeader $patrolLeader */
+        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+        $this->patrolService->openRegistration($patrolLeader, $reason);
+        $this->flashMessages->info('Patrol denied, email successfully sent');
+        $this->logger->info(
+            'Denied registration for Patrol with Patrol Leader ID '.$patrolLeader->id.' with reason: '.$reason
+        );
+
+        return $response->withRedirect(
+            $this->router->pathFor('admin-show-approving', ['eventSlug' => $patrolLeader->user->event->slug])
+        );
+    }
+
+    public function approvePatrol(int $patrolLeaderId, Response $response) {
+        /** @var PatrolLeader $patrolLeader */
+        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+        $this->patrolService->approveRegistration($patrolLeader);
+        $this->flashMessages->success('Patrol is approved, payment is generated and mail sent');
+        $this->logger->info('Approved registration for Patrol with Patrol Leader ID '.$patrolLeader->id);
+
+        return $response->withRedirect($this->router->pathFor(
+            'admin-show-approving', ['eventSlug' => $patrolLeader->user->event->slug])
+        );
     }
 }

@@ -4,10 +4,10 @@ namespace kissj\Participant\Patrol;
 
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Orm\Relation;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
 
@@ -15,24 +15,27 @@ class PatrolService {
     private $patrolLeaderRepository;
     private $patrolParticipantRepository;
     private $paymentRepository;
-    private $flashMessages;
-    private $mailer;
     private $userService;
+    private $paymentService;
+    private $mailer;
+    private $flashMessages;
 
     public function __construct(
         PatrolLeaderRepository $patrolLeaderRepository,
         PatrolParticipantRepository $patrolParticipantRepository,
         PaymentRepository $paymentRepository,
+        UserService $userService,
+        PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
-        PhpMailerWrapper $mailer,
-        UserService $userService
+        PhpMailerWrapper $mailer
     ) {
         $this->patrolLeaderRepository = $patrolLeaderRepository;
         $this->patrolParticipantRepository = $patrolParticipantRepository;
         $this->paymentRepository = $paymentRepository;
+        $this->userService = $userService;
+        $this->paymentService = $paymentService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
-        $this->userService = $userService;
     }
 
     public function getPatrolLeader(User $user): PatrolLeader {
@@ -197,7 +200,7 @@ class PatrolService {
                 $localMaxNumber = $event->maximalClosedPatrolsOthersCount;
                 break;
             default:
-                $this->flashMessages->error('Cannot determine your country properly, please contact organizators');
+                $this->flashMessages->warning('Cannot determine your country properly');
 
                 return false;
         }
@@ -252,48 +255,41 @@ class PatrolService {
         return $patrolLeader;
     }
 
+    public function openRegistration(PatrolLeader $patrolLeader, string $reason): PatrolLeader {
+        $this->mailer->sendDeniedRegistration($patrolLeader, $reason);
+        $this->userService->openRegistration($patrolLeader->user);
+
+        return $patrolLeader;
+    }
+
+    public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader {
+        $price = $this->paymentService->getPrice($patrolLeader);
+        $payment = $this->paymentRepository->createAndPersistNewPayment($patrolLeader, $price);
+
+        $this->mailer->sendRegistrationApprovedWithPayment($patrolLeader, $payment);
+        $this->userService->approveRegistration($patrolLeader->user);
+
+        return $patrolLeader;
+    }
+
     public function getAllPatrolsStatistics(): StatisticValueObject {
         $patrolLeaders = $this->patrolLeaderRepository->findAll();
 
         return new StatisticValueObject($patrolLeaders);
     }
 
-    // TODO fix
-    private function getClosedPatrolsCount(): int {
-        return $this->roleRepository->countBy([
-            'name' => 'patrol-leader',
-            'event' => $this->eventName,
-            'status' => new Relation('open', '!='),
-        ]);
-    }
+    public function getAllClosedPatrolLeaders(): array {
+        /** @var PatrolLeader[] $patrolLeaders */
+        $patrolLeaders = $this->patrolLeaderRepository->findBy(['role' => User::ROLE_PATROL_LEADER]);
 
-    // TODO move
-    public function sendPaymentByMail(Payment $payment, PatrolLeader $patrolLeader) {
-        $message = $this->renderer->fetch('emails/payment-info.twig', [
-            'eventName' => 'CEJ 2018',
-            'accountNumber' => $payment->accountNumber,
-            'price' => $payment->price,
-            'currency' => 'Kč',
-            'variableSymbol' => $payment->variableSymbol,
-            'role' => $payment->role->name,
-            'gender' => $patrolLeader->gender,
+        $closedPatrols = [];
+        foreach ($patrolLeaders as $patrolLeader) {
+            if ($patrolLeader->user->status === User::STATUS_CLOSED) {
+                $closedPatrols[] = $patrolLeader;
+            }
+        }
 
-            'patrolName' => $patrolLeader->patrolName,
-        ]);
-
-        $this->mailer->sendMailFromTemplate($payment->role->user->email, 'Registrace CEJ 2018 - platební informace',
-            $message);
-    }
-
-    public function sendDenialMail(PatrolLeader $patrolLeader, string $reason) {
-        $message = $this->renderer->fetch('emails/denial.twig', [
-            'eventName' => 'CEJ 2018',
-            'role' => 'patrol-leader',
-            'reason' => $reason,
-        ]);
-
-        $this->mailer->sendMailFromTemplate($patrolLeader->user->email, 'Registrace CEJ 2018 - zamítnutí registrace',
-            $message);
+        return $closedPatrols;
     }
 
     // TODO make this more clever
@@ -313,19 +309,5 @@ class PatrolService {
         } else {
             return null;
         }
-    }
-
-    public function approvePatrol(PatrolLeader $patrolLeader) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
-        $role->status = $this->roleService->getApproveStatus();
-        $this->roleRepository->persist($role);
-    }
-
-    public function openPatrol(PatrolLeader $patrolLeader) {
-        /** @var Role $role */
-        $role = $this->roleRepository->findOneBy(['userId' => $patrolLeader->user->id]);
-        $role->status = $this->roleService->getOpenStatus();
-        $this->roleRepository->persist($role);
     }
 }

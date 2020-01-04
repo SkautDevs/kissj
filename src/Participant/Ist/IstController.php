@@ -98,7 +98,7 @@ class IstController extends AbstractController {
         );
     }
 
-    public function approveIst(int $istId, Request $request, Response $response) {
+    public function approveIst(int $istId, Response $response) {
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->approveRegistration($ist);

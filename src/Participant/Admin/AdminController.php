@@ -38,11 +38,12 @@ class AdminController extends AbstractController {
         IstService $istService
     ) {
         return $this->view->render($response, 'admin/approving-admin.twig', [
-            //'closedPatrols' => $patrolService->getAllClosedPatrols(), // TODO continue
+            'closedPatrolLeaders' => $patrolService->getAllClosedPatrolLeaders(),
             'closedIsts' => $istService->getAllClosedIsts(),
         ]);
     }
 
+    // TODO
     public function showPayments(Request $request, Response $response, array $args) {
         $approvedPatrols = $this->patrolService->getAllApprovedPatrolsWithPayment();
         $approvedIsts = $this->istService->getAllApprovedIstsWithPayment();

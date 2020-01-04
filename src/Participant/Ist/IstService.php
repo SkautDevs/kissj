@@ -12,26 +12,26 @@ use kissj\User\UserService;
 
 class IstService {
     private $istRepository;
-    private $paymentService;
     private $paymentRepository;
+    private $userService;
+    private $paymentService;
     private $flashMessages;
     private $mailer;
-    private $userService;
 
     public function __construct(
         IstRepository $istRepository,
-        PaymentService $paymentService,
         PaymentRepository $paymentRepository,
+        UserService $userService,
+        PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
-        PhpMailerWrapper $mailer,
-        UserService $userService
+        PhpMailerWrapper $mailer
     ) {
         $this->istRepository = $istRepository;
-        $this->paymentService = $paymentService;
         $this->paymentRepository = $paymentRepository;
+        $this->userService = $userService;
+        $this->paymentService = $paymentService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
-        $this->userService = $userService;
     }
 
     public function getIst(User $user): Ist {
