@@ -33,6 +33,8 @@
 					</option>
 				</select>
 			</label>
+			<br>
+
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
 																	  value="{{ pDetails.getEmail }}"
 																	  required="required"></label>
@@ -64,6 +66,8 @@
 																		   name="scoutUnit"
 																		   value="{{ pDetails.getScoutUnit ?? plDetails.getScoutUnit }}"
 																		   required="required"></label>
+			<br>
+
 			<label class="form-group form-group-inline">Diet restriction:
 				<select class="form-control" name="foodPreferences" required="required">
 					<option value="no restriction"

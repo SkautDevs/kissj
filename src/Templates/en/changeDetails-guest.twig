@@ -32,6 +32,8 @@
 					</option>
 				</select>
 			</label>
+			<br>
+
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
 																	  value="{% if guestDetails.getEmail is empty %}{{ user.email }}{% else %}{{ guestDetails.getEmail }}{% endif %}"
 																	  required="required"></label>

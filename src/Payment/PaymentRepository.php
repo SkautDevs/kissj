@@ -3,6 +3,7 @@
 namespace kissj\Payment;
 
 use kissj\Orm\Repository;
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 
 class PaymentRepository extends Repository {
@@ -22,7 +23,11 @@ class PaymentRepository extends Repository {
         $payment->status = Payment::STATUS_WAITING;
         $payment->purpose = 'event fee';
         $payment->accountNumber = 'SK98 1100 0000 0026 6008 0180';
-        $payment->note = 'AQUA 2020 '.$payment->variableSymbol.' '.$participant->getFullName();
+        if ($participant instanceof Ist) {
+            $payment->note = 'AQUASTAFF '.$payment->variableSymbol.' '.$participant->getFullName();
+        } else {
+            $payment->note = 'AQUA 2020 '.$payment->variableSymbol.' '.$participant->getFullName();
+        }
 
         $this->persist($payment);
 

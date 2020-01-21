@@ -52,10 +52,8 @@ class PaymentService {
         }
 
         if ($participant instanceof Ist) {
-            return 50; // TODO check if other diet gets the discount
+            return 60;
         }
-
-        // TODO check what to do with guests
 
         throw new \RuntimeException('Generating price for unknown role - participant ID: '.$participant->id);
     }

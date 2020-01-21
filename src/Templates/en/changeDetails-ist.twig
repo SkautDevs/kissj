@@ -32,6 +32,8 @@
 					</option>
 				</select>
 			</label>
+			<br>
+
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
 																	  value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"
 																	  required="required"></label>
@@ -63,6 +65,8 @@
 																		   name="scoutUnit"
 																		   value="{{ istDetails.getScoutUnit }}"
 																		   required="required"></label>
+			<br>
+
 			<label class="form-group form-group-inline">T-shirt shape:
 				<select class="form-control" name="tshirtShape" required="required">
 					<option value="lady" {% if istDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
@@ -93,6 +97,8 @@
 					</option>
 				</select>
 			</label>
+			<br>
+
 			<label class="form-group form-group-inline">Diet restriction:
 				<select class="form-control" name="foodPreferences" required="required">
 					<option value="no restriction"
@@ -168,6 +174,8 @@
 																	   placeholder="sailing; food handling certificate; advanced first aid; ..."
 																	   value="{{ istDetails.getSkills }}">
 			</label>
+			<br>
+
 			<div class="form-group">
 				Preffered position:
 				<label class="form-control">
@@ -236,6 +244,8 @@
 					subcamp leader
 				</label>
 			</div>
+			<br>
+			
 			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
 																	 placeholder="anything else?"
 																	 value="{{ istDetails.getNotes }}">

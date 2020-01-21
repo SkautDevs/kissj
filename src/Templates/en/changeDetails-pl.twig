@@ -36,6 +36,8 @@
 					</option>
 				</select>
 			</label>
+			<br>
+
 			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
 																	  value="{% if plDetails.getEmail is empty %}{{ user.email }}{% else %}{{ plDetails.getEmail }}{% endif %}"
 																	  required="required"></label>
@@ -67,6 +69,8 @@
 																		   name="scoutUnit"
 																		   value="{{ plDetails.getScoutUnit }}"
 																		   required="required"></label>
+			<br>
+
 			{# <label class="form-group form-group-inline">T-shirt shape:
 				<select class="form-control" name="tshirtShape" required="required">
 					<option value="lady" {% if plDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
