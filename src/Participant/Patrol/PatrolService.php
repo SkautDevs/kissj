@@ -5,7 +5,6 @@ namespace kissj\Participant\Patrol;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -276,38 +275,5 @@ class PatrolService {
         $patrolLeaders = $this->patrolLeaderRepository->findAll();
 
         return new StatisticValueObject($patrolLeaders);
-    }
-
-    public function getAllClosedPatrolLeaders(): array {
-        /** @var PatrolLeader[] $patrolLeaders */
-        $patrolLeaders = $this->patrolLeaderRepository->findBy(['role' => User::ROLE_PATROL_LEADER]);
-
-        $closedPatrols = [];
-        foreach ($patrolLeaders as $patrolLeader) {
-            if ($patrolLeader->user->status === User::STATUS_CLOSED) {
-                $closedPatrols[] = $patrolLeader;
-            }
-        }
-
-        return $closedPatrols;
-    }
-
-    // TODO make this more clever
-    public function getOnePayment(PatrolLeader $patrolLeader): ?Payment {
-        if ($this->paymentRepository->isExisting([
-            'roleId' => $this->roleRepository->findOneBy([
-                'userId' => $patrolLeader->user->id,
-                'event' => 'cej2018',
-            ]),
-        ])) {
-            return $this->paymentRepository->findOneBy([
-                'roleId' => $this->roleRepository->findOneBy([
-                    'userId' => $patrolLeader->user->id,
-                    'event' => 'cej2018',
-                ]),
-            ]);
-        } else {
-            return null;
-        }
     }
 }

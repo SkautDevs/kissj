@@ -1,17 +1,16 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-	<p>Ahoy,</p>
-	<p>unfortunatelly, your payment for AQUA 2020 was denied. </p>
-	<p>Reason is: {{ reason }}.</p>
-	<p><b>Don't attempt to pay again with previous payment details!</b> Do you want to attend the event nevertheless?
-		Send your registration again at
-		<a href="{{ event.web }}">{{ event.web }} (submitted information is still saved in your account),
-			we will check and approve it again and send you new payment details.</p>
-	<p>If you have any questions, you may seek the answer at our webpage
-		<a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
-		or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
+<p>Ahoy,</p>
+<p>unfortunatelly, your payment for AQUA 2020 was denied. </p>
+<p>Reason is: {{ reason }}.</p>
+<p><b>Don't attempt to pay again with previous payment details!</b> Do you want to attend the event nevertheless?
+	Send your registration again at
+	<a href="{{ event.webUrl }}">{{ event.webUrl }}</a> (submitted information is still saved in your account),
+	we will check and approve it again and send you new payment details.</p>
+<p>If you have any questions, you may seek the answer at our webpage
+	<a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
+	or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
 
-	<p>Fair winds and following seas from AQUA team<br/>
-		{{ event.gooodbye }}</p>
-{% endblock %}
+<p>Fair winds and following seas from AQUA team<br/>
+	{% endblock %}

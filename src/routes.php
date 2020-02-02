@@ -299,7 +299,7 @@ $app->group('/v1', function () use ($helper) {
                 $this->group('/approving', function () {
                     $this->get('', AdminController::class.'::showApproving')
                         ->setName('admin-show-approving');
-                    
+
                     $this->get('/openPatrolLeader/{patrolLeaderId}', PatrolController::class.'::showOpenPatrol')
                         ->setName('admin-open-pl-show');
 
@@ -328,14 +328,20 @@ $app->group('/v1', function () use ($helper) {
                         ->setName('admin-approve-guest');
                 });
 
-                // TODO
                 $this->group('/payments', function () {
                     $this->get('', AdminController::class.'::showPayments')
                         ->setName('admin-show-payments');
 
-                    $this->post('/setPaymentPaid/{payment}', AdminController::class.'::setPaymentPaid')
-                        ->setName('admin-set-payment-paid');
+                    $this->get('/cancelPayment/{paymentId}', AdminController::class.'::showCancelPayment')
+                        ->setName('admin-cancel-payment-show');
 
+                    $this->post('/cancelPayment/{paymentId}', AdminController::class.'::cancelPayment')
+                        ->setName('admin-cancel-payment');
+
+                    $this->post('/confirmPayment/{paymentId}', AdminController::class.'::confirmPayment')
+                        ->setName('admin-confirm-payment');
+
+                    // TODO
                     $this->group('/auto', function () {
                         $this->get('/sinceLastUpdate', function (Request $request, Response $response, array $args) {
                             /** @var \kissj\Payment\PaymentService $paymentService */
@@ -357,6 +363,7 @@ $app->group('/v1', function () use ($helper) {
                     });
                 });
 
+                // TODO
                 $this->group('/export', function () {
                     $this->get('/medical', function (Request $request, Response $response) {
                         $csvRows = $this->exportService->medicalDataToCSV('cej2018');
@@ -383,7 +390,7 @@ $app->group('/v1', function () use ($helper) {
             })->add(function (Request $request, Response $response, callable $next) {
                 // protected area for Admins only
                 if ($request->getAttribute('user')->role !== User::ROLE_ADMIN) {
-                    $this->get('flashMessages')->error('Pardon, nejsi na akci vedený jako admin');
+                    $this->get('flashMessages')->error('Pardon, you are not registred as admin');
 
                     return $response->withRedirect($this->get('router')->pathFor('loginAskEmail'));
                 }

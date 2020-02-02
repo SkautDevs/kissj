@@ -111,20 +111,6 @@ class GuestService {
         return new StatisticValueObject($ists);
     }
 
-    public function getAllClosedGuests() {
-        /** @var Guest[] $guests */
-        $guests = $this->guestRepository->findBy(['role' => User::ROLE_GUEST], ['id' => false]);
-
-        $closedGuests = [];
-        foreach ($guests as $guest) {
-            if ($guest->user->status === User::STATUS_CLOSED) {
-                $closedGuests[] = $guest;
-            }
-        }
-
-        return $closedGuests;
-    }
-
     public function openRegistration(Guest $guest, $reason): Guest {
         $this->mailer->sendDeniedRegistration($guest, $reason);
         $this->userService->openRegistration($guest->user);

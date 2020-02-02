@@ -96,6 +96,24 @@ class PhpMailerWrapper {
         );
     }
 
+    public function sendCancelledPayment(Participant $participant, string $reason) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'payment cancelled',
+            'cancel-payment',
+            ['reason' => $reason, 'event' => $participant->user->event]
+        );
+    }
+
+    public function sendRegistrationPaid(Participant $participant) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'payment successfully paid',
+            'payment-successful',
+            ['event' => $participant->user->event]
+        );
+    }
+
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,

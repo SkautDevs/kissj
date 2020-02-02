@@ -65,6 +65,7 @@ class Settings {
                     'templates_path' => __DIR__.'/../Templates/en',
                     'enable_cache' => true,
                     'cache_path' => __DIR__.'/../../temp/twig',
+                    'debug_output' => false,
                 ],
 
                 // Monolog settings
@@ -211,9 +212,13 @@ class Settings {
         ) use ($settings) {
             $rendererSettings = $settings['renderer'];
 
-            $view = new Twig($rendererSettings['templates_path'], [
-                'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
-            ]);
+            $view = new Twig(
+                $rendererSettings['templates_path'],
+                [
+                    'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
+                    'debug' => $rendererSettings['debug_output']
+                ]
+            );
 
             $uri = $request->getUri();
             $basePath = rtrim(str_ireplace('index.php', '',
@@ -227,6 +232,9 @@ class Settings {
             }
             $baseHostScheme = $uri->getScheme().'://'.$uri->getHost().$portString;
             $view->addExtension(new TwigExtension($router, $basePath));
+            if ($rendererSettings['debug_output']) {
+                $view->addExtension(new \Twig\Extension\DebugExtension());
+            }
             $view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
             /** @var \kissj\User\User $user */

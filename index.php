@@ -24,7 +24,7 @@ session_start();
 
 // Instantiate the app
 
-$containerBuilder = new ContainerBuilder;
+$containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getSettingsAndDependencies());
 $containerBuilder->useAnnotations(true); // in AbstrackController
 $container = $containerBuilder->build();
@@ -38,4 +38,3 @@ require __DIR__.'/src/routes.php';
 
 // Run app
 $app->run();
-

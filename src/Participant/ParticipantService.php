@@ -2,27 +2,72 @@
 
 namespace kissj\Participant;
 
-use kissj\Participant\Guest\GuestRepository;
-use kissj\Participant\Ist\IstRepository;
-use kissj\Participant\Patrol\PatrolLeaderRepository;
-use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Mailer\PhpMailerWrapper;
+use kissj\Payment\Payment;
+use kissj\Payment\PaymentService;
+use kissj\User\User;
+use kissj\User\UserService;
 
 class ParticipantService {
     private $participantRepository;
-    private $istRepository;
-    private $guestRepository;
-    private $patrolLeaderRepository;
+    private $paymentService;
+    private $userService;
+    private $mailer;
 
     public function __construct(
         ParticipantRepository $participantRepository,
-        IstRepository $istRepository,
-        GuestRepository $guestRepository,
-        PatrolLeaderRepository $patrolLeaderRepository,
-        PatrolParticipantRepository $patrolParticipantRepository
+        PaymentService $paymentService,
+        UserService $userService,
+        PhpMailerWrapper $mailer
     ) {
         $this->participantRepository = $participantRepository;
-        $this->istRepository = $istRepository;
-        $this->guestRepository = $guestRepository;
-        $this->patrolLeaderRepository = $patrolLeaderRepository;
+        $this->paymentService = $paymentService;
+        $this->userService = $userService;
+        $this->mailer = $mailer;
+    }
+
+    /**
+     * @param string $role
+     * @param string $status
+     * @return Participant[]
+     */
+    public function getAllParticipantsWithStatus(string $role, string $status): array {
+        if (!in_array($role, User::ROLES, true)) {
+            throw new \RuntimeException('Unknown role: '.$role);
+        }
+
+        if (!in_array($status, User::STATUSES, true)) {
+            throw new \RuntimeException('Unknown status: '.$status);
+        }
+
+        /** @var Participant[] $participants */
+        $participants = $this->participantRepository->findBy(['role' => $role]);
+
+        $participantsWithRole = [];
+        foreach ($participants as $participant) {
+            if ($participant->user->status === $status) {
+                $participantsWithRole[] = $participant;
+            }
+        }
+
+        return $participantsWithRole;
+    }
+
+    public function cancelPayment(Payment $payment, string $reason): Payment {
+        $this->paymentService->cancelPayment($payment);
+        $this->userService->closeRegistration($payment->participant->user);
+
+        $this->mailer->sendCancelledPayment($payment->participant, $reason);
+
+        return $payment;
+    }
+
+    public function confirmPayment(Payment $payment): Payment {
+        $this->paymentService->confirmPayment($payment);
+        $this->userService->payRegistration($payment->participant->user);
+
+        $this->mailer->sendRegistrationPaid($payment->participant);
+
+        return $payment;
     }
 }

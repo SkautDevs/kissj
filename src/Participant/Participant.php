@@ -3,36 +3,39 @@
 namespace kissj\Participant;
 
 use kissj\Orm\EntityDatetime;
+use kissj\Payment\Payment;
 use kissj\User\User;
 
 /**
  * Master table for all participants, using Single Table Inheritance
  * All commons are here, entitis are seaprated of course (:
  *
- * @property int         $id
- * @property User|null   $user         m:hasOne
- * @property string|null $role         needed for DB working (see Mapper.php)
- * @property string|null $firstName
- * @property string|null $lastName
- * @property string|null $nickname
- * @property string|null $permanentResidence
- * @property string|null $telephoneNumber
- * @property string|null $gender
- * @property string|null $country
- * @property string|null $email
- * @property string|null $scoutUnit
- * @property string|null $languages
- * @property string|null $birthDate    m:passThru(dateFromString|dateToString)
- * @property string|null $birthPlace
- * @property string|null $healthProblems
- * @property string|null $foodPreferences
- * @property string|null $idNumber
- * @property string|null $scarf
- * @property string|null $swimming
- * @property string|null $tshirt       m:useMethods
- * @property string|null $arrivalDate  m:passThru(dateFromString|dateToString)
- * @property string|null $departueDate m:passThru(dateFromString|dateToString)
- * @property string|null $notes
+ * @property int            $id
+ * @property User|null      $user         m:hasOne
+ * @property string|null    $role         needed for DB working (see Mapper.php)
+ * @property string|null    $firstName
+ * @property string|null    $lastName
+ * @property string|null    $nickname
+ * @property string|null    $permanentResidence
+ * @property string|null    $telephoneNumber
+ * @property string|null    $gender
+ * @property string|null    $country
+ * @property string|null    $email
+ * @property string|null    $scoutUnit
+ * @property string|null    $languages
+ * @property string|null    $birthDate    m:passThru(dateFromString|dateToString)
+ * @property string|null    $birthPlace
+ * @property string|null    $healthProblems
+ * @property string|null    $foodPreferences
+ * @property string|null    $idNumber
+ * @property string|null    $scarf
+ * @property string|null    $swimming
+ * @property string|null    $tshirt       m:useMethods
+ * @property string|null    $arrivalDate  m:passThru(dateFromString|dateToString)
+ * @property string|null    $departueDate m:passThru(dateFromString|dateToString)
+ * @property string|null    $notes
+ *
+ * @property Payment[]|null $payment m:belongsToMany
  */
 class Participant extends EntityDatetime {
     protected $tshirtSize;

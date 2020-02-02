@@ -129,20 +129,6 @@ class IstService {
         return new StatisticValueObject($ists);
     }
 
-    public function getAllClosedIsts(): array {
-        /** @var Ist[] $ists */
-        $ists = $this->istRepository->findBy(['role' => User::ROLE_IST], ['id' => false]); // TODO fix order (reversed)
-
-        $closedIsts = [];
-        foreach ($ists as $ist) {
-            if ($ist->user->status === User::STATUS_CLOSED) {
-                $closedIsts[] = $ist;
-            }
-        }
-
-        return $closedIsts;
-    }
-
     public function openRegistration(Ist $ist, $reason): Ist {
         $this->mailer->sendDeniedRegistration($ist, $reason);
         $this->userService->openRegistration($ist->user);
@@ -158,27 +144,5 @@ class IstService {
         $this->userService->approveRegistration($ist->user);
 
         return $ist;
-    }
-
-    // TODO fix
-
-    public function getAllApprovedIstsWithPayment(): array {
-        $approvedIsts = $this->roleRepository->findBy([
-            'event' => $this->eventName,
-            'name' => 'ist',
-            'status' => 'approved',
-        ]);
-        $ists = [];
-        /** @var Role $approvedIst */
-        foreach ($approvedIsts as $approvedIst) {
-            $ist['info'] = $this->istRepository->findOneBy(['user' => $approvedIst->user]);
-            $ist['payment'] = $this->getOneValidPayment($ist['info']);
-            // TODO discuss moving this piece of logic elsewhere
-            $ist['elapsedPaymentDays'] = $ist['payment']->generatedDate->diff(new \DateTime());
-            $ist['elapsedPaymentDays'] = $ist['elapsedPaymentDays']->days;
-            $ists[] = $ist;
-        }
-
-        return $ists;
     }
 }

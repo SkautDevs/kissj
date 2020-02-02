@@ -68,49 +68,38 @@ class PaymentService {
         return 160;
     }
 
-    // TODO clean
-
-    public function findLastPayment(Participant $participant): ?Payment {
-        $criteria = ['participant' => $participant];
-        if ($this->paymentRepository->isExisting($criteria)) {
-            return $this->paymentRepository->findOneBy(
-                $criteria,
-                ['created_at' => false]
-            );
+    public function cancelPayment(Payment $payment): Payment {
+        if ($payment->status !== Payment::STATUS_WAITING) {
+            throw new \RuntimeException('Payment cancelation is allow only for payments with status "'
+                .Payment::STATUS_WAITING.'"');
         }
 
-        return null;
+        $payment->status = Payment::STATUS_CANCELED;
+        $this->paymentRepository->persist($payment);
+
+        return $payment;
     }
 
-    public function getPaymentFromId(int $paymentId) {
-        return $this->paymentRepository->findOneBy(['id' => $paymentId]);
+    public function confirmPayment(Payment $payment): Payment {
+        if ($payment->status !== Payment::STATUS_WAITING) {
+            throw new \RuntimeException('Payment confirmation is allow only for payments with status "'
+                .Payment::STATUS_WAITING.'"');
+        }
+
+        $payment->status = Payment::STATUS_PAID;
+        $this->paymentRepository->persist($payment);
+
+        return $payment;
     }
 
-    public function isPaymentValid(string $variableSymbol, string $price): bool {
-        return !is_null($this->paymentRepository->findOneBy([
-            'variableSymbol' => $variableSymbol,
-            'price' => $price,
-        ]));
-    }
+    // TODO clean
 
     # Jak vygenerovat hezci CSV z Money S3
     /* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
 
-    public function setPaymentPaid(Payment $payment): void {
-        // set payment paid in DB
-        $payment->status = 'paid';
-        $this->paymentRepository->persist($payment);
-
-        // set role as paid
-        $role = $payment->role;
-        $role->status = 'paid';
-        $this->roleRepository->persist($role);
-
-        $this->sendSuccesfulPaymentEmail($role);
-    }
-
     public function pairNewPayments(array $approvedIstPayments) {
-        $canceledPayments = $this->getCanceledPayments('korbo2019');
+        /** @var Payment[] $canceledPayments */
+        $canceledPayments = $this->paymentRepository->findBy(['event' => 'korbo2019', 'status' => 'canceled']);
         // get list of new payments from bank
         $transactionsList = $this->paymentAutoMatcherFio->lastDownload();
 
@@ -129,6 +118,7 @@ class PaymentService {
                     if ($payment->status == 'waiting') {
                         // not canceler or paid already
                         $this->setPaymentPaid($payment);
+                        $this->sendSuccesfulPaymentEmail($payment);
                         // TODO find a better place - all other logging is in controllers now
                         $this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
                         $counterSetPaid++;
@@ -187,22 +177,5 @@ class PaymentService {
         } else {
             $this->flashMessages->success('Na zaplacení nezbývají žádné platby!');
         }
-    }
-
-    /**
-     * @param string $event
-     * @return Payment[]
-     */
-    private function getCanceledPayments(string $event): array {
-        return $this->paymentRepository->findBy(['event' => $event, 'status' => 'canceled']);
-    }
-
-    public function cancelPayment(Payment $payment): void {
-        if ($payment->status != 'waiting') {
-            throw new \Exception('Payment cancelation is allow only for payments with status "waiting"');
-        }
-
-        $payment->status = 'canceled';
-        $this->paymentRepository->persist($payment);
     }
 }

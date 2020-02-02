@@ -1,57 +1,55 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card approved-theme">
-		<h2>Dashboard of event {{ eventName }} Administrator</h2>
-		<h3>Statistics</h3>
-		<div class="card-divide">
-			<div>
-				<h3>Patrol limits</h3>
-				<p>Limit for patrols: {{ event.maximalClosedPatrolsCount }}</p>
-				<p>Limit for SK patrols: {{ event.maximalClosedPatrolsSlovakCount }}</p>
-				<p>Limit for CZ patrols: {{ event.maximalClosedPatrolsCzechCount }}</p>
-				<p>Limit for other patrols: {{ event.maximalClosedPatrolsOthersCount }}</p>
-				<h3>Patrol counts</h3>
-				<p>Open patrols: {{ patrols.getOpenCount }}</p>
-				<p>Locked patrols: {{ patrols.getClosedCount }}</p>
-				<p>Approved patrols: {{ patrols.getApprovedCount }}</p>
-				<p>Paid patrols: {{ patrols.getPaidCount }}</p>
-			</div>
-			<div>
-				<h3>ISTs counts</h3>
-				<p>Limit for ISTs: {{ event.maximalClosedIstsCount }}</p>
-				<p>Open ISTs: {{ ists.getOpenCount }}</p>
-				<p>Locked ISTs: {{ ists.getClosedCount }}</p>
-				<p>Approved ISTs: {{ ists.getApprovedCount }}</p>
-				<p>Paid ISTs: {{ ists.getPaidCount }}</p>
+    <div class="card approved-theme">
+        <h2>Dashboard of event {{ eventName }} Administrator</h2>
+        <h3>Statistics</h3>
+        <div class="card-divide">
+            <div>
+                <h3>Patrol limits</h3>
+                <p>Limit for patrols: {{ event.maximalClosedPatrolsCount }}</p>
+                <p>Limit for SK patrols: {{ event.maximalClosedPatrolsSlovakCount }}</p>
+                <p>Limit for CZ patrols: {{ event.maximalClosedPatrolsCzechCount }}</p>
+                <p>Limit for other patrols: {{ event.maximalClosedPatrolsOthersCount }}</p>
+                <h3>Patrol counts</h3>
+                <p>Open patrols: {{ patrols.getOpenCount }}</p>
+                <p>Locked patrols: {{ patrols.getClosedCount }}</p>
+                <p>Approved patrols: {{ patrols.getApprovedCount }}</p>
+                <p>Paid patrols: {{ patrols.getPaidCount }}</p>
+            </div>
+            <div>
+                <h3>IST counts</h3>
+                <p>Limit for IST: {{ event.maximalClosedIstsCount }}</p>
+                <p>Open IST: {{ ists.getOpenCount }}</p>
+                <p>Locked IST: {{ ists.getClosedCount }}</p>
+                <p>Approved IST: {{ ists.getApprovedCount }}</p>
+                <p>Paid IST: {{ ists.getPaidCount }}</p>
 
-				<h3>Guest counts</h3>
-				<p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
-				<p>Open Guests: {{ guests.getOpenCount }}</p>
-				<p>Locked Guests: {{ guests.getClosedCount }}</p>
-				<p>Approved Guests: {{ guests.getApprovedCount }}</p>
-				<p>Paid Guests: {{ guests.getPaidCount }}</p>
-			</div>
-
-
-		</div>
-		<h3>Administators actions</h3>
-		<div class="card-divide">
-			<div>
-				<a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
-					participants</a><br/>
-				<a href="{{ path_for('admin-payments-autopay', {'eventSlug': event.slug}) }}" class="btn">Pair new
-					payments with bank</a><br/>
-				<!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-				<a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Approving
-					payments by hand</a><br/>
-			</div>
-			<div>
-				<a class="btn btn-grey">Export paid participants into CSV</a><br/>
-				<a class="btn btn-grey">Export medical data into CSV</a><br/>
-				<a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
-					into CSV</a><br/>
-			</div>
-		</div>
-	</div>
+                <h3>Guest counts</h3>
+                <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
+                <p>Open Guests: {{ guests.getOpenCount }}</p>
+                <p>Locked Guests: {{ guests.getClosedCount }}</p>
+                <p>Approved Guests: {{ guests.getApprovedCount }}</p>
+                <p>Paid Guests: {{ guests.getPaidCount }}</p>
+            </div>
+        </div>
+        <h3>Administators actions</h3>
+        <div class="card-divide">
+            <div>
+                <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
+                    participants</a><br/>
+                <a class="btn btn-grey">Pair new
+                    payments with bank</a><br/>
+                <!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Confirming
+                    payments by hand</a><br/>
+            </div>
+            <div>
+                <a class="btn btn-grey">Export paid participants into CSV</a><br/>
+                <a class="btn btn-grey">Export medical data into CSV</a><br/>
+                <a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
+                    into CSV</a><br/>
+            </div>
+        </div>
+    </div>
 {% endblock %}

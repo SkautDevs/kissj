@@ -21,8 +21,18 @@ class Payment extends EntityDatetime {
     public const STATUS_WAITING = 'waiting';
     public const STATUS_PAID = 'paid';
     public const STATUS_CANCELED = 'canceled';
+
+    public function getElapsedPaymentDays(): int {
+        /** @var $createdAt \DateTime */
+        $createdAt = $this->createdAt;
+        return $createdAt->diff(new \DateTime('now'))->days;
+    }
+
+    public function getMaxElapsedPaymentDays(): int {
+        return 14; // TODO move into db
+    }
 }
 
 /**
- * TODO do not forget add note and rename conventions
+ * TODO do not forget add note and rename conventions into new DB
  */
