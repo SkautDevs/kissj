@@ -178,4 +178,15 @@ class PaymentService {
             $this->flashMessages->success('Na zaplacení nezbývají žádné platby!');
         }
     }
+
+    public function findLastPayment(Participant $participant): ?Payment {
+        // TODO refactor
+        $payment = reset($participant->payment);
+
+        if ($payment === false) {
+            return null;
+        }
+
+        return $payment;
+    }
 }

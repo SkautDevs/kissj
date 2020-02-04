@@ -6,6 +6,7 @@ use Slim\Http\Response;
 use Whoops\Exception\Inspector;
 
 $container = $app->getContainer();
+
 // DEBUGGER
 
 if ($container->get('settings')['whoopsDebug']) {
@@ -18,10 +19,11 @@ if ($container->get('settings')['whoopsDebug']) {
 
         $container->get('logger')->error('Exception! '.$title.'('.$code.') -> '.$message);
 
-        require 'Templates/exception.php';
-        exit;
+        require 'Templates/en/exception.php';
+        die;
     };
 
+    // TODO add logger with mail
     $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app, [$simplyErrorHandler]));
 }
 
