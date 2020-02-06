@@ -131,7 +131,7 @@ class UserService {
 
     public function getClosedIstsCount(): int {
         return $this->userRepository->countBy([
-            'role' => USER::ROLE_IST,
+            'role' => User::ROLE_IST,
             //'event' => $this->eventName, // TODO fix
             'status' => new Relation(User::STATUS_OPEN, '!='),
         ]);
@@ -139,7 +139,7 @@ class UserService {
 
     public function getClosedPatrolsCount(): int {
         return $this->userRepository->countBy([
-            'role' => USER::ROLE_PATROL_LEADER,
+            'role' => User::ROLE_PATROL_LEADER,
             //'event' => $this->eventName, // TODO fix
             'status' => new Relation(User::STATUS_OPEN, '!='),
         ]);

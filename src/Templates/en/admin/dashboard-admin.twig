@@ -45,8 +45,10 @@
                     payments by hand</a><br/>
             </div>
             <div>
-                <a class="btn btn-grey">Export paid participants into CSV</a><br/>
                 <a class="btn btn-grey">Export medical data into CSV</a><br/>
+                <a href="{{ path_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">
+                    Export emails of paid into CSV
+                </a><br/>
                 <a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
                     into CSV</a><br/>
             </div>

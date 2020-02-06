@@ -1,9 +1,6 @@
 <?php
 
-namespace kissj\ManualPaymentImport;
-
-use kissj\PaymentImport\ManualPaymentImporter;
-use kissj\PaymentImport\Payment;
+namespace kissj\PaymentImport;
 
 class MoneyS3CSV implements ManualPaymentImporter {
 

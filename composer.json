@@ -38,8 +38,9 @@
         "zeuxisoo/slim-whoops": "0.6.*"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "^6.5"
+        "phpstan/phpstan": "^0.12.9",
+        "phpunit/phpunit": "^6.5",
+        "roave/security-advisories": "dev-master"
     },
     "autoload-dev": {
         "psr-4": {

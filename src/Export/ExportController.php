@@ -12,11 +12,19 @@ class ExportController extends AbstractController {
         $this->exportService = $exportService;
     }
 
+    public function exportPaidData(Response $response) {
+        $eventName = 'AQUA2020';
+        $csvRows = $this->exportService->paidContactDataToCSV($eventName);
+        $this->logger->info('Downloaded current emails about paid participants');
+
+        return $this->exportService->outputCSVresponse($response, $csvRows, $eventName.'_paid');
+    }
+
     public function exportFullData(Response $response) {
         // TODO make event aware
         $eventName = 'AQUA2020';
         $csvRows = $this->exportService->allRegistrationDataToCSV($eventName);
-        $this->logger->info('Downloaded full current data about participants');
+        $this->logger->info('Downloaded FULL current data about participants');
 
         return $this->exportService->outputCSVresponse($response, $csvRows, $eventName.'_full');
     }

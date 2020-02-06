@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5d267ef72c391f986dd464f952ea3bff",
-    "content-hash": "af60977cb065a20cadc88acead27b939",
+    "hash": "e61c627f3a99ba8d00c06017a8d11366",
+    "content-hash": "a42f0e224b22c2e3fdbbb5f137dd4b7f",
     "packages": [
         {
             "name": "dibi/dibi",
@@ -2405,6 +2405,45 @@
                 "stub"
             ],
             "time": "2020-01-20 15:57:02"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "0.12.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "297cb2458a96ea96d5e9d6ef38f1b7305c071f32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/297cb2458a96ea96d5e9d6ef38f1b7305c071f32",
+                "reference": "297cb2458a96ea96d5e9d6ef38f1b7305c071f32",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "time": "2020-02-04 22:30:27"
         },
         {
             "name": "phpunit/php-code-coverage",

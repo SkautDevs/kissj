@@ -2,13 +2,10 @@
 
 namespace kissj\Event;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
-
-class EventController {
+class EventController {/*
     public function createEvent(Request $request, Response $response, array $args) {
         $params = $request->getParams();
-        /** @var \kissj\Event\EventService $eventService */
+        /** @var \kissj\Event\EventService $eventService *//*
         $eventService = $this->eventService;
         if ($eventService->isEventDetailsValid(
             $params['slug'] ?? null,
@@ -25,7 +22,7 @@ class EventController {
             $params['allowIsts'] ?? null,
             $params['maximalClosedIstsCount'] ?? null)) {
 
-            /** @var \kissj\Event\Event $newEvent */
+            /** @var \kissj\Event\Event $newEvent *//*
             $newEvent = $eventService->createEvent(
                 $params['slug'] ?? null,
                 $params['readableName'] ?? null,
@@ -79,5 +76,5 @@ class EventController {
             }
         }
 
-    }
+    }*/
 }

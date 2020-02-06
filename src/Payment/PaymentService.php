@@ -3,7 +3,6 @@
 namespace kissj\Payment;
 
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -19,8 +18,7 @@ class PaymentService {
         PaymentRepository $paymentRepository,
         //FioRead $paymentAutoMatcherFio,
         FlashMessagesBySession $flashMessages,
-        Logger $logger,
-        PhpMailerWrapper $mailer
+        Logger $logger
     ) {
         $this->paymentRepository = $paymentRepository;
         //$this->paymentAutoMatcherFio = $paymentAutoMatcherFio;

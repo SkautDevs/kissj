@@ -18,7 +18,7 @@ class PaymentRepository extends Repository {
         $payment = new Payment();
         $payment->participant = $participant;
         $payment->variableSymbol = $variableNumber;
-        $payment->price = $price;
+        $payment->price = (string)$price;
         $payment->currency = '€';
         $payment->status = Payment::STATUS_WAITING;
         $payment->purpose = 'event fee';

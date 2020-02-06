@@ -364,21 +364,9 @@ $app->group('/v1', function () use ($helper) {
                     });
                 });
 
-                // TODO
                 $this->group('/export', function () {
-                    /*$this->get('/medical', function (Request $request, Response $response) {
-                        $csvRows = $this->exportService->medicalDataToCSV('cej2018');
-                        $this->get('logger')->info('Downloaded current medical data');
-
-                        return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_medical');
-                    })->setName('admin-export-medical');
-
-                    $this->get('/logistic', function (Request $request, Response $response) {
-                        $csvRows = $this->exportService->logisticDataPatrolsToCSV('cej2018');
-                        $this->get('logger')->info('Downloaded current logistic data');
-
-                        return $this->exportService->createCSVresponse($response, $csvRows, 'cej2018_logistic');
-                    })->setName('admin-export-logistic');*/
+                    $this->get('/paid', ExportController::class.'::exportPaidData')
+                        ->setName('admin-export-paid');
 
                     $this->get('/full', ExportController::class.'::exportFullData')
                         ->setName('admin-export-full');

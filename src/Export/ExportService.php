@@ -2,9 +2,10 @@
 
 namespace kissj\Export;
 
-use kissj\Orm\Relation;
 use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\User\User;
@@ -16,9 +17,14 @@ use Slim\Http\Response;
 class ExportService {
 
     private $participantRepository;
+    private $participantService;
 
-    public function __construct(ParticipantRepository $participantRepository) {
+    public function __construct(
+        ParticipantRepository $participantRepository,
+        ParticipantService $participantService
+    ) {
         $this->participantRepository = $participantRepository;
+        $this->participantService = $participantService;
     }
 
     public function outputCSVresponse(
@@ -48,154 +54,49 @@ class ExportService {
         return $response->withBody($body);
     }
 
-    // TODO fix
-    public function logisticDataPatrolsToCSV(string $event): array {
-        /** @var Role[] $roles */
-        $roles = $this->getExportRoles($event);
-        $patrolLeaderUserIds = [];
-        foreach ($roles as $role) {
-            if ($role->name === 'patrol-leader') {
-                $patrolLeaderUserIds[] = $role->user->id;
-            }
-        }
-        /** @var PatrolLeader[] $patrolLeaders */
-        $patrolLeaders = $this->patrolLeaderRepository->findBy([
-            'userId' => new Relation($patrolLeaderUserIds, 'IN')
-        ]);
-
-        $patrolLeaderIds = array_map(function (PatrolLeader $p) {
-            return $p->id;
-        }, $patrolLeaders);
-
-        /** @var PatrolParticipant[] $partolParticipants */
-        $partolParticipants = $this->patrolParticipantRepository->findBy([
-            'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
-        ]);
-
-        $rows = [];
-        foreach ($patrolLeaders as $leader) {
-            $rows[] = [
-                $leader->id,
-                $leader->permanentResidence,
-                $leader->country,
-                $leader->firstName.' '.$leader->lastName,
-                $leader->email,
-            ];
-        }
-        foreach ($partolParticipants as $participant) {
-            $rows[] = [
-                $participant->patrolLeader->id,
-                $participant->permanentResidence,
-                $participant->country,
-            ];
-        }
-
-        return $rows;
-    }
-
-    // TODO fix
-    public function medicalDataToCSV(string $event): array {
-        /** @var Role[] $roles */
-        $roles = $this->getExportRoles($event);
-        $patrolLeaderUserIds = [];
-        $istUserIds = [];
-        foreach ($roles as $role) {
-            if ($role->name === 'patrol-leader') {
-                $patrolLeaderUserIds[] = $role->user->id;
-            } elseif ($role->name === 'ist') {
-                $istUserIds[] = $role->user->id;
-            };
-        }
-        /** @var PatrolLeader[] $patrolLeaders */
-        $patrolLeaders = $this->patrolLeaderRepository->findBy([
-            'userId' => new Relation($patrolLeaderUserIds, 'IN')
-        ]);
-
-        $patrolLeaderIds = array_map(function (PatrolLeader $p) {
-            return $p->id;
-        }, $patrolLeaders);
-
-        /** @var Ist[] $ists */
-        $ists = $this->istRepository->findBy([
-            'userId' => new Relation($istUserIds, 'IN')
-        ]);
-        /** @var PatrolParticipant[] $partolParticipants */
-        $partolParticipants = $this->patrolParticipantRepository->findBy([
-            'patrolleaderId' => new Relation($patrolLeaderIds, 'IN')
-        ]);
-
-        $rows = [];
-        foreach ($patrolLeaders as $leader) {
-            $rows[] = [
-                $leader->firstName,
-                $leader->lastName,
-                $leader->birthDate == null ? '' : $leader->birthDate->format('Y-m-d'),
-                $leader->allergies,
-            ];
-        }
-        foreach ($ists as $ist) {
-            $rows[] = [
-                $ist->firstName,
-                $ist->lastName,
-                $ist->birthDate == null ? '' : $ist->birthDate->format('Y-m-d'),
-                $ist->allergies,
-            ];
-        }
-        foreach ($partolParticipants as $participant) {
-            $rows[] = [
-                $participant->firstName,
-                $participant->lastName,
-                $participant->birthDate == null ? '' : $participant->birthDate->format('Y-m-d'),
-                $participant->allergies,
-            ];
-        }
-        return $rows;
-    }
-
-    // TODO fix
-    public function paidContactDataToCSV(string $event): array {
-        // TODO now IST only - add PL
-        /** @var Role[] $roles */
-        $roles = $this->roleRepository->findByMultiple([
-            ['event' => $event,],
-            ['status' => 'paid',],
-        ]);
-        $istUserIds = [];
-        foreach ($roles as $role) {
-            $istUserIds[] = $role->user->id;
-        }
-        /** @var Ist[] $ists */
-        $ists = $this->istRepository->findBy([
-            'userId' => new Relation($istUserIds, 'IN')
-        ]);
-
-        $rows = [];
+    public function paidContactDataToCSV(string $eventName): array {
+        $paidIsts = $this->participantService->getAllParticipantsWithStatus(User::ROLE_IST, User::STATUS_PAID);
+        $paidPatrolLeaders
+            = $this->participantService->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, User::STATUS_PAID);
+        $approvedGuests = $this->participantService->getAllParticipantsWithStatus(User::ROLE_GUEST, User::STATUS_PAID);
 
         $rows[] = [
-            'ID',
-            'Křestní jméno',
-            'Příjmení',
-            'Přezdívka',
-            'Email',
+            'id',
+            'role',
+            'registration email',
+            'contact email',
         ];
 
-        foreach ($ists as $ist) {
+        $namedGroups = [
+            'IST' => $paidIsts,
+            'Patrol Leaders' => $paidPatrolLeaders,
+            'Guests' => $approvedGuests
+        ];
+        foreach ($namedGroups as $groupName => $participantGroup) {
             $rows[] = [
-                $ist->id,
-                $ist->firstName,
-                $ist->lastName,
-                $ist->nickname,
-                $ist->email,
+                '',
+                $groupName,
+                '',
+                '',
             ];
+
+            foreach ($participantGroup as $participant) {
+                $rows[] = [
+                    $participant->id,
+                    $participant->user->role,
+                    $participant->user->email,
+                    $participant->email,
+                ];
+            }
         }
+
         return $rows;
     }
 
     public function allRegistrationDataToCSV(string $eventName): array {
-        /** @var \kissj\Participant\Participant[] $participants */
+        /** @var Participant[] $participants */
         $participants = $this->participantRepository->findAll();
 
-        // nulls headers
         $rows[] = [
             'id',
             'role',

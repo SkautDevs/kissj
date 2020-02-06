@@ -2,9 +2,7 @@
 
 namespace kissj\Event;
 
-class EventService {
-
-    /** @var EventRepository */
+class EventService {/*
     private $eventRepository;
 
     public function __construct(EventRepository $eventRepository) {
@@ -53,9 +51,8 @@ class EventService {
         if ($allowPatrols && (
                 !is_numeric($maximalClosedPatrolsCount) ||
                 !is_numeric($minimalPatrolParticipantsCount) ||
-                !is_numeric(
-                    $maximalPatrolParticipantsCount ||
-                    $minimalPatrolParticipantsCount > $maximalPatrolParticipantsCount)
+                !is_numeric($maximalPatrolParticipantsCount) ||
+                $minimalPatrolParticipantsCount > $maximalPatrolParticipantsCount
             )
         ) {
             return false;
@@ -107,5 +104,5 @@ class EventService {
         $event = $this->eventRepository->findBy(['slug' => $eventSlug]);
 
         return $event[0] ?? null;
-    }
+    }*/
 }

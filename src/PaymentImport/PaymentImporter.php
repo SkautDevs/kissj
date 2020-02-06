@@ -6,7 +6,7 @@ interface PaymentImporter {
     public function getName(): string;
 
     /**
-     * @return array of kissj\PaymentImport\Payment
+     * @return Payment[]
      */
     public function getPayments(): array;
 }
