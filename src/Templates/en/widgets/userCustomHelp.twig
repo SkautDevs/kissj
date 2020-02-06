@@ -1,21 +1,21 @@
 {% if userStatus == 'open' %}
-	{% if userRole == 'pl' %}
-		Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom
-	{% else %}
-		Fill in all the details about yourself and then lock your registration via the buttom at the bottom
-	{% endif %}
+    {% if userRole == 'pl' %}
+        Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom
+    {% else %}
+        Fill in all the details about yourself and then lock your registration via the buttom at the bottom
+    {% endif %}
 {% elseif userStatus == 'closed' %}
-	{% if userRole == 'guest' %}
-		Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an E-mail: team@aqua.sk
-	{% else %}
-		Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an E-mail: team@aqua.sk
-	{% endif %}
+    {% if userRole == 'guest' %}
+        Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an E-mail: team@aqua.sk
+    {% else %}
+        Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an E-mail: team@aqua.sk
+    {% endif %}
 {% elseif userStatus == 'approved' %}
-	Your registration has been approved! Now you need to pay the registration fee. Payment details are below.
+    Your registration has been approved! Now you need to pay the registration fee. Payment details are below.
 {% elseif userStatus == 'paid' %}
-	{% if userRole == 'guest' %}
-		Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2020!
-	{% else %}
-		Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2020!
-	{% endif %}
+    {% if userRole == 'guest' %}
+        Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2020!
+    {% else %}
+        Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2020!
+    {% endif %}
 {% endif %}

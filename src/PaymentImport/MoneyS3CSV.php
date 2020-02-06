@@ -5,20 +5,17 @@ namespace kissj\ManualPaymentImport;
 use kissj\PaymentImport\ManualPaymentImporter;
 use kissj\PaymentImport\Payment;
 
-class MoneyS3CSV implements ManualPaymentImporter
-{
+class MoneyS3CSV implements ManualPaymentImporter {
 
     protected $file;
     protected $event;
 
-    public function __construct(string $file, string $event = "")
-    {
+    public function __construct(string $file, string $event = "") {
         $this->file = $file;
         $this->event = $event;
     }
 
-    public function getName(): string
-    {
+    public function getName(): string {
         return "Money S3 CSV";
     }
 
@@ -29,8 +26,7 @@ class MoneyS3CSV implements ManualPaymentImporter
     /**
      * @return array of kissj\PaymentImport\Payment, array of string
      */
-    public function getPayments(): array
-    {
+    public function getPayments(): array {
         $payments = array();
         $errors = array();
         if (($handle = fopen($this->file, "r")) !== FALSE) {
@@ -42,7 +38,7 @@ class MoneyS3CSV implements ManualPaymentImporter
                 }
             }
             if (!$header_found || $header === FALSE || count($header) < 35 || $header[0] != "Detail 1" || $header[1] != "0")
-                throw new \RuntimeException("File " . $this->file . " is not a properly formatted Money S3 CSV.");
+                throw new \RuntimeException("File ".$this->file." is not a properly formatted Money S3 CSV.");
 
             $header = array_map(array($this, 'encode'), $header);
 

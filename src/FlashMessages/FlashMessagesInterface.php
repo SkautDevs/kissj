@@ -11,6 +11,6 @@ interface FlashMessagesInterface {
     public function warning($message): void;
 
     public function error($message): void;
-	
-	public function dumpMessagesIntoArray(): array;
+
+    public function dumpMessagesIntoArray(): array;
 }

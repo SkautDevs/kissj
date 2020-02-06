@@ -1,34 +1,34 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="two-cards">
-		<div class="card registration-theme">
-			<h2>Vyber si roli!</h2>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="pl">
-				<input type="submit" class="btn form-wide" value="Registruj se jako Patrol Leader!">
-			</form>
-			<br/>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="ist">
-				<input type="submit" class="btn form-wide" value="Registruj se jako Servis Tým!">
-			</form>
-			<br/>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="guest">
-				<input type="submit" class="btn form-wide" value="Registruj se jako host!">
-			</form>
-			<br/>
-		</div>
+    <div class="two-cards">
+        <div class="card registration-theme">
+            <h2>Vyber si roli!</h2>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="pl">
+                <input type="submit" class="btn form-wide" value="Registruj se jako Patrol Leader!">
+            </form>
+            <br/>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="ist">
+                <input type="submit" class="btn form-wide" value="Registruj se jako Servis Tým!">
+            </form>
+            <br/>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="guest">
+                <input type="submit" class="btn form-wide" value="Registruj se jako host!">
+            </form>
+            <br/>
+        </div>
 
-		<div class="card approved-theme">
-			<h2>Nápověda k rolím</h2>
-			<p><b>Patrol Leader</b> je vedoucí skupinky několika dalších účastníků
-				- na akci za ně nese zodpověnost, všechny je i registruje a platí za ně</p>
-			<p><b>Servís tým</b> je parta plnoletých dobrovolníků, bez kterých by se akce neobešla
-				- jedou vypomáhat se vším, co je potřeba</p>
-			<p><b>Host</b> je pozvaný na specifickou část akce</p>
-			<p>Jednotliví <b>účastníci</b> se registrují skrz svého Patrol Leadera</p>
-		</div>
-	</div>
+        <div class="card approved-theme">
+            <h2>Nápověda k rolím</h2>
+            <p><b>Patrol Leader</b> je vedoucí skupinky několika dalších účastníků
+                - na akci za ně nese zodpověnost, všechny je i registruje a platí za ně</p>
+            <p><b>Servís tým</b> je parta plnoletých dobrovolníků, bez kterých by se akce neobešla
+                - jedou vypomáhat se vším, co je potřeba</p>
+            <p><b>Host</b> je pozvaný na specifickou část akce</p>
+            <p>Jednotliví <b>účastníci</b> se registrují skrz svého Patrol Leadera</p>
+        </div>
+    </div>
 {% endblock %}

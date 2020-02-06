@@ -1,53 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8"/>
-	<meta name="robots" content="noindex, nofollow">
+    <meta charset="utf-8"/>
+    <meta name="robots" content="noindex, nofollow">
 
-	<title>Registration {{ event.readableName ?? 'AQUA 2020' }} - kissj</title>
+    <title>Registration {{ event.readableName ?? 'AQUA 2020' }} - kissj</title>
 
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
 
-	<script src="{{ base_url() }}/public/date-polyfill.js" defer></script>
+    <script src="{{ base_url() }}/public/date-polyfill.js" defer></script>
 </head>
 
 <body lang="cs">
 <div class="wrapper">
-	<h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h1>
-	<div class="user text-right">
-		{% if user is not null %}
-			{{ user.email }}
-			<a class="" href="{{ path_for('logout') }}">Log out</a>
-			{% set userStatus = user.status %}
-		{% else %}
-			{% set userStatus = "unregistred" %}
-		{% endif %}
-		<br/>
-	</div>
-	<ul class="progressbar">
-		<li class="progressbar-item progressbar-item-registration progressbar-arrow-right {% if userStatus == 'unregistred' %}is-active{% endif %}">
-			Registration
-		</li>
-		<li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Editing</li>
-		<li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Locked</li>
-		<li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Approved</li>
-		<li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Payed! ;)</li>
-	</ul>
-	<div class="flash-wrapper">
-		{% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
-			<div class="alert alert-{{ flashMessage['type'] }}">
-				{{ flashMessage['message'] }}
-			</div>
-		{% endfor %}
-	</div>
-	<main role="main" class="container">
-		{% block content %}{% endblock %}
-	</main>
-	<footer>
-		<a href="https://devs.skauting.cz/" target="_blank">With ♥ created by Lung</a>
-		<!--<img href="https://aqua.sk/en/" src="/public/logo_200.png">-->
-	</footer>
+    <h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h1>
+    <div class="user text-right">
+        {% if user is not null %}
+            {{ user.email }}
+            <a class="" href="{{ path_for('logout') }}">Log out</a>
+            {% set userStatus = user.status %}
+        {% else %}
+            {% set userStatus = "unregistred" %}
+        {% endif %}
+        <br/>
+    </div>
+    <ul class="progressbar">
+        <li class="progressbar-item progressbar-item-registration progressbar-arrow-right {% if userStatus == 'unregistred' %}is-active{% endif %}">
+            Registration
+        </li>
+        <li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Editing</li>
+        <li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">Locked</li>
+        <li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">Approved</li>
+        <li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">Payed! ;)</li>
+    </ul>
+    <div class="flash-wrapper">
+        {% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
+            <div class="alert alert-{{ flashMessage['type'] }}">
+                {{ flashMessage['message'] }}
+            </div>
+        {% endfor %}
+    </div>
+    <main role="main" class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <a href="https://devs.skauting.cz/" target="_blank">With ♥ created by Lung</a>
+        <!--<img href="https://aqua.sk/en/" src="/public/logo_200.png">-->
+    </footer>
 </div>
 </body>
 </html>

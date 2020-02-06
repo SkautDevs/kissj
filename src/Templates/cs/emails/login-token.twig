@@ -1,10 +1,10 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-	<p>Ahoj!</p>
-	<p>Přihlašuješ se do registrace akce {{ eventName }}.</p>
-	<a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}">Přihlásit!</a>
-	<p>Pokud ti tlačítko nefunguje nebo se ti nezobrazuje, klikni na nebo zkopíruj odkaz do adresního řádku
-		prohlížeče: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
-	<p>Více informací najdeš na webu akce <a href="{{ event.webUrl }}">{{ event.webUrl }}</a></p>
+    <p>Ahoj!</p>
+    <p>Přihlašuješ se do registrace akce {{ eventName }}.</p>
+    <a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}">Přihlásit!</a>
+    <p>Pokud ti tlačítko nefunguje nebo se ti nezobrazuje, klikni na nebo zkopíruj odkaz do adresního řádku
+        prohlížeče: <a href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
+    <p>Více informací najdeš na webu akce <a href="{{ event.webUrl }}">{{ event.webUrl }}</a></p>
 {% endblock %}

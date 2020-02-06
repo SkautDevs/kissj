@@ -2,12 +2,11 @@
 
 namespace kissj\PaymentImport;
 
-interface PaymentImporter
-{
-    public function getName() : string;
+interface PaymentImporter {
+    public function getName(): string;
 
     /**
      * @return array of kissj\PaymentImport\Payment
      */
-    public function getPayments() : array;
+    public function getPayments(): array;
 }

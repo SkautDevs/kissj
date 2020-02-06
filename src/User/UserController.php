@@ -41,7 +41,7 @@ class UserController extends AbstractController {
             $this->userService->sendLoginTokenByMail($email);
         } catch (\RuntimeException $e) {
             $this->logger->addError("Error sending login email to $email with token ".
-                $this->userService->getTokenForEmail($email), array ($e));
+                $this->userService->getTokenForEmail($email), array($e));
             $this->flashMessages->error('E-mail sending failed. Please try it in a couple of minutes. ');
 
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
@@ -100,70 +100,6 @@ class UserController extends AbstractController {
 
             default:
                 throw new RuntimeException('got unknown role for User id '.$user->id.' with role '.$user->role);
-        }
-    }
-
-    // TODO clear/remove
-    protected function trySignup(Request $request, Response $response) {
-        $parameters = $request->getParsedBody();
-        $email = $parameters['email'];
-
-        if ($this->userService->isEmailExisting($email)) {
-            $this->flashMessages->error('Nepovedlo se založit uživatele pro email '.htmlspecialchars($email,
-                    ENT_QUOTES).', protože už takový existuje. Nechceš se spíš přihlásit?');
-            if (isset($parameters['eventSlug'])) {
-                $pathForRedirect = $this->router->pathFor('landing',
-                    ['eventSlug' => $parameters['eventSlug']]);
-            } else {
-                $pathForRedirect = $this->router->pathFor('kissj-landing');
-            }
-
-            return $response->withRedirect($pathForRedirect);
-        }
-
-        $user = $this->userService->registerUser($email);
-        $this->logger->info('Created new user with email '.$email);
-
-        if (isset($parameters['role'], $parameters['eventSlug'])) {
-            // participant signup
-
-            $role = $parameters['role'];
-            if (!$this->roleService->isUserRoleNameValid($role)) {
-                throw new \RuntimeException('User role "'.$role.'" is not valid');
-            }
-
-            $this->roleService->addRole($user, $role);
-            /** @var \kissj\Event $event */
-            $event = $this->eventService->getEventFromSlug($parameters['eventSlug']);
-            try {
-                $this->userService->sendLoginTokenByMail(
-                    $email,
-                    $this->roleService->getReadableRoleName($role),
-                    $event->readableName);
-
-                return $response->withRedirect($this->router->pathFor('signupSuccess'));
-            } catch (\RuntimeException $e) {
-                $this->logger->addError("Error sending registration email to $email to event $event->slug with token ".$this->userService->getTokenForEmail($email),
-                    array ($e));
-                $this->flashMessages->error('Registrace se povedla, ale nezdařilo se odeslat přihlašovací email. Zkus se prosím přihlásit znovu.');
-
-                return $response->withRedirect($this->router->pathFor('landing',
-                    ['eventSlug' => $event->slug]));
-            }
-        } else {
-            // new event registration signup
-            try {
-                $this->userService->sendLoginTokenByMail($email);
-
-                return $response->withRedirect($this->router->pathFor('kissj-signupSuccess'));
-            } catch (\RuntimeException $e) {
-                $this->logger->addError("Error sending registration email to $email with token ".$this->userService->getTokenForEmail($email),
-                    array ($e));
-                $this->flashMessages->error('Registrace se povedla, ale nezdařilo se odeslat přihlašovací email )-:');
-
-                return $response->withRedirect($this->router->pathFor('kissj-landing'));
-            }
-
         }
     }
 }

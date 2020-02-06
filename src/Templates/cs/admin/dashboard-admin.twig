@@ -1,39 +1,39 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card approved-theme">
-		<h2>Dashboard administrátora na akci {{ eventName }}</h2>
-		<h3>Přehled přihlašování</h3>
-		<div class="card-divide">
-			<div>
-				<h3>Patroly</h3>
-				<p>Limit pro patroly: {{ patrols['limit'] }}</p>
-				<p>Uzavřených patrol: {{ patrols['closed'] }}</p>
-				<p>Schválených patrol: {{ patrols['approved'] }}</p>
-				<p>Zaplacených patrol: {{ patrols['paid'] }}</p>
-			</div>
-			<div>
-				<h3>IST</h3>
-				<p>Limit pro IST: {{ ists['limit'] }}</p>
-				<p>Uzavřených IST: {{ ists['closed'] }}</p>
-				<p>Schválených IST: {{ ists['approved'] }}</p>
-				<p>Zaplacených IST: {{ ists['paid'] }}</p>
-			</div>
+    <div class="card approved-theme">
+        <h2>Dashboard administrátora na akci {{ eventName }}</h2>
+        <h3>Přehled přihlašování</h3>
+        <div class="card-divide">
+            <div>
+                <h3>Patroly</h3>
+                <p>Limit pro patroly: {{ patrols['limit'] }}</p>
+                <p>Uzavřených patrol: {{ patrols['closed'] }}</p>
+                <p>Schválených patrol: {{ patrols['approved'] }}</p>
+                <p>Zaplacených patrol: {{ patrols['paid'] }}</p>
+            </div>
+            <div>
+                <h3>IST</h3>
+                <p>Limit pro IST: {{ ists['limit'] }}</p>
+                <p>Uzavřených IST: {{ ists['closed'] }}</p>
+                <p>Schválených IST: {{ ists['approved'] }}</p>
+                <p>Zaplacených IST: {{ ists['paid'] }}</p>
+            </div>
 
-		</div>
-		<h3>Administrátorské akce</h3>
-		<div class="card-divide">
-			<div>
-				<a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
-				<a href="{{ path_for('admin-payments-auto') }}" class="btn">Spárovat nové platby s bankou</a><br/>
-				<!--<a href="{{ path_for('admin-payments-setbreakpoint') }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-				<a href="{{ path_for('admin-payments-manually') }}" class="btn">Ruční potvrzování plateb</a><br/>
-			</div>
-			<div>
-				<a href="{{ path_for('admin-export-paid') }}" class="btn">Export zaplacených účasníků do CSV</a><br/>
-				<a class="btn btn-grey">Export lékařských dat do CSV</a><br/>
-				<a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
-			</div>
-		</div>
-	</div>
+        </div>
+        <h3>Administrátorské akce</h3>
+        <div class="card-divide">
+            <div>
+                <a href="{{ path_for('admin-approving') }}" class="btn">Schvalování účastníků</a><br/>
+                <a href="{{ path_for('admin-payments-auto') }}" class="btn">Spárovat nové platby s bankou</a><br/>
+                <!--<a href="{{ path_for('admin-payments-setbreakpoint') }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ path_for('admin-payments-manually') }}" class="btn">Ruční potvrzování plateb</a><br/>
+            </div>
+            <div>
+                <a href="{{ path_for('admin-export-paid') }}" class="btn">Export zaplacených účasníků do CSV</a><br/>
+                <a class="btn btn-grey">Export lékařských dat do CSV</a><br/>
+                <a href="{{ path_for('admin-export-full') }}" class="btn">Export kompletních dat do CSV</a><br/>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -9,7 +9,6 @@
 namespace kissj\PaymentImport;
 
 
-interface AutomaticPaymentImporter extends PaymentImporter
-{
+interface AutomaticPaymentImporter extends PaymentImporter {
 
 }

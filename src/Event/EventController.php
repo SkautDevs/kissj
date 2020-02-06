@@ -62,21 +62,21 @@ class EventController {
 
         switch ($roleName) {
             case 'patrol-leader':
-                {
-                    return $response->withRedirect($this->router->pathFor('pl-dashboard'));
-                }
+            {
+                return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+            }
             case 'ist':
-                {
-                    return $response->withRedirect($this->router->pathFor('ist-dashboard'));
-                }
+            {
+                return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+            }
             case 'admin':
-                {
-                    return $response->withRedirect($this->router->pathFor('admin-dashboard'));
-                }
+            {
+                return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+            }
             default:
-                {
-                    throw new \RuntimeException('Non-implemented role "'.$roleName.'"!');
-                }
+            {
+                throw new \RuntimeException('Non-implemented role "'.$roleName.'"!');
+            }
         }
 
     }

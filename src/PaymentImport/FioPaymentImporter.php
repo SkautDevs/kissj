@@ -9,19 +9,16 @@
 namespace kissj\PaymentImport;
 
 
-class FioPaymentImporter implements AutomaticPaymentImporter
-{
+class FioPaymentImporter implements AutomaticPaymentImporter {
 
-    public function getName(): string
-    {
+    public function getName(): string {
         return "Fio banka";
     }
 
     /**
      * @return array of kissj\PaymentImport\Payment
      */
-    public function getPayments(): array
-    {
+    public function getPayments(): array {
         // TODO: Implement getPayments() method.
         return [];
     }

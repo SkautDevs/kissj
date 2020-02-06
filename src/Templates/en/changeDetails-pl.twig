@@ -1,170 +1,170 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card text-left open-theme">
-		<h2>Edit your details</h2>
-		<form method="POST" action="{{ path_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
-			<label class="form-group form-group-inline">Name of your patrol: <input class="form-control" type="text"
-																					name="patrolName"
-																					value="{{ plDetails.getPatrolName }}"
-																					required="required"></label>
-			<label class="form-group form-group-inline">First name: <input class="form-control" type="text"
-																		   name="firstName"
-																		   value="{{ plDetails.getFirstName }}"
-																		   required="required"></label>
-			<label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
-																		name="lastName"
-																		value="{{ plDetails.getLastName }}"
-																		required="required"></label>
-			<label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
-																			   name="nickname"
-																			   value="{{ plDetails.getNickname }}"></label>
-			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
-																			  name="birthDate"
-																			  value="{{ guestDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
-																			  required="required"></label>
-			<label class="form-group form-group-inline">Gender:
-				<select class="form-control" name="gender" required="required">
-					<option value="man" {% if plDetails.getGender == 'man' %}selected="selected"{% endif %}>
-						Man
-					</option>
-					<option value="woman" {% if plDetails.getGender == 'woman' %}selected="selected"{% endif %}>
-						Woman
-					</option>
-					<option value="other" {% if plDetails.getGender == 'other' %}selected="selected"{% endif %}>
-						Other
-					</option>
-				</select>
-			</label>
-			<br>
+    <div class="card text-left open-theme">
+        <h2>Edit your details</h2>
+        <form method="POST" action="{{ path_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
+            <label class="form-group form-group-inline">Name of your patrol: <input class="form-control" type="text"
+                                                                                    name="patrolName"
+                                                                                    value="{{ plDetails.getPatrolName }}"
+                                                                                    required="required"></label>
+            <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
+                                                                           name="firstName"
+                                                                           value="{{ plDetails.getFirstName }}"
+                                                                           required="required"></label>
+            <label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
+                                                                        name="lastName"
+                                                                        value="{{ plDetails.getLastName }}"
+                                                                        required="required"></label>
+            <label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
+                                                                               name="nickname"
+                                                                               value="{{ plDetails.getNickname }}"></label>
+            <label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
+                                                                              name="birthDate"
+                                                                              value="{{ guestDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
+                                                                              required="required"></label>
+            <label class="form-group form-group-inline">Gender:
+                <select class="form-control" name="gender" required="required">
+                    <option value="man" {% if plDetails.getGender == 'man' %}selected="selected"{% endif %}>
+                        Man
+                    </option>
+                    <option value="woman" {% if plDetails.getGender == 'woman' %}selected="selected"{% endif %}>
+                        Woman
+                    </option>
+                    <option value="other" {% if plDetails.getGender == 'other' %}selected="selected"{% endif %}>
+                        Other
+                    </option>
+                </select>
+            </label>
+            <br>
 
-			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
-																	  value="{% if plDetails.getEmail is empty %}{{ user.email }}{% else %}{{ plDetails.getEmail }}{% endif %}"
-																	  required="required"></label>
-			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
-																			 name="telephoneNumber"
-																			 value="{{ plDetails.getTelephoneNumber }}"
-																			 placeholder="digits including country dial-in code"
-																			 pattern="^\+?[0-9 ]+$"
-																			 required="required"></label>
-			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
-																				  name="permanentResidence"
-																				  value="{{ plDetails.getPermanentResidence }}"
-																				  placeholder="Street and no., city, postal code"
-																				  required="required"></label>
-			<label class="form-group form-group-inline">Country:
-				<select class="form-control" name="country">
-					<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
-						Slovak Republic
-					</option>
-					<option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
-						Czech Republic
-					</option>
-					<option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
-						other - please fill your country in note
-					</option>
-				</select>
-			</label>
-			<label class="form-group form-group-inline">Scout unit: <input class="form-control" type="text"
-																		   name="scoutUnit"
-																		   value="{{ plDetails.getScoutUnit }}"
-																		   required="required"></label>
-			<br>
+            <label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+                                                                      value="{% if plDetails.getEmail is empty %}{{ user.email }}{% else %}{{ plDetails.getEmail }}{% endif %}"
+                                                                      required="required"></label>
+            <label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
+                                                                             name="telephoneNumber"
+                                                                             value="{{ plDetails.getTelephoneNumber }}"
+                                                                             placeholder="digits including country dial-in code"
+                                                                             pattern="^\+?[0-9 ]+$"
+                                                                             required="required"></label>
+            <label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
+                                                                                  name="permanentResidence"
+                                                                                  value="{{ plDetails.getPermanentResidence }}"
+                                                                                  placeholder="Street and no., city, postal code"
+                                                                                  required="required"></label>
+            <label class="form-group form-group-inline">Country:
+                <select class="form-control" name="country">
+                    <option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
+                        Slovak Republic
+                    </option>
+                    <option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
+                        Czech Republic
+                    </option>
+                    <option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
+                        other - please fill your country in note
+                    </option>
+                </select>
+            </label>
+            <label class="form-group form-group-inline">Scout unit: <input class="form-control" type="text"
+                                                                           name="scoutUnit"
+                                                                           value="{{ plDetails.getScoutUnit }}"
+                                                                           required="required"></label>
+            <br>
 
-			{# <label class="form-group form-group-inline">T-shirt shape:
-				<select class="form-control" name="tshirtShape" required="required">
-					<option value="lady" {% if plDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
-						ladies
-					</option>
-					<option value="gentleman"
-							{% if plDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
-						gentleman
-					</option>
-				</select>
-			</label>
-			<label class="form-group form-group-inline">T-shirt size:
-				<select class="form-control" name="tshirtSize" required="required">
-					<option value="s" {% if plDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
-						S - small
-					</option>
-					<option value="m" {% if plDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
-						M - medium
-					</option>
-					<option value="l" {% if plDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
-						L - large
-					</option>
-					<option value="xl" {% if plDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
-						XL - larger
-					</option>
-					<option value="xxl" {% if plDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
-						XXL - largest
-					</option>
-				</select>
-			</label> #}
-			<label class="form-group form-group-inline">Diet restriction:
-				<select class="form-control" name="foodPreferences" required="required">
-					<option value="no restriction"
-							{% if plDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
-						no restriction
-					</option>
-					<option value="vegetarian"
-							{% if plDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
-						vegetarian
-					</option>
-					<option value="lactoseFree"
-							{% if plDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
-						lactose-free
-					</option>
-					<option value="glutenFree"
-							{% if plDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
-						gluten-free
-					</option>
-					<option value="other"
-							{% if plDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
-						other
-					</option>
-				</select>
-			</label>
-			if choosed other - we arrange only above stated options of diet restriction; in case of
-			other restrictions, you have to arrange all the food for whole event yourself and your
-			participant fee will be reduced
-			<label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
-																			  name="healthProblems"
-																			  placeholder="allergies, ..."
-																			  value="{{ plDetails.getHealthProblems }}">
-			</label>
-			<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
-																							type="text"
-																							name="languages"
-																							required="required"
-																							value="{{ plDetails.getLanguages }}">
-			</label>
-			<label class="form-group form-group-inline">Swimming skill:
-				<select class="form-control" name="swimming" required="required">
-					<option value="no swim"
-							{% if plDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
-						I can't swim :(
-					</option>
-					<option value="less than 50 meters"
-							{% if plDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
-						less than 50 meters
-					</option>
-					<option value="more than 50 meters"
-							{% if plDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
-						more than 50 meters
-					</option>
-				</select>
-			</label>
-			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
-																	 placeholder="anything else?"
-																	 value="{{ plDetails.getNotes }}">
-			</label>
+            {# <label class="form-group form-group-inline">T-shirt shape:
+                <select class="form-control" name="tshirtShape" required="required">
+                    <option value="lady" {% if plDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
+                        ladies
+                    </option>
+                    <option value="gentleman"
+                            {% if plDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
+                        gentleman
+                    </option>
+                </select>
+            </label>
+            <label class="form-group form-group-inline">T-shirt size:
+                <select class="form-control" name="tshirtSize" required="required">
+                    <option value="s" {% if plDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
+                        S - small
+                    </option>
+                    <option value="m" {% if plDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
+                        M - medium
+                    </option>
+                    <option value="l" {% if plDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
+                        L - large
+                    </option>
+                    <option value="xl" {% if plDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
+                        XL - larger
+                    </option>
+                    <option value="xxl" {% if plDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
+                        XXL - largest
+                    </option>
+                </select>
+            </label> #}
+            <label class="form-group form-group-inline">Diet restriction:
+                <select class="form-control" name="foodPreferences" required="required">
+                    <option value="no restriction"
+                            {% if plDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
+                        no restriction
+                    </option>
+                    <option value="vegetarian"
+                            {% if plDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
+                        vegetarian
+                    </option>
+                    <option value="lactoseFree"
+                            {% if plDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
+                        lactose-free
+                    </option>
+                    <option value="glutenFree"
+                            {% if plDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
+                        gluten-free
+                    </option>
+                    <option value="other"
+                            {% if plDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
+                        other
+                    </option>
+                </select>
+            </label>
+            if choosed other - we arrange only above stated options of diet restriction; in case of
+            other restrictions, you have to arrange all the food for whole event yourself and your
+            participant fee will be reduced
+            <label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
+                                                                              name="healthProblems"
+                                                                              placeholder="allergies, ..."
+                                                                              value="{{ plDetails.getHealthProblems }}">
+            </label>
+            <label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
+                                                                                            type="text"
+                                                                                            name="languages"
+                                                                                            required="required"
+                                                                                            value="{{ plDetails.getLanguages }}">
+            </label>
+            <label class="form-group form-group-inline">Swimming skill:
+                <select class="form-control" name="swimming" required="required">
+                    <option value="no swim"
+                            {% if plDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
+                        I can't swim :(
+                    </option>
+                    <option value="less than 50 meters"
+                            {% if plDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
+                        less than 50 meters
+                    </option>
+                    <option value="more than 50 meters"
+                            {% if plDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
+                        more than 50 meters
+                    </option>
+                </select>
+            </label>
+            <label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
+                                                                     placeholder="anything else?"
+                                                                     value="{{ plDetails.getNotes }}">
+            </label>
 
-			<div class="text-center">
-				<a class="btn btn-small btn-grey"
-				   href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
-				<input class="btn btn-small" type="submit" value="Save">
-			</div>
-		</form>
-	</div>
+            <div class="text-center">
+                <a class="btn btn-small btn-grey"
+                   href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+                <input class="btn btn-small" type="submit" value="Save">
+            </div>
+        </form>
+    </div>
 {% endblock %}

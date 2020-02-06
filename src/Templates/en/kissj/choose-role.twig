@@ -1,37 +1,37 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="two-cards">
-		<div class="card registration-theme">
-			<h2>Choose your role</h2>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="pl">
-				<input type="submit" class="btn form-wide" value="Register as Patrol Leader!">
-			</form>
-			<br/>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="ist">
-				<input type="submit" class="btn form-wide" value="Register as Servis Team!">
-			</form>
-			<br/>
-			<form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
-				<input type="hidden" name="role" value="guest">
-				<input type="submit" class="btn form-wide" value="Register as Guest!">
-			</form>
-			<br/>
-		</div>
+    <div class="two-cards">
+        <div class="card registration-theme">
+            <h2>Choose your role</h2>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="pl">
+                <input type="submit" class="btn form-wide" value="Register as Patrol Leader!">
+            </form>
+            <br/>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="ist">
+                <input type="submit" class="btn form-wide" value="Register as Servis Team!">
+            </form>
+            <br/>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="guest">
+                <input type="submit" class="btn form-wide" value="Register as Guest!">
+            </form>
+            <br/>
+        </div>
 
-		<div class="card approved-theme">
-			<h2>Advice on roles</h2>
-			<p><b>Patrol Leader</b> is a leader of a group of participants. S/he is responsible for the patrol
-				throughout whole event and also registers participants and pays the registration fee for whole patrol
-			</p>
-			<p><b>Service Team</b> or <b>IST</b> stands for International Service Team. It is a bunch of adult
-				volunteers without whom the event wouldn't take place
-				- they attend the event to help the organizers </p>
-			<p><b>Guest</b> is invited for a particular part of the event - you should know when you can register as
-				guest</p>
-			<p><b>Participants</b> are registered by their Parol Leader, we have no button for you here</p>
-		</div>
-	</div>
+        <div class="card approved-theme">
+            <h2>Advice on roles</h2>
+            <p><b>Patrol Leader</b> is a leader of a group of participants. S/he is responsible for the patrol
+                throughout whole event and also registers participants and pays the registration fee for whole patrol
+            </p>
+            <p><b>Service Team</b> or <b>IST</b> stands for International Service Team. It is a bunch of adult
+                volunteers without whom the event wouldn't take place
+                - they attend the event to help the organizers </p>
+            <p><b>Guest</b> is invited for a particular part of the event - you should know when you can register as
+                guest</p>
+            <p><b>Participants</b> are registered by their Parol Leader, we have no button for you here</p>
+        </div>
+    </div>
 {% endblock %}

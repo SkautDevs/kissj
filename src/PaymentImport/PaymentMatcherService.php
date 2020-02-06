@@ -2,13 +2,12 @@
 
 namespace kissj\PaymentImport;
 
-use kissj\PaymentImport;
 use kissj\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\PaymentImport;
 
-class PaymentMatcherService
-{
+class PaymentMatcherService {
 
     /** @var PaymentService */
     private $paymentService;
@@ -16,15 +15,14 @@ class PaymentMatcherService
     /** @var PaymentRepository */
     private $paymentRepository;
 
-    public function __construct(PaymentService $paymentService, PaymentRepository $paymentRepository)
-    {
+    public function __construct(PaymentService $paymentService, PaymentRepository $paymentRepository) {
 
     }
 
     public function match(array $importedPayments) {
         $toBePaid = $this->paymentRepository->findBy(['status' => 'waiting']);
 
-        $getVs = function($payment) {
+        $getVs = function ($payment) {
             return $payment->variableSymbol;
         };
 
@@ -60,11 +58,13 @@ class PaymentMatcherService
 
 abstract class PaymentMatchingError {
 
-    public $importedPayment; /** @var PaymentImport\Payment */
-    public $repoPayment; /** @var Payment\Payment */
+    public $importedPayment;
+    /** @var PaymentImport\Payment */
+    public $repoPayment;
 
-    public function __construct($importedPayment, $repoPayment = null)
-    {
+    /** @var Payment\Payment */
+
+    public function __construct($importedPayment, $repoPayment = null) {
         $this->importedPayment = $importedPayment;
         $this->repoPayment = $repoPayment;
     }
@@ -74,20 +74,19 @@ abstract class PaymentMatchingError {
 
 
 class WrongAmountError extends PaymentMatchingError {
-    public function getErrorString()
-    {
+    public function getErrorString() {
         return sprintf("Špatná částka. Má být: %i, je: %i.", $this->repoPayment->price, $this->importedPayment->amount);
     }
 }
+
 class WrongCurrencyError extends PaymentMatchingError {
-    public function getErrorString()
-    {
+    public function getErrorString() {
         return sprintf("Špatná měna. Má být: Kč, je: %s.", $this->importedPayment->currency);
     }
 }
+
 class UnknownVariableSymbolError extends PaymentMatchingError {
-    public function getErrorString()
-    {
+    public function getErrorString() {
         return sprintf("Neznámý variabilní symbol: %i.", $this->importedPayment->variableSymbol);
     }
 }

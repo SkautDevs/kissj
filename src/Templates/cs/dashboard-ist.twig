@@ -1,44 +1,44 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card {{ userStatus }}-theme">
-		<h2>Účastník - přehled údajů</h2>
-		<h4>
-			{{ userCustomHelp }}
-		</h4>
-		{% if userStatus == 'approved' %}
-			<div class="paymentInfo">
-				<h2>Platební údaje</h2>
-				Číslo účtu: <b>{{ payment.getAccountNumber }}</b><br/>
-				Částka: <b>{{ payment.getPrice }} Kč</b><br/>
-				Variabilní symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
-				Poznámka: <b>Korbo 2019 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}</b><br/>
-				<br/>
-			</div>
-		{% endif %}
+    <div class="card {{ userStatus }}-theme">
+        <h2>Účastník - přehled údajů</h2>
+        <h4>
+            {{ userCustomHelp }}
+        </h4>
+        {% if userStatus == 'approved' %}
+            <div class="paymentInfo">
+                <h2>Platební údaje</h2>
+                Číslo účtu: <b>{{ payment.getAccountNumber }}</b><br/>
+                Částka: <b>{{ payment.getPrice }} Kč</b><br/>
+                Variabilní symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
+                Poznámka: <b>Korbo 2019 {{ istDetails.getFirstName }} {{ istDetails.getLastName }}</b><br/>
+                <br/>
+            </div>
+        {% endif %}
 
-		<div>
-			<h2>Osobní údaje</h2>
-			{% if userStatus == 'open' %}
-				<a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
-			{% endif %}
-			<div class="text-center">
-				Křestní jméno: <b>{{ istDetails.getFirstName }}</b><br/>
-				Příjmení: <b>{{ istDetails.getLastName }}</b><br/>
-				Přezdívka: <b>{{ istDetails.getNickname }}</b><br/>
-				Gender: <b>{{ istDetails.getGender }}</b><br/>
-				Datum narození: <b>{{ istDetails.getBirthDate.format('d. m. Y') }}</b><br/>
-				Adresa: <b>{{ istDetails.getPermanentResidence }}</b><br/>
-				Email: <b>{{ istDetails.getEmail }}</b><br/>
-				Jméno a přijmení doprovodu (povinné do 18 let): <b>{{ istDetails.getLegalRepresestative }}</b><br/>
-				Korbo šátek: <b>{{ istDetails.getScarf }}</b><br/>
-				Poznámky: <b>{{ istDetails.getNotes }}</b><br/>
-				<br/>
-			</div>
-		</div>
+        <div>
+            <h2>Osobní údaje</h2>
+            {% if userStatus == 'open' %}
+                <a class="btn btn-small" href="{{ path_for('ist-changeDetails') }}">Změnit údaje o sobě</a><br/><br/>
+            {% endif %}
+            <div class="text-center">
+                Křestní jméno: <b>{{ istDetails.getFirstName }}</b><br/>
+                Příjmení: <b>{{ istDetails.getLastName }}</b><br/>
+                Přezdívka: <b>{{ istDetails.getNickname }}</b><br/>
+                Gender: <b>{{ istDetails.getGender }}</b><br/>
+                Datum narození: <b>{{ istDetails.getBirthDate.format('d. m. Y') }}</b><br/>
+                Adresa: <b>{{ istDetails.getPermanentResidence }}</b><br/>
+                Email: <b>{{ istDetails.getEmail }}</b><br/>
+                Jméno a přijmení doprovodu (povinné do 18 let): <b>{{ istDetails.getLegalRepresestative }}</b><br/>
+                Korbo šátek: <b>{{ istDetails.getScarf }}</b><br/>
+                Poznámky: <b>{{ istDetails.getNotes }}</b><br/>
+                <br/>
+            </div>
+        </div>
 
-		{% if userStatus == 'open' %}
-			<a class="btn btn-small" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
-		{% endif %}
-	</div>
+        {% if userStatus == 'open' %}
+            <a class="btn btn-small" href="{{ path_for('ist-closeRegistration') }}">Uzavřít registraci</a>
+        {% endif %}
+    </div>
 {% endblock %}

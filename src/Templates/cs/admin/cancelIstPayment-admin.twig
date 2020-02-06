@@ -1,22 +1,22 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card card-half closed-theme">
-		<h2>Zrušit platbu</h2>
-		<p>Skutečně chceš zrušit platbu účastníka <b>{{ ist.getFirstName }} {{ ist.getLastName }}
-				- {{ ist.getNickname }}</b>?</p>
-		<p>Je potřeba, aby o zrušení platby účastník věděl, protože platba může být na cestě - když ji teď zrušíš a
-			přesto dorazí, bude to dost řešení navíc. Pro opětovné placení bude potřeba znovu schválit účastníka a
-			vygenerovat mu tím novou platbu!!</p>
-		<form method="post" action="{{ path_for('cancel-ist-payment-confirmed', {'paymentId' : payment.getId}) }}">
-			<div class="form-group">
-				<label>Důvod zrušení platby (bude poslán mailem): <br/><br/>
-					<input type="text" name="reason" id="form-reason" class="form-control form-wide"
-						   required="required"></label>
-			</div>
-			<br/>
-			<a href="{{ path_for('admin-payments-manually') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
-			<input type="submit" value="Zrušit platbu" class="btn btn-small">
-		</form>
-	</div>
+    <div class="card card-half closed-theme">
+        <h2>Zrušit platbu</h2>
+        <p>Skutečně chceš zrušit platbu účastníka <b>{{ ist.getFirstName }} {{ ist.getLastName }}
+                - {{ ist.getNickname }}</b>?</p>
+        <p>Je potřeba, aby o zrušení platby účastník věděl, protože platba může být na cestě - když ji teď zrušíš a
+            přesto dorazí, bude to dost řešení navíc. Pro opětovné placení bude potřeba znovu schválit účastníka a
+            vygenerovat mu tím novou platbu!!</p>
+        <form method="post" action="{{ path_for('cancel-ist-payment-confirmed', {'paymentId' : payment.getId}) }}">
+            <div class="form-group">
+                <label>Důvod zrušení platby (bude poslán mailem): <br/><br/>
+                    <input type="text" name="reason" id="form-reason" class="form-control form-wide"
+                           required="required"></label>
+            </div>
+            <br/>
+            <a href="{{ path_for('admin-payments-manually') }}" class="btn btn-small btn-grey">Zpět</a><br/><br/>
+            <input type="submit" value="Zrušit platbu" class="btn btn-small">
+        </form>
+    </div>
 {% endblock %}
