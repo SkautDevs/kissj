@@ -12,7 +12,7 @@ $container = $app->getContainer();
 if ($container->get('settings')['whoopsDebug']) {
     $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 } else {
-    $simplyErrorHandler = function (Exception $exception, Inspector $inspector, $run) use ($container) {
+    $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {
         $title = $inspector->getExceptionName();
         $code = $exception->getCode();
         $message = $inspector->getExceptionMessage();

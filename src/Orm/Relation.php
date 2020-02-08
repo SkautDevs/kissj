@@ -4,8 +4,8 @@ namespace kissj\Orm;
 
 
 class Relation {
-    private $value;
-    private $relation;
+    public $value;
+    public $relation;
 
     public function __construct($value, $relation = '=') {
         $this->value = $value;
