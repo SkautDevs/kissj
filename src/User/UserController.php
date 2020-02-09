@@ -69,7 +69,7 @@ class UserController extends AbstractController {
 
     public function logout(Response $response) {
         $this->userService->logoutUser();
-        $this->flashMessages->info('Odhlášení bylo úspěšné');
+        $this->flashMessages->info('Logout was successful');
 
         return $response->withRedirect($this->router->pathFor('landing'));
     }
