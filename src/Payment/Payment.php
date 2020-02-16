@@ -31,6 +31,11 @@ class Payment extends EntityDatetime {
     public function getMaxElapsedPaymentDays(): int {
         return 14; // TODO move into db
     }
+
+    public function getPaymentUntil(): \DateTime {
+        $dateInterval = new \DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
+        return $this->createdAt->add($dateInterval);
+    }
 }
 
 /**
