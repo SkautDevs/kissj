@@ -112,10 +112,8 @@ class ExportService {
             'scout unit',
             'languages',
             'birth date',
-            'birth place',
             'health problems',
             'food preferences',
-            'passprort/ID number',
             'swimming',
             'tshirt',
             'arrival date',
@@ -152,7 +150,7 @@ class ExportService {
             if ($participant instanceof Ist) {
                 $istPart = [
                     $participant->skills,
-                    $participant->preferredPosition,
+                    implode(' | ', $participant->preferredPosition),
                     $participant->driversLicense,
                 ];
             } else {
@@ -162,7 +160,8 @@ class ExportService {
                     '',
                 ];
             }
-            $rows[] = [
+            $rows[] = array_merge(
+                [
                     (string)$participant->id,
                     $participant->role,
                     $participant->firstName,
@@ -177,16 +176,17 @@ class ExportService {
                     $participant->scoutUnit,
                     $participant->languages,
                     $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
-                    $participant->birthPlace,
                     $participant->healthProblems,
                     $participant->foodPreferences,
-                    $participant->idNumber,
                     $participant->swimming,
                     $participant->tshirt,
                     $participant->arrivalDate ? $participant->arrivalDate->format('Ymd-H:i:m') : '',
                     $participant->departueDate ? $participant->departueDate->format('Ymd-H:i:m') : '',
                     $participant->notes,
-                ] + $pPart + $istPart;
+                ],
+                $pPart,
+                $istPart
+            );
         }
 
         return $rows;
