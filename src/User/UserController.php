@@ -92,6 +92,9 @@ class UserController extends AbstractController {
             case User::ROLE_PATROL_LEADER:
                 return $response->withRedirect($this->router->pathFor('pl-dashboard', $routerEventSlug));
 
+            case User::ROLE_FREE_PARTICIPANT:
+                return $response->withRedirect($this->router->pathFor('fp-dashboard', $routerEventSlug));
+
             case User::ROLE_GUEST:
                 return $response->withRedirect($this->router->pathFor('guest-dashboard', $routerEventSlug));
 

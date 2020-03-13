@@ -6,6 +6,48 @@
         <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
     </div>
     <br/>
+
+    {% if approvedPatrolLeaders is not empty %}
+        <div class="card approved-theme">
+            <h2>Patrols</h2>
+        </div>
+        <br/>
+        {% for pl in approvedPatrolLeaders %}
+            <div class="card approved-theme">
+                <h4>{{ pl.getFullName }}</h4>
+                Email: <b>{{ pl.getEmail }}</b><br/>
+                {% for payment in pl.getPayment %}
+                    Status: <b>{{ payment.status }}</b><br/>
+                    Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+                    Payment is: <b><span
+                            class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
+						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
+                    <br/>
+                    Variable symbol: <b>{{ payment.variableSymbol }}</b><br/>
+                    Amount: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
+                    <br/>
+                    {% if payment.status == 'waiting' %}
+                        <a href="{{ path_for('admin-cancel-payment-show',
+                            {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                           class="btn btn-grey btn-small">Cancel payment</a>
+                        <br/>
+                        <br/>
+                        <form method="post" action="{{ path_for('admin-confirm-payment',
+                            {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+                            <input type="submit" value="Confirm payment" class="btn btn-small">
+                        </form>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>All patrols are paid up!</h2>
+        </div>
+        <br/>
+    {% endif %}
+
     {% if approvedIsts is not empty %}
         <div class="card approved-theme">
             <h2>International Service Team</h2>
@@ -16,7 +58,6 @@
                 <h4>{{ ist.getFullName }}</h4>
                 Email: <b>{{ ist.getEmail }}</b><br/>
                 {% for payment in ist.getPayment %}
-                    <br/>
                     Status: <b>{{ payment.status }}</b><br/>
                     Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
                     Payment is: <b><span
@@ -48,17 +89,16 @@
         <br/>
     {% endif %}
 
-    {% if approvedPatrolLeaders is not empty %}
+    {% if approvedFreeParticipants is not empty %}
         <div class="card approved-theme">
-            <h2>Patrols</h2>
+            <h2>Free Participants</h2>
         </div>
         <br/>
-        {% for pl in approvedPatrolLeaders %}
+        {% for fp in approvedFreeParticipants %}
             <div class="card approved-theme">
-                <h4>{{ pl.getFullName }}</h4>
-                Email: <b>{{ pl.getEmail }}</b><br/>
-                {% for payment in pl.getPayment %}
-                    <br/>
+                <h4>{{ fp.getFullName }}</h4>
+                Email: <b>{{ fp.getEmail }}</b><br/>
+                {% for payment in fp.getPayment %}
                     Status: <b>{{ payment.status }}</b><br/>
                     Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
                     Payment is: <b><span
@@ -85,7 +125,7 @@
         {% endfor %}
     {% else %}
         <div class="card closed-theme">
-            <h2>All patrols are paid up!</h2>
+            <h2>All Free Participants are paid up!</h2>
         </div>
         <br/>
     {% endif %}

@@ -86,7 +86,6 @@
                     Scout unit: <b>{{ pDetail.getScoutUnit }}</b><br/>
                     Diet Restriction: <b>{{ pDetail.getFoodPreferences }}</b><br/>
                     Health issues: <b>{{ pDetail.getHealthProblems }}</b><br/>
-                    Languages you speak + level: <b>{{ pDetail.getLanguages }}</b><br/>
                     Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
                     Notes: <b>{{ pDetail.getNotes }}</b><br/>
                     <br/>
@@ -105,6 +104,45 @@
     {% else %}
         <div class="card closed-theme">
             <h2>No patrols are in need to approve</h2>
+        </div>
+        <br/>
+    {% endif %}
+
+    {% if closedFreeParticipants is not empty %}
+        <div class="card closed-theme">
+            <h2>Free Participants</h2>
+        </div>
+        <br/>
+        {% for freeParticipant in closedFreeParticipants %}
+            <div class="card closed-theme">
+                <h4>{{ freeParticipant.getFullName }}</h4>
+                Date of birth: <b>{{ freeParticipant.getBirthDate.format('d. m. Y') }}</b><br/>
+                Gender: <b>{{ freeParticipant.getGender }}</b><br/>
+                Email: <b>{{ freeParticipant.getEmail }}</b><br/>
+                Phone number: <b>{{ freeParticipant.getTelephoneNumber }}</b><br/>
+                Permanent Address: <b>{{ freeParticipant.getPermanentResidence }}</b><br/>
+                Country: <b>{{ freeParticipant.getCountry }}</b><br/>
+                Scout unit: <b>{{ freeParticipant.getScoutUnit }}</b><br/>
+                Diet Restriction: <b>{{ freeParticipant.getFoodPreferences }}</b><br/>
+                Health issues: <b>{{ freeParticipant.getHealthProblems }}</b><br/>
+                Swimming skill: <b>{{ freeParticipant.getSwimming }}</b><br/>
+                Legal representative (name + email): <b>{{ freeParticipant.getLegalRepresentative }}</b><br/>
+                Current Leader (name + email): <b>{{ freeParticipant.getNotes }}</b><br/>
+                <br/>
+                <a href="{{ path_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">Deny</a>
+                <br/>
+                <br/>
+                <form method="post"
+                      action="{{ path_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                    <input type="submit" value="Approve and send email" class="btn btn-small">
+                </form>
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>No free participants are in need for approve</h2>
         </div>
         <br/>
     {% endif %}

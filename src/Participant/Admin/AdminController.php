@@ -3,6 +3,7 @@
 namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
+use kissj\Participant\FreeParticipant\FreeParticipantService;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
 use kissj\Participant\ParticipantRepository;
@@ -21,6 +22,7 @@ class AdminController extends AbstractController {
     public $paymentRepository;
     public $patrolService;
     public $istService;
+    public $freeParticipantService;
     public $guestService;
 
     public function __construct(
@@ -30,6 +32,7 @@ class AdminController extends AbstractController {
         PaymentRepository $paymentRepository,
         PatrolService $patrolService,
         IstService $istService,
+        FreeParticipantService $freeParticipantService,
         GuestService $guestService
     ) {
         $this->participantService = $participantService;
@@ -38,6 +41,7 @@ class AdminController extends AbstractController {
         $this->paymentRepository = $paymentRepository;
         $this->patrolService = $patrolService;
         $this->istService = $istService;
+        $this->freeParticipantService = $freeParticipantService;
         $this->guestService = $guestService;
     }
 
@@ -48,6 +52,7 @@ class AdminController extends AbstractController {
             [
                 'patrols' => $this->patrolService->getAllPatrolsStatistics(),
                 'ists' => $this->istService->getAllIstsStatistics(),
+                'freeParticipants' => $this->freeParticipantService->getAllFreeParticipantStatistics(),
                 'guests' => $this->guestService->getAllGuestsStatistics(),
             ]
         );
@@ -62,6 +67,8 @@ class AdminController extends AbstractController {
                 ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_CLOSED),
             'closedIsts' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_CLOSED),
+            'closedFreeParticipants' => $participantService
+                ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_CLOSED),
             'closedGuests' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_CLOSED),
         ]);
@@ -76,6 +83,8 @@ class AdminController extends AbstractController {
                 ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_APPROVED),
             'approvedIsts' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_APPROVED),
+            'approvedFreeParticipants' => $participantService
+                ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_APPROVED),
             'approvedGuests' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_APPROVED),
         ]);

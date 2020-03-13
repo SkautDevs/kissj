@@ -145,8 +145,23 @@ class UserService {
         ]);
     }
 
+    public function getClosedFreeParticipantsCount(): int {
+        return $this->userRepository->countBy([
+            'role' => User::ROLE_FREE_PARTICIPANT,
+            //'event' => $this->eventName, // TODO fix
+            'status' => new Relation(User::STATUS_OPEN, '!='),
+        ]);
+    }
+
     protected function isRoleValid(string $role): bool {
-        return in_array($role, [User::ROLE_IST, User::ROLE_PATROL_LEADER, User::ROLE_GUEST], true);
+        $allowedRoles = [
+            User::ROLE_IST,
+            User::ROLE_PATROL_LEADER,
+            User::ROLE_FREE_PARTICIPANT,
+            User::ROLE_GUEST
+        ];
+
+        return in_array($role, $allowedRoles, true);
     }
 
     public function openRegistration(User $user): User {

@@ -3,6 +3,7 @@
 namespace kissj\Payment;
 
 use kissj\Orm\Repository;
+use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 
@@ -25,6 +26,8 @@ class PaymentRepository extends Repository {
         $payment->accountNumber = 'SK98 1100 0000 0026 6008 0180';
         if ($participant instanceof Ist) {
             $payment->note = 'AQUASTAFF '.$payment->variableSymbol.' '.$participant->getFullName();
+        } elseif ($participant instanceof FreeParticipant) {
+            $payment->note = 'AQUA SOLO '.$payment->variableSymbol.' '.$participant->getFullName();
         } else {
             $payment->note = 'AQUA 2020 '.$payment->variableSymbol.' '.$participant->getFullName();
         }

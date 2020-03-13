@@ -34,4 +34,5 @@ class Event extends Entity {
     public $maximalClosedPatrolsSlovakCount = 18;
     public $maximalClosedPatrolsCzechCount = 5;
     public $maximalClosedPatrolsOthersCount = 5;
+    public $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
 }

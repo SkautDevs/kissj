@@ -3,6 +3,7 @@
 namespace kissj\Payment;
 
 use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -28,7 +29,7 @@ class PaymentService {
 
     /**
      * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
-     * discount 40€ for self-eating participant
+     * discount 40€ for self-eating participant (free included), not for ISTs (not computed)
      *
      * @param Participant $participant
      * @return int
@@ -53,11 +54,20 @@ class PaymentService {
             return 60;
         }
 
+        if ($participant instanceof FreeParticipant) {
+            $price = $this->getFullPriceForToday();
+            if ($participant->foodPreferences === Participant::FOOD_OTHER) {
+                $price -= 40;
+            }
+
+            return $price;
+        }
+
         throw new \RuntimeException('Generating price for unknown role - participant ID: '.$participant->id);
     }
 
     private function getFullPriceForToday(): int {
-        $lastDiscountDay = new \DateTime('2020-03-15');
+        $lastDiscountDay = new \DateTime('2020-03-20');
 
         if (new \DateTime('now') <= $lastDiscountDay) {
             return 150;
@@ -113,10 +123,10 @@ class PaymentService {
                 $payment = $payment['payment'];
                 if ($payment->variableSymbol == $transaction->variableSymbol && $payment->price == $transaction->volume) {
                     // match!
-                    if ($payment->status == 'waiting') {
+                    if ($payment->status == 'waiting') {/*
                         // not canceler or paid already
                         $this->setPaymentPaid($payment);
-                        $this->sendSuccesfulPaymentEmail($payment);
+                        $this->sendSuccesfulPaymentEmail($payment);*/
                         // TODO find a better place - all other logging is in controllers now
                         $this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
                         $counterSetPaid++;

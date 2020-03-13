@@ -4,6 +4,7 @@ namespace kissj\Orm;
 
 use kissj\Event\Event;
 use kissj\Participant\Admin\Admin;
+use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -66,6 +67,9 @@ class Mapper implements IMapper {
 
                     case User::ROLE_IST:
                         return Ist::class;
+
+                    case User::ROLE_FREE_PARTICIPANT:
+                        return FreeParticipant::class;
 
                     case User::ROLE_GUEST:
                         return Guest::class;

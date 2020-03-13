@@ -15,6 +15,11 @@
             </form>
             <br/>
             <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+                <input type="hidden" name="role" value="fp">
+                <input type="submit" class="btn form-wide" value="Register as Participant without patrol!">
+            </form>
+            <br/>
+            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="guest">
                 <input type="submit" class="btn form-wide" value="Register as Guest!">
             </form>
@@ -29,9 +34,10 @@
             <p><b>Service Team</b> or <b>IST</b> stands for International Service Team. It is a bunch of adult
                 volunteers without whom the event wouldn't take place
                 - they attend the event to help the organizers </p>
+            <p><b>Participants without patrol</b> is a participant without patrol. We will try to find them a patrol
+                to join, but cannot guarantee participation. Payment is requested after finding a patrol to join.</p>
             <p><b>Guest</b> is invited for a particular part of the event - you should know when you can register as
                 guest</p>
-            <p><b>Participants</b> are registered by their Parol Leader, we have no button for you here</p>
         </div>
     </div>
 {% endblock %}

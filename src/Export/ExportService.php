@@ -2,6 +2,7 @@
 
 namespace kissj\Export;
 
+use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -15,7 +16,6 @@ use Slim\Http\Response;
 
 
 class ExportService {
-
     private $participantRepository;
     private $participantService;
 
@@ -58,6 +58,7 @@ class ExportService {
         $paidIsts = $this->participantService->getAllParticipantsWithStatus(User::ROLE_IST, User::STATUS_PAID);
         $paidPatrolLeaders
             = $this->participantService->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, User::STATUS_PAID);
+        $paidFreeParticipants = $this->participantService->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, User::STATUS_PAID);
         $approvedGuests = $this->participantService->getAllParticipantsWithStatus(User::ROLE_GUEST, User::STATUS_PAID);
 
         $rows[] = [
@@ -70,6 +71,7 @@ class ExportService {
         $namedGroups = [
             'IST' => $paidIsts,
             'Patrol Leaders' => $paidPatrolLeaders,
+            'Free Participants' => $paidFreeParticipants,
             'Guests' => $approvedGuests
         ];
         foreach ($namedGroups as $groupName => $participantGroup) {
@@ -118,9 +120,10 @@ class ExportService {
             'tshirt',
             'arrival date',
             'departue date',
-            'notes',
+            'notes/current leader',
             'patrol id',
             'patrol name',
+            'legal representative',
             'skills',
             'preferred positions',
             'drivers license',
@@ -147,6 +150,16 @@ class ExportService {
                 ];
             }
 
+            if ($participant instanceof FreeParticipant) {
+                $freeParticipantPart = [
+                    $participant->legalRepresentative,
+                ];
+            } else {
+                $freeParticipantPart = [
+                    '',
+                ];
+            }
+
             if ($participant instanceof Ist) {
                 $istPart = [
                     $participant->skills,
@@ -160,6 +173,7 @@ class ExportService {
                     '',
                 ];
             }
+
             $rows[] = array_merge(
                 [
                     (string)$participant->id,
@@ -185,6 +199,7 @@ class ExportService {
                     $participant->notes,
                 ],
                 $pPart,
+                $freeParticipantPart,
                 $istPart
             );
         }

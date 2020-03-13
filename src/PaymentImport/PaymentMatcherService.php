@@ -75,7 +75,7 @@ abstract class PaymentMatchingError {
 
 class WrongAmountError extends PaymentMatchingError {
     public function getErrorString() {
-        return sprintf("Špatná částka. Má být: %i, je: %i.", $this->repoPayment->price, $this->importedPayment->amount);
+        return sprintf("Špatná částka. Má být: %s, je: %s.", $this->repoPayment->price, $this->importedPayment->amount);
     }
 }
 
@@ -87,6 +87,6 @@ class WrongCurrencyError extends PaymentMatchingError {
 
 class UnknownVariableSymbolError extends PaymentMatchingError {
     public function getErrorString() {
-        return sprintf("Neznámý variabilní symbol: %i.", $this->importedPayment->variableSymbol);
+        return sprintf("Neznámý variabilní symbol: %s.", $this->importedPayment->variableSymbol);
     }
 }

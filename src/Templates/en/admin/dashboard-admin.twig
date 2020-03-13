@@ -16,6 +16,13 @@
                 <p>Locked patrols: {{ patrols.getClosedCount }}</p>
                 <p>Approved patrols: {{ patrols.getApprovedCount }}</p>
                 <p>Paid patrols: {{ patrols.getPaidCount }}</p>
+
+                <h3>Free participants counts</h3>
+                <p>Limit for Free Participants: {{ event.maximalClosedFreeParticipantsCount }}</p>
+                <p>Open Free Participants: {{ freeParticipants.getOpenCount }}</p>
+                <p>Locked Free Participants: {{ freeParticipants.getClosedCount }}</p>
+                <p>Approved Free Participants: {{ freeParticipants.getApprovedCount }}</p>
+                <p>Paid Free Participants: {{ freeParticipants.getPaidCount }}</p>
             </div>
             <div>
                 <h3>IST counts</h3>

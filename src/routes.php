@@ -2,6 +2,7 @@
 
 use kissj\Export\ExportController;
 use kissj\Participant\Admin\AdminController;
+use kissj\Participant\FreeParticipant\FreeParticipantController;
 use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
 use kissj\Participant\Patrol\PatrolController;
@@ -256,6 +257,38 @@ $app->group('/v1', function () use ($helper) {
                     return $response;
                 });
 
+                $this->group('/freeParticipant', function () use ($helper) {
+                    $this->get('/dashboard', FreeParticipantController::class.'::showDashboard')
+                        ->setName('fp-dashboard');
+
+                    $this->group('', function () {
+                        $this->get('/showChangeDetails', FreeParticipantController::class.'::showDetailsChangeable')
+                            ->setName('fp-showDetailsChangeable');
+
+                        $this->post('/changeDetails', FreeParticipantController::class.'::changeDetails')
+                            ->setName('fp-changeDetails');
+
+                        $this->get('/closeRegistration', FreeParticipantController::class.'::showCloseRegistration')
+                            ->setName('fp-showCloseRegistration');
+
+                        $this->post('/closeRegistration', FreeParticipantController::class.'::closeRegistration')
+                            ->setName('fp-confirmCloseRegistration');
+
+                    })->add($helper['openStatusOnly']);
+
+                })->add(function (Request $request, Response $response, callable $next) {
+                    // protected area for Free Participants
+                    if ($request->getAttribute('user')->role !== User::ROLE_FREE_PARTICIPANT) {
+                        $this->get('flashMessages')->error('Pardon, you are not registred as Free Participant');
+
+                        return $response->withRedirect($this->get('router')->pathFor('landing'));
+                    }
+
+                    $response = $next($request, $response);
+
+                    return $response;
+                });
+
                 $this->group('/guest', function () use ($helper) {
                     $this->get('/dashboard', GuestController::class.'::showDashboard')
                         ->setName('guest-dashboard');
@@ -318,6 +351,15 @@ $app->group('/v1', function () use ($helper) {
 
                     $this->post('/approveIst/{istId}', IstController::class.'::approveIst')
                         ->setName('admin-approve-ist');
+
+                    $this->get('/openFreeParticipant/{fpId}', FreeParticipantController::class.'::showOpenFreeParticipant')
+                        ->setName('admin-open-fp-show');
+
+                    $this->post('/openFreeParticipant/{fpId}', FreeParticipantController::class.'::openFreeParticipant')
+                        ->setName('admin-open-fp');
+
+                    $this->post('/approveFreeParticipant/{fpId}', FreeParticipantController::class.'::approveFreeParticipant')
+                        ->setName('admin-approve-fp');
 
                     $this->get('/openGuest/{guestId}', GuestController::class.'::showOpenGuest')
                         ->setName('admin-open-guest-show');
