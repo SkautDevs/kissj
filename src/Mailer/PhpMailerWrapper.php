@@ -114,6 +114,15 @@ class PhpMailerWrapper {
         );
     }
 
+    public function sendWelcomeFreeParticipantMessage(Participant $participant) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'registration confirmed',
+            'welcome-message-free-participant',
+            ['event' => $participant->user->event]
+        );
+    }
+
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,

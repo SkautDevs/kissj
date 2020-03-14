@@ -1,0 +1,25 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <p>Ahoj!</p>
+
+    <p>Vďaka za záujem ísť na AQUA 2020, aj keď nemáš patrolu. :) Platbu od Teba budeme vyžadovať až po tom, čo nájdeme
+        patrolu, ku ktorej sa môžeš pridať. Ohľadom ďalšieho postupu Ťa budeme čo najskôr kontaktovať.</p>
+
+    <p>Ak máš nejaké otázky, môžeš skúsiť pozrieť na náš <a href="{{ event.webUrl }}">web {{ event.webUrl }}</a>
+        alebo nám napísať mail <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
+
+    <p>Dobrý vietor za AQUA tím</p>
+
+    <p>----------</p>
+    <p>Ahoy!</p>
+
+    <p>Thank you for registering as a solo participant to AQUA 2020. Payment from you will be required after we find you
+        a patrol to join. We will contact you with more details as soon as possible.</p>
+
+    <p>If you have any questions, you may seek the answer at our webpage
+        <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
+        or drop us an E-mail to <a href="mailto:team@aqua.sk">team@aqua.sk</a><span class="noselect">.</span></p>
+
+    <p>Fair wind and following seas from AQUA team</p>
+{% endblock %}

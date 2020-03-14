@@ -134,6 +134,11 @@
                 <br/>
                 <br/>
                 <form method="post"
+                      action="{{ path_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                    <input type="submit" value="Send welcome email" class="btn btn-grey btn-small">
+                </form>
+                <br/>
+                <form method="post"
                       action="{{ path_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
                     <input type="submit" value="Approve and send email" class="btn btn-small">
                 </form>

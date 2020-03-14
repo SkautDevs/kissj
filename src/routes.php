@@ -358,6 +358,9 @@ $app->group('/v1', function () use ($helper) {
                     $this->post('/openFreeParticipant/{fpId}', FreeParticipantController::class.'::openFreeParticipant')
                         ->setName('admin-open-fp');
 
+                    $this->post('/welcomeFreeParticipant/{fpId}', FreeParticipantController::class.'::mailWelcomeFreeParticipant')
+                        ->setName('admin-fp-send-welcome');
+
                     $this->post('/approveFreeParticipant/{fpId}', FreeParticipantController::class.'::approveFreeParticipant')
                         ->setName('admin-approve-fp');
 

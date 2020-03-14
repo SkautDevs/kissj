@@ -139,4 +139,8 @@ class FreeParticipantService {
 
         return $freeParticipant;
     }
+
+    public function sendWelcome(FreeParticipant $freeParticipant): void {
+        $this->mailer->sendWelcomeFreeParticipantMessage($freeParticipant);
+    }
 }
