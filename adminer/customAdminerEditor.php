@@ -41,7 +41,7 @@ function adminer_object() {
         }
 
         function database() {
-            return __DIR__.'/../src/db.sqlite';
+            return __DIR__.'/../src/db_dev.sqlite';
         }
 
         function login($login, $password) {
@@ -58,12 +58,12 @@ function adminer_object() {
         function fieldName($field, $order = 0) {
             // only columns with comments will be displayed and only the first five in select
             return $field["field"];
-            return ($order <= 5 && !preg_match('~_(md5|sha1)$~', $field["field"]) ? h($field["comment"]) : "");
+            // return ($order <= 5 && !preg_match('~_(md5|sha1)$~', $field["field"]) ? h($field["comment"]) : "");
         }
 
     }
 
-    return new AdminerSoftware;
+    return new AdminerSoftware();
 }
 
-include __DIR__.'/lib/editor-4.7.1.php';
+include __DIR__.'/lib/editor-4.7.7.php';

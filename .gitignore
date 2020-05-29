@@ -6,6 +6,7 @@
 /src/Settings/settings_custom.php
 /temp/*
 /vendor/*
+/composer.phar
 
 *.sqlite
 !db_init.sqlite
