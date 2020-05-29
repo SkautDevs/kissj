@@ -40,8 +40,8 @@ class UserController extends AbstractController {
         try {
             $this->userService->sendLoginTokenByMail($email);
         } catch (\RuntimeException $e) {
-            $this->logger->addError("Error sending login email to $email with token ".
-                $this->userService->getTokenForEmail($email), array($e));
+            $this->logger->addError('Error sending login email to '.$email.' with token '.
+                $this->userService->getTokenForEmail($email), [$e]);
             $this->flashMessages->error('E-mail sending failed. Please try it in a couple of minutes. ');
 
             return $response->withRedirect($this->router->pathFor('loginAskEmail'));
@@ -72,6 +72,19 @@ class UserController extends AbstractController {
         $this->flashMessages->info('Logout was successful');
 
         return $response->withRedirect($this->router->pathFor('landing'));
+    }
+
+    public function chooseRole(User $user, Response $response) {
+        // TODO make this dynamic for more roles
+        if (true) {
+            $this->userService->setRole($user, User::ROLE_IST);
+            $this->flashMessages->dumpMessagesIntoArray(); // empty false warning TODO make more smartyy 
+            return $response->withRedirect($this->router->pathFor('getDashboard', ['eventSlug' => $user->event->slug]));
+        }
+
+        return $this->view->render($response, 'kissj/choose-role.twig', [
+            'event' => $user->event,
+        ]);
     }
 
     public function setRole(User $user, Request $request, Response $response) {

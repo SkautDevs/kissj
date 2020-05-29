@@ -134,11 +134,8 @@ $app->group('/v2', function () use ($helper) {
     });
 
     $this->group('/event/{eventSlug}', function () use ($helper) {
-        $this->get('/chooseRole', function (Request $request, Response $response) {
-            return $this->get('view')->render($response, 'kissj/choose-role.twig', [
-                'event' => $request->getAttribute('user')->event,
-            ]);
-        })->add($helper['loggedOnly'])
+        $this->get('/chooseRole', UserController::class.'::chooseRole')
+            ->add($helper['loggedOnly'])
             ->add($helper['nonChoosedRoleOnly'])
             ->setName('chooseRole');
 
