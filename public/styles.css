@@ -179,14 +179,14 @@ h2, h3 {
 }
 
 li.progressbar-item:not(:first-child)::before {
-	display: block;
 	position: absolute;
-	left: calc(-1 * var(--borderRadius));
+	width: 0;
+	height: 0;
+	border-left: 20px solid black;
+	border-top: 28px solid transparent;
+	border-bottom: 28px solid transparent;
 	top: 0;
-	bottom: 0;
-	width: 1em;
-	background: var(--bgColor, blue);
-	z-index: -1;
+	left: 0;
 }
 
 li.progressbar-item-registration {
@@ -211,19 +211,6 @@ li.progressbar-item:nth-child(5) {
 
 li.progressbar-item.is-active {
 	filter: grayscale(0%);
-}
-
-li.progressbar-arrow-right:after {
-	left: 100%;
-	top: 50%;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-	border: 40px solid transparent;
-	border-left-color: inherit;
-	margin-top: -40px;
 }
 
 .registration-theme {

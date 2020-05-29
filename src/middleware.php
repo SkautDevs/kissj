@@ -8,7 +8,6 @@ use Whoops\Exception\Inspector;
 $container = $app->getContainer();
 
 // DEBUGGER
-
 if ($container->get('settings')['whoopsDebug']) {
     $app->add(new \Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware($app));
 } else {
@@ -28,7 +27,6 @@ if ($container->get('settings')['whoopsDebug']) {
 }
 
 // TRAILING SLASH REMOVER
-
 $app->add(function (Request $request, Response $response, callable $next): ResponseInterface {
     $uri = $request->getUri();
     $path = $uri->getPath();
@@ -48,19 +46,28 @@ $app->add(function (Request $request, Response $response, callable $next): Respo
     return $response;
 });
 
-// LOCALIZATION NEGOTIATOR
-// https://github.com/tboronczyk/localization-middleware
-// https://github.com/willdurand/Negotiation
-
-// TRANSLATOR
+// TODO TRANSLATOR
 // https://symfony.com/doc/current/components/translation.html
 
 
-// CSRF PROTECTION
+// LOCALIZATION RESOLVER
+// https://github.com/willdurand/Negotiation
+$app->add(function (Request $request, Response $response, callable $next) use ($container): ResponseInterface {
+    $negotiator = new \Negotiation\LanguageNegotiator();
+    $availableLanguages = $container->get('settings')['availableLocales'];
+    $negotiatedLanguage = $negotiator->getBest($request->getHeaderLine('Accept-Language'), $availableLanguages);
+    $bestLanguage = $negotiatedLanguage ? $negotiatedLanguage->getValue() : $container->get('settings')['defaultLocale'];
+    $container->get(\Slim\Views\Twig::class)->getEnvironment()->addGlobal('locale', $bestLanguage);
+
+    $response = $next($request, $response);
+
+    return $response;
+});
+
+// TODO CSRF PROTECTION
 // https://github.com/slimphp/Slim-Csrf
 
 // USER AUTHENTICATION
-
 $app->add(function (Request $request, Response $response, callable $next) use ($container): ResponseInterface {
     /** @var \kissj\User\UserRegeneration $userRegeneration */
     $userRegeneration = $container->get(\kissj\User\UserRegeneration::class);

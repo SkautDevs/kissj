@@ -1,20 +1,20 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "4b99e34568986d9d76f776ae095fb18a",
-    "packages": [
-        {
-            "name": "dibi/dibi",
-            "version": "v3.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dg/dibi.git",
-                "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266"
-            },
-            "dist": {
+  "_readme": [
+	"This file locks the dependencies of your project to a known state",
+	"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+	"This file is @generated automatically"
+  ],
+  "content-hash": "2df72594295a648b6618281a178f8592",
+  "packages": [
+	{
+	  "name": "dibi/dibi",
+	  "version": "v3.2.4",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/dg/dibi.git",
+		"reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266"
+	  },
+	  "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/dg/dibi/zipball/d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
                 "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
@@ -641,26 +641,135 @@
                 "read",
                 "transform",
                 "write"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/nyamsprod",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-03-17T15:15:35+00:00"
-        },
-        {
-            "name": "monolog/monolog",
-            "version": "1.25.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "3022efff205e2448b560c833c6fbbf91c3139168"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/3022efff205e2448b560c833c6fbbf91c3139168",
+			],
+		  "funding": [
+			{
+			  "url": "https://github.com/sponsors/nyamsprod",
+			  "type": "github"
+			}
+		  ],
+		  "time": "2020-03-17T15:15:35+00:00"
+		},
+	{
+	  "name": "middlewares/negotiation",
+	  "version": "v2.0.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/middlewares/negotiation.git",
+		"reference": "308eff5bfad1b26e9da777e723052ae207185432"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/middlewares/negotiation/zipball/308eff5bfad1b26e9da777e723052ae207185432",
+		"reference": "308eff5bfad1b26e9da777e723052ae207185432",
+		"shasum": ""
+	  },
+	  "require": {
+		"middlewares/utils": "^3.0",
+		"php": "^7.2",
+		"psr/http-server-middleware": "^1.0",
+		"willdurand/negotiation": "^2.1"
+	  },
+	  "require-dev": {
+		"friendsofphp/php-cs-fixer": "^2.0",
+		"laminas/laminas-diactoros": "^2.2",
+		"oscarotero/php-cs-fixer-config": "^1.0",
+		"phpunit/phpunit": "^8.1",
+		"squizlabs/php_codesniffer": "^3.0"
+	  },
+	  "type": "library",
+	  "autoload": {
+		"psr-4": {
+		  "Middlewares\\": "src/"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "description": "Middleware to implement content negotiation",
+	  "homepage": "https://github.com/middlewares/negotiation",
+	  "keywords": [
+		"content",
+		"encoding",
+		"http",
+		"language",
+		"middleware",
+		"negotiation",
+		"psr-15",
+		"psr-7",
+		"server"
+	  ],
+	  "time": "2020-03-07T11:55:39+00:00"
+	},
+	{
+	  "name": "middlewares/utils",
+	  "version": "v3.1.0",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/middlewares/utils.git",
+		"reference": "13689487e8f3bba10b6cc66ed206efc8b874163e"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/middlewares/utils/zipball/13689487e8f3bba10b6cc66ed206efc8b874163e",
+		"reference": "13689487e8f3bba10b6cc66ed206efc8b874163e",
+		"shasum": ""
+	  },
+	  "require": {
+		"php": "^7.2",
+		"psr/container": "^1.0",
+		"psr/http-factory": "^1.0",
+		"psr/http-message": "^1.0",
+		"psr/http-server-middleware": "^1.0"
+	  },
+	  "require-dev": {
+		"friendsofphp/php-cs-fixer": "^2.0",
+		"guzzlehttp/psr7": "dev-master",
+		"laminas/laminas-diactoros": "^2.2",
+		"nyholm/psr7": "^1.0",
+		"oscarotero/php-cs-fixer-config": "^1.0",
+		"phpunit/phpunit": "^8.1",
+		"slim/psr7": "~0.3",
+		"squizlabs/php_codesniffer": "^3.0",
+		"sunrise/http-message": "^1.0",
+		"sunrise/http-server-request": "^1.0",
+		"sunrise/stream": "^1.0",
+		"sunrise/uri": "^1.0"
+	  },
+	  "type": "library",
+	  "autoload": {
+		"psr-4": {
+		  "Middlewares\\Utils\\": "src/"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "description": "Common utils for PSR-15 middleware packages",
+	  "homepage": "https://github.com/middlewares/utils",
+	  "keywords": [
+		"PSR-11",
+		"http",
+		"middleware",
+		"psr-15",
+		"psr-17",
+		"psr-7"
+	  ],
+	  "time": "2020-01-19T00:30:41+00:00"
+	},
+	{
+	  "name": "monolog/monolog",
+	  "version": "1.25.4",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/Seldaek/monolog.git",
+		"reference": "3022efff205e2448b560c833c6fbbf91c3139168"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/Seldaek/monolog/zipball/3022efff205e2448b560c833c6fbbf91c3139168",
                 "reference": "3022efff205e2448b560c833c6fbbf91c3139168",
                 "shasum": ""
             },
@@ -1323,26 +1432,78 @@
             ],
             "description": "Common Container Interface (PHP FIG PSR-11)",
             "homepage": "https://github.com/php-fig/container",
-            "keywords": [
-                "PSR-11",
-                "container",
-                "container-interface",
-                "container-interop",
-                "psr"
-            ],
-            "time": "2017-02-14T16:28:37+00:00"
-        },
-        {
-            "name": "psr/http-message",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-message.git",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
+		  "keywords": [
+			"PSR-11",
+			"container",
+			"container-interface",
+			"container-interop",
+			"psr"
+		  ],
+		  "time": "2017-02-14T16:28:37+00:00"
+		},
+	{
+	  "name": "psr/http-factory",
+	  "version": "1.0.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/php-fig/http-factory.git",
+		"reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+		"reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+		"shasum": ""
+	  },
+	  "require": {
+		"php": ">=7.0.0",
+		"psr/http-message": "^1.0"
+	  },
+	  "type": "library",
+	  "extra": {
+		"branch-alias": {
+		  "dev-master": "1.0.x-dev"
+		}
+	  },
+	  "autoload": {
+		"psr-4": {
+		  "Psr\\Http\\Message\\": "src/"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "authors": [
+		{
+		  "name": "PHP-FIG",
+		  "homepage": "http://www.php-fig.org/"
+		}
+	  ],
+	  "description": "Common interfaces for PSR-7 HTTP message factories",
+	  "keywords": [
+		"factory",
+		"http",
+		"message",
+		"psr",
+		"psr-17",
+		"psr-7",
+		"request",
+		"response"
+	  ],
+	  "time": "2019-04-30T12:38:16+00:00"
+	},
+	{
+	  "name": "psr/http-message",
+	  "version": "1.0.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/php-fig/http-message.git",
+		"reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "shasum": ""
             },
@@ -1373,26 +1534,132 @@
             "description": "Common interface for HTTP messages",
             "homepage": "https://github.com/php-fig/http-message",
             "keywords": [
-                "http",
-                "http-message",
-                "psr",
-                "psr-7",
-                "request",
-                "response"
-            ],
-            "time": "2016-08-06T14:39:51+00:00"
-        },
-        {
-            "name": "psr/log",
-            "version": "1.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+			  "http",
+			  "http-message",
+			  "psr",
+			  "psr-7",
+			  "request",
+			  "response"
+			],
+	  "time": "2016-08-06T14:39:51+00:00"
+	},
+	{
+	  "name": "psr/http-server-handler",
+	  "version": "1.0.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/php-fig/http-server-handler.git",
+		"reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/php-fig/http-server-handler/zipball/aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+		"reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+		"shasum": ""
+	  },
+	  "require": {
+		"php": ">=7.0",
+		"psr/http-message": "^1.0"
+	  },
+	  "type": "library",
+	  "extra": {
+		"branch-alias": {
+		  "dev-master": "1.0.x-dev"
+		}
+	  },
+	  "autoload": {
+		"psr-4": {
+		  "Psr\\Http\\Server\\": "src/"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "authors": [
+		{
+		  "name": "PHP-FIG",
+		  "homepage": "http://www.php-fig.org/"
+		}
+	  ],
+	  "description": "Common interface for HTTP server-side request handler",
+	  "keywords": [
+		"handler",
+		"http",
+		"http-interop",
+		"psr",
+		"psr-15",
+		"psr-7",
+		"request",
+		"response",
+		"server"
+	  ],
+	  "time": "2018-10-30T16:46:14+00:00"
+	},
+	{
+	  "name": "psr/http-server-middleware",
+	  "version": "1.0.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/php-fig/http-server-middleware.git",
+		"reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/php-fig/http-server-middleware/zipball/2296f45510945530b9dceb8bcedb5cb84d40c5f5",
+		"reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5",
+		"shasum": ""
+	  },
+	  "require": {
+		"php": ">=7.0",
+		"psr/http-message": "^1.0",
+		"psr/http-server-handler": "^1.0"
+	  },
+	  "type": "library",
+	  "extra": {
+		"branch-alias": {
+		  "dev-master": "1.0.x-dev"
+		}
+	  },
+	  "autoload": {
+		"psr-4": {
+		  "Psr\\Http\\Server\\": "src/"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "authors": [
+		{
+		  "name": "PHP-FIG",
+		  "homepage": "http://www.php-fig.org/"
+		}
+	  ],
+	  "description": "Common interface for HTTP server-side middleware",
+	  "keywords": [
+		"http",
+		"http-interop",
+		"middleware",
+		"psr",
+		"psr-15",
+		"psr-7",
+		"request",
+		"response"
+	  ],
+	  "time": "2018-10-30T17:12:04+00:00"
+	},
+	{
+	  "name": "psr/log",
+	  "version": "1.1.3",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/php-fig/log.git",
+		"reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "shasum": ""
             },
@@ -2170,26 +2437,78 @@
                     "name": "Armin Ronacher",
                     "email": "armin.ronacher@active-4.com",
                     "role": "Project Founder"
-                }
-            ],
-            "description": "Twig, the flexible, fast, and secure template language for PHP",
-            "homepage": "https://twig.symfony.com",
-            "keywords": [
-                "templating"
-            ],
-            "time": "2020-02-11T15:33:47+00:00"
-        },
-        {
-            "name": "zeuxisoo/slim-whoops",
-            "version": "0.6.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zeuxisoo/php-slim-whoops.git",
-                "reference": "377911eb4159e366a1c2a7c42ffaed3c56ed4b8d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/377911eb4159e366a1c2a7c42ffaed3c56ed4b8d",
+				}
+			],
+		  "description": "Twig, the flexible, fast, and secure template language for PHP",
+		  "homepage": "https://twig.symfony.com",
+		  "keywords": [
+			"templating"
+		  ],
+		  "time": "2020-02-11T15:33:47+00:00"
+		},
+	{
+	  "name": "willdurand/negotiation",
+	  "version": "v2.3.1",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/willdurand/Negotiation.git",
+		"reference": "03436ededa67c6e83b9b12defac15384cb399dc9"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/willdurand/Negotiation/zipball/03436ededa67c6e83b9b12defac15384cb399dc9",
+		"reference": "03436ededa67c6e83b9b12defac15384cb399dc9",
+		"shasum": ""
+	  },
+	  "require": {
+		"php": ">=5.4.0"
+	  },
+	  "require-dev": {
+		"phpunit/phpunit": "~4.5"
+	  },
+	  "type": "library",
+	  "extra": {
+		"branch-alias": {
+		  "dev-master": "2.3-dev"
+		}
+	  },
+	  "autoload": {
+		"psr-4": {
+		  "Negotiation\\": "src/Negotiation"
+		}
+	  },
+	  "notification-url": "https://packagist.org/downloads/",
+	  "license": [
+		"MIT"
+	  ],
+	  "authors": [
+		{
+		  "name": "William Durand",
+		  "email": "will+git@drnd.me"
+		}
+	  ],
+	  "description": "Content Negotiation tools for PHP provided as a standalone library.",
+	  "homepage": "http://williamdurand.fr/Negotiation/",
+	  "keywords": [
+		"accept",
+		"content",
+		"format",
+		"header",
+		"negotiation"
+	  ],
+	  "time": "2017-05-14T17:21:12+00:00"
+	},
+	{
+	  "name": "zeuxisoo/slim-whoops",
+	  "version": "0.6.5",
+	  "source": {
+		"type": "git",
+		"url": "https://github.com/zeuxisoo/php-slim-whoops.git",
+		"reference": "377911eb4159e366a1c2a7c42ffaed3c56ed4b8d"
+	  },
+	  "dist": {
+		"type": "zip",
+		"url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/377911eb4159e366a1c2a7c42ffaed3c56ed4b8d",
                 "reference": "377911eb4159e366a1c2a7c42ffaed3c56ed4b8d",
                 "shasum": ""
             },

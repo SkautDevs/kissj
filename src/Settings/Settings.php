@@ -106,6 +106,9 @@ class Settings {
                     // 'login' => 'superSecretUsername',
                     // 'password' => 'superSecretPassword',
                 ],
+
+                'availableLocales' => ['cs', 'en'],
+                'defaultLocale' => 'cs',
             ],
         ];
 
@@ -216,7 +219,7 @@ class Settings {
                 $rendererSettings['templates_path'],
                 [
                     'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
-                    'debug' => $rendererSettings['debug_output']
+                    'debug' => $rendererSettings['debug_output'],
                 ]
             );
 

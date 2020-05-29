@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
+{# TODO make more smartyy #}
+{% if event is null %}
+    {% set event = [] %}
+    {% set event = event|merge({'readableName': 'Korbo 2020', 'webUrl': 'https://korbo.skauting.cz/'}) %}
+{% endif %}
+
 <head>
     <meta charset="utf-8"/>
     <meta name="robots" content="noindex, nofollow">
 
-    <title>Registration {{ event.readableName ?? 'AQUA 2020' }} - kissj</title>
+    <title>Registration - {{ event.readableName }} - kissj</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
@@ -12,9 +19,9 @@
     <script src="{{ base_url() }}/public/date-polyfill.js" defer></script>
 </head>
 
-<body lang="cs">
+<body lang="{{ locale }}">
 <div class="wrapper">
-    <h1 class="text-center">Registration to {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h1>
+    <h1 class="text-center">Registration - {{ event.readableName }}</h1>
     <div class="user text-right">
         {% if user is not null %}
             {{ user.email }}
@@ -26,7 +33,7 @@
         <br/>
     </div>
     <ul class="progressbar">
-        <li class="progressbar-item progressbar-item-registration progressbar-arrow-right {% if userStatus == 'unregistred' %}is-active{% endif %}">
+        <li class="progressbar-item progressbar-item-registration {% if userStatus == 'unregistred' %}is-active{% endif %}">
             Registration
         </li>
         <li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">Editing</li>
@@ -45,9 +52,11 @@
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <a href="https://devs.skauting.cz/" target="_blank" class="footer-item">With ♥ created by Lung</a>
-        <img href="https://aqua.sk/en/" src="/public/logo_aqua_zelene_168.png" class="footer-item"
-             alt="logo of aqua 2020">
+        <span class="footer-item">{{ event.readableName }} - 
+            <a href="https://devs.skauting.cz/" target="_blank">with ♥ created by Lung</a></span>
+        <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
+            <img src="/public/logo.png" alt="logo of {{ event.readableName }}">
+        </a>
     </footer>
 </div>
 </body>
