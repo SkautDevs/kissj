@@ -2,7 +2,7 @@
 
 namespace kissj\Event;
 
-use LeanMapper\Entity;
+use kissj\Orm\EntityDatetime;
 
 /**
  * @property int         $id
@@ -29,8 +29,11 @@ use LeanMapper\Entity;
  * @property bool        $allowIsts
  * @property int|null    $maximalClosedIstsCount
  * @property string|null $istLabel
+ *
+ * @property string|null $eventStart m:passThru(dateFromString|dateToString)
+ * @property string|null $contactEmail
  */
-class Event extends Entity {
+class Event extends EntityDatetime {
     public $maximalClosedGuestsCount = 100; // TODO move into DB
     public $maximalClosedPatrolsSlovakCount = 18;
     public $maximalClosedPatrolsCzechCount = 5;

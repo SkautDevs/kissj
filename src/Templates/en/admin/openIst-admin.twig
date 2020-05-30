@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card card-half closed-theme">
-        <h2>Deny IST</h2>
+        <h2>Deny {{ event.getIstLabel }}</h2>
         <p>Want you really deny <b>{{ ist.getFullName }}</b>?</p>
         <form method="post" action="{{ path_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">

@@ -5,7 +5,7 @@
         <h2>Dashboard of event {{ eventName }} Administrator</h2>
         <h3>Statistics</h3>
         <div class="card-divide">
-            <div>
+            <div>{#
                 <h3>Patrol limits</h3>
                 <p>Limit for patrols: {{ event.maximalClosedPatrolsCount }}</p>
                 <p>Limit for SK patrols: {{ event.maximalClosedPatrolsSlovakCount }}</p>
@@ -22,22 +22,22 @@
                 <p>Open Free Participants: {{ freeParticipants.getOpenCount }}</p>
                 <p>Locked Free Participants: {{ freeParticipants.getClosedCount }}</p>
                 <p>Approved Free Participants: {{ freeParticipants.getApprovedCount }}</p>
-                <p>Paid Free Participants: {{ freeParticipants.getPaidCount }}</p>
+                <p>Paid Free Participants: {{ freeParticipants.getPaidCount }}</p>#}
             </div>
             <div>
-                <h3>IST counts</h3>
+                <h3>{{ event.getIstLabel }} counts</h3>
                 <p>Limit for IST: {{ event.maximalClosedIstsCount }}</p>
                 <p>Open IST: {{ ists.getOpenCount }}</p>
                 <p>Locked IST: {{ ists.getClosedCount }}</p>
                 <p>Approved IST: {{ ists.getApprovedCount }}</p>
                 <p>Paid IST: {{ ists.getPaidCount }}</p>
-
-                <h3>Guest counts</h3>
-                <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
-                <p>Open Guests: {{ guests.getOpenCount }}</p>
-                <p>Locked Guests: {{ guests.getClosedCount }}</p>
-                <p>Approved Guests: {{ guests.getApprovedCount }}</p>
-                <p>Paid Guests: {{ guests.getPaidCount }}</p>
+                {#
+                                <h3>Guest counts</h3>
+                                <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
+                                <p>Open Guests: {{ guests.getOpenCount }}</p>
+                                <p>Locked Guests: {{ guests.getClosedCount }}</p>
+                                <p>Approved Guests: {{ guests.getApprovedCount }}</p>
+                                <p>Paid Guests: {{ guests.getPaidCount }}</p>#}
             </div>
         </div>
         <h3>Administators actions</h3>

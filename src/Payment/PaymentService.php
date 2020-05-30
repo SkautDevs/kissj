@@ -44,7 +44,6 @@ class PaymentService {
         $payment->accountNumber = $event->accountNumber;
         if ($participant instanceof Ist) {
             $payment->note = $event->slug.' '
-                .$payment->variableSymbol.' '
                 .$participant->getFullName();
         }
 

@@ -81,4 +81,10 @@ class Participant extends EntityDatetime {
     public function getFullName(): string {
         return ($this->firstName ?? '').' '.($this->lastName ?? '').($this->nickname ? ' - '.$this->nickname : '');
     }
+
+    public function getAgeInYears(\DateTime $eventStart): int {
+        /** @var \DateTime $birthDate */
+        $birthDate = $this->getBirthDate();
+        return $birthDate->diff($eventStart)->format('%y');
+    }
 }

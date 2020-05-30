@@ -8,27 +8,29 @@
     <br/>
     {% if closedIsts is not empty %}
         <div class="card closed-theme">
-            <h2>International Service Team</h2>
+            <h2>{{ event.getIstLabel|capitalize }}</h2>
         </div>
         <br/>
         {% for ist in closedIsts %}
             <div class="card closed-theme">
                 <h4>{{ ist.getFullName }}</h4>
-                Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+                Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b>
+                (will have {{ ist.getAgeInYears(event.getEventStart) }} years)<br/>
                 Gender: <b>{{ ist.getGender }}</b><br/>
-                Email: <b>{{ ist.getEmail }}</b><br/>
-                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>
+                {#Email: <b>{{ ist.getEmail }}</b><br/>
+                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
                 Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
                 Country: <b>{{ ist.getCountry }}</b><br/>
                 Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
-                T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
-                Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>
+                {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
+                Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
                 Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
-                Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+                {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
                 Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
-                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>
+                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
+                Scarf: <b>{{ ist.getScarf }}</b><br/>
                 Notes: <b>{{ ist.getNotes }}</b><br/>
                 <br/>
                 <a href="{{ path_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
@@ -44,148 +46,148 @@
         {% endfor %}
     {% else %}
         <div class="card closed-theme">
-            <h2>No ISTs are in need for approve</h2>
+            <h2>No {{ event.getIstLabel }} are in need for approve</h2>
         </div>
         <br/>
     {% endif %}
-
-    {% if closedPatrolLeaders is not empty %}
-        <div class="card closed-theme">
-            <h2>Patrols</h2>
-        </div>
-        <br/>
-        {% for pl in closedPatrolLeaders %}
+    {#
+        {% if closedPatrolLeaders is not empty %}
             <div class="card closed-theme">
-                <h3>{{ pl.getPatrolName }}</h3>
-                <br/>
-                <h4>{{ pl.getFullName }}</h4>
-                Date of birth: <b>{{ pl.getBirthDate.format('d. m. Y') }}</b><br/>
-                Gender: <b>{{ pl.getGender }}</b><br/>
-                Email: <b>{{ pl.getEmail }}</b><br/>
-                Phone number: <b>{{ pl.getTelephoneNumber }}</b><br/>
-                Permanent Address: <b>{{ pl.getPermanentResidence }}</b><br/>
-                Country: <b>{{ pl.getCountry }}</b><br/>
-                Scout unit: <b>{{ pl.getScoutUnit }}</b><br/>
-                T-shirt size: <b>{{ pl.getTshirt }}</b><br/>
-                Diet Restriction: <b>{{ pl.getFoodPreferences }}</b><br/>
-                Health issues: <b>{{ pl.getHealthProblems }}</b><br/>
-                Languages you speak + level: <b>{{ pl.getLanguages }}</b><br/>
-                Swimming skill: <b>{{ pl.getSwimming }}</b><br/>
-                Notes: <b>{{ pl.getNotes }}</b><br/>
-                <br/>
-
-                <h4>Patrol Participant details</h4>
-                {% for pDetail in pl.patrolParticipants %}
-                    Full name: <b>{{ pDetail.getFullName }}</b><br/>
-                    Date of birth: <b>{{ pDetail.getBirthDate.format('d. m. Y') }}</b><br/>
-                    Gender: <b>{{ pDetail.getGender }}</b><br/>
-                    Email: <b>{{ pDetail.getEmail }}</b><br/>
-                    Phone number: <b>{{ pDetail.getTelephoneNumber }}</b><br/>
-                    Permanent Address: <b>{{ pDetail.getPermanentResidence }}</b><br/>
-                    Country: <b>{{ pDetail.getCountry }}</b><br/>
-                    Scout unit: <b>{{ pDetail.getScoutUnit }}</b><br/>
-                    Diet Restriction: <b>{{ pDetail.getFoodPreferences }}</b><br/>
-                    Health issues: <b>{{ pDetail.getHealthProblems }}</b><br/>
-                    Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
-                    Notes: <b>{{ pDetail.getNotes }}</b><br/>
+                <h2>Patrols</h2>
+            </div>
+            <br/>
+            {% for pl in closedPatrolLeaders %}
+                <div class="card closed-theme">
+                    <h3>{{ pl.getPatrolName }}</h3>
                     <br/>
-                {% endfor %}
-                <a href="{{ path_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Deny</a>
+                    <h4>{{ pl.getFullName }}</h4>
+                    Date of birth: <b>{{ pl.getBirthDate.format('d. m. Y') }}</b><br/>
+                    Gender: <b>{{ pl.getGender }}</b><br/>
+                    Email: <b>{{ pl.getEmail }}</b><br/>
+                    Phone number: <b>{{ pl.getTelephoneNumber }}</b><br/>
+                    Permanent Address: <b>{{ pl.getPermanentResidence }}</b><br/>
+                    Country: <b>{{ pl.getCountry }}</b><br/>
+                    Scout unit: <b>{{ pl.getScoutUnit }}</b><br/>
+                    T-shirt size: <b>{{ pl.getTshirt }}</b><br/>
+                    Diet Restriction: <b>{{ pl.getFoodPreferences }}</b><br/>
+                    Health issues: <b>{{ pl.getHealthProblems }}</b><br/>
+                    Languages you speak + level: <b>{{ pl.getLanguages }}</b><br/>
+                    Swimming skill: <b>{{ pl.getSwimming }}</b><br/>
+                    Notes: <b>{{ pl.getNotes }}</b><br/>
+                    <br/>
+    
+                    <h4>Patrol Participant details</h4>
+                    {% for pDetail in pl.patrolParticipants %}
+                        Full name: <b>{{ pDetail.getFullName }}</b><br/>
+                        Date of birth: <b>{{ pDetail.getBirthDate.format('d. m. Y') }}</b><br/>
+                        Gender: <b>{{ pDetail.getGender }}</b><br/>
+                        Email: <b>{{ pDetail.getEmail }}</b><br/>
+                        Phone number: <b>{{ pDetail.getTelephoneNumber }}</b><br/>
+                        Permanent Address: <b>{{ pDetail.getPermanentResidence }}</b><br/>
+                        Country: <b>{{ pDetail.getCountry }}</b><br/>
+                        Scout unit: <b>{{ pDetail.getScoutUnit }}</b><br/>
+                        Diet Restriction: <b>{{ pDetail.getFoodPreferences }}</b><br/>
+                        Health issues: <b>{{ pDetail.getHealthProblems }}</b><br/>
+                        Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
+                        Notes: <b>{{ pDetail.getNotes }}</b><br/>
+                        <br/>
+                    {% endfor %}
+                    <a href="{{ path_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
+                       class="btn btn-grey btn-small">Deny</a>
+                    <br/>
+                    <br/>
+                    <form method="post"
+                          action="{{ path_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit" value="Approve and send email" class="btn btn-small">
+                    </form>
+                </div>
                 <br/>
-                <br/>
-                <form method="post"
-                      action="{{ path_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="Approve and send email" class="btn btn-small">
-                </form>
-            </div>
-            <br/>
-        {% endfor %}
-    {% else %}
-        <div class="card closed-theme">
-            <h2>No patrols are in need to approve</h2>
-        </div>
-        <br/>
-    {% endif %}
-
-    {% if closedFreeParticipants is not empty %}
-        <div class="card closed-theme">
-            <h2>Free Participants</h2>
-        </div>
-        <br/>
-        {% for freeParticipant in closedFreeParticipants %}
+            {% endfor %}
+        {% else %}
             <div class="card closed-theme">
-                <h4>{{ freeParticipant.getFullName }}</h4>
-                Date of birth: <b>{{ freeParticipant.getBirthDate.format('d. m. Y') }}</b><br/>
-                Gender: <b>{{ freeParticipant.getGender }}</b><br/>
-                Email: <b>{{ freeParticipant.getEmail }}</b><br/>
-                Phone number: <b>{{ freeParticipant.getTelephoneNumber }}</b><br/>
-                Permanent Address: <b>{{ freeParticipant.getPermanentResidence }}</b><br/>
-                Country: <b>{{ freeParticipant.getCountry }}</b><br/>
-                Scout unit: <b>{{ freeParticipant.getScoutUnit }}</b><br/>
-                Diet Restriction: <b>{{ freeParticipant.getFoodPreferences }}</b><br/>
-                Health issues: <b>{{ freeParticipant.getHealthProblems }}</b><br/>
-                Swimming skill: <b>{{ freeParticipant.getSwimming }}</b><br/>
-                Legal representative (name + email): <b>{{ freeParticipant.getLegalRepresentative }}</b><br/>
-                Current Leader (name + email): <b>{{ freeParticipant.getNotes }}</b><br/>
-                <br/>
-                <a href="{{ path_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Deny</a>
-                <br/>
-                <br/>
-                <form method="post"
-                      action="{{ path_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="Send welcome email" class="btn btn-grey btn-small">
-                </form>
-                <br/>
-                <form method="post"
-                      action="{{ path_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="Approve and send email" class="btn btn-small">
-                </form>
+                <h2>No patrols are in need to approve</h2>
             </div>
             <br/>
-        {% endfor %}
-    {% else %}
-        <div class="card closed-theme">
-            <h2>No free participants are in need for approve</h2>
-        </div>
-        <br/>
-    {% endif %}
-
-    {% if closedGuests is not empty %}
-        <div class="card closed-theme">
-            <h2>Guests</h2>
-        </div>
-        <br/>
-        {% for guest in closedGuests %}
+        {% endif %}
+    
+        {% if closedFreeParticipants is not empty %}
             <div class="card closed-theme">
-                <h4>{{ guest.getFullName }}</h4>
-                Date of birth: <b>{{ guest.getBirthDate.format('d. m. Y') }}</b><br/>
-                Gender: <b>{{ guest.getGender }}</b><br/>
-                Email: <b>{{ guest.getEmail }}</b><br/>
-                Phone number: <b>{{ guest.getTelephoneNumber }}</b><br/>
-                Country: <b>{{ guest.getCountry }}</b><br/>
-                Diet Restriction: <b>{{ guest.getFoodPreferences }}</b><br/>
-                Health issues: <b>{{ guest.getHealthProblems }}</b><br/>
-                Date of arrival: <b>{{ guest.getArrivalDate.format('d. m. Y') }}</b><br/>
-                Date of departue: <b>{{ guest.getDepartueDate.format('d. m. Y') }}</b><br/>
-                Notes: <b>{{ guest.getNotes }}</b><br/>
-                <br/>
-                <a href="{{ path_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Deny</a>
-                <br/>
-                <br/>
-                <form method="post"
-                      action="{{ path_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="Approve and send email" class="btn btn-small">
-                </form>
+                <h2>Free Participants</h2>
             </div>
             <br/>
-        {% endfor %}
-    {% else %}
-        <div class="card closed-theme">
-            <h2>No guests are in need for approve</h2>
-        </div>
-        <br/>
-    {% endif %}
+            {% for freeParticipant in closedFreeParticipants %}
+                <div class="card closed-theme">
+                    <h4>{{ freeParticipant.getFullName }}</h4>
+                    Date of birth: <b>{{ freeParticipant.getBirthDate.format('d. m. Y') }}</b><br/>
+                    Gender: <b>{{ freeParticipant.getGender }}</b><br/>
+                    Email: <b>{{ freeParticipant.getEmail }}</b><br/>
+                    Phone number: <b>{{ freeParticipant.getTelephoneNumber }}</b><br/>
+                    Permanent Address: <b>{{ freeParticipant.getPermanentResidence }}</b><br/>
+                    Country: <b>{{ freeParticipant.getCountry }}</b><br/>
+                    Scout unit: <b>{{ freeParticipant.getScoutUnit }}</b><br/>
+                    Diet Restriction: <b>{{ freeParticipant.getFoodPreferences }}</b><br/>
+                    Health issues: <b>{{ freeParticipant.getHealthProblems }}</b><br/>
+                    Swimming skill: <b>{{ freeParticipant.getSwimming }}</b><br/>
+                    Legal representative (name + email): <b>{{ freeParticipant.getLegalRepresentative }}</b><br/>
+                    Current Leader (name + email): <b>{{ freeParticipant.getNotes }}</b><br/>
+                    <br/>
+                    <a href="{{ path_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
+                       class="btn btn-grey btn-small">Deny</a>
+                    <br/>
+                    <br/>
+                    <form method="post"
+                          action="{{ path_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit" value="Send welcome email" class="btn btn-grey btn-small">
+                    </form>
+                    <br/>
+                    <form method="post"
+                          action="{{ path_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit" value="Approve and send email" class="btn btn-small">
+                    </form>
+                </div>
+                <br/>
+            {% endfor %}
+        {% else %}
+            <div class="card closed-theme">
+                <h2>No free participants are in need for approve</h2>
+            </div>
+            <br/>
+        {% endif %}
+    
+        {% if closedGuests is not empty %}
+            <div class="card closed-theme">
+                <h2>Guests</h2>
+            </div>
+            <br/>
+            {% for guest in closedGuests %}
+                <div class="card closed-theme">
+                    <h4>{{ guest.getFullName }}</h4>
+                    Date of birth: <b>{{ guest.getBirthDate.format('d. m. Y') }}</b><br/>
+                    Gender: <b>{{ guest.getGender }}</b><br/>
+                    Email: <b>{{ guest.getEmail }}</b><br/>
+                    Phone number: <b>{{ guest.getTelephoneNumber }}</b><br/>
+                    Country: <b>{{ guest.getCountry }}</b><br/>
+                    Diet Restriction: <b>{{ guest.getFoodPreferences }}</b><br/>
+                    Health issues: <b>{{ guest.getHealthProblems }}</b><br/>
+                    Date of arrival: <b>{{ guest.getArrivalDate.format('d. m. Y') }}</b><br/>
+                    Date of departue: <b>{{ guest.getDepartueDate.format('d. m. Y') }}</b><br/>
+                    Notes: <b>{{ guest.getNotes }}</b><br/>
+                    <br/>
+                    <a href="{{ path_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
+                       class="btn btn-grey btn-small">Deny</a>
+                    <br/>
+                    <br/>
+                    <form method="post"
+                          action="{{ path_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit" value="Approve and send email" class="btn btn-small">
+                    </form>
+                </div>
+                <br/>
+            {% endfor %}
+        {% else %}
+            <div class="card closed-theme">
+                <h2>No guests are in need for approve</h2>
+            </div>
+            <br/>
+        {% endif %}#}
 {% endblock %}
