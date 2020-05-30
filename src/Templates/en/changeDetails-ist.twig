@@ -32,9 +32,8 @@
 					</option>
 				</select>
 			</label>
-			<br>
 
-			<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+			{#<label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
 																	  value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"
 																	  required="required"></label>
 			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
@@ -42,7 +41,7 @@
 																			 value="{{ istDetails.getTelephoneNumber }}"
 																			 placeholder="digits including country dial-in code"
 																			 pattern="^\+?[0-9 ]+$"
-																			 required="required"></label>
+																			 required="required"></label>#}
 			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
 																				  name="permanentResidence"
 																				  value="{{ istDetails.getPermanentResidence }}"
@@ -50,9 +49,9 @@
 																				  required="required"></label>
 			<label class="form-group form-group-inline">Country:
 				<select class="form-control" name="country">
-					<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
+					{#<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
 						Slovak Republic
-					</option>
+					</option>#}
 					<option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
 						Czech Republic
 					</option>
@@ -65,7 +64,7 @@
 																		   name="scoutUnit"
 																		   value="{{ istDetails.getScoutUnit }}"
 																		   required="required"></label>
-			<br>
+			{#<br>
 
 			<label class="form-group form-group-inline">T-shirt shape:
 				<select class="form-control" name="tshirtShape" required="required">
@@ -125,13 +124,13 @@
 			</label>
 			if chosen "other" - we arrange only above stated options of diet restriction; in case of
 			other restrictions, you have to arrange all the food for whole event yourself and your
-			participant fee will be reduced<br><br>
+			participant fee will be reduced<br><br>#}
 			<label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
 																			  name="healthProblems"
-																			  placeholder="allergies, ..."
+																			  placeholder="for health rescue - allergies, medication..."
 																			  value="{{ istDetails.getHealthProblems }}">
 			</label>
-			<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
+			{#<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
 																							type="text"
 																							name="languages"
 																							required="required"
@@ -244,11 +243,21 @@
 					subcamp leader
 				</label>
 			</div>
-			<br>
+			<br>#}
 
-			<label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
-																	 placeholder="anything else?"
-																	 value="{{ istDetails.getNotes }}">
+			<label class="form-group form-group-inline">Scarf:
+				<select class="form-control" name="scarf">
+					<option value="yes"{% if istDetails.getScarf == 'yes' %} selected="selected"{% endif %}>
+						Yes, I need one for 90 CZK!
+					</option>
+					<option value="no"{% if istDetails.getScarf == 'no' %} selected="selected"{% endif %}>
+						No, I have one already...
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">Notice: <input class="form-control" type="text" name="notes"
+																	   placeholder="anything else?"
+																	   value="{{ istDetails.getNotes }}">
 			</label>
 
 			<div class="text-center">

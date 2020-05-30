@@ -44,6 +44,8 @@ class Participant extends EntityDatetime {
     protected const TSHIRT_DELIMITER = '-';
 
     public const FOOD_OTHER = 'other';
+    public const SCARF_NO = 'no';
+    public const SCARF_YES = 'yes';
 
     public function setUser(User $user): void {
         // else  LeanMapper \ Exception \ MemberAccessException

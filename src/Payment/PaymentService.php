@@ -11,7 +11,7 @@ use Monolog\Logger;
 
 class PaymentService {
     private $paymentRepository;
-    private $paymentAutoMatcherFio;
+    //private $paymentAutoMatcherFio;
     private $flashMessages;
     private $logger;
 
@@ -27,14 +27,50 @@ class PaymentService {
         $this->logger = $logger;
     }
 
+    public function createAndPersistNewPayment(Participant $participant): Payment {
+        do {
+            $variableNumber = '2020'.str_pad(random_int(0, 999999), 3, '0', STR_PAD_LEFT);
+        } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
+
+        $event = $participant->user->event;
+
+        $payment = new Payment();
+        $payment->participant = $participant;
+        $payment->variableSymbol = $variableNumber;
+        $payment->price = (string)$this->getPrice($participant);
+        $payment->currency = 'Kč';
+        $payment->status = Payment::STATUS_WAITING;
+        $payment->purpose = 'event fee';
+        $payment->accountNumber = $event->accountNumber;
+        if ($participant instanceof Ist) {
+            $payment->note = $event->slug.' '
+                .$payment->variableSymbol.' '
+                .$participant->getFullName();
+        }
+
+        $this->paymentRepository->persist($payment);
+
+        return $payment;
+    }
+
     /**
-     * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
-     * discount 40€ for self-eating participant (free included), not for ISTs (not computed)
-     *
      * @param Participant $participant
      * @return int
      */
     public function getPrice(Participant $participant): int {
+        $price = 500;
+        if ($participant->scarf === Participant::SCARF_YES) {
+            $price += $participant->user->event->scarfPrice;
+        }
+
+        return $price;
+
+        // TODO make dynamic for other events
+        /*
+         * AQUA2020
+         * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
+         * discount 40€ for self-eating participant (free included), not for ISTs (not computed)
+         */
         if ($participant instanceof PatrolLeader) {
             $todayPrice = $this->getFullPriceForToday();
             $patrolPriceSum = 0;

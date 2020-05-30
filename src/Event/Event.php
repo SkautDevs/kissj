@@ -28,6 +28,7 @@ use LeanMapper\Entity;
  *
  * @property bool        $allowIsts
  * @property int|null    $maximalClosedIstsCount
+ * @property string|null $istLabel
  */
 class Event extends Entity {
     public $maximalClosedGuestsCount = 100; // TODO move into DB

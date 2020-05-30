@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card open-theme">
-        <h2>Send IST registration</h2>
+        <h2>Lock registration as {{ event.getIstLabel|capitalize }}</h2>
         <p>Do you really want to lock your registration and send it to us for approval? <b>This step is irreversible and
                 submitted details cannot be changed afterward!</b></p>
         <form method="POST" action="{{ path_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">

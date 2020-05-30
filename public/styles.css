@@ -274,7 +274,7 @@ li.progressbar-item.is-active {
 }
 
 .form-control:invalid {
-	box-shadow: 2px 2px 2px #b17e4d;
+	box-shadow: 2px 2px 2px #a21f16;
 }
 
 .form-wide {

@@ -3,7 +3,7 @@
 {% block content %}
     {% set userStatus = ist.user.status %}
     <div class="card {{ userStatus }}-theme">
-        <h2>IST - details</h2>
+        <h2>{{ event.getIstLabel|capitalize }} - details</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'ist'} %}
         </h4>
@@ -11,10 +11,8 @@
             <div class="paymentInfo">
                 <h2>Payment information</h2>
                 International Bank Account Number (IBAN): {{ payment.getAccountNumber }}<br/>
-                SWIFT/BIC: TATRSKBX<br/>
-                Amount: {{ payment.getPrice }} EUR<br/>
-                Variable symbol: 51220 {# TODO fix for general event #}<br/>
-                Constant symbol (may be not available in your bank): 0558<br/>
+                Amount: {{ payment.getPrice }} {{ payment.currency }}<br/>
+                Variable symbol: {{ payment.getVariable }}<br/>
                 Note: {{ payment.getNote }}<br/>
                 <br/>
             </div>
@@ -32,19 +30,20 @@
                 Scout nickname: <b>{{ ist.getNickname }}</b><br/>
                 Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
                 Gender: <b>{{ ist.getGender }}</b><br/>
-                Email: <b>{{ ist.getEmail }}</b><br/>
-                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>
+                {#Email: <b>{{ ist.getEmail }}</b><br/>
+                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
                 Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
                 Country: <b>{{ ist.getCountry }}</b><br/>
                 Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
-                T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
-                Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>
+                {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
+                Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
                 Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
-                Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+                {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
                 Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
-                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>
+                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
+                Scarf: <b>{{ ist.getScarf }}</b><br/>
                 Notes: <b>{{ ist.getNotes }}</b><br/>
                 <br/>
             </div>

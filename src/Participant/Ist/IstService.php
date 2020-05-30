@@ -5,14 +5,12 @@ namespace kissj\Participant\Ist;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
 
 class IstService {
     private $istRepository;
-    private $paymentRepository;
     private $userService;
     private $paymentService;
     private $flashMessages;
@@ -20,14 +18,12 @@ class IstService {
 
     public function __construct(
         IstRepository $istRepository,
-        PaymentRepository $paymentRepository,
         UserService $userService,
         PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
         PhpMailerWrapper $mailer
     ) {
         $this->istRepository = $istRepository;
-        $this->paymentRepository = $paymentRepository;
         $this->userService = $userService;
         $this->paymentService = $paymentService;
         $this->flashMessages = $flashMessages;
@@ -65,6 +61,7 @@ class IstService {
         $ist->driversLicense = $params['driversLicense'] ?? null;
         $ist->skills = $params['skills'] ?? null;
         $ist->preferredPosition = $params['preferredPosition'] ?? [];
+        $ist->scarf = $params['scarf'] ?? null;
         $ist->notes = $params['notes'] ?? null;
 
         return $ist;
@@ -76,32 +73,32 @@ class IstService {
             || $ist->lastName === null
             || $ist->birthDate === null
             || $ist->gender === null
-            || $ist->email === null
-            || $ist->telephoneNumber === null
+            //|| $ist->email === null
+            //|| $ist->telephoneNumber === null
             || $ist->permanentResidence === null
             || $ist->country === null
             || $ist->scoutUnit === null
-            || $ist->foodPreferences === null
-            || $ist->languages === null
-            || $ist->swimming === null
-            || $ist->driversLicense === null
-            || $ist->preferredPosition === null
-            || $ist->getTshirtShape() === null
-            || $ist->getTshirtSize() === null
+            //|| $ist->foodPreferences === null
+            //|| $ist->languages === null
+            //|| $ist->swimming === null
+            //|| $ist->driversLicense === null
+            //|| $ist->preferredPosition === null
+            //|| $ist->getTshirtShape() === null
+            //|| $ist->getTshirtSize() === null
         ) {
             return false;
         }
-
-        if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
-            return false;
-        }
-
+        /*
+                if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
+                    return false;
+                }
+        */
         return true;
     }
 
     public function isCloseRegistrationValid(Ist $ist): bool {
         if (!$this->isIstValidForClose($ist)) {
-            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably email or some date)');
+            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably some date)');
 
             return false;
         }
@@ -137,8 +134,7 @@ class IstService {
     }
 
     public function approveRegistration(Ist $ist): Ist {
-        $price = $this->paymentService->getPrice($ist);
-        $payment = $this->paymentRepository->createAndPersistNewPayment($ist, $price);
+        $payment = $this->paymentService->createAndPersistNewPayment($ist);
 
         $this->mailer->sendRegistrationApprovedWithPayment($ist, $payment);
         $this->userService->approveRegistration($ist->user);
