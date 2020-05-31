@@ -1,11 +1,9 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-<p>Ahoy,</p>
-<p>unfortunatelly, your payment for AQUA 2020 was denied. </p>
-<p>Reason is: {{ reason }}.</p>
-<p><b>Don't attempt to pay again with previous payment details!</b> Do you want to attend the event nevertheless?
-    Send your registration again at
-    <a href="{{ event.webUrl }}">{{ event.webUrl }}</a> (submitted information is still saved in your account),
-    we will check and approve it again and send you new payment details.</p>
+<p>{% trans %}cancel-payment.welcome{% endtrans %}</p>
+<p>{% trans %}cancel-payment.denied{% endtrans %}</p>
+<p>{% trans %}cancel-payment.{% endtrans %}{{ reason }}.</p>
+<p><b>{% trans %}cancel-payment.dontPay{% endtrans %}</b>{% trans %}cancel-payment.registerAgain{% endtrans %}
+    <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>{% trans %}cancel-payment.newPayment{% endtrans %}</p>
     {% endblock %}

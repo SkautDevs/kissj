@@ -1,21 +1,21 @@
 {% if userStatus == 'open' %}
     {% if userRole == 'pl' %}
-        Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom
+        {% trans %}userCustomHelp.statusOpenPl{% endtrans %}
     {% else %}
-        Fill in all the details about yourself and then lock your registration via the buttom at the bottom
+        {% trans %}userCustomHelp.statusOpen{% endtrans %}
     {% endif %}
 {% elseif userStatus == 'closed' %}
     {% if userRole == 'guest' %}
-        Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an E-mail: team@aqua.sk
+        {% trans %}userCustomHelp.statusClosedGuest{% endtrans %}{{ event.getContactEmail }}
     {% else %}
-        Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an E-mail: team@aqua.sk
+        {% trans %}userCustomHelp.statusClosed{% endtrans %}{{ event.getContactEmail }}
     {% endif %}
 {% elseif userStatus == 'approved' %}
-    Your registration has been approved! Now you need to pay the registration fee. Payment details are below.
+        {% trans %}userCustomHelp.statusApproved{% endtrans %}    
 {% elseif userStatus == 'paid' %}
     {% if userRole == 'guest' %}
-        Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2020!
+        {% trans %}userCustomHelp.statusPaidGuest{% endtrans %}    
     {% else %}
-        Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2020!
+        {% trans %}userCustomHelp.statusPaid{% endtrans %}    
     {% endif %}
 {% endif %}

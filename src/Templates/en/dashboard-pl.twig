@@ -23,7 +23,7 @@
             <div>
                 <h2>Patrol Leader {{ pl.getFullName }}</h2>
                 {% if userStatus == 'open' %}
-                    <a class="btn btn-small" href="{{ url_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
+                    <a class="btn btn-small" href="{{ path_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
                         Edit your own details</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
@@ -50,7 +50,7 @@
             <div>
                 <h2>List of participants</h2>
                 {% if userStatus == 'open' %}
-                    <form method="POST" action="{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
+                    <form method="POST" action="{{ path_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
                         <input type="submit" value="Add a participant" class="btn btn-small">
                     </form>
                     <br/>
@@ -62,14 +62,14 @@
                             participant - <b>{{ p.getFullName }}</b>
                             {% if userStatus == 'open' %}
                                 <!-- edit --><a
-                                    href="{{ url_for('p-showChangeDetails',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                    href="{{ path_for('p-showChangeDetails',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                         class="material-icons">edit</i></a>
                                 <!-- delete --><a
-                                    href="{{ url_for('p-showDelete',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                    href="{{ path_for('p-showDelete',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                         class="material-icons">delete</i></a>
                             {% else %}
                                 <!-- show --><a
-                                    href="{{ url_for('p-show',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                    href="{{ path_for('p-show',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                         class="material-icons">search</i></a>
                             {% endif %}
 
@@ -93,7 +93,7 @@
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ url_for('pl-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            <a class="btn btn-small" href="{{ path_for('pl-showCloseRegistration', {'eventSlug': event.slug}) }}">
                 Lock registration
             </a>
         {% endif %}

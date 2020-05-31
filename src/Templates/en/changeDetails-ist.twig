@@ -1,34 +1,34 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card text-left open-theme">
-        <h2>Edit your details</h2>
-        <form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
-            <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
-                                                                           name="firstName"
-                                                                           value="{{ istDetails.getFirstName }}"
-                                                                           required="required"></label>
-            <label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
-                                                                        name="lastName"
-                                                                        value="{{ istDetails.getLastName }}"
-                                                                        required="required"></label>
-            <label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
-                                                                               name="nickname"
+	<div class="card text-left open-theme">
+		<h2>{% trans %}changeDetails-ist.editDetails{% endtrans %}</h2>
+		<form method="POST" action="{{ path_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.firstName{% endtrans %}<input class="form-control" type="text"
+																		   name="firstName"
+																		   value="{{ istDetails.getFirstName }}"
+																		   required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.surname{% endtrans %}<input class="form-control" type="text"
+																		name="lastName"
+																		value="{{ istDetails.getLastName }}"
+																		required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scoutNick{% endtrans %}<input class="form-control" type="text"
+																			   name="nickname"
 																			   value="{{ istDetails.getNickname }}"></label>
-			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.birthDate{% endtrans %}<input class="form-control" type="date"
 																			  name="birthDate"
 																			  value="{{ istDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
 																			  required="required"></label>
-			<label class="form-group form-group-inline">Gender:
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.gender{% endtrans %}
 				<select class="form-control" name="gender" required="required">
 					<option value="man" {% if istDetails.getGender == 'man' %}selected="selected"{% endif %}>
-						Man
+						{% trans %}changeDetails-ist.genderMan{% endtrans %}
 					</option>
 					<option value="woman" {% if istDetails.getGender == 'woman' %}selected="selected"{% endif %}>
-						Woman
+						{% trans %}changeDetails-ist.genderWoman{% endtrans %}
 					</option>
 					<option value="other" {% if istDetails.getGender == 'other' %}selected="selected"{% endif %}>
-						Other
+						{% trans %}changeDetails-ist.genderOther{% endtrans %}
 					</option>
 				</select>
 			</label>
@@ -42,25 +42,25 @@
 																			 placeholder="digits including country dial-in code"
 																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>#}
-			<label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.address{% endtrans %}<input class="form-control" type="text"
 																				  name="permanentResidence"
 																				  value="{{ istDetails.getPermanentResidence }}"
 																				  placeholder="Street and no., city, postal code"
 																				  required="required"></label>
-			<label class="form-group form-group-inline">Country:
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.country{% endtrans %}
 				<select class="form-control" name="country">
 					{#<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
 						Slovak Republic
 					</option>#}
 					<option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
-						Czech Republic
+						{% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
 					</option>
 					<option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
-						other - please fill your country in note
+						{% trans %}changeDetails-ist.countryOther{% endtrans %}
 					</option>
 				</select>
 			</label>
-			<label class="form-group form-group-inline">Scout unit: <input class="form-control" type="text"
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.unit{% endtrans %}<input class="form-control" type="text"
 																		   name="scoutUnit"
 																		   value="{{ istDetails.getScoutUnit }}"
 																		   required="required"></label>
@@ -125,7 +125,7 @@
 			if chosen "other" - we arrange only above stated options of diet restriction; in case of
 			other restrictions, you have to arrange all the food for whole event yourself and your
 			participant fee will be reduced<br><br>#}
-			<label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.issues{% endtrans %}<input class="form-control" type="text"
 																			  name="healthProblems"
 																			  placeholder="for health rescue - allergies, medication..."
 																			  value="{{ istDetails.getHealthProblems }}">
@@ -245,26 +245,26 @@
 			</div>
 			<br>#}
 
-			<label class="form-group form-group-inline">Scarf:
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scarf{% endtrans %}
 				<select class="form-control" name="scarf">
 					<option value="yes"{% if istDetails.getScarf == 'yes' %} selected="selected"{% endif %}>
-						Yes, I need one for 90 CZK!
+						{% trans %}changeDetails-ist.scarfYes{% endtrans %}
 					</option>
 					<option value="no"{% if istDetails.getScarf == 'no' %} selected="selected"{% endif %}>
-						No, I have one already...
-                    </option>
-                </select>
-            </label>
-            <label class="form-group form-group-inline">Notice: <input class="form-control" type="text" name="notes"
-                                                                       placeholder="anything else?"
-                                                                       value="{{ istDetails.getNotes }}">
-            </label>
+						{% trans %}changeDetails-ist.scarfNo{% endtrans %}
+					</option>
+				</select>
+			</label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %}<input class="form-control" type="text" name="notes"
+																	   placeholder="anything else?"
+																	   value="{{ istDetails.getNotes }}">
+			</label>
 
-            <div class="text-center">
-                <a class="btn btn-small btn-grey"
-                   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
-                <input class="btn btn-small" type="submit" value="Save">
-            </div>
-        </form>
-    </div>
+			<div class="text-center">
+				<a class="btn btn-small btn-grey"
+				   href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+				<input class="btn btn-small" type="submit" value="Save">
+			</div>
+		</form>
+	</div>
 {% endblock %}

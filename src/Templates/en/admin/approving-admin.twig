@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="card closed-theme">
-        <h2>Approving participants on event {{ event.readableName }}</h2>
-        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
+        <h2>{% trans %}approving-admin.approving{% endtrans %}{{ event.readableName }}</h2>
+        <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">{% trans %}approving-admin.back{% endtrans %}</a>
     </div>
     <br/>
     {% if closedIsts is not empty %}
@@ -14,31 +14,31 @@
         {% for ist in closedIsts %}
             <div class="card closed-theme">
                 <h4>{{ ist.getFullName }}</h4>
-                Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b>
-                (will have {{ ist.getAgeInYears(event.getEventStart) }} years)<br/>
-                Gender: <b>{{ ist.getGender }}</b><br/>
+                {% trans %}approving-admin.BirthDate{% endtrans %}<b>{{ ist.getBirthDate.format('d. m. Y') }}</b>
+                {% trans %}approving-admin.willHave{% endtrans %}{{ ist.getAgeInYears(event.getEventStart) }}{% trans %}approving-admin.years{% endtrans %}<br/>
+                {% trans %}approving-admin.gender{% endtrans %}<b>{{ ist.getGender }}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
-                Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
-                Country: <b>{{ ist.getCountry }}</b><br/>
+                {% trans %}approving-admin.address{% endtrans %}<b>{{ ist.getPermanentResidence }}</b><br/>
+                {% trans %}approving-admin.country{% endtrans %}<b>{{ ist.getCountry }}</b><br/>
                 Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
                 {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
                 Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
-                Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
+                {% trans %}approving-admin.issues{% endtrans %}<b>{{ ist.getHealthProblems }}</b><br/>
                 {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
                 Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
                 Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
-                Scarf: <b>{{ ist.getScarf }}</b><br/>
-                Notes: <b>{{ ist.getNotes }}</b><br/>
+                {% trans %}approving-admin.scarf{% endtrans %}<b>{{ ist.getScarf }}</b><br/>
+                {% trans %}approving-admin.notes{% endtrans %}<b>{{ ist.getNotes }}</b><br/>
                 <br/>
-                <a href="{{ url_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Deny</a>
+                <a href="{{ path_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
                 <br/>
                 <br/>
                 <form method="post"
-                      action="{{ url_for('admin-approve-ist', {'istId': ist.getId, 'eventSlug': event.slug}) }}">
+                      action="{{ path_for('admin-approve-ist', {'istId': ist.getId, 'eventSlug': event.slug}) }}">
                     <input type="submit" value="Approve and send email" class="btn btn-small">
                 </form>
             </div>
@@ -46,7 +46,7 @@
         {% endfor %}
     {% else %}
         <div class="card closed-theme">
-            <h2>No {{ event.getIstLabel }} are in need for approve</h2>
+            <h2>{% trans %}approving-admin.none{% endtrans %}{{ event.getIstLabel }} {% trans %}approving-admin.need{% endtrans %}</h2>
         </div>
         <br/>
     {% endif %}
@@ -92,12 +92,12 @@
                         Notes: <b>{{ pDetail.getNotes }}</b><br/>
                         <br/>
                     {% endfor %}
-                    <a href="{{ url_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
+                    <a href="{{ path_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">Deny</a>
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ path_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit" value="Approve and send email" class="btn btn-small">
                     </form>
                 </div>
@@ -131,17 +131,17 @@
                     Legal representative (name + email): <b>{{ freeParticipant.getLegalRepresentative }}</b><br/>
                     Current Leader (name + email): <b>{{ freeParticipant.getNotes }}</b><br/>
                     <br/>
-                    <a href="{{ url_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
+                    <a href="{{ path_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">Deny</a>
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ path_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit" value="Send welcome email" class="btn btn-grey btn-small">
                     </form>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ path_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit" value="Approve and send email" class="btn btn-small">
                     </form>
                 </div>
@@ -173,12 +173,12 @@
                     Date of departue: <b>{{ guest.getDepartueDate.format('d. m. Y') }}</b><br/>
                     Notes: <b>{{ guest.getNotes }}</b><br/>
                     <br/>
-                    <a href="{{ url_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
+                    <a href="{{ path_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">Deny</a>
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ path_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit" value="Approve and send email" class="btn btn-small">
                     </form>
                 </div>

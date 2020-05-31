@@ -12,7 +12,7 @@
             <h2>Personal information</h2>
             {% if userStatus == 'open' %}
                 <a class="btn btn-small"
-                   href="{{ url_for('guest-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                   href="{{ path_for('guest-showDetailsChangeable', {'eventSlug': event.slug}) }}">
                     Edit my details</a><br/><br/>
             {% endif %}
             <div class="text-center">
@@ -35,7 +35,7 @@
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ url_for('guest-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            <a class="btn btn-small" href="{{ path_for('guest-showCloseRegistration', {'eventSlug': event.slug}) }}">
                 Lock registration</a>
         {% endif %}
     </div>

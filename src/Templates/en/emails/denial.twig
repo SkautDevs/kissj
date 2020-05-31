@@ -1,10 +1,8 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>Ahoy,</p>
-    <p>unfortunatelly, we have denied your registration for {{ event.readableName }}, as you hadn't met all the
-        requirements. </p>
+    <p>{% trans %}denial.welcome{% endtrans %}</p>
+    <p>{% trans %}denial.denied{% endtrans %}{{ event.readableName }}{% trans %}denial.requirements{% endtrans %}</p>
 
-    <p>Reason: {{ reason }}. Please, add or edit missing details in registration system and don't forget to send your
-        registration for approval. </p>
+    <p>{% trans %}denial.reason{% endtrans %}{{ reason }}{% trans %}denial.editRegistration{% endtrans %}</p>
 {% endblock %}

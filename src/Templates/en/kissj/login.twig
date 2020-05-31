@@ -3,10 +3,10 @@
 {% block content %}
     <div class="two-cards">
         <div class="card registration-theme">
-            <form action="{{ url_for('sendLoginEmail') }}" method="post">
-                <h2>Registration for the {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
+            <form action="{{ path_for('sendLoginEmail') }}" method="post">
+                <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
                 <div class="form-group">
-                    <label for="form-email">Email</label>
+                    <label for="form-email">{% trans %}login.Email{% endtrans %}</label>
                     <input class="form-control form-wide" type="email" name="email" id="form-email"
                            required/><br/>
                 </div>
@@ -14,18 +14,17 @@
             </form>
         </div>
         <div class="card approved-theme">
-            <h2>How does logging-in work?</h2>
+            <h2>{% trans %}login.howItWorks{% endtrans %}</h2>
             <ul>
-                <li>Submit your E-mail</li>
-                <li>Follow an access button in your E-mail</li>
-                <li>Fill in your details</li>
-                <li>Send your registration for approval</li>
-                <li>Wait for approving and payment info</li>
-                <li>Pay and you are good to go!</li>
+                <li>{% trans %}login.submitEmail{% endtrans %}</li>
+                <li>{% trans %}login.followButton{% endtrans %}</li>
+                <li>{% trans %}login.fillDetails{% endtrans %}</li>
+                <li>{% trans %}login.sentForApproval{% endtrans %}</li>
+                <li>{% trans %}login.waitForApproval{% endtrans %}</li>
+                <li>{% trans %}login.pay{% endtrans %}</li>
             </ul>
             <br/>
-            <a href="{{ url_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">More information about
-                registration system</a>
+            <a href="{{ path_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">{% trans %}login.more{% endtrans %}</a>
         </div>
     </div>
 {% endblock %}

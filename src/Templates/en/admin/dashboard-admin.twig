@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="card approved-theme">
-        <h2>Dashboard of event {{ eventName }} Administrator</h2>
-        <h3>Statistics</h3>
+        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %}{{ eventName }}{% trans %}dashboard-admin.admin{% endtrans %}</h2>
+        <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
         <div class="card-divide">
             <div>{#
                 <h3>Patrol limits</h3>
@@ -25,12 +25,12 @@
                 <p>Paid Free Participants: {{ freeParticipants.getPaidCount }}</p>#}
             </div>
             <div>
-                <h3>{{ event.getIstLabel }} counts</h3>
-                <p>Limit for IST: {{ event.maximalClosedIstsCount }}</p>
-                <p>Open IST: {{ ists.getOpenCount }}</p>
-                <p>Locked IST: {{ ists.getClosedCount }}</p>
-                <p>Approved IST: {{ ists.getApprovedCount }}</p>
-                <p>Paid IST: {{ ists.getPaidCount }}</p>
+                <h3>{{ event.getIstLabel }}{% trans %}dashboard-admin.count{% endtrans %}</h3>
+                <p>{% trans %}dashboard-admin.limitIst{% endtrans %}{{ event.maximalClosedIstsCount }}</p>
+                <p>{% trans %}dashboard-admin.openIst{% endtrans %}{{ ists.getOpenCount }}</p>
+                <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}{{ ists.getClosedCount }}</p>
+                <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}{{ ists.getApprovedCount }}</p>
+                <p>{% trans %}dashboard-admin.paidIst{% endtrans %}{{ ists.getPaidCount }}</p>
                 {#
                                 <h3>Guest counts</h3>
                                 <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
@@ -40,24 +40,18 @@
                                 <p>Paid Guests: {{ guests.getPaidCount }}</p>#}
             </div>
         </div>
-        <h3>Administators actions</h3>
+        <h3>{% trans %}dashboard-admin.adminActions{% endtrans %}</h3>
         <div class="card-divide">
             <div>
-                <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
-                    participants</a><br/>
-                <a class="btn btn-grey">Pair new
-                    payments with bank</a><br/>
-                <!--<a href="{{ url_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-                <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Confirming
-                    payments by hand</a><br/>
+                <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
+                <a class="btn btn-grey">{% trans %}dashboard-admin.newPaymnets{% endtrans %}</a><br/>
+                <!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
             </div>
             <div>
-                <a class="btn btn-grey">Export medical data into CSV</a><br/>
-                <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">
-                    Export emails of paid into CSV
-                </a><br/>
-                <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
-                    into CSV</a><br/>
+                <a class="btn btn-grey">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
+                <a href="{{ path_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
+                <a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
             </div>
         </div>
     </div>

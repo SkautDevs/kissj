@@ -2,10 +2,9 @@
 
 {% block content %}
     <div class="text-center">
-        <p>Ahoy!</p>
-        <p>We approved your registration for {{ event.readableName }}. Thank you!</p>
+        <p>{% trans %}finished.welcome{% endtrans %}</p>
+        <p>{% trans %}finished.approved{% endtrans %}{{ event.readableName }}{% trans %}finished.thanks{% endtrans %}</p>
 
-        <p>Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent
-            is ready for the nature of northern Slovakia and stay tuned for more information. ;)</p>
+        <p>{% trans %}finished.enjoy{% endtrans %}</p>
     </div>
 {% endblock %}
