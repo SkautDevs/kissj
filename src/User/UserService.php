@@ -7,10 +7,10 @@ use kissj\Orm\Relation;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use PHPUnit\Framework\MockObject\RuntimeException;
-use Slim\Router;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Routing\RouteContext;
 
 class UserService {
-    private $router;
     private $userRepository;
     private $mailer;
     private $loginTokenRepository;
@@ -20,14 +20,12 @@ class UserService {
         LoginTokenRepository $loginTokenRepository,
         ParticipantRepository $participantRepository,
         UserRepository $userRepository,
-        PhpMailerWrapper $mailer,
-        Router $router
+        PhpMailerWrapper $mailer
     ) {
         $this->loginTokenRepository = $loginTokenRepository;
         $this->participantRepository = $participantRepository;
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
-        $this->router = $router;
     }
 
     public function isEmailExisting(string $email): bool {
@@ -42,7 +40,7 @@ class UserService {
         return $user;
     }
 
-    public function sendLoginTokenByMail(string $email): string {
+    public function sendLoginTokenByMail(string $email, Request $request): string {
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => $email]);
         $this->invalidateAllLoginTokens($user);
@@ -56,8 +54,10 @@ class UserService {
 
         $this->loginTokenRepository->persist($loginToken);
 
-        $link = $this->router->pathFor('loginWithToken', ['token' => $token]);
-        $this->mailer->sendLoginToken($user, $link);
+        // need to use full route
+        $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+        $fullLink = $routeParser->fullUrlFor($request->getUri(), 'loginWithToken', ['token' => $token]);
+        $this->mailer->sendLoginToken($user, $fullLink);
 
         return $token;
     }
@@ -158,7 +158,7 @@ class UserService {
             User::ROLE_IST,
             User::ROLE_PATROL_LEADER,
             User::ROLE_FREE_PARTICIPANT,
-            User::ROLE_GUEST
+            User::ROLE_GUEST,
         ];
 
         return in_array($role, $allowedRoles, true);

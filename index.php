@@ -22,13 +22,11 @@ require __DIR__.'/vendor/autoload.php';
 
 session_start();
 
-// Instantiate the app
-
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getSettingsAndDependencies());
-$containerBuilder->useAnnotations(true); // in AbstrackController
+$containerBuilder->useAnnotations(true); // used in AbstractController
 $container = $containerBuilder->build();
-$app = new \Slim\App($container);
+$app = \DI\Bridge\Slim\Bridge::create($container);
 
 // Register middleware
 require __DIR__.'/src/middleware.php';

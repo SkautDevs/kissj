@@ -42,7 +42,7 @@ class GuestController extends AbstractController {
         $this->guestRepository->persist($guest);
         $this->flashMessages->success('Details successfully saved. ');
 
-        return $response->withRedirect($this->router->pathFor('guest-dashboard',
+        return $response->withRedirect($this->router->urlFor('guest-dashboard',
             ['eventSlug' => $guest->user->event->slug]));
     }
 
@@ -54,7 +54,7 @@ class GuestController extends AbstractController {
                 ['dataProtectionUrl' => $guest->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('guest-dashboard',
+        return $response->withRedirect($this->router->urlFor('guest-dashboard',
             ['eventSlug' => $guest->user->event->slug]
         ));
     }
@@ -70,7 +70,7 @@ class GuestController extends AbstractController {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        return $response->withRedirect($this->router->pathFor('guest-dashboard',
+        return $response->withRedirect($this->router->urlFor('guest-dashboard',
             ['eventSlug' => $guest->user->event->slug]));
     }
 
@@ -89,7 +89,7 @@ class GuestController extends AbstractController {
         $this->logger->info('Denied registration for guest with ID '.$guest->id.' with reason: '.$reason);
 
         return $response->withRedirect(
-            $this->router->pathFor('admin-show-approving', ['eventSlug' => $guest->user->event->slug])
+            $this->router->urlFor('admin-show-approving', ['eventSlug' => $guest->user->event->slug])
         );
     }
 
@@ -100,7 +100,7 @@ class GuestController extends AbstractController {
         $this->flashMessages->success('guest participant is approved, mail was sent (withnout payment)');
         $this->logger->info('Approved (no payment was sent) registration for guest with ID '.$guest->id);
 
-        return $response->withRedirect($this->router->pathFor(
+        return $response->withRedirect($this->router->urlFor(
             'admin-show-approving', ['eventSlug' => $guest->user->event->slug])
         );
     }

@@ -5,8 +5,8 @@ namespace kissj\Participant\Ist;
 use kissj\AbstractController;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class IstController extends AbstractController {
     private $istService;
@@ -23,7 +23,7 @@ class IstController extends AbstractController {
         $this->paymentService = $paymentService;
     }
 
-    public function showDashboard(Response $response, User $user) {
+    public function showDashboard(Response $response, User $user): Response {
         $ist = $this->istService->getIst($user);
         $possibleOnePayment = $this->paymentService->findLastPayment($ist);
 
@@ -31,27 +31,26 @@ class IstController extends AbstractController {
             ['user' => $user, 'ist' => $ist, 'payment' => $possibleOnePayment]);
     }
 
-    public function showDetailsChangeable(Request $request, Response $response) {
+    public function showDetailsChangeable(Request $request, Response $response): Response {
         $istDetails = $this->istService->getIst($request->getAttribute('user'));
 
         return $this->view->render($response, 'changeDetails-ist.twig',
             ['istDetails' => $istDetails]);
     }
 
-    public function changeDetails(Request $request, Response $response) {
+    public function changeDetails(Request $request, Response $response): Response {
         $ist = $this->istService->addParamsIntoIst(
             $this->istService->getIst($request->getAttribute('user')),
-            $request->getParams()
+            $request->getParsedBody()
         );
 
         $this->istRepository->persist($ist);
         $this->flashMessages->success('Details successfully saved. ');
 
-        return $response->withRedirect($this->router->pathFor('ist-dashboard',
-            ['eventSlug' => $ist->user->event->slug]));
+        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function showCloseRegistration(Request $request, Response $response) {
+    public function showCloseRegistration(Request $request, Response $response): Response {
         $ist = $this->istService->getIst($request->getAttribute('user')); // TODO change to autowiring
         $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
@@ -59,12 +58,10 @@ class IstController extends AbstractController {
                 ['dataProtectionUrl' => $ist->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('ist-dashboard',
-            ['eventSlug' => $ist->user->event->slug]
-        ));
+        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function closeRegistration(Request $request, Response $response) {
+    public function closeRegistration(Request $request, Response $response): Response {
         $ist = $this->istService->getIst($request->getAttribute('user'));
         $ist = $this->istService->closeRegistration($ist);
 
@@ -75,38 +72,33 @@ class IstController extends AbstractController {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        return $response->withRedirect($this->router->pathFor('ist-dashboard',
-            ['eventSlug' => $ist->user->event->slug]));
+        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function showOpenIst(int $istId, Response $response) {
+    public function showOpenIst(int $istId, Response $response): Response {
         $ist = $this->istRepository->find($istId);
 
         return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
     }
 
-    public function openIst(int $istId, Request $request, Response $response) {
-        $reason = htmlspecialchars($request->getParam('reason'), ENT_QUOTES);
+    public function openIst(int $istId, Request $request, Response $response): Response {
+        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->openRegistration($ist, $reason);
         $this->flashMessages->info('IST participant denied, email successfully sent');
         $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
 
-        return $response->withRedirect(
-            $this->router->pathFor('admin-show-approving', ['eventSlug' => $ist->user->event->slug])
-        );
+        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function approveIst(int $istId, Response $response) {
+    public function approveIst(int $istId, Request $request, Response $response): Response {
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->approveRegistration($ist);
         $this->flashMessages->success('IST participant is approved, payment is generated and mail sent');
         $this->logger->info('Approved registration for IST with ID '.$ist->id);
 
-        return $response->withRedirect($this->router->pathFor(
-            'admin-show-approving', ['eventSlug' => $ist->user->event->slug])
-        );
+        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
     }
 }

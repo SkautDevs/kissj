@@ -3,8 +3,6 @@
 namespace kissj\Settings;
 
 use DI\Bridge\Slim\CallableResolver;
-use DI\Bridge\Slim\ControllerInvoker;
-use DI\Container;
 use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
 use Invoker\Invoker;
@@ -13,7 +11,10 @@ use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use Invoker\ParameterResolver\DefaultValueResolver;
 use Invoker\ParameterResolver\ResolverChain;
 use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
 use kissj\User\UserRegeneration;
 use LeanMapper\Connection;
@@ -24,38 +25,33 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
-use Slim\Handlers;
-use Slim\Http\Environment;
-use Slim\Http\Headers;
-use Slim\Http\Request;
-use Slim\Http\Response;
-use Slim\Interfaces\RouterInterface;
-use Slim\Router;
+use Psr\Log\LoggerInterface;
+use Slim\Psr7\Environment;
 use Slim\Views\Twig;
-use Slim\Views\TwigExtension;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
 
 class Settings {
     public function getSettingsAndDependencies(): array {
+        $settings = $this->getSettings();
+        $settings = array_merge($settings, $this->getDependencies($settings['settings']));
+
+        return $settings;
+    }
+
+    protected function getSettings(): array {
         $settings = [
             'settings' => [
                 // TODO tidy up
                 'httpVersion' => '1.1',
                 'responseChunkSize' => 4096,
-                'outputBuffering' => 'append',
-                'determineRouteBeforeAppMiddleware' => false,
                 'routerCacheFile' => false,
 
                 'debug' => true, // true fires Whoops debugger, false falls into Slim debugger (keep true at all times)
 
                 // Whoops debug part
                 'whoopsDebug' => false, // true enable Whoops nice debug page, false fires up production error handle
-
-                // Slim debug part
-                'displayErrorDetails' => false, // set to false in production
-                'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
                 // Testing site
                 'useTestingSite' => false,
@@ -106,52 +102,23 @@ class Settings {
                     // 'login' => 'superSecretUsername',
                     // 'password' => 'superSecretPassword',
                 ],
-
-                'availableLocales' => ['cs', 'en'],
-                'defaultLocale' => 'cs',
+                'locales' => [
+                    'availableLocales' => ['cs', 'en'],
+                    'defaultLocale' => 'cs',
+                ],
             ],
         ];
 
         if (file_exists(__DIR__.'/settings_custom.php')) {
             $settings = array_replace_recursive($settings, require 'settings_custom.php');
         }
-
-        $settings = array_merge($settings, $this->getDependencies($settings['settings']));
-
         return $settings;
     }
 
     private function getDependencies(array $settings): array {
+        // TODO celanup
         $container = [
-            // Default Slim services
-            'router' => create(Router::class)
-                ->method('setContainer', get(Container::class))
-                ->method('setCacheFile', $settings['routerCacheFile']),
-            Router::class => get('router'),
-            RouterInterface::class => get('router'),
-            'errorHandler' => create(Handlers\Error::class)
-                ->constructor(get('settings.displayErrorDetails')),
-            'phpErrorHandler' => create(Handlers\PhpError::class)
-                ->constructor(get('settings.displayErrorDetails')),
-            'notFoundHandler' => create(Handlers\NotFound::class),
-            'notAllowedHandler' => create(Handlers\NotAllowed::class),
-            'environment' => function () {
-                return new Environment($_SERVER);
-            },
-            'flashMessages' => autowire(FlashMessagesBySession::class),
-            'request' => function (ContainerInterface $c) {
-                return Request::createFromEnvironment($c->get('environment'));
-            },
-            Request::class => get('request'),
-            'response' => function (ContainerInterface $c) {
-                $headers = new Headers(['Content-Type' => 'text/html; charset=UTF-8']);
-                $response = new Response(200, $headers);
-
-                return $response->withProtocolVersion($c->get('settings')['httpVersion']);
-            },
-            Response::class => get('response'),
-            'foundHandler' => create(ControllerInvoker::class)
-                ->constructor(get('foundHandler.invoker')),
+            'environment' => create(Environment::class),
             'foundHandler.invoker' => function (ContainerInterface $c) {
                 $resolvers = [
                     // Inject parameters by name first
@@ -168,22 +135,24 @@ class Settings {
             'callableResolver' => autowire(CallableResolver::class),
         ];
 
-        $container['logger'] = function () use ($settings) {
+        $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
+
+        $container[Logger::class] = function () use ($settings) {
             $logger = new Logger($settings['logger']['name']);
             $logger->pushProcessor(new UidProcessor());
             $logger->pushHandler(new StreamHandler($settings['logger']['path'], $settings['logger']['level']));
 
             return $logger;
         };
-        $container[Logger::class] = get('logger');
+
+        $container['logger'] = get(Logger::class); // TODO remove
+        $container[LoggerInterface::class] = get(Logger::class);
 
         $container[Connection::class] = function () use ($settings): Connection {
-            $connection = new Connection([
+            return new Connection([
                 'driver' => 'sqlite3',
                 'database' => $settings['db']['path'],
             ]);
-
-            return $connection;
         };
 
         $container[IMapper::class] = create(Mapper::class);
@@ -205,17 +174,25 @@ class Settings {
             return $fioFactory->createFioRead('mainAccount');
         };
 
-        $container[FioRead::class] = 'need to implement';
+        $container[FioRead::class] = 'need to implement'; // TODO
+
+        $container[UserAuthenticationMiddleware::class] = function (UserRegeneration $userRegeneration) {
+            return new UserAuthenticationMiddleware($userRegeneration);
+        };
+
+        $container[LocalizationResolverMiddleware::class] = autowire()->constructor(
+            get(Twig::class),
+            $settings['locales']['availableLocales'],
+            $settings['locales']['defaultLocale']
+        );
 
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
-            FlashMessagesBySession $flashMessages,
-            Request $request,
-            Router $router
+            FlashMessagesBySession $flashMessages
         ) use ($settings) {
             $rendererSettings = $settings['renderer'];
 
-            $view = new Twig(
+            $view = Twig::create(
                 $rendererSettings['templates_path'],
                 [
                     'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
@@ -223,39 +200,35 @@ class Settings {
                 ]
             );
 
-            $uri = $request->getUri();
-            $basePath = rtrim(str_ireplace('index.php', '',
-                $uri->getScheme().'://'.$uri->getHost().':'.$uri->getPort().$uri->getBasePath()), '/');
-
-            // Add few elements for rendering
-            $portString = '';
-            $port = $uri->getPort();
-            if ($port !== null) {
-                $portString .= ':'.$port;
-            }
-            $baseHostScheme = $uri->getScheme().'://'.$uri->getHost().$portString;
-            $view->addExtension(new TwigExtension($router, $basePath));
-            if ($rendererSettings['debug_output']) {
-                $view->addExtension(new \Twig\Extension\DebugExtension());
-            }
-            $view->getEnvironment()->addGlobal('baseHostScheme', $baseHostScheme);
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
-            /** @var \kissj\User\User $user */
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
             if ($user !== null) {
                 $view->getEnvironment()->addGlobal('event', $user->event);
             }
+            /*
             // TODO move into middleware
             if ($settings['useTestingSite']) {
                 $flashMessages->info('Test version - please do not imput any real personal details!');
                 $flashMessages->info('Administration login: admin, password: admin, link: '
-                    .$router->pathFor('administration'));
-            }
+                    .$router->getRouteParser()->urlFor('administration'));
+            }*/
 
+            /*            
+            // translations
+            // https://symfony.com/doc/current/components/translation.html
+            $translator = new Translator('en', new \Symfony\Component\Translation\MessageSelector());
+            $translator->setFallbackLocales(['cs']);
+
+            $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
+            $translator->addLoader('yaml', $yamlLoader);
+            $translator->addResource('yaml', '../Templates/translations/en.yaml', 'en');
+
+            $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+            */
             return $view;
         };
-        $container['view'] = get(Twig::class);
+        $container['view'] = get(Twig::class); // TODO remove
 
         return $container;
     }

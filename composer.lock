@@ -1,20 +1,20 @@
 {
-  "_readme": [
-	"This file locks the dependencies of your project to a known state",
-	"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-	"This file is @generated automatically"
-  ],
-  "content-hash": "2df72594295a648b6618281a178f8592",
-  "packages": [
-	{
-	  "name": "dibi/dibi",
-	  "version": "v3.2.4",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/dg/dibi.git",
-		"reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266"
-	  },
-	  "dist": {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "e7b9d2fb6da75430d7575eb8538022f7",
+    "packages": [
+        {
+            "name": "dibi/dibi",
+            "version": "v3.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dg/dibi.git",
+                "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266"
+            },
+            "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/dg/dibi/zipball/d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
                 "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
@@ -219,17 +219,69 @@
             "time": "2020-05-25T17:44:05+00:00"
         },
         {
-            "name": "filp/whoops",
-            "version": "2.3.2",
+            "name": "fig/http-message-util",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/filp/whoops.git",
-                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35"
+                "url": "https://github.com/php-fig/http-message-util.git",
+                "reference": "3242caa9da7221a304b8f84eb9eaddae0a7cf422"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
-                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
+                "url": "https://api.github.com/repos/php-fig/http-message-util/zipball/3242caa9da7221a304b8f84eb9eaddae0a7cf422",
+                "reference": "3242caa9da7221a304b8f84eb9eaddae0a7cf422",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3 || ^7.0"
+            },
+            "suggest": {
+                "psr/http-message": "The package containing the PSR-7 interfaces"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fig\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Utility classes and constants for use with PSR-7 (psr/http-message)",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2020-02-05T20:36:27+00:00"
+        },
+        {
+            "name": "filp/whoops",
+            "version": "2.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/filp/whoops.git",
+                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
+                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
                 "shasum": ""
             },
             "require": {
@@ -238,8 +290,8 @@
             },
             "require-dev": {
                 "mockery/mockery": "^0.9 || ^1.0",
-                "phpunit/phpunit": "^4.8.35 || ^5.7",
-                "symfony/var-dumper": "^2.6 || ^3.0 || ^4.0"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0",
+                "symfony/var-dumper": "^2.6 || ^3.0 || ^4.0 || ^5.0"
             },
             "suggest": {
                 "symfony/var-dumper": "Pretty print complex values better with var-dumper available",
@@ -248,7 +300,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev"
+                    "dev-master": "2.6-dev"
                 }
             },
             "autoload": {
@@ -277,7 +329,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2019-06-21T09:00:00+00:00"
+            "time": "2020-05-05T12:28:07+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -641,135 +693,184 @@
                 "read",
                 "transform",
                 "write"
-			],
-		  "funding": [
-			{
-			  "url": "https://github.com/sponsors/nyamsprod",
-			  "type": "github"
-			}
-		  ],
-		  "time": "2020-03-17T15:15:35+00:00"
-		},
-	{
-	  "name": "middlewares/negotiation",
-	  "version": "v2.0.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/middlewares/negotiation.git",
-		"reference": "308eff5bfad1b26e9da777e723052ae207185432"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/middlewares/negotiation/zipball/308eff5bfad1b26e9da777e723052ae207185432",
-		"reference": "308eff5bfad1b26e9da777e723052ae207185432",
-		"shasum": ""
-	  },
-	  "require": {
-		"middlewares/utils": "^3.0",
-		"php": "^7.2",
-		"psr/http-server-middleware": "^1.0",
-		"willdurand/negotiation": "^2.1"
-	  },
-	  "require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.0",
-		"laminas/laminas-diactoros": "^2.2",
-		"oscarotero/php-cs-fixer-config": "^1.0",
-		"phpunit/phpunit": "^8.1",
-		"squizlabs/php_codesniffer": "^3.0"
-	  },
-	  "type": "library",
-	  "autoload": {
-		"psr-4": {
-		  "Middlewares\\": "src/"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "description": "Middleware to implement content negotiation",
-	  "homepage": "https://github.com/middlewares/negotiation",
-	  "keywords": [
-		"content",
-		"encoding",
-		"http",
-		"language",
-		"middleware",
-		"negotiation",
-		"psr-15",
-		"psr-7",
-		"server"
-	  ],
-	  "time": "2020-03-07T11:55:39+00:00"
-	},
-	{
-	  "name": "middlewares/utils",
-	  "version": "v3.1.0",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/middlewares/utils.git",
-		"reference": "13689487e8f3bba10b6cc66ed206efc8b874163e"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/middlewares/utils/zipball/13689487e8f3bba10b6cc66ed206efc8b874163e",
-		"reference": "13689487e8f3bba10b6cc66ed206efc8b874163e",
-		"shasum": ""
-	  },
-	  "require": {
-		"php": "^7.2",
-		"psr/container": "^1.0",
-		"psr/http-factory": "^1.0",
-		"psr/http-message": "^1.0",
-		"psr/http-server-middleware": "^1.0"
-	  },
-	  "require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.0",
-		"guzzlehttp/psr7": "dev-master",
-		"laminas/laminas-diactoros": "^2.2",
-		"nyholm/psr7": "^1.0",
-		"oscarotero/php-cs-fixer-config": "^1.0",
-		"phpunit/phpunit": "^8.1",
-		"slim/psr7": "~0.3",
-		"squizlabs/php_codesniffer": "^3.0",
-		"sunrise/http-message": "^1.0",
-		"sunrise/http-server-request": "^1.0",
-		"sunrise/stream": "^1.0",
-		"sunrise/uri": "^1.0"
-	  },
-	  "type": "library",
-	  "autoload": {
-		"psr-4": {
-		  "Middlewares\\Utils\\": "src/"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "description": "Common utils for PSR-15 middleware packages",
-	  "homepage": "https://github.com/middlewares/utils",
-	  "keywords": [
-		"PSR-11",
-		"http",
-		"middleware",
-		"psr-15",
-		"psr-17",
-		"psr-7"
-	  ],
-	  "time": "2020-01-19T00:30:41+00:00"
-	},
-	{
-	  "name": "monolog/monolog",
-	  "version": "1.25.4",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/Seldaek/monolog.git",
-		"reference": "3022efff205e2448b560c833c6fbbf91c3139168"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/Seldaek/monolog/zipball/3022efff205e2448b560c833c6fbbf91c3139168",
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/nyamsprod",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-03-17T15:15:35+00:00"
+        },
+        {
+            "name": "middlewares/negotiation",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/middlewares/negotiation.git",
+                "reference": "308eff5bfad1b26e9da777e723052ae207185432"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/middlewares/negotiation/zipball/308eff5bfad1b26e9da777e723052ae207185432",
+                "reference": "308eff5bfad1b26e9da777e723052ae207185432",
+                "shasum": ""
+            },
+            "require": {
+                "middlewares/utils": "^3.0",
+                "php": "^7.2",
+                "psr/http-server-middleware": "^1.0",
+                "willdurand/negotiation": "^2.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "laminas/laminas-diactoros": "^2.2",
+                "oscarotero/php-cs-fixer-config": "^1.0",
+                "phpunit/phpunit": "^8.1",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Middlewares\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Middleware to implement content negotiation",
+            "homepage": "https://github.com/middlewares/negotiation",
+            "keywords": [
+                "content",
+                "encoding",
+                "http",
+                "language",
+                "middleware",
+                "negotiation",
+                "psr-15",
+                "psr-7",
+                "server"
+            ],
+            "time": "2020-03-07T11:55:39+00:00"
+        },
+        {
+            "name": "middlewares/trailing-slash",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/middlewares/trailing-slash.git",
+                "reference": "7965ed1032095b7260ec0436d5ff84347fdd5b1c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/middlewares/trailing-slash/zipball/7965ed1032095b7260ec0436d5ff84347fdd5b1c",
+                "reference": "7965ed1032095b7260ec0436d5ff84347fdd5b1c",
+                "shasum": ""
+            },
+            "require": {
+                "middlewares/utils": "^3.0",
+                "php": "^7.2",
+                "psr/http-server-middleware": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "oscarotero/php-cs-fixer-config": "^1.0",
+                "phpunit/phpunit": "^8.1",
+                "squizlabs/php_codesniffer": "^3.0",
+                "zendframework/zend-diactoros": "^2.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Middlewares\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Middleware to normalize the trailing slash of the uri path",
+            "homepage": "https://github.com/middlewares/trailing-slash",
+            "keywords": [
+                "http",
+                "middleware",
+                "normalize",
+                "path",
+                "psr-15",
+                "psr-7",
+                "slash"
+            ],
+            "time": "2019-11-30T16:32:48+00:00"
+        },
+        {
+            "name": "middlewares/utils",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/middlewares/utils.git",
+                "reference": "13689487e8f3bba10b6cc66ed206efc8b874163e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/middlewares/utils/zipball/13689487e8f3bba10b6cc66ed206efc8b874163e",
+                "reference": "13689487e8f3bba10b6cc66ed206efc8b874163e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "psr/container": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "psr/http-server-middleware": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "guzzlehttp/psr7": "dev-master",
+                "laminas/laminas-diactoros": "^2.2",
+                "nyholm/psr7": "^1.0",
+                "oscarotero/php-cs-fixer-config": "^1.0",
+                "phpunit/phpunit": "^8.1",
+                "slim/psr7": "~0.3",
+                "squizlabs/php_codesniffer": "^3.0",
+                "sunrise/http-message": "^1.0",
+                "sunrise/http-server-request": "^1.0",
+                "sunrise/stream": "^1.0",
+                "sunrise/uri": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Middlewares\\Utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Common utils for PSR-15 middleware packages",
+            "homepage": "https://github.com/middlewares/utils",
+            "keywords": [
+                "PSR-11",
+                "http",
+                "middleware",
+                "psr-15",
+                "psr-17",
+                "psr-7"
+            ],
+            "time": "2020-01-19T00:30:41+00:00"
+        },
+        {
+            "name": "monolog/monolog",
+            "version": "1.25.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "3022efff205e2448b560c833c6fbbf91c3139168"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/3022efff205e2448b560c833c6fbbf91c3139168",
                 "reference": "3022efff205e2448b560c833c6fbbf91c3139168",
                 "shasum": ""
             },
@@ -1240,26 +1341,27 @@
         },
         {
             "name": "php-di/slim-bridge",
-            "version": "2.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Slim-Bridge.git",
-                "reference": "df3c116bedb325c88c01991605380b0fd77b97ed"
+                "reference": "e7a568c00ecf6b0128f2a751990e06e77bedec68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Slim-Bridge/zipball/df3c116bedb325c88c01991605380b0fd77b97ed",
-                "reference": "df3c116bedb325c88c01991605380b0fd77b97ed",
+                "url": "https://api.github.com/repos/PHP-DI/Slim-Bridge/zipball/e7a568c00ecf6b0128f2a751990e06e77bedec68",
+                "reference": "e7a568c00ecf6b0128f2a751990e06e77bedec68",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.0",
+                "php": "~7.1",
                 "php-di/invoker": "^2.0.0",
                 "php-di/php-di": "^6.0.0",
-                "slim/slim": "^3.9.0"
+                "slim/slim": "^4.2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~6.0"
+                "phpunit/phpunit": "~6.0",
+                "zendframework/zend-diactoros": "^2.1"
             },
             "type": "library",
             "autoload": {
@@ -1272,7 +1374,7 @@
                 "MIT"
             ],
             "description": "PHP-DI integration in Slim",
-            "time": "2018-02-24T10:54:47+00:00"
+            "time": "2020-01-13T19:11:12+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -1343,56 +1445,6 @@
             "time": "2020-05-27T12:24:03+00:00"
         },
         {
-            "name": "pimple/pimple",
-            "version": "v3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/e55d12f9d6a0e7f9c85992b73df1267f46279930",
-                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "psr/container": "^1.0"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "^3.4|^4.4|^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Pimple": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Pimple, a simple Dependency Injection Container",
-            "homepage": "https://pimple.symfony.com",
-            "keywords": [
-                "container",
-                "dependency injection"
-            ],
-            "time": "2020-03-03T09:12:48+00:00"
-        },
-        {
             "name": "psr/container",
             "version": "1.0.0",
             "source": {
@@ -1432,78 +1484,78 @@
             ],
             "description": "Common Container Interface (PHP FIG PSR-11)",
             "homepage": "https://github.com/php-fig/container",
-		  "keywords": [
-			"PSR-11",
-			"container",
-			"container-interface",
-			"container-interop",
-			"psr"
-		  ],
-		  "time": "2017-02-14T16:28:37+00:00"
-		},
-	{
-	  "name": "psr/http-factory",
-	  "version": "1.0.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/php-fig/http-factory.git",
-		"reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
-		"reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
-		"shasum": ""
-	  },
-	  "require": {
-		"php": ">=7.0.0",
-		"psr/http-message": "^1.0"
-	  },
-	  "type": "library",
-	  "extra": {
-		"branch-alias": {
-		  "dev-master": "1.0.x-dev"
-		}
-	  },
-	  "autoload": {
-		"psr-4": {
-		  "Psr\\Http\\Message\\": "src/"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "authors": [
-		{
-		  "name": "PHP-FIG",
-		  "homepage": "http://www.php-fig.org/"
-		}
-	  ],
-	  "description": "Common interfaces for PSR-7 HTTP message factories",
-	  "keywords": [
-		"factory",
-		"http",
-		"message",
-		"psr",
-		"psr-17",
-		"psr-7",
-		"request",
-		"response"
-	  ],
-	  "time": "2019-04-30T12:38:16+00:00"
-	},
-	{
-	  "name": "psr/http-message",
-	  "version": "1.0.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/php-fig/http-message.git",
-		"reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2017-02-14T16:28:37+00:00"
+        },
+        {
+            "name": "psr/http-factory",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-factory.git",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "keywords": [
+                "factory",
+                "http",
+                "message",
+                "psr",
+                "psr-17",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2019-04-30T12:38:16+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "shasum": ""
             },
@@ -1534,132 +1586,132 @@
             "description": "Common interface for HTTP messages",
             "homepage": "https://github.com/php-fig/http-message",
             "keywords": [
-			  "http",
-			  "http-message",
-			  "psr",
-			  "psr-7",
-			  "request",
-			  "response"
-			],
-	  "time": "2016-08-06T14:39:51+00:00"
-	},
-	{
-	  "name": "psr/http-server-handler",
-	  "version": "1.0.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/php-fig/http-server-handler.git",
-		"reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/php-fig/http-server-handler/zipball/aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
-		"reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
-		"shasum": ""
-	  },
-	  "require": {
-		"php": ">=7.0",
-		"psr/http-message": "^1.0"
-	  },
-	  "type": "library",
-	  "extra": {
-		"branch-alias": {
-		  "dev-master": "1.0.x-dev"
-		}
-	  },
-	  "autoload": {
-		"psr-4": {
-		  "Psr\\Http\\Server\\": "src/"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "authors": [
-		{
-		  "name": "PHP-FIG",
-		  "homepage": "http://www.php-fig.org/"
-		}
-	  ],
-	  "description": "Common interface for HTTP server-side request handler",
-	  "keywords": [
-		"handler",
-		"http",
-		"http-interop",
-		"psr",
-		"psr-15",
-		"psr-7",
-		"request",
-		"response",
-		"server"
-	  ],
-	  "time": "2018-10-30T16:46:14+00:00"
-	},
-	{
-	  "name": "psr/http-server-middleware",
-	  "version": "1.0.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/php-fig/http-server-middleware.git",
-		"reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/php-fig/http-server-middleware/zipball/2296f45510945530b9dceb8bcedb5cb84d40c5f5",
-		"reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5",
-		"shasum": ""
-	  },
-	  "require": {
-		"php": ">=7.0",
-		"psr/http-message": "^1.0",
-		"psr/http-server-handler": "^1.0"
-	  },
-	  "type": "library",
-	  "extra": {
-		"branch-alias": {
-		  "dev-master": "1.0.x-dev"
-		}
-	  },
-	  "autoload": {
-		"psr-4": {
-		  "Psr\\Http\\Server\\": "src/"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "authors": [
-		{
-		  "name": "PHP-FIG",
-		  "homepage": "http://www.php-fig.org/"
-		}
-	  ],
-	  "description": "Common interface for HTTP server-side middleware",
-	  "keywords": [
-		"http",
-		"http-interop",
-		"middleware",
-		"psr",
-		"psr-15",
-		"psr-7",
-		"request",
-		"response"
-	  ],
-	  "time": "2018-10-30T17:12:04+00:00"
-	},
-	{
-	  "name": "psr/log",
-	  "version": "1.1.3",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/php-fig/log.git",
-		"reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "psr/http-server-handler",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-server-handler.git",
+                "reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-server-handler/zipball/aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+                "reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Server\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP server-side request handler",
+            "keywords": [
+                "handler",
+                "http",
+                "http-interop",
+                "psr",
+                "psr-15",
+                "psr-7",
+                "request",
+                "response",
+                "server"
+            ],
+            "time": "2018-10-30T16:46:14+00:00"
+        },
+        {
+            "name": "psr/http-server-middleware",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-server-middleware.git",
+                "reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-server-middleware/zipball/2296f45510945530b9dceb8bcedb5cb84d40c5f5",
+                "reference": "2296f45510945530b9dceb8bcedb5cb84d40c5f5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0",
+                "psr/http-message": "^1.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Server\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP server-side middleware",
+            "keywords": [
+                "http",
+                "http-interop",
+                "middleware",
+                "psr",
+                "psr-15",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2018-10-30T17:12:04+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "shasum": ""
             },
@@ -1737,30 +1789,42 @@
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
-            "name": "slim/php-view",
-            "version": "2.2.1",
+            "name": "slim/psr7",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/slimphp/PHP-View.git",
-                "reference": "a13ada9d7962ca1b48799c0d9ffbca4c33245aed"
+                "url": "https://github.com/slimphp/Slim-Psr7.git",
+                "reference": "3c76899e707910779f13d7af95fde12310b0a5ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/PHP-View/zipball/a13ada9d7962ca1b48799c0d9ffbca4c33245aed",
-                "reference": "a13ada9d7962ca1b48799c0d9ffbca4c33245aed",
+                "url": "https://api.github.com/repos/slimphp/Slim-Psr7/zipball/3c76899e707910779f13d7af95fde12310b0a5ae",
+                "reference": "3c76899e707910779f13d7af95fde12310b0a5ae",
                 "shasum": ""
             },
             "require": {
-                "psr/http-message": "^1.0"
+                "fig/http-message-util": "^1.1.2",
+                "php": "^7.2",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "ralouphie/getallheaders": "^3"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8",
-                "slim/slim": "^3.0"
+                "adriansuter/php-autoload-override": "^1.0",
+                "ext-json": "*",
+                "http-interop/http-factory-tests": "^0.6.0",
+                "php-http/psr7-integration-tests": "dev-master",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^8.5",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Slim\\Views\\": "src"
+                    "Slim\\Psr7\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1769,52 +1833,80 @@
             ],
             "authors": [
                 {
-                    "name": "Glenn Eggleton",
-                    "email": "geggleto@gmail.com"
+                    "name": "Josh Lockhart",
+                    "email": "hello@joshlockhart.com",
+                    "homepage": "http://joshlockhart.com"
+                },
+                {
+                    "name": "Andrew Smith",
+                    "email": "a.smith@silentworks.co.uk",
+                    "homepage": "http://silentworks.co.uk"
+                },
+                {
+                    "name": "Rob Allen",
+                    "email": "rob@akrabat.com",
+                    "homepage": "http://akrabat.com"
+                },
+                {
+                    "name": "Pierre Berube",
+                    "email": "pierre@lgse.com",
+                    "homepage": "http://www.lgse.com"
                 }
             ],
-            "description": "Render PHP view scripts into a PSR-7 Response object.",
+            "description": "Strict PSR-7 implementation",
+            "homepage": "https://www.slimframework.com",
             "keywords": [
-                "framework",
-                "php",
-                "phtml",
-                "renderer",
-                "slim",
-                "template",
-                "view"
+                "http",
+                "psr-7",
+                "psr7"
             ],
-            "time": "2019-04-15T20:43:28+00:00"
+            "time": "2020-05-01T14:24:20+00:00"
         },
         {
             "name": "slim/slim",
-            "version": "3.12.3",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim.git",
-                "reference": "1c9318a84ffb890900901136d620b4f03a59da38"
+                "reference": "5613cbb521081ed676d5d7eb3e44f2b80a818c24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim/zipball/1c9318a84ffb890900901136d620b4f03a59da38",
-                "reference": "1c9318a84ffb890900901136d620b4f03a59da38",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/5613cbb521081ed676d5d7eb3e44f2b80a818c24",
+                "reference": "5613cbb521081ed676d5d7eb3e44f2b80a818c24",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "ext-libxml": "*",
-                "ext-simplexml": "*",
-                "nikic/fast-route": "^1.0",
-                "php": ">=5.5.0",
-                "pimple/pimple": "^3.0",
+                "nikic/fast-route": "^1.3",
+                "php": "^7.2",
                 "psr/container": "^1.0",
-                "psr/http-message": "^1.0"
-            },
-            "provide": {
-                "psr/http-message-implementation": "1.0"
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "psr/http-server-handler": "^1.0",
+                "psr/http-server-middleware": "^1.0",
+                "psr/log": "^1.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.0",
-                "squizlabs/php_codesniffer": "^2.5"
+                "adriansuter/php-autoload-override": "^1.0",
+                "ext-simplexml": "*",
+                "guzzlehttp/psr7": "^1.5",
+                "http-interop/http-factory-guzzle": "^1.0",
+                "laminas/laminas-diactoros": "^2.1",
+                "nyholm/psr7": "^1.1",
+                "nyholm/psr7-server": "^0.3.0",
+                "phpspec/prophecy": "^1.10",
+                "phpstan/phpstan": "^0.11.5",
+                "phpunit/phpunit": "^8.5",
+                "slim/http": "^1.0",
+                "slim/psr7": "^1.0",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "suggest": {
+                "ext-simplexml": "Needed to support XML format in BodyParsingMiddleware",
+                "ext-xml": "Needed to support XML format in BodyParsingMiddleware",
+                "php-di/php-di": "PHP-DI is the recommended container library to be used with Slim",
+                "slim/psr7": "Slim PSR-7 implementation. See https://www.slimframework.com/docs/v4/start/installation.html for more information."
             },
             "type": "library",
             "autoload": {
@@ -1843,43 +1935,61 @@
                     "homepage": "http://akrabat.com"
                 },
                 {
+                    "name": "Pierre Berube",
+                    "email": "pierre@lgse.com",
+                    "homepage": "http://www.lgse.com"
+                },
+                {
                     "name": "Gabriel Manricks",
                     "email": "gmanricks@me.com",
                     "homepage": "http://gabrielmanricks.com"
                 }
             ],
             "description": "Slim is a PHP micro framework that helps you quickly write simple yet powerful web applications and APIs",
-            "homepage": "https://slimframework.com",
+            "homepage": "https://www.slimframework.com",
             "keywords": [
                 "api",
                 "framework",
                 "micro",
                 "router"
             ],
-            "time": "2019-11-28T17:40:33+00:00"
+            "funding": [
+                {
+                    "url": "https://opencollective.com/slimphp",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/slim/slim",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-14T20:49:48+00:00"
         },
         {
             "name": "slim/twig-view",
-            "version": "2.5.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Twig-View.git",
-                "reference": "47bd5cc1cbbdf5196d0873ece0ee97c6c7b352e9"
+                "reference": "36f7a04ca9e58ef926dc25cd0110f629668cb3f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/47bd5cc1cbbdf5196d0873ece0ee97c6c7b352e9",
-                "reference": "47bd5cc1cbbdf5196d0873ece0ee97c6c7b352e9",
+                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/36f7a04ca9e58ef926dc25cd0110f629668cb3f0",
+                "reference": "36f7a04ca9e58ef926dc25cd0110f629668cb3f0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0",
+                "php": "^7.2",
                 "psr/http-message": "^1.0",
-                "twig/twig": "^1.38|^2.7|^3.0"
+                "slim/slim": "^4.0",
+                "twig/twig": "^3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.7",
-                "slim/slim": "^3.10"
+                "phpstan/phpstan": "^0.11.15",
+                "phpunit/phpunit": "^8.5",
+                "psr/http-factory": "^1.0",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "type": "library",
             "autoload": {
@@ -1896,10 +2006,15 @@
                     "name": "Josh Lockhart",
                     "email": "hello@joshlockhart.com",
                     "homepage": "http://joshlockhart.com"
+                },
+                {
+                    "name": "Pierre Berube",
+                    "email": "pierre@lgse.com",
+                    "homepage": "http://www.lgse.com"
                 }
             ],
-            "description": "Slim Framework 3 view helper built on top of the Twig 2 templating component",
-            "homepage": "http://slimframework.com",
+            "description": "Slim Framework 4 view helper built on top of the Twig 3 templating component",
+            "homepage": "https://www.slimframework.com",
             "keywords": [
                 "framework",
                 "slim",
@@ -1907,7 +2022,7 @@
                 "twig",
                 "view"
             ],
-            "time": "2019-11-28T18:03:50+00:00"
+            "time": "2020-03-13T18:08:36+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2336,6 +2451,168 @@
             "time": "2020-05-12T16:14:59+00:00"
         },
         {
+            "name": "symfony/translation",
+            "version": "v5.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/translation.git",
+                "reference": "c3879db7a68fe3e12b41263b05879412c87b27fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/c3879db7a68fe3e12b41263b05879412c87b27fd",
+                "reference": "c3879db7a68fe3e12b41263b05879412c87b27fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5",
+                "symfony/polyfill-mbstring": "~1.0",
+                "symfony/translation-contracts": "^2"
+            },
+            "conflict": {
+                "symfony/config": "<4.4",
+                "symfony/dependency-injection": "<5.0",
+                "symfony/http-kernel": "<5.0",
+                "symfony/twig-bundle": "<5.0",
+                "symfony/yaml": "<4.4"
+            },
+            "provide": {
+                "symfony/translation-implementation": "2.0"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "^4.4|^5.0",
+                "symfony/console": "^4.4|^5.0",
+                "symfony/dependency-injection": "^5.0",
+                "symfony/finder": "^4.4|^5.0",
+                "symfony/http-kernel": "^5.0",
+                "symfony/intl": "^4.4|^5.0",
+                "symfony/service-contracts": "^1.1.2|^2",
+                "symfony/yaml": "^4.4|^5.0"
+            },
+            "suggest": {
+                "psr/log-implementation": "To use logging capability in translator",
+                "symfony/config": "",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Translation\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Translation Component",
+            "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-12T16:45:47+00:00"
+        },
+        {
+            "name": "symfony/translation-contracts",
+            "version": "v2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/translation-contracts.git",
+                "reference": "e5ca07c8f817f865f618aa072c2fe8e0e637340e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/e5ca07c8f817f865f618aa072c2fe8e0e637340e",
+                "reference": "e5ca07c8f817f865f618aa072c2fe8e0e637340e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5"
+            },
+            "suggest": {
+                "symfony/translation-implementation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\Translation\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to translation",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-20T17:43:50+00:00"
+        },
+        {
             "name": "tharos/leanmapper",
             "version": "v3.4.2",
             "source": {
@@ -2437,97 +2714,98 @@
                     "name": "Armin Ronacher",
                     "email": "armin.ronacher@active-4.com",
                     "role": "Project Founder"
-				}
-			],
-		  "description": "Twig, the flexible, fast, and secure template language for PHP",
-		  "homepage": "https://twig.symfony.com",
-		  "keywords": [
-			"templating"
-		  ],
-		  "time": "2020-02-11T15:33:47+00:00"
-		},
-	{
-	  "name": "willdurand/negotiation",
-	  "version": "v2.3.1",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/willdurand/Negotiation.git",
-		"reference": "03436ededa67c6e83b9b12defac15384cb399dc9"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/willdurand/Negotiation/zipball/03436ededa67c6e83b9b12defac15384cb399dc9",
-		"reference": "03436ededa67c6e83b9b12defac15384cb399dc9",
-		"shasum": ""
-	  },
-	  "require": {
-		"php": ">=5.4.0"
-	  },
-	  "require-dev": {
-		"phpunit/phpunit": "~4.5"
-	  },
-	  "type": "library",
-	  "extra": {
-		"branch-alias": {
-		  "dev-master": "2.3-dev"
-		}
-	  },
-	  "autoload": {
-		"psr-4": {
-		  "Negotiation\\": "src/Negotiation"
-		}
-	  },
-	  "notification-url": "https://packagist.org/downloads/",
-	  "license": [
-		"MIT"
-	  ],
-	  "authors": [
-		{
-		  "name": "William Durand",
-		  "email": "will+git@drnd.me"
-		}
-	  ],
-	  "description": "Content Negotiation tools for PHP provided as a standalone library.",
-	  "homepage": "http://williamdurand.fr/Negotiation/",
-	  "keywords": [
-		"accept",
-		"content",
-		"format",
-		"header",
-		"negotiation"
-	  ],
-	  "time": "2017-05-14T17:21:12+00:00"
-	},
-	{
-	  "name": "zeuxisoo/slim-whoops",
-	  "version": "0.6.5",
-	  "source": {
-		"type": "git",
-		"url": "https://github.com/zeuxisoo/php-slim-whoops.git",
-		"reference": "377911eb4159e366a1c2a7c42ffaed3c56ed4b8d"
-	  },
-	  "dist": {
-		"type": "zip",
-		"url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/377911eb4159e366a1c2a7c42ffaed3c56ed4b8d",
-                "reference": "377911eb4159e366a1c2a7c42ffaed3c56ed4b8d",
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "time": "2020-02-11T15:33:47+00:00"
+        },
+        {
+            "name": "willdurand/negotiation",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/willdurand/Negotiation.git",
+                "reference": "03436ededa67c6e83b9b12defac15384cb399dc9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/willdurand/Negotiation/zipball/03436ededa67c6e83b9b12defac15384cb399dc9",
+                "reference": "03436ededa67c6e83b9b12defac15384cb399dc9",
                 "shasum": ""
             },
             "require": {
-                "filp/whoops": "2.3.*",
-                "php": ">=5.5.0"
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.8.* || 5.7.*",
-                "slim/slim": "3.11.*",
-                "slim/twig-view": "2.4.*"
+                "phpunit/phpunit": "~4.5"
             },
-            "suggest": {
-                "zeuxisoo/php-slimork": "A small skeleton application to quick start projects using slim framework with other packages"
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Negotiation\\": "src/Negotiation"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "will+git@drnd.me"
+                }
+            ],
+            "description": "Content Negotiation tools for PHP provided as a standalone library.",
+            "homepage": "http://williamdurand.fr/Negotiation/",
+            "keywords": [
+                "accept",
+                "content",
+                "format",
+                "header",
+                "negotiation"
+            ],
+            "time": "2017-05-14T17:21:12+00:00"
+        },
+        {
+            "name": "zeuxisoo/slim-whoops",
+            "version": "0.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zeuxisoo/php-slim-whoops.git",
+                "reference": "34a0dd3f0b3f17726083f5f6c8676f65553af7b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/34a0dd3f0b3f17726083f5f6c8676f65553af7b7",
+                "reference": "34a0dd3f0b3f17726083f5f6c8676f65553af7b7",
+                "shasum": ""
+            },
+            "require": {
+                "filp/whoops": "^2.3",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "equip/dispatch": "^2.0",
+                "phpunit/phpunit": "^7.5",
+                "slim/http": "0.8",
+                "slim/psr7": "0.6.*",
+                "slim/slim": "4.3.*",
+                "slim/twig-view": "dev-master#472f2c1"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Zeuxisoo\\Whoops\\Provider\\Slim": "src/"
+                "psr-4": {
+                    "Zeuxisoo\\Whoops\\Slim\\": "src/Zeuxisoo/Whoops/Slim",
+                    "Zeuxisoo\\Whoops\\Slim\\Tests\\": "tests"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2550,7 +2828,7 @@
                 "slim",
                 "whoops"
             ],
-            "time": "2018-11-12T02:48:09+00:00"
+            "time": "2019-11-21T12:56:35+00:00"
         }
     ],
     "packages-dev": [

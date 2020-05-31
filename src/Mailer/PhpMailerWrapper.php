@@ -140,13 +140,13 @@ class PhpMailerWrapper {
                 $mailer->isMail();
             }
             if ($this->disable_tls) {
-                $mailer->SMTPOptions = array(
-                    'ssl' => array(
+                $mailer->SMTPOptions = [
+                    'ssl' => [
                         'verify_peer' => false,
                         'verify_peer_name' => false,
                         'allow_self_signed' => true,
-                    ),
-                );
+                    ],
+                ];
             }
             $mailer->Host = $this->smtp_server;    // Specify main and backup SMTP servers
             $mailer->Port = $this->smtp_port;    // TCP port to connect to
@@ -172,7 +172,11 @@ class PhpMailerWrapper {
             $mailer->Body = $messageBody;
             $mailer->AltBody = strip_tags($messageBody);
 
+            // phpamiler echoing debug, content-length middleware addds length header, 
+            //thus browser do not redirect, but shows content (debug) of that length
+            ob_start();
             $mailer->send();
+            $mailerDebugstring = ob_get_clean();
         } catch (\Exception $e) {
             throw new Exception('Error sending email', $e->getCode(), $e);
         }

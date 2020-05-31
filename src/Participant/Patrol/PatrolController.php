@@ -57,7 +57,7 @@ class PatrolController extends AbstractController {
         $this->patrolLeaderRepository->persist($patrolLeader);
         $this->flashMessages->success('Details successfully saved.');
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+        return $response->withRedirect($this->router->urlFor('pl-dashboard',
             ['eventSlug' => $patrolLeader->user->event->slug]));
     }
 
@@ -69,7 +69,7 @@ class PatrolController extends AbstractController {
                 ['dataProtectionUrl' => $patrolLeader->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+        return $response->withRedirect($this->router->urlFor('pl-dashboard',
             ['eventSlug' => $patrolLeader->user->event->slug]
         ));
     }
@@ -86,7 +86,7 @@ class PatrolController extends AbstractController {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+        return $response->withRedirect($this->router->urlFor('pl-dashboard',
             ['eventSlug' => $patrolLeader->user->event->slug]));
     }
 
@@ -95,7 +95,7 @@ class PatrolController extends AbstractController {
         $user = $request->getAttribute('user');
         $patrolParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($user));
 
-        return $response->withRedirect($this->router->pathFor(
+        return $response->withRedirect($this->router->urlFor(
             'p-showChangeDetails', ['eventSlug' => $user->event->slug, 'participantId' => $patrolParticipant->id])
         );
     }
@@ -121,7 +121,7 @@ class PatrolController extends AbstractController {
         $this->patrolLeaderRepository->persist($patrolParticipant);
         $this->flashMessages->success('Details successfully saved.');
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+        return $response->withRedirect($this->router->urlFor('pl-dashboard',
             ['eventSlug' => $patrolParticipant->patrolLeader->user->event->slug]));
     }
 
@@ -135,7 +135,7 @@ class PatrolController extends AbstractController {
         $this->patrolService->deletePatrolParticipant($this->patrolService->getPatrolParticipant($participantId));
         $this->flashMessages->info('Participant was deleted');
 
-        return $response->withRedirect($this->router->pathFor('pl-dashboard',
+        return $response->withRedirect($this->router->urlFor('pl-dashboard',
             ['eventSlug' => $request->getAttribute('user')->event->slug]));
     }
 
@@ -162,7 +162,7 @@ class PatrolController extends AbstractController {
         );
 
         return $response->withRedirect(
-            $this->router->pathFor('admin-show-approving', ['eventSlug' => $patrolLeader->user->event->slug])
+            $this->router->urlFor('admin-show-approving', ['eventSlug' => $patrolLeader->user->event->slug])
         );
     }
 
@@ -173,7 +173,7 @@ class PatrolController extends AbstractController {
         $this->flashMessages->success('Patrol is approved, payment is generated and mail sent');
         $this->logger->info('Approved registration for Patrol with Patrol Leader ID '.$patrolLeader->id);
 
-        return $response->withRedirect($this->router->pathFor(
+        return $response->withRedirect($this->router->urlFor(
             'admin-show-approving', ['eventSlug' => $patrolLeader->user->event->slug])
         );
     }

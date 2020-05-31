@@ -8,7 +8,7 @@
         <p>The participant needs to know about the cancellation, because the payment can be on the way -
             if you cancel it now and the payment arrives, it will be quite an extra efford to solve this issue.
             You will need to return the payment and make him send it again with newly generated variable number.</p>
-        <form method="post" action="{{ path_for('admin-cancel-payment',
+        <form method="post" action="{{ url_for('admin-cancel-payment',
             {'paymentId' : payment.id, 'eventSlug': event.slug}) }}">
             <div class="form-group">
                 <label>Reason for payment cancellation (will be sent via mail): <br/><br/>
@@ -16,7 +16,7 @@
                            required="required"></label>
             </div>
             <br/>
-            <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}"
+            <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                class="btn btn-small btn-grey">Back</a><br/><br/>
             <input type="submit" value="Cancel payment" class="btn btn-small">
         </form>

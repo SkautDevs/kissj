@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card approved-theme">
         <h2>Confirming payments on event {{ event.readableName }}</h2>
-        <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
     </div>
     <br/>
 
@@ -21,18 +21,18 @@
                     Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
                     Payment is: <b><span
                             class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
+						overdue{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
                     <br/>
                     Variable symbol: <b>{{ payment.variableSymbol }}</b><br/>
                     Amount: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
                     <br/>
                     {% if payment.status == 'waiting' %}
-                        <a href="{{ path_for('admin-cancel-payment-show',
+                        <a href="{{ url_for('admin-cancel-payment-show',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
                            class="btn btn-grey btn-small">Cancel payment</a>
                         <br/>
                         <br/>
-                        <form method="post" action="{{ path_for('admin-confirm-payment',
+                        <form method="post" action="{{ url_for('admin-confirm-payment',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
                             <input type="submit" value="Confirm payment" class="btn btn-small">
                         </form>
@@ -56,28 +56,30 @@
         {% for ist in approvedIsts %}
             <div class="card approved-theme">
                 <h4>{{ ist.getFullName }}</h4>
-                Email: <b>{{ ist.getEmail }}</b><br/>
+                Email: <b>{{ ist.user.getEmail }}</b><br/>
                 {% for payment in ist.getPayment %}
-                    Status: <b>{{ payment.status }}</b><br/>
-                    Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                    Payment is: <b><span
-                            class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
-                    <br/>
-                    Variable symbol: <b>{{ payment.variableSymbol }}</b><br/>
-                    Amount: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
-                    <br/>
-                    {% if payment.status == 'waiting' %}
-                        <a href="{{ path_for('admin-cancel-payment-show',
-                            {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                           class="btn btn-grey btn-small">Cancel payment</a>
+                    <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+                        Status: <b>{{ payment.status }}</b><br/>
+                        Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+                        Payment is: <b><span
+                                    class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
+						overdue{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
                         <br/>
+                        Variable symbol: <b>{{ payment.variableSymbol }}</b><br/>
+                        Amount: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
                         <br/>
-                        <form method="post" action="{{ path_for('admin-confirm-payment',
-                            {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                            <input type="submit" value="Confirm payment" class="btn btn-small">
-                        </form>
-                    {% endif %}
+                        {% if payment.status == 'waiting' %}
+                            <a href="{{ url_for('admin-cancel-payment-show',
+                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                               class="btn btn-grey btn-small">Cancel payment</a>
+                            <br/>
+                            <br/>
+                            <form method="post" action="{{ url_for('admin-confirm-payment',
+                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+                                <input type="submit" value="Confirm payment" class="btn btn-small">
+                            </form>
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
             <br/>
@@ -103,18 +105,18 @@
                     Payment was generated at: <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
                     Payment is: <b><span
                             class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
+                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }}</b> days old
                     <br/>
                     Variable symbol: <b>{{ payment.variableSymbol }}</b><br/>
                     Amount: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
                     <br/>
                     {% if payment.status == 'waiting' %}
-                        <a href="{{ path_for('admin-cancel-payment-show',
+                        <a href="{{ url_for('admin-cancel-payment-show',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
                            class="btn btn-grey btn-small">Cancel payment</a>
                         <br/>
                         <br/>
-                        <form method="post" action="{{ path_for('admin-confirm-payment',
+                        <form method="post" action="{{ url_for('admin-confirm-payment',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
                             <input type="submit" value="Confirm payment" class="btn btn-small">
                         </form>

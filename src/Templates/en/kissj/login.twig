@@ -3,7 +3,7 @@
 {% block content %}
     <div class="two-cards">
         <div class="card registration-theme">
-            <form action="{{ path_for('sendLoginEmail') }}" method="post">
+            <form action="{{ url_for('sendLoginEmail') }}" method="post">
                 <h2>Registration for the {{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
                 <div class="form-group">
                     <label for="form-email">Email</label>
@@ -24,7 +24,7 @@
                 <li>Pay and you are good to go!</li>
             </ul>
             <br/>
-            <a href="{{ path_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">More information about
+            <a href="{{ url_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">More information about
                 registration system</a>
         </div>
     </div>

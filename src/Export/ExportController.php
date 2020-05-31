@@ -3,7 +3,7 @@
 namespace kissj\Export;
 
 use kissj\AbstractController;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class ExportController extends AbstractController {
     private $exportService;

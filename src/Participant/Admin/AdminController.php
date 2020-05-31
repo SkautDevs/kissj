@@ -12,8 +12,8 @@ use kissj\Participant\Patrol\PatrolService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class AdminController extends AbstractController {
     public $participantService;
@@ -45,7 +45,7 @@ class AdminController extends AbstractController {
         $this->guestService = $guestService;
     }
 
-    public function showDashboard(Response $response) {
+    public function showDashboard(Response $response): Response {
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
@@ -61,7 +61,7 @@ class AdminController extends AbstractController {
     public function showApproving(
         Response $response,
         ParticipantService $participantService
-    ) {
+    ): Response {
         return $this->view->render($response, 'admin/approving-admin.twig', [
             'closedPatrolLeaders' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_CLOSED),
@@ -77,8 +77,8 @@ class AdminController extends AbstractController {
     public function showPayments(
         Response $response,
         ParticipantService $participantService
-    ) {
-        $this->view->render($response, 'admin/payments-admin.twig', [
+    ): Response {
+        return $this->view->render($response, 'admin/payments-admin.twig', [
             'approvedPatrolLeaders' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_APPROVED),
             'approvedIsts' => $participantService
@@ -90,33 +90,39 @@ class AdminController extends AbstractController {
         ]);
     }
 
-    public function showCancelPayment(int $paymentId, Response $response) {
+    public function showCancelPayment(int $paymentId, Response $response): Response {
         $payment = $this->paymentRepository->find($paymentId);
 
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
 
-    public function cancelPayment(int $paymentId, Request $request, Response $response) {
-        $reason = htmlspecialchars($request->getParam('reason'), ENT_QUOTES);
+    public function cancelPayment(int $paymentId, Request $request, Response $response): Response {
+        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
 
         $payment = $this->paymentRepository->find($paymentId);
         $this->participantService->cancelPayment($payment, $reason);
         $this->flashMessages->info('Participant payment cancelled, email with reason sent');
         $this->logger->info('Cancelled payment ID '.$paymentId.' for participant with reason: '.$reason);
 
-        return $response->withRedirect(
-            $this->router->pathFor('admin-show-payments', ['eventSlug' => $payment->participant->user->event->slug])
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-payments',
+            ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
 
-    public function confirmPayment(int $paymentId, Response $response) {
+    public function confirmPayment(int $paymentId, Request $request, Response $response): Response {
         $payment = $this->paymentRepository->find($paymentId);
         $this->participantService->confirmPayment($payment);
         $this->flashMessages->success('Participant payment is confirmed, email about confirmation is sent');
         $this->logger->info('Confirmed payment ID'.$paymentId);
 
-        return $response->withRedirect($this->router->pathFor(
-            'admin-show-payments', ['eventSlug' => $payment->participant->user->event->slug])
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-payments',
+            ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
 }

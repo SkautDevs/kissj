@@ -281,6 +281,14 @@ li.progressbar-item.is-active {
 	width: 100%;
 }
 
+.overdue {
+	color: #a21f16;
+}
+
+div.payment-overdue {
+	text-decoration: line-through;
+}
+
 .alert {
 	border-radius: var(--borderRadius);
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);

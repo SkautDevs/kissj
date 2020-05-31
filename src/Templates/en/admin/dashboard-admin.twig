@@ -43,20 +43,20 @@
         <h3>Administators actions</h3>
         <div class="card-divide">
             <div>
-                <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
+                <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">Approving
                     participants</a><br/>
                 <a class="btn btn-grey">Pair new
                     payments with bank</a><br/>
-                <!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-                <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Confirming
+                <!--<a href="{{ url_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">Confirming
                     payments by hand</a><br/>
             </div>
             <div>
                 <a class="btn btn-grey">Export medical data into CSV</a><br/>
-                <a href="{{ path_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">
+                <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">
                     Export emails of paid into CSV
                 </a><br/>
-                <a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
+                <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">Export FULL data
                     into CSV</a><br/>
             </div>
         </div>

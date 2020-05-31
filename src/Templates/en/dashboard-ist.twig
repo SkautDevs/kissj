@@ -10,10 +10,10 @@
         {% if userStatus == 'approved' %}
             <div class="paymentInfo">
                 <h2>Payment information</h2>
-                International Bank Account Number (IBAN): {{ payment.getAccountNumber }}<br/>
-                Amount: {{ payment.getPrice }} {{ payment.currency }}<br/>
-                Variable symbol: {{ payment.getVariableSymbol }}<br/>
-                Note: {{ payment.getNote }}<br/>
+                International Bank Account Number (IBAN): <b>{{ payment.getAccountNumber }}</b><br/>
+                Amount: <b>{{ payment.getPrice }} {{ payment.currency }}</b><br/>
+                Variable symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
+                Note: <b>{{ payment.getNote }}</b><br/>
                 <br/>
             </div>
         {% endif %}
@@ -21,7 +21,7 @@
         <div>
             <h2>Personal information</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ path_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                <a class="btn btn-small" href="{{ url_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
                     Edit my details</a><br/><br/>
             {% endif %}
             <div class="text-center">
@@ -50,7 +50,7 @@
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ path_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            <a class="btn btn-small" href="{{ url_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
                 Lock registration</a>
         {% endif %}
     </div>

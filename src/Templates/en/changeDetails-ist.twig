@@ -1,19 +1,19 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-	<div class="card text-left open-theme">
-		<h2>Edit your details</h2>
-		<form method="POST" action="{{ path_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
-			<label class="form-group form-group-inline">First name: <input class="form-control" type="text"
-																		   name="firstName"
-																		   value="{{ istDetails.getFirstName }}"
-																		   required="required"></label>
-			<label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
-																		name="lastName"
-																		value="{{ istDetails.getLastName }}"
-																		required="required"></label>
-			<label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
-																			   name="nickname"
+    <div class="card text-left open-theme">
+        <h2>Edit your details</h2>
+        <form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
+            <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
+                                                                           name="firstName"
+                                                                           value="{{ istDetails.getFirstName }}"
+                                                                           required="required"></label>
+            <label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
+                                                                        name="lastName"
+                                                                        value="{{ istDetails.getLastName }}"
+                                                                        required="required"></label>
+            <label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
+                                                                               name="nickname"
 																			   value="{{ istDetails.getNickname }}"></label>
 			<label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
 																			  name="birthDate"
@@ -252,19 +252,19 @@
 					</option>
 					<option value="no"{% if istDetails.getScarf == 'no' %} selected="selected"{% endif %}>
 						No, I have one already...
-					</option>
-				</select>
-			</label>
-			<label class="form-group form-group-inline">Notice: <input class="form-control" type="text" name="notes"
-																	   placeholder="anything else?"
-																	   value="{{ istDetails.getNotes }}">
-			</label>
+                    </option>
+                </select>
+            </label>
+            <label class="form-group form-group-inline">Notice: <input class="form-control" type="text" name="notes"
+                                                                       placeholder="anything else?"
+                                                                       value="{{ istDetails.getNotes }}">
+            </label>
 
-			<div class="text-center">
-				<a class="btn btn-small btn-grey"
-				   href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
-				<input class="btn btn-small" type="submit" value="Save">
-			</div>
-		</form>
-	</div>
+            <div class="text-center">
+                <a class="btn btn-small btn-grey"
+                   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+                <input class="btn btn-small" type="submit" value="Save">
+            </div>
+        </form>
+    </div>
 {% endblock %}

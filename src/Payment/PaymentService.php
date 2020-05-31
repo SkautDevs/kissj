@@ -224,12 +224,11 @@ class PaymentService {
 
     public function findLastPayment(Participant $participant): ?Payment {
         // TODO refactor
-        $payment = reset($participant->payment);
+        $payments = $participant->payment;
 
-        if ($payment === false) {
-            return null;
+        if (count($payments) > 0) {
+            return $payments[0];
         }
-
-        return $payment;
+        return null;
     }
 }

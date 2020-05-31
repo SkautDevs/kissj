@@ -4,7 +4,7 @@
     <div class="card text-left open-theme">
         <h2>Edit details of particiant from you patrol</h2>
         <form method="POST"
-              action="{{ path_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}">
+              action="{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}">
             <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
                                                                            name="firstName"
                                                                            value="{{ pDetails.getFirstName }}"
@@ -122,7 +122,7 @@
             </label>
             <div class="text-center">
                 <a class="btn btn-small btn-grey"
-                   href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+                   href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
                 <input class="btn btn-small" type="submit" value="Save">
             </div>
         </form>

@@ -41,13 +41,13 @@ class EventController {/*
             $this->flashMessages->success('Registrace je úspěšně vytvořená!');
             $this->logger->info('Created event with ID '.$newEvent->id.' and slug '.$newEvent->slug);
 
-            return $response->withRedirect($this->router->pathFor('getDashboard',
+            return $response->withRedirect($this->router->urlFor('getDashboard',
                 ['eventSlug' => $newEvent->slug]));
         }
 
         $this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus zadání údajů znovu.');
 
-        return $response->withRedirect($this->router->pathFor('createEvent'));
+        return $response->withRedirect($this->router->urlFor('createEvent'));
         // TODO add event-admins (roles table?)
     }
 
@@ -60,15 +60,15 @@ class EventController {/*
         switch ($roleName) {
             case 'patrol-leader':
             {
-                return $response->withRedirect($this->router->pathFor('pl-dashboard'));
+                return $response->withRedirect($this->router->urlFor('pl-dashboard'));
             }
             case 'ist':
             {
-                return $response->withRedirect($this->router->pathFor('ist-dashboard'));
+                return $response->withRedirect($this->router->urlFor('ist-dashboard'));
             }
             case 'admin':
             {
-                return $response->withRedirect($this->router->pathFor('admin-dashboard'));
+                return $response->withRedirect($this->router->urlFor('admin-dashboard'));
             }
             default:
             {

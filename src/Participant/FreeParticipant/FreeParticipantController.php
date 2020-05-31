@@ -48,7 +48,7 @@ class FreeParticipantController extends AbstractController {
         $this->freeParticipantRepository->persist($freeParticipant);
         $this->flashMessages->success('Details successfully saved. ');
 
-        return $response->withRedirect($this->router->pathFor('fp-dashboard',
+        return $response->withRedirect($this->router->urlFor('fp-dashboard',
             ['eventSlug' => $freeParticipant->user->event->slug]));
     }
 
@@ -60,7 +60,7 @@ class FreeParticipantController extends AbstractController {
                 ['dataProtectionUrl' => $freeParticipant->user->event->dataProtectionUrl]);
         }
 
-        return $response->withRedirect($this->router->pathFor('fp-dashboard',
+        return $response->withRedirect($this->router->urlFor('fp-dashboard',
             ['eventSlug' => $freeParticipant->user->event->slug]
         ));
     }
@@ -76,7 +76,7 @@ class FreeParticipantController extends AbstractController {
             $this->flashMessages->error('Registration cannot be locked, data is not valid');
         }
 
-        return $response->withRedirect($this->router->pathFor('fp-dashboard',
+        return $response->withRedirect($this->router->urlFor('fp-dashboard',
             ['eventSlug' => $freeParticipant->user->event->slug]));
     }
 
@@ -95,7 +95,7 @@ class FreeParticipantController extends AbstractController {
         $this->logger->info('Denied registration for Free Participant with ID '.$freeParticipant->id.' with reason: '.$reason);
 
         return $response->withRedirect(
-            $this->router->pathFor('admin-show-approving', ['eventSlug' => $freeParticipant->user->event->slug])
+            $this->router->urlFor('admin-show-approving', ['eventSlug' => $freeParticipant->user->event->slug])
         );
     }
 
@@ -106,7 +106,7 @@ class FreeParticipantController extends AbstractController {
         $this->logger->info('Sent welcome mail to Free Participant participant with ID '.$freeParticipant->id);
 
         return $response->withRedirect(
-            $this->router->pathFor('admin-show-approving', ['eventSlug' => $freeParticipant->user->event->slug])
+            $this->router->urlFor('admin-show-approving', ['eventSlug' => $freeParticipant->user->event->slug])
         );
     }
 
@@ -117,7 +117,7 @@ class FreeParticipantController extends AbstractController {
         $this->flashMessages->success('Free Participant participant is approved, payment is generated and mail sent');
         $this->logger->info('Approved registration for Free Participant with ID '.$freeParticipant->id);
 
-        return $response->withRedirect($this->router->pathFor(
+        return $response->withRedirect($this->router->urlFor(
             'admin-show-approving', ['eventSlug' => $freeParticipant->user->event->slug])
         );
     }
