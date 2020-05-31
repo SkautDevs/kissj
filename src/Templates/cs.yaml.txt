@@ -1,0 +1,194 @@
+closeRegistration-fp:
+    title:Send Free Participant registration
+    lockRegistaration:Do you really want to lock your registration and send it to us for approval? 
+    lockRegistrationBold:This step is irreversible and submitted details cannot be changed afterward!
+    protectionAgree:I read and I agree with data protection rules at
+closeRegistration-ist:
+    title:Registrace korboúčastníků
+    lockRegistration:Opravdu chceš uložit přihlášku a poslat nám ji ke schválení? 
+    lockRegistrationBold:Tento krok je nevratný a vložené informace se poté už nedají změnit.
+    protectionAgree:Přečetl/a jsem si a souhlasím s pravidly
+userCustomHelp:
+    statusOpen:Napiš o sobě všechny níže uvedené informace a poté je ulož tlačítkem dole.
+    statusOpenPl:Napiš o sobě všechny uvedené informace, přidej členy své patroly a informace o nich, poté ulož vaši přihlášku tlačítkem dole.
+    statusClosed:Tvá přihláška čeká na schválení.Dáme ti vědět až bude připravena a následně ti pošleme informace k platbě. Pokud schvalování trvá moc dlouho, napiš nám na E-mail:
+    statusClosedGuest:Tvá přihláška čeká na schválení. Dáme ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na E-mail:
+    statusApproved:Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační. Informace k platbě jsou níže.
+    statusPaid:Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až tě uvidíme na Korbu 2020!
+    statusPaidGuest:Tvá přihláška je vyplněna a schválena! ;) Těšíme se až tě uvidíme na Korbu 2020!
+dashboard-ist:
+    paymentInfo:Informace o platbě
+    accountNumber:Číslo bankovního účtu:
+    amount:Cena:
+    variableSymbol:Variabilní symbol:
+    paymentNote:Poznámka:
+    personalInfo:Osobní informace
+    editDetails:Upravit mé informace
+    firstName:Křestní jméno:
+    surname:Příjmení:
+    scoutNick:Přezdívka:
+    birthDate:Datum narození:
+    gender:Pohlaví:
+    address:Stálá adresa:
+    country:Země:
+    unit:Středisko:
+    issues:Zdravotní omezení:
+    scarf:Šátek:
+    personalNotes:Poznámky:
+    lockRegistration:Uložit přihlášku
+changeDetails-ist:
+    editDetails:Upravit mé informace
+    firstName:Křestní jméno:
+    surname:Příjmení:
+    scoutNick:Přezdívka:
+    birthDate:Datum narození:
+    gender:Pohlaví:
+    genderMan:Muž
+    genderWoman:Žena
+    genderOther:Jiné
+    address:Stálá adresa:
+    country:Země:
+    countryCzechRepublic:Česká republika
+    countryOther:Jiné - prosím napiš svou zemi do poznámek
+    unit:Středisko:
+    issues:Zdravotní omezení:
+    scarf:Šátek:
+    scarfYes:Ano, potřebuji jeden za 90 Kč!
+    scarfNo:Ne, už jeden mám...
+    notice:Poznámky:
+_layout:
+    title:Registrace
+    tilteBar:Registrace
+    logOut:Odhlásit se
+    editingBar:Vyplňování
+    lockedBar:Uloženo
+    approvedBar:Schváleno
+    payedBar:Zaplaceno! ;)
+    creator:se ♥ na dlani, vytvořil Lung
+singupSuccess:
+    buttonSent:Přihlašovací tlačítko ti bylo posláno na E-mail. 
+    buttonClick:Klikni na něj do 15 minut k přihlášení do registračního systému.
+login-help:
+    text:<h2>Přihlašovací systém kissj</h2><h3>Jak to vlastně funguje?</h3><p>Přihlašování do registračního systému kissj se provádí přes E-mailovou adresu přihlašujícího, bez hesla. </p><p>Pro první přihlášení se do systému, zadáš svojí E-mailovou adresu. Následně dostaneš E-mail s přihlašovacím tlačítkem a odkazem, který když následuješ, tak budeš moci okamžitě vyplnit svou registraci. </p><p>Zůstávaš přihlášen/a dokud se ručně neodhlásíš. </p><p>Po odhlášení nemá nikdo přístum k tvým informacím, dokonce ani ze stejného zařízení. </p><p>Pro opětovné přihlášení a přistup k tvým informacím, musíš zadat svou E.mailovou adresu v přihlašovacím okně. Obdržíš na svůj E-mail přihlašovací tlačítko/odkaz a musíš jej následovat, stejně jako když jsi se přihlašoval/a poprvé.</p><h3>Expirace přihlašovácího tlačítka/odkazu</h3><p>Přihlašovací tlačítko/odkaz je použitelné pouze 15 minut po příchodu E-mailu. Po vypršení 15 minut by jsi musel/a znovu zadat E-mail a nechat si poslat nové přihlašovací tlačítko/odkaz. Toto je opatření proti komukoliv, kdo by mohl jakkoliv získat přístup k tvým starým E-mailům - takto tvé informace vyplněné při registraci nemohou být zpřístupněny pomocí starého odkazu. </p><p>Po následování přihlašovacího tlačítka/odkazu se stavají neplatnými. Tím pádem v případě přihlášení a odhlášení v krátkém čase se nemůžeš do registrace znovu přihlásit přes stejný odkaz a musíš si získat další. </p><p>Všechny tato opatření mají jeden jediný účel - udržet tvé informace tak v bezpečí, jak jen je to možné, stejně jako se o to snaží banky či jiné veliké portály. </p><h3>Otázky?</h3><p>Pokud by se měl vyskytnout problém s přihlašováním, napiš E-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou. </p>
+    backToLogin:Zpět k přihlášení
+login-link-sent:
+    accessToSystem:Přístup do registračního systému
+    linkSent:Přihlašovací odkaz by odeslán na tůj E-mail.
+    followLink:Následuj odkaz do 15 minut k přihlášení se do registračního systému.
+login:
+    registrationFor:Registrace pro
+    email:E-mail
+    howItWorks:Jak přihlašování funguje?
+    submitEmail:Zadej svůj E-mail
+    followButton:Následuj přihlašovací tlačítko, které ti přijde na zadaný E-mail
+    fillDetails:Vyplň své informace
+    sentForApproval:Poslat přihlášku ke schválení
+    waitForApproval:Počkej na schválení a informace k platbě
+    pay:Zplať a máš vše!
+    more:Více informací o registračním systému
+_mail-layout:
+    registrationF:Registrace
+    ifQuestion:Pokud máš otázky,mohl by jsi odpověď najít na naší webové stránce
+    sendEmail:nebo nám pošli E-mail na
+    farewell:Hezké časy až do akce, ti přeje tým
+cancel-payment:
+    welcome:Ahoj,
+    denied:bohužel tvá platba pro KORBO 2020 byla zamítnuta. 
+    reason:Z důvodu: 
+    dontPay:Nepokoušej se prosím zaplatit s předchozími platebními údaji!
+    registerAgain:Chceš se stále zúčastnit akce? Pošli svou přihlášku na
+    newPayment:(vyplněné informace jsou stále uloženy na tvém profilu), zkontrolujeme a schválíme tvou přihlášku znova a pošleme nové platební údaje.
+closed:
+    welcome:Ahoj,
+    successfullySent:Úspěšně jsi poslal/a svou přihlášku na KORBO 2020.Nyní musíme zkontrolovat zda je všechno v pořádku a pokud je, počleme ti platební údaje.Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)
+denial:
+    welcome:Ahoj,
+    denied:bohužel jsme museli zamítnout tvou přihlášku pro
+    requirements:, nesplňoval/a jsi podmínky pro přijetí. 
+    reason:Z důvodu: 
+    editRegistration:. Uprav nebo dopň své informace v systému, prosím. Nezapomeň nám přihlášku opětovně poslat ke schválení.
+finished:
+    welcome:Ahoj!
+    approved:Schválili jsme tvou přihlášku pro
+    thanks:. Děkujeme!
+    enjoy:Nyní si můžeš plně užít čkání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)
+login-token:
+    welcome:Ahoj!
+    logging:Přihlašuješ se do registračního systému na 
+    logIn:Přihlásit se!
+    buttonNotWorking:Pokud přihlašovací tlačítko nefunguje nebo není vidět, zkopíruj a vlož, prosím, tento odkaz do vyhledávacího řádku svého prohlížeče.
+payment-info:
+    welcome:Ahoj,
+    approved:pravě jsme potvrdili tvou přihlášku na 
+    finish:! K dokončení tvého přihlášení už tě čeká jen jeden krok - zaplatit registrační poplatek do
+    days:14 dní
+    paymentDetails:Platební údaje
+    accountNumber:Číslo účtu:
+    amount:Cena:
+    variableSymbol:Variabilní symbol:
+    paymentNote:Zpráva pro příjemce:
+payment-successful:
+    welcome:Ahoj!
+    recieved:Obdrželi jsme tvou platbu na
+    thanks:. Děkujeme!
+    enjoy:Nyní si můžeš plně užít čkání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)
+penist-admin:
+    deny:Zamítnout
+    wantDeny:Opravdu cheš zamítnout účast? 
+    reason:Důvod zamítnutí (Bude posláno E-mailem, tak nebuď moc krutý/á): 
+payments-admin:
+    confirm:Potvrzovaní plateb na akci
+    patrols:Patroly
+    email:E-mail: 
+    status:Stav: 
+    paymentWas:Platba byla vygenerována: 
+    paymentIs:Platba je: 
+    days:dní stará
+    variableSymbol:variabilní symbol: 
+    amount:cena: 
+    cancel:Zrušit platbu
+    allPatrolsPaid:Všechny patroly mají zaplaceno!
+    ist:Korboúčastníci
+    allIstPaid: Všichni Korboúčastníci mají zaplaceno!
+    participants:Bezplatný účastník
+    allParticipantsPaid:Všichni bezplatní účastníci jsou potvrzeni!
+dashboard-admin:
+    dashboard:Přehled akce 
+    admin:Administrátor
+    stats:Statistiky
+    count:počty
+    limitIst:Limit Korboúčastníků: 
+    openIst:Volná místa pro Korboúčastníky: 
+    lockedIst:Korboúčastníci s poslanou přihláškou: 
+    approvedIst:schváleňí Korboúčastníci: 
+    paidIst:zaplacení Korboúčastníci: 
+    adminActions:Akce administrátora
+    approving:Schvalování účastníků
+    newPayments:Párovaní nových plateb s Bankou
+    confirmPaymnets:Potvrzování plateb ručně
+    exportMedData:Odesílání zdravotních informací do CSV
+    exportEmailsPaid:Odesílání informací o zaplacení do CSV
+    exportFullData:Odesílání všech informací do CSV
+cancelPayment-admin:
+    cancel:Zrušit platbu
+    wantCancel:Opravdu chceš zrušit platbu pro účastníka 
+    inRole:v roli 
+    participantNeedsToKnow:Účastník musí vědět o zrušení platby, protože platba může být už na cestě - pokud zrušíš platbu a platba přijde, bude to vyžadovat nějakou extra námahu na vyřešení vzniklého problému. Platba se bude muset vrátit a budeš muset účastníka přimět zaplatit znovu s nově vygenerovanými platebnímmi údaji.
+    reason:Důvod zrušení platby (Bude poslán E-mailem, tak nebuď sprostý/á): 
+    back:Zpět
+approving-admin:
+    approving:Potvrzování účastníků na akci 
+    back:Zpět
+    BirthDate:Datum narození: 
+    willHave:(Bude mu/jí
+    years: let)
+    gender:Pohlaví:
+    address:Stálá adresa:
+    country:Země:
+    unit:Středisko:
+    issues:Zdravotní omezení:
+    scarf:Šátek:
+    notes:Poznámky
+    deny:Zamítnout
+    none:Žádní 
+    need: nevyžadují schválení

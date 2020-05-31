@@ -23,7 +23,7 @@
         <div>
             <h2>Personal information</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ url_for('fp-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                <a class="btn btn-small" href="{{ path_for('fp-showDetailsChangeable', {'eventSlug': event.slug}) }}">
                     Edit my details</a><br/><br/>
             {% endif %}
             <div class="text-center">
@@ -46,7 +46,7 @@
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ url_for('fp-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            <a class="btn btn-small" href="{{ path_for('fp-showCloseRegistration', {'eventSlug': event.slug}) }}">
                 Lock registration</a>
         {% endif %}
     </div>

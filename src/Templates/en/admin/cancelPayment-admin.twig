@@ -2,22 +2,20 @@
 
 {% block content %}
     <div class="card card-half closed-theme">
-        <h2>Cancel payment</h2>
-        <p>You really want to cancel payment for participant <b>{{ payment.participant.getFullName }}</b>
-            in role {{ payment.participant.getRole }}?</p>
-        <p>The participant needs to know about the cancellation, because the payment can be on the way -
-            if you cancel it now and the payment arrives, it will be quite an extra efford to solve this issue.
-            You will need to return the payment and make him send it again with newly generated variable number.</p>
-        <form method="post" action="{{ url_for('admin-cancel-payment',
+        <h2>{% trans %}cancelPayment-admin.cancel{% endtrans %}</h2>
+        <p>{% trans %}cancelPayment-admin.wantCancel{% endtrans %}<b>{{ payment.participant.getFullName }}</b>
+           {% trans %}cancelPayment-admin.inRole{% endtrans %}{{ payment.participant.getRole }}?</p>
+        <p>{% trans %}cancelPayment-admin.participantNeedsToKnow{% endtrans %}</p>
+        <form method="post" action="{{ path_for('admin-cancel-payment',
             {'paymentId' : payment.id, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>Reason for payment cancellation (will be sent via mail): <br/><br/>
+                <label>{% trans %}cancelPayment-admin.reason{% endtrans %}<br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
             <br/>
-            <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
-               class="btn btn-small btn-grey">Back</a><br/><br/>
+            <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}"
+               class="btn btn-small btn-grey">{% trans %}cancelPayment-admin.back{% endtrans %}</a><br/><br/>
             <input type="submit" value="Cancel payment" class="btn btn-small">
         </form>
     </div>

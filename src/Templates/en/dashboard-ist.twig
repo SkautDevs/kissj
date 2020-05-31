@@ -9,49 +9,49 @@
         </h4>
         {% if userStatus == 'approved' %}
             <div class="paymentInfo">
-                <h2>Payment information</h2>
-                International Bank Account Number (IBAN): <b>{{ payment.getAccountNumber }}</b><br/>
-                Amount: <b>{{ payment.getPrice }} {{ payment.currency }}</b><br/>
-                Variable symbol: <b>{{ payment.getVariableSymbol }}</b><br/>
-                Note: <b>{{ payment.getNote }}</b><br/>
+                <h2>{% trans %}dashboard-ist.paymentInfo{% endtrans %}</h2>
+                {% trans %}dashboard-ist.accountNumber{% endtrans %} {{ payment.getAccountNumber }}<br/>
+                {% trans %}dashboard-ist.amount{% endtrans %} {{ payment.getPrice }} {{ payment.currency }}<br/>
+                {% trans %}dashboard-ist.variableSymbol{% endtrans %} {{ payment.getVariableSymbol }}<br/>
+                {% trans %}dashboard-ist.paymentNote{% endtrans %} {{ payment.getNote }}<br/>
                 <br/>
             </div>
         {% endif %}
 
         <div>
-            <h2>Personal information</h2>
+            <h2>{% trans %}dashboard-ist.personalInfo{% endtrans %}</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ url_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
-                    Edit my details</a><br/><br/>
+                <a class="btn btn-small" href="{{ path_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                    {% trans %}dashboard-ist.editDetails{% endtrans %}</a><br/><br/>
             {% endif %}
             <div class="text-center">
-                First name: <b>{{ ist.getFirstName }}</b><br/>
-                Surname: <b>{{ ist.getLastName }}</b><br/>
-                Scout nickname: <b>{{ ist.getNickname }}</b><br/>
-                Date of birth: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-                Gender: <b>{{ ist.getGender }}</b><br/>
+                {% trans %}dashboard-ist.firstName{% endtrans %} <b>{{ ist.getFirstName }}</b><br/>
+                {% trans %}dashboard-ist.surname{% endtrans %} <b>{{ ist.getLastName }}</b><br/>
+                {% trans %}dashboard-ist.scoutNick{% endtrans %} <b>{{ ist.getNickname }}</b><br/>
+                {% trans %}dashboard-ist.BirthDate{% endtrans %} <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+                {% trans %}dashboard-ist.gender{% endtrans %} <b>{{ ist.getGender }}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
-                Permanent Address: <b>{{ ist.getPermanentResidence }}</b><br/>
-                Country: <b>{{ ist.getCountry }}</b><br/>
-                Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
+                {% trans %}dashboard-ist.address{% endtrans %} <b>{{ ist.getPermanentResidence }}</b><br/>
+                {% trans %}dashboard-ist.country{% endtrans %} <b>{{ ist.getCountry }}</b><br/>
+                {% trans %}dashboard-ist.unit{% endtrans %} <b>{{ ist.getScoutUnit }}</b><br/>
                 {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
                 Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
-                Health issues: <b>{{ ist.getHealthProblems }}</b><br/>
+                {% trans %}dashboard-ist.issues{% endtrans %} <b>{{ ist.getHealthProblems }}</b><br/>
                 {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
                 Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
                 Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
-                Scarf: <b>{{ ist.getScarf }}</b><br/>
-                Notes: <b>{{ ist.getNotes }}</b><br/>
+                {% trans %}dashboard-ist.scarf{% endtrans %} <b>{{ ist.getScarf }}</b><br/>
+                {% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
                 <br/>
             </div>
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ url_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
-                Lock registration</a>
+            <a class="btn btn-small" href="{{ path_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
+                {% trans %}dashboard-ist.lockRegistration{% endtrans %}</a>
         {% endif %}
     </div>
 {% endblock %}

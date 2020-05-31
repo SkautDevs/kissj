@@ -1,14 +1,13 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>Ahoy,</p>
-    <p>we have just approved your registration for <b>{{ event.readableName }}</b>!
-        To finish your registration properly, there is only one more step - to pay the registration fee
-        till <b>14 days</b> ({{ payment.paymentUntil|date('d. m. Y') }}).</p>
+    <p>{% trans %}payment-info.welcome{% endtrans %}</p>
+    <p>{% trans %}payment-info.approved{% endtrans %}<b>{{ event.readableName }}</b>!
+       {% trans %}payment-info.finish{% endtrans %}<b>{% trans %}payment-info.days{% endtrans %}</b> ({{ payment.paymentUntil|date('d. m. Y') }}).</p>
 
-    <h3><u>Payment details</u></h3>
-    <h4>International Bank Account Number (IBAN): {{ payment.accountNumber }}</h4>
-    <h4>Amount: {{ payment.price }} {{ payment.currency }}</h4>
-    <h4>Variable symbol: {{ payment.getVariableSymbol }}</h4>
-    <h4>Note: {{ payment.note }}</h4>
+    <h3><u>{% trans %}payment-info.paymentDetails{% endtrans %}</u></h3>
+    <h4>{% trans %}payment-info.accountNumber{% endtrans %}{{ payment.accountNumber }}</h4>
+    <h4>{% trans %}payment-info.amount{% endtrans %}{{ payment.price }} {{ payment.currency }}</h4>
+    <h4>{% trans %}payment-info.variableSymbol{% endtrans %}{{ payment.getVariableSymbol }}</h4>
+    <h4>{% trans %}payment-info.paymentNote{% endtrans %}{{ payment.note }}</h4>
 {% endblock %}
