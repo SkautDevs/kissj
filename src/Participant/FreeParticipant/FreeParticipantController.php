@@ -73,7 +73,7 @@ class FreeParticipantController extends AbstractController {
             $this->flashMessages->success('Registration successfully locked and sent');
             $this->logger->info('Locked registration for Free Participant with ID '.$freeParticipant->id.', user ID '.$freeParticipant->user->id);
         } else {
-            $this->flashMessages->error('Registration cannot be locked, data is not valid');
+            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
         return $response->withRedirect($this->router->urlFor('fp-dashboard',

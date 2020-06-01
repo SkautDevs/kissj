@@ -67,7 +67,7 @@ class GuestController extends AbstractController {
             $this->flashMessages->success('Registration successfully locked and sent');
             $this->logger->info('Locked registration for Guest with ID '.$guest->id.', user ID '.$guest->user->id);
         } else {
-            $this->flashMessages->error('Registration cannot be locked, data is not valid');
+            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
         return $response->withRedirect($this->router->urlFor('guest-dashboard',

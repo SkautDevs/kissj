@@ -46,12 +46,12 @@ class UserController extends AbstractController {
         } catch (\RuntimeException $e) {
             $this->logger->addError('Error sending login email to '.$email.' with token '.
                 $this->userService->getTokenForEmail($email), [$e]);
-            $this->flashMessages->error('E-mail sending failed. Please try it in a couple of minutes. ');
+            $this->flashMessages->error($this->translator->trans('flash.error.mailError'));
 
             return $this->redirect($request, $response, 'loginAskEmail');
         }
 
-        $this->flashMessages->success('E-mail sent! Follow the link in it to log in.');
+        $this->flashMessages->success($this->translator->trans('flash.success.linkSent'));
 
         return $this->redirect($request, $response, 'loginAfterLinkSent');
     }
@@ -70,14 +70,14 @@ class UserController extends AbstractController {
             return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
         }
 
-        $this->flashMessages->warning('Log-in button you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one.');
+        $this->flashMessages->warning($this->translator->trans('flash.warning.invalidLogin'));
 
         return $this->redirect($request, $response, 'loginAskEmail');
     }
 
     public function logout(Request $request, Response $response) {
         $this->userService->logoutUser();
-        $this->flashMessages->info('Logout was successful');
+        $this->flashMessages->info($this->translator->trans('flash.info.logout'));
 
         return $this->redirect($request, $response, 'landing');
     }

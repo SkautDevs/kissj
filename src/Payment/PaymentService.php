@@ -8,22 +8,26 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use Monolog\Logger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService {
     private $paymentRepository;
     //private $paymentAutoMatcherFio;
     private $flashMessages;
+    private $translator;
     private $logger;
 
     public function __construct(
         PaymentRepository $paymentRepository,
         //FioRead $paymentAutoMatcherFio,
         FlashMessagesBySession $flashMessages,
+        TranslatorInterface $translator,
         Logger $logger
     ) {
         $this->paymentRepository = $paymentRepository;
         //$this->paymentAutoMatcherFio = $paymentAutoMatcherFio;
         $this->flashMessages = $flashMessages;
+        $this->translator = $translator;
         $this->logger = $logger;
     }
 
@@ -181,7 +185,7 @@ class PaymentService {
                 /** @var Payment $canceledPayment */
                 foreach ($canceledPayments as $canceledPayment) {
                     if ($canceledPayment->variableSymbol == $transaction->variableSymbol && $canceledPayment->price == $transaction->volume) {
-                        // TODO better system for this warning
+                        // TODO better system for this warning + do tranlation
                         $this->flashMessages->error(htmlspecialchars(
                             'Zaplacená zrušená platba: '.$transaction->volume.
                             ' Kč, VS: '.($transaction->variableSymbol).
@@ -194,7 +198,7 @@ class PaymentService {
                 }
 
                 if ($canceledFlag === false) {
-                    // TODO better system for this warning
+                    // TODO better system for this warning + translation
                     $this->flashMessages->warning(htmlspecialchars(
                         'Nerozeznaná platba: '.$transaction->volume.
                         ' Kč, VS: '.($transaction->variableSymbol ?? 'není').
@@ -207,18 +211,18 @@ class PaymentService {
 
         // TODO better system for outputting these
         if ($counterSetPaid) {
-            $this->flashMessages->success('Spárováno '.$counterSetPaid.' plateb s transakcemi z banky!');
+            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments').$counterSetPaid.'!');
         }
 
         if ($counterUnknownPayment) {
-            $this->flashMessages->info('Nerozeznáno celkem '.$counterUnknownPayment.' bankovních transakcí.');
+            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized').$counterUnknownPayment);
         }
 
         $counterUnpayedPayments = count($approvedIstPayments) - $counterWasPaid - $counterSetPaid;
         if ($counterUnpayedPayments) {
-            $this->flashMessages->info('Zbývá zaplatit celkem '.$counterUnpayedPayments.' plateb.');
+            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsWaiting').$counterUnpayedPayments);
         } else {
-            $this->flashMessages->success('Na zaplacení nezbývají žádné platby!');
+            $this->flashMessages->success($this->translator->trans('flash.success.adminNoWaitingPayments'));
         }
     }
 

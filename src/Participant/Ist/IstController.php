@@ -45,7 +45,7 @@ class IstController extends AbstractController {
         );
 
         $this->istRepository->persist($ist);
-        $this->flashMessages->success('Details successfully saved. ');
+        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
         return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
@@ -66,10 +66,10 @@ class IstController extends AbstractController {
         $ist = $this->istService->closeRegistration($ist);
 
         if ($ist->user->status === User::STATUS_CLOSED) {
-            $this->flashMessages->success('Registration successfully locked and sent');
+            $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for IST with ID '.$ist->id.', user ID '.$ist->user->id);
         } else {
-            $this->flashMessages->error('Registration cannot be locked, data is not valid');
+            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
         return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
@@ -86,7 +86,7 @@ class IstController extends AbstractController {
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->openRegistration($ist, $reason);
-        $this->flashMessages->info('IST participant denied, email successfully sent');
+        $this->flashMessages->info($this->translator->trans('flash.info.istDenied'));
         $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
 
         return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
@@ -96,7 +96,7 @@ class IstController extends AbstractController {
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->approveRegistration($ist);
-        $this->flashMessages->success('IST participant is approved, payment is generated and mail sent');
+        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
         $this->logger->info('Approved registration for IST with ID '.$ist->id);
 
         return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);

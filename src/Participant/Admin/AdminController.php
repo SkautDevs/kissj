@@ -101,7 +101,7 @@ class AdminController extends AbstractController {
 
         $payment = $this->paymentRepository->find($paymentId);
         $this->participantService->cancelPayment($payment, $reason);
-        $this->flashMessages->info('Participant payment cancelled, email with reason sent');
+        $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
         $this->logger->info('Cancelled payment ID '.$paymentId.' for participant with reason: '.$reason);
 
         return $this->redirect(
@@ -115,7 +115,7 @@ class AdminController extends AbstractController {
     public function confirmPayment(int $paymentId, Request $request, Response $response): Response {
         $payment = $this->paymentRepository->find($paymentId);
         $this->participantService->confirmPayment($payment);
-        $this->flashMessages->success('Participant payment is confirmed, email about confirmation is sent');
+        $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
         $this->logger->info('Confirmed payment ID'.$paymentId);
 
         return $this->redirect(

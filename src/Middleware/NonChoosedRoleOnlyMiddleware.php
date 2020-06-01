@@ -7,12 +7,18 @@ use kissj\User\User;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NonChoosedRoleOnlyMiddleware extends AbstractMiddleware {
     private $flashMessages;
+    private $translator;
 
-    public function __construct(FlashMessagesInterface $flashMessages) {
+    public function __construct(
+        FlashMessagesInterface $flashMessages,
+        TranslatorInterface $translator
+    ) {
         $this->flashMessages = $flashMessages;
+        $this->translator = $translator;
     }
 
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
@@ -24,7 +30,7 @@ class NonChoosedRoleOnlyMiddleware extends AbstractMiddleware {
         $user = $request->getAttribute('user');
 
         if ($user->status !== User::STATUS_WITHOUT_ROLE) {
-            $this->flashMessages->warning('Pardon, you already choosed your role for this event');
+            $this->flashMessages->warning($this->translator->trans('flash.warning.roleChoosed'));
 
             $url = $this->getRouter($request)->urlFor('landing');
             $response = new \Slim\Psr7\Response();
