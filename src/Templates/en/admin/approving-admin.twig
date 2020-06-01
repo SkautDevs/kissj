@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card closed-theme">
-        <h2>{% trans %}approving-admin.approving{% endtrans %}{{ event.readableName }}</h2>
+        <h2>{% trans %}approving-admin.approving{% endtrans %} {{ event.readableName }}</h2>
         <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">{% trans %}approving-admin.back{% endtrans %}</a>
     </div>
     <br/>
@@ -14,24 +14,24 @@
         {% for ist in closedIsts %}
             <div class="card closed-theme">
                 <h4>{{ ist.getFullName }}</h4>
-                {% trans %}approving-admin.BirthDate{% endtrans %}<b>{{ ist.getBirthDate.format('d. m. Y') }}</b>
-                {% trans %}approving-admin.willHave{% endtrans %}{{ ist.getAgeInYears(event.getEventStart) }}{% trans %}approving-admin.years{% endtrans %}<br/>
-                {% trans %}approving-admin.gender{% endtrans %}<b>{{ ist.getGender }}</b><br/>
+                {% trans %}approving-admin.BirthDate{% endtrans %} <b> {{ ist.getBirthDate.format('d. m. Y') }}</b>
+                {% trans %}approving-admin.willHave{% endtrans %} {{ ist.getAgeInYears(event.getEventStart) }} {% trans %}approving-admin.years{% endtrans %}<br/>
+                {% trans %}approving-admin.gender{% endtrans %} <b>{{ ist.getGender }}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
-                {% trans %}approving-admin.address{% endtrans %}<b>{{ ist.getPermanentResidence }}</b><br/>
-                {% trans %}approving-admin.country{% endtrans %}<b>{{ ist.getCountry }}</b><br/>
-                Scout unit: <b>{{ ist.getScoutUnit }}</b><br/>
+                {% trans %}approving-admin.address{% endtrans %} <b>{{ ist.getPermanentResidence }}</b><br/>
+                {% trans %}approving-admin.country{% endtrans %} <b>{{ ist.getCountry }}</b><br/>
+                {% trans %}approving-admin.unit{% endtrans %} <b>{{ ist.getScoutUnit }}</b><br/>
                 {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
                 Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
-                {% trans %}approving-admin.issues{% endtrans %}<b>{{ ist.getHealthProblems }}</b><br/>
+                {% trans %}approving-admin.issues{% endtrans %} <b>{{ ist.getHealthProblems }}</b><br/>
                 {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
                 Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
                 Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
-                {% trans %}approving-admin.scarf{% endtrans %}<b>{{ ist.getScarf }}</b><br/>
-                {% trans %}approving-admin.notes{% endtrans %}<b>{{ ist.getNotes }}</b><br/>
+                {% trans %}approving-admin.scarf{% endtrans %} <b>{{ ist.getScarf }}</b><br/>
+                {% trans %}approving-admin.notes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
                 <br/>
                 <a href="{{ path_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
                    class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
@@ -39,14 +39,14 @@
                 <br/>
                 <form method="post"
                       action="{{ path_for('admin-approve-ist', {'istId': ist.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="Approve and send email" class="btn btn-small">
+                    <input type="submit" value="{% trans %}approving-admin.approveAndSend{% endtrans %}" class="btn btn-small">
                 </form>
             </div>
             <br/>
         {% endfor %}
     {% else %}
         <div class="card closed-theme">
-            <h2>{% trans %}approving-admin.none{% endtrans %}{{ event.getIstLabel }} {% trans %}approving-admin.need{% endtrans %}</h2>
+            <h2>{% trans %}approving-admin.none{% endtrans %} {{ event.getIstLabel }} {% trans %}approving-admin.need{% endtrans %}</h2>
         </div>
         <br/>
     {% endif %}

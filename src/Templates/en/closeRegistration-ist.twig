@@ -11,8 +11,8 @@
             <br/>
             <div class="text-center">
                 <a href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Back</a>
-                <input class="btn btn-small" type="submit" value="Lock registration">
+                   class="btn btn-grey btn-small">Ba{% trans %}closeRegistration-ist.back{% endtrans %}ck</a>
+                <input class="btn btn-small" type="submit" value="{% trans %}closeRegistration-ist.lockRegistrationButton{% endtrans %}">
             </div>
         </form>
     </div>

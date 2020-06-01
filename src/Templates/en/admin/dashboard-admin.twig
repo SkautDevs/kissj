@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card approved-theme">
-        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %}{{ eventName }}{% trans %}dashboard-admin.admin{% endtrans %}</h2>
+        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ eventName }} {% trans %}dashboard-admin.admin{% endtrans %}</h2>
         <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
         <div class="card-divide">
             <div>{#
@@ -26,11 +26,11 @@
             </div>
             <div>
                 <h3>{{ event.getIstLabel }}{% trans %}dashboard-admin.count{% endtrans %}</h3>
-                <p>{% trans %}dashboard-admin.limitIst{% endtrans %}{{ event.maximalClosedIstsCount }}</p>
-                <p>{% trans %}dashboard-admin.openIst{% endtrans %}{{ ists.getOpenCount }}</p>
-                <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}{{ ists.getClosedCount }}</p>
-                <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}{{ ists.getApprovedCount }}</p>
-                <p>{% trans %}dashboard-admin.paidIst{% endtrans %}{{ ists.getPaidCount }}</p>
+                <p>{% trans %}dashboard-admin.limitIst{% endtrans %} {{ event.maximalClosedIstsCount }}</p>
+                <p>{% trans %}dashboard-admin.openIst{% endtrans %} {{ ists.getOpenCount }}</p>
+                <p>{% trans %}dashboard-admin.lockedIst{% endtrans %} {{ ists.getClosedCount }}</p>
+                <p>{% trans %}dashboard-admin.approvedIst{% endtrans %} {{ ists.getApprovedCount }}</p>
+                <p>{% trans %}dashboard-admin.paidIst{% endtrans %} {{ ists.getPaidCount }}</p>
                 {#
                                 <h3>Guest counts</h3>
                                 <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
@@ -44,7 +44,7 @@
         <div class="card-divide">
             <div>
                 <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                <a class="btn btn-grey">{% trans %}dashboard-admin.newPaymnets{% endtrans %}</a><br/>
+                <a class="btn btn-grey">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 <!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
                 <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
             </div>

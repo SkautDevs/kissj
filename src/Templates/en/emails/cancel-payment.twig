@@ -3,7 +3,7 @@
 {% block content %}
 <p>{% trans %}cancel-payment.welcome{% endtrans %}</p>
 <p>{% trans %}cancel-payment.denied{% endtrans %}</p>
-<p>{% trans %}cancel-payment.{% endtrans %}{{ reason }}.</p>
-<p><b>{% trans %}cancel-payment.dontPay{% endtrans %}</b>{% trans %}cancel-payment.registerAgain{% endtrans %}
-    <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>{% trans %}cancel-payment.newPayment{% endtrans %}</p>
+<p>{% trans %}cancel-payment.reason{% endtrans %} {{ reason }}.</p>
+<p><b>{% trans %}cancel-payment.dontPay{% endtrans %} </b>{% trans %}cancel-payment.registerAgain{% endtrans %}
+    <a href="{{ event.webUrl }}">{{ event.webUrl }}</a> {% trans %}cancel-payment.newPayment{% endtrans %}</p>
     {% endblock %}

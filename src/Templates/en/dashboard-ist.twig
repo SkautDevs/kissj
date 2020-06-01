@@ -3,7 +3,7 @@
 {% block content %}
     {% set userStatus = ist.user.status %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{{ event.getIstLabel|capitalize }} - details</h2>
+        <h2>{{ event.getIstLabel|capitalize }}{% trans %}dashboard-ist.details{% endtrans %}</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'ist'} %}
         </h4>
@@ -28,7 +28,7 @@
                 {% trans %}dashboard-ist.firstName{% endtrans %} <b>{{ ist.getFirstName }}</b><br/>
                 {% trans %}dashboard-ist.surname{% endtrans %} <b>{{ ist.getLastName }}</b><br/>
                 {% trans %}dashboard-ist.scoutNick{% endtrans %} <b>{{ ist.getNickname }}</b><br/>
-                {% trans %}dashboard-ist.BirthDate{% endtrans %} <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+                {% trans %}dashboard-ist.birthDate{% endtrans %} <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
                 {% trans %}dashboard-ist.gender{% endtrans %} <b>{{ ist.getGender }}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}

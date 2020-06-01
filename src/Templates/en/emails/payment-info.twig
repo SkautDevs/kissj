@@ -2,12 +2,12 @@
 
 {% block content %}
     <p>{% trans %}payment-info.welcome{% endtrans %}</p>
-    <p>{% trans %}payment-info.approved{% endtrans %}<b>{{ event.readableName }}</b>!
+    <p>{% trans %}payment-info.approved{% endtrans %} <b> {{ event.readableName }}</b>!
        {% trans %}payment-info.finish{% endtrans %}<b>{% trans %}payment-info.days{% endtrans %}</b> ({{ payment.paymentUntil|date('d. m. Y') }}).</p>
 
     <h3><u>{% trans %}payment-info.paymentDetails{% endtrans %}</u></h3>
-    <h4>{% trans %}payment-info.accountNumber{% endtrans %}{{ payment.accountNumber }}</h4>
-    <h4>{% trans %}payment-info.amount{% endtrans %}{{ payment.price }} {{ payment.currency }}</h4>
-    <h4>{% trans %}payment-info.variableSymbol{% endtrans %}{{ payment.getVariableSymbol }}</h4>
-    <h4>{% trans %}payment-info.paymentNote{% endtrans %}{{ payment.note }}</h4>
+    <h4>{% trans %}payment-info.accountNumber{% endtrans %} {{ payment.accountNumber }}</h4>
+    <h4>{% trans %}payment-info.amount{% endtrans %} {{ payment.price }} {{ payment.currency }}</h4>
+    <h4>{% trans %}payment-info.variableSymbol{% endtrans %} {{ payment.getVariableSymbol }}</h4>
+    <h4>{% trans %}payment-info.paymentNote{% endtrans %} {{ payment.note }}</h4>
 {% endblock %}

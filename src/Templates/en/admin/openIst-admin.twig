@@ -12,8 +12,8 @@
             </div>
             <br/>
             <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}"
-               class="btn btn-small btn-grey">Back</a><br/><br/>
-            <input type="submit" value="Deny and send email" class="btn btn-small">
+               class="btn btn-small btn-grey">{% trans %}openist-admin.back{% endtrans %}</a><br/><br/>
+            <input type="submit" value="{% trans %}openist-admin.denyAndSend{% endtrans %}" class="btn btn-small">
         </form>
     </div>
 {% endblock %}
