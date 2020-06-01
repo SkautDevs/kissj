@@ -2,6 +2,7 @@
 
 namespace kissj\Participant\Admin;
 
+use GuzzleHttp\Psr7\LazyOpenStream;
 use kissj\AbstractController;
 use kissj\Participant\FreeParticipant\FreeParticipantService;
 use kissj\Participant\Guest\GuestService;
@@ -124,5 +125,14 @@ class AdminController extends AbstractController {
             'admin-show-payments',
             ['eventSlug' => $payment->participant->user->event->slug]
         );
+    }
+
+    public function showFile(string $filename) {
+        $uploadFolder = __DIR__.'/../../../uploads/';
+        $stream = new LazyOpenStream($uploadFolder.$filename, 'r');
+        $response = new \Slim\Psr7\Response(200, null, $stream);
+        $response = $response->withAddedHeader('Content-Type', mime_content_type($uploadFolder.$filename));
+
+        return $response;
     }
 }

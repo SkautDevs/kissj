@@ -7,6 +7,7 @@ use kissj\Payment\PaymentService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\UploadedFile;
 
 class IstController extends AbstractController {
     private $istService;
@@ -39,10 +40,25 @@ class IstController extends AbstractController {
     }
 
     public function changeDetails(Request $request, Response $response): Response {
-        $ist = $this->istService->addParamsIntoIst(
-            $this->istService->getIst($request->getAttribute('user')),
-            $request->getParsedBody()
-        );
+        $ist = $this->istService->getIst($request->getAttribute('user'));
+
+        $uploadedFiles = $request->getUploadedFiles();
+        if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
+            // problem - too big file -> not safe anything, because always got nulls in request fields
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
+
+            return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
+        }
+
+        $errorNum = $uploadedFiles['uploadFile']->getError();
+        if ($errorNum === UPLOAD_ERR_OK) {
+            $ist = $this->istService->handleUploadedFile($ist, $uploadedFiles['uploadFile']);
+        } elseif ($errorNum === UPLOAD_ERR_INI_SIZE) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
+        }
+
+
+        $ist = $this->istService->addParamsIntoIst($ist, $request->getParsedBody());
 
         $this->istRepository->persist($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));

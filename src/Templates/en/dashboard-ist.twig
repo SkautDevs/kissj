@@ -61,6 +61,9 @@
                     {% elseif ist.getScarf  == 'no' %}
                         {% trans %}changeDetails-ist.scarfNo{% endtrans %}
                     {% endif %}</b><br/>
+                {% if ist.getUploadedFilename %}
+                    {% trans %}dashboard-ist.uploadedFile{% endtrans %} <b>Soubor úspěšně nahraný!</b><br/>
+                {% endif %}
                 {% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
                 <br/>
             </div>

@@ -13,7 +13,6 @@ use kissj\Participant\FreeParticipant\FreeParticipantController;
 use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
 use kissj\Participant\Patrol\PatrolController;
-use kissj\User\User;
 use kissj\User\UserController;
 use Middlewares\Utils\RequestHandler;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -78,48 +77,48 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
         $app->group('', function (RouteCollectorProxy $app) {
             $app->get('/getDashboard', UserController::class.'::getDashboard')
                 ->setName('getDashboard');
-
-            $app->group('/patrol', function (RouteCollectorProxy $app) {
-                $app->get('/dashboard', PatrolController::class.'::showDashboard')
-                    ->setName('pl-dashboard');
-
-                $app->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
-                    ->setName('p-show');
-
-                $app->group('', function (RouteCollectorProxy $app) {
-                    $app->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
-                        ->setName('pl-showDetailsChangeable');
-
-                    $app->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
-                        ->setName('pl-changeDetails');
-
-                    $app->get('/closeRegistration', PatrolController::class.'::showCloseRegistration')
-                        ->setName('pl-showCloseRegistration');
-
-                    $app->post('/closeRegistration', PatrolController::class.'::closeRegistration')
-                        ->setName('pl-closeRegistration');
-
-                    $app->post('/addParticipant', PatrolController::class.'::addParticipant')
-                        ->setName('pl-addParticipant');
-
-                    $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
-                        $app->get('/showChangeDetails',
-                            PatrolController::class.'::showChangeDetailsPatrolParticipant')
-                            ->setName('p-showChangeDetails');
-
-                        $app->post('/changeDetails', PatrolController::class.'::changeDetailsPatrolParticipant')
-                            ->setName('p-changeDetails');
-
-                        $app->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
-                            ->setName('p-showDelete');
-
-                        $app->post('/delete', PatrolController::class.'::deleteParticipant')
-                            ->setName('p-delete');
-
-                    })->add(\kissj\Middleware\CheckPatrolLeaderParticipants::class);
-                })->add(OpenStatusOnlyMiddleware::class);
-            })->add(\kissj\Middleware\PatrolLeadersOnlyMiddleware::class);
-
+            /*
+                        $app->group('/patrol', function (RouteCollectorProxy $app) {
+                            $app->get('/dashboard', PatrolController::class.'::showDashboard')
+                                ->setName('pl-dashboard');
+            
+                            $app->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
+                                ->setName('p-show');
+            
+                            $app->group('', function (RouteCollectorProxy $app) {
+                                $app->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
+                                    ->setName('pl-showDetailsChangeable');
+            
+                                $app->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
+                                    ->setName('pl-changeDetails');
+            
+                                $app->get('/closeRegistration', PatrolController::class.'::showCloseRegistration')
+                                    ->setName('pl-showCloseRegistration');
+            
+                                $app->post('/closeRegistration', PatrolController::class.'::closeRegistration')
+                                    ->setName('pl-closeRegistration');
+            
+                                $app->post('/addParticipant', PatrolController::class.'::addParticipant')
+                                    ->setName('pl-addParticipant');
+            
+                                $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
+                                    $app->get('/showChangeDetails',
+                                        PatrolController::class.'::showChangeDetailsPatrolParticipant')
+                                        ->setName('p-showChangeDetails');
+            
+                                    $app->post('/changeDetails', PatrolController::class.'::changeDetailsPatrolParticipant')
+                                        ->setName('p-changeDetails');
+            
+                                    $app->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
+                                        ->setName('p-showDelete');
+            
+                                    $app->post('/delete', PatrolController::class.'::deleteParticipant')
+                                        ->setName('p-delete');
+            
+                                })->add(\kissj\Middleware\CheckPatrolLeaderParticipants::class);
+                            })->add(OpenStatusOnlyMiddleware::class);
+                        })->add(\kissj\Middleware\PatrolLeadersOnlyMiddleware::class);
+            */
             $app->group('/ist', function (RouteCollectorProxy $app) {
                 $app->get('/dashboard', IstController::class.'::showDashboard')
                     ->setName('ist-dashboard');
@@ -140,40 +139,40 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
                 })->add(OpenStatusOnlyMiddleware::class);
 
             })->add(IstsOnlyMiddleware::class);
-
-            $app->group('/freeParticipant', function (RouteCollectorProxy $app) {
-                $app->get('/dashboard', FreeParticipantController::class.'::showDashboard')
-                    ->setName('fp-dashboard');
-
-                $app->group('', function (RouteCollectorProxy $app) {
-                    $app->get('/showChangeDetails', FreeParticipantController::class.'::showDetailsChangeable')
-                        ->setName('fp-showDetailsChangeable');
-
-                    $app->post('/changeDetails', FreeParticipantController::class.'::changeDetails')
-                        ->setName('fp-changeDetails');
-
-                    $app->get('/closeRegistration', FreeParticipantController::class.'::showCloseRegistration')
-                        ->setName('fp-showCloseRegistration');
-
-                    $app->post('/closeRegistration', FreeParticipantController::class.'::closeRegistration')
-                        ->setName('fp-confirmCloseRegistration');
-
-                })->add(OpenStatusOnlyMiddleware::class);
-
-            })->add(function (Request $request, RequestHandler $handler) use ($app) {
-                // protected area for Free Participants
-                if ($request->getAttribute('user')->role !== User::ROLE_FREE_PARTICIPANT) {
-                    $this->get('flashMessages')->error('Pardon, you are not registred as Free Participant');
-
-                    $url = $app->getRouteCollector()->getRouteParser()->urlFor('landing');
-                    $response = new \Slim\Psr7\Response();
-
-                    return $response->withHeader('Location', $url)->withStatus(302);
-                }
-
-                return $handler->handle($request);
-            });
-
+            /*
+                        $app->group('/freeParticipant', function (RouteCollectorProxy $app) {
+                            $app->get('/dashboard', FreeParticipantController::class.'::showDashboard')
+                                ->setName('fp-dashboard');
+            
+                            $app->group('', function (RouteCollectorProxy $app) {
+                                $app->get('/showChangeDetails', FreeParticipantController::class.'::showDetailsChangeable')
+                                    ->setName('fp-showDetailsChangeable');
+            
+                                $app->post('/changeDetails', FreeParticipantController::class.'::changeDetails')
+                                    ->setName('fp-changeDetails');
+            
+                                $app->get('/closeRegistration', FreeParticipantController::class.'::showCloseRegistration')
+                                    ->setName('fp-showCloseRegistration');
+            
+                                $app->post('/closeRegistration', FreeParticipantController::class.'::closeRegistration')
+                                    ->setName('fp-confirmCloseRegistration');
+            
+                            })->add(OpenStatusOnlyMiddleware::class);
+            
+                        })->add(function (Request $request, RequestHandler $handler) use ($app) {
+                            // protected area for Free Participants
+                            if ($request->getAttribute('user')->role !== User::ROLE_FREE_PARTICIPANT) {
+                                $this->get('flashMessages')->error('Pardon, you are not registred as Free Participant');
+            
+                                $url = $app->getRouteCollector()->getRouteParser()->urlFor('landing');
+                                $response = new \Slim\Psr7\Response();
+            
+                                return $response->withHeader('Location', $url)->withStatus(302);
+                            }
+            
+                            return $handler->handle($request);
+                        });
+            */ /*
             $app->group('/guest', function (RouteCollectorProxy $app) {
                 $app->get('/dashboard', GuestController::class.'::showDashboard')
                     ->setName('guest-dashboard');
@@ -206,13 +205,16 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
 
                 return $handler->handle($request);
             });
-
+*/
             $app->redirect('', $app->getRouteCollector()->getRouteParser()->urlFor('landing'));
         })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 
         $app->group('/admin', function (RouteCollectorProxy $app) {
             $app->get('/dashboard', AdminController::class.'::showDashboard')
                 ->setName('admin-dashboard');
+
+            $app->get('/showFile/{filename}', AdminController::class.'::showFile')
+                ->setName('admin-show-file');
 
             $app->group('/approving', function (RouteCollectorProxy $app) {
                 $app->get('', AdminController::class.'::showApproving')

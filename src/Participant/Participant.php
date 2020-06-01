@@ -33,6 +33,9 @@ use kissj\User\User;
  * @property string|null    $tshirt       m:useMethods
  * @property string|null    $arrivalDate  m:passThru(dateFromString|dateToString)
  * @property string|null    $departueDate m:passThru(dateFromString|dateToString)
+ * @property string|null    $uploadedFilename
+ * @property string|null    $uploadedOriginalFilename
+ * @property string|null    $uploadedContenttype
  * @property string|null    $notes
  *
  * @property Payment[]|null $payment m:belongsToMany

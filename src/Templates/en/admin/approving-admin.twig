@@ -26,7 +26,7 @@
                     {% else %}
                         {% trans %}changeDetails-ist.genderOther{% endtrans %}
                     {% endif %}</b><br/>
-                {#Email: <b>{{ ist.getEmail }}</b><br/>
+                Email: <b>{{ ist.user.getEmail }}</b><br/>{#
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
                 {% trans %}approving-admin.address{% endtrans %} <b>{{ ist.getPermanentResidence }}</b><br/>
                 {% trans %}approving-admin.country{% endtrans %} <b>
@@ -50,6 +50,15 @@
                     {% else %}
                         {% trans %}changeDetails-ist.scarfNo{% endtrans %}
                     {% endif %}</b><br/>
+                {% trans %}approving-admin.uploadedFile{% endtrans %}
+                {% if ist.getUploadedFilename %}
+                <a target="_blank"
+                   href="{{ url_for('admin-show-file', {'filename': ist.getUploadedFilename, 'eventSlug': event.slug}) }}">
+                    {{ ist.getUploadedOriginalFilename }}
+                </a>
+            {% else %}
+                <i>{% trans %}approving-admin.noFile{% endtrans %}</i>
+                {% endif %}<br/>
                 {% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
                 <br/>
                 <a href="{{ url_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"

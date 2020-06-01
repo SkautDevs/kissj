@@ -59,7 +59,7 @@ class PhpMailerWrapper {
     }
 
     public function sendRegistrationClosed(User $user): void {
-        $this->sendMailFromTemplate($user->email, 'registration sent', 'closed', []);
+        $this->sendMailFromTemplate($user->email, 'registrace uzamčena', 'closed', []);
     }
 
     public function sendDeniedRegistration(Participant $participant, string $reason) {

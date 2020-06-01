@@ -8,6 +8,7 @@ use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
+use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IstService {
@@ -42,6 +43,26 @@ class IstService {
         }
 
         return $this->istRepository->findOneBy(['user' => $user]);
+    }
+
+    public function handleUploadedFile(Ist $ist, UploadedFile $uploadedFile): Ist {
+        // check for too-big files
+        if ($uploadedFile->getSize() > 10000000) { // 10MB
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
+
+            return $ist;
+        }
+
+        $uploadDirectory = __DIR__.'/../../../uploads/';
+        $newFilename = \md5(microtime(true));
+        $uploadedFile->moveTo($uploadDirectory.DIRECTORY_SEPARATOR.$newFilename);
+
+        $ist->uploadedFilename = $newFilename;
+        $ist->uploadedOriginalFilename = $uploadedFile->getClientFilename();
+        $ist->uploadedContenttype = $uploadedFile->getClientMediaType();
+        $this->istRepository->persist($ist);
+
+        return $ist;
     }
 
     public function addParamsIntoIst(Ist $ist, array $params): Ist {

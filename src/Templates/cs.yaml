@@ -13,7 +13,7 @@ closeRegistration-ist:
 userCustomHelp:
     statusOpen: "Vyplň všechny potřebné informace informace a poté uzamkni přihlášku tlačítkem dole."
     statusOpenPl: "Napiš o sobě všechny uvedené informace, přidej členy své patroly a informace o nich, poté uzamkni vaši přihlášku tlačítkem dole."
-    statusClosed: "Tvá přihláška čeká na schválení. Dáme ti vědět až bude připravena a následně ti pošleme informace k platbě. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
+    statusClosed: "Tvá přihláška čeká na schválení. Dáme ti vědět, až bude připravena, a následně ti pošleme informace k platbě. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusClosedGuest: "Tvá přihláška čeká na schválení. Dáme ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek. Informace k platbě jsou níže."
     statusPaid: "Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až tě uvidíme na Korbu 2020!"
@@ -34,9 +34,10 @@ dashboard-ist:
     gender: "Pohlaví:"
     address: "Trvalá adresa:"
     country: "Země:"
-    unit: "Skatuské středisko:"
+    unit: "Skautské středisko:"
     issues: "Zdravotní omezení:"
     scarf: "Šátek:"
+    uploadedFile: "Soubor s potvrzením:"
     personalNotes: "Poznámky:"
     lockRegistration: "Uzamknout přihlášku"
 changeDetails-ist:
@@ -60,6 +61,7 @@ changeDetails-ist:
     scarf: "Šátek:"
     scarfYes: "Ano, chci jeden za 90 Kč!"
     scarfNo: "Ne, už jeden mám..."
+    uploadFile: "Nebylo ti 18? Nahraj PDF s potvrzením od rodičů:"
     notice: "Poznámky:"
     notice-placeholder: "cokoli dalšího?"
     back: "Zpět"
@@ -72,7 +74,7 @@ _layout:
     lockedBar: "Zamknuto"
     approvedBar: "Schváleno"
     payedBar: "Zaplaceno! ;)"
-    creator: "se ♥ na dlani, vytvořil Lung"
+    creator: "se ♥ na dlani vytvořil Lung"
 singupSuccess:
     buttonSent: "Přihlašovací tlačítko ti bylo posláno na e-mail."
     buttonClick: "Klikni na něj do 15 minut k přihlášení do registračního systému."
@@ -81,7 +83,7 @@ login-help:
     backToLogin: "Zpět k přihlášení"
 login-link-sent:
     accessToSystem: "Přístup do registračního systému"
-    linkSent: "Přihlašovací odkaz by odeslán na tůj e-mail."
+    linkSent: "Přihlašovací odkaz by odeslán na tvůj e-mail."
     followLink: "Následuj odkaz do 15 minut k přihlášení se do registračního systému."
 login:
     registrationFor: "Registrace pro "
@@ -97,7 +99,7 @@ login:
     more: "Více informací o registraci"
 _mail-layout:
     registrationF: "Registrace"
-    ifQuestion: "Pokud máš otázky, mohl by jsi odpověď najít na naší webové stránce "
+    ifQuestion: "Pokud máš otázky, mohl/a bys odpověď najít na naší webové stránce "
     sendEmail: "nebo nám pošli e-mail na "
     farewell: "Hezký zbytek dne ti přeje tým akce "
 cancel-payment:
@@ -109,7 +111,7 @@ cancel-payment:
     newPayment: "(vyplněné informace jsou stále uloženy na tvém profilu), zkontrolujeme a schválíme tvou přihlášku znova a pošleme nové platební údaje."
 closed:
     welcome: "Ahoj,"
-    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na KORBO 2020. Nyní musíme zkontrolovat zda je všechno v pořádku a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
+    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na KORBO 2020. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
 denial:
     welcome: "Ahoj,"
     denied: "bohužel jsme museli zamítnout tvou přihlášku pro"
@@ -163,7 +165,7 @@ payments-admin:
     allIstPaid: " Všichni Korboúčastníci mají zaplaceno!"
     participants: "Bezplatný účastník"
     allParticipantsPaid: "Všichni bezplatní účastníci jsou potvrzeni!"
-OpenIst-admin:
+openIst-admin:
     deny: "Zamítnout"
     wantDeny: "Opravdu chceš zamítnout"
     reason: "Z důvodu (bude posláno mailem, tak nějak mile):"
@@ -206,6 +208,8 @@ approving-admin:
     unit: "Skautské středisko:"
     issues: "Zdravotní omezení:"
     scarf: "Šátek:"
+    uploadedFile: "Nahraný soubor:"
+    noFile: "nic nahráno není"
     notes: "Poznámky"
     deny: "Zamítnout"
     approveAndSend: "Schválit a poslat e-mail"
@@ -234,6 +238,7 @@ flash:
         loggedIn: "Omlouváme se, ale jsi stále přihlášený/á - nejprve se odhlaš kliknutím na \"Odhlásit se\""
         roleChoosed: "Omlouváme se, ale už sis zvolil/a roli pro tuto akci"
         invalidLogin: "Přihlašovací odkaz který jsi použil/a není platný. Vlož, prosím, svůj e-mail na domovské stránce registrace a nech si zaslat nový."
+        fileTooBig: "Nahraný soubor je příliš velký, nahraj prosím menší"
     error:
         adminOnly: "Promiň kámo, pouze pro administrátory"
         istOnly: "Promiň, nejsi přihlášený jako účastník"
