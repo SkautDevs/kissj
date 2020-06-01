@@ -29,6 +29,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Psr7\Environment;
 use Slim\Views\Twig;
 use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -187,9 +188,24 @@ class Settings {
             $settings['locales']['defaultLocale']
         );
 
+        $container[TranslatorInterface::class] = function () {
+            // https://symfony.com/doc/current/components/translation.html
+            $locale = 'cs'; // TODO connect
+            $translator = new Translator($locale);
+            $translator->setFallbackLocales(['cs']);
+
+            $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
+            $translator->addLoader('yaml', $yamlLoader);
+            $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
+            $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
+
+            return $translator;
+        };
+
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
-            FlashMessagesBySession $flashMessages
+            FlashMessagesBySession $flashMessages,
+            TranslatorInterface $translator
         ) use ($settings) {
             $rendererSettings = $settings['renderer'];
 
@@ -216,15 +232,6 @@ class Settings {
             }*/
 
             // translations
-            // https://symfony.com/doc/current/components/translation.html
-            $locale = 'cs'; // TODO connect
-            $translator = new Translator($locale);
-            $translator->setFallbackLocales(['cs']);
-
-            $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
-            $translator->addLoader('yaml', $yamlLoader);
-            $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
-            $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
 
             $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
 

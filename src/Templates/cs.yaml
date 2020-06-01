@@ -82,7 +82,7 @@ login-link-sent:
     linkSent: "Přihlašovací odkaz by odeslán na tůj e-mail."
     followLink: "Následuj odkaz do 15 minut k přihlášení se do registračního systému."
 login:
-    registrationFor: "Registrace pro"
+    registrationFor: "Registrace pro "
     email: "E-mail"
     sendMeEmail: "Odešli přihlašovací mail"
     howItWorks: "Jak přihlašování funguje?"
@@ -91,8 +91,8 @@ login:
     fillDetails: "Vyplň své informace"
     sentForApproval: "Pošli přihlášku ke schválení"
     waitForApproval: "Počkej na schválení a informace k platbě"
-    pay: "Prosím zaplať"
-    more: "Více informací o registračním systému"
+    pay: "Zaplať a jeď!"
+    more: "Více informací o registraci"
 _mail-layout:
     registrationF: "Registrace"
     ifQuestion: "Pokud máš otázky, mohl by jsi odpověď najít na naší webové stránce "
@@ -209,3 +209,6 @@ approving-admin:
     approveAndSend: "Schválit a poslat e-mail"
     none: "Žádní"
     need: " nevyžadují schválení"
+flash:
+    success:
+        linkSent: "Email poslán! Pro přihlášení klikni na odkaz v emailu."

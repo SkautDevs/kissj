@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractController {
     /**
@@ -29,6 +30,12 @@ abstract class AbstractController {
      * @var Twig
      */
     protected $view;
+
+    /**
+     * @Inject()
+     * @var TranslatorInterface
+     */
+    protected $translator;
 
     protected function redirect(
         Request $request,

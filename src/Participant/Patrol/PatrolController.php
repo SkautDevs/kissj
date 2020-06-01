@@ -83,7 +83,7 @@ class PatrolController extends AbstractController {
             $this->logger->info('Locked registration for Patrol Leader with ID '
                 .$patrolLeader->id.', user ID '.$patrolLeader->user->id);
         } else {
-            $this->flashMessages->error('Registration cannot be locked, data is not valid');
+            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
         return $response->withRedirect($this->router->urlFor('pl-dashboard',

@@ -8,12 +8,14 @@ use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IstService {
     private $istRepository;
     private $userService;
     private $paymentService;
     private $flashMessages;
+    private $translator;
     private $mailer;
 
     public function __construct(
@@ -21,12 +23,14 @@ class IstService {
         UserService $userService,
         PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
+        TranslatorInterface $translator,
         PhpMailerWrapper $mailer
     ) {
         $this->istRepository = $istRepository;
         $this->userService = $userService;
         $this->paymentService = $paymentService;
         $this->flashMessages = $flashMessages;
+        $this->translator = $translator;
         $this->mailer = $mailer;
     }
 
@@ -98,12 +102,12 @@ class IstService {
 
     public function isCloseRegistrationValid(Ist $ist): bool {
         if (!$this->isIstValidForClose($ist)) {
-            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably some date)');
+            $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
 
             return false;
         }
         if ($this->userService->getClosedIstsCount() >= $ist->user->event->maximalClosedIstsCount) {
-            $this->flashMessages->warning('For IST we have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise');
+            $this->flashMessages->warning($this->translator->trans('flash.warning.istFullRegistration'));
 
             return false;
         }

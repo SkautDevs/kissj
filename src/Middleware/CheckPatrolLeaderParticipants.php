@@ -7,17 +7,24 @@ use kissj\Participant\Patrol\PatrolService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * participants actions are allowed only for their Patrol Leader
  */
 class CheckPatrolLeaderParticipants extends AbstractMiddleware {
-    private $flashMessages;
     private $patrolService;
+    private $flashMessages;
+    private $translator;
 
-    public function __construct(FlashMessagesInterface $flashMessages, PatrolService $patrolService) {
-        $this->flashMessages = $flashMessages;
+    public function __construct(
+        PatrolService $patrolService,
+        FlashMessagesInterface $flashMessages,
+        TranslatorInterface $translator
+    ) {
         $this->patrolService = $patrolService;
+        $this->flashMessages = $flashMessages;
+        $this->translator = $translator;
     }
 
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
@@ -35,7 +42,7 @@ class CheckPatrolLeaderParticipants extends AbstractMiddleware {
             $this->patrolService->getPatrolParticipant($routeParams['participantId']),
             $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
 
-            $this->flashMessages->error('Pardon, but you cannot edit or view participants outside your patrol.');
+            $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
 
             $url = $this->getRouter($request)->urlFor('pl-dashboard');
             $response = new \Slim\Psr7\Response();

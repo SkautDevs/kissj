@@ -71,8 +71,8 @@ _layout:
     approvedBar: "Approved"
     payedBar: "Payed! ;)"
     creator: "with ♥ created by Lung"
-singupSuccess: ""
-    buttonSent: "A log-in button has been sent to your E-mail address."
+singupSuccess:
+    buttonSent: "A log-in token has been sent to your E-mail address."
     buttonClick: "Click on it in 15 minutes to log in into the registratino system."
 login-help:
     text: "<h2>Logging-in scheme of kissj system</h2><h3>How does it work, actually?</h3><p>Logging into the kissj registration system is done via one's E-mail address, without any password. </p><p>For the first access into the system, you submit your E-mail address. Subsequently you receive an E-mail witha signing-in button and link, which you follow and are then immediately able to fill in a registrationform. </p><p>You stay logged in until you manually log out. </p><p>After loggin out, nobody can access your data, not even from the same device. </p><p>For logging back in and accessing your data, you have to submit your E-mail address at the log-in page. Your will receive the logging-in button/link into you E-mail account and have to follow it, just like when signing in for the first time. </p><h3>Expiration of access button/link</h3><p>The received button/link is valid only for 15 minutes. Later on you would have to submit your E-mail address again to get a new logging-in button/link. This is a protection against anyone, who could somehow get access to your old E-mails - so that the data you submitted into the registration system are not accessible via an old loggin-in link. </p><p>After following the button/link, it becomes invalid. Therefore if you log in and out in a short period of time, you cannot access the registration account with the same link again and have to get a new logging-in button/link. </p><p>All these security elements have one main point - to keep your data as secure as possible, just like the banks and other big portals attempt to do it. </p><h3>Questions?</h3><p>Should there be any issue with logging in or with any other part of the system, write an E-mail to the particular event organizers, they will surely try to help you at their best. </p>"
@@ -121,13 +121,13 @@ finished:
     enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
 login-token:
     welcome: "Ahoy!"
-    logging: "You are logging into the registration system of"
+    logging: "You are logging into the registration system of "
     logIn: "Log in!"
-    buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser:"
+    buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser: "
 payment-info:
     welcome: "Ahoy,"
-    approved: "we have just approved your registration for"
-    finish: "! To finish your registration properly, there is only one more step - to pay the registration fee till"
+    approved: "we have just approved your registration for "
+    finish: "! To finish your registration properly, there is only one more step - to pay the registration fee till "
     days: "14 days"
     paymentDetails: "Payment details"
     accountNumber: "International Bank Account Number (IBAN):"
@@ -209,3 +209,33 @@ approving-admin:
     approveAndSend: "Approve and send email"
     no: "No"
     need: " are in need for approval"
+flash:
+    info:
+        paymentCanceled: "Participant payment cancelled, email with reason sent"
+        chooseRoleNeeded: "At first you need to choose your role on event"
+        istDenied: "IST participant denied, email successfully sent"
+        logout: "Logout was successful"
+        adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
+        adminPaymentsWaiting: "Zbývá zaplatit plateb: "
+    success:
+        linkSent: "E-mail sent! Follow the link in it to log in."
+        comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
+        detailsSaved: "Details successfully saved."
+        locked: "Registration successfully locked and sent"
+        approved: "IST participant is approved, payment is generated and mail sent"
+        adminPairedPayments: "Z banky spárováno plateb: "
+        adminNoWaitingPayments: "Na zaplacení nezbývají žádné platby!"
+    warning:
+        istNoLock: "Cannot lock the registration - some details are wrong or missing (probably some date)"
+        istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise of other participant cancellation"
+        notLogged: "Pardon, but you are not logged. Please log yourself via entering your email"
+        loggedIn: "Pardon, but your are logged - you need to sign off first by click to \"Log off\""
+        roleChoosed: "Pardon, you already choosed your role for this event"
+        invalidLogin: "Log-in token you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one."
+    error:
+        adminOnly: "Sorry bro, admins only"
+        istOnly: "Sorry, you are not logged as IST"
+        plOnly: "Sorry, you are not logged as Patrol Leader"
+        wrongPatrol: "Pardon, but you cannot edit or view participants outside your patrol."
+        wrongData: "Registration cannot be locked, data is not valid"
+        mailError: "Pardon, e-mail sending failed. Please try it in a couple of minutes."
