@@ -129,7 +129,7 @@ login-token:
 payment-info:
     welcome: "Ahoj,"
     approved: "právě jsme potvrdili tvou přihlášku na"
-    finish: "! K dokončení tvého přihlášení už tě čeká jen jeden krok - zaplatit registrační poplatek do"
+    finish: "K dokončení tvého přihlášení už tě čeká jen jeden krok - zaplatit registrační poplatek do"
     days: "14 dní"
     paymentDetails: "Platební údaje"
     accountNumber: "Číslo účtu:"

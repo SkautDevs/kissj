@@ -34,7 +34,7 @@
                         {% trans %}changeDetails-ist.genderMan{% endtrans %}
                     {% elseif ist.getGender  == 'woman' %}
                         {% trans %}changeDetails-ist.genderWoman{% endtrans %}
-                    {% else %}
+                    {% elseif ist.getGender  == 'other' %}
                         {% trans %}changeDetails-ist.genderOther{% endtrans %}
                     {% endif %}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
@@ -58,7 +58,7 @@
                 {% trans %}dashboard-ist.scarf{% endtrans %} <b>
                     {% if ist.getScarf  == 'yes' %}
                         {% trans %}changeDetails-ist.scarfYes{% endtrans %}
-                    {% else %}
+                    {% elseif ist.getScarf  == 'no' %}
                         {% trans %}changeDetails-ist.scarfNo{% endtrans %}
                     {% endif %}</b><br/>
                 {% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
