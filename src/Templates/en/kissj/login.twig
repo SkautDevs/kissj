@@ -6,11 +6,11 @@
             <form action="{{ path_for('sendLoginEmail') }}" method="post">
                 <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
                 <div class="form-group">
-                    <label for="form-email">{% trans %}login.Email{% endtrans %}</label>
+                    <label for="form-email">{% trans %}login.email{% endtrans %}</label>
                     <input class="form-control form-wide" type="email" name="email" id="form-email"
                            required/><br/>
                 </div>
-                <input type="submit" value="Send me an email to register" class="btn form-wide"/>
+                <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
             </form>
         </div>
         <div class="card approved-theme">

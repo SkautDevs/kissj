@@ -8,6 +8,8 @@ closeRegistration-ist:
     lockRegistration:Do you really want to lock your registration and send it to us for approval? 
     lockRegistrationBold:This step is irreversible and submitted details cannot be changed afterward!
     protectionAgree:I read and I agree with data protection rules at
+    back:Back
+    lockRegistrationButton:Lock registration
 userCustomHelp:
     statusOpen:Fill in all the details about yourself and then lock your registration via the buttom at the bottom
     statusOpenPl:Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom
@@ -17,6 +19,7 @@ userCustomHelp:
     statusPaid:Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2020!
     statusPaidGuest:Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2020!
 dashboard-ist:
+    details:details
     paymentInfo:Payment information
     accountNumber:International Bank Account Number (IBAN):
     amount:Amount:
@@ -77,7 +80,8 @@ login-link-sent:
     followLink:Follow the link in 15 minutes to sign in into the registration system.
 login:
     registrationFor:Registration for the 
-    email:Email
+    email:E-mail
+    sendMeEmail:Send me an email to register
     howItWorks:How does logging-in work?
     submitEmail:Submit your E-mail
     followButton:Follow an access button in your E-mail
@@ -137,7 +141,8 @@ penist-admin:
     wantDeny:Do you really want to deny 
     reason:Reason for denial (will be sent by email): 
 payments-admin:
-    confirm:Confirming payments on event 
+    confirmParticipants:Confirming payments on event 
+    back:Back
     patrols:Patrols
     email:Email: 
     status:Status: 
@@ -147,11 +152,18 @@ payments-admin:
     variableSymbol:Variable symbol: 
     amount:Amount: 
     cancel:Cancel payment
+    confirm:Confirm payment
     allPatrolsPaid:All patrols are paid up!
     ist:International Service Team
     allIstPaid: All ISTs are paid up!
     participants:Free Participants
     allParticipantsPaid:All Free Participants are paid up!
+OpenIst-admin:
+    deny:Deny
+    wantDeny:Do you really want to deny
+    reason:Reason is (will be send via Email)
+    back:Back
+    denyAndSend:Deny and send email
 dashboard-admin:
     dashboard:Dashboard of event 
     admin:Administrator
@@ -165,7 +177,7 @@ dashboard-admin:
     adminActions:Administators actions
     approving:Approving participants
     newPayments:Pair new payments with bank
-    confirmPaymnets:Confirming payments by hand
+    confirmPayments:Confirming payments by hand
     exportMedData:Export medical data into CSV
     exportEmailsPaid:Export emails of paid into CSV
     exportFullData:Export FULL data into CSV
@@ -176,6 +188,7 @@ cancelPayment-admin:
     participantNeedsToKnow:The participant needs to know about the cancellation, because the payment can be on the way - if you cancel it now and the payment arrives, it will be quite an extra efford to solve this issue. You will need to return the payment and make him send it again with newly generated variable number.
     reason:Reason for payment cancellation (will be sent via mail): 
     back:Back
+    cancelPayment:CancelPayment
 approving-admin:
     approving:Approving participants on event 
     back:Back
@@ -190,5 +203,6 @@ approving-admin:
     scarf:Scarf
     notes:Notes
     deny:Deny
+    approveAndSend:Approve and send email
     no:No 
     need: are in need for approval

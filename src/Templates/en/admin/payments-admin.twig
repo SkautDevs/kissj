@@ -2,29 +2,29 @@
 
 {% block content %}
     <div class="card approved-theme">
-        <h2>{% trans %}payments-admin.confirm{% endtrans %}{{ event.readableName }}</h2>
+        <h2>{% trans %}payments-admin.confirmParticipants{% endtrans %} {{ event.readableName }}</h2>
         <a href="{{ path_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
     </div>
     <br/>
 
     {% if approvedPatrolLeaders is not empty %}
         <div class="card approved-theme">
-            <h2>{% trans %}payments-admin.patrols{% endtrans %}</h2>
+            <h2>{% trans %}payments-admin.participants{% endtrans %}</h2>
         </div>
         <br/>
         {% for pl in approvedPatrolLeaders %}
             <div class="card approved-theme">
                 <h4>{{ pl.getFullName }}</h4>
-                {% trans %}payments-admin.email{% endtrans %}<b>{{ pl.getEmail }}</b><br/>
+                {% trans %}payments-admin.email{% endtrans %} <b>{{ pl.getEmail }}</b><br/>
                 {% for payment in pl.getPayment %}
-                    {% trans %}payments-admin.status{% endtrans %}<b>{{ payment.status }}</b><br/>
-                    {% trans %}payments-admin.paymentWas{% endtrans %}<b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                    {% trans %}payments-admin.paymentIs{% endtrans %}<b><span
+                    {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
+                    {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+                    {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
                             class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b>{% trans %}payments-admin.days{% endtrans %}
+						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b> {% trans %}payments-admin.days{% endtrans %}
                     <br/>
-                    {% trans %}payments-admin.variableSymbol{% endtrans %}<b>{{ payment.variableSymbol }}</b><br/>
-                    {% trans %}payments-admin.amount{% endtrans %}<b>{{ payment.price }} {{ payment.currency }}</b><br/>
+                    {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
+                    {% trans %}payments-admin.amount{% endtrans %} <b>{{ payment.price }} {{ payment.currency }}</b><br/>
                     <br/>
                     {% if payment.status == 'waiting' %}
                         <a href="{{ path_for('admin-cancel-payment-show',
@@ -34,7 +34,7 @@
                         <br/>
                         <form method="post" action="{{ path_for('admin-confirm-payment',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                            <input type="submit" value="Confirm payment" class="btn btn-small">
+                            <input type="submit" value="{% trans %}payments-admin.confirm{% endtrans %}" class="btn btn-small">
                         </form>
                     {% endif %}
                 {% endfor %}
@@ -56,16 +56,16 @@
         {% for ist in approvedIsts %}
             <div class="card approved-theme">
                 <h4>{{ ist.getFullName }}</h4>
-                {% trans %}payments-admin.email{% endtrans %}<b>{{ ist.getEmail }}</b><br/>
+                {% trans %}payments-admin.email{% endtrans %} <b>{{ ist.getEmail }}</b><br/>
                 {% for payment in ist.getPayment %}
-                    {% trans %}payments-admin.status{% endtrans %}<b>{{ payment.status }}</b><br/>
-                    {% trans %}payments-admin.paymentWas{% endtrans %}<b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                    {% trans %}payments-admin.paymentIs{% endtrans %}<b><span
+                    {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
+                    {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+                    {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
                             class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b>{% trans %}payments-admin.days{% endtrans %}
+						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }} </b> {% trans %}payments-admin.days{% endtrans %}
                     <br/>
-                    {% trans %}payments-admin.variableSymbol{% endtrans %}<b>{{ payment.variableSymbol }}</b><br/>
-                    {% trans %}payments-admin.amount{% endtrans %}<b>{{ payment.price }} {{ payment.currency }}</b><br/>
+                    {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
+                    {% trans %}payments-admin.amount{% endtrans %} <b> {{ payment.price }} {{ payment.currency }}</b><br/>
                     <br/>
                     {% if payment.status == 'waiting' %}
                         <a href="{{ path_for('admin-cancel-payment-show',
@@ -75,7 +75,7 @@
                         <br/>
                         <form method="post" action="{{ path_for('admin-confirm-payment',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                            <input type="submit" value="Confirm payment" class="btn btn-small">
+                            <input type="submit" value="{% trans %}payments-admin.confirm{% endtrans %}" class="btn btn-small">
                         </form>
                     {% endif %}
                 {% endfor %}
@@ -91,22 +91,22 @@
 
     {% if approvedFreeParticipants is not empty %}
         <div class="card approved-theme">
-            <h2>{% trans %}payments-admin.paticipants{% endtrans %}</h2>
+            <h2>{% trans %}payments-admin.participants{% endtrans %}</h2>
         </div>
         <br/>
         {% for fp in approvedFreeParticipants %}
             <div class="card approved-theme">
                 <h4>{{ fp.getFullName }}</h4>
-                {% trans %}payments-admin.email{% endtrans %}<b>{{ fp.getEmail }}</b><br/>
+                {% trans %}payments-admin.email{% endtrans %} <b>{{ fp.getEmail }}</b><br/>
                 {% for payment in fp.getPayment %}
-                    {% trans %}payments-admin.status{% endtrans %}<b>{{ payment.status }}</b><br/>
-                    {% trans %}payments-admin.paymentWas{% endtrans %}<b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                    {% trans %}payments-admin.paymentIs{% endtrans %}<b><span
+                    {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
+                    {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+                    {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
                             class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						registration-theme{% endif %}">{{ payment.getElapsedPaymentDays }}</b>{% trans %}payments-admin.days{% endtrans %}
+						registration-theme{% endif %}"> {{ payment.getElapsedPaymentDays }}</b> {% trans %}payments-admin.days{% endtrans %}
                     <br/>
-                    {% trans %}payments-admin.variableSymbol{% endtrans %}<b>{{ payment.variableSymbol }}</b><br/>
-                    {% trans %}payments-admin.Amount{% endtrans %}<b>{{ payment.price }} {{ payment.currency }}</b><br/>
+                    {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
+                    {% trans %}payments-admin.Amount{% endtrans %} <b>{{ payment.price }} {{ payment.currency }}</b><br/>
                     <br/>
                     {% if payment.status == 'waiting' %}
                         <a href="{{ path_for('admin-cancel-payment-show',
@@ -116,7 +116,7 @@
                         <br/>
                         <form method="post" action="{{ path_for('admin-confirm-payment',
                             {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                            <input type="submit" value="Confirm payment" class="btn btn-small">
+                            <input type="submit" value="{% trans %}payments-admin.confirm{% endtrans %}" class="btn btn-small">
                         </form>
                     {% endif %}
                 {% endfor %}

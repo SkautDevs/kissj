@@ -3,8 +3,8 @@
 {% block content %}
     <div class="card card-half closed-theme">
         <h2>{% trans %}cancelPayment-admin.cancel{% endtrans %}</h2>
-        <p>{% trans %}cancelPayment-admin.wantCancel{% endtrans %}<b>{{ payment.participant.getFullName }}</b>
-           {% trans %}cancelPayment-admin.inRole{% endtrans %}{{ payment.participant.getRole }}?</p>
+        <p>{% trans %}cancelPayment-admin.wantCancel{% endtrans %}<b> {{ payment.participant.getFullName }}</b>
+           {% trans %}cancelPayment-admin.inRole{% endtrans %} {{ payment.participant.getRole }}?</p>
         <p>{% trans %}cancelPayment-admin.participantNeedsToKnow{% endtrans %}</p>
         <form method="post" action="{{ path_for('admin-cancel-payment',
             {'paymentId' : payment.id, 'eventSlug': event.slug}) }}">
@@ -16,7 +16,7 @@
             <br/>
             <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                class="btn btn-small btn-grey">{% trans %}cancelPayment-admin.back{% endtrans %}</a><br/><br/>
-            <input type="submit" value="Cancel payment" class="btn btn-small">
+            <input type="submit" value="{% trans %}cancelPayment-admin.cancelPayment{% endtrans %}" class="btn btn-small">
         </form>
     </div>
 {% endblock %}
