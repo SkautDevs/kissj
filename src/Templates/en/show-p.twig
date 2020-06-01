@@ -19,6 +19,6 @@
         Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
         Notes: <b>{{ pDetail.getNotes }}</b><br/>
         <br/>
-        <a class="btn btn-grey btn-small" href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+        <a class="btn btn-grey btn-small" href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
     </div>
 {% endblock %}

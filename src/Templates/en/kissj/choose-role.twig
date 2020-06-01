@@ -4,22 +4,22 @@
     <div class="two-cards">
         <div class="card registration-theme">
             <h2>Choose your role</h2>
-            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+            <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="pl">
                 <input type="submit" class="btn form-wide" value="Register as Patrol Leader!">
             </form>
             <br/>
-            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+            <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="ist">
                 <input type="submit" class="btn form-wide" value="Register as Servis Team!">
             </form>
             <br/>
-            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+            <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="fp">
                 <input type="submit" class="btn form-wide" value="Register as Participant without patrol!">
             </form>
             <br/>
-            <form method="POST" action="{{ path_for('setRole', {'eventSlug': event.slug}) }}">
+            <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="guest">
                 <input type="submit" class="btn form-wide" value="Register as Guest!">
             </form>

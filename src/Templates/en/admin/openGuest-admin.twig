@@ -5,14 +5,14 @@
         <h2>Deny guest</h2>
         <p>Want you really deny <b>{{ guest.getFullName }}</b>?</p>
         <form method="post"
-              action="{{ path_for('admin-open-guest', {'guestId' : guest.getId, 'eventSlug': event.slug}) }}">
+              action="{{ url_for('admin-open-guest', {'guestId' : guest.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
                 <label>Reason for denial (will be sent by email): <br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
             <br/>
-            <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+            <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                class="btn btn-small btn-grey">Back</a><br/><br/>
             <input type="submit" value="Deny and send email" class="btn btn-small">
         </form>

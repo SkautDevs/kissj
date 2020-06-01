@@ -4,7 +4,7 @@
     <div class="card registration-theme">
         <h2>Založení registrace akce</h2>
 
-        <form method="POST" action="{{ path_for('postCreateEvent') }}">
+        <form method="POST" action="{{ url_for('postCreateEvent') }}">
             <label class="form-group form-group-inline">
                 Název akce:
                 <input class="form-control" type="text" name="readableName" required="required"

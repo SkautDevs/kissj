@@ -43,15 +43,19 @@
         <h3>{% trans %}dashboard-admin.adminActions{% endtrans %}</h3>
         <div class="card-divide">
             <div>
-                <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
+                <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
                 <a class="btn btn-grey">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
-                <!--<a href="{{ path_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
-                <a href="{{ path_for('admin-show-payments', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
+                <!--<a href="{{ url_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
             </div>
             <div>
                 <a class="btn btn-grey">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
-                <a href="{{ path_for('admin-export-paid', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
-                <a href="{{ path_for('admin-export-full', {'eventSlug': event.slug}) }}" class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
+                <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
+                <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
             </div>
         </div>
     </div>

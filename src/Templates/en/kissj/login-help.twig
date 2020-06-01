@@ -2,8 +2,9 @@
 
 {% block content %}
     <div class="card text-center">
-      {% trans %}login-help.text{% endtrans %}
+        {% trans %}login-help.text{% endtrans %}
         <br>
-        <a href="{{ path_for('landing') }}" class="btn btn-small btn-grey btn text-center">{% trans %}login-help.backToLogin{% endtrans %}</a>
+        <a href="{{ url_for('landing') }}"
+           class="btn btn-small btn-grey btn text-center">{% trans %}login-help.backToLogin{% endtrans %}</a>
     </div>
 {% endblock %}

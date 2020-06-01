@@ -3,14 +3,16 @@
 {% block content %}
     <div class="card open-theme">
         <h2>{% trans %}closeRegistration-fp.title{% endtrans %}</h2>
-        <p>{% trans %}closeRegistration-fp.lockRegistration{% endtrans %}<b>{% trans %}closeRegistration-fp.lockRegistrationBold{% endtrans %}</b></p>
-        <form method="POST" action="{{ path_for('fp-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
-            <label><input type="checkbox" required="required">{% trans %}closeRegistration-fp.protectionAgree{% endtrans %}
+        <p>{% trans %}closeRegistration-fp.lockRegistration{% endtrans %}
+            <b>{% trans %}closeRegistration-fp.lockRegistrationBold{% endtrans %}</b></p>
+        <form method="POST" action="{{ url_for('fp-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
+            <label><input type="checkbox"
+                          required="required">{% trans %}closeRegistration-fp.protectionAgree{% endtrans %}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
-                <a href="{{ path_for('fp-dashboard', {'eventSlug': event.slug}) }}"
+                <a href="{{ url_for('fp-dashboard', {'eventSlug': event.slug}) }}"
                    class="btn btn-grey btn-small">Back</a>
                 <input class="btn btn-small" type="submit" value="Lock registration">
             </div>

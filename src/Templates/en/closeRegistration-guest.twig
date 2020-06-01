@@ -5,13 +5,13 @@
         <h2>Send guest registration</h2>
         <p>Do you really want to lock your registration and send it to us for approval? <b>This step is irreversible and
                 submitted details cannot be changed afterward!</b></p>
-        <form method="POST" action="{{ path_for('guest-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
+        <form method="POST" action="{{ url_for('guest-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
             <label><input type="checkbox" required="required">I read and I agree with data protection rules at
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
-                <a href="{{ path_for('guest-dashboard', {'eventSlug': event.slug}) }}"
+                <a href="{{ url_for('guest-dashboard', {'eventSlug': event.slug}) }}"
                    class="btn btn-grey btn-small">Back</a>
                 <input class="btn btn-small" type="submit" value="Lock registration">
             </div>

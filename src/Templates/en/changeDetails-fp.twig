@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card text-left open-theme">
         <h2>Edit your details</h2>
-        <form method="POST" action="{{ path_for('fp-changeDetails', {'eventSlug': event.slug}) }}">
+        <form method="POST" action="{{ url_for('fp-changeDetails', {'eventSlug': event.slug}) }}">
             <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
                                                                            name="firstName"
                                                                            value="{{ fp.getFirstName }}"
@@ -131,7 +131,7 @@
             </label>
             <div class="text-center">
                 <a class="btn btn-small btn-grey"
-                   href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+                   href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
                 <input class="btn btn-small" type="submit" value="Save">
             </div>
         </form>

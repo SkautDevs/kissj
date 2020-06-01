@@ -4,14 +4,14 @@
     <div class="card card-half closed-theme">
         <h2>{% trans %}openist-admin.deny{% endtrans %}{{ event.getIstLabel }}</h2>
         <p>{% trans %}openist-admin.wantDeny{% endtrans %}<b>{{ ist.getFullName }}</b>?</p>
-        <form method="post" action="{{ path_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
+        <form method="post" action="{{ url_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
                 <label>{% trans %}openist-admin.reason{% endtrans %}<br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
             <br/>
-            <a href="{{ path_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+            <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                class="btn btn-small btn-grey">{% trans %}openist-admin.back{% endtrans %}</a><br/><br/>
             <input type="submit" value="{% trans %}openist-admin.denyAndSend{% endtrans %}" class="btn btn-small">
         </form>

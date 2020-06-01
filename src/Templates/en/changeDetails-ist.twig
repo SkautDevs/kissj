@@ -3,17 +3,20 @@
 {% block content %}
 	<div class="card text-left open-theme">
 		<h2>{% trans %}changeDetails-ist.editDetails{% endtrans %}</h2>
-		<form method="POST" action="{{ path_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.firstName{% endtrans %}<input class="form-control" type="text"
-																		   name="firstName"
-																		   value="{{ istDetails.getFirstName }}"
-																		   required="required"></label>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.surname{% endtrans %}<input class="form-control" type="text"
-																		name="lastName"
-																		value="{{ istDetails.getLastName }}"
-																		required="required"></label>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scoutNick{% endtrans %}<input class="form-control" type="text"
-																			   name="nickname"
+		<form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}">
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.firstName{% endtrans %}<input
+						class="form-control" type="text"
+						name="firstName"
+						value="{{ istDetails.getFirstName }}"
+						required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.surname{% endtrans %}<input
+						class="form-control" type="text"
+						name="lastName"
+						value="{{ istDetails.getLastName }}"
+						required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scoutNick{% endtrans %}<input
+						class="form-control" type="text"
+						name="nickname"
 																			   value="{{ istDetails.getNickname }}"></label>
 			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.birthDate{% endtrans %}<input class="form-control" type="date"
 																			  name="birthDate"
@@ -42,11 +45,12 @@
 																			 placeholder="digits including country dial-in code"
 																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label>#}
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.address{% endtrans %}<input class="form-control" type="text"
-																				  name="permanentResidence"
-																				  value="{{ istDetails.getPermanentResidence }}"
-																				  placeholder="Street and no., city, postal code"
-																				  required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.address{% endtrans %}<input
+						class="form-control" type="text"
+						name="permanentResidence"
+						value="{{ istDetails.getPermanentResidence }}"
+						placeholder="{% trans %}changeDetails-ist.address-placeholder{% endtrans %}"
+						required="required"></label>
 			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.country{% endtrans %}
 				<select class="form-control" name="country">
 					{#<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
@@ -125,10 +129,11 @@
 			if chosen "other" - we arrange only above stated options of diet restriction; in case of
 			other restrictions, you have to arrange all the food for whole event yourself and your
 			participant fee will be reduced<br><br>#}
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.issues{% endtrans %}<input class="form-control" type="text"
-																			  name="healthProblems"
-																			  placeholder="for health rescue - allergies, medication..."
-																			  value="{{ istDetails.getHealthProblems }}">
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.issues{% endtrans %}<input
+						class="form-control" type="text"
+						name="healthProblems"
+						placeholder="{% trans %}changeDetails-ist.issues-placeholder{% endtrans %}"
+						value="{{ istDetails.getHealthProblems }}">
 			</label>
 			{#<label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
 																							type="text"
@@ -255,14 +260,15 @@
 					</option>
 				</select>
 			</label>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %}<input class="form-control" type="text" name="notes"
-																	   placeholder="anything else?"
-																	   value="{{ istDetails.getNotes }}">
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %}<input
+						class="form-control" type="text" name="notes"
+						placeholder="{% trans %}changeDetails-ist.notice-placeholder{% endtrans %}"
+						value="{{ istDetails.getNotes }}">
 			</label>
 
 			<div class="text-center">
 				<a class="btn btn-small btn-grey"
-				   href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
+				   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">Back</a>
 				<input class="btn btn-small" type="submit" value="Save">
 			</div>
 		</form>

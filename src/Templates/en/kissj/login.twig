@@ -3,8 +3,8 @@
 {% block content %}
     <div class="two-cards">
         <div class="card registration-theme">
-            <form action="{{ path_for('sendLoginEmail') }}" method="post">
-                <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName ?? 'AQUA 2020' }}{# TODO make dynamic #}</h2>
+            <form action="{{ url_for('sendLoginEmail') }}" method="post">
+                <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName ?? 'Korbo 2020' }}{# TODO make dynamic #}</h2>
                 <div class="form-group">
                     <label for="form-email">{% trans %}login.email{% endtrans %}</label>
                     <input class="form-control form-wide" type="email" name="email" id="form-email"
@@ -24,7 +24,8 @@
                 <li>{% trans %}login.pay{% endtrans %}</li>
             </ul>
             <br/>
-            <a href="{{ path_for('loginHelp') }}" class="btn-sm btn btn-small btn-grey">{% trans %}login.more{% endtrans %}</a>
+            <a href="{{ url_for('loginHelp') }}"
+               class="btn-sm btn btn-small btn-grey">{% trans %}login.more{% endtrans %}</a>
         </div>
     </div>
 {% endblock %}

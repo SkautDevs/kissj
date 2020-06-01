@@ -28,6 +28,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Psr7\Environment;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -214,18 +215,19 @@ class Settings {
                     .$router->getRouteParser()->urlFor('administration'));
             }*/
 
-            /*            
             // translations
             // https://symfony.com/doc/current/components/translation.html
-            $translator = new Translator('en', new \Symfony\Component\Translation\MessageSelector());
+            $locale = 'cs'; // TODO connect
+            $translator = new Translator($locale);
             $translator->setFallbackLocales(['cs']);
 
             $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
             $translator->addLoader('yaml', $yamlLoader);
-            $translator->addResource('yaml', '../Templates/translations/en.yaml', 'en');
+            $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
+            $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
 
             $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
-            */
+
             return $view;
         };
         $container['view'] = get(Twig::class); // TODO remove

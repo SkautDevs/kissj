@@ -30,7 +30,7 @@ class PhpMailerWrapper {
 
     public function __construct(Twig $renderer, array $mailerSettings) {
         $this->renderer = $renderer;
-        $this->eventName = 'AQUA 2020'; // TODO make dynamic
+        $this->eventName = 'Korbo 2020'; // TODO make dynamic
 
         // TODO refactor
         $this->smtp = $mailerSettings['smtp'];
@@ -52,7 +52,7 @@ class PhpMailerWrapper {
     public function sendLoginToken(User $user, string $link) {
         $this->sendMailFromTemplate(
             $user->email,
-            'link with login',
+            'odkaz pro přihlášení', // TODO make translatable
             'login-token',
             ['link' => $link, 'event' => $user->event]
         );
@@ -65,7 +65,7 @@ class PhpMailerWrapper {
     public function sendDeniedRegistration(Participant $participant, string $reason) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'registration returned',
+            'zamítnutá registrace', // TODO make translatable
             'denial',
             ['reason' => $reason, 'event' => $participant->user->event]
         );
@@ -74,7 +74,7 @@ class PhpMailerWrapper {
     public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'payment informations',
+            'informace o platbě', // TODO make translatable
             'payment-info',
             [
                 'event' => $participant->user->event,
@@ -87,7 +87,7 @@ class PhpMailerWrapper {
     public function sendGuestRegistrationFinished(Participant $participant) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'registration finished',
+            'registrace dokončena', // TODO make translatable
             'finished',
             [
                 'event' => $participant->user->event,
@@ -99,7 +99,7 @@ class PhpMailerWrapper {
     public function sendCancelledPayment(Participant $participant, string $reason) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'payment cancelled',
+            'platba zrušena', // TODO make translatable
             'cancel-payment',
             ['reason' => $reason, 'event' => $participant->user->event]
         );
@@ -108,7 +108,7 @@ class PhpMailerWrapper {
     public function sendRegistrationPaid(Participant $participant) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'payment successfully paid',
+            'platba úspěšně zaplacena!', // TODO make translatable
             'payment-successful',
             ['event' => $participant->user->event]
         );
@@ -117,7 +117,7 @@ class PhpMailerWrapper {
     public function sendWelcomeFreeParticipantMessage(Participant $participant) {
         $this->sendMailFromTemplate(
             $participant->user->email,
-            'registration confirmed',
+            'registrace potvrzena', // TODO make translatable
             'welcome-message-free-participant',
             ['event' => $participant->user->event]
         );

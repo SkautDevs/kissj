@@ -7,9 +7,9 @@
             {% if pDetail.getFirstName is not empty %}<b>{{ pDetail.getFullName }}</b>{% endif %}
             ? You won't be able to undo this action!</p>
         <form method="POST"
-              action="{{ path_for('p-delete', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
+              action="{{ url_for('p-delete', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
             <input class="btn btn-small" type="submit" value="Delete participant">
-            <a href="{{ path_for('pl-dashboard', {'eventSlug': event.slug}) }}" class="btn btn-grey btn-small">Back</a>
+            <a href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}" class="btn btn-grey btn-small">Back</a>
         </form>
     </div>
 {% endblock %}

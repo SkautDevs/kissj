@@ -14,9 +14,9 @@
     <title>{% trans %}_layout.title{% endtrans %} - {{ event.readableName }} - kissj</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="{{ base_url() }}/public/styles.css">
+    <link rel="stylesheet" href="{{ base_path() }}/public/styles.css">
 
-    <script src="{{ base_url() }}/public/date-polyfill.js" defer></script>
+    <script src="{{ base_path() }}/public/date-polyfill.js" defer></script>
 </head>
 
 <body lang="{{ locale }}">
@@ -25,7 +25,7 @@
     <div class="user text-right">
         {% if user is not null %}
             {{ user.email }}
-            <a class="" href="{{ path_for('logout') }}">{% trans %}_layout.logOut{% endtrans %}</a>
+            <a class="" href="{{ url_for('logout') }}">{% trans %}_layout.logOut{% endtrans %}</a>
             {% set userStatus = user.status %}
         {% else %}
             {% set userStatus = "unregistred" %}

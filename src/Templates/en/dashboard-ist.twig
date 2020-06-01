@@ -10,10 +10,10 @@
         {% if userStatus == 'approved' %}
             <div class="paymentInfo">
                 <h2>{% trans %}dashboard-ist.paymentInfo{% endtrans %}</h2>
-                {% trans %}dashboard-ist.accountNumber{% endtrans %} {{ payment.getAccountNumber }}<br/>
-                {% trans %}dashboard-ist.amount{% endtrans %} {{ payment.getPrice }} {{ payment.currency }}<br/>
-                {% trans %}dashboard-ist.variableSymbol{% endtrans %} {{ payment.getVariableSymbol }}<br/>
-                {% trans %}dashboard-ist.paymentNote{% endtrans %} {{ payment.getNote }}<br/>
+                {% trans %}dashboard-ist.accountNumber{% endtrans %} <b>{{ payment.getAccountNumber }}</b><br/>
+                {% trans %}dashboard-ist.amount{% endtrans %} <b>{{ payment.getPrice }} {{ payment.currency }}</b><br/>
+                {% trans %}dashboard-ist.variableSymbol{% endtrans %} <b>{{ payment.getVariableSymbol }}</b><br/>
+                {% trans %}dashboard-ist.paymentNote{% endtrans %} <b>{{ payment.getNote }}</b><br/>
                 <br/>
             </div>
         {% endif %}
@@ -21,7 +21,7 @@
         <div>
             <h2>{% trans %}dashboard-ist.personalInfo{% endtrans %}</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ path_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                <a class="btn btn-small" href="{{ url_for('ist-showDetailsChangeable', {'eventSlug': event.slug}) }}">
                     {% trans %}dashboard-ist.editDetails{% endtrans %}</a><br/><br/>
             {% endif %}
             <div class="text-center">
@@ -50,7 +50,7 @@
         </div>
 
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ path_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            <a class="btn btn-small" href="{{ url_for('ist-showCloseRegistration', {'eventSlug': event.slug}) }}">
                 {% trans %}dashboard-ist.lockRegistration{% endtrans %}</a>
         {% endif %}
     </div>

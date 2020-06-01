@@ -3,16 +3,19 @@
 {% block content %}
     <div class="card open-theme">
         <h2>{% trans %}closeRegistration-ist.title{% endtrans %}</h2>
-        <p>{% trans %}closeRegistration-ist.lockRegistration{% endtrans %}<b>{% trans %}closeRegistration-ist.lockRegistrationBold{% endtrans %}</b></p>
-        <form method="POST" action="{{ path_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
-            <label><input type="checkbox" required="required">{% trans %}closeRegistration-ist.protectionAgree{% endtrans %}
+        <p>{% trans %}closeRegistration-ist.lockRegistration{% endtrans %}
+            <b>{% trans %}closeRegistration-ist.lockRegistrationBold{% endtrans %}</b></p>
+        <form method="POST" action="{{ url_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
+            <label><input type="checkbox"
+                          required="required">{% trans %}closeRegistration-ist.protectionAgree{% endtrans %}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
-                <a href="{{ path_for('ist-dashboard', {'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Ba{% trans %}closeRegistration-ist.back{% endtrans %}ck</a>
-                <input class="btn btn-small" type="submit" value="{% trans %}closeRegistration-ist.lockRegistrationButton{% endtrans %}">
+                <a href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}closeRegistration-ist.back{% endtrans %}</a>
+                <input class="btn btn-small" type="submit"
+                       value="{% trans %}closeRegistration-ist.lockRegistrationButton{% endtrans %}">
             </div>
         </form>
     </div>
