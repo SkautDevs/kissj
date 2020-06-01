@@ -19,7 +19,7 @@ userCustomHelp:
     statusPaid: "Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až tě uvidíme na Korbu 2020!"
     statusPaidGuest: "Tvá přihláška je vyplněna a schválena! ;) Těšíme se až tě uvidíme na Korbu 2020!"
 dashboard-ist:
-    details: " přehled"
+    details: " - přehled"
     paymentInfo: "Informace k platbě"
     accountNumber: "Číslo bankovního účtu:"
     amount: "Cena:"
@@ -62,6 +62,8 @@ changeDetails-ist:
     scarfNo: "Ne, už jeden mám..."
     notice: "Poznámky:"
     notice-placeholder: "cokoli dalšího?"
+    back: "Zpět"
+    save: "Uložit"
 _layout:
     title: "Registrace"
     titleBar: "Registrace"
@@ -188,7 +190,7 @@ cancelPayment-admin:
     cancel: "Zrušit platbu"
     wantCancel: "Opravdu chceš zrušit platbu pro účastníka"
     inRole: "v roli"
-    participantNeedsToKnow: "Účastník musí vědět o zrušení platby, protože platba může být už na cestě - pokud zrušíš platbu a platba přijde, bude to vyžadovat nějakou extra námahu na vyřešení vzniklého problému. Platba se bude muset vrátit a budeš muset účastníka přimět zaplatit znovu s nově vygenerovanými platebnímmi údaji."
+    participantNeedsToKnow: "Účastník musí vědět o zrušení platby, protože platba může být už na cestě - pokud zrušíš platbu a platba přijde, bude to vyžadovat nějakou extra námahu na vyřešení vzniklého problému. Platba se bude muset vrátit a budeš muset účastníka přimět zaplatit znovu s nově vygenerovanými platebními údaji."
     reason: "Důvod zrušení platby (bude poslán e-mailem, tak nebuď sprostý/á):"
     back: "Zpět"
     cancelPayment: "Zamítnout platbu"

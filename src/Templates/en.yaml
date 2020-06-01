@@ -62,6 +62,8 @@ changeDetails-ist:
     scarfNo: "No, I have one already..."
     notice: "Notice:"
     notice-placeholder: "anything else?"
+    back: "Back"
+    save: "Save"
 _layout:
     title: "Registration"
     titleBar: "Registration"
@@ -127,7 +129,7 @@ login-token:
 payment-info:
     welcome: "Ahoy,"
     approved: "we have just approved your registration for"
-    finish: "! To finish your registration properly, there is only one more step - to pay the registration fee till"
+    finish: " To finish your registration properly, there is only one more step - to pay the registration fee till"
     days: "14 days"
     paymentDetails: "Payment details"
     accountNumber: "International Bank Account Number (IBAN):"
@@ -161,7 +163,7 @@ payments-admin:
     allIstPaid: " All ISTs are paid up!"
     participants: "Free Participants"
     allParticipantsPaid: "All Free Participants are paid up!"
-OpenIst-admin:
+openIst-admin:
     deny: "Deny"
     wantDeny: "Do you really want to deny"
     reason: "Reason is (will be send via Email)"

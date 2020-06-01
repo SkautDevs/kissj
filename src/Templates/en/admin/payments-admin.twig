@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card approved-theme">
         <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
-        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">Back</a>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}" class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
     <br/>
 
