@@ -29,11 +29,23 @@
                 {% trans %}dashboard-ist.surname{% endtrans %} <b>{{ ist.getLastName }}</b><br/>
                 {% trans %}dashboard-ist.scoutNick{% endtrans %} <b>{{ ist.getNickname }}</b><br/>
                 {% trans %}dashboard-ist.birthDate{% endtrans %} <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-                {% trans %}dashboard-ist.gender{% endtrans %} <b>{{ ist.getGender }}</b><br/>
+                {% trans %}dashboard-ist.gender{% endtrans %} <b>
+                    {% if ist.getGender  == 'man' %}
+                        {% trans %}changeDetails-ist.genderMan{% endtrans %}
+                    {% elseif ist.getGender  == 'woman' %}
+                        {% trans %}changeDetails-ist.genderWoman{% endtrans %}
+                    {% else %}
+                        {% trans %}changeDetails-ist.genderOther{% endtrans %}
+                    {% endif %}</b><br/>
                 {#Email: <b>{{ ist.getEmail }}</b><br/>
                 Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
                 {% trans %}dashboard-ist.address{% endtrans %} <b>{{ ist.getPermanentResidence }}</b><br/>
-                {% trans %}dashboard-ist.country{% endtrans %} <b>{{ ist.getCountry }}</b><br/>
+                {% trans %}dashboard-ist.country{% endtrans %} <b>
+                    {% if ist.getCountry == 'Czech' %}
+                        {% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
+                    {% elseif ist.getCountry == 'other' %}
+                        {% trans %}changeDetails-ist.countryOther{% endtrans %}
+                    {% endif %}</b><br/>
                 {% trans %}dashboard-ist.unit{% endtrans %} <b>{{ ist.getScoutUnit }}</b><br/>
                 {#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
                 Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
@@ -43,7 +55,12 @@
                 Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
                 Skills: <b>{{ ist.getSkills }}</b><br/>
                 Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
-                {% trans %}dashboard-ist.scarf{% endtrans %} <b>{{ ist.getScarf }}</b><br/>
+                {% trans %}dashboard-ist.scarf{% endtrans %} <b>
+                    {% if ist.getScarf  == 'yes' %}
+                        {% trans %}changeDetails-ist.scarfYes{% endtrans %}
+                    {% else %}
+                        {% trans %}changeDetails-ist.scarfNo{% endtrans %}
+                    {% endif %}</b><br/>
                 {% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>
                 <br/>
             </div>

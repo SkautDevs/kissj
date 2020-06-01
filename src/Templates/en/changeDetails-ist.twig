@@ -17,20 +17,21 @@
 			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scoutNick{% endtrans %}<input
 						class="form-control" type="text"
 						name="nickname"
-																			   value="{{ istDetails.getNickname }}"></label>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.birthDate{% endtrans %}<input class="form-control" type="date"
-																			  name="birthDate"
-																			  value="{{ istDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
-																			  required="required"></label>
+						value="{{ istDetails.getNickname }}"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.birthDate{% endtrans %}<input
+						class="form-control" type="date"
+						name="birthDate"
+						value="{{ istDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
+						required="required"></label>
 			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.gender{% endtrans %}
 				<select class="form-control" name="gender" required="required">
-					<option value="{% trans %}changeDetails-ist.genderMan{% endtrans %}" {% if istDetails.getGender == '{% trans %}changeDetails-ist.genderMan{% endtrans %}' %}selected="selected"{% endif %}>
+					<option value="man" {% if istDetails.getGender == 'man' %}selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.genderMan{% endtrans %}
 					</option>
-					<option value="{% trans %}changeDetails-ist.genderWoman{% endtrans %}" {% if istDetails.getGender == 'wo{% trans %}changeDetails-ist.genderWoman{% endtrans %}man' %}selected="selected"{% endif %}>
+					<option value="woman" {% if istDetails.getGender == 'woman' %}selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.genderWoman{% endtrans %}
 					</option>
-					<option value="{% trans %}changeDetails-ist.genderOther{% endtrans %}" {% if istDetails.getGender == '{% trans %}changeDetails-ist.genderOther{% endtrans %}' %}selected="selected"{% endif %}>
+					<option value="other" {% if istDetails.getGender == 'other' %}selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.genderOther{% endtrans %}
 					</option>
 				</select>
@@ -56,18 +57,19 @@
 					{#<option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
 						Slovak Republic
 					</option>#}
-					<option value="{% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}"{% if istDetails.getCountry == '{% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}' %} selected="selected"{% endif %}>
+					<option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
 					</option>
-					<option value="{% trans %}changeDetails-ist.countryOther{% endtrans %}"{% if istDetails.getCountry == '{% trans %}changeDetails-ist.countryOther{% endtrans %}' %} selected="selected"{% endif %}>
+					<option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.countryOther{% endtrans %}
 					</option>
 				</select>
 			</label>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.unit{% endtrans %}<input class="form-control" type="text"
-																		   name="scoutUnit"
-																		   value="{{ istDetails.getScoutUnit }}"
-																		   required="required"></label>
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.unit{% endtrans %}<input
+						class="form-control" type="text"
+						name="scoutUnit"
+						value="{{ istDetails.getScoutUnit }}"
+						required="required"></label>
 			{#<br>
 
 			<label class="form-group form-group-inline">T-shirt shape:
@@ -252,10 +254,10 @@
 
 			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.scarf{% endtrans %}
 				<select class="form-control" name="scarf">
-					<option value="{% trans %}changeDetails-ist.scarfYes{% endtrans %}"{% if istDetails.getScarf == '{% trans %}changeDetails-ist.scarfYes{% endtrans %}' %} selected="selected"{% endif %}>
+					<option value="yes"{% if istDetails.getScarf == 'yes' %} selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.scarfYes{% endtrans %}
 					</option>
-					<option value="{% trans %}changeDetails-ist.scarfNo{% endtrans %}"{% if istDetails.getScarf == '{% trans %}changeDetails-ist.scarfNo{% endtrans %}' %} selected="selected"{% endif %}>
+					<option value="no"{% if istDetails.getScarf == 'no' %} selected="selected"{% endif %}>
 						{% trans %}changeDetails-ist.scarfNo{% endtrans %}
 					</option>
 				</select>
@@ -269,7 +271,7 @@
 			<div class="text-center">
 				<a class="btn btn-small btn-grey"
 				   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">{% trans %}changeDetails-ist.back{% endtrans %}</a>
-				<input class="btn btn-small" type="submit" value="Sa{% trans %}changeDetails-ist.save{% endtrans %}ve">
+				<input class="btn btn-small" type="submit" value="{% trans %}changeDetails-ist.save{% endtrans %}">
 			</div>
 		</form>
 	</div>
