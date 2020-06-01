@@ -12,7 +12,7 @@ closeRegistration-ist:
     lockRegistrationButton: "Uzamknout přihlášku"
 userCustomHelp:
     statusOpen: "Vyplň všechny potřebné informace informace a poté uzamkni přihlášku tlačítkem dole."
-    statusOpenPl: "Napiš o sobě všechny uvedené informace, přidej členy své patroly a informace o nich, poté ulož vaši přihlášku tlačítkem dole."
+    statusOpenPl: "Napiš o sobě všechny uvedené informace, přidej členy své patroly a informace o nich, poté uzamkni vaši přihlášku tlačítkem dole."
     statusClosed: "Tvá přihláška čeká na schválení. Dáme ti vědět až bude připravena a následně ti pošleme informace k platbě. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusClosedGuest: "Tvá přihláška čeká na schválení. Dáme ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek. Informace k platbě jsou níže."
@@ -223,12 +223,12 @@ flash:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
         detailsSaved: "Informace úspěšně uloženy."
-        locked: "Přihláška úspěšně uložena a poslána"
+        locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Korboúčastník schválen, platební údaje vygenerovány a e-mail odeslán"
         adminPairedPayments: "Z banky spárováno plateb: "
         adminNoWaitingPayments: "Na zaplacení nezbývají žádné platby!"
     warning:
-        istNoLock: "Přihláška nelze uložit - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
+        istNoLock: "Přihláška nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
         istFullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Počkej prosím než navýšíme kapacitu nebo někteří účastníci zruší svojí přihlášku"
         notLogged: "Omlouváme se, ale nejsi přihlášen/a. Přihlaš se prosím vyplněním svého e-mailu"
         loggedIn: "Omlouváme se, ale jsi stále přihlášený/á - nejprve se odhlaš kliknutím na \"Odhlásit se\""
