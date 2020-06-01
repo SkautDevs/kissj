@@ -62,6 +62,8 @@ changeDetails-ist:
     scarfNo: "No, I have one already..."
     notice: "Notice:"
     notice-placeholder: "anything else?"
+    back: "Back"
+    save: "Save"
 _layout:
     title: "Registration"
     titleBar: "Registration"
@@ -126,8 +128,8 @@ login-token:
     buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser: "
 payment-info:
     welcome: "Ahoy,"
-    approved: "we have just approved your registration for "
-    finish: "! To finish your registration properly, there is only one more step - to pay the registration fee till "
+    approved: "we have just approved your registration for"
+    finish: " To finish your registration properly, there is only one more step - to pay the registration fee till"
     days: "14 days"
     paymentDetails: "Payment details"
     accountNumber: "International Bank Account Number (IBAN):"
@@ -161,7 +163,7 @@ payments-admin:
     allIstPaid: " All ISTs are paid up!"
     participants: "Free Participants"
     allParticipantsPaid: "All Free Participants are paid up!"
-OpenIst-admin:
+openIst-admin:
     deny: "Deny"
     wantDeny: "Do you really want to deny"
     reason: "Reason is (will be send via Email)"
@@ -227,7 +229,7 @@ flash:
         adminNoWaitingPayments: "Na zaplacení nezbývají žádné platby!"
     warning:
         istNoLock: "Cannot lock the registration - some details are wrong or missing (probably some date)"
-        istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise of other participant cancellation"
+        istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise or other participant cancellation"
         notLogged: "Pardon, but you are not logged. Please log yourself via entering your email"
         loggedIn: "Pardon, but your are logged - you need to sign off first by click to \"Log off\""
         roleChoosed: "Pardon, you already choosed your role for this event"
