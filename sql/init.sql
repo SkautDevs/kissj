@@ -1,154 +1,139 @@
-CREATE TABLE user (
-	id     INTEGER PRIMARY KEY AUTOINCREMENT,
-	email  TEXT NOT NULL,
-	event  INT  NOT NULL,
-	status TEXT NOT NULL
+create table bankpayment
+(
+	id INTEGER
+		constraint bankpayment_pk
+			primary key,
+	move_date TEXT,
+	price TEXT,
+	variable_symbol TEXT,
+	account_number TEXT,
+	constants_ymbol TEXT,
+	specific_symbol TEXT,
+	note TEXT,
+	currency TEXT,
+	message TEXT,
+	advanced_information TEXT,
+	comment TEXT,
+	status TEXT
 );
 
-CREATE UNIQUE INDEX user_email_uindex
-	ON user (email);
-
-CREATE TABLE logintoken (
-	id      INTEGER PRIMARY KEY AUTOINCREMENT,
-	token   TEXT NOT NULL,
-	userId  INT CONSTRAINT login_tokens_users_id_fk REFERENCES USER (id),
-	created DATETIME,
-	used    BOOLEAN
+create table event
+(
+	id INTEGER
+		primary key autoincrement,
+	slug TEXT,
+	readable_name TEXT,
+	account_number TEXT,
+	prefix_variable_symbol INTEGER,
+	automatic_payment_pairing INTEGER,
+	bank_id INTEGER,
+	bank_api_key TEXT,
+	max_elapsed_payment_days INTEGER,
+	scarf_price INTEGER,
+	tshirt_price INTEGER,
+	allow_patrols INTEGER,
+	maximal_closed_patrols_count INTEGER,
+	minimal_patrol_participants_count INTEGER,
+	maximal_patrol_participants_count INTEGER,
+	allow_ists INTEGER,
+	maximal_closed_ists_count INTEGER,
+	web_url TEXT,
+	created_at DATETIME,
+	updated_at DATETIME,
+	data_protection_url int,
+	diet_price INTEGER,
+	ist_label TEXT,
+	event_start DATE,
+	contact_email TEXT
 );
 
-CREATE TABLE patrolparticipant (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	patrolleaderId     INT CONSTRAINT participant_patrolleaderId_fk REFERENCES patrolleader (id),
-
-	firstName          TEXT,
-	lastName           TEXT,
-	nickname           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	tshirtSize         TEXT,
-	scarf              TEXT,
-	notes              TEXT
+create table user
+(
+	id INTEGER
+		primary key autoincrement,
+	email TEXT not null,
+	status TEXT,
+	created_at DATETIME not null,
+	updated_at DATETIME not null,
+	event_id int default 1
+		constraint user_event_id_fk
+			references event,
+	role TEXT default 'withoutRole'
 );
 
-CREATE TABLE patrolleader (
-	id                 INTEGER PRIMARY KEY autoincrement,
-	userId             INT CONSTRAINT patrolleader_userId_fk REFERENCES USER (id),
-
-	patrolName         TEXT,
-	-- same as patrolparticipant
-	firstName          TEXT,
-	lastName           TEXT,
-	nickname           TEXT,
-	permanentResidence TEXT,
-	telephoneNumber    TEXT,
-	gender             TEXT,
-	country            TEXT,
-	email              TEXT,
-	scoutUnit          TEXT,
-	birthDate          DATETIME,
-	birthPlace         TEXT,
-	allergies          TEXT,
-	foodPreferences    TEXT,
-	cardPassportNumber TEXT,
-	tshirtSize         TEXT,
-	scarf              TEXT,
-	notes              TEXT
+create table logintoken
+(
+	id INTEGER
+		primary key autoincrement,
+	token TEXT not null,
+	user_id INT
+		constraint login_tokens_users_id_fk
+			references user,
+	used BOOLEAN,
+	created_at DATETIME not null,
+	updated_at DATETIME not null
 );
 
-CREATE TABLE ist (
-	id                   INTEGER PRIMARY KEY autoincrement,
-	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-
-	workPreferences      TEXT,
-	skills               TEXT,
-	languages            TEXT,
-	arrivalDate          DATETIME,
-	leavingDate          DATETIME,
-	carRegistrationPlate TEXT,
-	-- same as patrolparticipant
-	firstName            TEXT,
-	lastName             TEXT,
-	nickname             TEXT,
-	permanentResidence   TEXT,
-	telephoneNumber      TEXT,
-	gender               TEXT,
-	country              TEXT,
-	email                TEXT,
-	scoutUnit            TEXT,
-	birthDate            DATETIME,
-	birthPlace           TEXT,
-	allergies            TEXT,
-	foodPreferences      TEXT,
-	cardPassportNumber   TEXT,
-	tshirtSize           TEXT,
-	scarf                TEXT,
-	notes                TEXT
+create table participant
+(
+	id INTEGER
+		primary key autoincrement,
+	user_id INT
+		constraint ist_userId_fk
+			references user,
+	first_name TEXT,
+	last_name TEXT,
+	nickname TEXT,
+	gender TEXT,
+	birth_date DATETIME,
+	birth_place DATETIME,
+	permanent_residence TEXT,
+	country TEXT,
+	id_number TEXT,
+	telephone_number TEXT,
+	email TEXT,
+	legal_representative TEXT,
+	health_problems TEXT,
+	food_preferences TEXT,
+	scout_unit TEXT,
+	tshirt TEXT,
+	scarf TEXT,
+	notes TEXT,
+	created_at DATETIME,
+	updated_at DATETIME,
+	patrol_leader_id int,
+	patrol_name TEXT,
+	drivers_license TEXT,
+	languages TEXT,
+	skills TEXT,
+	preferred_position TEXT,
+	role TEXT,
+	swimming TEXT,
+	arrival_date TEXT,
+	departue_date TEXT,
+	uploaded_filename TEXT,
+	uploaded_original_filename TEXT,
+	uploaded_contenttype TEXT
 );
 
-CREATE TABLE guest (
-	id                   INTEGER PRIMARY KEY autoincrement,
-	userId               INT CONSTRAINT ist_userId_fk REFERENCES USER (id),
-
-	workPreferences      TEXT,
-	skills               TEXT,
-	languages            TEXT,
-	arrivalDate          DATETIME,
-	leavingDate          DATETIME,
-	carRegistrationPlate TEXT,
-	-- same as patrolparticipant
-	firstName            TEXT,
-	lastName             TEXT,
-	nickname             TEXT,
-	permanentResidence   TEXT,
-	telephoneNumber      TEXT,
-	gender               TEXT,
-	country              TEXT,
-	email                TEXT,
-	scoutUnit            TEXT,
-	birthDate            DATETIME,
-	birthPlace           TEXT,
-	allergies            TEXT,
-	foodPreferences      TEXT,
-	cardPassportNumber   TEXT,
-	tshirtSize           TEXT,
-	scarf                TEXT,
-	notes                TEXT
+create table payment
+(
+	id INTEGER
+		primary key autoincrement,
+	variable_symbol TEXT not null,
+	price TEXT not null,
+	currency TEXT not null,
+	status TEXT not null,
+	purpose TEXT not null,
+	account_number TEXT not null,
+	created_at DATETIME,
+	updated_at DATETIME,
+	participant_id int not null
+		references participant,
+	note TEXT
 );
 
-CREATE TABLE payment (
-	id             INTEGER PRIMARY KEY autoincrement,
-	variableSymbol TEXT NOT NULL,
-	price          TEXT NOT NULL,
-	currency       TEXT NOT NULL,
-	status         TEXT NOT NULL,
-	purpose        TEXT NOT NULL,
-	accountNumber  TEXT NOT NULL,
-	generatedDate  DATETIME NOT NULL,
-	roleId         INT CONSTRAINT payment_roleId_fk REFERENCES role (id)
-);
+create unique index user_email_uindex
+	on user (email);
 
-CREATE TABLE event (
-	id                             INTEGER PRIMARY KEY autoincrement,
-	slug                           TEXT NOT NULL,
-	readableName                   TEXT NOT NULL,
-	accountNumber                  TEXT NOT NULL,
-	prefixVariableSymbol           INT  NOT NULL,
-	automaticPaymentPairing        INT  NOT NULL,
-	bankId                         INT  NOT NULL,
-	bankApi                        TEXT,
-	allowPatrols                   INT  NOT NULL,
-	maximalClosedPatrolsCount      INT  NOT NULL,
-	minimalPatrolParticipantsCount INT  NOT NULL,
-	maximalPatrolParticipantsCount INT  NOT NULL,
-	allowIsts                      INT  NOT NULL,
-	maximalClosedIstsCount         INT  NOT NULL
-);
+

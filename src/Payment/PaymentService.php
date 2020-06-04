@@ -2,7 +2,11 @@
 
 namespace kissj\Payment;
 
+use kissj\BankPayment\BankPayment;
+use kissj\BankPayment\BankPaymentRepository;
+use kissj\BankPayment\FioBankPaymentService;
 use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -11,22 +15,28 @@ use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService {
+    private $bankPaymentService;
+    private $bankPaymentRepository;
     private $paymentRepository;
-    //private $paymentAutoMatcherFio;
     private $flashMessages;
+    private $mailer;
     private $translator;
     private $logger;
 
     public function __construct(
+        FioBankPaymentService $bankPaymentService,
         PaymentRepository $paymentRepository,
-        //FioRead $paymentAutoMatcherFio,
+        BankPaymentRepository $bankPaymentRepository,
         FlashMessagesBySession $flashMessages,
+        PhpMailerWrapper $mailer,
         TranslatorInterface $translator,
         Logger $logger
     ) {
+        $this->bankPaymentService = $bankPaymentService;
+        $this->bankPaymentRepository = $bankPaymentRepository;
         $this->paymentRepository = $paymentRepository;
-        //$this->paymentAutoMatcherFio = $paymentAutoMatcherFio;
         $this->flashMessages = $flashMessages;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         $this->logger = $logger;
     }
@@ -140,10 +150,70 @@ class PaymentService {
         return $payment;
     }
 
-    // TODO clean
+    public function findLastPayment(Participant $participant): ?Payment {
+        // TODO refactor
+        $payments = $participant->payment;
+
+        if (count($payments) > 0) {
+            return $payments[0];
+        }
+        return null;
+    }
+
+    /**
+     * plan - frstly it looks, if they are any payments downloaded from bank to pair with our generated payments
+     * if not, download fresh data from bank and then vvv
+     * pair few of them (few because of mailing and processing time)
+     *
+     * @param int $limit
+     */
+    public function updatePayments(int $limit): void {
+        $freshBankPayments = $this->bankPaymentRepository->findBy(['status', BankPayment::STATUS_FRESH]);
+        if (count($freshBankPayments) === 0) {
+            $this->bankPaymentService->getAndSafeFreshPaymentsFromBank();
+            $freshBankPayments = $this->bankPaymentRepository->findBy(['status', BankPayment::STATUS_FRESH]);
+        }
+        
+        $participantKeydPayments = $this->paymentRepository->getWaitingPaymentsKeydByVariableSymbols();
+        $counterNewPaid = 0;
+        $counterUnknownPayment = 0;
+
+        /** @var BankPayment $bankPayment */
+        foreach (array_slice($freshBankPayments, 0, $limit) as $bankPayment) {
+            if (array_key_exists($bankPayment->variableSymbol, $participantKeydPayments)) {
+                $payment = $participantKeydPayments[$bankPayment->variableSymbol];
+                if ($payment->price === $bankPayment->price) {
+                    // match!
+                    $this->confirmPayment($payment);
+                    $this->mailer->sendRegistrationPaid($payment->participant);
+                    $this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
+
+                    $bankPayment->status = BankPayment::STATUS_PAIRED;
+                    $counterNewPaid++;
+                } else {
+                    // matching VS, not matchnig price
+                    $bankPayment->status = BankPayment::STATUS_UNKNOWN;
+                    $counterUnknownPayment++;
+                }
+            } else {
+                // found no payment of this VS
+                $bankPayment->status = BankPayment::STATUS_UNKNOWN;
+                $counterUnknownPayment++;
+            }
+
+            $this->bankPaymentRepository->persist($bankPayment);
+        }
+
+        $this->flashMessages->info(
+            $this->translator->trans('flash.info.markedNew').': '.$counterNewPaid.', '
+            .$this->translator->trans('flash.info.newUnknown').': '.$counterUnknownPayment
+        );
+    }
 
     # Jak vygenerovat hezci CSV z Money S3
     /* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
+
+    // TODO delete
 
     public function pairNewPayments(array $approvedIstPayments) {
         /** @var Payment[] $canceledPayments */
@@ -225,15 +295,5 @@ class PaymentService {
         } else {
             $this->flashMessages->success($this->translator->trans('flash.success.adminNoWaitingPayments'));
         }
-    }
-
-    public function findLastPayment(Participant $participant): ?Payment {
-        // TODO refactor
-        $payments = $participant->payment;
-
-        if (count($payments) > 0) {
-            return $payments[0];
-        }
-        return null;
     }
 }

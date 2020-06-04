@@ -215,6 +215,12 @@ approving-admin:
     approveAndSend: "Schválit a poslat e-mail"
     none: "Žádní"
     need: " nevyžadují schválení"
+paymentsAuto-admin:
+    update: "Stáhnout a napárovat platby"
+    paymentsOnAccount: "Platby na bankovním účtu"
+    vs: "VS"
+    note: "poznámka"
+    status: "status"
 flash:
     info:
         paymentCanceled: "Platba zamítnuta, e-mail s důvodem odeslán"
@@ -223,6 +229,8 @@ flash:
         logout: "Odhlášení bylo úspěšné"
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
         adminPaymentsWaiting: "Zbývá zaplatit plateb: "
+        markedNew: "Označeno nových zaplacených"
+        newUnknown: "nových neznámých"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"

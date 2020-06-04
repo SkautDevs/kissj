@@ -6,7 +6,7 @@
  * Time: 22:41
  */
 
-namespace kissj\Payment;
+namespace kissj\BankPayment;
 
 
 class Banks {

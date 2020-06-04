@@ -14,7 +14,6 @@ use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\User\UserController;
-use Middlewares\Utils\RequestHandler;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
@@ -274,31 +273,16 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
                 $app->post('/confirmPayment/{paymentId}', AdminController::class.'::confirmPayment')
                     ->setName('admin-confirm-payment');
 
-                // TODO
+                
                 $app->group('/auto', function (RouteCollectorProxy $app) {
-                    $app->get('/sinceLastUpdate', function (Request $request, RequestHandler $handler) use ($app) {
-                        /** @var \kissj\Payment\PaymentService $paymentService */
-                        $paymentService = $this->get('paymentService');
-                        // TODO optimalite with new function (getAllIstsPayments() or so)
-                        $approvedIsts = $this->istService->getAllApprovedIstsWithPayment();
-                        $paymentService->pairNewPayments($approvedIsts);
-
-                        $url = $app->getRouteCollector()->getRouteParser()->urlFor('admin-dashboard');
-                        $response = new \Slim\Psr7\Response();
-
-                        return $response->withHeader('Location', $url)->withStatus(302);
-                    })->setName('admin-payments-autopay');
-
-                    $app->get('setBreakpoint', function (Request $request, RequestHandler $handler) use ($app) {
-                        /** @var \kissj\Payment\PaymentService */
-                        $this->get('paymentService')->setLastDate('2016-01-01');
-                        $this->get('flashMessages')->success('Poslední break point banky posunut na začátek akce');
-
-                        $url = $app->getRouteCollector()->getRouteParser()->urlFor('admin-dashboard');
-                        $response = new \Slim\Psr7\Response();
-
-                        return $response->withHeader('Location', $url)->withStatus(302);
-                    })->setName('admin-payments-setbreakpoint');
+                    $app->get('', AdminController::class.'::showAutoPayments')
+                        ->setName('admin-show-auto-payments');
+                    
+                    $app->post('/setBreakpointFromRoute', AdminController::class.'::setBreakpointFromRoute')
+                        ->setName('admin-set-breakpoint-payments');
+                    
+                    $app->post('/updatePayments', AdminController::class.'::updatePayments')
+                        ->setName('admin-update-payments');
                 });
             });
 

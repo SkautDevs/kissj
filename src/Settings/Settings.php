@@ -104,6 +104,12 @@ class Settings {
                     // 'login' => 'superSecretUsername',
                     // 'password' => 'superSecretPassword',
                 ],
+
+                'payment' => [
+                    'accountNumber' => 'accountNumber/2010', // fio bank only
+                    'fioApiToken' => 'readTokenFromIBanking', // more at https://www.fio.cz/docs/cz/API_Bankovnictvi.pdf
+                ],
+
                 'locales' => [
                     'availableLocales' => ['cs', 'en'],
                     'defaultLocale' => 'cs',
@@ -165,7 +171,7 @@ class Settings {
 
         $container['paymentAutoMatcherFio'] = function () use ($settings) {
             // using h4kuna/fio - https://github.com/h4kuna/fio
-            $paymentSettings = $settings['paymentSettings'];
+            $paymentSettings = $settings['payment'];
             $fioFactory = new FioFactory([
                 'mainAccount' => [
                     'account' => $paymentSettings['accountNumber'],
@@ -238,6 +244,19 @@ class Settings {
             return $view;
         };
         $container['view'] = get(Twig::class); // TODO remove
+
+        $container[FioRead::class] = function () use ($settings) {
+            $fioSettings = $settings['payment'];
+
+            $fioFactory = new FioFactory([
+                'fio-account' => [
+                    'account' => $fioSettings['accountNumber'],
+                    'token' => $fioSettings['fioApiToken'],
+                ],
+            ]);
+
+            return $fioFactory->createFioRead('fio-account');
+        };
 
         return $container;
     }

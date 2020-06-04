@@ -4,10 +4,11 @@ namespace kissj\Participant\Admin;
 
 use GuzzleHttp\Psr7\LazyOpenStream;
 use kissj\AbstractController;
+use kissj\BankPayment\BankPaymentRepository;
+use kissj\BankPayment\FioBankPaymentService;
 use kissj\Participant\FreeParticipant\FreeParticipantService;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
-use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Payment\PaymentRepository;
@@ -17,29 +18,32 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class AdminController extends AbstractController {
-    public $participantService;
-    public $participantRepository;
-    public $paymentService;
-    public $paymentRepository;
-    public $patrolService;
-    public $istService;
-    public $freeParticipantService;
-    public $guestService;
+    private $participantService;
+    private $paymentService;
+    private $paymentRepository;
+    private $bankPaymentRepository;
+    private $bankPaymentService;
+    private $patrolService;
+    private $istService;
+    private $freeParticipantService;
+    private $guestService;
 
     public function __construct(
         ParticipantService $participantService,
-        ParticipantRepository $participantRepository,
         PaymentService $paymentService,
         PaymentRepository $paymentRepository,
+        BankPaymentRepository $bankPaymentRepository,
+        FioBankPaymentService $bankPaymentService,
         PatrolService $patrolService,
         IstService $istService,
         FreeParticipantService $freeParticipantService,
         GuestService $guestService
     ) {
         $this->participantService = $participantService;
-        $this->participantRepository = $participantRepository;
         $this->paymentService = $paymentService;
         $this->paymentRepository = $paymentRepository;
+        $this->bankPaymentRepository = $bankPaymentRepository;
+        $this->bankPaymentService = $bankPaymentService;
         $this->patrolService = $patrolService;
         $this->istService = $istService;
         $this->freeParticipantService = $freeParticipantService;
@@ -134,5 +138,39 @@ class AdminController extends AbstractController {
         $response = $response->withAddedHeader('Content-Type', mime_content_type($uploadFolder.$filename));
 
         return $response;
+    }
+
+    public function showAutoPayments(Response $response): Response {
+        $bankPayments = $this->bankPaymentRepository->findAll();
+        
+        return $this->view->render($response, 'admin/paymentsAuto-admin.twig', ['bankPayments' => $bankPayments]);
+    }
+
+    public function setBreakpointFromRoute(Request $request, Response $response): Response {
+        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'));
+
+        if ($result) {
+            $this->flashMessages->success('Zarážka plateb úspěšně nastavena');
+        } else {
+            $this->flashMessages->error('Něco se pokazilo :(');
+        }
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-auto-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
+    }
+
+    public function updatePayments(Request $request, Response $response): Response {
+        $this->paymentService->updatePayments(5);
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-auto-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace kissj\Orm;
 
+use kissj\BankPayment\BankPayment;
 use kissj\Event\Event;
 use kissj\Participant\Admin\Admin;
 use kissj\Participant\FreeParticipant\FreeParticipant;
@@ -50,6 +51,9 @@ class Mapper implements IMapper {
 
             case 'payment':
                 return Payment::class;
+                
+            case 'bankpayment':
+                return BankPayment::class;
 
             case 'event':
                 return Event::class;

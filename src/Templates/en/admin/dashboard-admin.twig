@@ -45,8 +45,8 @@
             <div>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                <a class="btn btn-grey">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
-                <!--<a href="{{ url_for('admin-payments-setbreakpoint', {'eventSlug': event.slug}) }}" class="btn">Nastavit zarážku plateb na začátek</a><br/>-->
+                <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}" 
+                   class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
             </div>

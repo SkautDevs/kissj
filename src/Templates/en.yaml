@@ -215,6 +215,12 @@ approving-admin:
     approveAndSend: "Approve and send email"
     no: "No"
     need: " are in need for approval"
+paymentsAuto-admin:
+    update: "Download and pair payments"
+    paymentsOnAccount: "Payments on account "
+    vs: "VS"
+    note: "notice"
+    status: "status"
 flash:
     info:
         paymentCanceled: "Participant payment cancelled, email with reason sent"
@@ -223,6 +229,8 @@ flash:
         logout: "Logout was successful"
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
         adminPaymentsWaiting: "Zbývá zaplatit plateb: "
+            markedNew: "Marked new payments"
+            newUnknown: "marked new unknowns"
     success:
         linkSent: "E-mail sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"

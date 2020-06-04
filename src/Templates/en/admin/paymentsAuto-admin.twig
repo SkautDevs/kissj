@@ -1,0 +1,28 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card approved-theme">
+        <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
+        <form action="{{ url_for('admin-update-payments', {'eventSlug': event.slug} ) }}" method="POST">
+            <input type="submit" class="btn btn-small" value="{% trans %}paymentsAuto-admin.update{% endtrans %}">
+        </form>
+        <br/>
+        <form action="{{ url_for('admin-set-breakpoint-payments', {'eventSlug': event.slug} ) }}" method="POST">
+            <input type="submit" class="btn btn-small" value="Nastavit zarážku na 31.5.2020">
+        </form>
+        <br/>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
+           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+    </div>
+    <br/>
+    <div class="card approved-theme">
+        <h3>{% trans %}paymentsAuto-admin.paymentsOnAccount{% endtrans %} {{ event.accountNumber }}</h3>
+        <hr>
+        {% for p in bankPayments %}
+            {% trans %}paymentsAuto-admin.vs{% endtrans %}: <b>{{ p.variableSymbol }}</b>,
+            {% trans %}paymentsAuto-admin.note{% endtrans %}: <b>{{ p.note }}</b>,
+            {% trans %}paymentsAuto-admin.status{% endtrans %}: <b>{{ p.status }}</b>
+            <hr>
+        {% endfor %}
+    </div>
+{% endblock %}
