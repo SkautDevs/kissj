@@ -289,6 +289,10 @@ div.payment-overdue {
 	text-decoration: line-through;
 }
 
+tr:nth-child(odd) {
+	background: #eeeeee
+}
+
 .alert {
 	border-radius: var(--borderRadius);
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);

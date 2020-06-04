@@ -135,7 +135,11 @@ class Repository extends BaseRepository {
      */
     protected function addOrderBy(Fluent $qb, array $orderBy) {
         foreach ($orderBy as $order => $asc) {
-            $qb->orderBy($order)->asc($asc);
+            if ($asc) {
+                $qb->orderBy($order)->asc();
+            } else {
+                $qb->orderBy($order)->desc();
+            }
         }
     }
 

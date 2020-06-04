@@ -6,20 +6,20 @@ use h4kuna\Fio\Response\Read\Transaction;
 use kissj\Orm\EntityDatetime;
 
 /**
- * @property int    $id
- * @property string $bankId
- * @property string $moveDate
- * @property string $price
- * @property string $variableSymbol
- * @property string $accountNumber
- * @property string $constantSymbol
- * @property string $specificSymbol
- * @property string $note
- * @property string $currency
- * @property string $message
- * @property string $advancedInformation
- * @property string $comment
- * @property string $status m:enum(self::STATUS_*)
+ * @property int         $id
+ * @property string|null $bankId
+ * @property string|null $moveDate m:passThru(dateFromString|dateToString)
+ * @property string|null $price
+ * @property string|null $variableSymbol
+ * @property string|null $accountNumber
+ * @property string|null $constantSymbol
+ * @property string|null $specificSymbol
+ * @property string|null $note
+ * @property string|null $currency
+ * @property string|null $message
+ * @property string|null $nameAccountFrom
+ * @property string|null $comment
+ * @property string|null $status m:enum(self::STATUS_*)
  */
 class BankPayment extends EntityDatetime {
     public const STATUS_FRESH = 'fresh';
@@ -30,7 +30,7 @@ class BankPayment extends EntityDatetime {
 
     public function mapTransactionInto(Transaction $t): self {
         $this->bankId = (string)$t->moveId;
-        $this->moveDate = $t->moveDate;
+        $this->setMoveDate($t->moveDate);
         $this->price = $t->volume;
         $this->variableSymbol = $t->variableSymbol;
         $this->accountNumber = $t->toAccount.'/'.$t->bankCode;
@@ -39,7 +39,7 @@ class BankPayment extends EntityDatetime {
         $this->note = $t->note;
         $this->currency = $t->currency;
         $this->message = $t->messageTo;
-        $this->advancedInformation = $t->advancedInformation;
+        $this->nameAccountFrom = $t->nameAccountTo;
         $this->comment = $t->comment;
         $this->status = self::STATUS_FRESH;
 

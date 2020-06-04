@@ -119,9 +119,9 @@ class AdminController extends AbstractController {
 
     public function confirmPayment(int $paymentId, Request $request, Response $response): Response {
         $payment = $this->paymentRepository->find($paymentId);
-        $this->participantService->confirmPayment($payment);
+        $this->paymentService->confirmPayment($payment);
         $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
-        $this->logger->info('Confirmed payment ID'.$paymentId);
+        $this->logger->info('Payment ID '.$paymentId. ' manually confirmed as paid');
 
         return $this->redirect(
             $request,
@@ -141,8 +141,8 @@ class AdminController extends AbstractController {
     }
 
     public function showAutoPayments(Response $response): Response {
-        $bankPayments = $this->bankPaymentRepository->findAll();
-        
+        $bankPayments = $this->bankPaymentRepository->findBy([], ['id' => false]);
+
         return $this->view->render($response, 'admin/paymentsAuto-admin.twig', ['bankPayments' => $bankPayments]);
     }
 
@@ -150,9 +150,9 @@ class AdminController extends AbstractController {
         $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'));
 
         if ($result) {
-            $this->flashMessages->success('Zarážka plateb úspěšně nastavena');
+            $this->flashMessages->success('Set breakpoint successfully');
         } else {
-            $this->flashMessages->error('Něco se pokazilo :(');
+            $this->flashMessages->error('Something gone wrong, probably unvalid token :(');
         }
 
         return $this->redirect(

@@ -218,9 +218,14 @@ approving-admin:
 paymentsAuto-admin:
     update: "Download and pair payments"
     paymentsOnAccount: "Payments on account "
+    date: "date"
+    accountNumber: "from account"
+    price: "value"
     vs: "VS"
     note: "notice"
     status: "status"
+    message: "message"
+    noPayments: "No payments are availabe from the bank yet."
 flash:
     info:
         paymentCanceled: "Participant payment cancelled, email with reason sent"
@@ -228,17 +233,15 @@ flash:
         istDenied: "IST participant denied, email successfully sent"
         logout: "Logout was successful"
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
-        adminPaymentsWaiting: "Zbývá zaplatit plateb: "
-            markedNew: "Marked new payments"
-            newUnknown: "marked new unknowns"
+        newPayments: "From bank got new messages: "
+        noNewPayments: "No new payments found."
     success:
         linkSent: "E-mail sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
         detailsSaved: "Details successfully saved."
         locked: "Registration successfully locked and sent"
         approved: "IST participant is approved, payment is generated and mail sent"
-        adminPairedPayments: "Z banky spárováno plateb: "
-        adminNoWaitingPayments: "Na zaplacení nezbývají žádné platby!"
+        adminPairedPayments: "Paired bank transactions: "
     warning:
         istNoLock: "Cannot lock the registration - some details are wrong or missing (probably some date)"
         istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise or other participant cancellation"

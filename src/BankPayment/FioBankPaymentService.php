@@ -26,13 +26,15 @@ class FioBankPaymentService implements IBankPaymentService {
             $this->fioRead->setLastDate($dateTime);
         } catch (ServiceUnavailable $e) {
             $this->logger->error('Setting breakpoint for Fio Bank failed: '.$e->getMessage());
+
             return false;
         }
+        $this->logger->error('Set breakpoint for Fio Bank on time '.$dateTime->format('Y-d-m'));
 
         return true;
     }
 
-    public function getAndSafeFreshPaymentsFromBank(): void {
+    public function getAndSafeFreshPaymentsFromBank(): int {
         // TODO deduplicate persisted and new ones, possibly by moveId
         $freshPayments = $this->fioRead->lastDownload();
         foreach ($freshPayments as $freshPayment) {
@@ -41,5 +43,7 @@ class FioBankPaymentService implements IBankPaymentService {
             // TODO optimalize
             $this->bankPaymentRepository->persist($bankPayment);
         }
+
+        return count($freshPayments);
     }
 }

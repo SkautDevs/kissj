@@ -53,20 +53,12 @@ class ParticipantService {
         return $participantsWithRole;
     }
 
+    // TODO move into payment service, same as comfirmPayment
     public function cancelPayment(Payment $payment, string $reason): Payment {
         $this->paymentService->cancelPayment($payment);
         $this->userService->closeRegistration($payment->participant->user);
 
         $this->mailer->sendCancelledPayment($payment->participant, $reason);
-
-        return $payment;
-    }
-
-    public function confirmPayment(Payment $payment): Payment {
-        $this->paymentService->confirmPayment($payment);
-        $this->userService->payRegistration($payment->participant->user);
-
-        $this->mailer->sendRegistrationPaid($payment->participant);
 
         return $payment;
     }

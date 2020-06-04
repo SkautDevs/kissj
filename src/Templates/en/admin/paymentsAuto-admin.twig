@@ -7,22 +7,47 @@
             <input type="submit" class="btn btn-small" value="{% trans %}paymentsAuto-admin.update{% endtrans %}">
         </form>
         <br/>
+        <!--
         <form action="{{ url_for('admin-set-breakpoint-payments', {'eventSlug': event.slug} ) }}" method="POST">
             <input type="submit" class="btn btn-small" value="Nastavit zarážku na 31.5.2020">
         </form>
         <br/>
+        -->
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
     <br/>
     <div class="card approved-theme">
         <h3>{% trans %}paymentsAuto-admin.paymentsOnAccount{% endtrans %} {{ event.accountNumber }}</h3>
-        <hr>
-        {% for p in bankPayments %}
-            {% trans %}paymentsAuto-admin.vs{% endtrans %}: <b>{{ p.variableSymbol }}</b>,
-            {% trans %}paymentsAuto-admin.note{% endtrans %}: <b>{{ p.note }}</b>,
-            {% trans %}paymentsAuto-admin.status{% endtrans %}: <b>{{ p.status }}</b>
-            <hr>
-        {% endfor %}
+        {% if bankPayments %}
+        <table class="">
+            <thead>
+            <tr>
+                <th>{% trans %}paymentsAuto-admin.date{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.accountNumber{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.price{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.vs{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.note{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.message{% endtrans %}</th>
+                <th>{% trans %}paymentsAuto-admin.status{% endtrans %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for p in bankPayments %}
+                <tr>
+                    <td>{{ p.getMoveDate | date('d.m.Y') }}</td>
+                    <td>{{ p.getAccountNumber }}</td>
+                    <td>{{ p.getPrice }} {{ p.getCurrency }}</td>
+                    <td>{{ p.getVariableSymbol }}</td>
+                    <td>{{ p.getNote }}</td>
+                    <td>{{ p.getMessage }}</td>
+                    <td>{{ p.getStatus }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>{% trans %}paymentsAuto-admin.noPayments{% endtrans %}</p>
+        {% endif %}
     </div>
 {% endblock %}

@@ -11,6 +11,7 @@ use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\User\UserService;
 use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,6 +19,7 @@ class PaymentService {
     private $bankPaymentService;
     private $bankPaymentRepository;
     private $paymentRepository;
+    private $userService;
     private $flashMessages;
     private $mailer;
     private $translator;
@@ -25,8 +27,9 @@ class PaymentService {
 
     public function __construct(
         FioBankPaymentService $bankPaymentService,
-        PaymentRepository $paymentRepository,
         BankPaymentRepository $bankPaymentRepository,
+        PaymentRepository $paymentRepository,
+        UserService $userService,
         FlashMessagesBySession $flashMessages,
         PhpMailerWrapper $mailer,
         TranslatorInterface $translator,
@@ -35,6 +38,7 @@ class PaymentService {
         $this->bankPaymentService = $bankPaymentService;
         $this->bankPaymentRepository = $bankPaymentRepository;
         $this->paymentRepository = $paymentRepository;
+        $this->userService = $userService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
         $this->translator = $translator;
@@ -144,8 +148,10 @@ class PaymentService {
                 .Payment::STATUS_WAITING.'"');
         }
 
+        $this->userService->payRegistration($payment->participant->user);
         $payment->status = Payment::STATUS_PAID;
         $this->paymentRepository->persist($payment);
+        $this->mailer->sendRegistrationPaid($payment->participant);
 
         return $payment;
     }
@@ -168,12 +174,19 @@ class PaymentService {
      * @param int $limit
      */
     public function updatePayments(int $limit): void {
-        $freshBankPayments = $this->bankPaymentRepository->findBy(['status', BankPayment::STATUS_FRESH]);
+        $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
         if (count($freshBankPayments) === 0) {
-            $this->bankPaymentService->getAndSafeFreshPaymentsFromBank();
-            $freshBankPayments = $this->bankPaymentRepository->findBy(['status', BankPayment::STATUS_FRESH]);
+            $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank();
+
+            if ($newPaymentsCount > 0) {
+                $this->flashMessages->info($this->translator->trans('flash.info.newPayments').$newPaymentsCount);
+            } else {
+                $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
+            }
+
+            return;
         }
-        
+
         $participantKeydPayments = $this->paymentRepository->getWaitingPaymentsKeydByVariableSymbols();
         $counterNewPaid = 0;
         $counterUnknownPayment = 0;
@@ -186,7 +199,7 @@ class PaymentService {
                     // match!
                     $this->confirmPayment($payment);
                     $this->mailer->sendRegistrationPaid($payment->participant);
-                    $this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
+                    $this->logger->info('Payment ID '.$payment->id.' automatically set to status '.$payment->status);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;
@@ -204,96 +217,15 @@ class PaymentService {
             $this->bankPaymentRepository->persist($bankPayment);
         }
 
-        $this->flashMessages->info(
-            $this->translator->trans('flash.info.markedNew').': '.$counterNewPaid.', '
-            .$this->translator->trans('flash.info.newUnknown').': '.$counterUnknownPayment
-        );
-    }
-
-    # Jak vygenerovat hezci CSV z Money S3
-    /* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
-
-    // TODO delete
-
-    public function pairNewPayments(array $approvedIstPayments) {
-        /** @var Payment[] $canceledPayments */
-        $canceledPayments = $this->paymentRepository->findBy(['event' => 'korbo2019', 'status' => 'canceled']);
-        // get list of new payments from bank
-        $transactionsList = $this->paymentAutoMatcherFio->lastDownload();
-
-        $counterSetPaid = 0;
-        $counterUnknownPayment = 0;
-        $counterWasPaid = 0;
-        // iterate and try find a match
-        /** @var $transaction \h4kuna\Fio\Response\Read\Transaction */
-        foreach ($transactionsList as $transaction) {
-            $paidFlag = false;
-            foreach ($approvedIstPayments as $payment) {
-                /** @var Payment $payment */
-                $payment = $payment['payment'];
-                if ($payment->variableSymbol == $transaction->variableSymbol && $payment->price == $transaction->volume) {
-                    // match!
-                    if ($payment->status == 'waiting') {/*
-                        // not canceler or paid already
-                        $this->setPaymentPaid($payment);
-                        $this->sendSuccesfulPaymentEmail($payment);*/
-                        // TODO find a better place - all other logging is in controllers now
-                        $this->logger->addInfo('Payment '.$payment->id.' is set to '.$payment->status.' automatically');
-                        $counterSetPaid++;
-                    } elseif ($payment->status == 'paid') {
-                        // because of re-check from bank
-                        $counterWasPaid++;
-                    }
-                    $paidFlag = true;
-                    break;
-                }
-            }
-            // nonrecognized transaction
-            if ($paidFlag === false) {
-                $counterUnknownPayment++;
-
-                $canceledFlag = false;
-                /** @var Payment $canceledPayment */
-                foreach ($canceledPayments as $canceledPayment) {
-                    if ($canceledPayment->variableSymbol == $transaction->variableSymbol && $canceledPayment->price == $transaction->volume) {
-                        // TODO better system for this warning + do tranlation
-                        $this->flashMessages->error(htmlspecialchars(
-                            'Zaplacená zrušená platba: '.$transaction->volume.
-                            ' Kč, VS: '.($transaction->variableSymbol).
-                            ', zaplatil účastník registrovaný mailem: '.$canceledPayment->role->user->email,
-                            ENT_QUOTES));
-
-                        $canceledFlag = true;
-                        break;
-                    }
-                }
-
-                if ($canceledFlag === false) {
-                    // TODO better system for this warning + translation
-                    $this->flashMessages->warning(htmlspecialchars(
-                        'Nerozeznaná platba: '.$transaction->volume.
-                        ' Kč, VS: '.($transaction->variableSymbol ?? 'není').
-                        ', od: '.($transaction->nameAccountTo ?? 'plátce neznámý').
-                        ', poznámka: '.($transaction->messageTo ?? 'není'),
-                        ENT_QUOTES));
-                }
-            }
-        }
-
-        // TODO better system for outputting these
-        if ($counterSetPaid) {
-            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments').$counterSetPaid.'!');
+        if ($counterNewPaid) {
+            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments').$counterNewPaid);
         }
 
         if ($counterUnknownPayment) {
             $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized').$counterUnknownPayment);
         }
-
-        $counterUnpayedPayments = count($approvedIstPayments) - $counterWasPaid - $counterSetPaid;
-        if ($counterUnpayedPayments) {
-            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsWaiting').$counterUnpayedPayments);
-        } else {
-            $this->flashMessages->success($this->translator->trans('flash.success.adminNoWaitingPayments'));
-        }
     }
+
+    # Jak vygenerovat hezci CSV z Money S3
+    /* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
 }

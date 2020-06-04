@@ -218,9 +218,14 @@ approving-admin:
 paymentsAuto-admin:
     update: "Stáhnout a napárovat platby"
     paymentsOnAccount: "Platby na bankovním účtu"
+    date: "datum"
+    accountNumber: "z účtu"
+    price: "částka"
     vs: "VS"
     note: "poznámka"
     status: "status"
+    message: "zpráva"
+    noPayments: "Prozatím nejsou z banky k dispozici žádné platby."
 flash:
     info:
         paymentCanceled: "Platba zamítnuta, e-mail s důvodem odeslán"
@@ -228,17 +233,15 @@ flash:
         istDenied: "Korboúčastník zamítnut, e-mail byl poslán"
         logout: "Odhlášení bylo úspěšné"
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
-        adminPaymentsWaiting: "Zbývá zaplatit plateb: "
-        markedNew: "Označeno nových zaplacených"
-        newUnknown: "nových neznámých"
+        newPayments: "Nových plateb z banky: "
+        noNewPayments: "Žádné nové platby z banky."
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
         detailsSaved: "Informace úspěšně uloženy."
         locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Korboúčastník schválen, platební údaje vygenerovány a e-mail odeslán"
-        adminPairedPayments: "Z banky spárováno plateb: "
-        adminNoWaitingPayments: "Na zaplacení nezbývají žádné platby!"
+        adminPairedPayments: "Spárováno bankovních transakcí: "
     warning:
         istNoLock: "Přihláška nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
         istFullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Počkej prosím než navýšíme kapacitu nebo někteří účastníci zruší svojí přihlášku"
