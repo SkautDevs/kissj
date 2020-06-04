@@ -66,4 +66,4 @@ function adminer_object() {
     return new AdminerSoftware();
 }
 
-include __DIR__.'/lib/editor-4.7.7.php';
+include __DIR__.'/lib/editor-4.7.1.php';

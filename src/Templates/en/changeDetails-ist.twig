@@ -269,7 +269,8 @@
 			<span class="">PDF s potvrzením najdeš na <a
 						href="https://drive.google.com/file/d/1k1-NBex72kruoQsX2eWjkqpMy1Qh3_kV">našem disku</a>. 
 			{% if istDetails.getUploadedFilename %}Soubor už od tebe úspěšně nahraný máme!{% endif %}</span>
-			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %}<input
+			<label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %} - pokud
+				nebudeš mít 18 let, vyplň zde zletilý dozor<input
 						class="form-control" type="text" name="notes"
 						placeholder="{% trans %}changeDetails-ist.notice-placeholder{% endtrans %}"
 						value="{{ istDetails.getNotes }}">

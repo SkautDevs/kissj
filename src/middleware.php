@@ -23,6 +23,10 @@ $app->add(\kissj\Middleware\UserAuthenticationMiddleware::class);
 // ROUTING
 $app->addRoutingMiddleware();
 
+//CORRECT SUBFOLDER -> BASE PATH
+//$app->add(BasePathMiddleware::class);
+
+// TWIG
 $app->add(TwigMiddleware::createFromContainer($app));
 
 // TRAILING SLASH REMOVER

@@ -80,9 +80,9 @@ class UserService {
         }
 
         $lastValidTime = new \DateTime();
-        $lastValidTime->modify('-15 minutes');
+        $lastValidTime->modify('-24 hours');
 
-        return !($lastToken->createdAt < $lastValidTime);
+        return $lastToken->createdAt > $lastValidTime;
     }
 
     public function getLoginTokenFromStringToken(string $token): LoginToken {

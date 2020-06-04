@@ -33,7 +33,8 @@ class PaymentService {
 
     public function createAndPersistNewPayment(Participant $participant): Payment {
         do {
-            $variableNumber = '2020'.str_pad(random_int(0, 999999), 3, '0', STR_PAD_LEFT);
+            $prefix = $participant->user->event->prefixVariableSymbol;
+            $variableNumber = $prefix.str_pad(random_int(0, 999999), 3, '0', STR_PAD_LEFT);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
 
         $event = $participant->user->event;

@@ -33,10 +33,13 @@
         "monolog/monolog": "^1.25",
         "php-di/slim-bridge": "^3",
         "phpmailer/phpmailer": "^6.0",
+        "selective/basepath": "^1.0",
         "slim/psr7": "^1.1",
         "slim/slim": "^4",
         "slim/twig-view": "^3.1",
         "symfony/translation": "^5.0",
+        "symfony/twig-bridge": "^5.1",
+        "symfony/yaml": "^5.1",
         "tharos/leanmapper": "^3.1",
         "zeuxisoo/slim-whoops": "0.7.*"
     },

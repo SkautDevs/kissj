@@ -56,10 +56,11 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
             ->setName('postCreateEvent');
         */
 
-        $app->any('/administration', function (Request $request, Response $response) {
+        $app->any('/administration', function (Request $request, Response $response) use ($app) {
             global $adminerSettings;
-            $adminerSettings = $this->get('settings')['adminer'];
+            $adminerSettings = $app->getContainer()->get('settings')['adminer'];
             require __DIR__.'/../adminer/customAdminerEditor.php';
+            die();
         })->setName('administration');
     });
 
