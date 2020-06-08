@@ -18,8 +18,8 @@
     </div>
     <br/>
     <div class="card approved-theme">
-        <h3>{% trans %}paymentsAuto-admin.paymentsOnAccount{% endtrans %} {{ event.accountNumber }}</h3>
-        {% if bankPayments %}
+        <h3>{% trans %}paymentsAuto-admin.needToSolve{% endtrans %}</h3>
+        {% if bankPaymentsTodo %}
         <table class="">
             <thead>
             <tr>
@@ -30,10 +30,11 @@
                 <th>{% trans %}paymentsAuto-admin.note{% endtrans %}</th>
                 <th>{% trans %}paymentsAuto-admin.message{% endtrans %}</th>
                 <th>{% trans %}paymentsAuto-admin.status{% endtrans %}</th>
+                <th>akce</th>
             </tr>
             </thead>
             <tbody>
-            {% for p in bankPayments %}
+            {% for p in bankPaymentsTodo %}
                 <tr>
                     <td>{{ p.getMoveDate | date('d.m.Y') }}</td>
                     <td>{{ p.getAccountNumber }}</td>
@@ -42,10 +43,53 @@
                     <td>{{ p.getNote }}</td>
                     <td>{{ p.getMessage }}</td>
                     <td>{{ p.getStatus }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin-set-payment-paired', {'paymentId': p.getId, 'eventSlug': event.slug}) }}">
+                            <label>VS: <input type="text" name="notice" required></label>
+                            <input type="submit" class="btn btn-mini" value="{% trans %}paymentsAuto-admin.markPaymentPaired{% endtrans %}">
+                        </form>
+                        <form method="POST" action="{{ url_for('admin-set-payment-unrelated', {'paymentId': p.getId, 'eventSlug': event.slug}) }}">
+                            <input type="submit" class="btn btn-grey btn-mini" value="{% trans %}paymentsAuto-admin.markPaymentUnrelated{% endtrans %}">
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>{% trans %}paymentsAuto-admin.allPaymenntsDone{% endtrans %}</p>
+        {% endif %}
+    </div>
+    <br/>
+    <div class="card approved-theme">
+        <h3>{% trans %}paymentsAuto-admin.paymentsOnAccount{% endtrans %} {{ event.accountNumber }}</h3>
+        {% if bankPayments %}
+            <table class="">
+                <thead>
+                <tr>
+                    <th>{% trans %}paymentsAuto-admin.date{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.accountNumber{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.price{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.vs{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.note{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.message{% endtrans %}</th>
+                    <th>{% trans %}paymentsAuto-admin.status{% endtrans %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in bankPayments %}
+                    <tr>
+                        <td>{{ p.getMoveDate | date('d.m.Y') }}</td>
+                        <td>{{ p.getAccountNumber }}</td>
+                        <td>{{ p.getPrice }} {{ p.getCurrency }}</td>
+                        <td>{{ p.getVariableSymbol }}</td>
+                        <td>{{ p.getNote }}</td>
+                        <td>{{ p.getMessage }}</td>
+                        <td>{{ p.getStatus }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         {% else %}
             <p>{% trans %}paymentsAuto-admin.noPayments{% endtrans %}</p>
         {% endif %}

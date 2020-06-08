@@ -283,6 +283,12 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
                     
                     $app->post('/updatePayments', AdminController::class.'::updatePayments')
                         ->setName('admin-update-payments');
+                    
+                    $app->post('/setPaymentPaired/{paymentId}', AdminController::class.'::markBankPaymentPaired')
+                        ->setName('admin-set-payment-paired');
+                    
+                    $app->post('/setPaymentUnrelated/{paymentId}', AdminController::class.'::markBankPaymentUnrelated')
+                        ->setName('admin-set-payment-unrelated');
                 });
             });
 

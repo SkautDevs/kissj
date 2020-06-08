@@ -46,4 +46,22 @@ class FioBankPaymentService implements IBankPaymentService {
 
         return count($freshPayments);
     }
+
+    public function setBankPaymentPaired(int $paymentId): BankPayment  {
+        /** @var BankPayment $bankPayment */
+        $bankPayment = $this->bankPaymentRepository->find($paymentId);
+        $bankPayment->status = BankPayment::STATUS_PAIRED;
+        $this->bankPaymentRepository->persist($bankPayment);
+
+        return $bankPayment;
+    }
+
+    public function setBankPaymentUnrelated(int $paymentId): BankPayment {
+        /** @var BankPayment $bankPayment */
+        $bankPayment = $this->bankPaymentRepository->find($paymentId);
+        $bankPayment->status = BankPayment::STATUS_UNRELATED;
+        $this->bankPaymentRepository->persist($bankPayment);
+
+        return $bankPayment;
+    }
 }

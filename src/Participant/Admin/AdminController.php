@@ -4,6 +4,7 @@ namespace kissj\Participant\Admin;
 
 use GuzzleHttp\Psr7\LazyOpenStream;
 use kissj\AbstractController;
+use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\Participant\FreeParticipant\FreeParticipantService;
@@ -121,7 +122,7 @@ class AdminController extends AbstractController {
         $payment = $this->paymentRepository->find($paymentId);
         $this->paymentService->confirmPayment($payment);
         $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
-        $this->logger->info('Payment ID '.$paymentId. ' manually confirmed as paid');
+        $this->logger->info('Payment ID '.$paymentId.' manually confirmed as paid');
 
         return $this->redirect(
             $request,
@@ -141,9 +142,14 @@ class AdminController extends AbstractController {
     }
 
     public function showAutoPayments(Response $response): Response {
-        $bankPayments = $this->bankPaymentRepository->findBy([], ['id' => false]);
+        $arguments = [
+            'bankPayments' => $this->bankPaymentRepository->findBy([], ['id' => false]),
+            'bankPaymentsTodo' => $this->bankPaymentRepository->findBy(
+                ['status' => BankPayment::STATUS_UNKNOWN],
+                ['id' => false]
+            )];
 
-        return $this->view->render($response, 'admin/paymentsAuto-admin.twig', ['bankPayments' => $bankPayments]);
+        return $this->view->render($response, 'admin/paymentsAuto-admin.twig', $arguments);
     }
 
     public function setBreakpointFromRoute(Request $request, Response $response): Response {
@@ -165,6 +171,33 @@ class AdminController extends AbstractController {
 
     public function updatePayments(Request $request, Response $response): Response {
         $this->paymentService->updatePayments(5);
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-auto-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
+    }
+
+    public function markBankPaymentPaired(Request $request, Response $response, int $paymentId): Response {
+        $notice = htmlspecialchars($request->getParsedBody()['notice'], ENT_QUOTES);
+        $this->bankPaymentService->setBankPaymentPaired($paymentId);
+        $this->logger->info('Payment with ID '.$paymentId.' has been marked as paired with notice: '.$notice);
+        $this->flashMessages->info($this->translator->trans('flash.info.markedAsPaired'));
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-auto-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
+    }
+
+    public function markBankPaymentUnrelated(Request $request, Response $response, int $paymentId): Response {
+        $this->bankPaymentService->setBankPaymentUnrelated($paymentId);
+        $this->logger->info('Payment with ID '.$paymentId.' has been marked as unrelated');
+        $this->flashMessages->info($this->translator->trans('flash.info.markedAsUnrelated'));
 
         return $this->redirect(
             $request,

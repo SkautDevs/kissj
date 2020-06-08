@@ -129,6 +129,12 @@ h2, h3 {
 	display: inline-block;
 }
 
+.btn-mini {
+	display: inline-block;
+	font-size: inherit;
+	padding: 5px;
+}
+
 .two-cards {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
@@ -289,7 +295,12 @@ div.payment-overdue {
 	text-decoration: line-through;
 }
 
-tr:nth-child(odd) {
+th {
+	background: var(--color);
+	color: white;
+}
+
+tr:nth-child(even) {
 	background: #eeeeee
 }
 

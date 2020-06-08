@@ -217,7 +217,7 @@ approving-admin:
     need: " are in need for approval"
 paymentsAuto-admin:
     update: "Download and pair payments"
-    paymentsOnAccount: "Payments on account "
+    paymentsOnAccount: "All payments on account "
     date: "date"
     accountNumber: "from account"
     price: "value"
@@ -226,6 +226,10 @@ paymentsAuto-admin:
     status: "status"
     message: "message"
     noPayments: "No payments are availabe from the bank yet."
+    needToSolve: "Need to solve these payments"
+    allPaymenntsDone: "No payment needs attention!"
+    markPaymentPaired: "Mark as paired"
+    markPaymentUnrelated: "Mark as unrelated"
 flash:
     info:
         paymentCanceled: "Participant payment cancelled, email with reason sent"
@@ -235,6 +239,8 @@ flash:
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
         newPayments: "From bank got new messages: "
         noNewPayments: "No new payments found."
+        markedAsPaired: "Payment has been marked as paired"
+        markedAsUnrelated: "Payment has been marked as unrelated with registration system"
     success:
         linkSent: "E-mail sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"

@@ -217,7 +217,7 @@ approving-admin:
     need: " nevyžadují schválení"
 paymentsAuto-admin:
     update: "Stáhnout a napárovat platby"
-    paymentsOnAccount: "Platby na bankovním účtu"
+    paymentsOnAccount: "Všechny platby na bankovním účtu"
     date: "datum"
     accountNumber: "z účtu"
     price: "částka"
@@ -226,6 +226,10 @@ paymentsAuto-admin:
     status: "status"
     message: "zpráva"
     noPayments: "Prozatím nejsou z banky k dispozici žádné platby."
+    needToSolve: "Potřeba vyřešit tyo platby"
+    allPaymenntsDone: "Žádné platby nepotřebují pozornost!"
+    markPaymentPaired: "Označit jako zaplacenou"
+    markPaymentUnrelated: "Označit jako nesouvisející"
 flash:
     info:
         paymentCanceled: "Platba zamítnuta, e-mail s důvodem odeslán"
@@ -235,6 +239,8 @@ flash:
         adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
         newPayments: "Nových plateb z banky: "
         noNewPayments: "Žádné nové platby z banky."
+        markedAsPaired: "Platba byla označena jako spárovaná"
+        markedAsUnrelated: "Platba byla označena jako nesouvisející s registrací"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
