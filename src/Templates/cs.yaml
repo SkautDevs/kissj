@@ -185,9 +185,9 @@ dashboard-admin:
     approving: "Schvalování účastníků"
     newPayments: "Párovaní nových plateb s bankou"
     confirmPayments: "Potvrzování plateb ručně"
-    exportMedData: "Odesílání zdravotních informací do CSV"
-    exportEmailsPaid: "Odesílání informací o zaplacení do CSV"
-    exportFullData: "Odesílání všech informací do CSV"
+    exportMedData: "Export zdravotních informací do .csv"
+    exportEmailsPaid: "Export zaplacených do .csv"
+    exportFullData: "Export VŠECH informací do .csv"
 cancelPayment-admin:
     cancel: "Zrušit platbu"
     wantCancel: "Opravdu chceš zrušit platbu pro účastníka"

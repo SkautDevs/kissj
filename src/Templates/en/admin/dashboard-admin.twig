@@ -45,13 +45,14 @@
             <div>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}" 
+                <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
             </div>
             <div>
-                <a class="btn btn-grey">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
+                <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"

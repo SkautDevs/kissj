@@ -185,9 +185,9 @@ dashboard-admin:
     approving: "Approving participants"
     newPayments: "Pair new payments with bank"
     confirmPayments: "Confirming payments by hand"
-    exportMedData: "Export medical data into CSV"
-    exportEmailsPaid: "Export emails of paid into CSV"
-    exportFullData: "Export FULL data into CSV"
+    exportMedData: "Export medical data into .csv"
+    exportEmailsPaid: "Export emails of paid into .csv"
+    exportFullData: "Export FULL data into .csv"
 cancelPayment-admin:
     cancel: "Cancel payment"
     wantCancel: "You really want to cancel payment for participant"

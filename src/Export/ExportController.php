@@ -4,6 +4,7 @@ namespace kissj\Export;
 
 use kissj\AbstractController;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ExportController extends AbstractController {
     private $exportService;
@@ -12,20 +13,30 @@ class ExportController extends AbstractController {
         $this->exportService = $exportService;
     }
 
-    public function exportPaidData(Response $response) {
-        $eventName = 'AQUA2020';
-        $csvRows = $this->exportService->paidContactDataToCSV($eventName);
-        $this->logger->info('Downloaded current emails about paid participants');
+    public function exportHealthData(Request $request, Response $response) {
+        /** @var \kissj\Event\Event $event */
+        $event = $request->getAttribute('user')->event;
+        $csvRows = $this->exportService->healthDataToCSV($event);
+        $this->logger->info('Exported health data about participants');
 
-        return $this->exportService->outputCSVresponse($response, $csvRows, $eventName.'_paid');
+        return $this->exportService->outputCSVresponse($response, $csvRows, $event->slug.'_health');
     }
 
-    public function exportFullData(Response $response) {
-        // TODO make event aware
-        $eventName = 'AQUA2020';
-        $csvRows = $this->exportService->allRegistrationDataToCSV($eventName);
-        $this->logger->info('Downloaded FULL current data about participants');
+    public function exportPaidData(Request $request, Response $response) {
+        /** @var \kissj\Event\Event $event */
+        $event = $request->getAttribute('user')->event;
+        $csvRows = $this->exportService->paidContactDataToCSV($event);
+        $this->logger->info('Exported data about participants which paid');
 
-        return $this->exportService->outputCSVresponse($response, $csvRows, $eventName.'_full');
+        return $this->exportService->outputCSVresponse($response, $csvRows, $event->slug.'_paid');
+    }
+
+    public function exportFullData(Request $request, Response $response) {
+        /** @var \kissj\Event\Event $event */
+        $event = $request->getAttribute('user')->event;
+        $csvRows = $this->exportService->allRegistrationDataToCSV($event);
+        $this->logger->info('Exported FULL current data about participants');
+
+        return $this->exportService->outputCSVresponse($response, $csvRows, $event->slug.'_full');
     }
 }

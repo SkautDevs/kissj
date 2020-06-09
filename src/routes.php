@@ -293,6 +293,9 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
             });
 
             $app->group('/export', function (RouteCollectorProxy $app) {
+                $app->get('/health', ExportController::class.'::exportHealthData')
+                    ->setName('admin-export-health');
+                
                 $app->get('/paid', ExportController::class.'::exportPaidData')
                     ->setName('admin-export-paid');
 

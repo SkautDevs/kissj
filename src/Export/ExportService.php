@@ -2,17 +2,14 @@
 
 namespace kissj\Export;
 
-use kissj\Participant\FreeParticipant\FreeParticipant;
-use kissj\Participant\Ist\Ist;
+use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
-use kissj\Participant\Patrol\PatrolLeader;
-use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\User\User;
 use League\Csv\Reader;
 use League\Csv\Writer;
-use Slim\Http\Response;
+use Psr\Http\Message\MessageInterface as Response;
 
 
 class ExportService {
@@ -37,11 +34,11 @@ class ExportService {
             $fileName .= '_'.date(DATE_ATOM);
         }
 
-        $response = $response->withHeader('Content-Type', 'text/csv');
-        $response = $response->withHeader('Content-Disposition', 'attachment; filename="'.$fileName.'.csv";');
-        $response = $response->withHeader('Expires', '0');
-        $response = $response->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        $response = $response->withHeader('Pragma', 'no-cache');
+        $response = $response->withAddedHeader('Content-Type', 'text/csv');
+        $response = $response->withAddedHeader('Content-Disposition', 'attachment; filename="'.$fileName.'.csv";');
+        $response = $response->withAddedHeader('Expires', '0');
+        $response = $response->withAddedHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response = $response->withAddedHeader('Pragma', 'no-cache');
 
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
         $csv->setDelimiter(',');
@@ -54,40 +51,61 @@ class ExportService {
         return $response->withBody($body);
     }
 
-    public function paidContactDataToCSV(string $eventName): array {
-        $paidIsts = $this->participantService->getAllParticipantsWithStatus(User::ROLE_IST, User::STATUS_PAID);
-        $paidPatrolLeaders
-            = $this->participantService->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, User::STATUS_PAID);
-        $paidFreeParticipants = $this->participantService->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, User::STATUS_PAID);
-        $approvedGuests = $this->participantService->getAllParticipantsWithStatus(User::ROLE_GUEST, User::STATUS_PAID);
+    public function healthDataToCSV(Event $event): array {
+        // TODO add event-aware
+        $paidIsts = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_IST, User::STATUS_PAID);
+        /*$paidPatrolLeaders = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, User::STATUS_PAID);
+        $paidFreeParticipants = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, User::STATUS_PAID);
+        $approvedGuests = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_GUEST, User::STATUS_PAID);*/
 
+        $rows = [];
         $rows[] = [
             'id',
-            'role',
-            'registration email',
-            'contact email',
+            //'role',
+            'first name',
+            'last name',
+            'gender',
+            'birth day',
+            'scout unit',
+            'country',
+            'health problems',
+            'notice/responsible person when 18-',
         ];
 
         $namedGroups = [
             'IST' => $paidIsts,
-            'Patrol Leaders' => $paidPatrolLeaders,
+            /*'Patrol Leaders' => $paidPatrolLeaders,
             'Free Participants' => $paidFreeParticipants,
-            'Guests' => $approvedGuests
+            'Guests' => $approvedGuests,*/
         ];
         foreach ($namedGroups as $groupName => $participantGroup) {
-            $rows[] = [
+            /*$rows[] = [
                 '',
                 $groupName,
                 '',
                 '',
-            ];
+                '',
+                '',
+                '',
+                '',
+            ];*/
 
             foreach ($participantGroup as $participant) {
                 $rows[] = [
                     $participant->id,
-                    $participant->user->role,
-                    $participant->user->email,
-                    $participant->email,
+                    //$participant->user->role,
+                    $participant->firstName,
+                    $participant->lastName,
+                    $participant->gender,
+                    $participant->birthDate->format('d.m.Y'),
+                    $participant->scoutUnit,
+                    $participant->country,
+                    $participant->healthProblems,
+                    $participant->notes,
                 ];
             }
         }
@@ -95,8 +113,58 @@ class ExportService {
         return $rows;
     }
 
-    public function allRegistrationDataToCSV(string $eventName): array {
-        /** @var Participant[] $participants */
+    public function paidContactDataToCSV(Event $event): array {
+        // TODO add event-aware
+        $paidIsts = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_IST, User::STATUS_PAID);
+        /*$paidPatrolLeaders = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, User::STATUS_PAID);
+        $paidFreeParticipants = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, User::STATUS_PAID);
+        $approvedGuests = $this->participantService
+            ->getAllParticipantsWithStatus(User::ROLE_GUEST, User::STATUS_PAID);*/
+
+        $rows = [];
+        $rows[] = [
+            'id',
+            //'role',
+            'name',
+            'surname',
+            'registration email',
+            //'contact email',
+        ];
+
+        $namedGroups = [
+            'IST' => $paidIsts,
+            /*'Patrol Leaders' => $paidPatrolLeaders,
+            'Free Participants' => $paidFreeParticipants,
+            'Guests' => $approvedGuests,*/
+        ];
+        foreach ($namedGroups as $groupName => $participantGroup) {
+            /*$rows[] = [
+                '',
+                $groupName,
+                '',
+                //'',
+            ];*/
+
+            foreach ($participantGroup as $participant) {
+                $rows[] = [
+                    $participant->id,
+                    //$participant->user->role,
+                    $participant->firstName,
+                    $participant->lastName,
+                    $participant->user->email,
+                    '', //$participant->email,
+                ];
+            }
+        }
+
+        return $rows;
+    }
+
+    public function allRegistrationDataToCSV(Event $event): array {
+        // TODO add event-aware
         $participants = $this->participantRepository->findAll();
 
         $rows[] = [
@@ -105,35 +173,23 @@ class ExportService {
             'first name',
             'last name',
             'nickname',
-            'permanent residence',
-            'telephone number',
-            'gender',
-            'country',
             'registration email',
-            'contact email',
-            'scout unit',
-            'languages',
             'birth date',
+            'gender',
+            'permanent residence',
+            'country',
             'health problems',
-            'food preferences',
-            'swimming',
-            'tshirt',
-            'arrival date',
-            'departue date',
-            'notes/current leader',
-            'patrol id',
-            'patrol name',
-            'legal representative',
-            'skills',
-            'preferred positions',
-            'drivers license',
+            'scout unit',
+            'scarf',
+            'notes',
         ];
 
+        /** @var Participant $participant */
         foreach ($participants as $participant) {
             if ($participant->user->status === User::STATUS_OPEN) {
                 continue;
             }
-            if ($participant instanceof PatrolLeader) {
+            /*if ($participant instanceof PatrolLeader) {
                 $pPart = [
                     (string)$participant->id,
                     $participant->patrolName,
@@ -172,7 +228,7 @@ class ExportService {
                     '',
                     '',
                 ];
-            }
+            }*/
 
             $rows[] = array_merge(
                 [
@@ -181,26 +237,19 @@ class ExportService {
                     $participant->firstName,
                     $participant->lastName,
                     $participant->nickname,
-                    $participant->permanentResidence,
-                    $participant->telephoneNumber,
-                    $participant->gender,
-                    $participant->country,
                     $participant->user->email,
-                    $participant->email,
-                    $participant->scoutUnit,
-                    $participant->languages,
                     $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
+                    $participant->gender,
+                    $participant->permanentResidence,
+                    $participant->country,
                     $participant->healthProblems,
-                    $participant->foodPreferences,
-                    $participant->swimming,
-                    $participant->tshirt,
-                    $participant->arrivalDate ? $participant->arrivalDate->format('Ymd-H:i:m') : '',
-                    $participant->departueDate ? $participant->departueDate->format('Ymd-H:i:m') : '',
+                    $participant->scoutUnit,
+                    $participant->scarf,
                     $participant->notes,
-                ],
-                $pPart,
-                $freeParticipantPart,
-                $istPart
+                ]
+            /*$pPart,
+            $freeParticipantPart,
+            $istPart*/
             );
         }
 
