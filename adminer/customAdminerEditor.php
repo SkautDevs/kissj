@@ -6,7 +6,7 @@ function adminer_object() {
 
         function name() {
             // custom name in title and heading
-            return 'KISSJ';
+            return $_ENV['APP_NAME'];
         }
 
 
@@ -47,7 +47,7 @@ function adminer_object() {
         function login($login, $password) {
             // validate user submitted credentials
             global $adminerSettings;
-            return ($login == $adminerSettings['login'] && $password == $adminerSettings['password']);
+            return ($login === $_ENV['ADMINER_LOGIN'] && $password === $_ENV['ADMINER_PASSWORD']);
         }
 
         function tableName($tableStatus) {

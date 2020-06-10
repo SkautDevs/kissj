@@ -2,16 +2,13 @@
 
 namespace kissj\Settings;
 
-use DI\Bridge\Slim\CallableResolver;
+use Dotenv\Dotenv;
+use Dotenv\Exception\ValidationException;
 use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
-use Invoker\Invoker;
-use Invoker\ParameterResolver\AssociativeArrayResolver;
-use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
-use Invoker\ParameterResolver\DefaultValueResolver;
-use Invoker\ParameterResolver\ResolverChain;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Mailer\MailerSettings;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
@@ -24,9 +21,7 @@ use LeanMapper\IMapper;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Slim\Psr7\Environment;
 use Slim\Views\Twig;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,163 +30,80 @@ use function DI\create;
 use function DI\get;
 
 class Settings {
-    public function getSettingsAndDependencies(): array {
-        $settings = $this->getSettings();
-        $settings = array_merge($settings, $this->getDependencies($settings['settings']));
+    private const LOCALES_AVAILABLE = ['en', 'cs'];
 
-        return $settings;
-    }
+    public function getContainerDefinition(): array {
+        $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
 
-    protected function getSettings(): array {
-        $settings = [
-            'settings' => [
-                // TODO tidy up
-                'httpVersion' => '1.1',
-                'responseChunkSize' => 4096,
-                'routerCacheFile' => false,
+        $dotenv = Dotenv::createImmutable(__DIR__.'/../..', '.env');
+        $dotenv->load();
+        $this->validateAllSettings($dotenv);
 
-                'debug' => true, // true fires Whoops debugger, false falls into Slim debugger (keep true at all times)
-
-                // Whoops debug part
-                'whoopsDebug' => false, // true enable Whoops nice debug page, false fires up production error handle
-
-                // Testing site
-                'useTestingSite' => false,
-
-                // Renderer settings
-                'renderer' => [
-                    'templates_path' => __DIR__.'/../Templates/en',
-                    'enable_cache' => true,
-                    'cache_path' => __DIR__.'/../../temp/twig',
-                    'debug_output' => false,
-                ],
-
-                // Monolog settings
-                'logger' => [
-                    'name' => 'slim-app',
-                    'path' => __DIR__.'/../../logs/app.log',
-                    'level' => Logger::DEBUG,
-                ],
-
-                // PHPmailer settings - MailHog
-                'mailer' => [
-                    'smtp' => true,
-                    'smtp_server' => 'mailhog',
-                    'smtp_auth' => true,    // SMTP authentication
-                    'smtp_port' => 1025,
-                    'smtp_username' => '',
-                    'smtp_password' => '',
-                    'smtp_secure' => null, // ssl for Gmail, tls or nullalso possible
-
-                    'from_mail' => 'registration@localhost', // registration mail
-                    'from_name' => 'Registrace Localhost',
-
-                    'bcc_mail' => '', // another mail
-                    'bcc_name' => '',
-
-                    // debugging settings
-                    'disable_tls' => false, // turn off all certificate check
-                    'debugOutoutLevel' => 0, // print debug level (0 min to 4 max)
-                    'sendMailToMainRecipient' => true, // set false in dev
-                ],
-
-                'db' => [
-                    'path' => __DIR__.'/../db.sqlite',
-                ],
-
-                'adminer' => [
-                    // change password & add this into your settings_custom please
-                    // 'login' => 'superSecretUsername',
-                    // 'password' => 'superSecretPassword',
-                ],
-
-                'payment' => [
-                    'accountNumber' => 'accountNumber/2010', // fio bank only
-                    'fioApiToken' => 'readTokenFromIBanking', // more at https://www.fio.cz/docs/cz/API_Bankovnictvi.pdf
-                ],
-
-                'locales' => [
-                    'availableLocales' => ['cs', 'en'],
-                    'defaultLocale' => 'cs',
-                ],
-            ],
-        ];
-
-        if (file_exists(__DIR__.'/settings_custom.php')) {
-            $settings = array_replace_recursive($settings, require 'settings_custom.php');
-        }
-        return $settings;
-    }
-
-    private function getDependencies(array $settings): array {
-        // TODO celanup
-        $container = [
-            'environment' => create(Environment::class),
-            'foundHandler.invoker' => function (ContainerInterface $c) {
-                $resolvers = [
-                    // Inject parameters by name first
-                    new AssociativeArrayResolver(),
-                    // Then inject services by type-hints for those that weren't resolved
-                    new TypeHintContainerResolver($c),
-                    // Then fall back on parameters default values for optional route parameters
-                    new DefaultValueResolver(),
-                ];
-
-                return new Invoker(new ResolverChain($resolvers), $c);
-            },
-
-            'callableResolver' => autowire(CallableResolver::class),
-        ];
-
+        $container = [];
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
-
-        $container[Logger::class] = function () use ($settings) {
-            $logger = new Logger($settings['logger']['name']);
+        $container[Logger::class] = function (): LoggerInterface {
+            $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
-            $logger->pushHandler(new StreamHandler($settings['logger']['path'], $settings['logger']['level']));
+            $logger->pushHandler(
+                new StreamHandler(__DIR__.'/../../logs/'.$_ENV['LOGGER_FILENAME'], $_ENV['LOGGER_LEVEL'])
+            );
 
             return $logger;
         };
-
-        $container['logger'] = get(Logger::class); // TODO remove
         $container[LoggerInterface::class] = get(Logger::class);
+        $container['logger'] = get(Logger::class); // TODO remove
 
-        $container[Connection::class] = function () use ($settings): Connection {
+        $container[Connection::class] = function (): Connection {
             return new Connection([
                 'driver' => 'sqlite3',
-                'database' => $settings['db']['path'],
+                'database' => __DIR__.'/../db_dev.sqlite', // keep extension for safety - excluded in .gitignore
             ]);
         };
 
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-        $container[PhpMailerWrapper::class] = function (Twig $renderer) use ($settings) {
-            return new PhpMailerWrapper($renderer, $settings['mailer']);
+
+        $container[PhpMailerWrapper::class] = function (Twig $renderer): PhpMailerWrapper {
+            $settings = new MailerSettings(
+                $_ENV['MAIL_SMTP'],
+                $_ENV['MAIL_SMTP_SERVER'],
+                $_ENV['MAIL_SMTP_AUTH'],
+                $_ENV['MAIL_SMTP_PORT'],
+                $_ENV['MAIL_SMTP_USERNAME'],
+                $_ENV['MAIL_SMTP_PASSWORD'],
+                $_ENV['MAIL_SMTP_SECURE'],
+                $_ENV['MAIL_FROM_MAIL'],
+                $_ENV['MAIL_FROM_NAME'],
+                $_ENV['MAIL_BCC_MAIL'],
+                $_ENV['MAIL_BCC_NAME'],
+                $_ENV['MAIL_DISABLE_TLS'],
+                $_ENV['MAIL_DEBUG_OUTPUT_LEVEL'],
+                $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT']
+            );
+
+            return new PhpMailerWrapper($renderer, $settings);
         };
-
-        $container['paymentAutoMatcherFio'] = function () use ($settings) {
-            // using h4kuna/fio - https://github.com/h4kuna/fio
-            $paymentSettings = $settings['payment'];
-            $fioFactory = new FioFactory([
-                'mainAccount' => [
-                    'account' => $paymentSettings['accountNumber'],
-                    'token' => $paymentSettings['fioApiToken'],
-                ],
-            ]);
-
-            return $fioFactory->createFioRead('mainAccount');
-        };
-
-        $container[FioRead::class] = 'need to implement'; // TODO
 
         $container[UserAuthenticationMiddleware::class] = function (UserRegeneration $userRegeneration) {
             return new UserAuthenticationMiddleware($userRegeneration);
         };
 
+        $container[FioRead::class] = function () {
+            // using h4kuna/fio - https://github.com/h4kuna/fio
+            $fioFactory = new FioFactory([
+                'fio-account' => [
+                    'account' => $_ENV['PAYMENT_ACCOUNT_NUMBER'],
+                    'token' => $_ENV['PAYMENT_FIO_API_TOKEN'],
+                ],
+            ]);
+
+            return $fioFactory->createFioRead('fio-account');
+        };
+
         $container[LocalizationResolverMiddleware::class] = autowire()->constructor(
             get(Twig::class),
-            $settings['locales']['availableLocales'],
-            $settings['locales']['defaultLocale']
+            self::LOCALES_AVAILABLE,
+            $_ENV['DEFAULT_LOCALE']
         );
 
         $container[TranslatorInterface::class] = function () {
@@ -212,18 +124,17 @@ class Settings {
             UserRegeneration $userRegeneration,
             FlashMessagesBySession $flashMessages,
             TranslatorInterface $translator
-        ) use ($settings) {
-            $rendererSettings = $settings['renderer'];
-
+        ) {
             $view = Twig::create(
-                $rendererSettings['templates_path'],
+                __DIR__.'/../Templates/en', // TODO move
                 [
-                    'cache' => $rendererSettings['enable_cache'] ? $rendererSettings['cache_path'] : false,
-                    'debug' => $rendererSettings['debug_output'],
+                    'cache' => $_ENV['TEMPLATE_CACHE'] ? __DIR__.'/../../temp/twig' : false,
+                    'debug' => $_ENV['DEBUG'],
                 ]
             );
 
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
+
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
             if ($user !== null) {
@@ -237,27 +148,44 @@ class Settings {
                     .$router->getRouteParser()->urlFor('administration'));
             }*/
 
-            // translations
-
             $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
 
             return $view;
         };
         $container['view'] = get(Twig::class); // TODO remove
 
-        $container[FioRead::class] = function () use ($settings) {
-            $fioSettings = $settings['payment'];
-
-            $fioFactory = new FioFactory([
-                'fio-account' => [
-                    'account' => $fioSettings['accountNumber'],
-                    'token' => $fioSettings['fioApiToken'],
-                ],
-            ]);
-
-            return $fioFactory->createFioRead('fio-account');
-        };
-
         return $container;
+    }
+
+    private function validateAllSettings(Dotenv $dotenv) {
+        $dotenv->required('DEBUG')->notEmpty()->isBoolean();
+        $dotenv->required('TESTING_SITE')->notEmpty()->isBoolean();
+        $dotenv->required('TEMPLATE_CACHE')->notEmpty()->isBoolean();
+        $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
+        $dotenv->required('LOGGER_FILENAME')->notEmpty();
+        $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(array_flip(Logger::getLevels()));
+        $dotenv->required('ADMINER_LOGIN')->notEmpty();
+        $dotenv->required('ADMINER_PASSWORD')->notEmpty();
+        $dotenv->required('MAIL_SMTP');
+        $dotenv->required('MAIL_SMTP_SERVER');
+        $dotenv->required('MAIL_SMTP_AUTH');
+        $dotenv->required('MAIL_SMTP_PORT');
+        $dotenv->required('MAIL_SMTP_USERNAME');
+        $dotenv->required('MAIL_SMTP_PASSWORD');
+        $dotenv->required('MAIL_SMTP_SECURE');
+        $dotenv->required('MAIL_FROM_MAIL');
+        $dotenv->required('MAIL_FROM_NAME');
+        $dotenv->required('MAIL_BCC_MAIL');
+        $dotenv->required('MAIL_BCC_NAME');
+        $dotenv->required('MAIL_DISABLE_TLS');
+        $dotenv->required('MAIL_DEBUG_OUTPUT_LEVEL')->allowedValues(['0', '1', '2', '3', '4']);
+        $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
+        $dotenv->required('PAYMENT_ACCOUNT_NUMBER');
+        $dotenv->required('PAYMENT_FIO_API_TOKEN');
+
+        // check that adminer password is not default string
+        if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
+            throw new ValidationException('Adminer password must be changed and cannot be empty in .env');
+        }
     }
 }

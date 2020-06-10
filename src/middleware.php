@@ -5,8 +5,6 @@ use Slim\Middleware\ContentLengthMiddleware;
 use Slim\Views\TwigMiddleware;
 use Whoops\Exception\Inspector;
 
-$container = $app->getContainer();
-
 // CONTENT LENGTH
 $app->add(new ContentLengthMiddleware());
 
@@ -56,7 +54,7 @@ $app->add(function (Request $request, Response $response, callable $next): Respo
 
 // DEBUGGER
 // keep last to execute first
-if ($container->get('settings')['whoopsDebug']) {
+if ($_ENV['DEBUG']) {
     $app->add(new \Zeuxisoo\Whoops\Slim\WhoopsMiddleware());
 } else {
     $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {

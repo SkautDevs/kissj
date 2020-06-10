@@ -56,8 +56,6 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
         */
 
         $app->any('/administration', function (Request $request, Response $response) use ($app) {
-            global $adminerSettings;
-            $adminerSettings = $app->getContainer()->get('settings')['adminer'];
             require __DIR__.'/../adminer/customAdminerEditor.php';
             die();
         })->setName('administration');
@@ -272,21 +270,20 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
 
                 $app->post('/confirmPayment/{paymentId}', AdminController::class.'::confirmPayment')
                     ->setName('admin-confirm-payment');
-
                 
                 $app->group('/auto', function (RouteCollectorProxy $app) {
                     $app->get('', AdminController::class.'::showAutoPayments')
                         ->setName('admin-show-auto-payments');
-                    
+
                     $app->post('/setBreakpointFromRoute', AdminController::class.'::setBreakpointFromRoute')
                         ->setName('admin-set-breakpoint-payments');
-                    
+
                     $app->post('/updatePayments', AdminController::class.'::updatePayments')
                         ->setName('admin-update-payments');
-                    
+
                     $app->post('/setPaymentPaired/{paymentId}', AdminController::class.'::markBankPaymentPaired')
                         ->setName('admin-set-payment-paired');
-                    
+
                     $app->post('/setPaymentUnrelated/{paymentId}', AdminController::class.'::markBankPaymentUnrelated')
                         ->setName('admin-set-payment-unrelated');
                 });
@@ -295,7 +292,7 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
             $app->group('/export', function (RouteCollectorProxy $app) {
                 $app->get('/health', ExportController::class.'::exportHealthData')
                     ->setName('admin-export-health');
-                
+
                 $app->get('/paid', ExportController::class.'::exportPaidData')
                     ->setName('admin-export-paid');
 

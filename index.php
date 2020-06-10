@@ -1,37 +1,19 @@
 <?php
 
-use DI\ContainerBuilder;
-
-if (PHP_SAPI === 'cli-server') {
-    // To help the built-in PHP dev server, check if the request was actually for
-    // something which should probably be served as a static file
-    $url = parse_url($_SERVER['REQUEST_URI']);
-    $file = __DIR__.$url['path'];
-    if (is_file($file)) {
-        return false;
-    }
-}
-
-$version = explode('.', PHP_VERSION);
-if ($version[0] < 7) {
-    echo 'You are using PHP 5 or less - please update into PHP 7';
-    die();
-}
-
 require __DIR__.'/vendor/autoload.php';
 
 session_start();
 
-$containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getSettingsAndDependencies());
+$containerBuilder = new \DI\ContainerBuilder();
+$containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getContainerDefinition());
 $containerBuilder->useAnnotations(true); // used in AbstractController
 $container = $containerBuilder->build();
 $app = \DI\Bridge\Slim\Bridge::create($container);
 
-// Register middleware
+// Register middleware // TODO move into class
 require __DIR__.'/src/middleware.php';
 
-// Register routes
+// Register routes // TODO move into class
 require __DIR__.'/src/routes.php';
 
 // Run app

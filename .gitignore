@@ -3,10 +3,10 @@
 /backups/*
 /docs
 /logs/*
-/src/Settings/settings_custom.php
 /temp/*
 /vendor/*
 /composer.phar
 
+*.env
 *.sqlite
 !db_init.sqlite

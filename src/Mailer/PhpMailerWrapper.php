@@ -12,41 +12,12 @@ use Slim\Views\Twig;
 class PhpMailerWrapper {
     private $renderer;
     private $eventName;
+    private $settings;
 
-    private $smtp;
-    private $smtp_server;
-    private $smtp_port;
-    private $smtp_auth;
-    private $smtp_username;
-    private $smtp_password;
-    private $smtp_secure;
-    private $from_mail;
-    private $from_name;
-    private $bcc_mail;
-    private $bcc_name;
-    private $disable_tls;
-    private $debugOutputLevel;
-    private $sendMailToMainRecipient;
-
-    public function __construct(Twig $renderer, array $mailerSettings) {
+    public function __construct(Twig $renderer, MailerSettings $mailerSettings) {
         $this->renderer = $renderer;
         $this->eventName = 'Korbo 2020'; // TODO make dynamic
-
-        // TODO refactor
-        $this->smtp = $mailerSettings['smtp'];
-        $this->smtp_server = $mailerSettings['smtp_server'];
-        $this->smtp_auth = $mailerSettings['smtp_auth'];
-        $this->smtp_port = $mailerSettings['smtp_port'];
-        $this->smtp_username = $mailerSettings['from_mail'];
-        $this->smtp_password = $mailerSettings['smtp_password'];
-        $this->smtp_secure = $mailerSettings['smtp_secure'];
-        $this->from_mail = $mailerSettings['from_mail'];
-        $this->from_name = $mailerSettings['from_name'];
-        $this->bcc_mail = $mailerSettings['bcc_mail'];
-        $this->bcc_name = $mailerSettings['bcc_name'];
-        $this->disable_tls = $mailerSettings['disable_tls'];
-        $this->debugOutputLevel = $mailerSettings['debugOutoutLevel'];
-        $this->sendMailToMainRecipient = $mailerSettings['sendMailToMainRecipient'];
+        $this->settings = $mailerSettings;
     }
 
     public function sendLoginToken(User $user, string $link) {
@@ -133,13 +104,13 @@ class PhpMailerWrapper {
         $mailer = new PHPMailer(true);
 
         try {
-            $mailer->SMTPDebug = $this->debugOutputLevel; // Enable debug output
-            if ($this->smtp) {
+            $mailer->SMTPDebug = $this->settings->debugOutputLevel; // Enable debug output
+            if ($this->settings->smtp) {
                 $mailer->isSMTP();
             } else {
                 $mailer->isMail();
             }
-            if ($this->disable_tls) {
+            if ($this->settings->disableTls) {
                 $mailer->SMTPOptions = [
                     'ssl' => [
                         'verify_peer' => false,
@@ -148,21 +119,21 @@ class PhpMailerWrapper {
                     ],
                 ];
             }
-            $mailer->Host = $this->smtp_server;    // Specify main and backup SMTP servers
-            $mailer->Port = $this->smtp_port;    // TCP port to connect to
-            $mailer->SMTPAuth = $this->smtp_auth;    // Enable SMTP authentication
-            $mailer->Username = $this->smtp_username;    // SMTP username
-            $mailer->Password = $this->smtp_password;    // SMTP password
-            $mailer->SMTPSecure = $this->smtp_secure;    // Enable TLS encryption, `ssl` or null also accepted
+            $mailer->Host = $this->settings->smtpServer;    // Specify main and backup SMTP servers
+            $mailer->Port = $this->settings->smtpPort;    // TCP port to connect to
+            $mailer->SMTPAuth = $this->settings->smtpAuth;    // Enable SMTP authentication
+            $mailer->Username = $this->settings->smtpUsername;    // SMTP username
+            $mailer->Password = $this->settings->smtpPassword;    // SMTP password
+            $mailer->SMTPSecure = $this->settings->smtpSecure;    // Enable TLS encryption, `ssl` or null also accepted
             $mailer->CharSet = 'UTF-8';
 
             //Recipients
-            $mailer->setFrom($this->from_mail, $this->from_name);
-            if (!empty($this->bcc_mail)) {
-                $mailer->addCC($this->bcc_mail, $this->bcc_name);
+            $mailer->setFrom($this->settings->fromMail, $this->settings->fromName);
+            if (!empty($this->settings->bccMail)) {
+                $mailer->addCC($this->settings->bccMail, $this->settings->bccName);
             }
 
-            if ($this->sendMailToMainRecipient) {
+            if ($this->settings->sendMailToMainRecipient) {
                 $mailer->addAddress($recipientEmail);
             }
 
@@ -173,10 +144,10 @@ class PhpMailerWrapper {
             $mailer->AltBody = strip_tags($messageBody);
 
             // phpamiler echoing debug, content-length middleware addds length header, 
-            //thus browser do not redirect, but shows content (debug) of that length
+            // thus browser do not redirect, but shows content (debug) of that length
             ob_start();
             $mailer->send();
-            $mailerDebugstring = ob_get_clean();
+            ob_get_clean();
         } catch (\Exception $e) {
             throw new Exception('Error sending email', $e->getCode(), $e);
         }
