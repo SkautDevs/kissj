@@ -32,9 +32,10 @@ kissj is scouts **registration system for national and international Scout Jambo
 1. Get latest Docker and docker-compose
  - Latest Docker Unix command: `curl -sSL https://get.docker.com/ | sh`
  - Install script for latest docker-compose `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh` 
-2. Create local config in `src/Settings/settings_custom.php` and override main `settings.php`
-3. run `docker-compose build && docker-compose up`
-4. visit `localhost` for app, `localhost:8025` for mails sent from app
+2. run `docker-compose build && docker-compose up`
+3. run `composer install` in the container // TODO install composer into image
+4. visit `localhost/install.php`, fill the form and hit button which init DB and create proper .env file
+5. done! Visit `localhost` for app, `localhost:8025` for mails sent from app
 
 
 # Devstack
@@ -74,9 +75,8 @@ Backlog is in project github issues
 #### Local mail service at Linux/Mac
 
 - using https://gist.github.com/raelgc/6031274 and on Linux Mint works like a charm!
-- not exactly like a charm on others:
+- on others:
     - https://serverfault.com/questions/184138/quick-linux-mail-server-setup-for-programming
         - good to setup the aliases, so that the mail falls into your account's mailbox
         - installing procmail fixed it for me (instead of postfix)
-    - easier than setting up thinderbird is just typing `mail` in commandline
- 
+    - easier than setting up thinderbird is just typing `mail` in commandline 

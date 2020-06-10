@@ -1,20 +1,24 @@
 create table bankpayment
 (
 	id INTEGER
-		constraint bankpayment_pk
-			primary key,
-	move_date TEXT,
+		constraint table_name_pk
+		primary key,
+	bank_id TEXT,
+	name_account_from TEXT,
+	move_date DATETIME,
 	price TEXT,
 	variable_symbol TEXT,
 	account_number TEXT,
-	constants_ymbol TEXT,
+	constant_symbol TEXT,
 	specific_symbol TEXT,
 	note TEXT,
 	currency TEXT,
 	message TEXT,
 	advanced_information TEXT,
 	comment TEXT,
-	status TEXT
+	status TEXT,
+	created_at DATETIME,
+	updated_at DATETIME
 );
 
 create table event
@@ -57,7 +61,7 @@ create table user
 	updated_at DATETIME not null,
 	event_id int default 1
 		constraint user_event_id_fk
-			references event,
+		references event,
 	role TEXT default 'withoutRole'
 );
 
@@ -68,7 +72,7 @@ create table logintoken
 	token TEXT not null,
 	user_id INT
 		constraint login_tokens_users_id_fk
-			references user,
+		references user,
 	used BOOLEAN,
 	created_at DATETIME not null,
 	updated_at DATETIME not null
@@ -80,7 +84,7 @@ create table participant
 		primary key autoincrement,
 	user_id INT
 		constraint ist_userId_fk
-			references user,
+		references user,
 	first_name TEXT,
 	last_name TEXT,
 	nickname TEXT,
