@@ -170,6 +170,7 @@ class ExportService {
         $rows[] = [
             'id',
             'role',
+            'status',
             'first name',
             'last name',
             'nickname',
@@ -234,6 +235,7 @@ class ExportService {
                 [
                     (string)$participant->id,
                     $participant->role,
+                    $participant->user->status,
                     $participant->firstName,
                     $participant->lastName,
                     $participant->nickname,
