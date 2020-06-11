@@ -28,19 +28,23 @@ kissj is scouts **registration system for national and international Scout Jambo
 # Installation
 
 ## Developement Docker quickstart
-0. Clone this project by `git clone [this repository]`
-1. Get latest Docker and docker-compose
- - Latest Docker Unix command: `curl -sSL https://get.docker.com/ | sh`
- - Install script for latest docker-compose `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh` 
+0. clone this project by `git clone https://github.com/SkautDevs/kissj.git`
+1. get latest Docker and docker-compose
+ - latest Docker Unix command: `curl -sSL https://get.docker.com/ | sh`
+ - latest docker-compose Unix install script `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh`
+ - install guide for Windows: https://docs.docker.com/docker-for-windows/install/ (docker-compose included in Docker for win)
 2. run `docker-compose build && docker-compose up`
-3. run `composer install` in the container // TODO install composer into image
-4. visit `localhost/install.php`, fill the form and hit button which init DB and create proper .env file
+3. run `composer install` in the container by:
+ - check name of the running container by `docker ps` - there should be three, are searching something like `kissj_app`
+ - get into container by `docer exec -it name_of_the_container /bin/bash` (tab will help the wording)
+ - inside container, run `composer install`
+4. in browser visit `localhost/install.php`, fill the form and hit button which init DB and create your own .env file
 5. done! Visit `localhost` for app, `localhost:8025` for mails sent from app
 
 
 # Devstack
 
-- [slim framework](https://www.slimframework.com/) - handles routing, DI and middleware
+- [Slim framework 4](https://www.slimframework.com/) - handles routing, DI and middleware
 - [LeanMapper](http://leanmapper.com/) as ORM
 - [SQLite3](https://www.sqlite.org/) as database
 - & more in `composer.json`
@@ -62,7 +66,7 @@ Backlog is in project github issues
 
 #### Database could not be read
 
-- databasefile `db.sqlite` *and its directory* must be writable by execution programm
+- databasefile `db.sqlite` *and its directory* must be writable by execution program
 
 #### Random errors on DB
 
