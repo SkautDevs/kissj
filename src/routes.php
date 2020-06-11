@@ -55,7 +55,7 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
             ->setName('postCreateEvent');
         */
 
-        $app->any('/administration', function (Request $request, Response $response) use ($app) {
+        $app->any('/administration', function (Request $request, Response $response) {
             require __DIR__.'/../adminer/customAdminerEditor.php';
             die();
         })->setName('administration');
@@ -270,7 +270,7 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
 
                 $app->post('/confirmPayment/{paymentId}', AdminController::class.'::confirmPayment')
                     ->setName('admin-confirm-payment');
-                
+
                 $app->group('/auto', function (RouteCollectorProxy $app) {
                     $app->get('', AdminController::class.'::showAutoPayments')
                         ->setName('admin-show-auto-payments');
@@ -287,6 +287,12 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
                     $app->post('/setPaymentUnrelated/{paymentId}', AdminController::class.'::markBankPaymentUnrelated')
                         ->setName('admin-set-payment-unrelated');
                 });
+                
+                $app->get('/showTransferPayment', AdminController::class.'::showTransferPayment')
+                    ->setName('admin-show-transfer-payment');
+
+                $app->post('/transferPayment', AdminController::class.'::transferPayment')
+                    ->setName('admin-transfer-payment');
             });
 
             $app->group('/export', function (RouteCollectorProxy $app) {

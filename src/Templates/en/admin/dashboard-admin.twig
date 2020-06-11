@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card open-theme">
+    <div class="card paid-theme">
         <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ eventName }} {% trans %}dashboard-admin.admin{% endtrans %}</h2>
         <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
         <div class="card-divide">
@@ -40,6 +40,9 @@
                                 <p>Paid Guests: {{ guests.getPaidCount }}</p>#}
             </div>
         </div>
+    </div>
+    <br>
+    <div class="card paid-theme">
         <h3>{% trans %}dashboard-admin.adminActions{% endtrans %}</h3>
         <div class="card-divide">
             <div>
@@ -59,5 +62,16 @@
                    class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
             </div>
         </div>
+    </div>
+    <div class="card card-half paid-theme">
+        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
+            <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
+                <input class="form-control form-wide" name="emailFrom" type="email" required></label>
+            <br/>
+            <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
+                <input class="form-control form-wide" name="emailTo" type="email" required></label>
+            <br/>
+            <input class="btn btn-small" type="submit" value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
+        </form>
     </div>
 {% endblock %}

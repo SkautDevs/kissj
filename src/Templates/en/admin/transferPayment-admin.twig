@@ -1,0 +1,43 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card paid-theme">
+        <h2>{% trans %}transferPayment-admin.headline{% endtrans %}</h2>
+        <div class="card-divide">
+            <div>
+                <h2>{% trans %}transferPayment-admin.seller{% endtrans %}</h2>
+                <p>{% trans %}transferPayment-admin.sellerInfo{% endtrans %}</p>
+                {% if from %}
+                    {{ include('admin/snippet/details-ist.twig', {ist: from}) }}
+                    Mail: <b>{{ emailFrom }}</b><br/>
+                    Status: <b>{{ from.user.status }}</b>
+                {% else %}
+                    <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailFrom }}</h4>
+                {% endif %}
+            </div>
+            <div>
+                <h2>{% trans %}transferPayment-admin.buyer{% endtrans %}</h2>
+                <p>{% trans %}transferPayment-admin.buyerInfo{% endtrans %}</p>
+                {% if to %}
+                    {{ include('admin/snippet/details-ist.twig', {ist: to}) }}
+                    Mail: <b>{{ emailTo }}</b><br/>
+                    Status: <b>{{ to.user.status }}</b>
+                {% else %}
+                    <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailTo }}</h4>
+                {% endif %}
+            </div>
+        </div>
+        {% if transferPossible %}
+        <form method="POST" action="{{ url_for('admin-transfer-payment', {'eventSlug': event.slug}) }}">
+            <input name="emailFrom" type="hidden" value="{{ emailFrom }}" required>
+            <input name="emailTo" type="hidden" value="{{ emailTo }}" required>
+            <input class="btn btn-small" type="submit"
+                   value="{% trans %}transferPayment-admin.transfer{% endtrans %}">
+        </form><br/>
+        {% else %}
+            <h2>{% trans %}transferPayment-admin.notPossible{% endtrans %}</h2>
+        {% endif %}
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">Zpět</a>
+    </div>
+{% endblock %}

@@ -187,7 +187,7 @@ class PaymentService {
             return;
         }
 
-        // TODO make more save - set "processing" status or something
+        // TODO make more atomic - set "processing" status or something
         $participantKeydPayments = $this->paymentRepository->getWaitingPaymentsKeydByVariableSymbols();
         $counterNewPaid = 0;
         $counterUnknownPayment = 0;

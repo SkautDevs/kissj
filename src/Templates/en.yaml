@@ -188,6 +188,9 @@ dashboard-admin:
     exportMedData: "Export medical data into .csv"
     exportEmailsPaid: "Export emails of paid into .csv"
     exportFullData: "Export FULL data into .csv"
+    checkMovePayments: "Check payment move"
+    emailFrom: "Email prodávajícího zaplaceného účastníka"
+    emailTo: "Email kupujícího účastníka"
 cancelPayment-admin:
     cancel: "Cancel payment"
     wantCancel: "You really want to cancel payment for participant"
@@ -248,6 +251,7 @@ flash:
         locked: "Registration successfully locked and sent"
         approved: "IST participant is approved, payment is generated and mail sent"
         adminPairedPayments: "Paired bank transactions: "
+        transfer: "Payment transfer was successful!"
     warning:
         istNoLock: "Cannot lock the registration - some details are wrong or missing (probably some date)"
         istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise or other participant cancellation"

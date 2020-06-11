@@ -1,0 +1,46 @@
+<h4>{{ ist.getFullName }}</h4>
+{% trans %}approving-admin.BirthDate{% endtrans %} <b> {{ ist.getBirthDate.format('d. m. Y') }}</b>
+{% trans %}approving-admin.willHave{% endtrans %} {{ ist.getAgeInYears(event.getEventStart) }} {% trans %}approving-admin.years{% endtrans %}
+<br/>
+{% trans %}approving-admin.gender{% endtrans %} <b>
+    {% if ist.getGender  == 'man' %}
+        {% trans %}changeDetails-ist.genderMan{% endtrans %}
+    {% elseif ist.getGender  == 'woman' %}
+        {% trans %}changeDetails-ist.genderWoman{% endtrans %}
+    {% else %}
+        {% trans %}changeDetails-ist.genderOther{% endtrans %}
+    {% endif %}</b><br/>
+Email: <b>{{ ist.user.getEmail }}</b><br/>{#
+                Phone number: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
+                {% trans %}approving-admin.address{% endtrans %} <b>{{ ist.getPermanentResidence }}</b><br/>
+{% trans %}approving-admin.country{% endtrans %} <b>
+    {% if ist.getCountry == 'Czech' %}
+        {% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
+    {% elseif ist.getCountry == 'other' %}
+        {% trans %}changeDetails-ist.countryOther{% endtrans %}
+    {% endif %}</b><br/>
+{% trans %}approving-admin.unit{% endtrans %} <b>{{ ist.getScoutUnit }}</b><br/>
+{#T-shirt size: <b>{{ ist.getTshirt }}</b><br/>
+Diet Restriction: <b>{{ ist.getFoodPreferences }}</b><br/>#}
+                {% trans %}approving-admin.issues{% endtrans %} <b>{{ ist.getHealthProblems }}</b><br/>
+{#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+Swimming skill: <b>{{ ist.getSwimming }}</b><br/>
+Drivers licence: <b>{{ ist.getDriversLicense }}</b><br/>
+Skills: <b>{{ ist.getSkills }}</b><br/>
+Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
+                {% trans %}approving-admin.scarf{% endtrans %} <b>
+    {% if ist.getScarf  == 'yes' %}
+        {% trans %}changeDetails-ist.scarfYes{% endtrans %}
+    {% else %}
+        {% trans %}changeDetails-ist.scarfNo{% endtrans %}
+    {% endif %}</b><br/>
+{% trans %}approving-admin.uploadedFile{% endtrans %}
+{% if ist.getUploadedFilename %}
+    <a target="_blank"
+       href="{{ url_for('admin-show-file', {'filename': ist.getUploadedFilename, 'eventSlug': event.slug}) }}">
+        {{ ist.getUploadedOriginalFilename }}
+    </a>
+{% else %}
+    <i>{% trans %}approving-admin.noFile{% endtrans %}</i>
+{% endif %}<br/>
+{% trans %}dashboard-ist.personalNotes{% endtrans %} <b>{{ ist.getNotes }}</b><br/>

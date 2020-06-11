@@ -92,12 +92,13 @@ h1 {
 	background-color: #f9f9f9;
 	border-radius: var(--borderRadius);
 	padding: 35px 44px;
+	margin-bottom: 11px;
 	text-align: center;
 }
 
 .card-half {
 	max-width: 50%;
-	margin: 0 auto;
+	margin: 0 auto 11px;
 }
 
 h1 {

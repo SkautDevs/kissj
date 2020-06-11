@@ -143,6 +143,10 @@ payment-successful:
     recieved: "Obdrželi jsme tvou platbu na"
     thanks: ". Děkujeme!"
     enjoy: "Nyní si můžeš plně užít čkání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+email:
+    text:
+        paidRegistrationTransfered: "Ahoj, tvá platba byla přesunuta k registraci novému účastníkovi. Pokud o tomto nic nevíš, hned se nám prosím ozvi."
+        paymentTransfered: "převádíme jinou platbu k tvojí registraci"
 penist-admin:
     deny: "Zamítnout"
     wantDeny: "Opravdu cheš zamítnout účast?"
@@ -188,6 +192,9 @@ dashboard-admin:
     exportMedData: "Export zdravotních informací do .csv"
     exportEmailsPaid: "Export zaplacených do .csv"
     exportFullData: "Export VŠECH informací do .csv"
+    checkMovePayments: "Zkontrolovat přesun platby"
+    emailFrom: "Email prodávajícího zaplaceného účastníka"
+    emailTo: "Email kupujícího účastníka"
 cancelPayment-admin:
     cancel: "Zrušit platbu"
     wantCancel: "Opravdu chceš zrušit platbu pro účastníka"
@@ -230,6 +237,15 @@ paymentsAuto-admin:
     allPaymenntsDone: "Žádné platby nepotřebují pozornost!"
     markPaymentPaired: "Označit jako zaplacenou"
     markPaymentUnrelated: "Označit jako nesouvisející"
+transferPayment-admin:
+    headline: "Přesun platby mezi účastníky"
+    seller: "Prodávající"
+    buyer: "Kupující"
+    sellerInfo: "Musí mít zaplaceno. Jeho zaplacená platba se přesune včetně variabilního symbolu. Pošle se mu email s informací o přesunu platby. Registrace se odemkne."
+    buyerInfo: "Musí být v libovolném nezaplaceném stavu. Pokud už má vygenerovanou platbu, zamítne se. Pošle se mu email o zaplacení. Registrace se označí jako zaplacená."
+    participantNotFound: "Účastník nebyl nalezen :( Mail:"
+    transfer: "Přesuň platbu"
+    notPossible: "Přesun nelze uskutečnit"
 flash:
     info:
         paymentCanceled: "Platba zamítnuta, e-mail s důvodem odeslán"
@@ -241,6 +257,7 @@ flash:
         noNewPayments: "Žádné nové platby z banky."
         markedAsPaired: "Platba byla označena jako spárovaná"
         markedAsUnrelated: "Platba byla označena jako nesouvisející s registrací"
+        differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -248,6 +265,7 @@ flash:
         locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Korboúčastník schválen, platební údaje vygenerovány a e-mail odeslán"
         adminPairedPayments: "Spárováno bankovních transakcí: "
+        transfer: "Platba úspěšně přesunuta!"
     warning:
         istNoLock: "Přihláška nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
         istFullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Počkej prosím než navýšíme kapacitu nebo někteří účastníci zruší svojí přihlášku"
@@ -256,6 +274,10 @@ flash:
         roleChoosed: "Omlouváme se, ale už sis zvolil/a roli pro tuto akci"
         invalidLogin: "Přihlašovací odkaz který jsi použil/a není platný. Vlož, prosím, svůj e-mail na domovské stránce registrace a nech si zaslat nový."
         fileTooBig: "Nahraný soubor je příliš velký, nahraj prosím menší"
+        nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
+        differentParticipants: "Účastníci jsou různých rolí"
+        notPaid: "Prodávající nemá žádnou zaplacenou platbu"
+        isPaid: "Kupující již má zaplacenou platbu"
     error:
         adminOnly: "Promiň kámo, pouze pro administrátory"
         istOnly: "Promiň, nejsi přihlášený jako účastník"

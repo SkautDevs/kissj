@@ -28,6 +28,7 @@ class AdminController extends AbstractController {
     private $istService;
     private $freeParticipantService;
     private $guestService;
+    private $adminService;
 
     public function __construct(
         ParticipantService $participantService,
@@ -38,7 +39,8 @@ class AdminController extends AbstractController {
         PatrolService $patrolService,
         IstService $istService,
         FreeParticipantService $freeParticipantService,
-        GuestService $guestService
+        GuestService $guestService,
+        AdminService $adminService
     ) {
         $this->participantService = $participantService;
         $this->paymentService = $paymentService;
@@ -49,6 +51,7 @@ class AdminController extends AbstractController {
         $this->istService = $istService;
         $this->freeParticipantService = $freeParticipantService;
         $this->guestService = $guestService;
+        $this->adminService = $adminService;
     }
 
     public function showDashboard(Response $response): Response {
@@ -203,6 +206,58 @@ class AdminController extends AbstractController {
             $request,
             $response,
             'admin-show-auto-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
+    }
+
+    public function showTransferPayment(Request $request, Response $response): Response {
+        $queryParams = $request->getQueryParams();
+
+        $emailFrom = $queryParams['emailFrom'];
+        $emailTo = $queryParams['emailTo'];
+
+        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom);
+        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo);
+
+        return $this->view->render($response, 'admin/transferPayment-admin.twig', [
+            'emailFrom' => $emailFrom,
+            'emailTo' => $emailTo,
+            'from' => $participantFrom,
+            'to' => $participantTo,
+            'transferPossible' => $this->adminService->isPaymentTransferPossible(
+                $participantFrom,
+                $participantTo,
+                $this->flashMessages
+            ),
+        ]);
+    }
+
+    public function transferPayment(Request $request, Response $response): Response {
+        $queryParams = $request->getParsedBody();
+
+        $participantFrom = $this->participantService->findParticipantFromUserMail($queryParams['emailFrom']);
+        $participantTo = $this->participantService->findParticipantFromUserMail($queryParams['emailTo']);
+
+        // TODO refactor findParticipantFromUserMail into get method
+        if ($participantFrom === null || $participantTo === null) {
+            throw new \RuntimeException('Found no participant');
+        }
+
+        if (!$this->adminService->isPaymentTransferPossible(
+            $participantFrom,
+            $participantTo,
+            $this->flashMessages
+        )) {
+            throw new \RuntimeException('Cannot do transfer');
+        }
+
+        $this->adminService->transferPayment($participantFrom, $participantTo);
+        $this->flashMessages->success($this->translator->trans('flash.success.transfer'));
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-dashboard',
             ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }

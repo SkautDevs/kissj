@@ -85,6 +85,15 @@ class PhpMailerWrapper {
         );
     }
 
+    public function sendPaymentTransferedFromYou(Participant $participant) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'platba převedena na jiného účastníka',
+            'payment-transfered-from-you',
+            []
+        );
+    }
+
     public function sendWelcomeFreeParticipantMessage(Participant $participant) {
         $this->sendMailFromTemplate(
             $participant->user->email,

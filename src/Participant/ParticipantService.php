@@ -6,22 +6,26 @@ use kissj\Mailer\PhpMailerWrapper;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
+use kissj\User\UserRepository;
 use kissj\User\UserService;
 
 class ParticipantService {
     private $participantRepository;
     private $paymentService;
+    private $userRepository;
     private $userService;
     private $mailer;
 
     public function __construct(
         ParticipantRepository $participantRepository,
         PaymentService $paymentService,
+        UserRepository $userRepository,
         UserService $userService,
         PhpMailerWrapper $mailer
     ) {
         $this->participantRepository = $participantRepository;
         $this->paymentService = $paymentService;
+        $this->userRepository = $userRepository;
         $this->userService = $userService;
         $this->mailer = $mailer;
     }
@@ -61,5 +65,21 @@ class ParticipantService {
         $this->mailer->sendCancelledPayment($payment->participant, $reason);
 
         return $payment;
+    }
+
+    public function findParticipantFromUserMail(string $emailFrom): ?Participant {
+        // TODO optimalize into one query with join
+        // TODO refactor Repository into get() and find() methods
+        $user = $this->userRepository->findBy(['email' => $emailFrom]);
+        if (count($user) === 0) {
+            return null;
+        }
+
+        $participant = $this->participantRepository->findBy(['user_id' => $user[0]->id]);
+        if (count($participant) === 0) {
+            return null;
+        }
+
+        return $participant[0];
     }
 }

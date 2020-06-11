@@ -23,8 +23,10 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Extension\DebugExtension;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -128,8 +130,9 @@ class Settings {
             $view = Twig::create(
                 __DIR__.'/../Templates/en', // TODO move
                 [
-                    'cache' => $_ENV['TEMPLATE_CACHE'] ? __DIR__.'/../../temp/twig' : false,
-                    'debug' => $_ENV['DEBUG'],
+                    // env. variables are parsed into strings
+                    'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__.'/../../temp/twig' : false,
+                    'debug' => $_ENV['DEBUG'] === 'true',
                 ]
             );
 
@@ -148,7 +151,8 @@ class Settings {
                     .$router->getRouteParser()->urlFor('administration'));
             }*/
 
-            $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+            $view->addExtension(new DebugExtension()); // not needed to disable in production
+            $view->addExtension(new TranslationExtension($translator));
 
             return $view;
         };
