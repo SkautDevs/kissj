@@ -109,8 +109,7 @@ class Settings {
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);
             $translator->setFallbackLocales([$_ENV['DEFAULT_LOCALE']]);
 
-            $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
-            $translator->addLoader('yaml', $yamlLoader);
+            $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
             $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
             $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
 
@@ -123,7 +122,7 @@ class Settings {
             FlashMessagesBySession $flashMessages
         ) {
             $view = Twig::create(
-                __DIR__.'/../Templates/en', // TODO move
+                __DIR__.'/../Templates/translatable',
                 [
                     // env. variables are parsed into strings
                     'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__.'/../../temp/twig' : false,

@@ -1,6 +1,7 @@
 <?php
 
 use Middlewares\TrailingSlash;
+use Monolog\Logger;
 use Slim\Middleware\ContentLengthMiddleware;
 use Slim\Views\TwigMiddleware;
 use Whoops\Exception\Inspector;
@@ -54,7 +55,7 @@ $app->add(function (Request $request, Response $response, callable $next): Respo
 
 // DEBUGGER
 // keep last to execute first
-if ($_ENV['DEBUG']) {
+if ($_ENV['DEBUG'] !== 'false') {
     $app->add(new \Zeuxisoo\Whoops\Slim\WhoopsMiddleware());
 } else {
     $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {
@@ -62,9 +63,9 @@ if ($_ENV['DEBUG']) {
         $code = $exception->getCode();
         $message = $inspector->getExceptionMessage();
 
-        $container->get('logger')->error('Exception! '.$title.'('.$code.') -> '.$message);
+        $container->get(Logger::class)->error('Exception! '.$title.'('.$code.') -> '.$message);
 
-        require 'Templates/en/exception.php';
+        require 'Templates/exception.php';
         die;
     };
 

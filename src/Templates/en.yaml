@@ -86,7 +86,7 @@ login-link-sent:
     linkSent: "A signing-in link has been sent to your E-mail address."
     followLink: "Follow the link in 15 minutes to sign in into the registration system."
 login:
-    registrationFor: "Registration for the"
+    registrationFor: "Registration for "
     email: "E-mail"
     sendMeEmail: "Send me an email to register"
     howItWorks: "How does logging-in work?"

@@ -113,6 +113,9 @@ class PhpMailerWrapper {
         $mailer = new PHPMailer(true);
 
         try {
+            // phpamiler echoing debug, content-length middleware addds length header, 
+            // thus browser do not redirect, but shows content (debug) of that length
+            ob_start();
             $mailer->SMTPDebug = $this->settings->debugOutputLevel; // Enable debug output
             if ($this->settings->smtp) {
                 $mailer->isSMTP();
@@ -152,13 +155,11 @@ class PhpMailerWrapper {
             $mailer->Body = $messageBody;
             $mailer->AltBody = strip_tags($messageBody);
 
-            // phpamiler echoing debug, content-length middleware addds length header, 
-            // thus browser do not redirect, but shows content (debug) of that length
-            ob_start();
             $mailer->send();
-            ob_get_clean();
         } catch (\Exception $e) {
             throw new Exception('Error sending email', $e->getCode(), $e);
+        } finally {
+            ob_get_clean();
         }
     }
 }

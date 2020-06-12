@@ -43,7 +43,7 @@ class UserController extends AbstractController {
 
         try {
             $this->userService->sendLoginTokenByMail($email, $request);
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->logger->addError('Error sending login email to '.$email.' with token '.
                 $this->userService->getTokenForEmail($email), [$e]);
             $this->flashMessages->error($this->translator->trans('flash.error.mailError'));
