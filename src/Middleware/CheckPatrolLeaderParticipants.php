@@ -12,7 +12,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * participants actions are allowed only for their Patrol Leader
  */
-class CheckPatrolLeaderParticipants extends AbstractMiddleware {
+class CheckPatrolLeaderParticipants extends BaseMiddleware {
     private $patrolService;
     private $flashMessages;
     private $translator;
@@ -25,10 +25,6 @@ class CheckPatrolLeaderParticipants extends AbstractMiddleware {
         $this->patrolService = $patrolService;
         $this->flashMessages = $flashMessages;
         $this->translator = $translator;
-    }
-
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-        return $this->process($request, $handler);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {

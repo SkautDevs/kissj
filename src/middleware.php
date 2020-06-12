@@ -25,7 +25,7 @@ $app->addRoutingMiddleware();
 //$app->add(BasePathMiddleware::class);
 
 // TWIG
-$app->add(TwigMiddleware::createFromContainer($app));
+$app->add(TwigMiddleware::createFromContainer($app, \Slim\Views\Twig::class));
 
 // TRAILING SLASH REMOVER
 $app->add(new TrailingSlash(false)); // remove trailing slash

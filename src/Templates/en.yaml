@@ -143,6 +143,10 @@ payment-successful:
     recieved: "We have received your payment for"
     thanks: ". Thank you!"
     enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
+email:
+    text:
+        paidRegistrationTransfered: "Ahoy, your payment was transferred to different participant. If you do not know about this, please contact us."
+        paymentTransfered: "tranfering different payment into your registration"
 penist-admin:
     deny: "Deny"
     wantDeny: "Do you really want to deny"
@@ -233,6 +237,15 @@ paymentsAuto-admin:
     allPaymenntsDone: "No payment needs attention!"
     markPaymentPaired: "Mark as paired"
     markPaymentUnrelated: "Mark as unrelated"
+transferPayment-admin:
+    headline: "Transfer payment between participants"
+    seller: "Seller"
+    buyer: "Buyer"
+    sellerInfo: "He must be paid up. His completed payment will be moved, variable symbol included. Mail will be sent about the transfer. Registration will be marked as open/unlocked."
+    buyerInfo: "he must not be paid up. If some payment was generated, it will be canceled. Mail will be sent about new completed payment. Registration will be marked as paid."
+    participantNotFound: "Participant was not found :( Mail:"
+    transfer: "Transfer payment"
+    notPossible: "Transfer is blocked"
 flash:
     info:
         paymentCanceled: "Participant payment cancelled, email with reason sent"
@@ -244,6 +257,7 @@ flash:
         noNewPayments: "No new payments found."
         markedAsPaired: "Payment has been marked as paired"
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
+        differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
     success:
         linkSent: "E-mail sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -259,6 +273,11 @@ flash:
         loggedIn: "Pardon, but your are logged - you need to sign off first by click to \"Log off\""
         roleChoosed: "Pardon, you already choosed your role for this event"
         invalidLogin: "Log-in token you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one."
+        fileTooBig: "Uploaded file is too big, please try upload smaller"
+        nullParticipants: "One or both participants was not found in system"
+        differentParticipants: "Participants has different roles"
+        notPaid: "Seller has not completed payment"
+        isPaid: "Buyer has completed payment"
     error:
         adminOnly: "Sorry bro, admins only"
         istOnly: "Sorry, you are not logged as IST"

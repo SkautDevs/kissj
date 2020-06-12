@@ -23,7 +23,6 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
@@ -53,7 +52,6 @@ class Settings {
             return $logger;
         };
         $container[LoggerInterface::class] = get(Logger::class);
-        $container['logger'] = get(Logger::class); // TODO remove
 
         $container[Connection::class] = function (): Connection {
             return new Connection([
@@ -102,17 +100,14 @@ class Settings {
             return $fioFactory->createFioRead('fio-account');
         };
 
-        $container[LocalizationResolverMiddleware::class] = autowire()->constructor(
-            get(Twig::class),
-            self::LOCALES_AVAILABLE,
-            $_ENV['DEFAULT_LOCALE']
-        );
+        $container[LocalizationResolverMiddleware::class] = autowire()
+            ->constructorParameter('availableLanguages', self::LOCALES_AVAILABLE)
+            ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
 
-        $container[TranslatorInterface::class] = function () {
+        $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html
-            $locale = 'cs'; // TODO connect
-            $translator = new Translator($locale);
-            $translator->setFallbackLocales(['cs']);
+            $translator = new Translator($_ENV['DEFAULT_LOCALE']);
+            $translator->setFallbackLocales([$_ENV['DEFAULT_LOCALE']]);
 
             $yamlLoader = new \Symfony\Component\Translation\Loader\YamlFileLoader();
             $translator->addLoader('yaml', $yamlLoader);
@@ -121,11 +116,11 @@ class Settings {
 
             return $translator;
         };
+        $container[TranslatorInterface::class] = get(Translator::class);
 
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
-            FlashMessagesBySession $flashMessages,
-            TranslatorInterface $translator
+            FlashMessagesBySession $flashMessages
         ) {
             $view = Twig::create(
                 __DIR__.'/../Templates/en', // TODO move
@@ -152,11 +147,9 @@ class Settings {
             }*/
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
-            $view->addExtension(new TranslationExtension($translator));
 
             return $view;
         };
-        $container['view'] = get(Twig::class); // TODO remove
 
         return $container;
     }
@@ -187,7 +180,7 @@ class Settings {
         $dotenv->required('PAYMENT_ACCOUNT_NUMBER');
         $dotenv->required('PAYMENT_FIO_API_TOKEN');
 
-        // check that adminer password is not default string
+        // check that adminer password is not default or empty string
         if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
             throw new ValidationException('Adminer password must be changed and cannot be empty in .env');
         }

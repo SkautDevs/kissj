@@ -25,6 +25,7 @@
         "ext-dom": "*",
         "ext-mbstring": "*",
         "ext-sqlite3": "*",
+        "dflydev/fig-cookies": "^2.0",
         "doctrine/annotations": "^1.8",
         "h4kuna/fio": "^2.0",
         "league/csv": "^9.1",

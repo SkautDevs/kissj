@@ -35,7 +35,7 @@ kissj is scouts **registration system for national and international Scout Jambo
  - install guide for Windows: https://docs.docker.com/docker-for-windows/install/ (docker-compose included in Docker for win)
 2. run `docker-compose build && docker-compose up`
 3. run `composer install` in the container by:
- - check name of the running container by `docker ps` - there should be three, are searching something like `kissj_app`
+ - check name of the running container by `docker ps` - there should be three, you are searching something like `kissj_app`
  - get into container by `docer exec -it name_of_the_container /bin/bash` (tab will help the wording)
  - inside container, run `composer install`
 4. in browser visit `localhost/install.php`, fill the form and hit button which init DB and create your own .env file
@@ -44,9 +44,10 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 # Devstack
 
-- [Slim framework 4](https://www.slimframework.com/) - handles routing, DI and middleware
+- [Slim framework 4](https://www.slimframework.com/) - handles routing and middleware
 - [LeanMapper](http://leanmapper.com/) as ORM
 - [SQLite3](https://www.sqlite.org/) as database
+- [php-di](https://php-di.org/) for dependency injection
 - & more in `composer.json`
 
 
@@ -55,9 +56,12 @@ kissj is scouts **registration system for national and international Scout Jambo
 Backlog is in project github issues
 
 
-# Codestyle
+# Standards
 
-- PSR-2 (with exception sameline of curly bracers after function definition name)
+- PSR-3 for logging
+- PSR-4 for autoloading
+- PSR-7 for HTTP requests/responses
+- PSR-15 for middlewares
 - directories honoring Separation of Concerns
 - KISS + YAGNI
 

@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NonLoggedOnlyMiddleware extends AbstractMiddleware {
+class NonLoggedOnlyMiddleware extends BaseMiddleware {
     private $flashMessages;
     private $translator;
 
@@ -18,10 +18,6 @@ class NonLoggedOnlyMiddleware extends AbstractMiddleware {
     ) {
         $this->flashMessages = $flashMessages;
         $this->translator = $translator;
-    }
-
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-        return $this->process($request, $handler);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {

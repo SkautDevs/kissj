@@ -20,13 +20,13 @@ abstract class AbstractController {
     protected $flashMessages;
 
     /**
-     * @Inject("logger")
+     * @Inject("Psr\Log\LoggerInterface")
      * @var Logger
      */
     protected $logger;
 
     /**
-     * @Inject("view")
+     * @Inject("Slim\Views\Twig")
      * @var Twig
      */
     protected $view;
