@@ -18,13 +18,14 @@ userCustomHelp:
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek. Informace k platbě jsou níže."
     statusPaid: "Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až tě uvidíme na Korbu 2020!"
     statusPaidGuest: "Tvá přihláška je vyplněna a schválena! ;) Těšíme se až tě uvidíme na Korbu 2020!"
-dashboard-ist:
+dashboard:
     details: " - přehled"
     paymentInfo: "Informace k platbě"
-    accountNumber: "Číslo bankovního účtu:"
-    amount: "Cena:"
-    variableSymbol: "Variabilní symbol:"
-    paymentNote: "Poznámka:"
+    accountNumber: "Číslo bankovního účtu"
+    amount: "Cena"
+    variableSymbol: "Variabilní symbol"
+    paymentNote: "Poznámka"
+dashboard-ist:
     personalInfo: "Osobní informace"
     editDetails: "Upravit mé informace"
     firstName: "Křestní jméno:"

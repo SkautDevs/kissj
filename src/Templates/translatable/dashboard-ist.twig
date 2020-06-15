@@ -3,19 +3,22 @@
 {% block content %}
     {% set userStatus = ist.user.status %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{{ event.getIstLabel|capitalize }}{% trans %}dashboard-ist.details{% endtrans %}</h2>
+        <h2>{{ event.getIstLabel|capitalize }}{% trans %}dashboard.details{% endtrans %}</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'ist'} %}
         </h4>
-        {% if userStatus == 'approved' %}
-            <div class="paymentInfo">
-                <h2>{% trans %}dashboard-ist.paymentInfo{% endtrans %}</h2>
-                {% trans %}dashboard-ist.accountNumber{% endtrans %} <b>{{ payment.getAccountNumber }}</b><br/>
-                {% trans %}dashboard-ist.amount{% endtrans %} <b>{{ payment.getPrice }} {{ payment.currency }}</b><br/>
-                {% trans %}dashboard-ist.variableSymbol{% endtrans %} <b>{{ payment.getVariableSymbol }}</b><br/>
-                {% trans %}dashboard-ist.paymentNote{% endtrans %} <b>{{ payment.getNote }}</b><br/>
-                <br/>
-            </div>
+        {% if ist.getPayments %}
+            <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
+            {% for payment in ist.getPayments %}
+                <div class="payment {% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+                    {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
+                    {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
+                    <br/>
+                    {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
+                    {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
+                    <br/>
+                </div>
+            {% endfor %}
         {% endif %}
 
         <div>

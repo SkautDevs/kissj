@@ -90,4 +90,11 @@ class Participant extends EntityDatetime {
         $birthDate = $this->getBirthDate();
         return $birthDate->diff($eventStart)->format('%y');
     }
+
+    /**
+     * @return Payment[]
+     */
+    public function getPayments(): array {
+        return $this->payment;
+    }
 }
