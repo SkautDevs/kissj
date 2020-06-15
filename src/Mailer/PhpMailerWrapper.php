@@ -103,6 +103,15 @@ class PhpMailerWrapper {
         );
     }
 
+    public function sendDuePaymentDenied(Participant $participant) {
+        $this->sendMailFromTemplate(
+            $participant->user->email,
+            'platba neobdržena -> registrace zrušena', // TODO make translatable
+            'cancel-payment',
+            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $participant->user->event]
+        );
+    }
+
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,

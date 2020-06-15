@@ -29,4 +29,13 @@ class PaymentRepository extends Repository {
 
         return $finalPayments;
     }
+
+    public function getDuePayments() {
+        /** @var Payment[] $waitingPayments */
+        $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
+        
+        return array_filter($waitingPayments, function ($payment) {
+            return $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays();
+        });
+    }
 }

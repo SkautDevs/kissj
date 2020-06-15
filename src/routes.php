@@ -267,6 +267,9 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
 
                 $app->post('/cancelPayment/{paymentId}', AdminController::class.'::cancelPayment')
                     ->setName('admin-cancel-payment');
+                
+                $app->post('/cancelDuePayments', AdminController::class.'::cancelAllDuePayments')
+                    ->setName('admin-cancel-due-payments');
 
                 $app->post('/confirmPayment/{paymentId}', AdminController::class.'::confirmPayment')
                     ->setName('admin-confirm-payment');

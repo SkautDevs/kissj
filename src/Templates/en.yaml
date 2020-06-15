@@ -154,6 +154,7 @@ penist-admin:
     reason: "Reason for denial (will be sent by email):"
 payments-admin:
     confirmText: "Confirming payments on event"
+    openDuePayments: "Unlock payments after due deadline"
     back: "Back"
     patrols: "Patrols"
     email: "Email:"
@@ -260,6 +261,7 @@ flash:
         markedAsPaired: "Payment has been marked as paired"
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
+        duePaymentDenied: "Participants denied which missed due payment deadline by mail"
     success:
         linkSent: "E-mail sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"

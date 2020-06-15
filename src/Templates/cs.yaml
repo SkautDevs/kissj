@@ -154,6 +154,7 @@ penist-admin:
     reason: "Důvod zamítnutí (Bude posláno e-mailem, tak nebuď moc krutý/á):"
 payments-admin:
     confirmText: "Potvrzovaní plateb na akci"
+    openDuePayments: "Odemknout platby po splatnosti"
     back: "Zpět"
     patrols: "Patroly"
     email: "E-mail:"
@@ -260,6 +261,7 @@ flash:
         markedAsPaired: "Platba byla označena jako spárovaná"
         markedAsUnrelated: "Platba byla označena jako nesouvisející s registrací"
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
+        duePaymentDenied: "Kvůli nezaplacení emaily zamítnuto účastníků"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"

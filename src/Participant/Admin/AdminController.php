@@ -120,6 +120,17 @@ class AdminController extends AbstractController {
             ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
+    
+    public function cancelAllDuePayments(Request $request, Response $response): Response {
+        $this->paymentService->cancelDuePayments(5);
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-payments',
+            ['eventSlug' => $request->getAttribute('user')->event->slug]
+        );
+    }
 
     public function confirmPayment(int $paymentId, Request $request, Response $response): Response {
         $payment = $this->paymentRepository->find($paymentId);

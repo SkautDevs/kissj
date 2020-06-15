@@ -48,7 +48,7 @@ class PaymentService {
     public function createAndPersistNewPayment(Participant $participant): Payment {
         do {
             $prefix = $participant->user->event->prefixVariableSymbol;
-            $variableNumber = $prefix.str_pad(random_int(0, 999999), 3, '0', STR_PAD_LEFT);
+            $variableNumber = $prefix.str_pad(random_int(0, 999999), strlen($prefix), '0', STR_PAD_LEFT);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
 
         $event = $participant->user->event;
@@ -140,6 +140,21 @@ class PaymentService {
         $this->paymentRepository->persist($payment);
 
         return $payment;
+    }
+
+    public function cancelDuePayments(int $limit): void {
+        $duePayments = $this->paymentRepository->getDuePayments();
+        $deniedPaymentsCount = 0;
+
+        foreach(array_slice($duePayments, 0, $limit) as $payment) {
+            $this->cancelPayment($payment);
+            
+            $this->userService->openRegistration($payment->participant->user);
+            $this->mailer->sendDuePaymentDenied($payment->participant);
+            $deniedPaymentsCount++;
+        }
+
+        $this->flashMessages->info($this->translator->trans('flash.info.duePaymentDenied').': '.$deniedPaymentsCount);
     }
 
     public function confirmPayment(Payment $payment): Payment {
