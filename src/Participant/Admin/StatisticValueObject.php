@@ -3,6 +3,7 @@
 namespace kissj\Participant\Admin;
 
 use kissj\Participant\Participant;
+use kissj\Payment\Payment;
 use kissj\User\User;
 
 class StatisticValueObject {
@@ -13,6 +14,8 @@ class StatisticValueObject {
     /** @var int */
     protected $approvedCount;
     /** @var int */
+    protected $afterPayment;
+    /** @var int */
     protected $paidCount;
 
     /**
@@ -22,6 +25,7 @@ class StatisticValueObject {
         $this->openCount = 0;
         $this->closedCount = 0;
         $this->approvedCount = 0;
+        $this->afterPayment = 0;
         $this->paidCount = 0;
 
         foreach ($participants as $participant) {
@@ -36,6 +40,16 @@ class StatisticValueObject {
 
                 case User::STATUS_APPROVED:
                     $this->approvedCount++;
+
+                    foreach ($participant->getPayments() as $payment) {
+                        if ($payment->status !== Payment::STATUS_CANCELED &&
+                            $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
+                        ) {
+                            $this->afterPayment++;
+                            // only one waiting payment is sufficient
+                            break;
+                        }
+                    }
                     break;
 
                 case User::STATUS_PAID:
@@ -55,6 +69,10 @@ class StatisticValueObject {
 
     public function getApprovedCount(): int {
         return $this->approvedCount;
+    }
+
+    public function getAfterPayment(): int {
+        return $this->afterPayment;
     }
 
     public function getPaidCount(): int {

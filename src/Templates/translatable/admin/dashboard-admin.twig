@@ -26,11 +26,12 @@
             </div>
             <div>
                 <h3>{{ event.getIstLabel }}{% trans %}dashboard-admin.count{% endtrans %}</h3>
-                <p>{% trans %}dashboard-admin.limitIst{% endtrans %} {{ event.maximalClosedIstsCount }}</p>
-                <p>{% trans %}dashboard-admin.openIst{% endtrans %} {{ ists.getOpenCount }}</p>
-                <p>{% trans %}dashboard-admin.lockedIst{% endtrans %} {{ ists.getClosedCount }}</p>
-                <p>{% trans %}dashboard-admin.approvedIst{% endtrans %} {{ ists.getApprovedCount }}</p>
-                <p>{% trans %}dashboard-admin.paidIst{% endtrans %} {{ ists.getPaidCount }}</p>
+                <p>{% trans %}dashboard-admin.limitIst{% endtrans %}: {{ event.maximalClosedIstsCount }}</p>
+                <p>{% trans %}dashboard-admin.openIst{% endtrans %}: {{ ists.getOpenCount }}</p>
+                <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}: {{ ists.getClosedCount }}</p>
+                <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}: {{ ists.getApprovedCount }}
+                    ({{ ists.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
+                <p>{% trans %}dashboard-admin.paidIst{% endtrans %}: {{ ists.getPaidCount }}</p>
                 {#
                                 <h3>Guest counts</h3>
                                 <p>Limit for Guests: {{ event.maximalClosedGuestsCount }}</p>
