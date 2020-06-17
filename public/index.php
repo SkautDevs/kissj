@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 session_start();
 
@@ -14,12 +14,13 @@ if ($_ENV['DEBUG'] === 'false') {
 }
 $container = $containerBuilder->build();
 $app = \DI\Bridge\Slim\Bridge::create($container);
+$app->setBasePath($_ENV['BASEPATH']);
 
 // Register middleware // TODO move into class
-require __DIR__.'/src/middleware.php';
+require __DIR__.'/../src/middleware.php';
 
 // Register routes // TODO move into class
-require __DIR__.'/src/routes.php';
+require __DIR__.'/../src/routes.php';
 
 // Run app
 $app->run();

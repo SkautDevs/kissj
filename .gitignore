@@ -10,3 +10,4 @@
 *.env
 *.sqlite
 !db_init.sqlite
+!/logs/.gitkeep

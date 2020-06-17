@@ -2,7 +2,6 @@
 
 namespace kissj\Payment;
 
-use http\Exception\RuntimeException;
 use kissj\Orm\Repository;
 
 class PaymentRepository extends Repository {
@@ -20,7 +19,7 @@ class PaymentRepository extends Repository {
         /** @var Payment $payment */
         foreach ($payments as $payment) {
             if (array_key_exists($payment->variableSymbol, $finalPayments)) {
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     'More payments with same variable symbol existing: '.$payment->variableSymbol
                 );
             }

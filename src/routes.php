@@ -18,10 +18,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 
-$app->redirect('/', '/v2');
+$app->redirect($app->getBasePath() ?: '/', $app->getBasePath().'/v2/kissj');
 
-$app->group('/v2', function (RouteCollectorProxy $app) {
-    $app->redirect('', '/v2/kissj');
+$app->group($app->getBasePath().'/v2', function (RouteCollectorProxy $app) {
+    $app->redirect('', $app->getBasePath().'/v2/kissj');
 
     $app->group('/kissj', function (RouteCollectorProxy $app) {
         $app->get('', UserController::class.'::landing')->setName('landing');
@@ -267,7 +267,7 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
 
                 $app->post('/cancelPayment/{paymentId}', AdminController::class.'::cancelPayment')
                     ->setName('admin-cancel-payment');
-                
+
                 $app->post('/cancelDuePayments', AdminController::class.'::cancelAllDuePayments')
                     ->setName('admin-cancel-due-payments');
 
@@ -290,7 +290,7 @@ $app->group('/v2', function (RouteCollectorProxy $app) {
                     $app->post('/setPaymentUnrelated/{paymentId}', AdminController::class.'::markBankPaymentUnrelated')
                         ->setName('admin-set-payment-unrelated');
                 });
-                
+
                 $app->get('/showTransferPayment', AdminController::class.'::showTransferPayment')
                     ->setName('admin-show-transfer-payment');
 

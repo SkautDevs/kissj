@@ -2,17 +2,18 @@
 
 $dbName = 'db_dev.sqlite';
 
-if (is_file(__DIR__.'/.env')) {
+if (is_file(__DIR__.'/../.env')) {
     echo('Sorry, installation has been done before. Delete file .env to restart it');
     die;
 }
 
-if (is_file(__DIR__.'/src/'.$dbName)) {
+if (is_file(__DIR__.'/../src/'.$dbName)) {
     echo('Sorry, installation has been done before. Delete src/'.$dbName.' to restart it');
     die;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $basename = str_replace('/install.php', '', $_SERVER['REQUEST_URI']);
     echo '
 <!DOCTYPE html>
 <head><title>KISSJ - installation</title></head>
@@ -20,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <h1>KISSJ installation</h1>
     <form method="POST">
         <h2>Administrator</h2>
+        <input name="basepath" type="hidden" value="'.$basename.'" required>
         <label>Amidninistrator email: <input name="administrator_email" type="email" required></label><br>
         <h2>Adminer</h2>
         <label>Admin login: <input name="adminer_login" type="text" required></label><br>
@@ -57,21 +59,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // set enviromental variables
 
-if (!copy(__DIR__.'/.env.example', __DIR__.'/.env')) {
+if (!copy(__DIR__.'/../.env.example', __DIR__.'/../.env')) {
     echo 'failed to copy .env.example - please check permissions';
     die;
 }
 
-if (!chmod(__DIR__.'/.env', 0666)) {
+if (!chmod(__DIR__.'/../.env', 0666)) {
     echo 'failed to set .env right permission - please check permissions';
     die;
 }
 
-$envFile = file(__DIR__.'/.env');
+$envFile = file(__DIR__.'/../.env');
 $newEnvFile = array_map(function ($line) {
     $explodedLine = explode('=', $line);
 
     switch ($explodedLine[0]) {
+        case 'BASEPATH':
+            return 'BASEPATH="'.$_POST['basepath'].'"'.PHP_EOL;
+
         case 'ADMINER_LOGIN':
             return 'ADMINER_LOGIN="'.$_POST['adminer_login'].'"'.PHP_EOL;
 
@@ -89,7 +94,7 @@ $newEnvFile = array_map(function ($line) {
     }
 }, $envFile);
 
-if (!file_put_contents(__DIR__.'/.env', implode('', $newEnvFile))) {
+if (!file_put_contents(__DIR__.'/../.env', implode('', $newEnvFile))) {
     echo 'failed to write into .env - please check permissions';
     die;
 }
@@ -97,19 +102,19 @@ if (!file_put_contents(__DIR__.'/.env', implode('', $newEnvFile))) {
 // init sqlite database
 
 try {
-    $pdo = new PDO('sqlite:'.__DIR__.'/src/'.$dbName);
+    $pdo = new PDO('sqlite:'.__DIR__.'/../src/'.$dbName);
 } catch (PDOException $e) {
     echo 'failed to create new sqlite database file - check permissions';
     die;
 }
 
-if (!chmod(__DIR__.'/src/'.$dbName, 0666)) {
+if (!chmod(__DIR__.'/../src/'.$dbName, 0666)) {
     echo 'failed to set db file '.$dbName.' right permission - please check permissions';
     die;
 }
 
 try {
-    $pdo->exec(file_get_contents(__DIR__.'/sql/init.sql'));
+    $pdo->exec(file_get_contents(__DIR__.'/../sql/init.sql'));
 
     $quotedNow = '"'.date(DATE_ATOM).'"';
     $queryEvent = $pdo->prepare('INSERT INTO `event` (
@@ -168,7 +173,7 @@ try {
         echo 'failed to prepare admininistrator data into query';
         die;
     }
-    
+
     $resultAdministrator = $queryAdminstrator->execute([$_POST['administrator_email']]);
 
     if ($resultAdministrator === false) {
@@ -181,5 +186,5 @@ try {
     die;
 }
 
-
-echo('done');
+echo('Do not forget set mail settings correctly into .nev file!<br/>
+<a href="'.$_POST['basepath'].'">done - continue to app</a>');

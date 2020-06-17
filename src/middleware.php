@@ -2,6 +2,7 @@
 
 use Middlewares\TrailingSlash;
 use Monolog\Logger;
+use Selective\BasePath\BasePathMiddleware;
 use Slim\Middleware\ContentLengthMiddleware;
 use Slim\Views\TwigMiddleware;
 use Whoops\Exception\Inspector;
@@ -21,9 +22,7 @@ $app->add(\kissj\Middleware\UserAuthenticationMiddleware::class);
 
 // ROUTING
 $app->addRoutingMiddleware();
-
-//CORRECT SUBFOLDER -> BASE PATH
-//$app->add(BasePathMiddleware::class);
+$app->add(new BasePathMiddleware($app)); // must be after addRoutingMiddleware()
 
 // TWIG
 $app->add(TwigMiddleware::createFromContainer($app, \Slim\Views\Twig::class));
