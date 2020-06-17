@@ -146,11 +146,12 @@ class PaymentService {
         $duePayments = $this->paymentRepository->getDuePayments();
         $deniedPaymentsCount = 0;
 
-        foreach(array_slice($duePayments, 0, $limit) as $payment) {
+        foreach (array_slice($duePayments, 0, $limit) as $payment) {
             $this->cancelPayment($payment);
-            
+
             $this->userService->openRegistration($payment->participant->user);
             $this->mailer->sendDuePaymentDenied($payment->participant);
+            $this->logger->info('Payment ID '.$payment->id.' was automatically denied because payment due');
             $deniedPaymentsCount++;
         }
 

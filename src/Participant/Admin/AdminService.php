@@ -11,6 +11,7 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminService {
@@ -20,6 +21,7 @@ class AdminService {
     private $mailer;
     private $translator;
     private $paymentRepository;
+    private $logger;
 
     public function __construct(
         UserRepository $userRepository,
@@ -27,7 +29,8 @@ class AdminService {
         PaymentRepository $paymentRepository,
         PaymentService $paymentService,
         PhpMailerWrapper $mailer,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        LoggerInterface $logger
     ) {
         $this->userRepository = $userRepository;
         $this->participantRepository = $participantRepository;
@@ -35,6 +38,7 @@ class AdminService {
         $this->paymentService = $paymentService;
         $this->mailer = $mailer;
         $this->translator = $translator;
+        $this->logger = $logger;
     }
 
     public function isPaymentTransferPossible(
@@ -110,7 +114,7 @@ class AdminService {
         }
 
         $correctPayment->participant = $participantTo;
-        
+
         $userFrom = $participantFrom->user;
         $userFrom->status = User::STATUS_OPEN;
 
@@ -124,5 +128,8 @@ class AdminService {
 
         $this->mailer->sendRegistrationPaid($participantTo);
         $this->mailer->sendPaymentTransferedFromYou($participantFrom);
+
+        $this->logger->info('Tranfered payment ID '.$correctPayment->id
+            .' from participant ID '.$userFrom->id.' to participant ID '.$userTo->id);
     }
 }
