@@ -205,7 +205,6 @@ class PaymentService {
                 if ($payment->price === $bankPayment->price) {
                     // match!
                     $this->confirmPayment($payment);
-                    $this->mailer->sendRegistrationPaid($payment->participant);
                     $this->logger->info('Payment ID '.$payment->id.' automatically set to status '.$payment->status);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
