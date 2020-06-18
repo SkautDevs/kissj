@@ -13,7 +13,7 @@ class PaymentImportTest extends BaseTestCase {
      */
     public function testImportPaymentData() {
         $importer = new MoneyS3CSV(__DIR__."/money_s3.csv");
-        list($payments, $errors) = $importer->getPayments();
+        [$payments, $errors] = $importer->getPayments();
 
         $this->assertEquals(2, count($payments));
         $this->assertEquals(0, count($errors));

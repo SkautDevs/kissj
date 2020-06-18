@@ -46,13 +46,14 @@
         "zeuxisoo/slim-whoops": "0.7.*"
     },
     "require-dev": {
+        "mockery/mockery": "dev-master",
         "phpstan/phpstan": "^0.12.9",
-        "phpunit/phpunit": "^6.5",
+        "phpunit/phpunit": "^9",
         "roave/security-advisories": "dev-master"
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "Tests/",
+            "Tests\\": "tests/",
             "kissj\\": "src/"
         }
     },
@@ -61,6 +62,6 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit Tests/"
     }
 }

@@ -47,8 +47,7 @@ class PaymentService {
 
     public function createAndPersistNewPayment(Participant $participant): Payment {
         do {
-            $prefix = $participant->user->event->prefixVariableSymbol;
-            $variableNumber = $prefix.str_pad(random_int(0, 999999), strlen($prefix), '0', STR_PAD_LEFT);
+            $variableNumber = $this->getVariableNumber($participant->user->event->prefixVariableSymbol);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
 
         $event = $participant->user->event;
@@ -230,6 +229,24 @@ class PaymentService {
         if ($counterUnknownPayment) {
             $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized').$counterUnknownPayment);
         }
+    }
+
+    protected function getVariableNumber(?int $prefix): string {
+        if ($prefix === null) {
+            return str_pad(random_int(0, 9999999999), 10, '0', STR_PAD_LEFT);
+        }
+
+        $prefixLength = strlen((string)$prefix);
+        if ($prefixLength > 5) {
+            throw new \RuntimeException('prefix is too long: '.$prefix);
+        }
+
+        $variableNumber = (string)$prefix;
+        for ($i = 0; $i < 10 - $prefixLength; $i++) {
+            $variableNumber .= random_int(0, 9);
+        }
+
+        return $variableNumber;
     }
 
     # Jak vygenerovat hezci CSV z Money S3
