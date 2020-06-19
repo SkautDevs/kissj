@@ -69,9 +69,14 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
         }
 
         $negotiator = new \Negotiation\LanguageNegotiator();
+        $header = $request->getHeaderLine('Accept-Language');
+        if ($header === '') {
+            return $this->defaultLocale;
+        }
+
         /** @var AcceptLanguage $negotiatedLanguage */
-        $negotiatedLanguage = $negotiator->getBest($request->getHeaderLine('Accept-Language'), $this->availableLanguages);
-        
+        $negotiatedLanguage = $negotiator->getBest($header, $this->availableLanguages);
+
         return $negotiatedLanguage ? $negotiatedLanguage->getValue() : $this->defaultLocale;
     }
 }

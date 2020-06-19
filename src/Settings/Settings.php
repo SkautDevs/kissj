@@ -33,10 +33,15 @@ use function DI\get;
 class Settings {
     private const LOCALES_AVAILABLE = ['en', 'cs'];
 
-    public function getContainerDefinition(): array {
+    public function getContainerDefinition(
+        string $envPath = __DIR__.'/../..',
+        string $envFilename = '.env',
+        string $dbFullPath = __DIR__.'/../db_dev.sqlite'
+    ): array {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
+        $_ENV['DB_FULL_PATH'] = $dbFullPath; // do not allow change DB path in .env
 
-        $dotenv = Dotenv::createImmutable(__DIR__.'/../..', '.env');
+        $dotenv = Dotenv::createImmutable($envPath, $envFilename);
         $dotenv->load();
         $this->validateAllSettings($dotenv);
 
@@ -56,7 +61,7 @@ class Settings {
         $container[Connection::class] = function (): Connection {
             return new Connection([
                 'driver' => 'sqlite3',
-                'database' => __DIR__.'/../db_dev.sqlite', // keep extension for safety - excluded in .gitignore
+                'database' => $_ENV['DB_FULL_PATH'],
             ]);
         };
 

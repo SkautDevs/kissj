@@ -1,9 +1,6 @@
-<phpunit
-        bootstrap="tests/bootstrap.php"
-        backupGlobals="false"
->
+<phpunit bootstrap="tests/bootstrap.php" backupGlobals="false">
     <testsuites>
-        <testsuite name="SlimSkeleton">
+        <testsuite name="kissj">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

@@ -2,12 +2,15 @@
 /attachments/*
 /backups/*
 /docs
+/forms
 /logs/*
-/temp/*
+!/logs/.gitkeep
 /vendor/*
-/composer.phar
+/temp/*
+/tests/temp/*
+!/tests/temp/.gitkeep
 
+/composer.phar
 *.env
 *.sqlite
 !db_init.sqlite
-!/logs/.gitkeep
