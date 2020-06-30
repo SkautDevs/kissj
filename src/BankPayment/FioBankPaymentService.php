@@ -38,16 +38,18 @@ class FioBankPaymentService implements IBankPaymentService {
         // TODO deduplicate persisted and new ones, possibly by moveId
         $freshPayments = $this->fioRead->lastDownload();
         foreach ($freshPayments as $freshPayment) {
-            $bankPayment = new BankPayment();
-            $bankPayment->mapTransactionInto($freshPayment);
-            // TODO optimalize
-            $this->bankPaymentRepository->persist($bankPayment);
+            if ($freshPayment->volume > 0) { // get only incomes
+                $bankPayment = new BankPayment();
+                $bankPayment->mapTransactionInto($freshPayment);
+                // TODO optimalize
+                $this->bankPaymentRepository->persist($bankPayment);
+            }
         }
 
         return count($freshPayments);
     }
 
-    public function setBankPaymentPaired(int $paymentId): BankPayment  {
+    public function setBankPaymentPaired(int $paymentId): BankPayment {
         /** @var BankPayment $bankPayment */
         $bankPayment = $this->bankPaymentRepository->find($paymentId);
         $bankPayment->status = BankPayment::STATUS_PAIRED;
