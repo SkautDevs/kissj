@@ -13,13 +13,18 @@ use Slim\Psr7\Request;
 use Slim\Psr7\Uri;
 
 class AppTestCase extends TestCase {
-    protected function getTestApp(): App {
-        $this->clearTempFolder();
+    protected function getTestApp(bool $freshInit = true): App {
 
         $testDbFullPath = __DIR__.'/temp/db_tests.sqlite';
-
-        $pdo = new \PDO('sqlite:'.$testDbFullPath);
-        $pdo->exec(file_get_contents(__DIR__.'/../sql/init.sql'));
+        if ($freshInit) {
+            $this->clearTempFolder();
+            $pdo = new \PDO('sqlite:'.$testDbFullPath);
+            $sqlInit = file_get_contents(__DIR__.'/../sql/init.sql');
+            if ($sqlInit === false) {
+                throw new \RuntimeException('loading of sql/init.sql file failed');
+            }
+            $pdo->exec($sqlInit);
+        }
 
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
@@ -44,8 +49,9 @@ class AppTestCase extends TestCase {
     protected function createRequest(
         string $path,
         string $method = 'GET',
-        array $cookies = [],
-        array $serverParams = []
+        array $body = [],
+        array $serverParams = [],
+        array $cookies = []
     ): Request {
         $uri = new Uri('', '', 80, $path);
         $handle = fopen('php://temp', 'wb+');
@@ -56,7 +62,13 @@ class AppTestCase extends TestCase {
             $headers->addHeader($name, $value);
         }
 
-        return new Request($method, $uri, $headers, $cookies, $serverParams, $stream);
+        $request = new Request($method, $uri, $headers, $cookies, $serverParams, $stream);
+
+        if (count($body) > 0) {
+            return $request->withParsedBody($body);
+        }
+
+        return $request;
     }
 
     protected function clearTempFolder(): void {

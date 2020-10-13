@@ -18,10 +18,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 
-$app->redirect($app->getBasePath() ?: '/', $app->getBasePath().'/v2/kissj');
+$app->redirect($app->getBasePath() ?: '/', $app->getBasePath().'/v2/kissj', 301);
 
 $app->group($app->getBasePath().'/v2', function (RouteCollectorProxy $app) {
-    $app->redirect('', $app->getBasePath().'/v2/kissj');
+    $app->redirect('', $app->getBasePath().'/v2/kissj', 301);
 
     $app->group('/kissj', function (RouteCollectorProxy $app) {
         $app->get('', UserController::class.'::landing')->setName('landing');
@@ -75,48 +75,48 @@ $app->group($app->getBasePath().'/v2', function (RouteCollectorProxy $app) {
         $app->group('', function (RouteCollectorProxy $app) {
             $app->get('/getDashboard', UserController::class.'::getDashboard')
                 ->setName('getDashboard');
-            /*
-                        $app->group('/patrol', function (RouteCollectorProxy $app) {
-                            $app->get('/dashboard', PatrolController::class.'::showDashboard')
-                                ->setName('pl-dashboard');
+
+            $app->group('/patrol', function (RouteCollectorProxy $app) {
+                $app->get('/dashboard', PatrolController::class.'::showDashboard')
+                    ->setName('pl-dashboard');
+
+                $app->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
+                    ->setName('p-show');
+
+                $app->group('', function (RouteCollectorProxy $app) {
+                    $app->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
+                        ->setName('pl-showDetailsChangeable');
+
+                    $app->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
+                        ->setName('pl-changeDetails');
+
+                    $app->get('/closeRegistration', PatrolController::class.'::showCloseRegistration')
+                        ->setName('pl-showCloseRegistration');
+
+                    $app->post('/closeRegistration', PatrolController::class.'::closeRegistration')
+                        ->setName('pl-closeRegistration');
+
+                    $app->post('/addParticipant', PatrolController::class.'::addParticipant')
+                        ->setName('pl-addParticipant');
+
+                    $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
+                        $app->get('/showChangeDetails',
+                            PatrolController::class.'::showChangeDetailsPatrolParticipant')
+                            ->setName('p-showChangeDetails');
+
+                        $app->post('/changeDetails', PatrolController::class.'::changeDetailsPatrolParticipant')
+                            ->setName('p-changeDetails');
+
+                        $app->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
+                            ->setName('p-showDelete');
+
+                        $app->post('/delete', PatrolController::class.'::deleteParticipant')
+                            ->setName('p-delete');
+
+                    })->add(\kissj\Middleware\CheckPatrolLeaderParticipants::class);
+                })->add(OpenStatusOnlyMiddleware::class);
+            })->add(\kissj\Middleware\PatrolLeadersOnlyMiddleware::class);
             
-                            $app->get('/participant/{participantId}/show', PatrolController::class.'::showParticipant')
-                                ->setName('p-show');
-            
-                            $app->group('', function (RouteCollectorProxy $app) {
-                                $app->get('/changeDetails', PatrolController::class.'::showDetailsChangeableLeader')
-                                    ->setName('pl-showDetailsChangeable');
-            
-                                $app->post('/changeDetails', PatrolController::class.'::changeDetailsLeader')
-                                    ->setName('pl-changeDetails');
-            
-                                $app->get('/closeRegistration', PatrolController::class.'::showCloseRegistration')
-                                    ->setName('pl-showCloseRegistration');
-            
-                                $app->post('/closeRegistration', PatrolController::class.'::closeRegistration')
-                                    ->setName('pl-closeRegistration');
-            
-                                $app->post('/addParticipant', PatrolController::class.'::addParticipant')
-                                    ->setName('pl-addParticipant');
-            
-                                $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
-                                    $app->get('/showChangeDetails',
-                                        PatrolController::class.'::showChangeDetailsPatrolParticipant')
-                                        ->setName('p-showChangeDetails');
-            
-                                    $app->post('/changeDetails', PatrolController::class.'::changeDetailsPatrolParticipant')
-                                        ->setName('p-changeDetails');
-            
-                                    $app->get('/showDelete', PatrolController::class.'::showDeleteParticipant')
-                                        ->setName('p-showDelete');
-            
-                                    $app->post('/delete', PatrolController::class.'::deleteParticipant')
-                                        ->setName('p-delete');
-            
-                                })->add(\kissj\Middleware\CheckPatrolLeaderParticipants::class);
-                            })->add(OpenStatusOnlyMiddleware::class);
-                        })->add(\kissj\Middleware\PatrolLeadersOnlyMiddleware::class);
-            */
             $app->group('/ist', function (RouteCollectorProxy $app) {
                 $app->get('/dashboard', IstController::class.'::showDashboard')
                     ->setName('ist-dashboard');

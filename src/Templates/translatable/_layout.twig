@@ -20,7 +20,7 @@
 <body class="wrapper">
 <h1 class="text-center">{% trans %}_layout.title{% endtrans %} - {{ event.readableName }}</h1>
 <div class="user text-right">
-    <a href="?locale=cs">Česky</a> | <a href="?locale=en">English</a>
+    <a href="?locale=cs">Česky</a> | <a href="?locale=sk">Slovensky</a> | <a href="?locale=en">English</a>
     {% if user is not null %}
         | {{ user.email }}
         <a class="" href="{{ url_for('logout') }}">{% trans %}_layout.logOut{% endtrans %}</a>

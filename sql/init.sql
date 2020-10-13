@@ -140,4 +140,7 @@ create table payment
 create unique index user_email_uindex
 	on user (email);
 
-
+insert into event (id, slug, readable_name) 
+	values (1, 'test-event-slug', 'test-event-readable-name');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+																																																																																																																 )

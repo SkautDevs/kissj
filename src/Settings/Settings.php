@@ -31,7 +31,7 @@ use function DI\create;
 use function DI\get;
 
 class Settings {
-    private const LOCALES_AVAILABLE = ['en', 'cs'];
+    private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
     public function getContainerDefinition(
         string $envPath = __DIR__.'/../..',
@@ -116,6 +116,7 @@ class Settings {
 
             $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
             $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
+            $translator->addResource('yaml', __DIR__.'/../Templates/sk.yaml', 'sk');
             $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
 
             return $translator;

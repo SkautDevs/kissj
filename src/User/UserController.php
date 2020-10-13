@@ -83,16 +83,7 @@ class UserController extends AbstractController {
     }
 
     public function chooseRole(User $user, Request $request, Response $response) {
-        // TODO make this dynamic for more roles
-        if (true) {
-            $this->userService->setRole($user, User::ROLE_IST);
-            $this->flashMessages->dumpMessagesIntoArray(); // empty false warning TODO make more smartyy 
-            return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
-        }
-
-        return $this->view->render($response, 'kissj/choose-role.twig', [
-            'event' => $user->event,
-        ]);
+        return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $user->event,]);
     }
 
     public function setRole(User $user, Request $request, Response $response) {

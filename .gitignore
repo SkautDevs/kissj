@@ -9,8 +9,8 @@
 /temp/*
 /tests/temp/*
 !/tests/temp/.gitkeep
+.phpunit.result.cache
 
-/composer.phar
 *.env
 *.sqlite
 !db_init.sqlite
