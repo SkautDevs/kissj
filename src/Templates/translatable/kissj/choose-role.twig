@@ -3,15 +3,15 @@
 {% block content %}
     <div class="two-cards">
         <div class="card registration-theme">
-            <h2>Choose your role</h2>
+            <h2>{% trans %}chooseRole.chooseRole{% endtrans %}</h2>
             <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="pl">
-                <input type="submit" class="btn form-wide" value="Register as Patrol Leader!">
+                <input type="submit" class="btn form-wide" value="{% trans %}chooseRole.registerAsPl{% endtrans %}">
             </form>
             <br/>
             <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                 <input type="hidden" name="role" value="ist">
-                <input type="submit" class="btn form-wide" value="Register as Servis Team!">
+                <input type="submit" class="btn form-wide" value="{% trans %}chooseRole.registerAsIst{% endtrans %}">
             </form>
             <br/>
             {#<form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
@@ -27,17 +27,9 @@
         </div>
 
         <div class="card approved-theme">
-            <h2>Advice on roles</h2>
-            <p><b>Patrol Leader</b> is a leader of a group of participants. S/he is responsible for the patrol
-                throughout whole event and also registers participants and pays the registration fee for whole patrol
-            </p>
-            <p><b>Service Team</b> or <b>IST</b> stands for International Service Team. It is a bunch of adult
-                volunteers without whom the event wouldn't take place
-                - they attend the event to help the organizers </p>
-            {#<p><b>Participants without patrol</b> is a participant without patrol. We will try to find them a patrol
-                to join, but cannot guarantee participation. Payment is requested after finding a patrol to join.</p>
-            <p><b>Guest</b> is invited for a particular part of the event - you should know when you can register as
-                guest</p>#}
+            <h2>{% trans %}chooseRole.rolesAdvice{% endtrans %}</h2>
+            <p><b>{% trans %}chooseRole.advicePlHeader{% endtrans %}</b> {% trans %}chooseRole.advicePlText{% endtrans %}</p>
+            <p><b>{% trans %}chooseRole.adviceIstHeader{% endtrans %}</b> {% trans %}chooseRole.adviceIstText{% endtrans %}</p>
         </div>
     </div>
 {% endblock %}

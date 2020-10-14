@@ -103,21 +103,21 @@ class IstService {
             || $ist->permanentResidence === null
             || $ist->country === null
             || $ist->scoutUnit === null
-            //|| $ist->foodPreferences === null
+            || $ist->foodPreferences === null
             //|| $ist->languages === null
-            //|| $ist->swimming === null
+            || $ist->swimming === null
             //|| $ist->driversLicense === null
             //|| $ist->preferredPosition === null
-            //|| $ist->getTshirtShape() === null
-            //|| $ist->getTshirtSize() === null
+            || $ist->getTshirtShape() === null
+            || $ist->getTshirtSize() === null
         ) {
             return false;
         }
-        /*
-                if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
-                    return false;
-                }
-        */
+
+        /*if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
+            return false;
+        }*/
+
         return true;
     }
 
