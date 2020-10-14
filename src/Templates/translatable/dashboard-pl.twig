@@ -2,56 +2,80 @@
 
 {% block content %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{{ pl.getPatrolName }} patrol details</h2>
+        <h2>{{ pl.getPatrolName }} {% trans %}dashboard.details{% endtrans %}</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'pl'} %}
         </h4>
-        {% if userStatus == 'approved' %}
-            <div class="paymentInfo">
-                <h2>Payment details</h2>
-                International Bank Account Number (IBAN): {{ payment.getAccountNumber }}<br/>
-                SWIFT/BIC: TATRSKBX<br/>
-                Amount: {{ payment.getPrice }} EUR<br/>
-                Variable symbol: 51220 {# TODO fix for general event #}<br/>
-                Constant symbol (may be not available in your bank): 0558<br/>
-                Note: {{ payment.getNote }}<br/>
-                <br/>
-            </div>
+        {% if ist.getPayments %}
+            <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
+            {% for payment in pl.getPayments %}
+                <div class="payment {% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+                    {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
+                    {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
+                    <br/>
+                    {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
+                    {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
+                    <br/>
+                </div>
+            {% endfor %}
         {% endif %}
-
+        
         <div class="card-divide">
             <div>
                 <h2>Patrol Leader {{ pl.getFullName }}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
-                        Edit your own details</a><br/><br/>
+                        {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
-                    Patrol name: <b>{{ pl.getPatrolName }}</b><br/>
+                    {% trans %}detail.firstName{% endtrans %}: <b>{{ ist.getFirstName }}</b><br/>
+                    {% trans %}detail.surname{% endtrans %}: <b>{{ ist.getLastName }}</b><br/>
+                    {% trans %}detail.scoutNick{% endtrans %}: <b>{{ ist.getNickname }}</b><br/>
+                    {% trans %}detail.birthDate{% endtrans %}: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.gender{% endtrans %}: <b>
+                        {% if ist.getGender  == 'man' %}
+                            {% trans %}changeDetails-ist.genderMan{% endtrans %}
+                        {% elseif ist.getGender  == 'woman' %}
+                            {% trans %}changeDetails-ist.genderWoman{% endtrans %}
+                        {% elseif ist.getGender  == 'other' %}
+                            {% trans %}changeDetails-ist.genderOther{% endtrans %}
+                        {% endif %}</b><br/>
+                    {# {% trans %}detail.email{% endtrans %}: <b>{{ ist.getEmail }}</b><br/>
+                {% trans %}detail.phone{% endtrans %}: <b>{{ ist.getTelephoneNumber }}</b><br/>#}
+                    {% trans %}detail.address{% endtrans %}: <b>{{ ist.getPermanentResidence }}</b><br/>
+                    {% trans %}detail.country{% endtrans %}: <b>
+                        {% if ist.getCountry == 'Czech' %}
+                            {% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
+                        {% elseif ist.getCountry == 'other' %}
+                            {% trans %}changeDetails-ist.countryOther{% endtrans %}
+                        {% endif %}</b><br/>
+                    {% trans %}detail.unit{% endtrans %}: <b>{{ ist.getScoutUnit }}</b><br/>
+                    {# {% trans %}detail.thisrtSize{% endtrans %}: <b>{{ ist.getTshirt }}</b><br/>
+                {% trans %}detail.foodHeader{% endtrans %}: <b>{{ ist.getFoodPreferences }}</b><br/>#}
+                    {% trans %}detail.issues{% endtrans %}: <b>{{ ist.getHealthProblems }}</b><br/>
+                    {#Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
+                {% trans %}detail.swimSkill{% endtrans %}: <b>{{ ist.getSwimming }}</b><br/> TODO
+                {% trans %}detail.driver{% endtrans %}: <b>{{ ist.getDriversLicense }}</b><br/>
+                Skills: <b>{{ ist.getSkills }}</b><br/>
+                Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>#}
+                    {% trans %}detail.scarf{% endtrans %}: <b>
+                        {% if ist.getScarf  == 'yes' %}
+                            {% trans %}changeDetails-ist.scarfYes{% endtrans %}
+                        {% elseif ist.getScarf  == 'no' %}
+                            {% trans %}changeDetails-ist.scarfNo{% endtrans %}
+                        {% endif %}</b><br/>
+                    {% if ist.getUploadedFilename %}
+                        {% trans %}detail.uploadedFile{% endtrans %}: <b>Soubor úspěšně nahraný!</b><br/>
+                    {% endif %}
+                    {% trans %}detail.notice{% endtrans %}: <b>{{ ist.getNotes }}</b><br/>
                     <br/>
-                    First name: <b>{{ pl.getFirstName }}</b><br/>
-                    Surname: <b>{{ pl.getLastName }}</b><br/>
-                    Scout nickname: <b>{{ pl.getNickname }}</b><br/>
-                    Date of birth: <b>{{ pl.getBirthDate.format('d. m. Y') }}</b><br/>
-                    Gender: <b>{{ pl.getGender }}</b><br/>
-                    Email: <b>{{ pl.getEmail }}</b><br/>
-                    Phone number: <b>{{ pl.getTelephoneNumber }}</b><br/>
-                    Permanent Address: <b>{{ pl.getPermanentResidence }}</b><br/>
-                    Country: <b>{{ pl.getCountry }}</b><br/>
-                    Scout unit: <b>{{ pl.getScoutUnit }}</b><br/>
-                    T-shirt size: <b>{{ pl.getTshirt }}</b><br/>
-                    Diet Restriction: <b>{{ pl.getFoodPreferences }}</b><br/>
-                    Health issues: <b>{{ pl.getHealthProblems }}</b><br/>
-                    Languages you speak + level: <b>{{ pl.getLanguages }}</b><br/>
-                    Swimming skill: <b>{{ pl.getSwimming }}</b><br/>
-                    Notes: <b>{{ pl.getNotes }}</b><br/>
                 </div>
             </div>
             <div>
-                <h2>List of participants</h2>
+                <h2>{% trans %}dashboard.listOfParticipants{% endtrans %}</h2>
                 {% if userStatus == 'open' %}
                     <form method="POST" action="{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
-                        <input type="submit" value="Add a participant" class="btn btn-small">
+                        <input type="submit" value="{% trans %}dashboard.addParticipant{% endtrans %}" class="btn btn-small">
                     </form>
                     <br/>
                 {% endif %}
@@ -59,7 +83,7 @@
                 <ol class="text-center">
                     {% for p in particiants %}
                         <li>
-                            participant - <b>{{ p.getFullName }}</b>
+                            {% trans %}role.p{% endtrans %} - <b>{{ p.getFullName }}</b>
                             {% if userStatus == 'open' %}
                                 <!-- edit --><a
                                     href="{{ url_for('p-showChangeDetails',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
@@ -72,21 +96,20 @@
                                     href="{{ url_for('p-show',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                         class="material-icons">search</i></a>
                             {% endif %}
-
                         </li>
                         {% set count = count + 1 %}
                     {% endfor %}
                 </ol>
                 {% if userStatus == 'open' %}
                     <p>
-                        You need
+                        {% trans %}dashboard.youNeed {% endtrans %}
                         {% if event.minimalPatrolParticipantsCount == event.maximalPatrolParticipantsCount %}
-                            exactly {{ event.minimalPatrolParticipantsCount }}
+                            {% trans %}dashboard.exactly {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
                         {% else %}
-                            minimally {{ event.minimalPatrolParticipantsCount }}
-                            and maximally {{ event.maximalPatrolParticipantsCount }}
+                            {% trans %}dashboard.minimally {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
+                            {% trans %}dashboard.andMaximally {% endtrans %} {{ event.maximalPatrolParticipantsCount }}
                         {% endif %}
-                        participants for valid registration
+                        {% trans %}dashboard.pForValidReg {% endtrans %}
                     </p>
                 {% endif %}
             </div>
@@ -94,7 +117,7 @@
 
         {% if userStatus == 'open' %}
             <a class="btn btn-small" href="{{ url_for('pl-showCloseRegistration', {'eventSlug': event.slug}) }}">
-                Lock registration
+                {% trans %}dashboard.lockRegistration{% endtrans %}
             </a>
         {% endif %}
     </div>

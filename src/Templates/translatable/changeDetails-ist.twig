@@ -2,89 +2,89 @@
 
 {% block content %}
     <div class="card text-left open-theme">
-        <h2>{% trans %}changeDetails-ist.editDetails{% endtrans %}</h2>
+        <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.firstName{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.firstName{% endtrans %}: <input
                         class="form-control" type="text"
                         name="firstName"
                         value="{{ istDetails.getFirstName }}"
                         required="required"></label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.surname{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.surname{% endtrans %}: <input
                         class="form-control" type="text"
                         name="lastName"
                         value="{{ istDetails.getLastName }}"
                         required="required"></label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.scoutNick{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.scoutNick{% endtrans %}: <input
                         class="form-control" type="text"
                         name="nickname"
                         value="{{ istDetails.getNickname }}"></label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.birthDate{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.birthDate{% endtrans %}: <input
                         class="form-control" type="date"
                         name="birthDate"
                         value="{{ istDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
                         required="required"></label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.gender{% endtrans %}
+            <label class="form-group form-group-inline">{% trans %}detail.gender{% endtrans %}:
                 <select class="form-control" name="gender" required="required">
                     <option value="man" {% if istDetails.getGender == 'man' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.genderMan{% endtrans %}
+                        {% trans %}detail.genderMan{% endtrans %}
                     </option>
                     <option value="woman" {% if istDetails.getGender == 'woman' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.genderWoman{% endtrans %}
+                        {% trans %}detail.genderWoman{% endtrans %}
                     </option>
                     <option value="other" {% if istDetails.getGender == 'other' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.genderOther{% endtrans %}
+                        {% trans %}detail.genderOther{% endtrans %}
                     </option>
                 </select>
             </label>
 
-            {# <label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
+            {# <label class="form-group form-group-inline">{% trans %}detail.email{% endtrans %}: <input class="form-control" type="email" name="email"
 																	  value="{% if istDetails.getEmail is empty %}{{ user.email }}{% else %}{{ istDetails.getEmail }}{% endif %}"
 																	  required="required"></label>
-			<label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
+			<label class="form-group form-group-inline">{% trans %}detail.phone{% endtrans %}: <input class="form-control" type="text"
 																			 name="telephoneNumber"
 																			 value="{{ istDetails.getTelephoneNumber }}"
 																			 placeholder="digits including country dial-in code"
 																			 pattern="^\+?[0-9 ]+$"
 																			 required="required"></label> #}
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.address{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.address{% endtrans %}: <input
                         class="form-control" type="text"
                         name="permanentResidence"
                         value="{{ istDetails.getPermanentResidence }}"
-                        placeholder="{% trans %}changeDetails-ist.address-placeholder{% endtrans %}"
+                        placeholder="{% trans %}detail.address-placeholder{% endtrans %}"
                         required="required"></label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.country{% endtrans %}
+            <label class="form-group form-group-inline">{% trans %}detail.country{% endtrans %}:
                 <select class="form-control" name="country">
                     <option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.countryCzechRepublic{% endtrans %}
+                        {% trans %}detail.countryCzechRepublic{% endtrans %}
                     </option>
                     <option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.countrySlovakia{% endtrans %}
+                        {% trans %}detail.countrySlovakia{% endtrans %}
                     </option>
                     <option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.countryOther{% endtrans %}
+                        {% trans %}detail.countryOther{% endtrans %}
                     </option>
                 </select>
             </label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.unit{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.unit{% endtrans %}: <input
                         class="form-control" type="text"
                         name="scoutUnit"
                         value="{{ istDetails.getScoutUnit }}"
                         required="required"></label>
             <br>
 
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.thisrtGender{% endtrans %}:
+            <label class="form-group form-group-inline">{% trans %}detail.thisrtGender{% endtrans %}:
                 <select class="form-control" name="tshirtShape" required="required">
                     <option value="lady" {% if istDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.thisrtGenderFemale{% endtrans %}
+                        {% trans %}detail.thisrtGenderFemale{% endtrans %}
                     </option>
                     <option value="gentleman"
                             {% if istDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.thisrtGenderMale{% endtrans %}
+                        {% trans %}detail.thisrtGenderMale{% endtrans %}
                     </option>
                 </select>
             </label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.thisrtSize{% endtrans %}:
+            <label class="form-group form-group-inline">{% trans %}detail.thisrtSize{% endtrans %}:
                 <select class="form-control" name="tshirtSize" required="required">
                     <option value="s" {% if istDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
                         XS - smallest
@@ -106,58 +106,58 @@
                     </option>
                 </select>
             </label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.foodHeader{% endtrans %}:
+            <label class="form-group form-group-inline">{% trans %}detail.foodHeader{% endtrans %}:
                 <select class="form-control" name="foodPreferences" required="required">
                     <option value="no restriction"
                             {% if istDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.foodWithout{% endtrans %}
+                        {% trans %}detail.foodWithout{% endtrans %}
                     </option>
                     <option value="vegetarian"
                             {% if istDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.foodVegetarian{% endtrans %}
+                        {% trans %}detail.foodVegetarian{% endtrans %}
                     </option>
                     <option value="lactoseFree"
                             {% if istDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.foodLactoseFree{% endtrans %}
+                        {% trans %}detail.foodLactoseFree{% endtrans %}
                     </option>
                     <option value="glutenFree"
                             {% if istDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.foodGlutenFree{% endtrans %}
+                        {% trans %}detail.foodGlutenFree{% endtrans %}
                     </option>
                     <option value="other"
                             {% if istDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.foodOther{% endtrans %}
+                        {% trans %}detail.foodOther{% endtrans %}
                     </option>
                 </select>
             </label>
-            {% trans %}changeDetails-ist.foodNote{% endtrans %}
+            {% trans %}detail.foodNote{% endtrans %}
             <br><br>
 
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.issues{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.issues{% endtrans %}: <input
                         class="form-control" type="text"
                         name="healthProblems"
-                        placeholder="{% trans %}changeDetails-ist.issues-placeholder{% endtrans %}"
+                        placeholder="{% trans %}detail.issues-placeholder{% endtrans %}"
                         value="{{ istDetails.getHealthProblems }}">
             </label>
-            {# <label class="form-group form-group-inline">Languages you speak + level: <input class="form-control"
+            {# <label class="form-group form-group-inline">{% trans %}detail.languages{% endtrans %}: <input class="form-control"
 																							type="text"
 																							name="languages"
 																							required="required"
 																							value="{{ istDetails.getLanguages }}">
 			</label> #}
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.swimSkill{% endtrans %}:
+            <label class="form-group form-group-inline">{% trans %}detail.swimSkill{% endtrans %}:
                 <select class="form-control" name="swimming" required="required">
                     <option value="no swim"
                             {% if istDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.swimSkillNo{% endtrans %}
+                        {% trans %}detail.swimSkillNo{% endtrans %}
                     </option>
                     <option value="less than 50 meters"
                             {% if istDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.swimSkillLess50{% endtrans %}
+                        {% trans %}detail.swimSkillLess50{% endtrans %}
                     </option>
                     <option value="more than 50 meters"
                             {% if istDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.swimSkillMore50{% endtrans %}
+                        {% trans %}detail.swimSkillMore50{% endtrans %}
                     </option>
                 </select>
             </label>
@@ -254,32 +254,32 @@
 			</div>
 			<br> #}
             {#
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.scarf{% endtrans %}
+            <label class="form-group form-group-inline">{% trans %}detail.scarf{% endtrans %}: 
                 <select class="form-control" name="scarf">
                     <option value="yes"{% if istDetails.getScarf == 'yes' %} selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.scarfYes{% endtrans %}
+                        {% trans %}detail.scarfYes{% endtrans %}
                     </option>
                     <option value="no"{% if istDetails.getScarf == 'no' %} selected="selected"{% endif %}>
-                        {% trans %}changeDetails-ist.scarfNo{% endtrans %}
+                        {% trans %}detail.scarfNo{% endtrans %}
                     </option>
                 </select>
             </label>
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.uploadFile{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.uploadFile{% endtrans %}: <input
                         class="form-control" type="file" name="uploadFile">
             </label>
             <span class="">PDF s potvrzením najdeš na <a
-                        href="https://drive.google.com/file/d/1k1-NBex72kruoQsX2eWjkqpMy1Qh3_kV">našem disku</a>. 
+                        href="">našem disku</a>. 
 			{% if istDetails.getUploadedFilename %}Soubor už od tebe úspěšně nahraný máme!{% endif %}</span> #}
-            <label class="form-group form-group-inline">{% trans %}changeDetails-ist.notice{% endtrans %}<input
+            <label class="form-group form-group-inline">{% trans %}detail.notice{% endtrans %}: <input
                         class="form-control" type="text" name="notes"
-                        placeholder="{% trans %}changeDetails-ist.notice-placeholder{% endtrans %}"
+                        placeholder="{% trans %}detail.notice-placeholder{% endtrans %}"
                         value="{{ istDetails.getNotes }}">
             </label>
 
             <div class="text-center">
                 <a class="btn btn-small btn-grey"
-                   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">{% trans %}changeDetails-ist.back{% endtrans %}</a>
-                <input class="btn btn-small" type="submit" value="{% trans %}changeDetails-ist.save{% endtrans %}">
+                   href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}">{% trans %}changeDetails.back{% endtrans %}</a>
+                <input class="btn btn-small" type="submit" value="{% trans %}changeDetails.save{% endtrans %}">
             </div>
         </form>
     </div>
