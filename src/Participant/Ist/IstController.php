@@ -3,44 +3,49 @@
 namespace kissj\Participant\Ist;
 
 use kissj\AbstractController;
+use kissj\Event\ContentArbiterIst;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\UploadedFile;
 
 class IstController extends AbstractController {
-    public const UPLOADING_FILES = false;
-    
-    private $istService;
-    private $istRepository;
+    private IstService $istService;
+    private IstRepository $istRepository;
+    private ContentArbiterIst $contentArbiterIst;
 
     public function __construct(
         IstService $istService,
-        IstRepository $istRepository
+        IstRepository $istRepository,
+        ContentArbiterIst $contentArbiterIst
     ) {
         $this->istService = $istService;
         $this->istRepository = $istRepository;
+        $this->contentArbiterIst = $contentArbiterIst;
     }
 
     public function showDashboard(Response $response, User $user): Response {
         return $this->view->render(
             $response,
             'dashboard-ist.twig',
-            ['user' => $user, 'ist' => $this->istService->getIst($user)]
+            ['user' => $user, 'ist' => $this->istService->getIst($user), 'ca' => $this->contentArbiterIst]
         );
     }
 
     public function showDetailsChangeable(Request $request, Response $response): Response {
         $istDetails = $this->istService->getIst($request->getAttribute('user'));
 
-        return $this->view->render($response, 'changeDetails-ist.twig',
-            ['istDetails' => $istDetails]);
+        return $this->view->render(
+            $response,
+            'changeDetails-ist.twig',
+            ['istDetails' => $istDetails, 'ca' => $this->contentArbiterIst]
+        );
     }
 
     public function changeDetails(Request $request, Response $response): Response {
         $ist = $this->istService->getIst($request->getAttribute('user'));
 
-        if (self::UPLOADING_FILES) {
+        if ($this->contentArbiterIst->uploadFile) {
             $uploadedFiles = $request->getUploadedFiles();
             if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
                 // problem - too big file -> not safe anything, because always got nulls in request fields

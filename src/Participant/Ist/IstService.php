@@ -2,6 +2,7 @@
 
 namespace kissj\Participant\Ist;
 
+use kissj\Event\ContentArbiterIst;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
@@ -12,12 +13,13 @@ use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IstService {
-    private $istRepository;
-    private $userService;
-    private $paymentService;
-    private $flashMessages;
-    private $translator;
-    private $mailer;
+    private IstRepository $istRepository;
+    private UserService $userService;
+    private PaymentService $paymentService;
+    private FlashMessagesBySession $flashMessages;
+    private TranslatorInterface $translator;
+    private PhpMailerWrapper $mailer;
+    private ContentArbiterIst $ca;
 
     public function __construct(
         IstRepository $istRepository,
@@ -25,7 +27,8 @@ class IstService {
         PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
         TranslatorInterface $translator,
-        PhpMailerWrapper $mailer
+        PhpMailerWrapper $mailer,
+        ContentArbiterIst $contentArbiter
     ) {
         $this->istRepository = $istRepository;
         $this->userService = $userService;
@@ -33,6 +36,7 @@ class IstService {
         $this->flashMessages = $flashMessages;
         $this->translator = $translator;
         $this->mailer = $mailer;
+        $this->ca = $contentArbiter;
     }
 
     public function getIst(User $user): Ist {
@@ -94,29 +98,29 @@ class IstService {
 
     public function isIstValidForClose(Ist $ist): bool {
         if (
-            $ist->firstName === null
-            || $ist->lastName === null
-            || $ist->birthDate === null
-            || $ist->gender === null
-            //|| $ist->email === null
-            //|| $ist->telephoneNumber === null
-            || $ist->permanentResidence === null
-            || $ist->country === null
-            || $ist->scoutUnit === null
-            || $ist->foodPreferences === null
-            //|| $ist->languages === null
-            || $ist->swimming === null
-            //|| $ist->driversLicense === null
-            //|| $ist->preferredPosition === null
-            || $ist->getTshirtShape() === null
-            || $ist->getTshirtSize() === null
+            ($this->ca->firstName && $ist->firstName === null)
+            || ($this->ca->lastName && $ist->lastName === null)
+            || ($this->ca->birthDate && $ist->birthDate === null)
+            || ($this->ca->gender && $ist->gender === null)
+            || ($this->ca->email && $ist->email === null)
+            || ($this->ca->phone && $ist->telephoneNumber === null)
+            || ($this->ca->address && $ist->permanentResidence === null)
+            || ($this->ca->country && $ist->country === null)
+            || ($this->ca->unit && $ist->scoutUnit === null)
+            || ($this->ca->food && $ist->foodPreferences === null)
+            || ($this->ca->languages && $ist->languages === null)
+            || ($this->ca->swimming && $ist->swimming === null)
+            || ($this->ca->driver && $ist->driversLicense === null)
+            || ($this->ca->preferredPosition && $ist->preferredPosition === null)
+            || ($this->ca->tshirt && $ist->getTshirtShape() === null)
+            || ($this->ca->tshirt && $ist->getTshirtSize() === null)
         ) {
             return false;
         }
 
-        /*if (!empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
+        if ($this->ca->email && empty($ist->email) && filter_var($ist->email, FILTER_VALIDATE_EMAIL) === false) {
             return false;
-        }*/
+        }
 
         return true;
     }
