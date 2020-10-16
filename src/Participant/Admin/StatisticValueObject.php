@@ -7,16 +7,11 @@ use kissj\Payment\Payment;
 use kissj\User\User;
 
 class StatisticValueObject {
-    /** @var int */
-    protected $openCount;
-    /** @var int */
-    protected $closedCount;
-    /** @var int */
-    protected $approvedCount;
-    /** @var int */
-    protected $afterPayment;
-    /** @var int */
-    protected $paidCount;
+    protected int $openCount;
+    protected int $closedCount;
+    protected int $approvedCount;
+    protected int $afterPayment;
+    protected int $paidCount;
 
     /**
      * @param Participant[] $participants

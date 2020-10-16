@@ -11,10 +11,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
 class UserService {
-    private $userRepository;
-    private $mailer;
-    private $loginTokenRepository;
-    private $participantRepository;
+    private UserRepository $userRepository;
+    private PhpMailerWrapper $mailer;
+    private LoginTokenRepository $loginTokenRepository;
+    private ParticipantRepository $participantRepository;
 
     public function __construct(
         LoginTokenRepository $loginTokenRepository,

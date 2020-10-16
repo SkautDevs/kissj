@@ -3,14 +3,14 @@
 namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NonLoggedOnlyMiddleware extends BaseMiddleware {
-    private $flashMessages;
-    private $translator;
+    private FlashMessagesInterface $flashMessages;
+    private TranslatorInterface $translator;
 
     public function __construct(
         FlashMessagesInterface $flashMessages,
@@ -20,7 +20,7 @@ class NonLoggedOnlyMiddleware extends BaseMiddleware {
         $this->translator = $translator;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+    public function process(Request $request, ResponseHandler $handler): Response {
         if ($request->getAttribute('user') !== null) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.loggedIn'));
 

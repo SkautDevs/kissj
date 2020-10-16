@@ -4,18 +4,19 @@ namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\Patrol\PatrolService;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
+use Slim\Routing\RouteContext;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * participants actions are allowed only for their Patrol Leader
  */
 class CheckPatrolLeaderParticipants extends BaseMiddleware {
-    private $patrolService;
-    private $flashMessages;
-    private $translator;
+    private PatrolService $patrolService;
+    private FlashMessagesInterface $flashMessages;
+    private TranslatorInterface $translator;
 
     public function __construct(
         PatrolService $patrolService,
@@ -27,15 +28,14 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
         $this->translator = $translator;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-        $route = \Slim\Routing\RouteContext::fromRequest($request)->getRoute();
+    public function process(Request $request, ResponseHandler $handler): Response {
+        $route = RouteContext::fromRequest($request)->getRoute();
         if ($route === null) {
-            throw new \RuntimeException('None route found');
+            throw new \RuntimeException('Cannot access route in CheckPatrolLeaderParticipatns middleware');
         }
-        $route->getArgument('participantId');
-        $routeParams = $request->getAttribute('routeInfo')[2]; // get route params from request (undocumented feature) // TODO fix as in v4
+        $participantId = $route->getArgument('participantId');
         if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
-            $this->patrolService->getPatrolParticipant($routeParams['participantId']),
+            $this->patrolService->getPatrolParticipant($participantId),
             $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
 
             $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));

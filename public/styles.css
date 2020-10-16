@@ -272,10 +272,6 @@ li.progressbar-item.is-active {
 	margin-bottom: 10px;
 }
 
-.form-control:focus {
-	outline: none;
-}
-
 .form-control:valid {
 	box-shadow: 1px 1px 1px #1e341b;
 }

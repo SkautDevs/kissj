@@ -34,9 +34,9 @@ use kissj\Orm\EntityDatetime;
  * @property string|null $contactEmail
  */
 class Event extends EntityDatetime {
-    public $maximalClosedGuestsCount = 100; // TODO move into DB
-    public $maximalClosedPatrolsSlovakCount = 18;
-    public $maximalClosedPatrolsCzechCount = 5;
-    public $maximalClosedPatrolsOthersCount = 5;
-    public $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
+    public int $maximalClosedGuestsCount = 100; // TODO move into DB
+    public int $maximalClosedPatrolsSlovakCount = 18;
+    public int $maximalClosedPatrolsCzechCount = 5;
+    public int $maximalClosedPatrolsOthersCount = 5;
+    public int $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
 }

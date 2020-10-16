@@ -6,18 +6,18 @@ use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
 use Negotiation\AcceptLanguage;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Translator;
 
 class LocalizationResolverMiddleware extends BaseMiddleware {
-    private $view;
-    private $translator;
-    private $availableLanguages;
-    private $defaultLocale;
+    private Twig $view;
+    private Translator $translator;
+    private array $availableLanguages;
+    private string $defaultLocale;
 
     private const LOCALE_COOKIE_NAME = 'locale';
 
@@ -39,7 +39,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
         $this->defaultLocale = $defaultLocale;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+    public function process(Request $request, ResponseHandler $handler): Response {
         if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
             $bestNegotiatedLanguage = htmlspecialchars($request->getQueryParams()[self::LOCALE_COOKIE_NAME], ENT_QUOTES);
         } else {
@@ -62,7 +62,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
         return $response;
     }
 
-    private function getBestLanguage(ServerRequestInterface $request): string {
+    private function getBestLanguage(Request $request): string {
         $localeCookie = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME);
         if ($localeCookie->getValue() !== null) {
             return $localeCookie->getValue();

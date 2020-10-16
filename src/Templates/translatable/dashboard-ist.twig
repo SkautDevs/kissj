@@ -28,70 +28,7 @@
                     {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
             {% endif %}
             <div class="text-center">
-                {% if ca.firstName %}
-                    {% trans %}detail.firstName{% endtrans %}: <b>{{ ist.getFirstName }}</b><br/>
-                {% endif %}{% if ca.lastName %}
-                    {% trans %}detail.surname{% endtrans %}: <b>{{ ist.getLastName }}</b><br/>
-                {% endif %}{% if ca.nickname %}
-                    {% trans %}detail.scoutNick{% endtrans %}: <b>{{ ist.getNickname }}</b><br/>
-                {% endif %}{% if ca.gender %}
-                    {% trans %}detail.gender{% endtrans %}: <b>
-                    {% if ist.getGender  == 'man' %}
-                            {% trans %}detail.genderMan{% endtrans %}
-                        {% elseif ist.getGender  == 'woman' %}
-                            {% trans %}detail.genderWoman{% endtrans %}
-                        {% elseif ist.getGender  == 'other' %}
-                            {% trans %}detail.genderOther{% endtrans %}
-                        {% endif %}</b><br/>
-                {% endif %}{% if ca.birthDate %}
-                    {% trans %}detail.birthDate{% endtrans %}: <b>{{ ist.getBirthDate.format('d. m. Y') }}</b><br/>
-                {% endif %}{% if ca.email %}
-                    {% trans %}detail.email{% endtrans %}: <b>{{ ist.getEmail }}</b><br/>
-                {% endif %}{% if ca.phone %}
-                    {% trans %}detail.phone{% endtrans %}: <b>{{ ist.getTelephoneNumber }}</b><br/> #}
-                {% endif %}{% if ca.address %}
-                    {% trans %}detail.address{% endtrans %}: <b>{{ ist.getPermanentResidence }}</b><br/>
-                {% endif %}{% if ca.country %}
-                    {% trans %}detail.country{% endtrans %}: <b>
-                        {% if ist.getCountry == 'Czech' %}
-                            {% trans %}detail.countryCzechRepublic{% endtrans %}
-                        {% elseif ist.getCountry == 'Slovak' %}
-                            {% trans %}detail.countrySlovakia{% endtrans %}
-                        {% elseif ist.getCountry == 'other' %}
-                            {% trans %}detail.countryOther{% endtrans %}
-                        {% endif %}</b><br/>
-                {% endif %}{% if ca.unit %}
-                    {% trans %}detail.unit{% endtrans %}: <b>{{ ist.getScoutUnit }}</b><br/>
-                {% endif %}{% if ca.tshirt %}
-                    {% trans %}detail.thisrt{% endtrans %}: <b>{{ ist.getTshirt }}</b><br/>
-                {% endif %}{% if ca.food %}
-                    {% trans %}detail.foodHeader{% endtrans %}: <b>{{ ist.getFoodPreferences }}</b><br/>
-                {% endif %}{% if ca.health %}
-                    {% trans %}detail.issues{% endtrans %}: <b>{{ ist.getHealthProblems }}</b><br/>
-                {% endif %}{% if ca.languages %}
-                    Languages you speak + level: <b>{{ ist.getLanguages }}</b><br/>
-                {% endif %}{% if ca.swimming %}
-                    {% trans %}detail.swimSkill{% endtrans %}: <b>{{ ist.getSwimming }}</b><br/>
-                {% endif %}{% if ca.driver %}
-                    {% trans %}detail.driver{% endtrans %}: <b>{{ ist.getDriversLicense }}</b><br/>
-                {% endif %}{% if ca.skills %}
-                    Skills: <b>{{ ist.getSkills }}</b><br/>
-                {% endif %}{% if ca.preferredPosition %}
-                    Preferred positions: <b>{{ ist.preferredPosition|join(', ', ' and ') }}</b><br/>
-                {% endif %}{% if ca.scarf %}
-                    {% trans %}detail.scarf{% endtrans %}: <b>
-                        {% if ist.getScarf  == 'yes' %}
-                            {% trans %}detail.scarfYes{% endtrans %}
-                        {% elseif ist.getScarf  == 'no' %}
-                            {% trans %}detail.scarfNo{% endtrans %}
-                        {% endif %}</b><br/>
-                {% endif %}{% if ca.uploadFile %}
-                    {% if ist.getUploadedFilename %}
-                        {% trans %}detail.uploadedFile{% endtrans %}: <b>Soubor úspěšně nahraný!</b><br/>
-                    {% endif %}
-                {% endif %}{% if ca.notice %}
-                    {% trans %}detail.notice{% endtrans %}: <b>{{ ist.getNotes }}</b><br/>
-                {% endif %}
+                {% include 'widgets/dashboard.twig' with {'person': ist} %}
                 <br/>
             </div>
         </div>

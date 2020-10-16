@@ -1,0 +1,291 @@
+{% if ca.firstName %}
+    <label class="form-group form-group-inline">{% trans %}detail.firstName{% endtrans %}: <input
+                class="form-control" type="text"
+                name="firstName"
+                value="{{ personDetails.getFirstName }}"
+                required="required"></label>
+{% endif %}{% if ca.lastName %}
+    <label class="form-group form-group-inline">{% trans %}detail.surname{% endtrans %}: <input
+                class="form-control" type="text"
+                name="lastName"
+                value="{{ personDetails.getLastName }}"
+                required="required"></label>
+{% endif %}{% if ca.nickname %}
+    <label class="form-group form-group-inline">{% trans %}detail.scoutNick{% endtrans %}: <input
+                class="form-control" type="text"
+                name="nickname"
+                value="{{ personDetails.getNickname }}"></label>
+{% endif %}{% if ca.gender %}
+    <label class="form-group form-group-inline">{% trans %}detail.gender{% endtrans %}:
+        <select class="form-control" name="gender" required="required">
+            <option value="man" {% if personDetails.getGender == 'man' %}selected="selected"{% endif %}>
+                {% trans %}detail.genderMan{% endtrans %}
+            </option>
+            <option value="woman" {% if personDetails.getGender == 'woman' %}selected="selected"{% endif %}>
+                {% trans %}detail.genderWoman{% endtrans %}
+            </option>
+            <option value="other" {% if personDetails.getGender == 'other' %}selected="selected"{% endif %}>
+                {% trans %}detail.genderOther{% endtrans %}
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.birthDate %}
+    <label class="form-group form-group-inline">{% trans %}detail.birthDate{% endtrans %}: <input
+                class="form-control" type="date"
+                name="birthDate"
+                value="{{ personDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
+                required="required"></label>
+{% endif %}{% if ca.email %}
+    <label class="form-group form-group-inline">{% trans %}detail.email{% endtrans %}: <input
+                class="form-control" type="email" name="email"
+                value="{% if personDetails.getEmail is empty %}{{ user.email }}{% else %}{{ personDetails.getEmail }}{% endif %}"
+                required="required"></label>
+{% endif %}{% if ca.phone %}
+    <label class="form-group form-group-inline">{% trans %}detail.phone{% endtrans %}: <input
+                class="form-control" type="text"
+                name="telephoneNumber"
+                value="{{ personDetails.getTelephoneNumber }}"
+                placeholder="digits including country dial-in code"
+                pattern="^\+?[0-9 ]+$"
+                required="required"></label>
+{% endif %}{% if ca.address %}
+    <label class="form-group form-group-inline">{% trans %}detail.address{% endtrans %}: <input
+                class="form-control" type="text"
+                name="permanentResidence"
+                value="{{ personDetails.getPermanentResidence }}"
+                placeholder="{% trans %}detail.address-placeholder{% endtrans %}"
+                required="required"></label>
+{% endif %}{% if ca.country %}
+    <label class="form-group form-group-inline">{% trans %}detail.country{% endtrans %}:
+        <select class="form-control" name="country">
+            <option value="Czech"{% if personDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
+                {% trans %}detail.countryCzechRepublic{% endtrans %}
+            </option>
+            <option value="Slovak"{% if personDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
+                {% trans %}detail.countrySlovakia{% endtrans %}
+            </option>
+            <option value="other"{% if personDetails.getCountry == 'other' %} selected="selected"{% endif %}>
+                {% trans %}detail.countryOther{% endtrans %}
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.unit %}
+    <label class="form-group form-group-inline">{% trans %}detail.unit{% endtrans %}: <input
+                class="form-control" type="text"
+                name="scoutUnit"
+                value="{{ personDetails.getScoutUnit }}"
+                required="required"></label>
+    <br>
+{% endif %}{% if ca.tshirt %}
+    <label class="form-group form-group-inline">{% trans %}detail.thisrtGender{% endtrans %}:
+        <select class="form-control" name="tshirtShape" required="required">
+            <option value="lady"
+                    {% if personDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
+                {% trans %}detail.thisrtGenderFemale{% endtrans %}
+            </option>
+            <option value="gentleman"
+                    {% if personDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
+                {% trans %}detail.thisrtGenderMale{% endtrans %}
+            </option>
+        </select>
+    </label>
+    <label class="form-group form-group-inline">{% trans %}detail.thisrtSize{% endtrans %}:
+        <select class="form-control" name="tshirtSize" required="required">
+            <option value="s" {% if personDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
+                XS - smallest
+            </option>
+            <option value="s" {% if personDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
+                S - small
+            </option>
+            <option value="m" {% if personDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
+                M - medium
+            </option>
+            <option value="l" {% if personDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
+                L - large
+            </option>
+            <option value="xl" {% if personDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
+                XL - larger
+            </option>
+            <option value="xxl" {% if personDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
+                XXL - largest
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.food %}
+    <label class="form-group form-group-inline">{% trans %}detail.foodHeader{% endtrans %}:
+        <select class="form-control" name="foodPreferences" required="required">
+            <option value="no restriction"
+                    {% if personDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
+                {% trans %}detail.foodWithout{% endtrans %}
+            </option>
+            <option value="vegetarian"
+                    {% if personDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
+                {% trans %}detail.foodVegetarian{% endtrans %}
+            </option>
+            <option value="lactoseFree"
+                    {% if personDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
+                {% trans %}detail.foodLactoseFree{% endtrans %}
+            </option>
+            <option value="glutenFree"
+                    {% if personDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
+                {% trans %}detail.foodGlutenFree{% endtrans %}
+            </option>
+            <option value="other"
+                    {% if personDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
+                {% trans %}detail.foodOther{% endtrans %}
+            </option>
+        </select>
+    </label>
+    {% trans %}detail.foodNote{% endtrans %}
+    <br><br>
+{% endif %}{% if ca.health %}
+    <label class="form-group form-group-inline">{% trans %}detail.issues{% endtrans %}: <input
+                class="form-control" type="text"
+                name="healthProblems"
+                placeholder="{% trans %}detail.issues-placeholder{% endtrans %}"
+                value="{{ personDetails.getHealthProblems }}">
+    </label>
+{% endif %}{% if ca.languages %}
+    <label class="form-group form-group-inline">{% trans %}detail.languages{% endtrans %}: <input
+                class="form-control"
+                type="text"
+                name="languages"
+                required="required"
+                value="{{ personDetails.getLanguages }}">
+    </label>
+{% endif %}{% if ca.swimming %}
+    <label class="form-group form-group-inline">{% trans %}detail.swimSkill{% endtrans %}:
+        <select class="form-control" name="swimming" required="required">
+            <option value="no swim"
+                    {% if personDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
+                {% trans %}detail.swimSkillNo{% endtrans %}
+            </option>
+            <option value="less than 50 meters"
+                    {% if personDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
+                {% trans %}detail.swimSkillLess50{% endtrans %}
+            </option>
+            <option value="more than 50 meters"
+                    {% if personDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
+                {% trans %}detail.swimSkillMore50{% endtrans %}
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.driver %}
+    <label class="form-group form-group-inline">Driver's licence:
+        <select class="form-control" name="driversLicense" required="required">
+            <option value="dont"
+                    {% if personDetails.getDriversLicense == 'dont' %}selected="selected"{% endif %}>
+                I don't have it or I don't want to drive on event
+            </option>
+            <option value="less 10000 km"
+                    {% if personDetails.getDriversLicense == 'less 10000 km' %}selected="selected"{% endif %}>
+                I have it, but have not driven more than 10 000 km
+            </option>
+            <option value="more 10000 km"
+                    {% if personDetails.getDriversLicense == 'more 10000 km' %}selected="selected"{% endif %}>
+                I have it and have driven more than 10 000 km
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.skills %}
+    <label class="form-group form-group-inline">Skills: <input class="form-control" type="text"
+                                                               name="skills"
+                                                               placeholder="sailing; food handling certificate; advanced first aid; ..."
+                                                               value="{{ personDetails.getSkills }}">
+    </label>
+    <br>
+{% endif %}{% if ca.preferredPosition %}
+    <div class="form-group">
+        Preffered position:
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="press"
+                   {% if 'press' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            press (newspaper, photography and other media...)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="central services"
+                   {% if 'central services' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            central services (registration, administration, info tent...)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="kitchen"
+                   {% if 'kitchen' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            kitchen (food preparation - you must have a valid food handling certificate)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="technical support"
+                   {% if 'technical support' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            technical support (material handling, storage or transport, fixing technical issues at the
+            campsite)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - sailing"
+                   {% if 'program - sailing' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - sailing
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - canoeing"
+                   {% if 'program - canoeing' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - canoeing
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - community project"
+                   {% if 'program - community project' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - community project
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - rafting"
+                   {% if 'program - rafting' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - rafting
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - hiking"
+                   {% if 'program - hiking' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - hiking
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="program - workshops"
+                   {% if 'program - workshops' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            main program - workshops (feel free to state any insteresting skills into skill field)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="evening activities"
+                   {% if 'evening activities' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            evening leisure activities (ceremonials, dances, parties, debates...)
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="teahouse staff"
+                   {% if 'teahouse staff' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            teahouse staff
+        </label>
+        <label class="form-control">
+            <input type="checkbox" name="preferredPosition[]" value="subcamp leader"
+                   {% if 'subcamp leader' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
+            subcamp leader
+        </label>
+    </div>
+    <br>
+{% endif %}{% if ca.scarf %}
+    <label class="form-group form-group-inline">{% trans %}detail.scarf{% endtrans %}:
+        <select class="form-control" name="scarf">
+            <option value="yes"{% if personDetails.getScarf == 'yes' %} selected="selected"{% endif %}>
+                {% trans %}detail.scarfYes{% endtrans %}
+            </option>
+            <option value="no"{% if personDetails.getScarf == 'no' %} selected="selected"{% endif %}>
+                {% trans %}detail.scarfNo{% endtrans %}
+            </option>
+        </select>
+    </label>
+{% endif %}{% if ca.uploadFile %}
+    <label class="form-group form-group-inline">{% trans %}detail.uploadFile{% endtrans %}: <input
+                class="form-control" type="file" name="uploadFile">
+    </label>
+    <span class="">PDF s potvrzením najdeš na <a href="">našem disku</a>. 
+            {% if personDetails.getUploadedFilename %}Soubor už od tebe úspěšně nahraný máme!{% endif %}</span>
+{% endif %}{% if ca.notes %}
+    <label class="form-group form-group-inline">{% trans %}detail.notice{% endtrans %}: <input
+                class="form-control" type="text" name="notes"
+                placeholder="{% trans %}detail.notice-placeholder{% endtrans %}"
+                value="{{ personDetails.getNotes }}">
+    </label>
+{% endif %}

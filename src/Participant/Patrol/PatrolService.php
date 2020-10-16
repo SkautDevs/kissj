@@ -2,39 +2,48 @@
 
 namespace kissj\Participant\Patrol;
 
+use kissj\AbstractService;
+use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolService {
-    private $patrolLeaderRepository;
-    private $patrolParticipantRepository;
-    private $paymentRepository;
-    private $userService;
-    private $paymentService;
-    private $mailer;
-    private $flashMessages;
+class PatrolService extends AbstractService {
+    private PatrolLeaderRepository $patrolLeaderRepository;
+    private PatrolParticipantRepository $patrolParticipantRepository;
+    private UserService $userService;
+    private PaymentService $paymentService;
+    private PhpMailerWrapper $mailer;
+    private TranslatorInterface $translator;
+    private FlashMessagesBySession $flashMessages;
+    private ContentArbiterPatrolLeader $contentArbiterPatrolLeader;
+    private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant;
 
     public function __construct(
         PatrolLeaderRepository $patrolLeaderRepository,
         PatrolParticipantRepository $patrolParticipantRepository,
-        PaymentRepository $paymentRepository,
         UserService $userService,
         PaymentService $paymentService,
         FlashMessagesBySession $flashMessages,
-        PhpMailerWrapper $mailer
+        TranslatorInterface $translator,
+        PhpMailerWrapper $mailer,
+        ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
+        ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant
     ) {
         $this->patrolLeaderRepository = $patrolLeaderRepository;
         $this->patrolParticipantRepository = $patrolParticipantRepository;
-        $this->paymentRepository = $paymentRepository;
         $this->userService = $userService;
         $this->paymentService = $paymentService;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
+        $this->translator = $translator;
+        $this->contentArbiterPatrolLeader = $contentArbiterPatrolLeader;
+        $this->contentArbiterPatrolParticipant = $contentArbiterPatrolParticipant;
     }
 
     public function getPatrolLeader(User $user): PatrolLeader {
@@ -48,55 +57,10 @@ class PatrolService {
     }
 
     public function addParamsIntoPatrolLeader(PatrolLeader $pl, array $params): PatrolLeader {
-        $pl->firstName = $params['firstName'] ?? null;
-        $pl->lastName = $params['lastName'] ?? null;
-        $pl->nickname = $params['nickname'] ?? null;
-        if ($params['birthDate'] !== null) {
-            $pl->birthDate = new \DateTime($params['birthDate']);
-        }
-        $pl->gender = $params['gender'] ?? null;
-        $pl->email = $params['email'] ?? null;
-        $pl->telephoneNumber = $params['telephoneNumber'] ?? null;
-        $pl->permanentResidence = $params['permanentResidence'] ?? null;
-        $pl->country = $params['country'] ?? null;
-        $pl->scoutUnit = $params['scoutUnit'] ?? null;
-        /* $pl->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null); */
-        $pl->foodPreferences = $params['foodPreferences'] ?? null;
-        $pl->healthProblems = $params['healthProblems'] ?? null;
-        $pl->languages = $params['languages'] ?? null;
-        $pl->swimming = $params['swimming'] ?? null;
+        $this->addParamsIntoPerson($params, $pl);
         $pl->patrolName = $params['patrolName'] ?? null;
-        $pl->notes = $params['notes'] ?? null;
 
         return $pl;
-    }
-
-    public function isPatrolLeaderValidForClose(PatrolLeader $pl): bool {
-        if (
-            $pl->patrolName === null
-            || $pl->firstName === null
-            || $pl->lastName === null
-            || $pl->birthDate === null
-            || $pl->gender === null
-            || $pl->email === null
-            || $pl->telephoneNumber === null
-            || $pl->permanentResidence === null
-            || $pl->country === null
-            || $pl->scoutUnit === null
-            || $pl->foodPreferences === null
-            || $pl->languages === null
-            || $pl->swimming === null
-            /*|| $pl->getTshirtShape() === null
-            || $pl->getTshirtSize() === null*/
-        ) {
-            return false;
-        }
-
-        if (!empty($pl->email) && filter_var($pl->email, FILTER_VALIDATE_EMAIL) === false) {
-            return false;
-        }
-
-        return true;
     }
 
     public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant {
@@ -109,66 +73,15 @@ class PatrolService {
     }
 
     public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant {
-        $patrolParticipant = $this->patrolParticipantRepository->findOneBy(['id' => $patrolParticipantId]);
-
-        return $patrolParticipant;
+        return $this->patrolParticipantRepository->findOneBy(['id' => $patrolParticipantId]);
     }
 
-    public function addParamsIntoPatrolParticipant(PatrolParticipant $p, array $params): PatrolParticipant {
-        $p->firstName = $params['firstName'] ?? null;
-        $p->lastName = $params['lastName'] ?? null;
-        $p->nickname = $params['nickname'] ?? null;
-        if ($params['birthDate'] !== null) {
-            $p->birthDate = new \DateTime($params['birthDate']);
-        }
-        $p->gender = $params['gender'] ?? null;
-        $p->email = $params['email'] ?? null;
-        $p->telephoneNumber = $params['telephoneNumber'] ?? null;
-        $p->permanentResidence = $params['permanentResidence'] ?? null;
-        $p->country = $params['country'] ?? null;
-        $p->scoutUnit = $params['scoutUnit'] ?? null;
-        $p->foodPreferences = $params['foodPreferences'] ?? null;
-        $p->healthProblems = $params['healthProblems'] ?? null;
-        $p->swimming = $params['swimming'] ?? null;
-        $p->notes = $params['notes'] ?? null;
+    public function addParamsIntoPatrolParticipant(PatrolParticipant $participant, array $params): PatrolParticipant {
+        $this->addParamsIntoPerson($params, $participant);
 
-        return $p;
+        return $participant;
     }
 
-    public function isPatrolParticipantValidForClose(PatrolParticipant $p): bool {
-        if (
-            $p->firstName === null
-            || $p->lastName === null
-            || $p->birthDate === null
-            || $p->gender === null
-            || $p->email === null
-            || $p->telephoneNumber === null
-            || $p->permanentResidence === null
-            || $p->country === null
-            || $p->scoutUnit === null
-            || $p->foodPreferences === null
-            || $p->swimming === null
-        ) {
-            return false;
-        }
-
-        if (!empty($p->email) && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // TODO add telephone check 
-    // check for numbers and plus sight up front only
-    /*if ((!empty ($telephoneNumber)) && preg_match('/^\+?\d+$/', $telephoneNumber) === 0) {
-        $validFlag = false;
-    }*/
-
-    /**
-     * @param PatrolParticipant $patrolParticipant
-     * @throws \LeanMapper\Exception\InvalidStateException
-     */
     public function deletePatrolParticipant(PatrolParticipant $patrolParticipant) {
         $this->patrolParticipantRepository->delete($patrolParticipant);
     }
@@ -181,11 +94,13 @@ class PatrolService {
     }
 
     public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
+        $validityFlag = true;
+
         $event = $patrolLeader->user->event;
         if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount()) {
-            $this->flashMessages->warning('Cannot lock the registration - for Patrols we have full registration now. Please wait for limit rise');
+            $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
 
-            return false;
+            $validityFlag = false;
         }
 
         switch ($patrolLeader->country) {
@@ -210,9 +125,8 @@ class PatrolService {
             return false;
         }
 
-        $validityFlag = true;
         if (!$this->isPatrolLeaderValidForClose($patrolLeader)) {
-            $this->flashMessages->warning('Cannot lock the registration - some of your details are wrong or missing (probably email or some date)');
+            $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
 
             $validityFlag = false;
         }
@@ -220,6 +134,7 @@ class PatrolService {
         $participants = $this->patrolParticipantRepository->findBy(['patrol_leader_id' => $patrolLeader->id]);
         $participantsCount = count($participants);
         if ($participantsCount < $event->minimalPatrolParticipantsCount) {
+            // TODO translate
             $this->flashMessages->warning('Cannot lock the registration - too few participants, they are only '
                 .$participantsCount.' from '.$event->minimalPatrolParticipantsCount.' needed');
 
@@ -245,6 +160,18 @@ class PatrolService {
         return $validityFlag;
     }
 
+    private function isPatrolLeaderValidForClose(PatrolLeader $pl): bool {
+        if ($this->contentArbiterPatrolLeader->patrolName && $pl->patrolName === null) {
+            return false;
+        }
+
+        return $this->isPersonValidForClose($pl, $this->contentArbiterPatrolLeader);
+    }
+
+    private function isPatrolParticipantValidForClose(PatrolParticipant $p): bool {
+        return $this->isPersonValidForClose($p, $this->contentArbiterPatrolParticipant);
+    }
+
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $this->userService->closeRegistration($patrolLeader->user);
@@ -262,8 +189,7 @@ class PatrolService {
     }
 
     public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader {
-        $price = $this->paymentService->getPrice($patrolLeader);
-        $payment = $this->paymentRepository->createAndPersistNewPayment($patrolLeader, $price);
+        $payment = $this->paymentService->createAndPersistNewPayment($patrolLeader);
 
         $this->mailer->sendRegistrationApprovedWithPayment($patrolLeader, $payment);
         $this->userService->approveRegistration($patrolLeader->user);

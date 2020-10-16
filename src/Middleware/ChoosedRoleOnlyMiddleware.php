@@ -4,14 +4,14 @@ namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\User;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChoosedRoleOnlyMiddleware extends BaseMiddleware {
-    private $flashMessages;
-    private $translator;
+    private FlashMessagesInterface $flashMessages;
+    private TranslatorInterface $translator;
 
     public function __construct(
         FlashMessagesInterface $flashMessages,
@@ -21,7 +21,7 @@ class ChoosedRoleOnlyMiddleware extends BaseMiddleware {
         $this->translator = $translator;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+    public function process(Request $request, ResponseHandler $handler): Response {
         /** @var User $user */
         $user = $request->getAttribute('user');
 

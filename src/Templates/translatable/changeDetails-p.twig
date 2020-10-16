@@ -2,128 +2,19 @@
 
 {% block content %}
     <div class="card text-left open-theme">
-        <h2>Edit details of particiant from you patrol</h2>
+        <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST"
               action="{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}">
-            <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
-                                                                           name="firstName"
-                                                                           value="{{ pDetails.getFirstName }}"
-                                                                           required="required"></label>
-            <label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
-                                                                        name="lastName"
-                                                                        value="{{ pDetails.getLastName }}"
-                                                                        required="required"></label>
-            <label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
-                                                                               name="nickname"
-                                                                               value="{{ pDetails.getNickname }}"></label>
-            <label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
-                                                                              name="birthDate"
-                                                                              value="{{ pDetails.getBirthDate.format('Y-m-d') ?? 'now - 15 years'|date('Y-m-d') }}"
-                                                                              required="required"></label>
-            <label class="form-group form-group-inline">Gender:
-                <select class="form-control" name="gender" required="required">
-                    <option value="man" {% if pDetails.getGender == 'man' %}selected="selected"{% endif %}>
-                        Man
-                    </option>
-                    <option value="woman" {% if pDetails.getGender == 'woman' %}selected="selected"{% endif %}>
-                        Woman
-                    </option>
-                    <option value="other" {% if pDetails.getGender == 'other' %}selected="selected"{% endif %}>
-                        Other
-                    </option>
-                </select>
-            </label>
-            <br>
-
-            <label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
-                                                                      value="{{ pDetails.getEmail }}"
-                                                                      required="required"></label>
-            <label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
-                                                                             name="telephoneNumber"
-                                                                             value="{{ pDetails.getTelephoneNumber }}"
-                                                                             placeholder="digits including country dial-in code"
-                                                                             pattern="^\+?[0-9 ]+$"
-                                                                             required="required"></label>
-            <label class="form-group form-group-inline">Permanent address: <input class="form-control" type="text"
-                                                                                  name="permanentResidence"
-                                                                                  value="{{ pDetails.getPermanentResidence }}"
-                                                                                  placeholder="Street and no., city, postal code"
-                                                                                  required="required"></label>
-            <label class="form-group form-group-inline">Country:
-                <select class="form-control" name="country">
-                    <option value="Slovak"{% if istDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
-                        Slovak Republic
-                    </option>
-                    <option value="Czech"{% if istDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
-                        Czech Republic
-                    </option>
-                    <option value="other"{% if istDetails.getCountry == 'other' %} selected="selected"{% endif %}>
-                        other - please fill your country in note
-                    </option>
-                </select>
-            </label>
-            <label class="form-group form-group-inline">Scout unit: <input class="form-control" type="text"
-                                                                           name="scoutUnit"
-                                                                           value="{{ pDetails.getScoutUnit ?? plDetails.getScoutUnit }}"
-                                                                           required="required"></label>
-            <br>
-
-            <label class="form-group form-group-inline">Diet restriction:
-                <select class="form-control" name="foodPreferences" required="required">
-                    <option value="no restriction"
-                            {% if pDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
-                        no restriction
-                    </option>
-                    <option value="vegetarian"
-                            {% if pDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
-                        vegetarian
-                    </option>
-                    <option value="lactoseFree"
-                            {% if pDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
-                        lactose-free
-                    </option>
-                    <option value="glutenFree"
-                            {% if pDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
-                        gluten-free
-                    </option>
-                    <option value="other"
-                            {% if pDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
-                        other
-                    </option>
-                </select>
-            </label>
-            if choosed other - we arrange only above stated options of diet restriction; in case of
-            other restrictions, you have to arrange all the food for whole event yourself and your
-            participant fee will be reduced
-            <label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
-                                                                              name="healthProblems"
-                                                                              placeholder="allergies, ..."
-                                                                              value="{{ pDetails.getHealthProblems }}">
-            </label>
-            <label class="form-group form-group-inline">Swimming skill:
-                <select class="form-control" name="swimming" required="required">
-                    <option value="no swim"
-                            {% if pDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
-                        I can't swim :(
-                    </option>
-                    <option value="less than 50 meters"
-                            {% if pDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
-                        less than 50 meters
-                    </option>
-                    <option value="more than 50 meters"
-                            {% if pDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
-                        more than 50 meters
-                    </option>
-                </select>
-            </label>
-            <label class="form-group form-group-inline">Note: <input class="form-control" type="text" name="notes"
-                                                                     placeholder="anything else?"
-                                                                     value="{{ pDetails.getNotes }}">
-            </label>
+            {% include 'widgets/changeDetails.twig' with {'personDetails': pDetails} %}
             <div class="text-center">
+                <br/>
+                <input class="btn btn-small" type="submit" value="{% trans %}changeDetails.save{% endtrans %}">
+                <br/>
+                <br/>
                 <a class="btn btn-small btn-grey"
-                   href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">Back</a>
-                <input class="btn btn-small" type="submit" value="Save">
+                   href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">
+                    {% trans %}changeDetails.back{% endtrans %}
+                </a>
             </div>
         </form>
     </div>

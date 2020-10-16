@@ -1,0 +1,64 @@
+{% if ca.firstName %}
+    {% trans %}detail.firstName{% endtrans %}: <b>{{ person.getFirstName }}</b><br/>
+{% endif %}{% if ca.lastName %}
+    {% trans %}detail.surname{% endtrans %}: <b>{{ person.getLastName }}</b><br/>
+{% endif %}{% if ca.nickname %}
+    {% trans %}detail.scoutNick{% endtrans %}: <b>{{ person.getNickname }}</b><br/>
+{% endif %}{% if ca.gender %}
+    {% trans %}detail.gender{% endtrans %}: <b>
+        {% if person.getGender == 'man' %}
+            {% trans %}detail.genderMan{% endtrans %}
+        {% elseif person.getGender == 'woman' %}
+            {% trans %}detail.genderWoman{% endtrans %}
+        {% elseif person.getGender == 'other' %}
+            {% trans %}detail.genderOther{% endtrans %}
+        {% endif %}</b><br/>
+{% endif %}{% if ca.birthDate %}
+    {% trans %}detail.birthDate{% endtrans %}: <b>{{ person.getBirthDate.format('d. m. Y') }}</b><br/>
+{% endif %}{% if ca.email %}
+    {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
+{% endif %}{% if ca.phone %}
+    {% trans %}detail.phone{% endtrans %}: <b>{{ person.getTelephoneNumber }}</b><br/> #}
+{% endif %}{% if ca.address %}
+    {% trans %}detail.address{% endtrans %}: <b>{{ person.getPermanentResidence }}</b><br/>
+{% endif %}{% if ca.country %}
+    {% trans %}detail.country{% endtrans %}: <b>
+        {% if person.getCountry == 'Czech' %}
+            {% trans %}detail.countryCzechRepublic{% endtrans %}
+        {% elseif person.getCountry == 'Slovak' %}
+            {% trans %}detail.countrySlovakia{% endtrans %}
+        {% elseif person.getCountry == 'other' %}
+            {% trans %}detail.countryOther{% endtrans %}
+        {% endif %}</b><br/>
+{% endif %}{% if ca.unit %}
+    {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
+{% endif %}{% if ca.tshirt %}
+    {% trans %}detail.thisrt{% endtrans %}: <b>{{ person.getTshirt }}</b><br/>
+{% endif %}{% if ca.food %}
+    {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences }}</b><br/>
+{% endif %}{% if ca.health %}
+    {% trans %}detail.issues{% endtrans %}: <b>{{ person.getHealthProblems }}</b><br/>
+{% endif %}{% if ca.languages %}
+    Languages you speak + level: <b>{{ person.getLanguages }}</b><br/>
+{% endif %}{% if ca.swimming %}
+    {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming }}</b><br/>
+{% endif %}{% if ca.driver %}
+    {% trans %}detail.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
+{% endif %}{% if ca.skills %}
+    Skills: <b>{{ person.getSkills }}</b><br/>
+{% endif %}{% if ca.preferredPosition %}
+    Preferred positions: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
+{% endif %}{% if ca.scarf %}
+    {% trans %}detail.scarf{% endtrans %}: <b>
+        {% if person.getScarf == 'yes' %}
+            {% trans %}detail.scarfYes{% endtrans %}
+        {% elseif person.getScarf == 'no' %}
+            {% trans %}detail.scarfNo{% endtrans %}
+        {% endif %}</b><br/>
+{% endif %}{% if ca.uploadFile %}
+    {% if person.getUploadedFilename %}
+        {% trans %}detail.uploadedFile{% endtrans %}: <b>Soubor úspěšně nahraný!</b><br/>
+    {% endif %}
+{% endif %}{% if ca.notes %}
+    {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+{% endif %}

@@ -7,7 +7,6 @@ use kissj\Event\ContentArbiterIst;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 
 class IstController extends AbstractController {
     private IstService $istService;
@@ -46,20 +45,12 @@ class IstController extends AbstractController {
         $ist = $this->istService->getIst($request->getAttribute('user'));
 
         if ($this->contentArbiterIst->uploadFile) {
-            $uploadedFiles = $request->getUploadedFiles();
-            if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
-                // problem - too big file -> not safe anything, because always got nulls in request fields
-                $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
-
+            $uploadedFile = $this->resolveUploadedFiles($request->getUploadedFiles());
+            if ($uploadedFile === null) {
                 return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
             }
 
-            $errorNum = $uploadedFiles['uploadFile']->getError();
-            if ($errorNum === UPLOAD_ERR_OK) {
-                $ist = $this->istService->handleUploadedFile($ist, $uploadedFiles['uploadFile']);
-            } elseif ($errorNum === UPLOAD_ERR_INI_SIZE) {
-                $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
-            }
+            $this->istService->saveFileTo($ist, $uploadedFile);
         }
 
         $ist = $this->istService->addParamsIntoIst($ist, $request->getParsedBody());

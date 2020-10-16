@@ -2,18 +2,20 @@
 
 {% block content %}
     <div class="card open-theme">
-        <h2>Send Patrol registration</h2>
-        <p>Do you really want to lock your registration and send it to us for approval? <b>This step is irreversible and
-                submitted details cannot be changed afterward!</b></p>
+        <h2>{% trans %}closeRegistration.titlePatrol{% endtrans %}</h2>
+        <p>{% trans %}closeRegistration.lockRegistration{% endtrans %}
+            <b>{% trans %}closeRegistration.lockRegistrationBold{% endtrans %}</b></p>
         <form method="POST" action="{{ url_for('pl-closeRegistration', {'eventSlug': event.slug}) }}">
-            <label><input type="checkbox" required="required">I read and I agree with data protection rules at
+            <label><input type="checkbox"
+                          required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
                 <a href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">Back</a>
-                <input class="btn btn-small" type="submit" value="Lock registration">
+                   class="btn btn-grey btn-small">{% trans %}closeRegistration.back{% endtrans %}</a>
+                <input class="btn btn-small" type="submit"
+                       value="{% trans %}closeRegistration.lockRegistrationButton{% endtrans %}">
             </div>
         </form>
     </div>

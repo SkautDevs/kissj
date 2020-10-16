@@ -2,14 +2,17 @@
 
 {% block content %}
     <div class="card open-theme">
-        <h2>Delete participant</h2>
-        <p>Do you really want to delete participant
-            {% if pDetail.getFirstName is not empty %}<b>{{ pDetail.getFullName }}</b>{% endif %}
-            ? You won't be able to undo this action!</p>
+        <h2>{% trans %}dashboard.delete{% endtrans %} - {% trans %}role.p{% endtrans %}</h2>
+        <p>
+            {% trans %}dashboard.youWantDelete{% endtrans %}
+            {% if pDetail.getFirstName is not empty %}<b>{{ pDetail.getFullName }}</b>{% else %}
+                <i>{% trans %}dashboard.withoutName{% endtrans %}</i>{% endif %}{% trans %}dashboard.wontBeAbleUndo{% endtrans %}
+        </p>
         <form method="POST"
               action="{{ url_for('p-delete', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
-            <input class="btn btn-small" type="submit" value="Delete participant">
-            <a href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}" class="btn btn-grey btn-small">Back</a>
+            <input class="btn btn-small" type="submit" value="{% trans %}dashboard.delete{% endtrans %}">
+            <a href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
         </form>
     </div>
 {% endblock %}
