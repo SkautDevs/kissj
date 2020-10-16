@@ -21,8 +21,9 @@
         }
     ],
     "require": {
-        "php": "^7.3",
+        "php": "^7.4",
         "ext-dom": "*",
+        "ext-fileinfo": "*",
         "ext-mbstring": "*",
         "ext-sqlite3": "*",
         "dflydev/fig-cookies": "^2.0",

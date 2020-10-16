@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 
 # Preparation
 RUN apt-get update
@@ -11,7 +11,7 @@ RUN apt-get install -y \
 	git \
 	zip
 
-RUN yes | pecl install xdebug-2.7.2 \
+RUN yes | pecl install xdebug-2.9.8 \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
