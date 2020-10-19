@@ -50,7 +50,7 @@ class IstService extends AbstractService {
     }
 
     public function addParamsIntoIst(Ist $ist, array $params): Ist {
-        $this->addParamsIntoPerson($params['notes'], $ist);
+        $this->addParamsIntoPerson($params, $ist);
         $ist->driversLicense = $params['driversLicense'] ?? null;
         $ist->skills = $params['skills'] ?? null;
         $ist->preferredPosition = $params['preferredPosition'] ?? [];
