@@ -50,7 +50,7 @@ class IstController extends AbstractController {
                 return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
             }
 
-            $this->istService->saveFileTo($ist, $uploadedFile);
+            $this->fileHandler->saveFileTo($ist, $uploadedFile);
         }
 
         $ist = $this->istService->addParamsIntoIst($ist, $request->getParsedBody());

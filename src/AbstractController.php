@@ -3,7 +3,8 @@
 namespace kissj;
 
 use DI\Annotation\Inject;
-use kissj\FlashMessages;
+use kissj\FileHandler\FileHandler;
+use kissj\FlashMessages\FlashMessagesBySession;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,27 +18,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AbstractController {
     /**
      * @Inject()
-     * @var FlashMessages\FlashMessagesBySession
      */
-    protected FlashMessages\FlashMessagesBySession $flashMessages;
+    protected FlashMessagesBySession $flashMessages;
 
     /**
      * @Inject("Psr\Log\LoggerInterface")
-     * @var Logger
      */
     protected Logger $logger;
 
     /**
-     * @Inject("Slim\Views\Twig")
-     * @var Twig
+     * @Inject()
      */
     protected Twig $view;
 
     /**
      * @Inject()
-     * @var TranslatorInterface
      */
     protected TranslatorInterface $translator;
+
+    /**
+     * @Inject()
+     */
+    protected FileHandler $fileHandler;
 
     protected function redirect(
         Request $request,
@@ -56,7 +58,7 @@ abstract class AbstractController {
 
     /**
      * @param UploadedFileInterface[] $uploadedFiles
-     * @return ?UploadedFile
+     * @return UploadedFile|null
      */
     protected function resolveUploadedFiles(array $uploadedFiles): ?UploadedFile {
         if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {

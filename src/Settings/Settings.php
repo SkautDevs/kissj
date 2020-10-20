@@ -2,10 +2,14 @@
 
 namespace kissj\Settings;
 
+use Aws\S3\S3Client;
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
+use kissj\FileHandler\FileHandler;
+use kissj\FileHandler\LocalFileHandler;
+use kissj\FileHandler\S3bucketFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\MailerSettings;
@@ -46,7 +50,53 @@ class Settings {
         $this->validateAllSettings($dotenv);
 
         $container = [];
+        $container[Connection::class] = function (): Connection {
+            switch ($_ENV['DB_TYPE']) {
+                case 'sqlite':
+                    return new Connection([
+                        'driver' => 'sqlite3',
+                        'database' => $_ENV['DB_FULL_PATH'],
+                    ]);
+                case 'postgresql':
+                    return new Connection([
+                        'driver' => 'postgreSql',
+                        'host' => $_ENV['DATABASE_HOST'],
+                        'username' => $_ENV['POSTGRES_USER'],
+                        'password' => $_ENV['POSTGRES_PASSWORD'],
+                        'database' => $_ENV['POSTGRES_DB'],
+                    ]);
+                default:
+                    throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']);
+            }
+        };
+        $container[FileHandler::class] = function () {
+            switch ($_ENV['FILE_HANDLER_TYPE']) {
+                case 'local':
+                    return new LocalFileHandler();
+                case 's3bucket':
+                    return create(S3bucketFileHandler::class);
+                default:
+                    throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
+                        .$_ENV['FILE_HANDLER_TYPE']);
+            }
+        };
+        $container[FioRead::class] = function () {
+            // using h4kuna/fio - https://github.com/h4kuna/fio
+            $fioFactory = new FioFactory([
+                'fio-account' => [
+                    'account' => $_ENV['PAYMENT_ACCOUNT_NUMBER'],
+                    'token' => $_ENV['PAYMENT_FIO_API_TOKEN'],
+                ],
+            ]);
+
+            return $fioFactory->createFioRead('fio-account');
+        };
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
+        $container[IMapper::class] = create(Mapper::class);
+        $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
+        $container[LocalizationResolverMiddleware::class] = autowire()
+            ->constructorParameter('availableLanguages', self::LOCALES_AVAILABLE)
+            ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
         $container[Logger::class] = function (): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
@@ -57,17 +107,6 @@ class Settings {
             return $logger;
         };
         $container[LoggerInterface::class] = get(Logger::class);
-
-        $container[Connection::class] = function (): Connection {
-            return new Connection([
-                'driver' => 'sqlite3',
-                'database' => $_ENV['DB_FULL_PATH'],
-            ]);
-        };
-
-        $container[IMapper::class] = create(Mapper::class);
-        $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-
         $container[PhpMailerWrapper::class] = function (Twig $renderer): PhpMailerWrapper {
             $settings = new MailerSettings(
                 $_ENV['MAIL_SMTP'],
@@ -88,27 +127,22 @@ class Settings {
 
             return new PhpMailerWrapper($renderer, $settings);
         };
-
-        $container[UserAuthenticationMiddleware::class] = function (UserRegeneration $userRegeneration) {
-            return new UserAuthenticationMiddleware($userRegeneration);
+        $container[S3bucketFileHandler::class] = function (S3Client $s3Client) {
+            // load separately to not load S3Client if not needed
+            return new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
         };
-
-        $container[FioRead::class] = function () {
-            // using h4kuna/fio - https://github.com/h4kuna/fio
-            $fioFactory = new FioFactory([
-                'fio-account' => [
-                    'account' => $_ENV['PAYMENT_ACCOUNT_NUMBER'],
-                    'token' => $_ENV['PAYMENT_FIO_API_TOKEN'],
+        $container[S3Client::class] = function () {
+            return new S3Client([
+                'version' => 'latest',
+                'region' => $_ENV['S3_REGION'],
+                'endpoint' => $_ENV['S3_ENDPOINT'],
+                'use_path_style_endpoint' => true,
+                'credentials' => [
+                    'key' => $_ENV['S3_KEY'],
+                    'secret' => $_ENV['S3_SECRET'],
                 ],
             ]);
-
-            return $fioFactory->createFioRead('fio-account');
         };
-
-        $container[LocalizationResolverMiddleware::class] = autowire()
-            ->constructorParameter('availableLanguages', self::LOCALES_AVAILABLE)
-            ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
-
         $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);
@@ -122,7 +156,6 @@ class Settings {
             return $translator;
         };
         $container[TranslatorInterface::class] = get(Translator::class);
-
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
             FlashMessagesBySession $flashMessages
@@ -155,6 +188,9 @@ class Settings {
 
             return $view;
         };
+        $container[UserAuthenticationMiddleware::class] = function (UserRegeneration $userRegeneration) {
+            return new UserAuthenticationMiddleware($userRegeneration);
+        };
 
         return $container;
     }
@@ -182,12 +218,21 @@ class Settings {
         $dotenv->required('MAIL_DISABLE_TLS');
         $dotenv->required('MAIL_DEBUG_OUTPUT_LEVEL')->allowedValues(['0', '1', '2', '3', '4']);
         $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
-        $dotenv->required('PAYMENT_ACCOUNT_NUMBER');
-        $dotenv->required('PAYMENT_FIO_API_TOKEN');
+        $dotenv->required('PAYMENT_ACCOUNT_NUMBER'); // TODO move into db
+        $dotenv->required('FILE_HANDLER_TYPE')->allowedValues(['local', 's3bucket']); // cannot use const - container won't compile
+        $dotenv->required('S3_BUCKET');
+        $dotenv->required('S3_KEY');
+        $dotenv->required('S3_SECRET');
+        $dotenv->required('S3_REGION');
+        $dotenv->required('S3_ENDPOINT');
+        $dotenv->required('DB_TYPE')->allowedValues(['sqlite', 'postgresql']);
+        $dotenv->required('DATABASE_HOST');
+        $dotenv->required('POSTGRES_USER');
+        $dotenv->required('POSTGRES_PASSWORD');
+        $dotenv->required('POSTGRES_DB');
 
-        // check that adminer password is not default or empty string
         if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
-            throw new ValidationException('Adminer password must be changed and cannot be empty in .env');
+            throw new ValidationException('Adminer password must be changed and cannot be empty');
         }
     }
 }

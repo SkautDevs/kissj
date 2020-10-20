@@ -3,20 +3,20 @@
 namespace kissj\Mailer;
 
 class MailerSettings {
-    public $smtp;
-    public $smtpServer;
-    public $smtpAuth;
-    public $smtpPort;
-    public $smtpUsername;
-    public $smtpPassword;
-    public $smtpSecure;
-    public $fromMail;
-    public $fromName;
-    public $bccMail;
-    public $bccName;
-    public $disableTls;
-    public $debugOutputLevel;
-    public $sendMailToMainRecipient;
+    public string $smtp;
+    public string $smtpServer;
+    public string $smtpAuth;
+    public string $smtpPort;
+    public string $smtpUsername;
+    public string $smtpPassword;
+    public string $smtpSecure;
+    public string $fromMail;
+    public string $fromName;
+    public string $bccMail;
+    public string $bccName;
+    public string $disableTls;
+    public string $debugOutputLevel;
+    public string $sendMailToMainRecipient;
 
     public function __construct(
         string $smtp,

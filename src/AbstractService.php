@@ -4,7 +4,6 @@ namespace kissj;
 
 use kissj\Event\AbstractContentArbiter;
 use kissj\Participant\Participant;
-use Slim\Psr7\UploadedFile;
 
 class AbstractService {
     public function addParamsIntoPerson(array $params, Participant $p): Participant {
@@ -61,17 +60,5 @@ class AbstractService {
         }
 
         return true;
-    }
-
-    public function saveFileTo(Participant $participant, UploadedFile $uploadedFile): Participant {
-        $uploadDirectory = __DIR__.'/../../../uploads/';
-        $newFilename = \md5(microtime(true));
-        $uploadedFile->moveTo($uploadDirectory.DIRECTORY_SEPARATOR.$newFilename); // TODO check if separator is needed
-
-        $participant->uploadedFilename = $newFilename;
-        $participant->uploadedOriginalFilename = $uploadedFile->getClientFilename();
-        $participant->uploadedContenttype = $uploadedFile->getClientMediaType();
-
-        return $participant;
     }
 }

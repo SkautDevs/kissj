@@ -10,9 +10,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
 
 class PhpMailerWrapper {
-    private $renderer;
-    private $eventName;
-    private $settings;
+    private Twig $renderer;
+    private string $eventName;
+    private MailerSettings $settings;
 
     public function __construct(Twig $renderer, MailerSettings $mailerSettings) {
         $this->renderer = $renderer;
@@ -140,12 +140,12 @@ class PhpMailerWrapper {
                     ],
                 ];
             }
-            $mailer->Host = $this->settings->smtpServer;    // Specify main and backup SMTP servers
-            $mailer->Port = $this->settings->smtpPort;    // TCP port to connect to
-            $mailer->SMTPAuth = $this->settings->smtpAuth;    // Enable SMTP authentication
-            $mailer->Username = $this->settings->smtpUsername;    // SMTP username
-            $mailer->Password = $this->settings->smtpPassword;    // SMTP password
-            $mailer->SMTPSecure = $this->settings->smtpSecure;    // Enable TLS encryption, `ssl` or null also accepted
+            $mailer->Host = $this->settings->smtpServer; // Specify main and backup SMTP servers
+            $mailer->Port = $this->settings->smtpPort; // TCP port to connect to
+            $mailer->SMTPAuth = $this->settings->smtpAuth; // Enable SMTP authentication
+            $mailer->Username = $this->settings->smtpUsername; // SMTP username
+            $mailer->Password = $this->settings->smtpPassword; // SMTP password
+            $mailer->SMTPSecure = $this->settings->smtpSecure; // Enable TLS encryption, `ssl` or null also accepted
             $mailer->CharSet = 'UTF-8';
 
             //Recipients

@@ -2,7 +2,6 @@
 
 namespace kissj\Participant\Admin;
 
-use GuzzleHttp\Psr7\LazyOpenStream;
 use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
@@ -19,16 +18,16 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class AdminController extends AbstractController {
-    private $participantService;
-    private $paymentService;
-    private $paymentRepository;
-    private $bankPaymentRepository;
-    private $bankPaymentService;
-    private $patrolService;
-    private $istService;
-    private $freeParticipantService;
-    private $guestService;
-    private $adminService;
+    private ParticipantService $participantService;
+    private PaymentService $paymentService;
+    private PaymentRepository $paymentRepository;
+    private BankPaymentRepository $bankPaymentRepository;
+    private FioBankPaymentService $bankPaymentService;
+    private PatrolService $patrolService;
+    private IstService $istService;
+    private FreeParticipantService $freeParticipantService;
+    private GuestService $guestService;
+    private AdminService $adminService;
 
     public function __construct(
         ParticipantService $participantService,
@@ -120,7 +119,7 @@ class AdminController extends AbstractController {
             ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
-    
+
     public function cancelAllDuePayments(Request $request, Response $response): Response {
         $this->paymentService->cancelDuePayments(5);
 
@@ -147,10 +146,9 @@ class AdminController extends AbstractController {
     }
 
     public function showFile(string $filename) {
-        $uploadFolder = __DIR__.'/../../../uploads/';
-        $stream = new LazyOpenStream($uploadFolder.$filename, 'r');
-        $response = new \Slim\Psr7\Response(200, null, $stream);
-        $response = $response->withAddedHeader('Content-Type', mime_content_type($uploadFolder.$filename));
+        $file = $this->fileHandler->getFile($filename);
+        $response = new \Slim\Psr7\Response(200, null, $file->stream);
+        $response = $response->withAddedHeader('Content-Type', $file->mimeContentType);
 
         return $response;
     }
