@@ -1,18 +1,25 @@
-{% if ca.firstName %}
-    {% trans %}detail.firstName{% endtrans %}: <b>{{ person.getFirstName }}</b><br/>
-{% endif %}{% if ca.lastName %}
-    {% trans %}detail.surname{% endtrans %}: <b>{{ person.getLastName }}</b><br/>
-{% endif %}{% if ca.nickname %}
-    {% trans %}detail.scoutNick{% endtrans %}: <b>{{ person.getNickname }}</b><br/>
-{% endif %}{% if ca.gender %}
+{% if useShortNaming %}
+    <b>{{ person.getFullName }}</b><br/>
+{% else %}
+    {% if ca.firstName %}
+        {% trans %}detail.firstName{% endtrans %}: <b>{{ person.getFirstName }}</b><br/>
+    {% endif %}
+    {% if ca.lastName %}
+        {% trans %}detail.surname{% endtrans %}: <b>{{ person.getLastName }}</b><br/>
+    {% endif %}
+    {% if ca.nickname %}
+        {% trans %}detail.scoutNick{% endtrans %}: <b>{{ person.getNickname }}</b><br/>
+    {% endif %}
+{% endif %}
+{% if ca.gender %}
     {% trans %}detail.gender{% endtrans %}: <b>
-        {% if person.getGender == 'man' %}
-            {% trans %}detail.genderMan{% endtrans %}
-        {% elseif person.getGender == 'woman' %}
-            {% trans %}detail.genderWoman{% endtrans %}
-        {% elseif person.getGender == 'other' %}
-            {% trans %}detail.genderOther{% endtrans %}
-        {% endif %}</b><br/>
+    {% if person.getGender == 'man' %}
+        {% trans %}detail.genderMan{% endtrans %}
+    {% elseif person.getGender == 'woman' %}
+        {% trans %}detail.genderWoman{% endtrans %}
+    {% elseif person.getGender == 'other' %}
+        {% trans %}detail.genderOther{% endtrans %}
+    {% endif %}</b><br/>
 {% endif %}{% if ca.birthDate %}
     {% trans %}detail.birthDate{% endtrans %}: <b>{{ person.getBirthDate.format('d. m. Y') }}</b><br/>
 {% endif %}{% if ca.email %}

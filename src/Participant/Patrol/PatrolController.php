@@ -200,8 +200,7 @@ class PatrolController extends AbstractController {
         /** @var PatrolLeader $patrolLeader */
         $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
         $this->patrolService->approveRegistration($patrolLeader);
-        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
-        $this->flashMessages->success('Patrol is approved, payment is generated and mail sent');
+        $this->flashMessages->success($this->translator->trans('flash.success.patrolApproved'));
         $this->logger->info('Approved registration for Patrol with Patrol Leader ID '.$patrolLeader->id);
 
         return $this->redirect($request,

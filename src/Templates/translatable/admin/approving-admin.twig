@@ -9,12 +9,25 @@
     <br/>
     {% if closedIsts is not empty %}
         <div class="card closed-theme">
-            <h2>{{ event.getIstLabel|capitalize }}</h2>
+            <h2>{% trans %}role.ist{% endtrans %}</h2>
         </div>
         <br/>
         {% for ist in closedIsts %}
             <div class="card closed-theme">
-                {{ include('admin/snippet/details-ist.twig') }}
+                <h4>{{ ist.getFullName }}</h4>
+                {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}{#
+                {% if caIst.uploadFile %}
+                    {% trans %}approving-admin.uploadedFile{% endtrans %}
+                    {% if ist.getUploadedFilename %}
+                        <a target="_blank"
+                           href="{{ url_for('admin-show-file', {'filename': ist.getUploadedFilename, 'eventSlug': event.slug}) }}">
+                            {{ ist.getUploadedOriginalFilename }}
+                        </a>
+                    {% else %}
+                        <i>{% trans %}approving-admin.noFile{% endtrans %}</i>
+                    {% endif %}<br/>
+                {% endif %}
+                TODO move into widget #}
                 <br/>
                 <a href="{{ url_for('admin-open-ist-show', {'istId': ist.getId, 'eventSlug': event.slug}) }}"
                    class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
@@ -22,7 +35,8 @@
                 <br/>
                 <form method="post"
                       action="{{ url_for('admin-approve-ist', {'istId': ist.getId, 'eventSlug': event.slug}) }}">
-                    <input type="submit" value="{% trans %}approving-admin.approveAndSend{% endtrans %}"
+                    <input type="submit"
+                           value="{% trans %}approving-admin.approveAndSend{% endtrans %}"
                            class="btn btn-small">
                 </form>
             </div>
@@ -30,148 +44,98 @@
         {% endfor %}
     {% else %}
         <div class="card closed-theme">
-            <h2>{% trans %}approving-admin.none{% endtrans %} {{ event.getIstLabel }} {% trans %}approving-admin.need{% endtrans %}</h2>
+            <h2>{% trans %}approving-admin.none{% endtrans %} {% trans %}role.ist{% endtrans %} {% trans %}approving-admin.need{% endtrans %}</h2>
         </div>
         <br/>
     {% endif %}
-    {#
-        {% if closedPatrolLeaders is not empty %}
+
+    {% if closedPatrolLeaders is not empty %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.pl{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for pl in closedPatrolLeaders %}
             <div class="card closed-theme">
-                <h2>Patrols</h2>
-            </div>
-            <br/>
-            {% for pl in closedPatrolLeaders %}
-                <div class="card closed-theme">
-                    <h3>{{ pl.getPatrolName }}</h3>
-                    <br/>
-                    <h4>{{ pl.getFullName }}</h4>
-                    Date of birth: <b>{{ pl.getBirthDate.format('d. m. Y') }}</b><br/>
-                    Gender: <b>{{ pl.getGender }}</b><br/>
-                    Email: <b>{{ pl.getEmail }}</b><br/>
-                    Phone number: <b>{{ pl.getTelephoneNumber }}</b><br/>
-                    Permanent Address: <b>{{ pl.getPermanentResidence }}</b><br/>
-                    Country: <b>{{ pl.getCountry }}</b><br/>
-                    Scout unit: <b>{{ pl.getScoutUnit }}</b><br/>
-                    T-shirt size: <b>{{ pl.getTshirt }}</b><br/>
-                    Diet Restriction: <b>{{ pl.getFoodPreferences }}</b><br/>
-                    Health issues: <b>{{ pl.getHealthProblems }}</b><br/>
-                    Languages you speak + level: <b>{{ pl.getLanguages }}</b><br/>
-                    Swimming skill: <b>{{ pl.getSwimming }}</b><br/>
-                    Notes: <b>{{ pl.getNotes }}</b><br/>
-                    <br/>
-    
-                    <h4>Patrol Participant details</h4>
-                    {% for pDetail in pl.patrolParticipants %}
-                        Full name: <b>{{ pDetail.getFullName }}</b><br/>
-                        Date of birth: <b>{{ pDetail.getBirthDate.format('d. m. Y') }}</b><br/>
-                        Gender: <b>{{ pDetail.getGender }}</b><br/>
-                        Email: <b>{{ pDetail.getEmail }}</b><br/>
-                        Phone number: <b>{{ pDetail.getTelephoneNumber }}</b><br/>
-                        Permanent Address: <b>{{ pDetail.getPermanentResidence }}</b><br/>
-                        Country: <b>{{ pDetail.getCountry }}</b><br/>
-                        Scout unit: <b>{{ pDetail.getScoutUnit }}</b><br/>
-                        Diet Restriction: <b>{{ pDetail.getFoodPreferences }}</b><br/>
-                        Health issues: <b>{{ pDetail.getHealthProblems }}</b><br/>
-                        Swimming skill: <b>{{ pDetail.getSwimming }}</b><br/>
-                        Notes: <b>{{ pDetail.getNotes }}</b><br/>
-                        <br/>
-                    {% endfor %}
-                    <a href="{{ url_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">Deny</a>
-                    <br/>
-                    <br/>
-                    <form method="post"
-                          action="{{ url_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="Approve and send email" class="btn btn-small">
-                    </form>
-                </div>
+                <h3>{{ pl.getPatrolName }}</h3>
                 <br/>
-            {% endfor %}
-        {% else %}
-            <div class="card closed-theme">
-                <h2>No patrols are in need to approve</h2>
-            </div>
-            <br/>
-        {% endif %}
-    
-        {% if closedFreeParticipants is not empty %}
-            <div class="card closed-theme">
-                <h2>Free Participants</h2>
-            </div>
-            <br/>
-            {% for freeParticipant in closedFreeParticipants %}
-                <div class="card closed-theme">
-                    <h4>{{ freeParticipant.getFullName }}</h4>
-                    Date of birth: <b>{{ freeParticipant.getBirthDate.format('d. m. Y') }}</b><br/>
-                    Gender: <b>{{ freeParticipant.getGender }}</b><br/>
-                    Email: <b>{{ freeParticipant.getEmail }}</b><br/>
-                    Phone number: <b>{{ freeParticipant.getTelephoneNumber }}</b><br/>
-                    Permanent Address: <b>{{ freeParticipant.getPermanentResidence }}</b><br/>
-                    Country: <b>{{ freeParticipant.getCountry }}</b><br/>
-                    Scout unit: <b>{{ freeParticipant.getScoutUnit }}</b><br/>
-                    Diet Restriction: <b>{{ freeParticipant.getFoodPreferences }}</b><br/>
-                    Health issues: <b>{{ freeParticipant.getHealthProblems }}</b><br/>
-                    Swimming skill: <b>{{ freeParticipant.getSwimming }}</b><br/>
-                    Legal representative (name + email): <b>{{ freeParticipant.getLegalRepresentative }}</b><br/>
-                    Current Leader (name + email): <b>{{ freeParticipant.getNotes }}</b><br/>
-                    <br/>
-                    <a href="{{ url_for('admin-open-fp-show', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">Deny</a>
-                    <br/>
-                    <br/>
-                    <form method="post"
-                          action="{{ url_for('admin-fp-send-welcome', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="Send welcome email" class="btn btn-grey btn-small">
-                    </form>
-                    <br/>
-                    <form method="post"
-                          action="{{ url_for('admin-approve-fp', {'fpId': freeParticipant.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="Approve and send email" class="btn btn-small">
-                    </form>
-                </div>
+                <h4>{{ pl.getFullName }}</h4>
+                {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
                 <br/>
-            {% endfor %}
-        {% else %}
-            <div class="card closed-theme">
-                <h2>No free participants are in need for approve</h2>
-            </div>
-            <br/>
-        {% endif %}
-    
-        {% if closedGuests is not empty %}
-            <div class="card closed-theme">
-                <h2>Guests</h2>
-            </div>
-            <br/>
-            {% for guest in closedGuests %}
-                <div class="card closed-theme">
-                    <h4>{{ guest.getFullName }}</h4>
-                    Date of birth: <b>{{ guest.getBirthDate.format('d. m. Y') }}</b><br/>
-                    Gender: <b>{{ guest.getGender }}</b><br/>
-                    Email: <b>{{ guest.getEmail }}</b><br/>
-                    Phone number: <b>{{ guest.getTelephoneNumber }}</b><br/>
-                    Country: <b>{{ guest.getCountry }}</b><br/>
-                    Diet Restriction: <b>{{ guest.getFoodPreferences }}</b><br/>
-                    Health issues: <b>{{ guest.getHealthProblems }}</b><br/>
-                    Date of arrival: <b>{{ guest.getArrivalDate.format('d. m. Y') }}</b><br/>
-                    Date of departue: <b>{{ guest.getDepartueDate.format('d. m. Y') }}</b><br/>
-                    Notes: <b>{{ guest.getNotes }}</b><br/>
+
+                <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
+                {% for pp in pl.patrolParticipants %}
+                    {% include 'widgets/details.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
                     <br/>
-                    <a href="{{ url_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">Deny</a>
-                    <br/>
-                    <br/>
-                    <form method="post"
-                          action="{{ url_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="Approve and send email" class="btn btn-small">
-                    </form>
-                </div>
+                {% endfor %}
+                <a href="{{ url_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
                 <br/>
-            {% endfor %}
-        {% else %}
-            <div class="card closed-theme">
-                <h2>No guests are in need for approve</h2>
+                <br/>
+                <form method="post"
+                      action="{{ url_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
+                    <input type="submit"
+                           value="{% trans %}approving-admin.approveAndSend{% endtrans %}"
+                           class="btn btn-small">
+                </form>
             </div>
             <br/>
-        {% endif %}#}
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>{% trans %}approving-admin.none{% endtrans %} {% trans %}role.pl{% endtrans %} {% trans %}approving-admin.need{% endtrans %}</h2>
+        </div>
+        <br/>
+    {% endif %}
+
+    {% if closedFreeParticipants is not empty %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.fp{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for fp in closedFreeParticipants %}
+            <div class="card closed-theme">
+                <h4>{{ fp.getFullName }}</h4>
+                {% include 'widgets/details.twig' with {'person': fp, 'ca': caFp} %}
+                <br/>
+                <a href="{{ url_for('admin-open-fp-show', {'fpId': fp.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
+                <br/>
+                <br/>
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>{% trans %}approving-admin.none{% endtrans %} {% trans %}role.fp{% endtrans %} {% trans %}approving-admin.need{% endtrans %}</h2>
+        </div>
+        <br/>
+    {% endif %}
+
+    {% if closedGuests is not empty %}
+        <div class="card closed-theme">
+            <h2>Guests</h2>
+        </div>
+        <br/>
+        {% for guest in closedGuests %}
+            <div class="card closed-theme">
+                <h4>{{ guest.getFullName }}</h4>
+                {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
+                <br/>
+                <a href="{{ url_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}approving-admin.deny{% endtrans %}</a>
+                <br/>
+                <br/>
+                <form method="post"
+                      action="{{ url_for('admin-approve-guest', {'guestId': guest.getId, 'eventSlug': event.slug}) }}">
+                    <input type="submit" value="{% trans %}approving-admin.approveAndSend{% endtrans %}" class="btn btn-small">
+                </form>
+            </div>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <div class="card closed-theme">
+            <h2>{% trans %}approving-admin.none{% endtrans %} {% trans %}role.guest{% endtrans %} {% trans %}approving-admin.need{% endtrans %}</h2>
+        </div>
+        <br/>
+    {% endif %}
 {% endblock %}

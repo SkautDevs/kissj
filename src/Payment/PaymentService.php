@@ -16,14 +16,14 @@ use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService {
-    private $bankPaymentService;
-    private $bankPaymentRepository;
-    private $paymentRepository;
-    private $userService;
-    private $flashMessages;
-    private $mailer;
-    private $translator;
-    private $logger;
+    private FioBankPaymentService $bankPaymentService;
+    private BankPaymentRepository $bankPaymentRepository;
+    private PaymentRepository $paymentRepository;
+    private UserService $userService;
+    private FlashMessagesBySession $flashMessages;
+    private PhpMailerWrapper $mailer;
+    private TranslatorInterface $translator;
+    private Logger $logger;
 
     public function __construct(
         FioBankPaymentService $bankPaymentService,
@@ -60,9 +60,10 @@ class PaymentService {
         $payment->status = Payment::STATUS_WAITING;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
-        if ($participant instanceof Ist) {
-            $payment->note = $event->slug.' '
-                .$participant->getFullName();
+        if ($participant instanceof PatrolLeader) {
+            $payment->note = $event->slug.' '.$participant->patrolName.' '.$participant->getFullName();
+        } else {
+            $payment->note = $event->slug.' '.$participant->getFullName();
         }
 
         $this->paymentRepository->persist($payment);

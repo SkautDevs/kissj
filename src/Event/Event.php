@@ -28,7 +28,7 @@ use kissj\Orm\EntityDatetime;
  *
  * @property bool        $allowIsts
  * @property int|null    $maximalClosedIstsCount
- * @property string|null $istLabel
+ * @property string|null $istLabel // TODO remove in favor of translation
  *
  * @property string|null $eventStart m:passThru(dateFromString|dateToString)
  * @property string|null $contactEmail

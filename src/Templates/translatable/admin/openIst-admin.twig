@@ -6,7 +6,7 @@
         <p>{% trans %}openIst-admin.wantDeny{% endtrans %} <b>{{ ist.getFullName }}</b>?</p>
         <form method="post" action="{{ url_for('admin-open-ist', {'istId' : ist.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>{% trans %}openIst-admin.reason{% endtrans %}<br/><br/>
+                <label>{% trans %}openIst-admin.reason{% endtrans %}:<br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>

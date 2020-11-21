@@ -107,7 +107,7 @@ class IstController extends AbstractController {
         /** @var Ist $ist */
         $ist = $this->istRepository->find($istId);
         $this->istService->approveRegistration($ist);
-        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
+        $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
         $this->logger->info('Approved registration for IST with ID '.$ist->id);
 
         return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);

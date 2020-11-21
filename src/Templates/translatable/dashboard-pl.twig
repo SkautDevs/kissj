@@ -32,7 +32,7 @@
                     {% if ca.firstName %}
                         {% trans %}detail.patrolName{% endtrans %}: <b>{{ pl.getPatrolName }}</b><br/>
                     {% endif %}
-                    {% include 'widgets/dashboard.twig' with {'person': pl} %}
+                    {% include 'widgets/details.twig' with {'person': pl} %}
                     <br/>
                 </div>
             </div>

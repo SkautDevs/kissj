@@ -97,7 +97,7 @@ class GuestController extends AbstractController {
         /** @var Guest $guest */
         $guest = $this->guestRepository->find($guestId);
         $this->guestService->finishRegistration($guest);
-        $this->flashMessages->success('guest participant is approved, mail was sent (withnout payment)');
+        $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
         $this->logger->info('Approved (no payment was sent) registration for guest with ID '.$guest->id);
 
         return $response->withRedirect($this->router->urlFor(

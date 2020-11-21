@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card card-half closed-theme">
         <h2>{% trans %}role.p{% endtrans %} - {% trans %}dashboard.details{% endtrans %}</h2>
-        {% include 'widgets/dashboard.twig' with {'person': pDetail} %}
+        {% include 'widgets/details.twig' with {'person': pDetail} %}
         <br/>
         <a class="btn btn-grey btn-small" href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">
             {% trans %}changeDetails.back{% endtrans %}

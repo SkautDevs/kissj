@@ -6,6 +6,11 @@ use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
+use kissj\Event\ContentArbiterFreeParticipant;
+use kissj\Event\ContentArbiterGuest;
+use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Participant\FreeParticipant\FreeParticipantService;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
@@ -28,6 +33,11 @@ class AdminController extends AbstractController {
     private FreeParticipantService $freeParticipantService;
     private GuestService $guestService;
     private AdminService $adminService;
+    private ContentArbiterPatrolLeader $contentArbiterPatrolLeader;
+    private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant;
+    private ContentArbiterIst $contentArbiterIst;
+    private ContentArbiterFreeParticipant $contentArbiterFreeParticipant;
+    private ContentArbiterGuest $contentArbiterGuest;
 
     public function __construct(
         ParticipantService $participantService,
@@ -39,7 +49,12 @@ class AdminController extends AbstractController {
         IstService $istService,
         FreeParticipantService $freeParticipantService,
         GuestService $guestService,
-        AdminService $adminService
+        AdminService $adminService,
+        ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
+        ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
+        ContentArbiterIst $contentArbiterIst,
+        ContentArbiterFreeParticipant $contentArbiterFreeParticipant,
+        ContentArbiterGuest $contentArbiterGuest
     ) {
         $this->participantService = $participantService;
         $this->paymentService = $paymentService;
@@ -51,6 +66,11 @@ class AdminController extends AbstractController {
         $this->freeParticipantService = $freeParticipantService;
         $this->guestService = $guestService;
         $this->adminService = $adminService;
+        $this->contentArbiterPatrolLeader = $contentArbiterPatrolLeader;
+        $this->contentArbiterPatrolParticipant = $contentArbiterPatrolParticipant;
+        $this->contentArbiterIst = $contentArbiterIst;
+        $this->contentArbiterFreeParticipant = $contentArbiterFreeParticipant;
+        $this->contentArbiterGuest = $contentArbiterGuest;
     }
 
     public function showDashboard(Response $response): Response {
@@ -79,6 +99,11 @@ class AdminController extends AbstractController {
                 ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_CLOSED),
             'closedGuests' => $participantService
                 ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_CLOSED),
+            'caIst' => $this->contentArbiterIst,
+            'caPl' => $this->contentArbiterPatrolLeader,
+            'caPp' => $this->contentArbiterPatrolParticipant,
+            'caFp' => $this->contentArbiterFreeParticipant,
+            'caGuest' => $this->contentArbiterGuest,
         ]);
     }
 
