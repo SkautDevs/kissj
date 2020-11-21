@@ -3,19 +3,19 @@
 {% block content %}
     <div class="card open-theme">
         <h2>{% trans %}closeRegistration.titleIst{% endtrans %}</h2>
-        <p>{% trans %}closeRegistration-ist.lockRegistration{% endtrans %}
-            <b>{% trans %}closeRegistration-ist.lockRegistrationBold{% endtrans %}</b></p>
+        <p>{% trans %}closeRegistration.lockRegistration{% endtrans %}
+            <b>{% trans %}closeRegistration.lockRegistrationBold{% endtrans %}</b></p>
         <form method="POST" action="{{ url_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
             <label><input type="checkbox"
-                          required="required">{% trans %}closeRegistration-ist.protectionAgree{% endtrans %}
+                          required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
                 <a href="{{ url_for('ist-dashboard', {'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">{% trans %}closeRegistration-ist.back{% endtrans %}</a>
+                   class="btn btn-grey btn-small">{% trans %}closeRegistration.back{% endtrans %}</a>
                 <input class="btn btn-small" type="submit"
-                       value="{% trans %}closeRegistration-ist.lockRegistrationButton{% endtrans %}">
+                       value="{% trans %}closeRegistration.lockRegistrationButton{% endtrans %}">
             </div>
         </form>
     </div>

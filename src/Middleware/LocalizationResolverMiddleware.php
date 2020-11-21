@@ -52,7 +52,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
 
         $response = $handler->handle($request);
 
-        if (isset($request->getQueryParams()['locale'])) {
+        if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
+            $response = FigResponseCookies::remove($response, self::LOCALE_COOKIE_NAME);
             $response = FigResponseCookies::set(
                 $response,
                 SetCookie::create(self::LOCALE_COOKIE_NAME, $bestNegotiatedLanguage)

@@ -39,15 +39,17 @@
 {% endif %}{% if ca.health %}
     {% trans %}detail.issues{% endtrans %}: <b>{{ person.getHealthProblems }}</b><br/>
 {% endif %}{% if ca.languages %}
-    Languages you speak + level: <b>{{ person.getLanguages }}</b><br/>
+    {% trans %}detail.language{% endtrans %}: <b>{{ person.getLanguages }}</b><br/>
+{% endif %}{% if ca.idNumber %}
+    {% trans %}detail.idNumber{% endtrans %}: <b>{{ person.getIdNumber }}</b><br/>{# used or health certificate #}
 {% endif %}{% if ca.swimming %}
     {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming }}</b><br/>
 {% endif %}{% if ca.driver %}
-    {% trans %}detail.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
+    {% trans %}detail-ist.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
 {% endif %}{% if ca.skills %}
-    Skills: <b>{{ person.getSkills }}</b><br/>
+    {% trans %}detail-ist.skills{% endtrans %}: <b>{{ person.getSkills }}</b><br/>
 {% endif %}{% if ca.preferredPosition %}
-    Preferred positions: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
+    {% trans %}detail-ist.position{% endtrans %}: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
 {% endif %}{% if ca.scarf %}
     {% trans %}detail.scarf{% endtrans %}: <b>
         {% if person.getScarf == 'yes' %}

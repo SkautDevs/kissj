@@ -22,6 +22,7 @@ class AbstractService {
         $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
         $p->foodPreferences = $params['foodPreferences'] ?? null;
         $p->healthProblems = $params['healthProblems'] ?? null;
+        $p->idNumber = $params['idNumber'] ?? null;
         $p->languages = $params['languages'] ?? null;
         $p->swimming = $params['swimming'] ?? null;
         $p->scarf = $params['scarf'] ?? null;

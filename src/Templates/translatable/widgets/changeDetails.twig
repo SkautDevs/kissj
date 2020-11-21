@@ -146,125 +146,38 @@
                 value="{{ personDetails.getHealthProblems }}">
     </label>
 {% endif %}{% if ca.languages %}
-    <label class="form-group form-group-inline">{% trans %}detail.languages{% endtrans %}: <input
+    <label class="form-group form-group-inline">{% trans %}detail.language{% endtrans %}: <input
                 class="form-control"
                 type="text"
                 name="languages"
                 required="required"
                 value="{{ personDetails.getLanguages }}">
     </label>
+{% endif %}{% if ca.idNumber %}
+    <label class="form-group form-group-inline">{% trans %}detail.idNumber{% endtrans %}: <input
+                class="form-control"
+                type="text"
+                name="idNumber"
+                placeholder="{% trans %}detail.idNumber-placeholder{% endtrans %}"
+                value="{{ personDetails.getIdNumber }}">
+    </label>
 {% endif %}{% if ca.swimming %}
     <label class="form-group form-group-inline">{% trans %}detail.swimSkill{% endtrans %}:
         <select class="form-control" name="swimming" required="required">
             <option value="no swim"
-                    {% if personDetails.getTshirtShape == 'no swim' %}selected="selected"{% endif %}>
+                    {% if personDetails.getSwimming == 'no swim' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillNo{% endtrans %}
             </option>
             <option value="less than 50 meters"
-                    {% if personDetails.getTshirtShape == 'less than 50 meters' %}selected="selected"{% endif %}>
+                    {% if personDetails.getSwimming == 'less than 50 meters' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillLess50{% endtrans %}
             </option>
             <option value="more than 50 meters"
-                    {% if personDetails.getTshirtShape == 'more than 50 meters' %}selected="selected"{% endif %}>
+                    {% if personDetails.getSwimming == 'more than 50 meters' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillMore50{% endtrans %}
             </option>
         </select>
     </label>
-{% endif %}{% if ca.driver %}
-    <label class="form-group form-group-inline">Driver's licence:
-        <select class="form-control" name="driversLicense" required="required">
-            <option value="dont"
-                    {% if personDetails.getDriversLicense == 'dont' %}selected="selected"{% endif %}>
-                I don't have it or I don't want to drive on event
-            </option>
-            <option value="less 10000 km"
-                    {% if personDetails.getDriversLicense == 'less 10000 km' %}selected="selected"{% endif %}>
-                I have it, but have not driven more than 10 000 km
-            </option>
-            <option value="more 10000 km"
-                    {% if personDetails.getDriversLicense == 'more 10000 km' %}selected="selected"{% endif %}>
-                I have it and have driven more than 10 000 km
-            </option>
-        </select>
-    </label>
-{% endif %}{% if ca.skills %}
-    <label class="form-group form-group-inline">Skills: <input class="form-control" type="text"
-                                                               name="skills"
-                                                               placeholder="sailing; food handling certificate; advanced first aid; ..."
-                                                               value="{{ personDetails.getSkills }}">
-    </label>
-    <br>
-{% endif %}{% if ca.preferredPosition %}
-    <div class="form-group">
-        Preffered position:
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="press"
-                   {% if 'press' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            press (newspaper, photography and other media...)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="central services"
-                   {% if 'central services' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            central services (registration, administration, info tent...)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="kitchen"
-                   {% if 'kitchen' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            kitchen (food preparation - you must have a valid food handling certificate)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="technical support"
-                   {% if 'technical support' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            technical support (material handling, storage or transport, fixing technical issues at the
-            campsite)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - sailing"
-                   {% if 'program - sailing' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - sailing
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - canoeing"
-                   {% if 'program - canoeing' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - canoeing
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - community project"
-                   {% if 'program - community project' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - community project
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - rafting"
-                   {% if 'program - rafting' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - rafting
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - hiking"
-                   {% if 'program - hiking' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - hiking
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - workshops"
-                   {% if 'program - workshops' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            main program - workshops (feel free to state any insteresting skills into skill field)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="evening activities"
-                   {% if 'evening activities' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            evening leisure activities (ceremonials, dances, parties, debates...)
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="teahouse staff"
-                   {% if 'teahouse staff' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            teahouse staff
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="subcamp leader"
-                   {% if 'subcamp leader' in personDetails.getPreferredPosition %}checked="checked"{% endif %}>
-            subcamp leader
-        </label>
-    </div>
-    <br>
 {% endif %}{% if ca.scarf %}
     <label class="form-group form-group-inline">{% trans %}detail.scarf{% endtrans %}:
         <select class="form-control" name="scarf">

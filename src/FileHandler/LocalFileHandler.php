@@ -30,5 +30,4 @@ class LocalFileHandler extends FileHandler {
 
         return $participant;
     }
-
 }

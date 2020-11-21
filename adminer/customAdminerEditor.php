@@ -15,7 +15,7 @@ function adminer_object() {
 			<table cellspacing="0">
 				<tr>
 					<th><?php echo lang('Username'); ?>
-					<td><input type="hidden" name="auth[driver]" value="sqlite"><input name="auth[username]"
+					<td><input type="hidden" name="auth[driver]" value="sqlite<?php /* or pgsql */ ?>"><input name="auth[username]"
 																					   id="username"
 																					   value="<?php echo h($_GET["username"]); ?>"
 																					   autocapitalize="off">
@@ -37,10 +37,12 @@ function adminer_object() {
         }
 
         function credentials() {
-            return array ();
+            // return [$_ENV['DATABASE_HOST'], $_ENV['POSTGRES_USER'], $_ENV['POSTGRES_PASSWORD']];
+            return [];
         }
 
         function database() {
+            //return $_ENV['POSTGRES_DB'];
             return __DIR__.'/../src/db_dev.sqlite';
         }
 

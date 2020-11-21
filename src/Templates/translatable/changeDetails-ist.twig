@@ -6,99 +6,100 @@
         <form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
             {% include 'widgets/changeDetails.twig' with {'personDetails': istDetails} %}
-            
+
             {% if ca.skills %}
-                <label class="form-group form-group-inline">Skills: <input class="form-control" type="text"
-                                                                           name="skills"
-                                                                           placeholder="sailing; food handling certificate; advanced first aid; ..."
-                                                                           value="{{ istDetails.getSkills }}">
+                <label class="form-group form-group-inline">
+                    {% trans %}detail-ist.skills{% endtrans %}:
+                    <input class="form-control" type="text"
+                           name="skills"
+                           placeholder="{% trans %}detail-ist.skills-placeholder{% endtrans %}"
+                           value="{{ istDetails.getSkills }}">
                 </label>
                 <br>
             {% endif %}{% if ca.preferredPosition %}
                 <div class="form-group">
-                    Preffered position:
+                    {% trans %}detail-ist.position{% endtrans %}:
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="press"
                                {% if 'press' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        press (newspaper, photography and other media...)
+                        {% trans %}detail-ist.position-press{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="central services"
                                {% if 'central services' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        central services (registration, administration, info tent...)
+                        {% trans %}detail-ist.position-centralServices{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="kitchen"
                                {% if 'kitchen' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        kitchen (food preparation - you must have a valid food handling certificate)
+                        {% trans %}detail-ist.position-kitchen{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="technical support"
                                {% if 'technical support' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        technical support (material handling, storage or transport, fixing technical issues at the
-                        campsite)
+                        {% trans %}detail-ist.position-technical{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - sailing"
                                {% if 'program - sailing' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - sailing
+                        {% trans %}detail-ist.position-programSailing{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - canoeing"
                                {% if 'program - canoeing' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - canoeing
+                        {% trans %}detail-ist.position-programCanoeing{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - community project"
                                {% if 'program - community project' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - community project
+                        {% trans %}detail-ist.position-programCommunityProject{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - rafting"
                                {% if 'program - rafting' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - rafting
+                        {% trans %}detail-ist.position-programRafting{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - hiking"
                                {% if 'program - hiking' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - hiking
+                        {% trans %}detail-ist.position-programHiking{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="program - workshops"
                                {% if 'program - workshops' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        main program - workshops (feel free to state any insteresting skills into skill field)
+                        {% trans %}detail-ist.position-programWorkshops{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="evening activities"
                                {% if 'evening activities' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        evening leisure activities (ceremonials, dances, parties, debates...)
+                        {% trans %}detail-ist.position-programLeisure{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="teahouse staff"
                                {% if 'teahouse staff' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        teahouse staff
+                        {% trans %}detail-ist.position-programTeahouse{% endtrans %}
                     </label>
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="subcamp leader"
                                {% if 'subcamp leader' in istDetails.getPreferredPosition %}checked="checked"{% endif %}>
-                        subcamp leader
+                        {% trans %}detail-ist.position-subcamp{% endtrans %}
                     </label>
                 </div>
                 <br>
             {% endif %}{% if ca.driver %}
-                <label class="form-group form-group-inline">Driver's licence:
+                <label class="form-group form-group-inline">{% trans %}detail-ist.driver{% endtrans %}:
                     <select class="form-control" name="driversLicense" required="required">
                         <option value="dont"
                                 {% if istDetails.getDriversLicense == 'dont' %}selected="selected"{% endif %}>
-                            I don't have it or I don't want to drive on event
+                            {% trans %}detail-ist.driver-dont{% endtrans %}
                         </option>
                         <option value="less 10000 km"
                                 {% if istDetails.getDriversLicense == 'less 10000 km' %}selected="selected"{% endif %}>
-                            I have it, but have not driven more than 10 000 km
+                            {% trans %}detail-ist.driver-less10k{% endtrans %}
                         </option>
                         <option value="more 10000 km"
                                 {% if istDetails.getDriversLicense == 'more 10000 km' %}selected="selected"{% endif %}>
-                            I have it and have driven more than 10 000 km
+                            {% trans %}detail-ist.driver-more10k{% endtrans %}
                         </option>
                     </select>
                 </label>
