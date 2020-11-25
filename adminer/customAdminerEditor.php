@@ -15,10 +15,12 @@ function adminer_object() {
 			<table cellspacing="0">
 				<tr>
 					<th><?php echo lang('Username'); ?>
-					<td><input type="hidden" name="auth[driver]" value="sqlite<?php /* or pgsql */ ?>"><input name="auth[username]"
-																					   id="username"
-																					   value="<?php echo h($_GET["username"]); ?>"
-																					   autocapitalize="off">
+					<td><input type="hidden" name="auth[driver]"
+							   value="<?= $_ENV['DB_TYPE'] === 'sqlite' ? 'sqlite' : 'pgsql' ?>"><input
+								name="auth[username]"
+								id="username"
+								value="<?php echo h($_GET["username"]); ?>"
+								autocapitalize="off">
 				<tr>
 					<th><?php echo lang('Password'); ?>
 					<td><input type="password" name="auth[password]">
@@ -37,13 +39,11 @@ function adminer_object() {
         }
 
         function credentials() {
-            // return [$_ENV['DATABASE_HOST'], $_ENV['POSTGRES_USER'], $_ENV['POSTGRES_PASSWORD']];
-            return [];
+            return ($_ENV['DB_TYPE'] === 'sqlite') ? [] : [$_ENV['DATABASE_HOST'], $_ENV['POSTGRES_USER'], $_ENV['POSTGRES_PASSWORD']];
         }
 
         function database() {
-            //return $_ENV['POSTGRES_DB'];
-            return __DIR__.'/../src/db_dev.sqlite';
+            return ($_ENV['DB_TYPE'] === 'sqlite') ? $_ENV['DB_FULL_PATH'] : $_ENV['POSTGRES_DB'];
         }
 
         function login($login, $password) {
