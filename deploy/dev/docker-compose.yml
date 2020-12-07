@@ -6,7 +6,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-        - .:/var/www/html
+        - ../..:/var/www/html
     environment:
       XDEBUG_EXTENSION_DEBUG: 1
       XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_port=9001 remote_autostart=1"
