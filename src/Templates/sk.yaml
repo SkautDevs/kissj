@@ -155,7 +155,7 @@ login:
     pay: "Zaplať a prídi na akciu!"
     more: "Viac informácií o registračnom systéme"
 _mail-layout:
-    registrationF: "Registrácia"
+    registration: "Registrácia"
     ifQuestion: "Ak máš akékoľvek otázky, skús sa pozrieť na web pre viac informácií"
     sendEmail: "alebo nám pošli mail na"
     farewell: "Dobrý vietor za tím"

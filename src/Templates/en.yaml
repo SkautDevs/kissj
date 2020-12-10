@@ -155,7 +155,7 @@ login:
     pay: "Pay and you are good to go!"
     more: "More information about registration system"
 _mail-layout:
-    registrationF: "Registration"
+    registration: "Registration"
     ifQuestion: "If you have any questions, you may seek the answer at our webpage"
     sendEmail: "or send us an E-mail to"
     farewell: "Fair winds and following seas from team of"
