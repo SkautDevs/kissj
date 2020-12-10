@@ -59,7 +59,7 @@ class Settings {
                     ]);
                 case 'postgresql':
                     return new Connection([
-                        'driver' => 'postgreSql',
+                        'driver' => 'postgre',
                         'host' => $_ENV['DATABASE_HOST'],
                         'username' => $_ENV['POSTGRES_USER'],
                         'password' => $_ENV['POSTGRES_PASSWORD'],
@@ -69,12 +69,12 @@ class Settings {
                     throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']);
             }
         };
-        $container[FileHandler::class] = function () {
+        $container[FileHandler::class] = function (S3bucketFileHandler $s3BucketFileHandler) {
             switch ($_ENV['FILE_HANDLER_TYPE']) {
                 case 'local':
                     return new LocalFileHandler();
                 case 's3bucket':
-                    return create(S3bucketFileHandler::class);
+                    return $s3BucketFileHandler;
                 default:
                     throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
                         .$_ENV['FILE_HANDLER_TYPE']);
@@ -101,7 +101,7 @@ class Settings {
             $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
             $logger->pushHandler(
-                new StreamHandler(__DIR__.'/../../logs/'.$_ENV['LOGGER_FILENAME'], $_ENV['LOGGER_LEVEL'])
+                new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL'])
             );
 
             return $logger;
