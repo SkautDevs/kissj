@@ -5,7 +5,6 @@ namespace kissj\Orm;
 use kissj\BankPayment\BankPayment;
 use kissj\Event\Event;
 use kissj\Participant\Admin\Admin;
-use kissj\Participant\FreeParticipant\FreeParticipant;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -20,8 +19,8 @@ use LeanMapper\IMapper;
 use LeanMapper\Row;
 
 class Mapper implements IMapper {
-    protected $defaultEntityNamespace = 'kissj';
-    protected $relationshipTableGlue = '_';
+    protected string $defaultEntityNamespace = 'kissj';
+    protected string $relationshipTableGlue = '_';
 
     public function getPrimaryKey($table): string {
         return 'id';
@@ -72,9 +71,6 @@ class Mapper implements IMapper {
                     case User::ROLE_IST:
                         return Ist::class;
 
-                    case User::ROLE_FREE_PARTICIPANT:
-                        return FreeParticipant::class;
-
                     case User::ROLE_GUEST:
                         return Guest::class;
 
@@ -114,7 +110,7 @@ class Mapper implements IMapper {
         throw new InvalidStateException('Cannot determine table name.');
     }
 
-    public function getImplicitFilters($entityClass, Caller $caller = null) {
+    public function getImplicitFilters($entityClass, Caller $caller = null): array {
         return [];
     }
 

@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use DI\Bridge\Slim\Bridge;
-use DI\ContainerBuilder;
-use kissj\Settings\Settings;
+use kissj\Application\ApplicationGetter;
 use PHPUnit\Framework\TestCase;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
@@ -14,7 +12,6 @@ use Slim\Psr7\Uri;
 
 class AppTestCase extends TestCase {
     protected function getTestApp(bool $freshInit = true): App {
-
         $testDbFullPath = __DIR__.'/temp/db_tests.sqlite';
         if ($freshInit) {
             $this->clearTempFolder();
@@ -26,24 +23,11 @@ class AppTestCase extends TestCase {
             $pdo->exec($sqlInit);
         }
 
-        $containerBuilder = new ContainerBuilder();
-        $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
+        return (new ApplicationGetter())->getApp(
             __DIR__.'/',
             'env.testing',
             $testDbFullPath
-        ));
-        $containerBuilder->useAnnotations(true); // used in AbstractController
-        if ($_ENV['DEBUG'] === 'false') {
-            // TODO add autowired definitions into container to get more performace
-            // https://php-di.org/doc/performances.html#optimizing-for-compilation
-            $containerBuilder->enableCompilation(__DIR__.'/temp');
-        }
-        $app = Bridge::create($containerBuilder->build());
-
-        require __DIR__.'/../src/middleware.php';
-        require __DIR__.'/../src/routes.php';
-
-        return $app;
+        );
     }
 
     protected function createRequest(

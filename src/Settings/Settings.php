@@ -37,11 +37,7 @@ use function DI\get;
 class Settings {
     private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
-    public function getContainerDefinition(
-        string $envPath = __DIR__.'/../..',
-        string $envFilename = '.env',
-        string $dbFullPath = __DIR__.'/../db_dev.sqlite'
-    ): array {
+    public function getContainerDefinition(string $envPath, string $envFilename, string $dbFullPath): array {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
         $_ENV['DB_FULL_PATH'] = $dbFullPath; // do not allow change DB path in .env
 
@@ -69,17 +65,17 @@ class Settings {
                     throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']);
             }
         };
-        $container[FileHandler::class] = function (S3bucketFileHandler $s3BucketFileHandler) {
-            switch ($_ENV['FILE_HANDLER_TYPE']) {
-                case 'local':
-                    return new LocalFileHandler();
-                case 's3bucket':
-                    return $s3BucketFileHandler;
-                default:
-                    throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
-                        .$_ENV['FILE_HANDLER_TYPE']);
-            }
-        };
+        switch ($_ENV['FILE_HANDLER_TYPE']) {
+            case 'local':
+                $container[FileHandler::class] = new LocalFileHandler();
+                break;
+            case 's3bucket':
+                $container[FileHandler::class] = get(S3bucketFileHandler::class);
+                break;
+            default:
+                throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
+                    .$_ENV['FILE_HANDLER_TYPE']);
+        }
         $container[FioRead::class] = function () {
             // using h4kuna/fio - https://github.com/h4kuna/fio
             $fioFactory = new FioFactory([

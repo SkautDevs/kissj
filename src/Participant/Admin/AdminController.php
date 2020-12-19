@@ -11,7 +11,6 @@ use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
-use kissj\Participant\FreeParticipant\FreeParticipantService;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
 use kissj\Participant\ParticipantService;
@@ -30,7 +29,6 @@ class AdminController extends AbstractController {
     private FioBankPaymentService $bankPaymentService;
     private PatrolService $patrolService;
     private IstService $istService;
-    private FreeParticipantService $freeParticipantService;
     private GuestService $guestService;
     private AdminService $adminService;
     private ContentArbiterPatrolLeader $contentArbiterPatrolLeader;
@@ -47,7 +45,6 @@ class AdminController extends AbstractController {
         FioBankPaymentService $bankPaymentService,
         PatrolService $patrolService,
         IstService $istService,
-        FreeParticipantService $freeParticipantService,
         GuestService $guestService,
         AdminService $adminService,
         ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
@@ -63,7 +60,6 @@ class AdminController extends AbstractController {
         $this->bankPaymentService = $bankPaymentService;
         $this->patrolService = $patrolService;
         $this->istService = $istService;
-        $this->freeParticipantService = $freeParticipantService;
         $this->guestService = $guestService;
         $this->adminService = $adminService;
         $this->contentArbiterPatrolLeader = $contentArbiterPatrolLeader;
@@ -80,7 +76,6 @@ class AdminController extends AbstractController {
             [
                 'patrols' => $this->patrolService->getAllPatrolsStatistics(),
                 'ists' => $this->istService->getAllIstsStatistics(),
-                'freeParticipants' => $this->freeParticipantService->getAllFreeParticipantStatistics(),
                 'guests' => $this->guestService->getAllGuestsStatistics(),
             ]
         );

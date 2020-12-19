@@ -8,8 +8,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class UserController extends AbstractController {
-    protected $userService;
-    protected $userRegeneration;
+    protected UserService $userService;
+    protected UserRegeneration $userRegeneration;
 
     public function __construct(
         UserService $userService,
@@ -19,7 +19,7 @@ class UserController extends AbstractController {
         $this->userRegeneration = $userRegeneration;
     }
 
-    public function landing(Request $request, Response $response, ?User $user) {
+    public function landing(Request $request, Response $response, ?User $user): Response {
         if ($user === null) {
             return $this->redirect($request, $response, 'loginAskEmail');
         }
@@ -31,11 +31,11 @@ class UserController extends AbstractController {
         return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
     }
 
-    public function login(Response $response) {
+    public function login(Response $response): Response {
         return $this->view->render($response, 'kissj/login.twig', ['event' => null]);
     }
 
-    public function sendLoginEmail(Request $request, Response $response) {
+    public function sendLoginEmail(Request $request, Response $response): Response {
         $email = $request->getParsedBody()['email'];
         if (!$this->userService->isEmailExisting($email)) {
             $this->userService->registerUser($email);
@@ -56,11 +56,11 @@ class UserController extends AbstractController {
         return $this->redirect($request, $response, 'loginAfterLinkSent');
     }
 
-    public function showAfterLinkSent(Response $response) {
+    public function showAfterLinkSent(Response $response): Response {
         return $this->view->render($response, 'kissj/login-link-sent.twig');
     }
 
-    public function tryLoginWithToken(Request $request, Response $response, string $token) {
+    public function tryLoginWithToken(Request $request, Response $response, string $token): Response {
         if ($this->userService->isLoginTokenValid($token)) {
             $loginToken = $this->userService->getLoginTokenFromStringToken($token);
             $user = $loginToken->user;
@@ -75,24 +75,25 @@ class UserController extends AbstractController {
         return $this->redirect($request, $response, 'loginAskEmail');
     }
 
-    public function logout(Request $request, Response $response) {
+    public function logout(Request $request, Response $response): Response {
         $this->userService->logoutUser();
         $this->flashMessages->info($this->translator->trans('flash.info.logout'));
 
         return $this->redirect($request, $response, 'landing');
     }
 
-    public function chooseRole(User $user, Request $request, Response $response) {
+    public function chooseRole(User $user, Request $request, Response $response): Response {
+        // TODO add preference into get parameter
         return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $user->event,]);
     }
 
-    public function setRole(User $user, Request $request, Response $response) {
+    public function setRole(User $user, Request $request, Response $response): Response {
         $this->userService->setRole($user, $request->getParsedBody()['role']);
 
         return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
     }
 
-    public function getDashboard(User $user, Request $request, Response $response) {
+    public function getDashboard(User $user, Request $request, Response $response): Response {
         $routerEventSlug = ['eventSlug' => $user->event->slug];
         switch ($user->role) {
             case null:
@@ -118,7 +119,7 @@ class UserController extends AbstractController {
         }
     }
 
-    public function showLoginHelp(Response $response) {
+    public function showLoginHelp(Response $response): Response {
         return $this->view->render($response, 'kissj/login-help.twig');
     }
 }
