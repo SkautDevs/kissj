@@ -118,6 +118,9 @@ _layout:
     approvedBar: "Approved"
     payedBar: "Payed! ;)"
     creator: "with ♥ created by Lung"
+404:
+    pardon: "Oops! Nothing is here... bad link maybe?"
+    button: "From the top!"
 singupSuccess:
     buttonSent: "A log-in token has been sent to your E-mail address."
     buttonClick: "Click on it in 15 minutes to log in into the registratino system."

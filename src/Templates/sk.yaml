@@ -118,6 +118,9 @@ _layout:
     approvedBar: "Schválené"
     payedBar: "Zaplatené! ;)"
     creator: "s ♥ vytvoril Lung"
+404:
+    pardon: "Ups! Tady nic není... možná špatný odkaz?"
+    button: "Zpátky na začátek!"
 singupSuccess:
     buttonSent: "Na zadaný e-mail sme Ti poslali prihlasovací odkaz."
     buttonClick: "Použi ho pre prihlásenie do registračného systému do 15 minút."

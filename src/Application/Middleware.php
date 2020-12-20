@@ -7,7 +7,9 @@ use Middlewares\TrailingSlash;
 use Monolog\Logger;
 use Selective\BasePath\BasePathMiddleware;
 use Slim\App;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Middleware\ContentLengthMiddleware;
+use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Throwable;
 use Whoops\Exception\Inspector;
@@ -32,7 +34,7 @@ class Middleware {
         $app->add(new BasePathMiddleware($app)); // must be after addRoutingMiddleware()
 
         // TWIG
-        $app->add(TwigMiddleware::createFromContainer($app, \Slim\Views\Twig::class));
+        $app->add(TwigMiddleware::createFromContainer($app, Twig::class));
 
         // TRAILING SLASH REMOVER
         $app->add(new TrailingSlash(false)); // remove trailing slash
@@ -45,6 +47,12 @@ class Middleware {
             $container = $app->getContainer();
 
             $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {
+                if ($exception instanceof HttpNotFoundException) {
+                    // TODO get user preferred langage from db when implemented
+                    echo $container->get(Twig::class)->fetch('404.twig');
+                    die;
+                }
+
                 $title = $inspector->getExceptionName();
                 $code = $exception->getCode();
                 $message = $inspector->getExceptionMessage();

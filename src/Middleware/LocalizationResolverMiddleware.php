@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Translator;
 
 class LocalizationResolverMiddleware extends BaseMiddleware {
@@ -47,7 +46,6 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
         }
 
         $this->translator->setLocale($bestNegotiatedLanguage);
-        $this->view->addExtension(new TranslationExtension($this->translator));
         $this->view->getEnvironment()->addGlobal('locale', $bestNegotiatedLanguage); // used in templates
 
         $response = $handler->handle($request);

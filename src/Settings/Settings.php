@@ -27,6 +27,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
@@ -154,6 +155,7 @@ class Settings {
         $container[TranslatorInterface::class] = get(Translator::class);
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
+            Translator $translator,
             FlashMessagesBySession $flashMessages
         ) {
             $view = Twig::create(
@@ -181,6 +183,7 @@ class Settings {
             }*/
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
+            $view->addExtension(new TranslationExtension($translator));
 
             return $view;
         };
