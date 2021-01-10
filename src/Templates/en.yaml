@@ -223,6 +223,7 @@ payments-admin:
     days: "days old"
     variableSymbol: "Variable symbol:"
     amount: "Amount:"
+    note: "Note:"
     cancel: "Cancel payment"
     confirm: "Confirm payment"
     allPatrolsPaid: "All patrols are paid up!"

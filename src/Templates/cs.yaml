@@ -223,6 +223,7 @@ payments-admin:
     days: "dní stará"
     variableSymbol: "Variabilní symbol:"
     amount: "Cena:"
+    note: "Poznámka:"
     cancel: "Zrušit platbu"
     confirm: "Potvrdit platbu"
     allPatrolsPaid: "Všechny patroly mají zaplaceno!"
