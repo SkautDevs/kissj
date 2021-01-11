@@ -4,39 +4,26 @@
     {% set userStatus = guest.user.status %}
     <div class="card {{ userStatus }}-theme">
         <h2>Guest - details</h2>
+        <h2>{% trans %}role.guest{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'guest'} %}
         </h4>
 
         <div>
-            <h2>Personal information</h2>
+            <h2>{% trans %}dashboard.personalInfo{% endtrans %}</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small"
-                   href="{{ url_for('guest-showDetailsChangeable', {'eventSlug': event.slug}) }}">
-                    Edit my details</a><br/><br/>
+                <a class="btn btn-small" href="{{ url_for('guest-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                    {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
             {% endif %}
             <div class="text-center">
-                First name: <b>{{ guest.getFirstName }}</b><br/>
-                Surname: <b>{{ guest.getLastName }}</b><br/>
-                Scout nickname: <b>{{ guest.getNickname }}</b><br/>
-                Date of birth: <b>{{ guest.getBirthDate.format('d. m. Y') }}</b><br/>
-                Gender: <b>{{ guest.getGender }}</b><br/>
-                Email: <b>{{ guest.getEmail }}</b><br/>
-                Phone number: <b>{{ guest.getTelephoneNumber }}</b><br/>
-                Country: <b>{{ guest.getCountry }}</b><br/>
-                {#T-shirt size: <b>{{ guest.getTshirt }}</b><br/>#}
-                Diet Restriction: <b>{{ guest.getFoodPreferences }}</b><br/>
-                Health issues: <b>{{ guest.getHealthProblems }}</b><br/>
-                Date of arrival: <b>{{ guest.getArrivalDate.format('d. m. Y') }}</b><br/>
-                Date of departue: <b>{{ guest.getDepartueDate.format('d. m. Y') }}</b><br/>
-                Notes: <b>{{ guest.getNotes }}</b><br/>
+                {% include 'widgets/details.twig' with {'person': guest} %}
                 <br/>
             </div>
         </div>
 
         {% if userStatus == 'open' %}
             <a class="btn btn-small" href="{{ url_for('guest-showCloseRegistration', {'eventSlug': event.slug}) }}">
-                Lock registration</a>
+                {% trans %}dashboard.lockRegistration{% endtrans %}</a>
         {% endif %}
     </div>
 {% endblock %}

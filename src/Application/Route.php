@@ -143,39 +143,6 @@ class Route {
 
                     })->add(IstsOnlyMiddleware::class);
                     /*
-                                $app->group('/freeParticipant', function (RouteCollectorProxy $app) {
-                                    $app->get('/dashboard', FreeParticipantController::class.'::showDashboard')
-                                        ->setName('fp-dashboard');
-                    
-                                    $app->group('', function (RouteCollectorProxy $app) {
-                                        $app->get('/showChangeDetails', FreeParticipantController::class.'::showDetailsChangeable')
-                                            ->setName('fp-showDetailsChangeable');
-                    
-                                        $app->post('/changeDetails', FreeParticipantController::class.'::changeDetails')
-                                            ->setName('fp-changeDetails');
-                    
-                                        $app->get('/closeRegistration', FreeParticipantController::class.'::showCloseRegistration')
-                                            ->setName('fp-showCloseRegistration');
-                    
-                                        $app->post('/closeRegistration', FreeParticipantController::class.'::closeRegistration')
-                                            ->setName('fp-confirmCloseRegistration');
-                    
-                                    })->add(OpenStatusOnlyMiddleware::class);
-                    
-                                })->add(function (Request $request, RequestHandler $handler) use ($app) {
-                                    // protected area for Free Participants
-                                    if ($request->getAttribute('user')->role !== User::ROLE_FREE_PARTICIPANT) {
-                                        $this->get('flashMessages')->error('Pardon, you are not registred as Free Participant');
-                    
-                                        $url = $app->getRouteCollector()->getRouteParser()->urlFor('landing');
-                                        $response = new \Slim\Psr7\Response();
-                    
-                                        return $response->withHeader('Location', $url)->withStatus(302);
-                                    }
-                    
-                                    return $handler->handle($request);
-                                });
-                    */ /*
             $app->group('/guest', function (RouteCollectorProxy $app) {
                 $app->get('/dashboard', GuestController::class.'::showDashboard')
                     ->setName('guest-dashboard');
@@ -240,19 +207,7 @@ class Route {
 
                         $app->post('/approveIst/{istId}', IstController::class.'::approveIst')
                             ->setName('admin-approve-ist');
-                        /*
-                                        $app->get('/openFreeParticipant/{fpId}', FreeParticipantController::class.'::showOpenFreeParticipant')
-                                            ->setName('admin-open-fp-show');
-                        
-                                        $app->post('/openFreeParticipant/{fpId}', FreeParticipantController::class.'::openFreeParticipant')
-                                            ->setName('admin-open-fp');
-                        
-                                        $app->post('/welcomeFreeParticipant/{fpId}', FreeParticipantController::class.'::mailWelcomeFreeParticipant')
-                                            ->setName('admin-fp-send-welcome');
-                        
-                                        $app->post('/approveFreeParticipant/{fpId}', FreeParticipantController::class.'::approveFreeParticipant')
-                                            ->setName('admin-approve-fp');
-                        */
+
                         $app->get('/openGuest/{guestId}', GuestController::class.'::showOpenGuest')
                             ->setName('admin-open-guest-show');
 

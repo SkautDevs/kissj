@@ -109,6 +109,9 @@ detail-ist:
     driver-dont: "I don't have it or I don't want to drive on the event"
     driver-less10k: "I have it, but have not driven more than 10 000 km"
     driver-more10k: "I have it and have driven more than 10 000 km"
+detail-guest:
+    notice: "Inviter and purpose"
+    notice-placeholder: "Who invited you and what is your intentions at event?"
 _layout:
     title: "Registration"
     titleBar: "Registration"

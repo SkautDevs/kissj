@@ -6,7 +6,8 @@ class ApplicationGetter {
     public function getApp(
         string $envPath = __DIR__.'/../../',
         string $envFilename = '.env',
-        string $dbFullPath = __DIR__.'/../db_dev.sqlite'
+        string $dbFullPath = __DIR__.'/../db_dev.sqlite', 
+        string $tempPath = __DIR__.'/../../temp'
     ): \Slim\App {
         $containerBuilder = new \DI\ContainerBuilder();
         $containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getContainerDefinition(
@@ -18,7 +19,7 @@ class ApplicationGetter {
         if ($_ENV['DEBUG'] === 'false') {
             // TODO add autowired definitions into container to get more performace
             // https://php-di.org/doc/performances.html#optimizing-for-compilation
-            $containerBuilder->enableCompilation(__DIR__.'/../../temp');
+            $containerBuilder->enableCompilation($tempPath);
         }
         $container = $containerBuilder->build();
         $app = \DI\Bridge\Slim\Bridge::create($container);

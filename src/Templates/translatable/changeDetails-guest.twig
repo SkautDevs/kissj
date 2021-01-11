@@ -2,140 +2,19 @@
 
 {% block content %}
     <div class="card text-left open-theme">
-        <h2>Edit your details</h2>
-        <form method="POST" action="{{ url_for('guest-changeDetails', {'eventSlug': event.slug}) }}">
-            <label class="form-group form-group-inline">First name: <input class="form-control" type="text"
-                                                                           name="firstName"
-                                                                           value="{{ guestDetails.getFirstName }}"
-                                                                           required="required"></label>
-            <label class="form-group form-group-inline">Surname: <input class="form-control" type="text"
-                                                                        name="lastName"
-                                                                        value="{{ guestDetails.getLastName }}"
-                                                                        required="required"></label>
-            <label class="form-group form-group-inline">Scout nickname: <input class="form-control" type="text"
-                                                                               name="nickname"
-                                                                               value="{{ guestDetails.getNickname }}"></label>
-            <label class="form-group form-group-inline">Date of birth: <input class="form-control" type="date"
-                                                                              name="birthDate"
-                                                                              value="{{ guestDetails.getBirthDate.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}"
-                                                                              required="required"></label>
-            <label class="form-group form-group-inline">Gender:
-                <select class="form-control" name="gender" required="required">
-                    <option value="man" {% if guestDetails.getGender == 'man' %}selected="selected"{% endif %}>
-                        Man
-                    </option>
-                    <option value="woman" {% if guestDetails.getGender == 'woman' %}selected="selected"{% endif %}>
-                        Woman
-                    </option>
-                    <option value="other" {% if guestDetails.getGender == 'other' %}selected="selected"{% endif %}>
-                        Other
-                    </option>
-                </select>
-            </label>
-            <br>
+        <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
+        <form method="POST" action="{{ url_for('guest-changeDetails', {'eventSlug': event.slug}) }}"
+              enctype="multipart/form-data">
 
-            <label class="form-group form-group-inline">Email: <input class="form-control" type="email" name="email"
-                                                                      value="{% if guestDetails.getEmail is empty %}{{ user.email }}{% else %}{{ guestDetails.getEmail }}{% endif %}"
-                                                                      required="required"></label>
-            <label class="form-group form-group-inline">Phone number: <input class="form-control" type="text"
-                                                                             name="telephoneNumber"
-                                                                             value="{{ guestDetails.getTelephoneNumber }}"
-                                                                             placeholder="digits including country dial-in code"
-                                                                             pattern="^\+?[0-9 ]+$"
-                                                                             required="required"></label>
-            <label class="form-group form-group-inline">Country:
-                <select class="form-control" name="country">
-                    <option value="Slovak"{% if guestDetails.getCountry == 'Slovak' %} selected="selected"{% endif %}>
-                        Slovak Republic
-                    </option>
-                    <option value="Czech"{% if guestDetails.getCountry == 'Czech' %} selected="selected"{% endif %}>
-                        Czech Republic
-                    </option>
-                    <option value="other"{% if guestDetails.getCountry == 'other' %} selected="selected"{% endif %}>
-                        other - please fill your country in note
-                    </option>
-                </select>
-            </label>
-            {#<label class="form-group form-group-inline">T-shirt shape:
-                <select class="form-control" name="tshirtShape" required="required">
-                    <option value="lady" {% if guestDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
-                        ladies
-                    </option>
-                    <option value="gentleman"
-                            {% if guestDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
-                        gentleman
-                    </option>
-                </select>
-            </label>
-            <label class="form-group form-group-inline">T-shirt size:
-                <select class="form-control" name="tshirtSize" required="required">
-                    <option value="s" {% if guestDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
-                        S - small
-                    </option>
-                    <option value="m" {% if guestDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
-                        M - medium
-                    </option>
-                    <option value="l" {% if guestDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
-                        L - large
-                    </option>
-                    <option value="xl" {% if guestDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
-                        XL - larger
-                    </option>
-                    <option value="xxl" {% if guestDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
-                        XXL - largest
-                    </option>
-                </select>
-            </label>#}
-            <label class="form-group form-group-inline">Diet restriction:
-                <select class="form-control" name="foodPreferences" required="required">
-                    <option value="no restriction"
-                            {% if guestDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
-                        no restriction
-                    </option>
-                    <option value="vegetarian"
-                            {% if guestDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
-                        vegetarian
-                    </option>
-                    <option value="lactoseFree"
-                            {% if guestDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
-                        lactose-free
-                    </option>
-                    <option value="glutenFree"
-                            {% if guestDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
-                        gluten-free
-                    </option>
-                    <option value="other"
-                            {% if guestDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
-                        other
-                    </option>
-                </select>
-            </label>
-            if choosed other - we arrange only above stated options of diet restriction; in case of
-            other restrictions, you have to arrange all the food for whole event yourself and your
-            participant fee will be reduced
-            <label class="form-group form-group-inline">Health issues: <input class="form-control" type="text"
-                                                                              name="healthProblems"
-                                                                              placeholder="allergies, ..."
-                                                                              value="{{ guestDetails.getHealthProblems }}">
-            </label>
-            <label class="form-group form-group-inline">Arrival date: <input class="form-control" type="date"
-                                                                             name="arrivalDate"
-                                                                             value="{{ guestDetails.getArrivalDate.format('Y-m-d') ?? '2020-08-19' }}"
-                                                                             required="required"></label>
-            <label class="form-group form-group-inline">Departue date: <input class="form-control" type="date"
-                                                                              name="departueDate"
-                                                                              value="{{ guestDetails.getDepartueDate.format('Y-m-d') ?? '2020-08-25' }}"
-                                                                              required="required"></label>
-            <label class="form-group form-group-inline">Inviter and purpose: <input class="form-control" type="text"
-                                                                                    name="notes"
-                                                                                    placeholder="Who invited you and what is your intentions at event?"
-                                                                                    value="{{ guestDetails.getNotes }}">
-            </label>
+            {% include 'widgets/changeDetails.twig' with {'personDetails': guestDetails} %}
 
             <div class="text-center">
+                <br/>
+                <input class="btn btn-small" type="submit" value="{% trans %}changeDetails.save{% endtrans %}">
+                <br/>
+                <br/>
                 <a class="btn btn-small btn-grey"
-                   href="{{ url_for('guest-dashboard', {'eventSlug': event.slug}) }}">Back</a>
-                <input class="btn btn-small" type="submit" value="Save">
+                   href="{{ url_for('guest-dashboard', {'eventSlug': event.slug}) }}">{% trans %}changeDetails.back{% endtrans %}</a>
             </div>
         </form>
     </div>

@@ -24,9 +24,10 @@ class AppTestCase extends TestCase {
         }
 
         return (new ApplicationGetter())->getApp(
-            __DIR__.'/',
-            'env.testing',
-            $testDbFullPath
+            __DIR__.'/', 
+            'env.testing', 
+            $testDbFullPath, 
+            __DIR__.'/temp'
         );
     }
 

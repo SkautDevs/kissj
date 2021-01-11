@@ -30,7 +30,7 @@ use kissj\Orm\EntityDatetime;
  * @property int|null    $maximalClosedIstsCount
  * @property string|null $istLabel // TODO remove in favor of translation
  *
- * @property string|null $eventStart m:passThru(dateFromString|dateToString)
+ * @property string|null $eventStart m:passThru(dateFromString|dateToString) // TODO rename to startDay
  * @property string|null $contactEmail
  */
 class Event extends EntityDatetime {
@@ -39,4 +39,5 @@ class Event extends EntityDatetime {
     public int $maximalClosedPatrolsCzechCount = 5;
     public int $maximalClosedPatrolsOthersCount = 5;
     public int $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
+    public \DateTime $finishDay; // TODO move into DB
 }

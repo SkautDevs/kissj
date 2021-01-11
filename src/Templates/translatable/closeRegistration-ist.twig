@@ -6,8 +6,7 @@
         <p>{% trans %}closeRegistration.lockRegistration{% endtrans %}
             <b>{% trans %}closeRegistration.lockRegistrationBold{% endtrans %}</b></p>
         <form method="POST" action="{{ url_for('ist-confirmCloseRegistration', {'eventSlug': event.slug}) }}">
-            <label><input type="checkbox"
-                          required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
+            <label><input type="checkbox" required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>

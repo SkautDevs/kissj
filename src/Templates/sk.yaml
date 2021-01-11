@@ -109,6 +109,9 @@ detail-ist:
     driver-dont: "Nemám alebo na akcii nechcem šoférovať"
     driver-less10k: "Mám, ale mám najazdených menej ako 10 000 km"
     driver-more10k: "Mám a mám najazdených viac ako 10 000 km"
+detail-guest:
+    notice: "Zvoucí a účel"
+    notice-placeholder: "Od koho máš pozvánku a jaký je tvůj záměr na akci?"
 _layout:
     title: "Registrácia"
     titleBar: "Registrácia"
