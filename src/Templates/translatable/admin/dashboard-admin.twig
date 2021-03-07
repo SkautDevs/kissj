@@ -24,7 +24,7 @@
                 <p>{% trans %}dashboard-admin.paidIst{% endtrans %}: {{ ists.getPaidCount }}</p>
                 <br>
                 <h3>{% trans %}role.guest{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                <p>{% trans %}dashboard-admin.limitGuest{% endtrans %}: {{ event.maximalClosedGuestsCount }}</p>
+                <p>{% trans %}dashboard-admin.limitGuest{% endtrans %}: {{ event.getMaximalClosedGuestsCount() }}</p>
                 <p>{% trans %}dashboard-admin.openGuest{% endtrans %}: {{ guests.getOpenCount }}</p>
                 <p>{% trans %}dashboard-admin.lockedGuest{% endtrans %}: {{ guests.getClosedCount }}</p>
                 <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.getApprovedCount }}</p>

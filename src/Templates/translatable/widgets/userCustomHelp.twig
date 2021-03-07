@@ -6,7 +6,7 @@
     {% endif %}
 {% elseif userStatus == 'closed' %}
     {% if userRole == 'guest' %}
-        {% trans %}userCustomHelp.statusClosedGuest{% endtrans %}{{ event.getContactEmail }}
+        {% trans %}userCustomHelp.statusClosedGuest{% endtrans %} <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
     {% else %}
         {% trans %}userCustomHelp.statusClosed{% endtrans %} <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
     {% endif %}

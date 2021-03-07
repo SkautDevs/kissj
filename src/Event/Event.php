@@ -11,6 +11,7 @@ use kissj\Orm\EntityDatetime;
  * @property string      $readableName
  * @property string      $webUrl
  * @property string      $dataProtectionUrl
+ * @property string      $contactEmail
  *
  * @property string      $accountNumber
  * @property int         $prefixVariableSymbol
@@ -18,9 +19,7 @@ use kissj\Orm\EntityDatetime;
  * @property int|null    $bankId
  * @property string|null $bankApiKey
  * @property int         $maxElapsedPaymentDays
- * @property int|null    $scarfPrice // TODO remove
- * @property int|null    $thirtPrice // TODO remove
- * @property int|null    $dietPrice // TODO remove
+ * @property string      $currency
  *
  * @property bool        $allowPatrols
  * @property int|null    $maximalClosedPatrolsCount
@@ -29,17 +28,12 @@ use kissj\Orm\EntityDatetime;
  *
  * @property bool        $allowIsts
  * @property int|null    $maximalClosedIstsCount
- * @property string|null $istLabel // TODO remove in favor of translation
  *
- * @property string|null $eventStart m:passThru(dateFromString|dateToString) // TODO rename to startDay
- * @property string|null $contactEmail
+ * @property bool        $allowGuests
+ * @property int|null    $maximalClosedGuestsCount
+ *
+ * @property string|null $startDay m:passThru(dateFromString|dateToString)
+ * @property string|null $endDay m:passThru(dateFromString|dateToString)
  */
 class Event extends EntityDatetime {
-    public int $maximalClosedGuestsCount = 100; // TODO move into DB
-    public int $maximalClosedPatrolsSlovakCount = 18;
-    public int $maximalClosedPatrolsCzechCount = 5;
-    public int $maximalClosedPatrolsOthersCount = 5;
-    public int $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
-    public \DateTime $finishDay; // TODO move into DB
-    public string $currency = 'Kč'; // TODO move into DB
 }
