@@ -37,6 +37,7 @@
         "monolog/monolog": "^1.25",
         "php-di/slim-bridge": "^3",
         "phpmailer/phpmailer": "^6.0",
+        "robmorgan/phinx": "^0.12.5",
         "selective/basepath": "^1.0",
         "slim/psr7": "^1.1",
         "slim/slim": "^4",
@@ -70,7 +71,11 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "vendor/bin/phpunit Tests/",
-        "check": "vendor/bin/phpstan analyse src/ tests/"
+        "test": "vendor/bin/phpunit tests/",
+        "check": "vendor/bin/phpstan analyse src/ tests/",
+        "phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",
+        "phinx:migrate": "vendor/bin/phinx migrate --configuration src/Settings/phinxConfiguration.php",
+        "phinx:rollback": "vendor/bin/phinx rollback --configuration src/Settings/phinxConfiguration.php",
+        "phinx:status": "vendor/bin/phinx status --configuration src/Settings/phinxConfiguration.php"
     }
 }

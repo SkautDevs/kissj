@@ -3,24 +3,40 @@
 namespace Tests;
 
 use kissj\Application\ApplicationGetter;
+use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
 use Slim\Psr7\Request;
 use Slim\Psr7\Uri;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class AppTestCase extends TestCase {
     protected function getTestApp(bool $freshInit = true): App {
         $testDbFullPath = __DIR__.'/temp/db_tests.sqlite';
         if ($freshInit) {
             $this->clearTempFolder();
-            $pdo = new \PDO('sqlite:'.$testDbFullPath);
-            $sqlInit = file_get_contents(__DIR__.'/../sql/init.sql');
-            if ($sqlInit === false) {
-                throw new \RuntimeException('loading of sql/init.sql file failed');
+            
+            if (true) { 
+                // use for tradiconal 
+                $pdo = new \PDO('sqlite:'.$testDbFullPath);
+                $sqlInit = file_get_contents(__DIR__.'/../sql/init.sql');
+                if ($sqlInit === false) {
+                    throw new \RuntimeException('loading of sql/init.sql file failed');
+                }
+                $pdo->exec($sqlInit);
+            } else {
+                // TODO use migrations to tests
+                $arguments = [
+                    'command' => 'migrate',
+                    '--configuration' => '',
+                ];
+                
+                $phinx = new PhinxApplication();
+                $phinx->find('migrate')->run(new ArrayInput($arguments), new BufferedOutput());
             }
-            $pdo->exec($sqlInit);
         }
 
         return (new ApplicationGetter())->getApp(
