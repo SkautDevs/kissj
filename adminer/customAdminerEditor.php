@@ -19,7 +19,7 @@ function adminer_object() {
 							   value="<?= $_ENV['DB_TYPE'] === 'sqlite' ? 'sqlite' : 'pgsql' ?>"><input
 								name="auth[username]"
 								id="username"
-								value="<?php echo h($_GET["username"]); ?>"
+								value="<?php echo hTrim($_GET["username"]); ?>"
 								autocapitalize="off">
 				<tr>
 					<th><?php echo lang('Password'); ?>
@@ -54,7 +54,7 @@ function adminer_object() {
 
         function tableName($tableStatus) {
             // tables without comments would return empty string and will be ignored by Adminer
-            return h($tableStatus["Name"]);
+            return hTrim($tableStatus["Name"]);
         }
 
         function fieldName($field, $order = 0) {
