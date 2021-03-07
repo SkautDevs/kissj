@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -8,7 +9,7 @@ class BaseTest extends AppTestCase {
     public function testRunApp() {
         $app = $this->getTestApp();
         $responseRoot = $app->handle($this->createRequest('/'));
-        $this->assertEquals(302, $responseRoot->getStatusCode());
+        $this->assertEquals(301, $responseRoot->getStatusCode());
 
         $app = $this->getTestApp();
         $responseSpecific = $app->handle($this->createRequest('/v2/kissj/login'));

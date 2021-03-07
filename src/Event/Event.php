@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace kissj\Event;
 
@@ -17,9 +18,9 @@ use kissj\Orm\EntityDatetime;
  * @property int|null    $bankId
  * @property string|null $bankApiKey
  * @property int         $maxElapsedPaymentDays
- * @property int|null    $scarfPrice
- * @property int|null    $thirtPrice
- * @property int|null    $dietPrice
+ * @property int|null    $scarfPrice // TODO remove
+ * @property int|null    $thirtPrice // TODO remove
+ * @property int|null    $dietPrice // TODO remove
  *
  * @property bool        $allowPatrols
  * @property int|null    $maximalClosedPatrolsCount
@@ -40,4 +41,5 @@ class Event extends EntityDatetime {
     public int $maximalClosedPatrolsOthersCount = 5;
     public int $maximalClosedFreeParticipantsCount = 100; // TODO move into DB
     public \DateTime $finishDay; // TODO move into DB
+    public string $currency = 'Kč'; // TODO move into DB
 }

@@ -1,14 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace kissj\Payment;
 
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
+use kissj\Event\EventType\EventType;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Participant\FreeParticipant\FreeParticipant;
-use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\User\UserService;
@@ -20,6 +20,7 @@ class PaymentService {
     private BankPaymentRepository $bankPaymentRepository;
     private PaymentRepository $paymentRepository;
     private UserService $userService;
+    private EventType $eventType;
     private FlashMessagesBySession $flashMessages;
     private PhpMailerWrapper $mailer;
     private TranslatorInterface $translator;
@@ -30,6 +31,7 @@ class PaymentService {
         BankPaymentRepository $bankPaymentRepository,
         PaymentRepository $paymentRepository,
         UserService $userService,
+        EventType $eventType,
         FlashMessagesBySession $flashMessages,
         PhpMailerWrapper $mailer,
         TranslatorInterface $translator,
@@ -39,6 +41,7 @@ class PaymentService {
         $this->bankPaymentRepository = $bankPaymentRepository;
         $this->paymentRepository = $paymentRepository;
         $this->userService = $userService;
+        $this->eventType = $eventType;
         $this->flashMessages = $flashMessages;
         $this->mailer = $mailer;
         $this->translator = $translator;
@@ -55,8 +58,8 @@ class PaymentService {
         $payment = new Payment();
         $payment->participant = $participant;
         $payment->variableSymbol = $variableNumber;
-        $payment->price = (string)$this->getPrice($participant);
-        $payment->currency = 'Kč';
+        $payment->price = (string)$this->eventType->getPrice($participant);
+        $payment->currency = $event->currency;
         $payment->status = Payment::STATUS_WAITING;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
@@ -69,65 +72,6 @@ class PaymentService {
         $this->paymentRepository->persist($payment);
 
         return $payment;
-    }
-
-    /**
-     * @param Participant $participant
-     * @return int
-     */
-    public function getPrice(Participant $participant): int {
-        $price = 500;
-        if ($participant->scarf === Participant::SCARF_YES) {
-            $price += $participant->user->event->scarfPrice;
-        }
-
-        return $price;
-
-        // TODO make dynamic for other events
-        /*
-         * AQUA2020
-         * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
-         * discount 40€ for self-eating participant (free included), not for ISTs (not computed)
-         */
-        if ($participant instanceof PatrolLeader) {
-            $todayPrice = $this->getFullPriceForToday();
-            $patrolPriceSum = 0;
-            $fullPatrol = array_merge([$participant], $participant->patrolParticipants);
-            /** @var Participant $patrolParticipant */
-            foreach ($fullPatrol as $patrolParticipant) {
-                $patrolPriceSum += $todayPrice;
-                if ($patrolParticipant->foodPreferences === Participant::FOOD_OTHER) {
-                    $patrolPriceSum -= 40;
-                }
-            }
-
-            return $patrolPriceSum;
-        }
-
-        if ($participant instanceof Ist) {
-            return 60;
-        }
-
-        if ($participant instanceof FreeParticipant) {
-            $price = $this->getFullPriceForToday();
-            if ($participant->foodPreferences === Participant::FOOD_OTHER) {
-                $price -= 40;
-            }
-
-            return $price;
-        }
-
-        throw new \RuntimeException('Generating price for unknown role - participant ID: '.$participant->id);
-    }
-
-    private function getFullPriceForToday(): int {
-        $lastDiscountDay = new \DateTime('2020-03-20');
-
-        if (new \DateTime('now') <= $lastDiscountDay) {
-            return 150;
-        }
-
-        return 160;
     }
 
     public function cancelPayment(Payment $payment): Payment {

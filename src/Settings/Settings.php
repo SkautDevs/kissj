@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace kissj\Settings;
 
@@ -7,6 +8,8 @@ use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
+use kissj\Event\EventType\EventType;
+use kissj\Event\EventType\EventTypeKorbo;
 use kissj\FileHandler\FileHandler;
 use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
@@ -77,6 +80,7 @@ class Settings {
                 throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
                     .$_ENV['FILE_HANDLER_TYPE']);
         }
+        $container[EventType::class] = create(EventTypeKorbo::class);// TODO multievent
         $container[FioRead::class] = function () {
             // using h4kuna/fio - https://github.com/h4kuna/fio
             $fioFactory = new FioFactory([

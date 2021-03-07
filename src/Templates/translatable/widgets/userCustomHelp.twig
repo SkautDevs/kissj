@@ -8,7 +8,7 @@
     {% if userRole == 'guest' %}
         {% trans %}userCustomHelp.statusClosedGuest{% endtrans %}{{ event.getContactEmail }}
     {% else %}
-        {% trans %}userCustomHelp.statusClosed{% endtrans %}{{ event.getContactEmail }}
+        {% trans %}userCustomHelp.statusClosed{% endtrans %} <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
     {% endif %}
 {% elseif userStatus == 'approved' %}
         {% trans %}userCustomHelp.statusApproved{% endtrans %}    

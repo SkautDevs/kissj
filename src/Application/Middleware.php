@@ -49,6 +49,7 @@ class Middleware {
             $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {
                 if ($exception instanceof HttpNotFoundException) {
                     // TODO get user preferred langage from db when implemented
+                    http_response_code(404);
                     echo $container->get(Twig::class)->fetch('404.twig');
                     die;
                 }
