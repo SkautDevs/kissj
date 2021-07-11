@@ -167,7 +167,7 @@ _mail-layout:
     farewell: "Fair winds and following seas from team of"
 cancel-payment:
     welcome: "Ahoy,"
-    denied: "unfortunatelly, your payment for AQUA 2021 was denied."
+    denied: "unfortunately, your payment for AQUA 2021 was denied."
     reason: "Reason is:"
     dontPay: "Don't take further attempts to pay again with the previous payment details!"
     registerAgain: "Do you want to attend the event nevertheless? Send your registration again at"
@@ -177,7 +177,7 @@ closed:
     successfullySent: " You have successfully sent the registration onto an AQUA voyage. Now we need to check if everything is alright and if it is so, we will send you payment information. It may take several days, so be patient, please. :)"
 denial:
     welcome: "Ahoy,"
-    denied: "unfortunatelly, we have denied your registration for"
+    denied: "unfortunately, we have denied your registration for"
     requirements: ", as you hadn't met all the requirements."
     reason: "Reason:"
     editRegistration: ". Please, add or edit missing details in registration system and don't forget to send your registration for approval."
