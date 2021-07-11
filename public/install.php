@@ -105,6 +105,7 @@ try {
     $pdo = new PDO('sqlite:'.__DIR__.'/../src/'.$dbName);
 } catch (PDOException $e) {
     echo 'failed to create new sqlite database file - check permissions';
+    var_dump($e->getMessage());
     die;
 }
 
@@ -123,19 +124,18 @@ try {
                      `account_number`,
                      `prefix_variable_symbol`,
                      `max_elapsed_payment_days`,
-                     `scarf_price`,
                      `maximal_closed_ists_count`,
                      `web_url`,
                      `data_protection_url`,
-                     `ist_label`,
-                     `event_start`,
+                     `start_day`,
                      `contact_email`,
                      `created_at`,
                      `updated_at`
-         ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?, '.$quotedNow.', '.$quotedNow.');');
+         ) VALUES (?,?,?,?,?,?,?,?,?,?, '.$quotedNow.', '.$quotedNow.');');
 
     if ($queryEvent === false) {
         echo 'failed to prepare event data into query';
+        var_dump($pdo->errorInfo());
         die;
     }
 
@@ -146,17 +146,16 @@ try {
         $_POST['event_account_number'],
         $_POST['event_prefix_variable_symbol'],
         $_POST['event_max_elapsed_payment_days'],
-        $_POST['event_scarf_price'],
         $_POST['event_maximal_closed_ists_count'],
         $_POST['event_web_url'],
         $_POST['event_data_protection_url'],
-        $_POST['event_ist_label'],
         $_POST['event_event_start'],
         $_POST['event_contact_email'],
     ]);
 
     if ($resultEvent === false) {
         echo 'failed to insert event data into database named '.$dbName;
+        var_dump($queryEvent->errorInfo());
         die;
     }
 
@@ -187,4 +186,4 @@ try {
 }
 
 echo('Do not forget set mail settings correctly into .nev file!<br/>
-<a href="'.$_POST['basepath'].'">done - continue to app</a>');
+<a href="/">done - continue to app</a>');

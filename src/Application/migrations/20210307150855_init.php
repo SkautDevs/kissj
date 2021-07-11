@@ -5,7 +5,7 @@ use Phinx\Migration\AbstractMigration;
 
 final class Init extends AbstractMigration {
     public function up(): void {
-        $queries = file_get_contents(__DIR__.'/../sql/init.sql');
+        $queries = file_get_contents(__DIR__.'/../../../sql/init.sql');
         if ($queries === false) {
             throw new RuntimeException('cannot load file sql/init.sql');
         }

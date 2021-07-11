@@ -33,11 +33,11 @@ kissj is scouts **registration system for national and international Scout Jambo
  - latest Docker Unix command: `curl -sSL https://get.docker.com/ | sh`
  - latest docker-compose Unix install script `https://gist.githubusercontent.com/deviantony/2b5078fe1675a5fedabf1de3d1f2652a/raw/4516ce1aae777616e980c4645897c4ae30362b2a/install-latest-compose.sh`
  - install guide for Windows: https://docs.docker.com/docker-for-windows/install/ (docker-compose included in Docker for win)
-2. run `docker-compose build && docker-compose up`
-3. run `composer install` in the container by:
+2. run `docker-compose --file deploy/dev/docker-compose.yml up --build -d`
+3. install libraries and define secrets and settings in the container by:
  - check name of the running container by `docker ps` - there should be three, you are searching something like `kissj_app`
  - get into container by `docer exec -it name_of_the_container /bin/bash` (tab will help the wording)
- - inside container, run `composer install`
+ - inside container, run `bin/install.sh`
 4. in browser visit `localhost/install.php`, fill the form and hit button which init DB and create your own .env file
 5. done! Visit `localhost` for app, `localhost:8025` for mails sent from app
 

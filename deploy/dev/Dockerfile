@@ -1,6 +1,7 @@
 FROM php:7.4-apache
 
-# Preparation
+# Preparation for apt
+RUN set -ex
 RUN apt-get update
 
 # Tools installation
@@ -10,6 +11,10 @@ RUN apt-get install -y \
 	nano \
 	git \
 	zip
+
+# Preparation for postgress
+RUN apt-get install -y \
+    libpq-dev
 
 RUN docker-php-ext-install \
   pcntl \ 
@@ -22,10 +27,8 @@ RUN yes | pecl install xdebug-2.9.8 \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-# Apache2
+# Refresh apache2
 RUN a2enmod rewrite
 
-# Composer
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-COPY ../../composer.json /var/www/html/
-RUN composer install --no-interaction
