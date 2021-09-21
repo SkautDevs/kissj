@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "ext-dom": "*",
         "ext-fileinfo": "*",
         "ext-mbstring": "*",
@@ -54,7 +54,8 @@
         "mockery/mockery": "dev-master",
         "phpstan/phpstan": "^0.12.9",
         "phpunit/phpunit": "^9",
-        "roave/security-advisories": "dev-master"
+        "rector/rector": "^0.11.53",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
@@ -72,7 +73,7 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit tests/",
-        "check": "vendor/bin/phpstan analyse src/ tests/",
+        "stan": "vendor/bin/phpstan analyse --configuration phpstan.neon",
         "phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",
         "phinx:migrate": "vendor/bin/phinx migrate --configuration src/Settings/phinxConfiguration.php",
         "phinx:rollback": "vendor/bin/phinx rollback --configuration src/Settings/phinxConfiguration.php",
