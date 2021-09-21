@@ -10,14 +10,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
 
 class PhpMailerWrapper {
-    private Twig $renderer;
     private string $eventName;
-    private MailerSettings $settings;
 
-    public function __construct(Twig $renderer, MailerSettings $mailerSettings) {
-        $this->renderer = $renderer;
+    public function __construct(private Twig $renderer, private MailerSettings $settings) {
         $this->eventName = 'Korbo 2020'; // TODO make dynamic
-        $this->settings = $mailerSettings;
     }
 
     public function sendLoginToken(User $user, string $link) {

@@ -11,24 +11,13 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PatrolController extends AbstractController {
-    private PatrolService $patrolService;
-    private PatrolLeaderRepository $patrolLeaderRepository;
-    private PatrolParticipantRepository $patrolParticipantRepository;
-    private ContentArbiterPatrolLeader $contentArbiterPl;
-    private ContentArbiterPatrolParticipant $contentArbiterPp;
-
     public function __construct(
-        PatrolService $patrolService,
-        PatrolLeaderRepository $patrolLeaderRepository,
-        PatrolParticipantRepository $patrolParticipantRepository,
-        ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
-        ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant
+        private PatrolService $patrolService,
+        private PatrolLeaderRepository $patrolLeaderRepository,
+        private PatrolParticipantRepository $patrolParticipantRepository,
+        private ContentArbiterPatrolLeader $contentArbiterPl,
+        private ContentArbiterPatrolParticipant $contentArbiterPp,
     ) {
-        $this->patrolService = $patrolService;
-        $this->patrolLeaderRepository = $patrolLeaderRepository;
-        $this->patrolParticipantRepository = $patrolParticipantRepository;
-        $this->contentArbiterPl = $contentArbiterPatrolLeader;
-        $this->contentArbiterPp = $contentArbiterPatrolParticipant;
     }
 
     public function showDashboard(Response $response, User $user) {

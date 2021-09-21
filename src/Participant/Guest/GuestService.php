@@ -9,21 +9,12 @@ use kissj\User\User;
 use kissj\User\UserService;
 
 class GuestService {
-    private $guestRepository;
-    private $flashMessages;
-    private $mailer;
-    private $userService;
-
     public function __construct(
-        GuestRepository $guestRepository,
-        FlashMessagesBySession $flashMessages,
-        PhpMailerWrapper $mailer,
-        UserService $userService
+        private GuestRepository $guestRepository,
+        private FlashMessagesBySession $flashMessages,
+        private PhpMailerWrapper $mailer,
+        private UserService $userService,
     ) {
-        $this->guestRepository = $guestRepository;
-        $this->flashMessages = $flashMessages;
-        $this->mailer = $mailer;
-        $this->userService = $userService;
     }
 
     public function getGuest(User $user): Guest {

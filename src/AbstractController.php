@@ -58,7 +58,6 @@ abstract class AbstractController {
 
     /**
      * @param UploadedFileInterface[] $uploadedFiles
-     * @return UploadedFile|null
      */
     protected function resolveUploadedFiles(array $uploadedFiles): ?UploadedFile {
         if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
@@ -75,7 +74,7 @@ abstract class AbstractController {
                 $uploadedFile = $uploadedFiles['uploadFile'];
 
                 // check for too-big files
-                if ($uploadedFile->getSize() > 10000000) { // 10MB
+                if ($uploadedFile->getSize() > 10_000_000) { // 10MB
                     $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
 
                     return null;

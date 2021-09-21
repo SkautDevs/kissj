@@ -22,51 +22,22 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class AdminController extends AbstractController {
-    private ParticipantService $participantService;
-    private PaymentService $paymentService;
-    private PaymentRepository $paymentRepository;
-    private BankPaymentRepository $bankPaymentRepository;
-    private FioBankPaymentService $bankPaymentService;
-    private PatrolService $patrolService;
-    private IstService $istService;
-    private GuestService $guestService;
-    private AdminService $adminService;
-    private ContentArbiterPatrolLeader $contentArbiterPatrolLeader;
-    private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant;
-    private ContentArbiterIst $contentArbiterIst;
-    private ContentArbiterFreeParticipant $contentArbiterFreeParticipant;
-    private ContentArbiterGuest $contentArbiterGuest;
-
     public function __construct(
-        ParticipantService $participantService,
-        PaymentService $paymentService,
-        PaymentRepository $paymentRepository,
-        BankPaymentRepository $bankPaymentRepository,
-        FioBankPaymentService $bankPaymentService,
-        PatrolService $patrolService,
-        IstService $istService,
-        GuestService $guestService,
-        AdminService $adminService,
-        ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
-        ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
-        ContentArbiterIst $contentArbiterIst,
-        ContentArbiterFreeParticipant $contentArbiterFreeParticipant,
-        ContentArbiterGuest $contentArbiterGuest
+        private ParticipantService $participantService,
+        private PaymentService $paymentService,
+        private PaymentRepository $paymentRepository,
+        private BankPaymentRepository $bankPaymentRepository,
+        private FioBankPaymentService $bankPaymentService,
+        private PatrolService $patrolService,
+        private IstService $istService,
+        private GuestService $guestService,
+        private AdminService $adminService,
+        private ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
+        private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
+        private ContentArbiterIst $contentArbiterIst,
+        private ContentArbiterFreeParticipant $contentArbiterFreeParticipant,
+        private ContentArbiterGuest $contentArbiterGuest,
     ) {
-        $this->participantService = $participantService;
-        $this->paymentService = $paymentService;
-        $this->paymentRepository = $paymentRepository;
-        $this->bankPaymentRepository = $bankPaymentRepository;
-        $this->bankPaymentService = $bankPaymentService;
-        $this->patrolService = $patrolService;
-        $this->istService = $istService;
-        $this->guestService = $guestService;
-        $this->adminService = $adminService;
-        $this->contentArbiterPatrolLeader = $contentArbiterPatrolLeader;
-        $this->contentArbiterPatrolParticipant = $contentArbiterPatrolParticipant;
-        $this->contentArbiterIst = $contentArbiterIst;
-        $this->contentArbiterFreeParticipant = $contentArbiterFreeParticipant;
-        $this->contentArbiterGuest = $contentArbiterGuest;
     }
 
     public function showDashboard(Response $response): Response {

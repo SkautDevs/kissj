@@ -4,11 +4,9 @@ namespace kissj\PaymentImport;
 
 class MoneyS3CSV implements ManualPaymentImporter {
 
-    protected $file;
-    protected $event;
+    protected string $event;
 
-    public function __construct(string $file, string $event = "") {
-        $this->file = $file;
+    public function __construct(protected string $file, string $event = "") {
         $this->event = $event;
     }
 
@@ -29,12 +27,12 @@ class MoneyS3CSV implements ManualPaymentImporter {
         if (($handle = fopen($this->file, "r")) !== FALSE) {
             $header_found = FALSE;
             while (($header = fgetcsv($handle, 0, ";")) !== FALSE) {
-                if (count($header) > 0 && $header[0] == "Detail 1") {
+                if (count((array) $header) > 0 && $header[0] == "Detail 1") {
                     $header_found = TRUE;
                     break;
                 }
             }
-            if (!$header_found || $header === FALSE || count($header) < 35 || $header[0] != "Detail 1" || $header[1] != "0")
+            if (!$header_found || $header === FALSE || count((array) $header) < 35 || $header[0] != "Detail 1" || $header[1] != "0")
                 throw new \RuntimeException("File ".$this->file." is not a properly formatted Money S3 CSV.");
 
             $header = array_map(array($this, 'encode'), $header);
@@ -50,7 +48,7 @@ class MoneyS3CSV implements ManualPaymentImporter {
             $dateReceivedField = $fields["Datum platby"];
 
             while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
-                if (count($data) < $header_length || $data[0] != "Detail 1" || $data[1] != "1")
+                if (count((array) $data) < $header_length || $data[0] != "Detail 1" || $data[1] != "1")
                     continue;
 
                 try {
@@ -66,7 +64,7 @@ class MoneyS3CSV implements ManualPaymentImporter {
                     $payment->noteForReceiver = $data[$noteForReceiverField];
                     $payment->dateReceived = new \DateTimeImmutable($data[$dateReceivedField]);
                     $payments[] = $payment;
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $errors[] = $data;
                 }
             }

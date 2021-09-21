@@ -33,8 +33,9 @@ class PaymentRepository extends Repository {
         /** @var Payment[] $waitingPayments */
         $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
         
-        return array_filter($waitingPayments, function ($payment) {
-            return $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays();
-        });
+        return array_filter(
+            $waitingPayments,
+            fn(Payment $payment) => $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
+        );
     }
 }

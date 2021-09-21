@@ -9,18 +9,11 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class IstController extends AbstractController {
-    private IstService $istService;
-    private IstRepository $istRepository;
-    private ContentArbiterIst $contentArbiterIst;
-
     public function __construct(
-        IstService $istService,
-        IstRepository $istRepository,
-        ContentArbiterIst $contentArbiterIst
+        private IstService $istService,
+        private IstRepository $istRepository,
+        private ContentArbiterIst $contentArbiterIst,
     ) {
-        $this->istService = $istService;
-        $this->istRepository = $istRepository;
-        $this->contentArbiterIst = $contentArbiterIst;
     }
 
     public function showDashboard(Response $response, User $user): Response {

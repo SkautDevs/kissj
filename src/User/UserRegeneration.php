@@ -3,12 +3,10 @@
 namespace kissj\User;
 
 class UserRegeneration {
-    private $userRepository;
-    private $currentUser;
+    private ?User $currentUser;
 
-    public function __construct(UserRepository $userRepository) {
+    public function __construct(private UserRepository $userRepository) {
         $possibleUserSession = $_SESSION['user'] ?? [];
-        $this->userRepository = $userRepository;
 
         if ($this->canRecreateUserFromSession($possibleUserSession)) {
             $this->currentUser = $this->recreateUserFromSession($possibleUserSession);

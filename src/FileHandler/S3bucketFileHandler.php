@@ -9,12 +9,8 @@ use kissj\Participant\Participant;
 use Slim\Psr7\UploadedFile;
 
 class S3bucketFileHandler extends FileHandler {
-    private S3Client $s3client;
-    private string $s3bucket;
-
-    public function __construct(S3Client $s3client, string $s3bucket) {
-        $this->s3client = $s3client;
-        $this->s3bucket = $s3bucket;
+    public function __construct(private S3Client $s3client, private string $s3bucket)
+    {
     }
 
     public function getFile(string $filename): File {
@@ -41,7 +37,7 @@ class S3bucketFileHandler extends FileHandler {
                 'Body' => $uploadedFile->getStream(),
                 'ContentType' => $uploadedFile->getClientMediaType(),
             ]);
-        } catch (S3Exception $e) {
+        } catch (S3Exception) {
             // TODO add log
         }
 

@@ -13,15 +13,10 @@ use Psr\Http\Message\MessageInterface as Response;
 
 
 class ExportService {
-    private $participantRepository;
-    private $participantService;
-
     public function __construct(
-        ParticipantRepository $participantRepository,
-        ParticipantService $participantService
+        private ParticipantRepository $participantRepository,
+        private ParticipantService $participantService,
     ) {
-        $this->participantRepository = $participantRepository;
-        $this->participantService = $participantService;
     }
 
     public function outputCSVresponse(

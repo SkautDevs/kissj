@@ -9,11 +9,9 @@ use kissj\PaymentImport;
 
 class PaymentMatcherService {
 
-    /** @var PaymentService */
-    private $paymentService;
+    private PaymentService $paymentService;
 
-    /** @var PaymentRepository */
-    private $paymentRepository;
+    private PaymentRepository $paymentRepository;
 
     public function __construct(PaymentService $paymentService, PaymentRepository $paymentRepository) {
 
@@ -22,9 +20,7 @@ class PaymentMatcherService {
     public function match(array $importedPayments) {
         $toBePaid = $this->paymentRepository->findBy(['status' => 'waiting']);
 
-        $getVs = function ($payment) {
-            return $payment->variableSymbol;
-        };
+        $getVs = fn($payment) => $payment->variableSymbol;
 
         $toBePaidByVs = array_combine(array_map($getVs, $toBePaid), $toBePaid);
         $importedByVs = array_combine(array_map($getVs, $importedPayments), $importedPayments);
@@ -58,15 +54,10 @@ class PaymentMatcherService {
 
 abstract class PaymentMatchingError {
 
-    public $importedPayment;
-    /** @var PaymentImport\Payment */
-    public $repoPayment;
-
     /** @var Payment\Payment */
 
-    public function __construct($importedPayment, $repoPayment = null) {
-        $this->importedPayment = $importedPayment;
-        $this->repoPayment = $repoPayment;
+    public function __construct(public $importedPayment, public $repoPayment = null)
+    {
     }
 
     public abstract function getErrorString();

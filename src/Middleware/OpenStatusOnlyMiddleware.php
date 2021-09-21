@@ -9,10 +9,8 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Psr\Log\LoggerInterface;
 
 class OpenStatusOnlyMiddleware extends BaseMiddleware {
-    private LoggerInterface $logger;
-
-    public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
+    public function __construct(private LoggerInterface $logger)
+    {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {

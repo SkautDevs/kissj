@@ -11,21 +11,12 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
 class UserService {
-    private UserRepository $userRepository;
-    private PhpMailerWrapper $mailer;
-    private LoginTokenRepository $loginTokenRepository;
-    private ParticipantRepository $participantRepository;
-
     public function __construct(
-        LoginTokenRepository $loginTokenRepository,
-        ParticipantRepository $participantRepository,
-        UserRepository $userRepository,
-        PhpMailerWrapper $mailer
+        private LoginTokenRepository $loginTokenRepository,
+        private ParticipantRepository $participantRepository,
+        private UserRepository $userRepository,
+        private PhpMailerWrapper $mailer,
     ) {
-        $this->loginTokenRepository = $loginTokenRepository;
-        $this->participantRepository = $participantRepository;
-        $this->userRepository = $userRepository;
-        $this->mailer = $mailer;
     }
 
     public function isEmailExisting(string $email): bool {

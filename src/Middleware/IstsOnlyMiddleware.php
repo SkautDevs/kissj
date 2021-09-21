@@ -10,15 +10,10 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IstsOnlyMiddleware extends BaseMiddleware {
-    private FlashMessagesInterface $flashMessages;
-    private TranslatorInterface $translator;
-
     public function __construct(
-        FlashMessagesInterface $flashMessages,
-        TranslatorInterface $translator
+        private FlashMessagesInterface $flashMessages,
+        private TranslatorInterface $translator,
     ) {
-        $this->flashMessages = $flashMessages;
-        $this->translator = $translator;
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {

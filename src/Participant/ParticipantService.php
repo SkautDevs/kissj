@@ -10,29 +10,16 @@ use kissj\User\UserRepository;
 use kissj\User\UserService;
 
 class ParticipantService {
-    private $participantRepository;
-    private $paymentService;
-    private $userRepository;
-    private $userService;
-    private $mailer;
-
     public function __construct(
-        ParticipantRepository $participantRepository,
-        PaymentService $paymentService,
-        UserRepository $userRepository,
-        UserService $userService,
-        PhpMailerWrapper $mailer
+        private ParticipantRepository $participantRepository,
+        private PaymentService $paymentService,
+        private UserRepository $userRepository,
+        private UserService $userService,
+        private PhpMailerWrapper $mailer,
     ) {
-        $this->participantRepository = $participantRepository;
-        $this->paymentService = $paymentService;
-        $this->userRepository = $userRepository;
-        $this->userService = $userService;
-        $this->mailer = $mailer;
     }
 
     /**
-     * @param string $role
-     * @param string $status
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(string $role, string $status): array {

@@ -15,30 +15,15 @@ use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminService {
-    private $userRepository;
-    private $participantRepository;
-    private $paymentService;
-    private $mailer;
-    private $translator;
-    private $paymentRepository;
-    private $logger;
-
     public function __construct(
-        UserRepository $userRepository,
-        ParticipantRepository $participantRepository,
-        PaymentRepository $paymentRepository,
-        PaymentService $paymentService,
-        PhpMailerWrapper $mailer,
-        TranslatorInterface $translator,
-        LoggerInterface $logger
+        private UserRepository $userRepository,
+        private ParticipantRepository $participantRepository,
+        private PaymentRepository $paymentRepository,
+        private PaymentService $paymentService,
+        private PhpMailerWrapper $mailer,
+        private TranslatorInterface $translator,
+        private LoggerInterface $logger,
     ) {
-        $this->userRepository = $userRepository;
-        $this->participantRepository = $participantRepository;
-        $this->paymentRepository = $paymentRepository;
-        $this->paymentService = $paymentService;
-        $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->logger = $logger;
     }
 
     public function isPaymentTransferPossible(
@@ -82,9 +67,6 @@ class AdminService {
      * Set From as open and send him email about payment transfer
      * Set To as paid and send him email about payment transfer
      * Handle scarf correction on To
-     *
-     * @param Participant $participantFrom
-     * @param Participant $participantTo
      */
     public function transferPayment(Participant $participantFrom, Participant $participantTo) {
         $correctPayment = null;

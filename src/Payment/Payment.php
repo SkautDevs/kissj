@@ -25,7 +25,7 @@ class Payment extends EntityDatetime {
     public function getElapsedPaymentDays(): int {
         /** @var $createdAt \DateTime */
         $createdAt = $this->createdAt;
-        
+
         return $createdAt->diff(new \DateTime('now'))->days;
     }
 
@@ -37,7 +37,7 @@ class Payment extends EntityDatetime {
         /** @var $createdAt \DateTime */
         $createdAt = $this->createdAt;
         $dateInterval = new \DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
-        
+
         return $createdAt->add($dateInterval);
     }
 }

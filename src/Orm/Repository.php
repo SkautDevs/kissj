@@ -93,7 +93,7 @@ class Repository extends BaseRepository {
             if ($value instanceof Entity) {
                 $columnName = $this->mapper->getRelationshipColumn(
                     $this->table,
-                    $this->mapper->getTable(get_class($value))
+                    $this->mapper->getTable($value::class)
                 );
                 $qb->where("$columnName = %i", $value->id);
             } elseif ($value instanceof Relation) {
@@ -129,10 +129,6 @@ class Repository extends BaseRepository {
         );
     }
 
-    /**
-     * @param Fluent $qb
-     * @param array  $orderBy
-     */
     protected function addOrderBy(Fluent $qb, array $orderBy) {
         foreach ($orderBy as $order => $asc) {
             if ($asc) {

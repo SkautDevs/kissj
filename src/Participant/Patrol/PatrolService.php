@@ -14,36 +14,17 @@ use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PatrolService extends AbstractService {
-    private PatrolLeaderRepository $patrolLeaderRepository;
-    private PatrolParticipantRepository $patrolParticipantRepository;
-    private UserService $userService;
-    private PaymentService $paymentService;
-    private PhpMailerWrapper $mailer;
-    private TranslatorInterface $translator;
-    private FlashMessagesBySession $flashMessages;
-    private ContentArbiterPatrolLeader $contentArbiterPatrolLeader;
-    private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant;
-
     public function __construct(
-        PatrolLeaderRepository $patrolLeaderRepository,
-        PatrolParticipantRepository $patrolParticipantRepository,
-        UserService $userService,
-        PaymentService $paymentService,
-        FlashMessagesBySession $flashMessages,
-        TranslatorInterface $translator,
-        PhpMailerWrapper $mailer,
-        ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
-        ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant
+        private PatrolLeaderRepository $patrolLeaderRepository,
+        private PatrolParticipantRepository $patrolParticipantRepository,
+        private UserService $userService,
+        private PaymentService $paymentService,
+        private FlashMessagesBySession $flashMessages,
+        private TranslatorInterface $translator,
+        private PhpMailerWrapper $mailer,
+        private ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
+        private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
     ) {
-        $this->patrolLeaderRepository = $patrolLeaderRepository;
-        $this->patrolParticipantRepository = $patrolParticipantRepository;
-        $this->userService = $userService;
-        $this->paymentService = $paymentService;
-        $this->flashMessages = $flashMessages;
-        $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->contentArbiterPatrolLeader = $contentArbiterPatrolLeader;
-        $this->contentArbiterPatrolParticipant = $contentArbiterPatrolParticipant;
     }
 
     public function getPatrolLeader(User $user): PatrolLeader {

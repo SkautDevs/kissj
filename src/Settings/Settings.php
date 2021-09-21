@@ -51,35 +51,27 @@ class Settings {
 
         $container = [];
         $container[Connection::class] = function (): Connection {
-            switch ($_ENV['DB_TYPE']) {
-                case 'sqlite':
-                    return new Connection([
-                        'driver' => 'sqlite3',
-                        'database' => $_ENV['DB_FULL_PATH'],
-                    ]);
-                case 'postgresql':
-                    return new Connection([
-                        'driver' => 'postgre',
-                        'host' => $_ENV['DATABASE_HOST'],
-                        'username' => $_ENV['POSTGRES_USER'],
-                        'password' => $_ENV['POSTGRES_PASSWORD'],
-                        'database' => $_ENV['POSTGRES_DB'],
-                    ]);
-                default:
-                    throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']);
-            }
+            return match ($_ENV['DB_TYPE']) {
+                'sqlite' => new Connection([
+                    'driver' => 'sqlite3',
+                    'database' => $_ENV['DB_FULL_PATH'],
+                ]),
+                'postgresql' => new Connection([
+                    'driver' => 'postgre',
+                    'host' => $_ENV['DATABASE_HOST'],
+                    'username' => $_ENV['POSTGRES_USER'],
+                    'password' => $_ENV['POSTGRES_PASSWORD'],
+                    'database' => $_ENV['POSTGRES_DB'],
+                ]),
+                default => throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']),
+            };
         };
-        switch ($_ENV['FILE_HANDLER_TYPE']) {
-            case 'local':
-                $container[FileHandler::class] = new LocalFileHandler();
-                break;
-            case 's3bucket':
-                $container[FileHandler::class] = get(S3bucketFileHandler::class);
-                break;
-            default:
-                throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
-                    .$_ENV['FILE_HANDLER_TYPE']);
-        }
+        $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
+            'local' => new LocalFileHandler(),
+            's3bucket' => get(S3bucketFileHandler::class),
+            default => throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
+                .$_ENV['FILE_HANDLER_TYPE']),
+        };
         $container[EventType::class] = create(EventTypeKorbo::class);// TODO multievent
         $container[FioRead::class] = function () {
             // using h4kuna/fio - https://github.com/h4kuna/fio
@@ -128,22 +120,18 @@ class Settings {
 
             return new PhpMailerWrapper($renderer, $settings);
         };
-        $container[S3bucketFileHandler::class] = function (S3Client $s3Client) {
-            // load separately to not load S3Client if not needed
-            return new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
-        };
-        $container[S3Client::class] = function () {
-            return new S3Client([
-                'version' => 'latest',
-                'region' => $_ENV['S3_REGION'],
-                'endpoint' => $_ENV['S3_ENDPOINT'],
-                'use_path_style_endpoint' => true,
-                'credentials' => [
-                    'key' => $_ENV['S3_KEY'],
-                    'secret' => $_ENV['S3_SECRET'],
-                ],
-            ]);
-        };
+        $container[S3bucketFileHandler::class] 
+            = fn(S3Client $s3Client) => new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
+        $container[S3Client::class] = fn() => new S3Client([
+            'version' => 'latest',
+            'region' => $_ENV['S3_REGION'],
+            'endpoint' => $_ENV['S3_ENDPOINT'],
+            'use_path_style_endpoint' => true,
+            'credentials' => [
+                'key' => $_ENV['S3_KEY'],
+                'secret' => $_ENV['S3_SECRET'],
+            ],
+        ]);
         $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);
@@ -191,9 +179,8 @@ class Settings {
 
             return $view;
         };
-        $container[UserAuthenticationMiddleware::class] = function (UserRegeneration $userRegeneration) {
-            return new UserAuthenticationMiddleware($userRegeneration);
-        };
+        $container[UserAuthenticationMiddleware::class] 
+            = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
 
         return $container;
     }

@@ -13,30 +13,15 @@ use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IstService extends AbstractService {
-    private IstRepository $istRepository;
-    private UserService $userService;
-    private PaymentService $paymentService;
-    private FlashMessagesBySession $flashMessages;
-    private TranslatorInterface $translator;
-    private PhpMailerWrapper $mailer;
-    private ContentArbiterIst $contentArbiter;
-
     public function __construct(
-        IstRepository $istRepository,
-        UserService $userService,
-        PaymentService $paymentService,
-        FlashMessagesBySession $flashMessages,
-        TranslatorInterface $translator,
-        PhpMailerWrapper $mailer,
-        ContentArbiterIst $contentArbiter
+        private IstRepository $istRepository,
+        private UserService $userService,
+        private PaymentService $paymentService,
+        private FlashMessagesBySession $flashMessages,
+        private TranslatorInterface $translator,
+        private PhpMailerWrapper $mailer,
+        private ContentArbiterIst $contentArbiter,
     ) {
-        $this->istRepository = $istRepository;
-        $this->userService = $userService;
-        $this->paymentService = $paymentService;
-        $this->flashMessages = $flashMessages;
-        $this->translator = $translator;
-        $this->mailer = $mailer;
-        $this->contentArbiter = $contentArbiter;
     }
 
     public function getIst(User $user): Ist {

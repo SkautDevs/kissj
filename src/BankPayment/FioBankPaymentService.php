@@ -7,18 +7,11 @@ use h4kuna\Fio\FioRead;
 use Psr\Log\LoggerInterface;
 
 class FioBankPaymentService implements IBankPaymentService {
-    private $bankPaymentRepository;
-    private $fioRead;
-    private $logger;
-
     public function __construct(
-        BankPaymentRepository $bankPaymentRepository,
-        FioRead $fioRead,
-        LoggerInterface $logger
+        private BankPaymentRepository $bankPaymentRepository,
+        private FioRead $fioRead,
+        private LoggerInterface $logger,
     ) {
-        $this->bankPaymentRepository = $bankPaymentRepository;
-        $this->fioRead = $fioRead;
-        $this->logger = $logger;
     }
 
     public function setBreakpoint(\DateTimeImmutable $dateTime): bool {

@@ -13,29 +13,17 @@ use Slim\Views\Twig;
 use Symfony\Component\Translation\Translator;
 
 class LocalizationResolverMiddleware extends BaseMiddleware {
-    private Twig $view;
-    private Translator $translator;
-    private array $availableLanguages;
-    private string $defaultLocale;
-
     private const LOCALE_COOKIE_NAME = 'locale';
 
     /**
-     * @param Twig       $twig
-     * @param Translator $translator
      * @param string[]   $availableLanguages
-     * @param string     $defaultLocale
      */
     public function __construct(
-        Twig $twig,
-        Translator $translator,
-        array $availableLanguages,
-        string $defaultLocale
+        private Twig $view,
+        private Translator $translator,
+        private array $availableLanguages,
+        private string $defaultLocale,
     ) {
-        $this->view = $twig;
-        $this->translator = $translator;
-        $this->availableLanguages = $availableLanguages;
-        $this->defaultLocale = $defaultLocale;
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {

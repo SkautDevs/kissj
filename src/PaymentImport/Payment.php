@@ -4,19 +4,12 @@ namespace kissj\PaymentImport;
 
 class Payment {
     public $event;
-    /** @var string */
-    public $variableSymbol;
-    /** @var int */
-    public $senderName;
-    /** @var string */
-    public $senderAccountNr;
-    /** @var string */
-    public $amount;
-    /** @var float */
-    public $currency;
-    /** @var string */
-    public $noteForReceiver;
-    /** @var string */
-    public $dateReceived;
+    public string $variableSymbol;
+    public int $senderName;
+    public string $senderAccountNr;
+    public string $amount;
+    public float $currency;
+    public string $noteForReceiver;
+    public string $dateReceived;
     /** @var \DateTimeImmutable */
 }

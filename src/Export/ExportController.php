@@ -7,10 +7,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ExportController extends AbstractController {
-    private $exportService;
-
-    public function __construct(ExportService $exportService) {
-        $this->exportService = $exportService;
+    public function __construct(
+        private ExportService $exportService,
+    ) {
     }
 
     public function exportHealthData(Request $request, Response $response) {

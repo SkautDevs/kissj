@@ -2,7 +2,7 @@
 
 namespace kissj\Event;
 
-class AbstractContentArbiter {
+abstract class AbstractContentArbiter {
     public bool $firstName = true;
     public bool $lastName = true;
     public bool $nickname = true;

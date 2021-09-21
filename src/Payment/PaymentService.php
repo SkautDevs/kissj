@@ -16,36 +16,17 @@ use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService {
-    private FioBankPaymentService $bankPaymentService;
-    private BankPaymentRepository $bankPaymentRepository;
-    private PaymentRepository $paymentRepository;
-    private UserService $userService;
-    private EventType $eventType;
-    private FlashMessagesBySession $flashMessages;
-    private PhpMailerWrapper $mailer;
-    private TranslatorInterface $translator;
-    private Logger $logger;
-
     public function __construct(
-        FioBankPaymentService $bankPaymentService,
-        BankPaymentRepository $bankPaymentRepository,
-        PaymentRepository $paymentRepository,
-        UserService $userService,
-        EventType $eventType,
-        FlashMessagesBySession $flashMessages,
-        PhpMailerWrapper $mailer,
-        TranslatorInterface $translator,
-        Logger $logger
+        private FioBankPaymentService $bankPaymentService,
+        private BankPaymentRepository $bankPaymentRepository,
+        private PaymentRepository $paymentRepository,
+        private UserService $userService,
+        private EventType $eventType,
+        private FlashMessagesBySession $flashMessages,
+        private PhpMailerWrapper $mailer,
+        private TranslatorInterface $translator,
+        private Logger $logger,
     ) {
-        $this->bankPaymentService = $bankPaymentService;
-        $this->bankPaymentRepository = $bankPaymentRepository;
-        $this->paymentRepository = $paymentRepository;
-        $this->userService = $userService;
-        $this->eventType = $eventType;
-        $this->flashMessages = $flashMessages;
-        $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->logger = $logger;
     }
 
     public function createAndPersistNewPayment(Participant $participant): Payment {
@@ -120,8 +101,6 @@ class PaymentService {
      * plan - frstly it looks, if they are any payments downloaded from bank to pair with our generated payments
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
-     *
-     * @param int $limit
      */
     public function updatePayments(int $limit): void {
         $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
@@ -178,7 +157,7 @@ class PaymentService {
 
     protected function getVariableNumber(?int $prefix): string {
         if ($prefix === null) {
-            return str_pad(random_int(0, 9999999999), 10, '0', STR_PAD_LEFT);
+            return str_pad(random_int(0, 9_999_999_999), 10, '0', STR_PAD_LEFT);
         }
 
         $prefixLength = strlen((string)$prefix);

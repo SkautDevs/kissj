@@ -10,7 +10,7 @@ namespace kissj\BankPayment;
 
 
 class Banks {
-    protected $banks = [
+    protected array $banks = [
         'fio' => [
             'bankCode' => '2010',
             'name' => 'Fio Banka',

@@ -8,15 +8,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class UserController extends AbstractController {
-    protected UserService $userService;
-    protected UserRegeneration $userRegeneration;
-
     public function __construct(
-        UserService $userService,
-        UserRegeneration $userRegeneration
+        protected UserService $userService, 
+        protected UserRegeneration $userRegeneration,
     ) {
-        $this->userService = $userService;
-        $this->userRegeneration = $userRegeneration;
     }
 
     public function landing(Request $request, Response $response, ?User $user): Response {
@@ -95,28 +90,15 @@ class UserController extends AbstractController {
 
     public function getDashboard(User $user, Request $request, Response $response): Response {
         $routerEventSlug = ['eventSlug' => $user->event->slug];
-        switch ($user->role) {
-            case null:
-                return $this->redirect($request, $response, 'chooseRole', $routerEventSlug);
-
-            case User::ROLE_IST:
-                return $this->redirect($request, $response, 'ist-dashboard', $routerEventSlug);
-
-            case User::ROLE_PATROL_LEADER:
-                return $this->redirect($request, $response, 'pl-dashboard', $routerEventSlug);
-
-            case User::ROLE_FREE_PARTICIPANT:
-                return $this->redirect($request, $response, 'fp-dashboard', $routerEventSlug);
-
-            case User::ROLE_GUEST:
-                return $this->redirect($request, $response, 'guest-dashboard', $routerEventSlug);
-
-            case User::ROLE_ADMIN:
-                return $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug);
-
-            default:
-                throw new RuntimeException('got unknown role for User id '.$user->id.' with role '.$user->role);
-        }
+        return match ($user->role) {
+            null => $this->redirect($request, $response, 'chooseRole', $routerEventSlug),
+            User::ROLE_IST => $this->redirect($request, $response, 'ist-dashboard', $routerEventSlug),
+            User::ROLE_PATROL_LEADER => $this->redirect($request, $response, 'pl-dashboard', $routerEventSlug),
+            User::ROLE_FREE_PARTICIPANT => $this->redirect($request, $response, 'fp-dashboard', $routerEventSlug),
+            User::ROLE_GUEST => $this->redirect($request, $response, 'guest-dashboard', $routerEventSlug),
+            User::ROLE_ADMIN => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
+            default => throw new RuntimeException('got unknown role for User id '.$user->id.' with role '.$user->role),
+        };
     }
 
     public function showLoginHelp(Response $response): Response {

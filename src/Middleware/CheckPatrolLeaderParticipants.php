@@ -14,18 +14,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * participants actions are allowed only for their Patrol Leader
  */
 class CheckPatrolLeaderParticipants extends BaseMiddleware {
-    private PatrolService $patrolService;
-    private FlashMessagesInterface $flashMessages;
-    private TranslatorInterface $translator;
-
     public function __construct(
-        PatrolService $patrolService,
-        FlashMessagesInterface $flashMessages,
-        TranslatorInterface $translator
+        private PatrolService $patrolService,
+        private FlashMessagesInterface $flashMessages,
+        private TranslatorInterface $translator,
     ) {
-        $this->patrolService = $patrolService;
-        $this->flashMessages = $flashMessages;
-        $this->translator = $translator;
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {

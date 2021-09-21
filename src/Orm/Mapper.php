@@ -61,25 +61,14 @@ class Mapper implements IMapper {
                 if ($row === null) {
                     return Participant::class;
                 }
-                switch ($row->getData()['role']) {
-                    case User::ROLE_PATROL_LEADER:
-                        return PatrolLeader::class;
-
-                    case User::ROLE_PATROL_PARTICIPANT:
-                        return PatrolParticipant::class;
-
-                    case User::ROLE_IST:
-                        return Ist::class;
-
-                    case User::ROLE_GUEST:
-                        return Guest::class;
-
-                    case User::ROLE_ADMIN:
-                        return Admin::class;
-
-                    default:
-                        throw new \UnexpectedValueException('Got unknown Participant role: '.$row->getData()['role']);
-                }
+                return match ($row->getData()['role']) {
+                    User::ROLE_PATROL_LEADER => PatrolLeader::class,
+                    User::ROLE_PATROL_PARTICIPANT => PatrolParticipant::class,
+                    User::ROLE_IST => Ist::class,
+                    User::ROLE_GUEST => Guest::class,
+                    User::ROLE_ADMIN => Admin::class,
+                    default => throw new \UnexpectedValueException('Got unknown Participant role: '.$row->getData()['role']),
+                };
 
             default:
                 throw new \UnexpectedValueException('Got unknown table name: '.$table);
@@ -121,14 +110,10 @@ class Mapper implements IMapper {
     }
 
     protected function toUnderScore(string $string): string {
-        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', function ($m) {
-            return '_'.strtolower($m[1]);
-        }, $string));
+        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', fn($m) => '_'.strtolower($m[1]), $string));
     }
 
     protected function toCamelCase(string $string): string {
-        return preg_replace_callback('#_(.)#', function ($m) {
-            return strtoupper($m[1]);
-        }, $string);
+        return preg_replace_callback('#_(.)#', fn($m) => strtoupper($m[1]), $string);
     }
 }

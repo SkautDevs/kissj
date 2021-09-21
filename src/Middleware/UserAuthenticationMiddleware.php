@@ -8,10 +8,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 
 class UserAuthenticationMiddleware extends BaseMiddleware {
-    private UserRegeneration $userRegeneration;
-
-    public function __construct(UserRegeneration $userRegeneration) {
-        $this->userRegeneration = $userRegeneration;
+    public function __construct(private UserRegeneration $userRegeneration)
+    {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {

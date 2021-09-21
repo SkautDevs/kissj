@@ -41,8 +41,8 @@ use kissj\User\User;
  * @property Payment[]|null $payment m:belongsToMany
  */
 class Participant extends EntityDatetime {
-    protected $tshirtSize;
-    protected $tshirtShape;
+    protected ?string $tshirtSize = null;
+    protected ?string $tshirtShape = null;
 
     protected const TSHIRT_DELIMITER = '-';
 
