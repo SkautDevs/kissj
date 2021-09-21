@@ -27,7 +27,7 @@
         "ext-mbstring": "*",
         "ext-sqlite3": "*",
         "aws/aws-sdk-php": "^3.158",
-        "dflydev/fig-cookies": "^2.0",
+        "dflydev/fig-cookies": "^3.0",
         "doctrine/annotations": "^1.8",
         "guzzlehttp/guzzle": "^6.0",
         "h4kuna/fio": "^2.0",
@@ -38,7 +38,7 @@
         "php-di/slim-bridge": "^3",
         "phpmailer/phpmailer": "^6.0",
         "robmorgan/phinx": "^0.12.5",
-        "selective/basepath": "^1.0",
+        "selective/basepath": "^2.1",
         "slim/psr7": "^1.1",
         "slim/slim": "^4",
         "slim/twig-view": "^3.1",
@@ -55,7 +55,7 @@
         "phpstan/phpstan": "^0.12.9",
         "phpunit/phpunit": "^9",
         "rector/rector": "^0.11.53",
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-master"
     },
     "autoload": {
         "psr-4": {
