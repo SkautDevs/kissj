@@ -20,20 +20,20 @@ class UserController extends AbstractController {
         }
 
         if ($user->role === User::STATUS_WITHOUT_ROLE) {
-            return $this->redirect($request, $response, 'chooseRole', ['eventSlug' => $user->event->slug]);
+            return $this->redirect($request, $response, 'chooseRole');
         }
 
-        return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
+        return $this->redirect($request, $response, 'getDashboard');
     }
 
     public function login(Response $response): Response {
-        return $this->view->render($response, 'kissj/login.twig', ['event' => null]);
+        return $this->view->render($response, 'kissj/login.twig');
     }
 
     public function sendLoginEmail(Request $request, Response $response): Response {
         $email = $request->getParsedBody()['email'];
         if (!$this->userService->isEmailExisting($email)) {
-            $this->userService->registerUser($email);
+            $this->userService->registerUser($email, $this->getEvent($request));
         }
 
         try {
@@ -62,7 +62,7 @@ class UserController extends AbstractController {
             $this->userRegeneration->saveUserIdIntoSession($user);
             $this->userService->invalidateAllLoginTokens($user);
 
-            return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
+            return $this->redirect($request, $response, 'getDashboard');
         }
 
         $this->flashMessages->warning($this->translator->trans('flash.warning.invalidLogin'));
@@ -85,7 +85,7 @@ class UserController extends AbstractController {
     public function setRole(User $user, Request $request, Response $response): Response {
         $this->userService->setRole($user, $request->getParsedBody()['role']);
 
-        return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $user->event->slug]);
+        return $this->redirect($request, $response, 'getDashboard');
     }
 
     public function getDashboard(User $user, Request $request, Response $response): Response {

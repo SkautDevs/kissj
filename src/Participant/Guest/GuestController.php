@@ -74,7 +74,7 @@ class GuestController extends AbstractController
 
     public function showOpenGuest(int $guestId, Response $response): Response
     {
-        $guest = $this->guestRepository->find($guestId);
+        $guest = $this->guestRepository->get($guestId);
 
         return $this->view->render($response, 'admin/openGuest-admin.twig', ['guest' => $guest]);
     }
@@ -83,7 +83,7 @@ class GuestController extends AbstractController
     {
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var Guest $guest */
-        $guest = $this->guestRepository->find($guestId);
+        $guest = $this->guestRepository->get($guestId);
         $this->guestService->openRegistration($guest, $reason);
         $this->flashMessages->info('guest participant denied, email successfully sent');
         $this->logger->info('Denied registration for guest with ID '.$guest->id.' with reason: '.$reason);
@@ -94,7 +94,7 @@ class GuestController extends AbstractController
     public function approveGuest(int $guestId, Request $request, Response $response): Response
     {
         /** @var Guest $guest */
-        $guest = $this->guestRepository->find($guestId);
+        $guest = $this->guestRepository->get($guestId);
         $this->guestService->finishRegistration($guest);
         $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
         $this->logger->info('Approved (no payment was sent) registration for guest with ID '.$guest->id);

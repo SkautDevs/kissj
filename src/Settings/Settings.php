@@ -163,9 +163,6 @@ class Settings {
 
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
-            if ($user !== null) {
-                $view->getEnvironment()->addGlobal('event', $user->event);
-            }
             /*
             // TODO move into middleware
             if ($settings['useTestingSite']) {
@@ -185,7 +182,8 @@ class Settings {
         return $container;
     }
 
-    private function validateAllSettings(Dotenv $dotenv) {
+    private function validateAllSettings(Dotenv $dotenv): void
+    {
         $dotenv->required('DEBUG')->notEmpty()->isBoolean();
         $dotenv->required('TESTING_SITE')->notEmpty()->isBoolean();
         $dotenv->required('TEMPLATE_CACHE')->notEmpty()->isBoolean();

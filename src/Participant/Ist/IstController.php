@@ -80,7 +80,7 @@ class IstController extends AbstractController {
     }
 
     public function showOpenIst(int $istId, Response $response): Response {
-        $ist = $this->istRepository->find($istId);
+        $ist = $this->istRepository->get($istId);
 
         return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
     }
@@ -88,7 +88,7 @@ class IstController extends AbstractController {
     public function openIst(int $istId, Request $request, Response $response): Response {
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var Ist $ist */
-        $ist = $this->istRepository->find($istId);
+        $ist = $this->istRepository->get($istId);
         $this->istService->openRegistration($ist, $reason);
         $this->flashMessages->info($this->translator->trans('flash.info.istDenied'));
         $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
@@ -98,7 +98,7 @@ class IstController extends AbstractController {
 
     public function approveIst(int $istId, Request $request, Response $response): Response {
         /** @var Ist $ist */
-        $ist = $this->istRepository->find($istId);
+        $ist = $this->istRepository->get($istId);
         $this->istService->approveRegistration($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
         $this->logger->info('Approved registration for IST with ID '.$ist->id);

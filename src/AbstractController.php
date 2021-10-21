@@ -3,6 +3,7 @@
 namespace kissj;
 
 use DI\Annotation\Inject;
+use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use Monolog\Logger;
@@ -47,6 +48,8 @@ abstract class AbstractController {
         string $routeName,
         array $arguments = []
     ): Response {
+        $arguments = array_merge($arguments, ['eventSlug' => $this->getEvent($request)->slug]);
+
         return $response
             ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments))
             ->withStatus(302);
@@ -90,5 +93,10 @@ abstract class AbstractController {
 
                 return null;
         }
+    }
+    
+    protected function getEvent(Request $request): Event
+    {
+        return $request->getAttribute('event');
     }
 }

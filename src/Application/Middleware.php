@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use kissj\Middleware\EventInfoMiddleware;
+use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\UserAuthenticationMiddleware;
 use Middlewares\TrailingSlash;
 use Monolog\Logger;
 use Selective\BasePath\BasePathMiddleware;
@@ -13,6 +16,7 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Throwable;
 use Whoops\Exception\Inspector;
+use Zeuxisoo\Whoops\Slim\WhoopsMiddleware;
 
 class Middleware {
     public function addMiddlewaresInto(App $app): App {
@@ -21,13 +25,16 @@ class Middleware {
 
         // LOCALIZATION RESOLVER
         // https://github.com/willdurand/Negotiation
-        $app->add(\kissj\Middleware\LocalizationResolverMiddleware::class);
+        $app->add(LocalizationResolverMiddleware::class);
 
         // TODO CSRF PROTECTION
         // https://github.com/slimphp/Slim-Csrf
 
         // USER AUTHENTICATION
-        $app->add(\kissj\Middleware\UserAuthenticationMiddleware::class);
+        $app->add(UserAuthenticationMiddleware::class);
+        
+        // EVENT INFO
+        $app->add(EventInfoMiddleware::class);
 
         // ROUTING
         $app->addRoutingMiddleware();
@@ -42,7 +49,7 @@ class Middleware {
         // DEBUGGER
         // keep last to execute first
         if ($_ENV['DEBUG'] !== 'false') {
-            $app->add(new \Zeuxisoo\Whoops\Slim\WhoopsMiddleware());
+            $app->add(new WhoopsMiddleware());
         } else {
             $container = $app->getContainer();
 
@@ -65,7 +72,7 @@ class Middleware {
             };
 
             // TODO add logger with mail
-            $app->add(new \Zeuxisoo\Whoops\Slim\WhoopsMiddleware([], [$simplyErrorHandler]));
+            $app->add(new WhoopsMiddleware([], [$simplyErrorHandler]));
         }
 
         return $app;

@@ -2,6 +2,7 @@
 
 namespace kissj\User;
 
+use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Orm\Relation;
 use kissj\Participant\Participant;
@@ -23,9 +24,10 @@ class UserService {
         return $this->userRepository->isExisting(['email' => $email]);
     }
 
-    public function registerUser(string $email): User {
+    public function registerUser(string $email, Event $event): User {
         $user = new User();
         $user->email = $email;
+        $user->event = $event;
         $this->userRepository->persist($user);
 
         return $user;
@@ -62,7 +64,7 @@ class UserService {
         if (!$this->loginTokenRepository->isExisting($criteria)) {
             return false;
         }
-        $lastToken = $this->loginTokenRepository->findOneBy(
+        $lastToken = $this->loginTokenRepository->getOneBy(
             $criteria,
             ['created_at' => false]
         );

@@ -10,13 +10,16 @@ use LeanMapper\Repository as BaseRepository;
  * @property array onBeforeCreate
  * @property array onBeforePersist
  */
-class Repository extends BaseRepository {
-    public function initEvents(): void {
-        $this->onBeforeCreate[] = EntityDatetime::class.'::setCreatedAtBeforeCreate';
-        $this->onBeforePersist[] = EntityDatetime::class.'::setUpdatedAtBeforePersist';
+class Repository extends BaseRepository
+{
+    public function initEvents(): void
+    {
+        $this->onBeforeCreate[] = EntityDatetime::class . '::setCreatedAtBeforeCreate';
+        $this->onBeforePersist[] = EntityDatetime::class . '::setUpdatedAtBeforePersist';
     }
 
-    public function isExisting(array $criteria): bool {
+    public function isExisting(array $criteria): bool
+    {
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
         $row = $qb->fetch();
@@ -24,32 +27,30 @@ class Repository extends BaseRepository {
         return $row !== false;
     }
 
-    public function find(int $id) {
-        return $this->findOneBy(['id' => $id]);
+    public function get(int $id): Entity
+    {
+        return $this->getOneBy(['id' => $id]);
     }
 
-    public function findOneBy(array $criteria, array $orderBy = []) {
-        $qb = $this->createFluent();
-        $this->addConditions($qb, $criteria);
-        $this->addOrderBy($qb, $orderBy);
-        $row = $qb->fetch();
-
-        if ($row === false) {
+    public function getOneBy(array $criteria, array $orderBy = []): Entity
+    {
+        $entity = $this->findOneBy($criteria);
+        if ($entity === null) {
             throw new \RuntimeException('Entity was not found.');
         }
 
-        // second part
-        return $this->createEntity($row);
+        return $entity;
     }
 
-    public function findBy(array $criteria, array $orderBy = []): array {
+    public function findBy(array $criteria, array $orderBy = []): array
+    {
         $qb = $this->createFluent();
 
         $this->addConditions($qb, $criteria);
         $this->addOrderBy($qb, $orderBy);
 
-//      this little boi dumps sql query
-//		$qb->getConnection()->test($qb->_export(null, ['%ofs %lmt', null, null]));
+        //      this little boi dumps sql query
+        //		$qb->getConnection()->test($qb->_export(null, ['%ofs %lmt', null, null]));
 
         $rows = $qb->fetchAll();
         $entities = [];
@@ -61,7 +62,8 @@ class Repository extends BaseRepository {
         return $entities;
     }
 
-    public function findByMultiple(array $criterias, array $orderBy = []): array {
+    public function findByMultiple(array $criterias, array $orderBy = []): array
+    {
         $qb = $this->createFluent();
 
         foreach ($criterias as $criterium) {
@@ -79,7 +81,22 @@ class Repository extends BaseRepository {
         return $entities;
     }
 
-    public function countBy(array $criteria): int {
+    public function findOneBy(array $criteria, array $orderBy = []): ?Entity
+    {
+        $qb = $this->createFluent();
+        $this->addConditions($qb, $criteria);
+        $this->addOrderBy($qb, $orderBy);
+        $row = $qb->fetch();
+
+        if ($row === false) {
+            return null;
+        }
+
+        return $this->createEntity($row);
+    }
+
+    public function countBy(array $criteria): int
+    {
         /** @var Fluent $qb */
         $qb = $this->connection->select('count(*)')->from($this->getTable());
         $this->addConditions($qb, $criteria);
@@ -88,7 +105,8 @@ class Repository extends BaseRepository {
         return $row;
     }
 
-    protected function addConditions(Fluent $qb, array $criteria) {
+    protected function addConditions(Fluent $qb, array $criteria): void
+    {
         foreach ($criteria as $field => $value) {
             if ($value instanceof Entity) {
                 $columnName = $this->mapper->getRelationshipColumn(
@@ -114,7 +132,8 @@ class Repository extends BaseRepository {
         }
     }
 
-    public function findIdBy(array $criteria): int {
+    public function findIdBy(array $criteria): int
+    {
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
         $id = $qb->fetchSingle();
@@ -122,14 +141,16 @@ class Repository extends BaseRepository {
         return $id;
     }
 
-    public function findAll() {
+    public function findAll()
+    {
         return $this->createEntities(
             $this->createFluent()
                 ->fetchAll()
         );
     }
 
-    protected function addOrderBy(Fluent $qb, array $orderBy) {
+    protected function addOrderBy(Fluent $qb, array $orderBy)
+    {
         foreach ($orderBy as $order => $asc) {
             if ($asc) {
                 $qb->orderBy($order)->asc();
@@ -139,7 +160,8 @@ class Repository extends BaseRepository {
         }
     }
 
-    protected function overloadEntityIfNeeded(): ?string {
+    protected function overloadEntityIfNeeded(): ?string
+    {
         if ($this->getTable() === 'participant') {
             return static::class;
         }

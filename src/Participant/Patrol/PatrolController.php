@@ -107,7 +107,7 @@ class PatrolController extends AbstractController {
         ParticipantRepository $participantRepository
     ) {
         /** @var PatrolParticipant $participant */
-        $participant = $participantRepository->find($participantId);
+        $participant = $participantRepository->get($participantId);
 
         return $this->view->render(
             $response,
@@ -162,7 +162,7 @@ class PatrolController extends AbstractController {
     }
 
     public function showOpenPatrol(int $patrolLeaderId, Response $response) {
-        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
 
         return $this->view->render($response, 'admin/openPatrol-admin.twig', ['patrolLeader' => $patrolLeader]);
     }
@@ -170,7 +170,7 @@ class PatrolController extends AbstractController {
     public function openPatrol(int $patrolLeaderId, Request $request, Response $response) {
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var PatrolLeader $patrolLeader */
-        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
         $this->patrolService->openRegistration($patrolLeader, $reason);
         $this->flashMessages->info($this->translator->trans('flash.info.patrolDenied'));
         $this->logger->info(
@@ -187,7 +187,7 @@ class PatrolController extends AbstractController {
 
     public function approvePatrol(int $patrolLeaderId, Request $request, Response $response) {
         /** @var PatrolLeader $patrolLeader */
-        $patrolLeader = $this->patrolLeaderRepository->find($patrolLeaderId);
+        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
         $this->patrolService->approveRegistration($patrolLeader);
         $this->flashMessages->success($this->translator->trans('flash.success.patrolApproved'));
         $this->logger->info('Approved registration for Patrol with Patrol Leader ID '.$patrolLeader->id);

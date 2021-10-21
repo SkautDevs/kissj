@@ -90,7 +90,7 @@ class AdminController extends AbstractController {
     }
 
     public function showCancelPayment(int $paymentId, Response $response): Response {
-        $payment = $this->paymentRepository->find($paymentId);
+        $payment = $this->paymentRepository->get($paymentId);
 
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
@@ -98,7 +98,7 @@ class AdminController extends AbstractController {
     public function cancelPayment(int $paymentId, Request $request, Response $response): Response {
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
 
-        $payment = $this->paymentRepository->find($paymentId);
+        $payment = $this->paymentRepository->get($paymentId);
         $this->participantService->cancelPayment($payment, $reason);
         $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
         $this->logger->info('Cancelled payment ID '.$paymentId.' for participant with reason: '.$reason);
@@ -123,7 +123,7 @@ class AdminController extends AbstractController {
     }
 
     public function confirmPayment(int $paymentId, Request $request, Response $response): Response {
-        $payment = $this->paymentRepository->find($paymentId);
+        $payment = $this->paymentRepository->get($paymentId);
         $this->paymentService->confirmPayment($payment);
         $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
         $this->logger->info('Payment ID '.$paymentId.' manually confirmed as paid');

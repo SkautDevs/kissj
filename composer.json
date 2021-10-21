@@ -55,7 +55,7 @@
         "phpstan/phpstan": "^0.12.9",
         "phpunit/phpunit": "^9",
         "rector/rector": "^0.11.53",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
