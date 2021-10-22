@@ -23,14 +23,14 @@
         {% set userStatus = "unregistred" %}
     {% endif %}
 </div>
-<ul class="progressbar">
-    <li class="progressbar-item progressbar-item-registration {% if userStatus == 'unregistred' %}is-active{% endif %}">
+<ul class="steps">
+    <li class="step {% if userStatus == 'unregistred' %}is-active{% endif %}">
         {% trans %}_layout.titleBar{% endtrans %}
     </li>
-    <li class="progressbar-item {% if userStatus == 'open' %}is-active{% endif %}">{% trans %}_layout.editingBar{% endtrans %}</li>
-    <li class="progressbar-item {% if userStatus == 'closed' %}is-active{% endif %}">{% trans %}_layout.lockedBar{% endtrans %}</li>
-    <li class="progressbar-item {% if userStatus == 'approved' %}is-active{% endif %}">{% trans %}_layout.approvedBar{% endtrans %}</li>
-    <li class="progressbar-item {% if userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.payedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'open' %}is-active{% endif %}">{% trans %}_layout.editingBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'closed' %}is-active{% endif %}">{% trans %}_layout.lockedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'approved' %}is-active{% endif %}">{% trans %}_layout.approvedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.payedBar{% endtrans %}</li>
 </ul>
 <div class="flash-wrapper">
     {% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
