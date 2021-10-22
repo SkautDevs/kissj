@@ -150,74 +150,81 @@ h2, h3 {
 	flex-direction: column;
 }
 
-.progressbar {
+/* Steps v2 */
+
+ul.steps {
+	width: 100%;
 	display: flex;
 	list-style: none;
 	padding: 0;
-	flex-direction: column;
-	max-width: 20em;
-	margin: 0 auto 13px;
+	flex-direction: row;
 }
 
-@media (min-width: 776px) {
-	.progressbar {
-		max-width: 1200px;
-		flex-direction: row;
-	}
-
-	.progressbar-item::before {
-		content: '';
-	}
+li.step {
+    width: 33%;
+    position: relative;
+    text-align: center;
+	font-size: 1.25rem;
+	font-weight: bolder;
+	color: #666;
 }
 
-.progressbar-item {
-	flex-basis: 0;
-	flex-grow: 1;
-	background: blue;
-	background: var(--bgColor, blue);
-	text-align: center;
-	padding: 1em;
-	color: white;
-	font-size: 17px;
-	border-radius: var(--borderRadius);
-	position: relative;
-
-	filter: grayscale(100%);
+li.step::before {
+	content: " ";
+    line-height: 30px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #888;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px;
+    background-color: #666;
 }
 
-li.progressbar-item:not(:first-child)::before {
-	position: absolute;
-	width: 0;
-	height: 0;
-	border-left: 20px solid black;
-	border-top: 28px solid transparent;
-	border-bottom: 28px solid transparent;
-	top: 0;
-	left: 0;
+li.step::after {
+	content: "";
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #ccc;
+    top: 15px;
+    left: -50%;
+    z-index: -1;
 }
 
-li.progressbar-item-registration {
-	--bgColor: #0b2a34;
+li.step:first-child:after {
+    content: none;
 }
 
-li.progressbar-item:nth-child(2) {
-	--bgColor: #224c48;
+li.step.is-active {
+	color: var(--step-color);
 }
 
-li.progressbar-item:nth-child(3) {
-	--bgColor: #1e341b;
+li.step.is-active::before,
+li.step.is-active::after {
+	border-color: var(--step-color);
+    background-color: var(--step-color);
 }
 
-li.progressbar-item:nth-child(4) {
-	--bgColor: #34706f;
+li.step:nth-child(1).is-active {
+	--step-color: #0b2a34;
 }
 
-li.progressbar-item:nth-child(5) {
-	--bgColor: #799369;
+li.step:nth-child(2).is-active {
+	--step-color: #224c48;
 }
 
-li.progressbar-item.is-active {
-	filter: grayscale(0%);
+li.step:nth-child(3).is-active {
+	--step-color: #1e341b;
+}
+
+li.step:nth-child(4).is-active {
+	--step-color: #34706f;
+}
+
+li.step:nth-child(5).is-active {
+	--step-color: #799369;
 }
 
 .registration-theme {
@@ -265,6 +272,7 @@ li.progressbar-item.is-active {
 	margin: calc(-1 * var(--borderRadius)) 0;
 	display: block;
 	flex-grow: 1;
+	margin-top: .5rem;
 }
 
 .form-group-inline {
