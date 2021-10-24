@@ -10,7 +10,11 @@ final class Init extends AbstractMigration {
             throw new RuntimeException('cannot load file sql/init.sql');
         }
         
-        $this->query($queries);
+        $queriesArray = explode(';', $queries);
+        
+        foreach($queriesArray as $query) {
+            $this->query($query);
+        }
     }
 
     public function down(): void {
