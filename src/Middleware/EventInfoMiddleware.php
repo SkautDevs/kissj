@@ -6,6 +6,7 @@ namespace kissj\Middleware;
 
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\Mailer\MailerSettings;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -17,6 +18,7 @@ class EventInfoMiddleware extends BaseMiddleware
     public function __construct(
         private EventRepository $eventRepository,
         private Twig $view,
+        private MailerSettings $mailerSettings,
     ) {
     }
 
@@ -30,6 +32,7 @@ class EventInfoMiddleware extends BaseMiddleware
         if ($event instanceof Event) {
             $request = $request->withAttribute('event', $event);
             $this->view->getEnvironment()->addGlobal('event', $event); // used in templates
+            $this->mailerSettings->setEvent($event);
         } else {
             $request = $request->withAttribute('event', null);
         }

@@ -18,15 +18,18 @@ use LeanMapper\Exception\InvalidStateException;
 use LeanMapper\IMapper;
 use LeanMapper\Row;
 
-class Mapper implements IMapper {
+class Mapper implements IMapper
+{
     protected string $defaultEntityNamespace = 'kissj';
     protected string $relationshipTableGlue = '_';
 
-    public function getPrimaryKey($table): string {
+    public function getPrimaryKey(string $table): string
+    {
         return 'id';
     }
 
-    public function getTable($entityClass): string {
+    public function getTable(string $entityClass): string
+    {
         $participantVariants = [
             PatrolLeader::class,
             PatrolParticipant::class,
@@ -40,7 +43,8 @@ class Mapper implements IMapper {
         return $this->toUnderScore($this->trimNamespace($entityClass));
     }
 
-    public function getEntityClass($table, Row $row = null): string {
+    public function getEntityClass(string $table, ?Row $row = null): string
+    {
         switch ($table) {
             case 'user':
                 return User::class;
@@ -50,7 +54,7 @@ class Mapper implements IMapper {
 
             case 'payment':
                 return Payment::class;
-                
+
             case 'bankpayment':
                 return BankPayment::class;
 
@@ -61,37 +65,46 @@ class Mapper implements IMapper {
                 if ($row === null) {
                     return Participant::class;
                 }
+
                 return match ($row->getData()['role']) {
                     User::ROLE_PATROL_LEADER => PatrolLeader::class,
                     User::ROLE_PATROL_PARTICIPANT => PatrolParticipant::class,
                     User::ROLE_IST => Ist::class,
                     User::ROLE_GUEST => Guest::class,
                     User::ROLE_ADMIN => Admin::class,
-                    default => throw new \UnexpectedValueException('Got unknown Participant role: '.$row->getData()['role']),
+                    default => throw new \UnexpectedValueException('Got unknown Participant role: ' . $row->getData()['role']),
                 };
 
             default:
-                throw new \UnexpectedValueException('Got unknown table name: '.$table);
+                throw new \UnexpectedValueException('Got unknown table name: ' . $table);
         }
     }
 
-    public function getColumn($entityClass, $field): string {
+    public function getColumn(string $entityClass, string $field): string
+    {
         return $this->toUnderScore($field);
     }
 
-    public function getEntityField($table, $column): string {
+    public function getEntityField(string $table, string $column): string
+    {
         return $this->toCamelCase($column);
     }
 
-    public function getRelationshipTable($sourceTable, $targetTable): string {
-        return $sourceTable.$this->relationshipTableGlue.$targetTable;
+    public function getRelationshipTable(string $sourceTable, string $targetTable): string
+    {
+        return $sourceTable . $this->relationshipTableGlue . $targetTable;
     }
 
-    public function getRelationshipColumn($sourceTable, $targetTable): string {
-        return $targetTable.'_'.$this->getPrimaryKey($targetTable);
+    public function getRelationshipColumn(
+        string $sourceTable,
+        string $targetTable,
+        ?string $relationshipName = null
+    ): string {
+        return $targetTable . '_' . $this->getPrimaryKey($targetTable);
     }
 
-    public function getTableByRepositoryClass($repositoryClass): string {
+    public function getTableByRepositoryClass(string $repositoryClass): string
+    {
         $matches = [];
         if (preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches)) {
             return strtolower($matches[1]);
@@ -99,21 +112,35 @@ class Mapper implements IMapper {
         throw new InvalidStateException('Cannot determine table name.');
     }
 
-    public function getImplicitFilters($entityClass, Caller $caller = null): array {
+    public function getImplicitFilters(string $entityClass, Caller $caller = null): array
+    {
         return [];
     }
 
-    protected function trimNamespace($class): string {
+    protected function trimNamespace($class): string
+    {
         $class = explode('\\', $class);
 
         return end($class);
     }
 
-    protected function toUnderScore(string $string): string {
-        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', fn($m) => '_'.strtolower($m[1]), $string));
+    protected function toUnderScore(string $string): string
+    {
+        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', fn($m) => '_' . strtolower($m[1]), $string));
     }
 
-    protected function toCamelCase(string $string): string {
+    protected function toCamelCase(string $string): string
+    {
         return preg_replace_callback('#_(.)#', fn($m) => strtoupper($m[1]), $string);
+    }
+
+    function convertToRowData(string $table, array $values): array
+    {
+        return $values;
+    }
+
+    function convertFromRowData(string $table, array $data): array
+    {
+        return $data;
     }
 }

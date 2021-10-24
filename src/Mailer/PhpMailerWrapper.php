@@ -9,14 +9,16 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
 
-class PhpMailerWrapper {
-    private string $eventName;
-
-    public function __construct(private Twig $renderer, private MailerSettings $settings) {
-        $this->eventName = 'Korbo 2020'; // TODO make dynamic
+class PhpMailerWrapper
+{
+    public function __construct(
+        private Twig $renderer,
+        private MailerSettings $settings
+    ) {
     }
 
-    public function sendLoginToken(User $user, string $link) {
+    public function sendLoginToken(User $user, string $link): void
+    {
         $this->sendMailFromTemplate(
             $user->email,
             'odkaz pro přihlášení', // TODO make translatable
@@ -25,11 +27,13 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendRegistrationClosed(User $user): void {
+    public function sendRegistrationClosed(User $user): void
+    {
         $this->sendMailFromTemplate($user->email, 'registrace uzamčena', 'closed', []);
     }
 
-    public function sendDeniedRegistration(Participant $participant, string $reason) {
+    public function sendDeniedRegistration(Participant $participant, string $reason): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'zamítnutá registrace', // TODO make translatable
@@ -38,7 +42,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment) {
+    public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'informace o platbě', // TODO make translatable
@@ -51,7 +56,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendGuestRegistrationFinished(Participant $participant) {
+    public function sendGuestRegistrationFinished(Participant $participant): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'registrace dokončena', // TODO make translatable
@@ -63,7 +69,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendCancelledPayment(Participant $participant, string $reason) {
+    public function sendCancelledPayment(Participant $participant, string $reason): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'platba zrušena', // TODO make translatable
@@ -72,7 +79,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendRegistrationPaid(Participant $participant) {
+    public function sendRegistrationPaid(Participant $participant): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'platba úspěšně zaplacena!', // TODO make translatable
@@ -81,7 +89,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendPaymentTransferedFromYou(Participant $participant) {
+    public function sendPaymentTransferedFromYou(Participant $participant): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'platba převedena na jiného účastníka',
@@ -90,7 +99,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendWelcomeFreeParticipantMessage(Participant $participant) {
+    public function sendWelcomeFreeParticipantMessage(Participant $participant): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'registrace potvrzena', // TODO make translatable
@@ -99,7 +109,8 @@ class PhpMailerWrapper {
         );
     }
 
-    public function sendDuePaymentDenied(Participant $participant) {
+    public function sendDuePaymentDenied(Participant $participant): void
+    {
         $this->sendMailFromTemplate(
             $participant->user->email,
             'platba neobdržena -> registrace zrušena', // TODO make translatable
@@ -114,8 +125,9 @@ class PhpMailerWrapper {
         string $templateName,
         array $parameters
     ): void {
-        $messageBody = $this->renderer->fetch('emails/'.$templateName.'.twig', $parameters);
+        $messageBody = $this->renderer->fetch('emails/' . $templateName . '.twig', $parameters);
         $mailer = new PHPMailer(true);
+        $event = $this->settings->getEvent();
 
         try {
             // phpamiler echoing debug, content-length middleware addds length header, 
@@ -145,7 +157,7 @@ class PhpMailerWrapper {
             $mailer->CharSet = 'UTF-8';
 
             //Recipients
-            $mailer->setFrom($this->settings->fromMail, $this->settings->fromName);
+            $mailer->setFrom($event->emailFrom, $event->emailFromName);
             if (!empty($this->settings->bccMail)) {
                 $mailer->addCC($this->settings->bccMail, $this->settings->bccName);
             }
@@ -156,7 +168,7 @@ class PhpMailerWrapper {
 
             // Content
             $mailer->isHTML();
-            $mailer->Subject = $this->eventName.' - '.$subject;
+            $mailer->Subject = $event->readableName . ' - ' . $subject;
             $mailer->Body = $messageBody;
             $mailer->AltBody = strip_tags($messageBody);
 

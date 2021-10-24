@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e06ca3f2e18c7d849ebe2cd1030dddfa",
+    "content-hash": "c89e12d9a2587aaa442779e638f88b09",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.199.1",
+            "version": "3.199.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1033abba14fd7cb6667f60aaa085bc0d2c61afe4"
+                "reference": "edc87cdd32545eb443b2b11070cbcdc29ecc8d95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1033abba14fd7cb6667f60aaa085bc0d2c61afe4",
-                "reference": "1033abba14fd7cb6667f60aaa085bc0d2c61afe4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/edc87cdd32545eb443b2b11070cbcdc29ecc8d95",
+                "reference": "edc87cdd32545eb443b2b11070cbcdc29ecc8d95",
                 "shasum": ""
             },
             "require": {
@@ -143,22 +143,22 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.199.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.199.2"
             },
-            "time": "2021-10-21T18:33:01+00:00"
+            "time": "2021-10-22T18:14:43+00:00"
         },
         {
             "name": "cakephp/core",
-            "version": "4.2.10",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/core.git",
-                "reference": "a99b4fef0e7c17bcf3cab659130963c0d6074805"
+                "reference": "7ff150e558cd0d3dfc89cf95cf92ce325a3df187"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/core/zipball/a99b4fef0e7c17bcf3cab659130963c0d6074805",
-                "reference": "a99b4fef0e7c17bcf3cab659130963c0d6074805",
+                "url": "https://api.github.com/repos/cakephp/core/zipball/7ff150e558cd0d3dfc89cf95cf92ce325a3df187",
+                "reference": "7ff150e558cd0d3dfc89cf95cf92ce325a3df187",
                 "shasum": ""
             },
             "require": {
@@ -202,20 +202,20 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/core"
             },
-            "time": "2021-09-11T20:25:27+00:00"
+            "time": "2021-10-11T16:29:09+00:00"
         },
         {
             "name": "cakephp/database",
-            "version": "4.2.10",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/database.git",
-                "reference": "d3c4c632289592e9f9f7f384232e1d99a1cad7e5"
+                "reference": "5e950f0ea0b6f365bbe1b5bac6516da80a19cbde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/database/zipball/d3c4c632289592e9f9f7f384232e1d99a1cad7e5",
-                "reference": "d3c4c632289592e9f9f7f384232e1d99a1cad7e5",
+                "url": "https://api.github.com/repos/cakephp/database/zipball/5e950f0ea0b6f365bbe1b5bac6516da80a19cbde",
+                "reference": "5e950f0ea0b6f365bbe1b5bac6516da80a19cbde",
                 "shasum": ""
             },
             "require": {
@@ -257,20 +257,20 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/database"
             },
-            "time": "2021-09-29T17:24:01+00:00"
+            "time": "2021-10-23T19:27:25+00:00"
         },
         {
             "name": "cakephp/datasource",
-            "version": "4.2.10",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/datasource.git",
-                "reference": "211d985dbd9d55e81b1725ecb40e9da2cd83da05"
+                "reference": "b119572bae14400d62d2546eda17f98480b129c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/datasource/zipball/211d985dbd9d55e81b1725ecb40e9da2cd83da05",
-                "reference": "211d985dbd9d55e81b1725ecb40e9da2cd83da05",
+                "url": "https://api.github.com/repos/cakephp/datasource/zipball/b119572bae14400d62d2546eda17f98480b129c4",
+                "reference": "b119572bae14400d62d2546eda17f98480b129c4",
                 "shasum": ""
             },
             "require": {
@@ -315,20 +315,20 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/datasource"
             },
-            "time": "2021-09-09T17:32:14+00:00"
+            "time": "2021-10-01T06:53:01+00:00"
         },
         {
             "name": "cakephp/utility",
-            "version": "4.2.10",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/utility.git",
-                "reference": "4259ae4154e639557af751ae719d58253a79282a"
+                "reference": "2a16f2a61b287914e9d6f904deeec286596d2a8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/utility/zipball/4259ae4154e639557af751ae719d58253a79282a",
-                "reference": "4259ae4154e639557af751ae719d58253a79282a",
+                "url": "https://api.github.com/repos/cakephp/utility/zipball/2a16f2a61b287914e9d6f904deeec286596d2a8f",
+                "reference": "2a16f2a61b287914e9d6f904deeec286596d2a8f",
                 "shasum": ""
             },
             "require": {
@@ -374,7 +374,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/utility"
             },
-            "time": "2021-03-29T16:08:09+00:00"
+            "time": "2021-10-18T18:25:06+00:00"
         },
         {
             "name": "dflydev/fig-cookies",
@@ -440,47 +440,46 @@
         },
         {
             "name": "dibi/dibi",
-            "version": "v3.2.4",
+            "version": "v4.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dg/dibi.git",
-                "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266"
+                "reference": "73e16eb1a322599e8cdf350adcfdbc15eaf16577"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dg/dibi/zipball/d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
-                "reference": "d571460a6f8fa1334a04f7aaa1551bb0f12c2266",
+                "url": "https://api.github.com/repos/dg/dibi/zipball/73e16eb1a322599e8cdf350adcfdbc15eaf16577",
+                "reference": "73e16eb1a322599e8cdf350adcfdbc15eaf16577",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.4"
+                "php": ">=7.2"
             },
             "replace": {
                 "dg/dibi": "*"
             },
             "require-dev": {
-                "nette/tester": "~1.7",
+                "nette/di": "^3.0",
+                "nette/tester": "~2.0",
+                "phpstan/phpstan": "^0.12",
                 "tracy/tracy": "~2.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.2-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
                 "classmap": [
                     "src/"
-                ],
-                "files": [
-                    "src/loader.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
+                "GPL-2.0-only",
+                "GPL-3.0-only"
             ],
             "authors": [
                 {
@@ -505,9 +504,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dg/dibi/issues",
-                "source": "https://github.com/dg/dibi/tree/v3.2.4"
+                "source": "https://github.com/dg/dibi/tree/v4.2.3"
             },
-            "time": "2020-03-26T03:05:01+00:00"
+            "time": "2021-07-23T08:49:27+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -922,16 +921,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0"
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
                 "shasum": ""
             },
             "require": {
@@ -986,7 +985,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/1.5.0"
+                "source": "https://github.com/guzzle/promises/tree/1.5.1"
             },
             "funding": [
                 {
@@ -1002,7 +1001,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-07T13:05:22+00:00"
+            "time": "2021-10-22T20:56:57+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -4624,30 +4623,37 @@
         },
         {
             "name": "tharos/leanmapper",
-            "version": "v3.5.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Tharos/LeanMapper.git",
-                "reference": "5f9cf657bbbc9965a412625f791feaae8b2de461"
+                "reference": "e8508cbff1cf189cda4c8786e41c59a2f21effd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Tharos/LeanMapper/zipball/5f9cf657bbbc9965a412625f791feaae8b2de461",
-                "reference": "5f9cf657bbbc9965a412625f791feaae8b2de461",
+                "url": "https://api.github.com/repos/Tharos/LeanMapper/zipball/e8508cbff1cf189cda4c8786e41c59a2f21effd1",
+                "reference": "e8508cbff1cf189cda4c8786e41c59a2f21effd1",
                 "shasum": ""
             },
             "require": {
-                "dibi/dibi": "~3.0",
-                "php": ">= 5.4"
+                "dibi/dibi": "~4.0",
+                "php": ">= 7.2"
             },
             "require-dev": {
-                "nette/bootstrap": "~2.2",
-                "nette/di": "~2.2",
-                "nette/robot-loader": "~2.2",
-                "nette/tester": "~1.0",
-                "tracy/tracy": "~2.2"
+                "nette/bootstrap": "^2.4 || ^3.0",
+                "nette/caching": "^2.4 || ^3.0",
+                "nette/di": "^2.4 || ^3.0",
+                "nette/robot-loader": "^2.4 || ^3.0",
+                "nette/tester": "^2.3",
+                "phpstan/phpstan": "^0.12",
+                "tracy/tracy": "^2.4 || ^3.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "4.0-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "LeanMapper": "src/"
@@ -4665,15 +4671,19 @@
                 {
                     "name": "Miroslav Paulík",
                     "role": "Maintainer"
+                },
+                {
+                    "name": "Jan Pecha",
+                    "role": "Maintainer"
                 }
             ],
             "description": "Tiny ORM based on powerful Dibi database abstraction library for PHP.",
             "homepage": "http://www.leanmapper.com",
             "support": {
                 "issues": "https://github.com/Tharos/LeanMapper/issues",
-                "source": "https://github.com/Tharos/LeanMapper/tree/v3.5.0"
+                "source": "https://github.com/Tharos/LeanMapper/tree/v4.0.1"
             },
-            "time": "2021-03-25T18:00:08+00:00"
+            "time": "2021-10-20T15:54:50+00:00"
         },
         {
             "name": "twig/twig",
@@ -7396,7 +7406,6 @@
                     "type": "github"
                 }
             ],
-            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {

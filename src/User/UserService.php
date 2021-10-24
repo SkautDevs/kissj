@@ -33,7 +33,7 @@ class UserService {
         return $user;
     }
 
-    public function sendLoginTokenByMail(string $email, Request $request): string {
+    public function sendLoginTokenByMail(string $email, Request $request, Event $event): string {
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => $email]);
         $this->invalidateAllLoginTokens($user);
@@ -49,7 +49,11 @@ class UserService {
 
         // need to use full route
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
-        $fullLink = $routeParser->fullUrlFor($request->getUri(), 'loginWithToken', ['token' => $token]);
+        $fullLink = $routeParser->fullUrlFor(
+            $request->getUri(), 
+            'loginWithToken', 
+            ['token' => $token, 'eventSlug' => $event->slug]
+        );
         $this->mailer->sendLoginToken($user, $fullLink);
 
         return $token;

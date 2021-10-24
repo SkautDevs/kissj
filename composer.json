@@ -45,9 +45,9 @@
         "symfony/translation": "^5.0",
         "symfony/twig-bridge": "^5.1",
         "symfony/yaml": "^5.1",
-        "tharos/leanmapper": "^3.1",
+        "tharos/leanmapper": "^4.0",
         "vlucas/phpdotenv": "^5.0",
-        "zeuxisoo/slim-whoops": "0.7.*"
+        "zeuxisoo/slim-whoops": "^0.7"
     },
     "require-dev": {
         "ext-pdo": "*",

@@ -25,11 +25,11 @@ class EntityDatetime extends Entity {
         return new \DateTime($val);
     }
 
-    public function setUpdatedAtBeforePersist(EntityDatetime $entity): void {
+    public static function setUpdatedAtBeforePersist(EntityDatetime $entity): void {
         $entity->updatedAt = new \DateTime();
     }
 
-    public function setCreatedAtBeforeCreate(EntityDatetime $entity): void {
+    public static function setCreatedAtBeforeCreate(EntityDatetime $entity): void {
         $entity->createdAt = new \DateTime();
     }
 }

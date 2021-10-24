@@ -37,7 +37,7 @@ class UserController extends AbstractController {
         }
 
         try {
-            $this->userService->sendLoginTokenByMail($email, $request);
+            $this->userService->sendLoginTokenByMail($email, $request, $this->getEvent($request));
         } catch (\Exception $e) {
             $this->logger->addError('Error sending login email to '.$email.' with token '.
                 $this->userService->getTokenForEmail($email), [$e]);

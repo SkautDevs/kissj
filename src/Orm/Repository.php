@@ -24,7 +24,7 @@ class Repository extends BaseRepository
         $this->addConditions($qb, $criteria);
         $row = $qb->fetch();
 
-        return $row !== false;
+        return $row !== null;
     }
 
     public function get(int $id): Entity

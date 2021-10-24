@@ -2,7 +2,12 @@
 
 namespace kissj\Mailer;
 
-class MailerSettings {
+use kissj\Event\Event;
+
+class MailerSettings
+{
+    private Event $event;
+
     public function __construct(
         public string $smtp,
         public string $smtpServer,
@@ -11,13 +16,21 @@ class MailerSettings {
         public string $smtpUsername,
         public string $smtpPassword,
         public string $smtpSecure,
-        public string $fromMail,
-        public string $fromName,
         public string $bccMail,
         public string $bccName,
         public string $disableTls,
         public string $debugOutputLevel,
         public string $sendMailToMainRecipient,
     ) {
+    }
+
+    public function setEvent(Event $event): void
+    {
+        $this->event = $event;
+    }
+
+    public function getEvent(): Event
+    {
+        return $this->event;
     }
 }

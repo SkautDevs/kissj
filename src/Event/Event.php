@@ -34,6 +34,9 @@ use kissj\Orm\EntityDatetime;
  *
  * @property string|null $startDay m:passThru(dateFromString|dateToString)
  * @property string|null $endDay m:passThru(dateFromString|dateToString)
+ * 
+ * @property string      $emailFrom
+ * @property string      $emailFromName
  */
 class Event extends EntityDatetime {
 }
