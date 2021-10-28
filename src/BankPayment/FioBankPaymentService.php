@@ -3,20 +3,20 @@
 namespace kissj\BankPayment;
 
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
-use h4kuna\Fio\FioRead;
+use kissj\Event\Event;
 use Psr\Log\LoggerInterface;
 
 class FioBankPaymentService implements IBankPaymentService {
     public function __construct(
         private BankPaymentRepository $bankPaymentRepository,
-        private FioRead $fioRead,
+        private FioBankReaderFactory $fioBankReaderFactory,
         private LoggerInterface $logger,
     ) {
     }
 
-    public function setBreakpoint(\DateTimeImmutable $dateTime): bool {
+    public function setBreakpoint(\DateTimeImmutable $dateTime, Event $event): bool {
         try {
-            $this->fioRead->setLastDate($dateTime);
+            $this->fioBankReaderFactory->getFioRead($event)->setLastDate($dateTime);
         } catch (ServiceUnavailable $e) {
             $this->logger->error('Setting breakpoint for Fio Bank failed: '.$e->getMessage());
 
@@ -27,9 +27,9 @@ class FioBankPaymentService implements IBankPaymentService {
         return true;
     }
 
-    public function getAndSafeFreshPaymentsFromBank(): int {
+    public function getAndSafeFreshPaymentsFromBank(Event $event): int {
         // TODO deduplicate persisted and new ones, possibly by moveId
-        $freshPayments = $this->fioRead->lastDownload();
+        $freshPayments = $this->fioBankReaderFactory->getFioRead($event)->lastDownload();
         foreach ($freshPayments as $freshPayment) {
             if ($freshPayment->volume > 0) { // get only incomes
                 $bankPayment = new BankPayment();

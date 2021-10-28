@@ -17,13 +17,12 @@ class NonChoosedRoleOnlyMiddleware extends BaseMiddleware {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {
-        /** @var User $user */
         $user = $request->getAttribute('user');
 
-        if ($user->status !== User::STATUS_WITHOUT_ROLE) {
+        if ($user instanceof User && $user->status !== User::STATUS_WITHOUT_ROLE) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.roleChoosed'));
 
-            $url = $this->getRouter($request)->urlFor('landing');
+            $url = $this->getRouter($request)->urlFor('landing', ['eventSlug' => $user->event->slug]);
             $response = new \Slim\Psr7\Response();
 
             return $response->withHeader('Location', $url)->withStatus(302);

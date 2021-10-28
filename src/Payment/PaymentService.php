@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace kissj\Payment;
@@ -6,7 +7,6 @@ namespace kissj\Payment;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
-use kissj\Event\EventType\EventType;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
@@ -15,13 +15,13 @@ use kissj\User\UserService;
 use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PaymentService {
+class PaymentService
+{
     public function __construct(
         private FioBankPaymentService $bankPaymentService,
         private BankPaymentRepository $bankPaymentRepository,
         private PaymentRepository $paymentRepository,
         private UserService $userService,
-        private EventType $eventType,
         private FlashMessagesBySession $flashMessages,
         private PhpMailerWrapper $mailer,
         private TranslatorInterface $translator,
@@ -29,7 +29,8 @@ class PaymentService {
     ) {
     }
 
-    public function createAndPersistNewPayment(Participant $participant): Payment {
+    public function createAndPersistNewPayment(Participant $participant): Payment
+    {
         do {
             $variableNumber = $this->getVariableNumber($participant->user->event->prefixVariableSymbol);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
@@ -39,15 +40,15 @@ class PaymentService {
         $payment = new Payment();
         $payment->participant = $participant;
         $payment->variableSymbol = $variableNumber;
-        $payment->price = (string)$this->eventType->getPrice($participant);
+        $payment->price = (string)$event->getEventType()->getPrice($participant);
         $payment->currency = $event->currency;
         $payment->status = Payment::STATUS_WAITING;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         if ($participant instanceof PatrolLeader) {
-            $payment->note = $event->slug.' '.$participant->patrolName.' '.$participant->getFullName();
+            $payment->note = $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
         } else {
-            $payment->note = $event->slug.' '.$participant->getFullName();
+            $payment->note = $event->slug . ' ' . $participant->getFullName();
         }
 
         $this->paymentRepository->persist($payment);
@@ -55,10 +56,11 @@ class PaymentService {
         return $payment;
     }
 
-    public function cancelPayment(Payment $payment): Payment {
+    public function cancelPayment(Payment $payment): Payment
+    {
         if ($payment->status !== Payment::STATUS_WAITING) {
-            throw new \RuntimeException('Payment cancelation is allow only for payments with status "'
-                .Payment::STATUS_WAITING.'"');
+            throw new \RuntimeException('Payment cancellation is allow only for payments with status "'
+                . Payment::STATUS_WAITING . '"');
         }
 
         $payment->status = Payment::STATUS_CANCELED;
@@ -67,7 +69,8 @@ class PaymentService {
         return $payment;
     }
 
-    public function cancelDuePayments(int $limit): void {
+    public function cancelDuePayments(int $limit): void
+    {
         $duePayments = $this->paymentRepository->getDuePayments();
         $deniedPaymentsCount = 0;
 
@@ -76,17 +79,18 @@ class PaymentService {
 
             $this->userService->openRegistration($payment->participant->user);
             $this->mailer->sendDuePaymentDenied($payment->participant);
-            $this->logger->info('Payment ID '.$payment->id.' was automatically denied because payment due');
+            $this->logger->info('Payment ID ' . $payment->id . ' was automatically denied because payment due');
             $deniedPaymentsCount++;
         }
 
-        $this->flashMessages->info($this->translator->trans('flash.info.duePaymentDenied').': '.$deniedPaymentsCount);
+        $this->flashMessages->info($this->translator->trans('flash.info.duePaymentDenied') . ': ' . $deniedPaymentsCount);
     }
 
-    public function confirmPayment(Payment $payment): Payment {
+    public function confirmPayment(Payment $payment): Payment
+    {
         if ($payment->status !== Payment::STATUS_WAITING) {
             throw new \RuntimeException('Payment confirmation is allow only for payments with status "'
-                .Payment::STATUS_WAITING.'"');
+                . Payment::STATUS_WAITING . '"');
         }
 
         $this->userService->payRegistration($payment->participant->user);
@@ -102,13 +106,14 @@ class PaymentService {
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
-    public function updatePayments(int $limit): void {
+    public function updatePayments(int $limit): void
+    {
         $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
         if (count($freshBankPayments) === 0) {
             $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank();
 
             if ($newPaymentsCount > 0) {
-                $this->flashMessages->info($this->translator->trans('flash.info.newPayments').$newPaymentsCount);
+                $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);
             } else {
                 $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
             }
@@ -128,7 +133,7 @@ class PaymentService {
                 if ($payment->price === $bankPayment->price) {
                     // match!
                     $this->confirmPayment($payment);
-                    $this->logger->info('Payment ID '.$payment->id.' automatically set to status '.$payment->status);
+                    $this->logger->info('Payment ID ' . $payment->id . ' automatically set to status ' . $payment->status);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;
@@ -147,22 +152,23 @@ class PaymentService {
         }
 
         if ($counterNewPaid) {
-            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments').$counterNewPaid);
+            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
         }
 
         if ($counterUnknownPayment) {
-            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized').$counterUnknownPayment);
+            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
         }
     }
 
-    protected function getVariableNumber(?int $prefix): string {
+    protected function getVariableNumber(?int $prefix): string
+    {
         if ($prefix === null) {
-            return str_pad(random_int(0, 9_999_999_999), 10, '0', STR_PAD_LEFT);
+            return str_pad((string)random_int(0, 9_999_999_999), 10, '0', STR_PAD_LEFT);
         }
 
         $prefixLength = strlen((string)$prefix);
         if ($prefixLength > 5) {
-            throw new \RuntimeException('prefix is too long: '.$prefix);
+            throw new \RuntimeException('prefix is too long: ' . $prefix);
         }
 
         $variableNumber = (string)$prefix;

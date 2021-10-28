@@ -17,10 +17,11 @@ class GuestsOnlyMiddleware extends BaseMiddleware {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {
-        if ($request->getAttribute('user')->role !== User::ROLE_GUEST) {
+        $user = $request->getAttribute('user');
+        if ($user instanceof User && $user->role !== User::ROLE_GUEST) {
             $this->flashMessages->error($this->translator->trans('flash.error.guestOnly'));
 
-            $url = $this->getRouter($request)->urlFor('loginAskEmail');
+            $url = $this->getRouter($request)->urlFor('loginAskEmail', ['eventSlug' => $user->event->slug]);
             $response = new \Slim\Psr7\Response();
 
             return $response->withHeader('Location', $url)->withStatus(302);

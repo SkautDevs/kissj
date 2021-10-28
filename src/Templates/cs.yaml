@@ -316,7 +316,7 @@ flash:
     info:
         participantDeleted: "Účastník byl smazán"
         paymentCanceled: "Platba zamítnuta, e-mail s důvodem odeslán"
-        chooseRoleNeeded: "Nejpre si musíš zvolit svoji roli pro tuto akci"
+        chooseRoleNeeded: "Nejprve si musíš zvolit svoji roli pro tuto akci"
         istDenied: "IST zamítnut, e-mail byl poslán"
         patrolDenied: "Patrola zamítnuta, e-mail byl poslán"
         logout: "Odhlášení bylo úspěšné"

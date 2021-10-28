@@ -84,21 +84,8 @@ class PatrolService extends AbstractService {
             $validityFlag = false;
         }
 
-        switch ($patrolLeader->country) {
-            case 'Slovak':
-                $localMaxNumber = $event->maximalClosedPatrolsSlovakCount;
-                break;
-            case 'Czech':
-                $localMaxNumber = $event->maximalClosedPatrolsCzechCount;
-                break;
-            case 'other':
-                $localMaxNumber = $event->maximalClosedPatrolsOthersCount;
-                break;
-            default:
-                $this->flashMessages->warning('Cannot determine your country properly');
+        $localMaxNumber = $event->getEventType()->getMaximumClosedParticipants($patrolLeader);
 
-                return false;
-        }
         if ($localMaxNumber <= $this->userService->getClosedPatrolsCount()) {
             $this->flashMessages->warning('Cannot lock the registration - for Patrols from your country 
                 we have full registration now. Please wait for limit rise');

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace kissj\Settings;
@@ -8,15 +9,12 @@ use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 use h4kuna\Fio\FioRead;
 use h4kuna\Fio\Utils\FioFactory;
-use kissj\Event\EventType\EventType;
-use kissj\Event\EventType\EventTypeKorbo;
 use kissj\FileHandler\FileHandler;
 use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\MailerSettings;
-use kissj\Mailer\PhpMailerWrapper;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
@@ -38,10 +36,18 @@ use function DI\autowire;
 use function DI\create;
 use function DI\get;
 
-class Settings {
+class Settings
+{
     private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
-    public function getContainerDefinition(string $envPath, string $envFilename, string $dbFullPath): array {
+    /**
+     * @param string $envPath
+     * @param string $envFilename
+     * @param string $dbFullPath
+     * @return array<string, mixed>
+     */
+    public function getContainerDefinition(string $envPath, string $envFilename, string $dbFullPath): array
+    {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
         $_ENV['DB_FULL_PATH'] = $dbFullPath; // do not allow change DB path in .env
 
@@ -63,26 +69,14 @@ class Settings {
                     'password' => $_ENV['POSTGRES_PASSWORD'],
                     'database' => $_ENV['POSTGRES_DB'],
                 ]),
-                default => throw new \UnexpectedValueException('Got unknown database type parameter: '.$_ENV['DB_TYPE']),
+                default => throw new \UnexpectedValueException('Got unknown database type parameter: ' . $_ENV['DB_TYPE']),
             };
         };
         $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
             'local' => new LocalFileHandler(),
             's3bucket' => get(S3bucketFileHandler::class),
             default => throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
-                .$_ENV['FILE_HANDLER_TYPE']),
-        };
-        $container[EventType::class] = create(EventTypeKorbo::class);// TODO multievent
-        $container[FioRead::class] = function () {
-            // using h4kuna/fio - https://github.com/h4kuna/fio
-            $fioFactory = new FioFactory([
-                'fio-account' => [
-                    'account' => $_ENV['PAYMENT_ACCOUNT_NUMBER'],
-                    'token' => $_ENV['PAYMENT_FIO_API_TOKEN'],
-                ],
-            ]);
-
-            return $fioFactory->createFioRead('fio-account');
+                . $_ENV['FILE_HANDLER_TYPE']),
         };
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
         $container[IMapper::class] = create(Mapper::class);
@@ -116,7 +110,7 @@ class Settings {
                 $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT']
             );
         };
-        $container[S3bucketFileHandler::class] 
+        $container[S3bucketFileHandler::class]
             = fn(S3Client $s3Client) => new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
         $container[S3Client::class] = fn() => new S3Client([
             'version' => 'latest',
@@ -134,9 +128,9 @@ class Settings {
             $translator->setFallbackLocales([$_ENV['DEFAULT_LOCALE']]);
 
             $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
-            $translator->addResource('yaml', __DIR__.'/../Templates/cs.yaml', 'cs');
-            $translator->addResource('yaml', __DIR__.'/../Templates/sk.yaml', 'sk');
-            $translator->addResource('yaml', __DIR__.'/../Templates/en.yaml', 'en');
+            $translator->addResource('yaml', __DIR__ . '/../Templates/cs.yaml', 'cs');
+            $translator->addResource('yaml', __DIR__ . '/../Templates/sk.yaml', 'sk');
+            $translator->addResource('yaml', __DIR__ . '/../Templates/en.yaml', 'en');
 
             return $translator;
         };
@@ -147,10 +141,10 @@ class Settings {
             FlashMessagesBySession $flashMessages
         ) {
             $view = Twig::create(
-                __DIR__.'/../Templates/translatable',
+                __DIR__ . '/../Templates/translatable',
                 [
                     // env. variables are parsed into strings
-                    'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__.'/../../temp/twig' : false,
+                    'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/twig' : false,
                     'debug' => $_ENV['DEBUG'] === 'true',
                 ]
             );
@@ -172,7 +166,7 @@ class Settings {
 
             return $view;
         };
-        $container[UserAuthenticationMiddleware::class] 
+        $container[UserAuthenticationMiddleware::class]
             = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
 
         return $container;
@@ -200,8 +194,10 @@ class Settings {
         $dotenv->required('MAIL_DISABLE_TLS');
         $dotenv->required('MAIL_DEBUG_OUTPUT_LEVEL')->allowedValues(['0', '1', '2', '3', '4']);
         $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
-        $dotenv->required('PAYMENT_ACCOUNT_NUMBER'); // TODO move into db
-        $dotenv->required('FILE_HANDLER_TYPE')->allowedValues(['local', 's3bucket']); // cannot use const - container won't compile
+        $dotenv->required('FILE_HANDLER_TYPE')->allowedValues([
+            'local',
+            's3bucket',
+        ]); // cannot use const - container won't compile
         $dotenv->required('S3_BUCKET');
         $dotenv->required('S3_KEY');
         $dotenv->required('S3_SECRET');

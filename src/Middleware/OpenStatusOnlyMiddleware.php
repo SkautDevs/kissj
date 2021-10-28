@@ -14,9 +14,9 @@ class OpenStatusOnlyMiddleware extends BaseMiddleware {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response {
-        /** @var User $user */
         $user = $request->getAttribute('user');
-        if ($user->status !== User::STATUS_OPEN) {
+
+        if ($user instanceof User && $user->status !== User::STATUS_OPEN) {
             $this->logger->warning(
                 'User '.$user->email.' is trying to change data, even he has role "'.$user->status.'"'
             );

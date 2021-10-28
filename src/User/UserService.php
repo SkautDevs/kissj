@@ -60,7 +60,7 @@ class UserService {
     }
 
     public function generateTokenString(): string {
-        return md5(random_int(PHP_INT_MIN, PHP_INT_MAX));
+        return md5((string)random_int(PHP_INT_MIN, PHP_INT_MAX));
     }
 
     public function isLoginTokenValid(string $loginToken): bool {

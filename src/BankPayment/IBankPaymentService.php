@@ -2,8 +2,11 @@
 
 namespace kissj\BankPayment;
 
-interface IBankPaymentService {
-    public function setBreakpoint(\DateTimeImmutable $dateTime): bool;
+use kissj\Event\Event;
 
-    public function getAndSafeFreshPaymentsFromBank(): int;
+interface IBankPaymentService
+{
+    public function setBreakpoint(\DateTimeImmutable $dateTime, Event $event): bool;
+
+    public function getAndSafeFreshPaymentsFromBank(Event $event): int;
 }

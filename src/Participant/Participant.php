@@ -11,7 +11,7 @@ use kissj\User\User;
  * All commons are here, entitis are seaprated of course (:
  *
  * @property int            $id
- * @property User|null      $user         m:hasOne
+ * @property User|null      $user         m:hasOne TODO check and get rid of null
  * @property string|null    $role         needed for DB working (see Mapper.php)
  * @property string|null    $firstName
  * @property string|null    $lastName
@@ -30,7 +30,7 @@ use kissj\User\User;
  * @property string|null    $idNumber
  * @property string|null    $scarf
  * @property string|null    $swimming
- * @property string|null    $tshirt       m:useMethods
+ * @property string|null    $tshirt       m:useMethods(getTshirt|setThirt)
  * @property string|null    $arrivalDate  m:passThru(dateFromString|dateToString)
  * @property string|null    $departueDate m:passThru(dateFromString|dateToString)
  * @property string|null    $uploadedFilename

@@ -6,10 +6,12 @@ namespace kissj\Event\EventType;
 use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType {
+    private const SCARF_PRICE = 90;
+    
     public function getPrice(Participant $participant): int {
         $price = 500;
         if ($participant->scarf === Participant::SCARF_YES) {
-            $price += $participant->user->event->scarfPrice;
+            $price += self::SCARF_PRICE;
         }
 
         return $price;
