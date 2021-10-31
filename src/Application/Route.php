@@ -179,32 +179,20 @@ class Route
                         $app->get('', AdminController::class . '::showApproving')
                             ->setName('admin-show-approving');
 
-                        $app->get('/openPatrolLeader/{patrolLeaderId}', PatrolController::class . '::showOpenPatrol')
-                            ->setName('admin-open-pl-show');
-
-                        $app->post('/openPatrolLeader/{patrolLeaderId}', PatrolController::class . '::openPatrol')
-                            ->setName('admin-open-pl');
-
                         $app->post('/approvePatrolLeader/{patrolLeaderId}', PatrolController::class . '::approvePatrol')
                             ->setName('admin-approve-pl');
-
-                        $app->get('/openIst/{istId}', IstController::class . '::showOpenIst')
-                            ->setName('admin-open-ist-show');
-
-                        $app->post('/openIst/{istId}', IstController::class . '::openIst')
-                            ->setName('admin-open-ist');
 
                         $app->post('/approveIst/{istId}', IstController::class . '::approveIst')
                             ->setName('admin-approve-ist');
 
-                        $app->get('/openGuest/{guestId}', GuestController::class . '::showOpenGuest')
-                            ->setName('admin-open-guest-show');
-
-                        $app->post('/openGuest/{guestId}', GuestController::class . '::openGuest')
-                            ->setName('admin-open-guest');
-
                         $app->post('/approveGuest/{guestId}', GuestController::class . '::approveGuest')
                             ->setName('admin-approve-guest');
+                        
+                        $app->get('/denyParticipant/{participantId}', AdminController::class . '::showDenyParticipant')
+                            ->setName('admin-deny-participant-show');
+
+                        $app->post('/denyParticipant/{participantId}', AdminController::class . '::denyParticipant')
+                            ->setName('admin-deny-participant');
                     });
 
                     $app->group('/payments', function (RouteCollectorProxy $app) {

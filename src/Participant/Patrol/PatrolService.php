@@ -149,13 +149,6 @@ class PatrolService extends AbstractService {
         return $patrolLeader;
     }
 
-    public function openRegistration(PatrolLeader $patrolLeader, string $reason): PatrolLeader {
-        $this->mailer->sendDeniedRegistration($patrolLeader, $reason);
-        $this->userService->openRegistration($patrolLeader->user);
-
-        return $patrolLeader;
-    }
-
     public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader {
         $payment = $this->paymentService->createAndPersistNewPayment($patrolLeader);
 

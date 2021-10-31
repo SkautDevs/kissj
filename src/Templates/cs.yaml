@@ -145,9 +145,11 @@ chooseRole:
     chooseRole: "Vyber svou roli"
     registerAsPl: "Registrovat patrolu!"
     registerAsIst: "Registrovat se do servis týmu!"
+    registerAsGuest: "Registrovat se jako host!"
     rolesAdvice: "Podrobnosti pro role"
     advicePlText: "je vedoucí skupiny účastníků. Účastníci se neregistrují samostatně, ale prostřednictvím svého patrol leadra. Ten je odpovědný za svoji patrolu v průběhu celé akce a také za ní jako celek platí registrační poplatek."
     adviceIstText: "(staff či IST - International Service Team). Hromada dospělých dobrovolníků, bez kterých by akce neproběhla - jedou, aby organizátorům pomohli se vším možným."
+    adviceGuestText: "je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:"
 login:
     registrationFor: "Registrace pro "
     email: "E-mail"
@@ -210,10 +212,6 @@ email:
     text:
         paidRegistrationTransfered: "Ahoj, tvá platba byla přesunuta k registraci novému účastníkovi. Pokud o tomto nic nevíš, hned se nám prosím ozvi."
         paymentTransfered: "převádíme jinou platbu k tvojí registraci"
-openist-admin:
-    deny: "Zamítnout"
-    wantDeny: "Opravdu cheš zamítnout účast?"
-    reason: "Důvod zamítnutí (Bude posláno e-mailem, tak nebuď moc krutý/á):"
 payments-admin:
     confirmText: "Potvrzovaní plateb na akci"
     openDuePayments: "Odemknout platby po splatnosti"
@@ -234,10 +232,10 @@ payments-admin:
     allIstPaid: " Všichni ISTs mají zaplaceno!"
     participants: "Bezplatný účastník"
     allParticipantsPaid: "Všichni bezplatní účastníci jsou potvrzeni!"
-openIst-admin:
-    deny: "Zamítnout"
-    wantDeny: "Opravdu chceš zamítnout"
-    reason: "Z důvodu (bude posláno mailem, tak nějak mile):"
+deny-admin:
+    deny: "Zamítnout účastníka s rolí"
+    wantDeny: "Zamítám"
+    reason: "z důvodu (bude posláno mailem, tak nějak mile)"
     back: "Zpět"
     denyAndSend: "Zamítnout a poslat e-mail"
 dashboard-admin:
@@ -279,15 +277,15 @@ cancelPayment-admin:
     reason: "Důvod zrušení platby (bude poslán e-mailem, tak nebuď sprostý/á):"
     back: "Zpět"
     cancelPayment: "Zamítnout platbu"
-approving-admin:
-    approving: "Potvrzování účastníků na akci"
+approve-admin:
+    approving: "Schvalování účastníků na akci"
     back: "Zpět"
     willHave: "(Bude mu/jí na akci "
     years: " let)"
     deny: "Zamítnout"
     approveAndSend: "Schválit a poslat e-mail"
-    none: "Žádní"
-    need: " nevyžadují schválení"
+    none: "Žádní účastníci s rolí"
+    need: "nevyžadují schválení"
 paymentsAuto-admin:
     update: "Stáhnout a napárovat platby"
     paymentsOnAccount: "Všechny platby na bankovním účtu"

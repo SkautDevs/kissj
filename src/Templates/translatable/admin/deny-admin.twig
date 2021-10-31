@@ -1,0 +1,21 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card card-half closed-theme">
+        <h2>{% trans %}deny-admin.deny{% endtrans %} {{ ('role.' ~ participant.role)|trans }}</h2>
+        <p></p>
+        <form method="post"
+              action="{{ url_for('admin-deny-participant', {'participantId' : participant.getId, 'eventSlug': event.slug}) }}">
+            <div class="form-group">
+                <label>{% trans %}deny-admin.wantDeny{% endtrans %} <b>{{ participant.getFullName }}</b>
+                    {% trans %}deny-admin.reason{% endtrans %}:<br/><br/>
+                    <input type="text" name="reason" id="form-reason" class="form-control form-wide"
+                           required="required"></label>
+            </div>
+            <br/>
+            <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+               class="btn btn-small btn-grey">{% trans %}deny-admin.back{% endtrans %}</a><br/><br/>
+            <input type="submit" value="{% trans %}deny-admin.denyAndSend{% endtrans %}" class="btn btn-small">
+        </form>
+    </div>
+{% endblock %}

@@ -79,23 +79,6 @@ class IstController extends AbstractController {
         return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function showOpenIst(int $istId, Response $response): Response {
-        $ist = $this->istRepository->get($istId);
-
-        return $this->view->render($response, 'admin/openIst-admin.twig', ['ist' => $ist]);
-    }
-
-    public function openIst(int $istId, Request $request, Response $response): Response {
-        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
-        /** @var Ist $ist */
-        $ist = $this->istRepository->get($istId);
-        $this->istService->openRegistration($ist, $reason);
-        $this->flashMessages->info($this->translator->trans('flash.info.istDenied'));
-        $this->logger->info('Denied registration for IST with ID '.$ist->id.' with reason: '.$reason);
-
-        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
-    }
-
     public function approveIst(int $istId, Request $request, Response $response): Response {
         /** @var Ist $ist */
         $ist = $this->istRepository->get($istId);

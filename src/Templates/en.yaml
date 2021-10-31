@@ -145,9 +145,11 @@ chooseRole:
     chooseRole: "Choose your role"
     registerAsPl: "Register your patrol!"
     registerAsIst: "Register into the IST!"
+    registerAsGuest: "Register as guest!"
     rolesAdvice: "Advice on roles"
     advicePlText: "is a leader of a group of participants. S/he is responsible for the patrol throughout whole event and also registers participants and pays the registration fee for the whole patrol"
     adviceIstText: "or IST stands for International Service Team. It is a bunch of adult volunteers without whom the event wouldn't take place - they attend the event to help the organizers"
+    adviceGuestText: "is guest on the event with special rules. If you don't know if you are guest, you probably aren't (:"
 login:
     registrationFor: "Registration for "
     email: "E-mail"
@@ -210,10 +212,6 @@ email:
     text:
         paidRegistrationTransfered: "Ahoy, your payment was transferred to a different participant. If you do not know about this, please contact us."
         paymentTransfered: "tranfering different payment into your registration"
-openist-admin:
-    deny: "Deny"
-    wantDeny: "Do you really want to deny"
-    reason: "Reason for denial (will be sent by email):"
 payments-admin:
     confirmText: "Confirming payments on event"
     openDuePayments: "Unlock payments after due deadline"
@@ -234,10 +232,10 @@ payments-admin:
     allIstPaid: " All ISTs are paid up!"
     participants: "Free Participants"
     allParticipantsPaid: "All Free Participants are paid up!"
-openIst-admin:
-    deny: "Deny"
-    wantDeny: "Do you really want to deny"
-    reason: "Reason is (will be send via email)"
+deny-admin:
+    deny: "Deny participant with role"
+    wantDeny: "Deny "
+    reason: "with reason for denial (will be send via email, be gentle please)"
     back: "Back"
     denyAndSend: "Deny and send email"
 dashboard-admin:
@@ -279,14 +277,14 @@ cancelPayment-admin:
     reason: "Reason for payment cancellation (will be sent via mail):"
     back: "Back"
     cancelPayment: "CancelPayment"
-approving-admin:
+approve-admin:
     approving: "Approving participants on event"
     back: "Back"
     willHave: "(on event will have"
     years: " years)"
     deny: "Deny"
     approveAndSend: "Approve and send email"
-    none: "No"
+    none: "No participants with role"
     need: "is in need for approval"
 paymentsAuto-admin:
     update: "Download and pair payments"

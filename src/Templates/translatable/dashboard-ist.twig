@@ -1,16 +1,16 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    {% set userStatus = ist.user.status %}
+    {% set userStatus = user.status %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{{ event.getIstLabel|capitalize }} {% trans %}dashboard.details{% endtrans %}</h2>
+        <h2>{% trans %}role.ist{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h2>
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'ist'} %}
         </h4>
         {% if ist.getPayments %}
             <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
-            {% for payment in ist.getPayments %}
-                <div class="payment {% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+             {% for payment in ist.getPayments %}
+                <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
                     {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
                     {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
                     <br/>

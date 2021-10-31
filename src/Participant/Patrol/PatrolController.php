@@ -161,30 +161,6 @@ class PatrolController extends AbstractController {
         );
     }
 
-    public function showOpenPatrol(int $patrolLeaderId, Response $response) {
-        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
-
-        return $this->view->render($response, 'admin/openPatrol-admin.twig', ['patrolLeader' => $patrolLeader]);
-    }
-
-    public function openPatrol(int $patrolLeaderId, Request $request, Response $response) {
-        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
-        /** @var PatrolLeader $patrolLeader */
-        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
-        $this->patrolService->openRegistration($patrolLeader, $reason);
-        $this->flashMessages->info($this->translator->trans('flash.info.patrolDenied'));
-        $this->logger->info(
-            'Denied registration for Patrol with Patrol Leader ID '.$patrolLeader->id.' with reason: '.$reason
-        );
-
-        return $this->redirect(
-            $request,
-            $response,
-            'admin-show-approving',
-            ['eventSlug' => $patrolLeader->user->event->slug]
-        );
-    }
-
     public function approvePatrol(int $patrolLeaderId, Request $request, Response $response) {
         /** @var PatrolLeader $patrolLeader */
         $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);

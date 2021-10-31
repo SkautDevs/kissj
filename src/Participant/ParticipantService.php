@@ -56,7 +56,6 @@ class ParticipantService {
 
     public function findParticipantFromUserMail(string $emailFrom): ?Participant {
         // TODO optimalize into one query with join
-        // TODO refactor Repository into get() and find() methods
         $user = $this->userRepository->findBy(['email' => $emailFrom]);
         if (count($user) === 0) {
             return null;
@@ -68,5 +67,13 @@ class ParticipantService {
         }
 
         return $participant[0];
+    }
+
+    public function denyRegistration(Participant $participant, string $reason): Participant
+    {
+        $this->mailer->sendDeniedRegistration($participant, $reason);
+        $this->userService->openRegistration($participant->user);
+
+        return $participant;
     }
 }

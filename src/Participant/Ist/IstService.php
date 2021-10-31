@@ -82,13 +82,6 @@ class IstService extends AbstractService {
         return $ist;
     }
 
-    public function openRegistration(Ist $ist, $reason): Ist {
-        $this->mailer->sendDeniedRegistration($ist, $reason);
-        $this->userService->openRegistration($ist->user);
-
-        return $ist;
-    }
-
     public function approveRegistration(Ist $ist): Ist {
         $payment = $this->paymentService->createAndPersistNewPayment($ist);
 

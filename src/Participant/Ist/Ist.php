@@ -6,7 +6,7 @@ use kissj\Participant\Participant;
 
 /**
  * @property string|null $skills
- * @property string|null $preferredPosition m:useMethods
+ * @property string|null $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
  * @property string|null $driversLicense
  */
 class Ist extends Participant {

@@ -102,13 +102,6 @@ class GuestService {
         return new StatisticValueObject($ists);
     }
 
-    public function openRegistration(Guest $guest, $reason): Guest {
-        $this->mailer->sendDeniedRegistration($guest, $reason);
-        $this->userService->openRegistration($guest->user);
-
-        return $guest;
-    }
-
     public function finishRegistration(Guest $guest): Guest {
         $this->userService->payRegistration($guest->user);
         $this->mailer->sendGuestRegistrationFinished($guest);

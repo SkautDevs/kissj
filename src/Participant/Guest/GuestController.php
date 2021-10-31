@@ -72,25 +72,6 @@ class GuestController extends AbstractController
         return $this->redirect($request, $response, 'guest-dashboard', ['eventSlug' => $guest->user->event->slug]);
     }
 
-    public function showOpenGuest(int $guestId, Response $response): Response
-    {
-        $guest = $this->guestRepository->get($guestId);
-
-        return $this->view->render($response, 'admin/openGuest-admin.twig', ['guest' => $guest]);
-    }
-
-    public function openGuest(int $guestId, Request $request, Response $response)
-    {
-        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
-        /** @var Guest $guest */
-        $guest = $this->guestRepository->get($guestId);
-        $this->guestService->openRegistration($guest, $reason);
-        $this->flashMessages->info('guest participant denied, email successfully sent');
-        $this->logger->info('Denied registration for guest with ID '.$guest->id.' with reason: '.$reason);
-
-        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $guest->user->event->slug]);
-    }
-
     public function approveGuest(int $guestId, Request $request, Response $response): Response
     {
         /** @var Guest $guest */
