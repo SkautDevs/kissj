@@ -1,0 +1,58 @@
+version: "3.9"
+services:
+
+
+
+    #database
+    postgresql:
+        image: postgres:11-alpine
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+
+        environment:
+            - POSTGRES_USER=user
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=kissj
+
+    #php-fpm
+    php-fpm:
+        image: ocr.apps.prod.kpml.net/kissj/php
+        depends_on:
+            - postgresql
+        links:
+            - postgresql
+
+        ports:
+            - 9000:9000
+
+        environment:
+            - POSTGRES_USER=user
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=kissj
+        volumes:
+            - ../../:/var/www/html
+
+
+    #Frontend Web Server
+    caddy:
+        image: ocr.apps.prod.kpml.net/kissj/caddy
+        ports:
+            - 8080:80
+        depends_on:
+            - php-fpm
+        links:
+            - php-fpm
+
+        environment:
+            - PHPFPM_HOST=php-fpm
+            - WEB_HOST=localhost
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+
+volumes:
+    db-data:
+
+networks:
+    default:

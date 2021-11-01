@@ -1,0 +1,10 @@
+:80 {
+	root * /var/www/html/public
+	file_server
+	php_fastcgi {env.PHPFPM_HOST}:9000
+	try_files {path} /index.php
+
+	log {
+		output stdout
+	}
+}
