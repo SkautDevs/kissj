@@ -341,7 +341,7 @@ flash:
         istFullRegistration: "We have full registration now and you are below the bar, so we cannot register you yet. Please wait for limit rise or other ist cancellation"
         notLogged: "Pardon, but you are not logged. Please log yourself via entering your email"
         loggedIn: "Pardon, but your are logged - you need to sign off first by click to \"Log off\""
-        roleChoosed: "Pardon, you already choosed your role for this event"
+        roleChoosed: "Pardon, you already chose your role for this event"
         invalidLogin: "Log-in token you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one."
         fileTooBig: "Uploaded file is too big, please try upload smaller"
         fileGeneral: "There is something wrong with uploaded file, please try it again."
@@ -349,6 +349,7 @@ flash:
         differentParticipants: "Participants have different roles"
         notPaid: "Seller has not completed payment"
         isPaid: "Buyer has completed payment"
+        wrongEvent: "You are not registered on this event yet - register yourself please"
     error:
         adminOnly: "Sorry bro, admins only"
         istOnly: "Sorry, you are not logged as IST"

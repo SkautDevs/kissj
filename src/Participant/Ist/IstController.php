@@ -3,44 +3,49 @@
 namespace kissj\Participant\Ist;
 
 use kissj\AbstractController;
-use kissj\Event\ContentArbiterIst;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class IstController extends AbstractController {
+class IstController extends AbstractController
+{
     public function __construct(
         private IstService $istService,
-        private IstRepository $istRepository,
-        private ContentArbiterIst $contentArbiterIst,
+        private IstRepository $istRepository
     ) {
     }
 
-    public function showDashboard(Response $response, User $user): Response {
+    public function showDashboard(Response $response, User $user): Response
+    {
         return $this->view->render(
             $response,
             'dashboard-ist.twig',
-            ['user' => $user, 'ist' => $this->istService->getIst($user), 'ca' => $this->contentArbiterIst]
+            [
+                'user' => $user,
+                'ist' => $this->istService->getIst($user),
+                'ca' => $user->event->eventType->getContentArbiterIst(),
+            ],
         );
     }
 
-    public function showDetailsChangeable(Request $request, Response $response): Response {
-        $istDetails = $this->istService->getIst($request->getAttribute('user'));
+    public function showDetailsChangeable(Request $request, Response $response, User $user): Response
+    {
+        $istDetails = $this->istService->getIst($user);
 
         return $this->view->render(
             $response,
             'changeDetails-ist.twig',
-            ['istDetails' => $istDetails, 'ca' => $this->contentArbiterIst]
+            ['istDetails' => $istDetails, 'ca' => $istDetails->user->event->eventType->getContentArbiterIst()]
         );
     }
 
-    public function changeDetails(Request $request, Response $response): Response {
-        $ist = $this->istService->getIst($request->getAttribute('user'));
-
-        if ($this->contentArbiterIst->uploadFile) {
+    public function changeDetails(Request $request, Response $response, User $user): Response
+    {
+        $ist = $this->istService->getIst($user);
+        if ($user->event->eventType->getContentArbiterIst()->uploadFile) { // TODO fix
             $uploadedFile = $this->resolveUploadedFiles($request->getUploadedFiles());
             if ($uploadedFile === null) {
-                return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
+                return $this->redirect($request, $response, 'ist-dashboard');
             }
 
             $this->fileHandler->saveFileTo($ist, $uploadedFile);
@@ -51,27 +56,33 @@ class IstController extends AbstractController {
         $this->istRepository->persist($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
-        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
+        return $this->redirect($request, $response, 'ist-dashboard');
     }
 
-    public function showCloseRegistration(Request $request, Response $response): Response {
-        $ist = $this->istService->getIst($request->getAttribute('user')); // TODO change to autowiring
+    public function showCloseRegistration(Request $request, Response $response, User $user): Response
+    {
+        $ist = $this->istService->getIst($user);
         $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
-            return $this->view->render($response, 'closeRegistration-ist.twig',
-                ['dataProtectionUrl' => $ist->user->event->dataProtectionUrl]);
+            return $this->view->render(
+                $response,
+                'closeRegistration-ist.twig',
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl]
+            );
         }
 
-        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
+        return $this->redirect($request, $response, 'ist-dashboard');
     }
 
-    public function closeRegistration(Request $request, Response $response): Response {
+// TODO join into admin
+    public function closeRegistration(Request $request, Response $response): Response
+    {
         $ist = $this->istService->getIst($request->getAttribute('user'));
         $ist = $this->istService->closeRegistration($ist);
 
         if ($ist->user->status === User::STATUS_CLOSED) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
-            $this->logger->info('Locked registration for IST with ID '.$ist->id.', user ID '.$ist->user->id);
+            $this->logger->info('Locked registration for IST with ID ' . $ist->id . ', user ID ' . $ist->user->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
@@ -79,12 +90,14 @@ class IstController extends AbstractController {
         return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-    public function approveIst(int $istId, Request $request, Response $response): Response {
+// TODO join into admin
+    public function approveIst(int $istId, Request $request, Response $response): Response
+    {
         /** @var Ist $ist */
         $ist = $this->istRepository->get($istId);
         $this->istService->approveRegistration($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
-        $this->logger->info('Approved registration for IST with ID '.$ist->id);
+        $this->logger->info('Approved registration for IST with ID ' . $ist->id);
 
         return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
     }

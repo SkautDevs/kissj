@@ -21,10 +21,7 @@ class IstsOnlyMiddleware extends BaseMiddleware {
         if ($user instanceof User && $user->role !== User::ROLE_IST) {
             $this->flashMessages->error($this->translator->trans('flash.error.istOnly'));
 
-            $url = $this->getRouter($request)->urlFor('loginAskEmail', ['eventSlug' => $user->event->slug]);
-            $response = new \Slim\Psr7\Response();
-
-            return $response->withHeader('Location', $url)->withStatus(302);
+            return $this->createRedirectResponse($request, 'loginAskEmail');
         }
 
         return $handler->handle($request);

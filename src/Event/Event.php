@@ -21,7 +21,7 @@ use kissj\Orm\EntityDatetime;
  * @property string      $webUrl
  * @property string      $dataProtectionUrl
  * @property string      $contactEmail
- * @property string      $eventType m:useMethods(getEventType|)
+ * @property EventType   $eventType m:useMethods(getEventType|)
  * @property string      $logoUrl
  *
  * @property string      $accountNumber with bank code after slash

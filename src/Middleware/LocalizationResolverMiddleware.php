@@ -12,11 +12,12 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Views\Twig;
 use Symfony\Component\Translation\Translator;
 
-class LocalizationResolverMiddleware extends BaseMiddleware {
+class LocalizationResolverMiddleware extends BaseMiddleware
+{
     private const LOCALE_COOKIE_NAME = 'locale';
 
     /**
-     * @param string[]   $availableLanguages
+     * @param string[] $availableLanguages
      */
     public function __construct(
         private Twig $view,
@@ -26,9 +27,11 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
     ) {
     }
 
-    public function process(Request $request, ResponseHandler $handler): Response {
+    public function process(Request $request, ResponseHandler $handler): Response
+    {
         if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
-            $bestNegotiatedLanguage = htmlspecialchars($request->getQueryParams()[self::LOCALE_COOKIE_NAME], ENT_QUOTES);
+            $bestNegotiatedLanguage = htmlspecialchars($request->getQueryParams()[self::LOCALE_COOKIE_NAME],
+                ENT_QUOTES);
         } else {
             $bestNegotiatedLanguage = $this->getBestLanguage($request);
         }
@@ -49,7 +52,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware {
         return $response;
     }
 
-    private function getBestLanguage(Request $request): string {
+    private function getBestLanguage(Request $request): string
+    {
         $localeCookie = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME);
         if ($localeCookie->getValue() !== null) {
             return $localeCookie->getValue();

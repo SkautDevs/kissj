@@ -349,6 +349,7 @@ flash:
         differentParticipants: "Účastníci jsou různých rolí"
         notPaid: "Prodávající nemá žádnou zaplacenou platbu"
         isPaid: "Kupující již má zaplacenou platbu"
+        wrongEvent: "Na tuto akci ještě nejsi registrovaný - registruj se, prosím"
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
         istOnly: "Pardon, nejsi přihlášený jako servis tým"

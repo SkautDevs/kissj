@@ -33,10 +33,7 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
 
             $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
 
-            $url = $this->getRouter($request)->urlFor('pl-dashboard');
-            $response = new \Slim\Psr7\Response();
-
-            return $response->withHeader('Location', $url)->withStatus(302);
+            return $this->createRedirectResponse($request, 'pl-dashboard');
         }
 
         return $handler->handle($request);

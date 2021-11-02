@@ -2,7 +2,10 @@
 
 namespace kissj\Middleware;
 
+use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\User\User;
+use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -12,6 +15,7 @@ class LoggedOnlyMiddleware extends BaseMiddleware {
     public function __construct(
         private FlashMessagesInterface $flashMessages,
         private TranslatorInterface $translator,
+        private UserController $userController,
     ) {
     }
 
@@ -19,10 +23,23 @@ class LoggedOnlyMiddleware extends BaseMiddleware {
         if ($request->getAttribute('user') === null) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.notLogged'));
 
-            $url = $this->getRouter($request)->urlFor('loginAskEmail');
-            $response = new \Slim\Psr7\Response();
+            return $this->createRedirectResponse($request, 'loginAskEmail');
+        }
 
-            return $response->withHeader('Location', $url)->withStatus(302);
+        /** @var User $user */
+        $user = $request->getAttribute('user');
+
+        /** @var Event|null $event */
+        $event = $request->getAttribute('event');
+        if ($event === null) {
+            throw new \Exception('Cannot get event from request');
+        }
+
+        if ($user->event->id !== $event->id) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.wrongEvent'));
+
+            // TODO fix one mail cannot attend multiple events
+            return $this->userController->logout($request, new \Slim\Psr7\Response());
         }
 
         return $handler->handle($request);

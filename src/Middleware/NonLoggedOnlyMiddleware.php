@@ -19,10 +19,7 @@ class NonLoggedOnlyMiddleware extends BaseMiddleware {
         if ($request->getAttribute('user') !== null) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.loggedIn'));
 
-            $url = $this->getRouter($request)->urlFor('landing');
-            $response = new \Slim\Psr7\Response();
-
-            return $response->withHeader('Location', $url)->withStatus(302);
+            return $this->createRedirectResponse($request, 'landing');
         }
 
         return $handler->handle($request);

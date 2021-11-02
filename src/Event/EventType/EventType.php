@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType;
 
+use kissj\Event\ContentArbiterGuest;
+use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -29,5 +33,25 @@ abstract class EventType
             Guest::class => $participant->user->event->maximalClosedGuestsCount,
             default => throw new \RuntimeException('Unexpected participent class: ' . get_class($participant)),
         };
+    }
+
+    public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
+    {
+        return new ContentArbiterPatrolLeader();
+    }
+
+    public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
+    {
+        return new ContentArbiterPatrolParticipant();
+    }
+
+    public function getContentArbiterIst(): ContentArbiterIst
+    {
+        return new ContentArbiterIst();
+    }
+
+    public function getContentArbiterGuest(): ContentArbiterGuest
+    {
+        return new ContentArbiterGuest();
     }
 }
