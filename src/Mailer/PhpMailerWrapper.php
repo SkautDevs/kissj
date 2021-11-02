@@ -149,8 +149,8 @@ class PhpMailerWrapper
                 ];
             }
             $mailer->Host = $this->settings->smtpServer; // Specify main and backup SMTP servers
-            $mailer->Port = $this->settings->smtpPort; // TCP port to connect to
-            $mailer->SMTPAuth = $this->settings->smtpAuth; // Enable SMTP authentication
+            $mailer->Port = (int)$this->settings->smtpPort; // TCP port to connect to
+            $mailer->SMTPAuth = (bool)$this->settings->smtpAuth; // Enable SMTP authentication
             $mailer->Username = $this->settings->smtpUsername; // SMTP username
             $mailer->Password = $this->settings->smtpPassword; // SMTP password
             $mailer->SMTPSecure = $this->settings->smtpSecure; // Enable TLS encryption, `ssl` or null also accepted
@@ -158,8 +158,8 @@ class PhpMailerWrapper
 
             //Recipients
             $mailer->setFrom($event->emailFrom, $event->emailFromName);
-            if (!empty($this->settings->bccMail)) {
-                $mailer->addCC($this->settings->bccMail, $this->settings->bccName);
+            if ($event->emailBccFrom !== null) {
+                $mailer->addCC($event->emailBccFrom, $event->emailFromName);
             }
 
             if ($this->settings->sendMailToMainRecipient) {

@@ -88,7 +88,7 @@ class Repository extends BaseRepository
         $this->addOrderBy($qb, $orderBy);
         $row = $qb->fetch();
 
-        if ($row === false) {
+        if ($row === null) {
             return null;
         }
 

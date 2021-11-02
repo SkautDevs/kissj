@@ -16,8 +16,6 @@ class MailerSettings
         public string $smtpUsername,
         public string $smtpPassword,
         public string $smtpSecure,
-        public string $bccMail,
-        public string $bccName,
         public string $disableTls,
         public string $debugOutputLevel,
         public string $sendMailToMainRecipient,

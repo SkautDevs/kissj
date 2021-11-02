@@ -103,8 +103,6 @@ class Settings
                 $_ENV['MAIL_SMTP_USERNAME'],
                 $_ENV['MAIL_SMTP_PASSWORD'],
                 $_ENV['MAIL_SMTP_SECURE'],
-                $_ENV['MAIL_BCC_MAIL'],
-                $_ENV['MAIL_BCC_NAME'],
                 $_ENV['MAIL_DISABLE_TLS'],
                 $_ENV['MAIL_DEBUG_OUTPUT_LEVEL'],
                 $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT']

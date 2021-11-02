@@ -24,10 +24,10 @@ use kissj\Orm\EntityDatetime;
  * @property string      $eventType m:useMethods(getEventType|)
  * @property string      $logoUrl
  *
- * @property string      $accountNumber with bank code after slash  
+ * @property string      $accountNumber with bank code after slash
  * @property int         $prefixVariableSymbol
  * @property bool        $automaticPaymentPairing
- * @property int|null    $bankId currently not in use 
+ * @property int|null    $bankId currently not in use
  * @property string|null $bankApiKey
  * @property int         $maxElapsedPaymentDays
  * @property int         $defaultPrice
@@ -49,7 +49,7 @@ use kissj\Orm\EntityDatetime;
  *
  * @property string      $emailFrom
  * @property string      $emailFromName
- * TODO add BCC maily
+ * @property string|null $emailBccFrom
  */
 class Event extends EntityDatetime
 {
