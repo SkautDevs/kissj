@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
-use DateTime;
+use DateTimeInterface;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeAqua;
 use kissj\Event\EventType\EventTypeCej;
@@ -16,41 +16,41 @@ use kissj\Event\EventType\EventTypeNsj;
 use kissj\Orm\EntityDatetime;
 
 /**
- * @property int         $id
- * @property string      $slug
- * @property string      $readableName
- * @property string      $webUrl
- * @property string      $dataProtectionUrl
- * @property string      $contactEmail
- * @property EventType   $eventType m:useMethods(getEventType|)
- * @property string      $logoUrl
+ * @property int               $id
+ * @property string            $slug
+ * @property string            $readableName
+ * @property string            $webUrl
+ * @property string            $dataProtectionUrl
+ * @property string            $contactEmail
+ * @property EventType         $eventType m:useMethods(getEventType|)
+ * @property string            $logoUrl
  *
- * @property string      $accountNumber with bank code after slash
- * @property int         $prefixVariableSymbol
- * @property bool        $automaticPaymentPairing
- * @property int|null    $bankId currently not in use
- * @property string|null $bankApiKey
- * @property int         $maxElapsedPaymentDays
- * @property int         $defaultPrice
- * @property string      $currency
+ * @property string            $accountNumber with bank code after slash
+ * @property int               $prefixVariableSymbol
+ * @property bool              $automaticPaymentPairing
+ * @property int|null          $bankId currently not in use
+ * @property string|null       $bankApiKey
+ * @property int               $maxElapsedPaymentDays
+ * @property int               $defaultPrice
+ * @property string            $currency
  *
- * @property bool        $allowPatrols
- * @property int|null    $maximalClosedPatrolsCount
- * @property int|null    $minimalPatrolParticipantsCount
- * @property int|null    $maximalPatrolParticipantsCount
+ * @property bool              $allowPatrols
+ * @property int|null          $maximalClosedPatrolsCount
+ * @property int|null          $minimalPatrolParticipantsCount
+ * @property int|null          $maximalPatrolParticipantsCount
  *
- * @property bool        $allowIsts
- * @property int|null    $maximalClosedIstsCount
+ * @property bool              $allowIsts
+ * @property int|null          $maximalClosedIstsCount
  *
- * @property bool        $allowGuests
- * @property int|null    $maximalClosedGuestsCount
+ * @property bool              $allowGuests
+ * @property int|null          $maximalClosedGuestsCount
  *
- * @property DateTime    $startDay m:passThru(dateFromString|dateToString)
- * @property DateTime    $endDay m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface $endDay m:passThru(dateFromString|dateToString)
  *
- * @property string      $emailFrom
- * @property string      $emailFromName
- * @property string|null $emailBccFrom
+ * @property string            $emailFrom
+ * @property string            $emailFromName
+ * @property string|null       $emailBccFrom
  */
 class Event extends EntityDatetime
 {

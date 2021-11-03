@@ -34,9 +34,9 @@ class EventTypeCej extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->swimming = true;
+        $ca->contingent = true;
 
         $ca->skills = true;
-        $ca->preferredPosition = true;
 
         return $ca;
     }
@@ -51,6 +51,7 @@ class EventTypeCej extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->swimming = true;
+        $ca->contingent = true;
 
         return $ca;
     }

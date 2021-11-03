@@ -3,15 +3,16 @@
 namespace kissj\Orm;
 
 use DateTime;
+use DateTimeInterface;
 use LeanMapper\Entity;
 
 /**
- * @property DateTime $createdAt m:passThru(dateFromString|dateToString)
- * @property DateTime $updatedAt m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface $createdAt m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface $updatedAt m:passThru(dateFromString|dateToString)
  */
 class EntityDatetime extends Entity
 {
-    public function dateToString(?DateTime $val): ?string
+    public function dateToString(?DateTimeInterface $val): ?string
     {
         if ($val === null) {
             return null;
@@ -20,13 +21,13 @@ class EntityDatetime extends Entity
         return $val->format(DATE_ATOM);
     }
 
-    public function dateFromString(string|DateTime $val): ?DateTime
+    public function dateFromString(string|DateTimeInterface $val): ?DateTimeInterface
     {
         if (empty($val)) {
             return null;
         }
 
-        if ($val instanceof DateTime) {
+        if ($val instanceof DateTimeInterface) {
             return $val;
         }
 
