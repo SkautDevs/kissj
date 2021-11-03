@@ -2,6 +2,7 @@
 
 namespace kissj\Participant;
 
+use DateTime;
 use kissj\Orm\EntityDatetime;
 use kissj\Payment\Payment;
 use kissj\User\User;
@@ -10,35 +11,35 @@ use kissj\User\User;
  * Master table for all participants, using Single Table Inheritance
  * All commons are here, entitis are seaprated of course (:
  *
- * @property int         $id
- * @property User|null   $user m:hasOne TODO check and get rid of null
- * @property string|null $role needed for DB working (see Mapper.php)
- * @property string|null $firstName
- * @property string|null $lastName
- * @property string|null $nickname
- * @property string|null $permanentResidence
- * @property string|null $telephoneNumber
- * @property string|null $gender
- * @property string|null $country
- * @property string|null $email
- * @property string|null $scoutUnit
- * @property string|null $languages
- * @property string|null $birthDate m:passThru(dateFromString|dateToString)
- * @property string|null $birthPlace
- * @property string|null $healthProblems
- * @property string|null $foodPreferences
- * @property string|null $idNumber
- * @property string|null $scarf
- * @property string|null $swimming
- * @property string|null $tshirt m:useMethods(getTshirt|setThirt)
- * @property string|null $arrivalDate m:passThru(dateFromString|dateToString)
- * @property string|null $departueDate m:passThru(dateFromString|dateToString)
- * @property string|null $uploadedFilename
- * @property string|null $uploadedOriginalFilename
- * @property string|null $uploadedContenttype
- * @property string|null $notes
+ * @property int           $id
+ * @property User|null     $user m:hasOne TODO check and get rid of null
+ * @property string|null   $role needed for DB working (see Mapper.php)
+ * @property string|null   $firstName
+ * @property string|null   $lastName
+ * @property string|null   $nickname
+ * @property string|null   $permanentResidence
+ * @property string|null   $telephoneNumber
+ * @property string|null   $gender
+ * @property string|null   $country
+ * @property string|null   $email
+ * @property string|null   $scoutUnit
+ * @property string|null   $languages
+ * @property DateTime|null $birthDate m:passThru(dateFromString|dateToString)
+ * @property string|null   $birthPlace
+ * @property string|null   $healthProblems
+ * @property string|null   $foodPreferences
+ * @property string|null   $idNumber
+ * @property string|null   $scarf
+ * @property string|null   $swimming
+ * @property string|null   $tshirt m:useMethods(getTshirt|setThirt)
+ * @property DateTime|null $arrivalDate m:passThru(dateFromString|dateToString)
+ * @property DateTime|null $departueDate m:passThru(dateFromString|dateToString)
+ * @property string|null   $uploadedFilename
+ * @property string|null   $uploadedOriginalFilename
+ * @property string|null   $uploadedContenttype
+ * @property string|null   $notes
  *
- * @property Payment[]   $payment m:belongsToMany
+ * @property Payment[]     $payment m:belongsToMany
  */
 class Participant extends EntityDatetime
 {
@@ -81,11 +82,14 @@ class Participant extends EntityDatetime
         return $this->getTshirtParsed()[1] ?? null;
     }
 
+    /**
+     * @return string[]
+     */
     protected function getTshirtParsed(): array
     {
         $tshirtFromDb = $this->getTshirt();
 
-        return explode(self::TSHIRT_DELIMITER, $tshirtFromDb);
+        return explode(self::TSHIRT_DELIMITER, $tshirtFromDb ?? '');
     }
 
     public function getFullName(): string
@@ -93,15 +97,14 @@ class Participant extends EntityDatetime
         return ($this->firstName ?? '') . ' ' . ($this->lastName ?? '') . ($this->nickname ? ' - ' . $this->nickname : '');
     }
 
-    public function getAgeInYears(\DateTime $eventStart): ?int
+    public function getAgeInYears(DateTime $eventStart): ?int
     {
-        /** @var \DateTime $birthDate */
-        $birthDate = $this->getBirthDate();
+        $birthDate = $this->birthDate;
         if ($birthDate === null) {
             return null;
         }
 
-        return $birthDate->diff($eventStart)->format('%y');
+        return (int)$birthDate->diff($eventStart)->format('%y');
     }
 
     /**

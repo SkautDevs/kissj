@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use DateTime;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeAqua;
 use kissj\Event\EventType\EventTypeCej;
@@ -34,7 +35,7 @@ use kissj\Orm\EntityDatetime;
  * @property string      $currency
  *
  * @property bool        $allowPatrols
- * @property int|null    $maximalClosedPatrolsCount # TODO remove null
+ * @property int|null    $maximalClosedPatrolsCount
  * @property int|null    $minimalPatrolParticipantsCount
  * @property int|null    $maximalPatrolParticipantsCount
  *
@@ -44,8 +45,8 @@ use kissj\Orm\EntityDatetime;
  * @property bool        $allowGuests
  * @property int|null    $maximalClosedGuestsCount
  *
- * @property string|null $startDay m:passThru(dateFromString|dateToString) # TODO remove null
- * @property string|null $endDay m:passThru(dateFromString|dateToString)
+ * @property DateTime    $startDay m:passThru(dateFromString|dateToString)
+ * @property DateTime    $endDay m:passThru(dateFromString|dateToString)
  *
  * @property string      $emailFrom
  * @property string      $emailFromName
