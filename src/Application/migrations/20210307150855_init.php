@@ -56,6 +56,7 @@ final class Init extends AbstractMigration {
 		$user->addColumn('email', 'text')
 			->addColumn('status','text')
 			->addColumn('created_at', 'datetime')
+			->addColumn('updated_at', 'datetime')
 			->addColumn('event_id', 'integer', ['default' => '1'])
 			->addForeignKey('event_id', 'event', ['id'], ['constraint' => 'user_event_id_fk'])
 			->addColumn('role', 'text', ['default' => 'withoutRole'])
