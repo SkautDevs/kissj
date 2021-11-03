@@ -73,7 +73,7 @@ final class Init extends AbstractMigration {
 			->create();
 
 		$participant= $this->table('participant');
-		$participant->addColumn('user_id', 'integer')
+		$participant->addColumn('user_id', 'integer', ['null' => true])
 			->addForeignKey('user_id', 'user', ['id'], ['constraint' => 'ist_userId_fk'])
 			->addColumn('first_name', 'text', ['null' => true])
 			->addColumn('last_name', 'text', ['null' => true])
