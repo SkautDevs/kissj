@@ -187,8 +187,6 @@ class Settings
         $dotenv->required('MAIL_SMTP_USERNAME');
         $dotenv->required('MAIL_SMTP_PASSWORD');
         $dotenv->required('MAIL_SMTP_SECURE');
-        $dotenv->required('MAIL_BCC_MAIL');
-        $dotenv->required('MAIL_BCC_NAME');
         $dotenv->required('MAIL_DISABLE_TLS');
         $dotenv->required('MAIL_DEBUG_OUTPUT_LEVEL')->allowedValues(['0', '1', '2', '3', '4']);
         $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
