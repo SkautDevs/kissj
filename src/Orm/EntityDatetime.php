@@ -21,7 +21,7 @@ class EntityDatetime extends Entity
         return $val->format(DATE_ATOM);
     }
 
-    public function dateFromString(DateTimeInterface|string $val): ?DateTimeInterface
+    public function dateFromString(DateTimeInterface|string|null $val): ?DateTimeInterface
     {
         if (empty($val)) {
             return null;

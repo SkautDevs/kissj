@@ -42,7 +42,7 @@
 {% endif %}{% if ca.tshirt %}
     {% trans %}detail.thisrt{% endtrans %}: <b>{{ person.getTshirt }}</b><br/>
 {% endif %}{% if ca.food %}
-    {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences }}</b><br/>
+    {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences|trans }}</b><br/>
 {% endif %}{% if ca.health %}
     {% trans %}detail.issues{% endtrans %}: <b>{{ person.getHealthProblems }}</b><br/>
 {% endif %}{% if ca.languages %}
@@ -50,7 +50,7 @@
 {% endif %}{% if ca.idNumber %}
     {% trans %}detail.idNumber{% endtrans %}: <b>{{ person.getIdNumber }}</b><br/>
 {% endif %}{% if ca.swimming %}
-    {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming }}</b><br/>
+    {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming|trans }}</b><br/>
 {% endif %}{% if ca.driver %}
     {% trans %}detail-ist.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
 {% endif %}{% if ca.skills %}

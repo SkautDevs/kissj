@@ -114,24 +114,24 @@
 {% endif %}{% if ca.food %}
     <label class="form-group form-group-inline">{% trans %}detail.foodHeader{% endtrans %}:
         <select class="form-control" name="foodPreferences" required="required">
-            <option value="no restriction"
-                    {% if personDetails.getFoodPreferences == 'no restriction' %}selected="selected"{% endif %}>
+            <option value="detail.foodWithout"
+                    {% if personDetails.getFoodPreferences == 'detail.foodWithout' %}selected="selected"{% endif %}>
                 {% trans %}detail.foodWithout{% endtrans %}
             </option>
-            <option value="vegetarian"
-                    {% if personDetails.getFoodPreferences == 'vegetarian' %}selected="selected"{% endif %}>
+            <option value="detail.foodVegetarian"
+                    {% if personDetails.getFoodPreferences == 'detail.foodVegetarian' %}selected="selected"{% endif %}>
                 {% trans %}detail.foodVegetarian{% endtrans %}
             </option>
-            <option value="lactoseFree"
-                    {% if personDetails.getFoodPreferences == 'lactoseFree' %}selected="selected"{% endif %}>
+            <option value="detail.foodLactoseFree"
+                    {% if personDetails.getFoodPreferences == 'detail.foodLactoseFree' %}selected="selected"{% endif %}>
                 {% trans %}detail.foodLactoseFree{% endtrans %}
             </option>
-            <option value="glutenFree"
-                    {% if personDetails.getFoodPreferences == 'glutenFree' %}selected="selected"{% endif %}>
+            <option value="detail.foodGlutenFree"
+                    {% if personDetails.getFoodPreferences == 'detail.foodGlutenFree' %}selected="selected"{% endif %}>
                 {% trans %}detail.foodGlutenFree{% endtrans %}
             </option>
-            <option value="other"
-                    {% if personDetails.getFoodPreferences == 'other' %}selected="selected"{% endif %}>
+            <option value="detail.foodOther"
+                    {% if personDetails.getFoodPreferences == 'detail.foodOther' %}selected="selected"{% endif %}>
                 {% trans %}detail.foodOther{% endtrans %}
             </option>
         </select>
@@ -164,16 +164,16 @@
 {% endif %}{% if ca.swimming %}
     <label class="form-group form-group-inline">{% trans %}detail.swimSkill{% endtrans %}:
         <select class="form-control" name="swimming" required="required">
-            <option value="no swim"
-                    {% if personDetails.getSwimming == 'no swim' %}selected="selected"{% endif %}>
+            <option value="detail.swimSkillNo"
+                    {% if personDetails.getSwimming == 'detail.swimSkillNo' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillNo{% endtrans %}
             </option>
-            <option value="less than 50 meters"
-                    {% if personDetails.getSwimming == 'less than 50 meters' %}selected="selected"{% endif %}>
+            <option value="detail.swimSkillLess50"
+                    {% if personDetails.getSwimming == 'detail.swimSkillLess50' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillLess50{% endtrans %}
             </option>
-            <option value="more than 50 meters"
-                    {% if personDetails.getSwimming == 'more than 50 meters' %}selected="selected"{% endif %}>
+            <option value="detail.swimSkillMore50"
+                    {% if personDetails.getSwimming == 'detail.swimSkillMore50' %}selected="selected"{% endif %}>
                 {% trans %}detail.swimSkillMore50{% endtrans %}
             </option>
         </select>
