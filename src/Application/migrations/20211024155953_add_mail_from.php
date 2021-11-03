@@ -9,7 +9,7 @@ final class AddMailFrom extends AbstractMigration
     public function up(): void
 	{
 		$event = $this->table('event');
-		$event->addColumn('email_from', 'text', ['default' => 'example@example.com'])
+		$event->addColumn('email_from', 'text', ['default' => 'registration@kissj.net'])
 			->addColumn('email_from_name', 'text', ['default' => 'Registration Office'])
 			->save();
 	}
