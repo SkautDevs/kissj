@@ -7,8 +7,8 @@ use DateTimeInterface;
 use LeanMapper\Entity;
 
 /**
- * @property DateTimeInterface $createdAt m:passThru(dateFromString|dateToString)
- * @property DateTimeInterface $updatedAt m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $createdAt m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $updatedAt m:passThru(dateFromString|dateToString)
  */
 class EntityDatetime extends Entity
 {
@@ -21,7 +21,7 @@ class EntityDatetime extends Entity
         return $val->format(DATE_ATOM);
     }
 
-    public function dateFromString(string|DateTimeInterface $val): ?DateTimeInterface
+    public function dateFromString(DateTimeInterface|string $val): ?DateTimeInterface
     {
         if (empty($val)) {
             return null;
