@@ -83,7 +83,10 @@ class UserService {
     }
 
     public function getLoginTokenFromStringToken(string $token): LoginToken {
-        return $this->loginTokenRepository->findOneBy(['token' => $token]);
+        /** @var LoginToken $loginToken */
+        $loginToken = $this->loginTokenRepository->findOneBy(['token' => $token]);
+
+        return $loginToken;
     }
 
     public function getTokenForEmail(string $email): string {
@@ -91,11 +94,17 @@ class UserService {
     }
 
     public function getTokenForUser(User $user): string {
-        return $this->loginTokenRepository->findOneBy(['user' => $user])->token;
+        /** @var LoginToken $loginToken */
+        $loginToken = $this->loginTokenRepository->findOneBy(['user' => $user]);
+
+        return $loginToken->token;
     }
 
     public function getUserFromEmail(string $email): User {
-        return $this->userRepository->findOneBy(['email' => $email]);
+        /** @var User $user */
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        return $user;
     }
 
     public function logoutUser(): void {
@@ -126,26 +135,26 @@ class UserService {
         $this->userRepository->persist($user);
     }
 
-    public function getClosedIstsCount(): int {
+    public function getClosedIstsCount(Event $event): int {
         return $this->userRepository->countBy([
             'role' => User::ROLE_IST,
-            //'event' => $this->eventName, // TODO fix
+            'event' => $event,
             'status' => new Relation(User::STATUS_OPEN, '!='),
         ]);
     }
 
-    public function getClosedPatrolsCount(): int {
+    public function getClosedPatrolsCount(Event $event): int {
         return $this->userRepository->countBy([
             'role' => User::ROLE_PATROL_LEADER,
-            //'event' => $this->eventName, // TODO fix
+            'event' => $event,
             'status' => new Relation(User::STATUS_OPEN, '!='),
         ]);
     }
 
-    public function getClosedFreeParticipantsCount(): int {
+    public function getClosedGuestsCount(Event $event): int {
         return $this->userRepository->countBy([
-            'role' => User::ROLE_FREE_PARTICIPANT,
-            //'event' => $this->eventName, // TODO fix
+            'role' => User::ROLE_GUEST,
+            'event' => $event,
             'status' => new Relation(User::STATUS_OPEN, '!='),
         ]);
     }

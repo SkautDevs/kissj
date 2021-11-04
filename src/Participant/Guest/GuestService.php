@@ -8,12 +8,14 @@ use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\User\User;
 use kissj\User\UserService;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GuestService extends AbstractService
 {
     public function __construct(
         private GuestRepository $guestRepository,
         private FlashMessagesBySession $flashMessages,
+        private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
         private UserService $userService,
     ) {
@@ -27,12 +29,18 @@ class GuestService extends AbstractService
             $this->guestRepository->persist($guest);
         }
 
-        return $this->guestRepository->findOneBy(['user' => $user]);
+        /** @var Guest $guest */
+        $guest = $this->guestRepository->findOneBy(['user' => $user]);
+
+        return $guest;
     }
 
     public function addParamsIntoGuest(Guest $guest, array $params): Guest
     {
-        return $this->addParamsIntoPerson($params, $guest);
+        /** @var Guest $guest */
+        $guest = $this->addParamsIntoPerson($params, $guest);
+
+        return $guest;
     }
 
     public function isGuestValidForClose(Guest $guest): bool
@@ -42,13 +50,22 @@ class GuestService extends AbstractService
 
     public function isCloseRegistrationValid(Guest $guest): bool
     {
+        $validityFlag = true;
+
         if (!$this->isGuestValidForClose($guest)) {
             $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably email or some date)');
 
-            return false;
+            $validityFlag = false;
         }
 
-        return true;
+        $event = $guest->user->event;
+        if ($this->userService->getClosedIstsCount($event) >= $event->maximalClosedGuestsCount) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.guestFullRegistration'));
+
+            $validityFlag = false;
+        }
+
+        return $validityFlag;
     }
 
     public function closeRegistration(Guest $guest): Guest

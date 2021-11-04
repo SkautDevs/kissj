@@ -67,7 +67,8 @@ class IstService extends AbstractService
             $validityFlag = false;
         }
 
-        if ($this->userService->getClosedIstsCount() >= $ist->user->event->maximalClosedIstsCount) {
+        $event = $ist->user->event;
+        if ($this->userService->getClosedIstsCount($event) >= $event->maximalClosedIstsCount) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.istFullRegistration'));
 
             $validityFlag = false;

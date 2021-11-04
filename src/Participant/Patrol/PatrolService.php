@@ -78,7 +78,7 @@ class PatrolService extends AbstractService {
         $validityFlag = true;
 
         $event = $patrolLeader->user->event;
-        if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount()) {
+        if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount($event)) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
 
             $validityFlag = false;
@@ -86,11 +86,11 @@ class PatrolService extends AbstractService {
 
         $localMaxNumber = $event->getEventType()->getMaximumClosedParticipants($patrolLeader);
 
-        if ($localMaxNumber <= $this->userService->getClosedPatrolsCount()) {
+        if ($localMaxNumber <= $this->userService->getClosedPatrolsCount($event)) {
             $this->flashMessages->warning('Cannot lock the registration - for Patrols from your country 
                 we have full registration now. Please wait for limit rise');
 
-            return false;
+            $validityFlag = false;
         }
 
         if (!$this->isPatrolLeaderValidForClose($patrolLeader)) {

@@ -7,6 +7,12 @@ use kissj\Participant\Participant;
 
 class AbstractService
 {
+    /**
+     * @param string[]    $params
+     * @param Participant $p
+     * @return Participant
+     * @throws \Exception
+     */
     public function addParamsIntoPerson(array $params, Participant $p): Participant
     {
         $p->firstName = $params['firstName'] ?? null;
