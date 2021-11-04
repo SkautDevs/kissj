@@ -70,12 +70,12 @@
                         {% include 'widgets/details.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
-                    <a href="{{ url_for('admin-open-pl-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
+                    <a href="{{ url_for('admin-deny-participant-show', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve-pl', {'patrolLeaderId': pl.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve-pl', {'participantId': pl.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit"
                                value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
                                class="btn btn-small">
@@ -102,7 +102,7 @@
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
-                    <a href="{{ url_for('admin-open-guest-show', {'guestId': guest.getId, 'eventSlug': event.slug}) }}"
+                    <a href="{{ url_for('admin-deny-participant-show', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
                     <br/>
                     <br/>

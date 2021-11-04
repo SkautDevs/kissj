@@ -5,6 +5,7 @@ namespace kissj\Application;
 
 use kissj\Export\ExportController;
 use kissj\Middleware\AdminsOnlyMiddleware;
+use kissj\Middleware\CheckPatrolLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\GuestsOnlyMiddleware;
 use kissj\Middleware\IstsOnlyMiddleware;
@@ -12,6 +13,7 @@ use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
+use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
@@ -122,9 +124,9 @@ class Route
                                 $app->post('/delete', PatrolController::class . '::deleteParticipant')
                                     ->setName('p-delete');
 
-                            })->add(\kissj\Middleware\CheckPatrolLeaderParticipants::class);
+                            })->add(CheckPatrolLeaderParticipants::class);
                         })->add(OpenStatusOnlyMiddleware::class);
-                    })->add(\kissj\Middleware\PatrolLeadersOnlyMiddleware::class);
+                    })->add(PatrolLeadersOnlyMiddleware::class);
 
                     $app->group('/ist', function (RouteCollectorProxy $app) {
                         $app->get('/dashboard', IstController::class . '::showDashboard')

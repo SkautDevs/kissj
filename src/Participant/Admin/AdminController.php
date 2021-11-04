@@ -6,7 +6,6 @@ use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
-use kissj\Event\ContentArbiterFreeParticipant;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
@@ -40,7 +39,6 @@ class AdminController extends AbstractController
         private ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
         private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
         private ContentArbiterIst $contentArbiterIst,
-        private ContentArbiterFreeParticipant $contentArbiterFreeParticipant,
         private ContentArbiterGuest $contentArbiterGuest,
     ) {
     }
@@ -74,7 +72,6 @@ class AdminController extends AbstractController
             'caIst' => $this->contentArbiterIst,
             'caPl' => $this->contentArbiterPatrolLeader,
             'caPp' => $this->contentArbiterPatrolParticipant,
-            'caFp' => $this->contentArbiterFreeParticipant,
             'caGuest' => $this->contentArbiterGuest,
         ]);
     }
