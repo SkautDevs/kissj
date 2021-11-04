@@ -19,22 +19,27 @@ class GuestController extends AbstractController
     {
         $guest = $this->guestService->getGuest($user);
 
-        return $this->view->render($response, 'dashboard-guest.twig',
-            ['user' => $user, 'guest' => $guest]);
+        return $this->view->render($response, 'dashboard-guest.twig', [
+            'user' => $user,
+            'guest' => $guest,
+            'ca' => $user->event->eventType->getContentArbiterGuest(),
+        ]);
     }
 
-    public function showDetailsChangeable(Request $request, Response $response): Response
+    public function showDetailsChangeable(Response $response, User $user): Response
     {
-        $guestDetails = $this->guestService->getGuest($request->getAttribute('user'));
+        $guest = $this->guestService->getGuest($user);
 
-        return $this->view->render($response, 'changeDetails-guest.twig',
-            ['guestDetails' => $guestDetails]);
+        return $this->view->render($response, 'changeDetails-guest.twig', [
+            'guestDetails' => $guest,
+            'ca' => $user->event->eventType->getContentArbiterGuest(),
+        ]);
     }
 
-    public function changeDetails(Request $request, Response $response): Response
+    public function changeDetails(Request $request, Response $response, User $user): Response
     {
         $guest = $this->guestService->addParamsIntoGuest(
-            $this->guestService->getGuest($request->getAttribute('user')),
+            $this->guestService->getGuest($user),
             $request->getParsedBody()
         );
 
@@ -44,9 +49,9 @@ class GuestController extends AbstractController
         return $this->redirect($request, $response, 'guest-dashboard', ['eventSlug' => $guest->user->event->slug]);
     }
 
-    public function showCloseRegistration(Request $request, Response $response): Response
+    public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
-        $guest = $this->guestService->getGuest($request->getAttribute('user'));
+        $guest = $this->guestService->getGuest($user);
         $validRegistration = $this->guestService->isCloseRegistrationValid($guest); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-guest.twig',
@@ -63,8 +68,8 @@ class GuestController extends AbstractController
 
         if ($guest->user->status === User::STATUS_CLOSED) {
             $this->flashMessages->success('Registration successfully locked and sent');
-            $this->logger->info('Locked registration for Guest with ID '.$guest->id
-                .', user ID '.$guest->user->id);
+            $this->logger->info('Locked registration for Guest with ID ' . $guest->id
+                . ', user ID ' . $guest->user->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
@@ -78,7 +83,7 @@ class GuestController extends AbstractController
         $guest = $this->guestRepository->get($guestId);
         $this->guestService->finishRegistration($guest);
         $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
-        $this->logger->info('Approved (no payment was sent) registration for guest with ID '.$guest->id);
+        $this->logger->info('Approved (no payment was sent) registration for guest with ID ' . $guest->id);
 
         return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $guest->user->event->slug]);
     }

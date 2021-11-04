@@ -23,7 +23,7 @@ abstract class AbstractContentArbiter
     public bool $swimming = false;
     public bool $tshirt = false;
     public bool $arrivalDate = false;
-    public bool $departueDate = false;
+    public bool $departureDate = false;
     public bool $uploadFile = false;
     public bool $contingent = false;
     public bool $notes = true;

@@ -64,6 +64,10 @@
         {% elseif person.getScarf == 'no' %}
             {% trans %}detail.scarfNo{% endtrans %}
         {% endif %}</b><br/>
+{% endif %}{% if ca.arrivalDate %}
+    {% trans %}detail.arrivalDate{% endtrans %}: <b>{{ person.getArrivalDate.format('d. m. Y') }}</b><br/>
+{% endif %}{% if ca.departureDate %}
+    {% trans %}detail.departureDate{% endtrans %}: <b>{{ person.getDepartureDate.format('d. m. Y') }}</b><br/>
 {% endif %}{% if ca.uploadFile %}
     {% if person.getUploadedFilename %}
         {% trans %}detail.uploadedFile{% endtrans %}: <b>Soubor úspěšně nahraný!</b><br/>

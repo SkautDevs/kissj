@@ -182,13 +182,13 @@
     <label class="form-group form-group-inline">{% trans %}detail.arrivalDate{% endtrans %}: <input
                 class="form-control" type="date"
                 name="arrivalDate"
-                value="{{ event.eventStart|date('Y-m-d') }}"
+                value="{{ (personDetails.getArrivalDate ?? event.startDay)|date('Y-m-d') }}"
                 required="required"></label>
 {% endif %}{% if ca.departueDate %}
     <label class="form-group form-group-inline">{% trans %}detail.departueDate{% endtrans %}: <input
                 class="form-control" type="date"
                 name="departueDate"
-                value="{{ event.finishDay|date('Y-m-d') }}"
+                value="{{ (personDetails.getDepartureDate ?? event.endDay)|date('Y-m-d') }}"
                 required="required"></label>
 {% endif %}{% if ca.scarf %}
     <label class="form-group form-group-inline">{% trans %}detail.scarf{% endtrans %}:

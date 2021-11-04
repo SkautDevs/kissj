@@ -5,12 +5,14 @@ namespace kissj;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Participant\Participant;
 
-class AbstractService {
-    public function addParamsIntoPerson(array $params, Participant $p): Participant {
+class AbstractService
+{
+    public function addParamsIntoPerson(array $params, Participant $p): Participant
+    {
         $p->firstName = $params['firstName'] ?? null;
         $p->lastName = $params['lastName'] ?? null;
         $p->nickname = $params['nickname'] ?? null;
-        if ($params['birthDate'] !== null) {
+        if (array_key_exists('birthDate', $params) && $params['birthDate'] !== null) {
             $p->birthDate = new \DateTime($params['birthDate']);
         }
         $p->gender = $params['gender'] ?? null;
@@ -26,12 +28,19 @@ class AbstractService {
         $p->languages = $params['languages'] ?? null;
         $p->swimming = $params['swimming'] ?? null;
         $p->scarf = $params['scarf'] ?? null;
+        if (array_key_exists('arrivalDate', $params) && $params['arrivalDate'] !== null) {
+            $p->arrivalDate = new \DateTime($params['arrivalDate']);
+        }
+        if (array_key_exists('departueDate', $params) && $params['departueDate'] !== null) {
+            $p->departureDate = new \DateTime($params['departueDate']);
+        }
         $p->notes = $params['notes'] ?? null;
 
         return $p;
     }
 
-    public function isPersonValidForClose(Participant $p, AbstractContentArbiter $ca): bool {
+    public function isPersonValidForClose(Participant $p, AbstractContentArbiter $ca): bool
+    {
         if (
             ($ca->firstName && $p->firstName === null)
             || ($ca->lastName && $p->lastName === null)

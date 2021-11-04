@@ -43,8 +43,10 @@
     {% block content %}{% endblock %}
 </main>
 <footer>
-    <span class="footer-item">{{ event.readableName }} - 
-    <a href="https://devs.skauting.cz/" target="_blank">{% trans %}_layout.creator{% endtrans %}</a></span>
+    <span class="footer-item">
+        <a href="{{ event.webUrl }}" target="_blank">{{ event.readableName }}</a> - 
+        <a href="https://devs.skauting.cz/" target="_blank">{% trans %}_layout.creator{% endtrans %}</a>
+    </span>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
         <img src="{{ event.logoUrl }}" alt="logo of {{ event.readableName }}">
     </a>

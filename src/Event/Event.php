@@ -26,7 +26,7 @@ use kissj\Orm\EntityDatetime;
  * @property string            $logoUrl
  *
  * @property string            $accountNumber with bank code after slash
- * @property int               $prefixVariableSymbol
+ * @property int               $prefixVariableSymbol // TODO add null
  * @property bool              $automaticPaymentPairing
  * @property int|null          $bankId currently not in use
  * @property string|null       $bankApiKey

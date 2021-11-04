@@ -82,6 +82,8 @@ detail:
     scarf: "Scarf"
     scarfYes: "Yes, I need one for 90 CZK!"
     scarfNo: "No, I have one already..."
+    arrivalDate: "Arrival date"
+    departureDate: "Departure date"
     uploadFile: "Not 18 yet? Upload PDF with parent consent"
     notice: "Notice"
     notice-placeholder: "anything else?"

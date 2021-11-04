@@ -82,6 +82,8 @@ detail:
     scarf: "Šátek"
     scarfYes: "Ano, chci jeden za 90 Kč!"
     scarfNo: "Ne, už jeden mám..."
+    arrivalDate: "Datum příjezdu"
+    departureDate: "Datum odjezdu"
     uploadFile: "Nebylo ti 18? Nahraj PDF s potvrzením od rodičů"
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"

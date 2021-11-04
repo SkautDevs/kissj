@@ -33,7 +33,7 @@ use kissj\User\User;
  * @property string|null            $swimming
  * @property string|null            $tshirt m:useMethods(getTshirt|setThirt)
  * @property DateTimeInterface|null $arrivalDate m:passThru(dateFromString|dateToString)
- * @property DateTimeInterface|null $departueDate m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $departureDate (departue_date) m:passThru(dateFromString|dateToString)
  * @property string|null            $uploadedFilename
  * @property string|null            $uploadedOriginalFilename
  * @property string|null            $uploadedContenttype
