@@ -24,12 +24,12 @@
     {% endif %}
 </div>
 <ul class="steps">
-    <li class="step {% if userStatus == 'unregistred' %}is-active{% endif %}">
+    <li class="step is-active">
         {% trans %}_layout.titleBar{% endtrans %}
     </li>
-    <li class="step {% if userStatus == 'open' %}is-active{% endif %}">{% trans %}_layout.editingBar{% endtrans %}</li>
-    <li class="step {% if userStatus == 'closed' %}is-active{% endif %}">{% trans %}_layout.lockedBar{% endtrans %}</li>
-    <li class="step {% if userStatus == 'approved' %}is-active{% endif %}">{% trans %}_layout.approvedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'open' or userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.editingBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.lockedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.approvedBar{% endtrans %}</li>
     <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.payedBar{% endtrans %}</li>
 </ul>
 <div class="flash-wrapper">
