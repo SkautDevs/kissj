@@ -1,0 +1,3 @@
+closed:
+    welcome: "Ahoj!"
+    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme kvůli účetnictví počkat do začátku roku 2022 (buď tedy trpělivý/á, prosím) a potom zkontrolujeme, zda je všechno v pořádku. Pokud ano, pošleme ti platební údaje."

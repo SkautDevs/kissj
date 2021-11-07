@@ -3,5 +3,5 @@
 {% block content %}
     <p>{% trans %}closed.welcome{% endtrans %}</p>
 
-    <p>{% trans %}closed.successfullySent{% endtrans %}</p>
+    <p>{% trans with {'%event.getReadableName%': event.getReadableName} %}closed.successfullySent{% endtrans %}</p>
 {% endblock %}

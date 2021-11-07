@@ -4,5 +4,5 @@
     <p>{% trans %}denial.welcome{% endtrans %}</p>
     <p>{% trans %}denial.denied{% endtrans %} {{ event.readableName }}{% trans %}denial.requirements{% endtrans %}</p>
 
-    <p>{% trans %}denial.reason{% endtrans %} {{ reason }} {% trans %}denial.editRegistration{% endtrans %}</p>
+    <p>{% trans %}denial.reason{% endtrans %} <b>{{ reason }}</b>{% trans %}denial.editRegistration{% endtrans %}</p>
 {% endblock %}

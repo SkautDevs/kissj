@@ -54,4 +54,12 @@ abstract class EventType
     {
         return new ContentArbiterGuest();
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getTranslationFilePaths(): array
+    {
+        return [];
+    }
 }

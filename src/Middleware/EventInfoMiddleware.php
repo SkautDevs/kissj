@@ -12,6 +12,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Translator;
 
 class EventInfoMiddleware extends BaseMiddleware
 {
@@ -32,6 +34,19 @@ class EventInfoMiddleware extends BaseMiddleware
         if ($event instanceof Event) {
             $request = $request->withAttribute('event', $event);
             $this->view->getEnvironment()->addGlobal('event', $event); // used in templates
+
+            $translationFilePaths = $event->getEventType()->getTranslationFilePaths();
+            if ($translationFilePaths !== []) {
+                /** @var TranslationExtension $translatorExtension */
+                $translatorExtension = $this->view->getEnvironment()->getExtension(TranslationExtension::class);
+                /** @var Translator $translator */
+                $translator = $translatorExtension->getTranslator();
+
+                foreach ($translationFilePaths as $locale => $path) {
+                    $translator->addResource('yaml', $path, $locale);
+                }
+            }
+
             $this->mailerSettings->setEvent($event);
         } else {
             $request = $request->withAttribute('event', null);

@@ -88,7 +88,7 @@ detail:
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"
 detail-ist:
-    skills: "Zručnosti"
+    skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position: "Preferovaná pozice (Vyber max. 5. Nezaručujeme zařazení na vybranou pozici, ale posnažíme se!)"
     position-press: "PR (AQUA noviny, fotografování a další média...)"
@@ -178,7 +178,7 @@ cancel-payment:
     newPayment: "(vyplněné informace jsou stále uloženy na tvém profilu), zkontrolujeme a schválíme tvou přihlášku znova a pošleme nové platební údaje."
 closed:
     welcome: "Ahoj,"
-    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na AQUA 2021. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
+    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
 denial:
     welcome: "Ahoj,"
     denied: "bohužel jsme museli zamítnout tvou přihlášku pro"

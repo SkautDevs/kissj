@@ -4,7 +4,7 @@ parameters:
 		- src
 		- tests
 	ignoreErrors:
-		 #- '#Unhandled Exceptions#'
+		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#'
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'

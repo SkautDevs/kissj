@@ -29,6 +29,7 @@ use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
@@ -125,7 +126,7 @@ class Settings
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);
             $translator->setFallbackLocales([$_ENV['DEFAULT_LOCALE']]);
 
-            $translator->addLoader('yaml', new \Symfony\Component\Translation\Loader\YamlFileLoader());
+            $translator->addLoader('yaml', new YamlFileLoader());
             $translator->addResource('yaml', __DIR__ . '/../Templates/cs.yaml', 'cs');
             $translator->addResource('yaml', __DIR__ . '/../Templates/sk.yaml', 'sk');
             $translator->addResource('yaml', __DIR__ . '/../Templates/en.yaml', 'en');
