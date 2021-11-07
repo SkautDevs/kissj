@@ -1,19 +1,25 @@
 {% if ca.firstName %}
     <label class="form-group form-group-inline">{% trans %}detail.firstName{% endtrans %}: <input
-                class="form-control" type="text"
+                class="form-control"
+                type="text"
                 name="firstName"
+                placeholder="{% trans %}detail.firstNamePlaceholder{% endtrans %}"
                 value="{{ personDetails.getFirstName }}"
                 required="required"></label>
 {% endif %}{% if ca.lastName %}
     <label class="form-group form-group-inline">{% trans %}detail.surname{% endtrans %}: <input
-                class="form-control" type="text"
+                class="form-control"
+                type="text"
                 name="lastName"
+                placeholder="{% trans %}detail.surnamePlaceholder{% endtrans %}"
                 value="{{ personDetails.getLastName }}"
                 required="required"></label>
 {% endif %}{% if ca.nickname %}
     <label class="form-group form-group-inline">{% trans %}detail.scoutNick{% endtrans %}: <input
-                class="form-control" type="text"
+                class="form-control"
+                type="text"
                 name="nickname"
+                placeholder="{% trans %}detail.scoutNickPlaceholder{% endtrans %}"
                 value="{{ personDetails.getNickname }}"></label>
 {% endif %}{% if ca.gender %}
     <label class="form-group form-group-inline">{% trans %}detail.gender{% endtrans %}:

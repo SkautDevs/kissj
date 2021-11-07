@@ -79,7 +79,7 @@ class PatrolService extends AbstractService {
 
         $event = $patrolLeader->user->event;
         if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount($event)) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
+            $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));
 
             $validityFlag = false;
         }
@@ -94,7 +94,7 @@ class PatrolService extends AbstractService {
         }
 
         if (!$this->isPatrolLeaderValidForClose($patrolLeader)) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.istNoLock'));
+            $this->flashMessages->warning($this->translator->trans('flash.warning.plWrongData'));
 
             $validityFlag = false;
         }
@@ -102,23 +102,34 @@ class PatrolService extends AbstractService {
         $participants = $this->patrolParticipantRepository->findBy(['patrol_leader_id' => $patrolLeader->id]);
         $participantsCount = count($participants);
         if ($participantsCount < $event->minimalPatrolParticipantsCount) {
-            // TODO translate
-            $this->flashMessages->warning('Cannot lock the registration - too few participants, they are only '
-                .$participantsCount.' from '.$event->minimalPatrolParticipantsCount.' needed');
+            $this->flashMessages->warning(
+                $this->translator->trans(
+                    'flash.warning.plTooFewParticipants',
+                    ['%minimalPatrolParticipantsCount%' => $event->minimalPatrolParticipantsCount],
+                )
+            );
 
             $validityFlag = false;
         }
         if ($participantsCount > $event->maximalPatrolParticipantsCount) {
-            $this->flashMessages->warning('Cannot lock the registration - too many participants - they are '
-                .$participantsCount.' and you need '.$event->maximalPatrolParticipantsCount.' maximum');
+            $this->flashMessages->warning(
+                $this->translator->trans(
+                    'flash.warning.plTooManyParticipants',
+                    ['%maximalPatrolParticipantsCount%' => $event->maximalPatrolParticipantsCount],
+                )
+            );
 
             $validityFlag = false;
         }
         /** @var PatrolParticipant $participant */
         foreach ($participants as $participant) {
             if (!$this->isPatrolParticipantValidForClose($participant)) {
-                $this->flashMessages->warning('Cannot lock the registration - some of the '
-                    .$participant->getFullName().' details are wrong or missing (probably email or some date)');
+                $this->flashMessages->warning(
+                    $this->translator->trans(
+                        'flash.warning.plWrongDataParticipant',
+                        ['%participantFullName%' => $participant->getFullName()],
+                    )
+                );
 
                 $validityFlag = false;
             }

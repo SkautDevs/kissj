@@ -13,6 +13,7 @@ class EventTypeNavigamus extends EventType
     {
         $caIst = parent::getContentArbiterIst();
         $caIst->skills = true;
+        $caIst->tshirt = true;
 
         return $caIst;
     }

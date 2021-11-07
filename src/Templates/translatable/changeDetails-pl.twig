@@ -7,8 +7,10 @@
               enctype="multipart/form-data">
             {% if ca.patrolName %}
                 <label class="form-group form-group-inline">{% trans %}detail.patrolName{% endtrans %}: <input
-                            class="form-control" type="text"
+                            class="form-control"
+                            type="text"
                             name="patrolName"
+                            placeholder="{% trans %}detail.patrolNamePlaceholder{% endtrans %}"
                             value="{{ plDetails.getPatrolName }}"
                             required="required"></label>
             {% endif %}

@@ -23,7 +23,7 @@
         <div class="card-divide">
             <!-- Patrol Leader -->
             <div>
-                <h2>Patrol Leader {{ pl.getFullName }}</h2>
+                <h2>{% trans %}role.pl{% endtrans %} {{ pl.getFullName }}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>

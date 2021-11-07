@@ -141,7 +141,7 @@ class PatrolController extends AbstractController {
 
     public function deleteParticipant(int $participantId, Request $request, Response $response) {
         $this->patrolService->deletePatrolParticipant($this->patrolService->getPatrolParticipant($participantId));
-        $this->flashMessages->info($this->translator->trans('participantDeleted'));
+        $this->flashMessages->info($this->translator->trans('flash.info.participantDeleted'));
 
         return $this->redirect(
             $request,

@@ -53,7 +53,7 @@ class GuestService extends AbstractService
         $validityFlag = true;
 
         if (!$this->isGuestValidForClose($guest)) {
-            $this->flashMessages->warning('Cannot lock the registration - some details are wrong or missing (probably email or some date)');
+            $this->flashMessages->warning('flash.warning.guestWrongData');
 
             $validityFlag = false;
         }
