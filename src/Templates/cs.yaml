@@ -75,7 +75,7 @@ detail:
     foodOther: "jiné - prosím upřesni v poznámce"
     foodNote: "v případě jiné diety, která není uvedena výše, kontaktuj nás prosím mailem"
     issues: "Zdravotní omezení"
-    issues-placeholder: "pravidelně užívané léky, překonané závažné nemoci, úrazy, či operace, alergie - spouštěč, symptomy, podávané léky..."
+    issues-placeholder: "alergie, pravidelně užívané léky, zdravotní omezení"
     language: "Jazyky + úroveň"
     idNumber: "Kurz první pomoci"
     idNumber-placeholder: "6h ČČK kurz, 40h ZZA kurz, jakékoli další zdravotnické vzdělání..."
@@ -170,7 +170,7 @@ login:
     more: "Více informací o registraci"
 _mail-layout:
     registration: "Registrace"
-    ifQuestion: "Pokud máš otázky, mohl/a bys odpověď najít na naší webové stránce "
+    ifQuestion: "Pokud máš otázky, můžeš odpověďi na ně najít na našem webu "
     sendEmail: "nebo nám pošli e-mail na "
     farewell: "Hezký zbytek dne ti přeje tým akce "
 cancel-payment:
