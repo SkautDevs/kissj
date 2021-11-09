@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\CheckPatrolLeaderParticipants;
@@ -43,6 +44,8 @@ class Route
                     ->add($helper['loggedOnly'])
                     ->setName('postCreateEvent');
                 */
+                $app->get('/events', EventController::class . '::list')
+                    ->setName('eventList');
 
                 $app->any('/administration', function (Request $request, Response $response) {
                     require __DIR__ . '/../../adminer/customAdminerEditor.php';

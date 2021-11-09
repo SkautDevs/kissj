@@ -16,7 +16,8 @@ use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AbstractController {
+abstract class AbstractController
+{
     /**
      * @Inject()
      */
@@ -42,27 +43,46 @@ abstract class AbstractController {
      */
     protected FileHandler $fileHandler;
 
+    /**
+     * @param Request  $request
+     * @param Response $response
+     * @param string   $routeName
+     * @param string[] $arguments
+     * @return Response
+     */
     protected function redirect(
         Request $request,
         Response $response,
         string $routeName,
         array $arguments = []
     ): Response {
-        $arguments = array_merge($arguments, ['eventSlug' => $this->getEvent($request)->slug]);
+        $event = $this->tryGetEvent($request);
+        
+        if ($event instanceof Event) {
+            $arguments = array_merge($arguments, ['eventSlug' => $event->slug]);
 
+            return $response
+                ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments))
+                ->withStatus(302);
+        }
+
+        $this->flashMessages->warning($this->translator->trans('flash.warning.nonexistentEvent'));
+        
         return $response
-            ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments))
+            ->withHeader('Location', $this->getRouter($request)->urlFor('eventList', $arguments))
             ->withStatus(302);
     }
 
-    protected function getRouter(Request $request): RouteParserInterface {
+    protected function getRouter(Request $request): RouteParserInterface
+    {
         return RouteContext::fromRequest($request)->getRouteParser();
     }
 
     /**
      * @param UploadedFileInterface[] $uploadedFiles
      */
-    protected function resolveUploadedFiles(array $uploadedFiles): ?UploadedFile {
+    protected function resolveUploadedFiles(array $uploadedFiles): ?UploadedFile
+    {
         if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
             // problem - too big file -> not safe anything, because always got nulls in request fields
             $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
@@ -94,8 +114,13 @@ abstract class AbstractController {
                 return null;
         }
     }
-    
+
     protected function getEvent(Request $request): Event
+    {
+        return $request->getAttribute('event');
+    }
+
+    protected function tryGetEvent(Request $request): ?Event
     {
         return $request->getAttribute('event');
     }

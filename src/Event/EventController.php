@@ -2,7 +2,15 @@
 
 namespace kissj\Event;
 
-class EventController {/*
+use kissj\AbstractController;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+class EventController extends AbstractController {
+    public function list(Request $request, Response $response): Response {
+        return $this->view->render($response, 'event/landing.twig');
+    }
+    /*
     public function createEvent(Request $request, Response $response, array $args) {
         $params = $request->getParams();
         /** @var \kissj\Event\EventService $eventService *//*
