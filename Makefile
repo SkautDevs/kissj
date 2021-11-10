@@ -1,0 +1,8 @@
+.PHONY: local-dev-postgresql
+local-dev-postgresql:
+	docker-compose --file deploy/dev-postgres/docker-compose.yml up --build -d
+	$(docker exec -it $(docker ps | grep dev-postgres-php-fpm-1 | awk '{print $1}') bash -c "./bin/installl.sh")
+
+.PHONY: local-dev-sqlite
+local-dev-sqlite:
+	@echo "TODO @vojtechmares"

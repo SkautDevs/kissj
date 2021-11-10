@@ -41,6 +41,20 @@ kissj is scouts **registration system for national and international Scout Jambo
 4. in browser visit `localhost/install.php`, fill the form and hit button which init DB and create your own .env file
 5. done! Visit `localhost` for app, `localhost:8025` for mails sent from app
 
+### Local dev setup with PostgreSQL
+
+#### Prerequisites
+
+- Installed `docker`
+- Installed `docker-compose`
+- Installed `make`
+
+#### Setup
+
+1. clone this repository: `git clone https://github.com/SkautDevs/kissj.git`
+2. Run the make target, so you don't have to do everything manually: `make local-dev-postgresql`
+3. Open `http://localhost:8080/v2/event/test-event-slug/` in your browser
+
 
 # Devstack
 
