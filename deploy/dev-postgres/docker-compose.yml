@@ -18,7 +18,7 @@ services:
 
     #php-fpm
     php-fpm:
-        image: ocr.apps.prod.kpml.net/kissj/php
+        image: quay.io/kissj/php
         depends_on:
             - postgresql
         links:
@@ -37,7 +37,7 @@ services:
 
     #Frontend Web Server
     caddy:
-        image: ocr.apps.prod.kpml.net/kissj/caddy
+        image: quay.io/kissj/caddy
         ports:
             - 8080:80
         depends_on:
@@ -50,7 +50,8 @@ services:
             - WEB_HOST=localhost
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
-
+            - ../../:/var/www/html
+              
 volumes:
     db-data:
 
