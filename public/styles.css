@@ -120,6 +120,7 @@ h2, h3 {
 	text-align: center;
 	padding: 15px;
 	border: none;
+	cursor: pointer;
 }
 
 .btn-grey {
