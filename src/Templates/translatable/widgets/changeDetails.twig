@@ -119,27 +119,15 @@
     </label>
 {% endif %}{% if ca.food %}
     <label class="form-group form-group-inline">{% trans %}detail.foodHeader{% endtrans %}:
+        {# todo dynamic into content arbiter #}
         <select class="form-control" name="foodPreferences" required="required">
-            <option value="detail.foodWithout"
-                    {% if personDetails.getFoodPreferences == 'detail.foodWithout' %}selected="selected"{% endif %}>
-                {% trans %}detail.foodWithout{% endtrans %}
-            </option>
-            <option value="detail.foodVegetarian"
-                    {% if personDetails.getFoodPreferences == 'detail.foodVegetarian' %}selected="selected"{% endif %}>
-                {% trans %}detail.foodVegetarian{% endtrans %}
-            </option>
-            <option value="detail.foodLactoseFree"
-                    {% if personDetails.getFoodPreferences == 'detail.foodLactoseFree' %}selected="selected"{% endif %}>
-                {% trans %}detail.foodLactoseFree{% endtrans %}
-            </option>
-            <option value="detail.foodGlutenFree"
-                    {% if personDetails.getFoodPreferences == 'detail.foodGlutenFree' %}selected="selected"{% endif %}>
-                {% trans %}detail.foodGlutenFree{% endtrans %}
-            </option>
-            <option value="detail.foodOther"
-                    {% if personDetails.getFoodPreferences == 'detail.foodOther' %}selected="selected"{% endif %}>
-                {% trans %}detail.foodOther{% endtrans %}
-            </option>
+            {% for foodOption in event.eventType.getFoodOptions() %}
+                <option value="{{ foodOption }}"
+                        {% if personDetails.getFoodPreferences == foodOption %}selected="selected"{% endif %}
+                >
+                    {{ foodOption|trans }}
+                </option>
+            {% endfor %}
         </select>
     </label>
     {% trans %}detail.foodNote{% endtrans %}

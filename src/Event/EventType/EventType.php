@@ -62,4 +62,18 @@ abstract class EventType
     {
         return [];
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getFoodOptions(): array
+    {
+        return [
+            'detail.foodWithout',
+            'detail.foodVegetarian',
+            'detail.foodLactoseFree',
+            'detail.foodGlutenFree',
+            'detail.foodOther',
+        ];
+    }
 }

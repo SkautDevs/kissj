@@ -73,7 +73,7 @@ detail:
     foodLactoseFree: "bez laktózy"
     foodGlutenFree: "bez lepku"
     foodOther: "iné - prosím upresni v poznámke"
-    foodNote: "V prípade inej diéty, než sú uvedené vyššie nás kontaktuj mailom"
+    foodNote: "V prípade inej diéty, než sú uvedené vyššie, uved svou preferenciu v poznámke"
     issues: "Zdravotné údaje"
     issues-placeholder: "pravidelne užívané lieky, prekonané operácie, závažné choroby, alergie - spúšťač, symptómy, podávané lieky..."
     language: "Ovládané jazyky + úroveň"

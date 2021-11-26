@@ -7,7 +7,7 @@ namespace kissj\Event;
 use DateTimeInterface;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeAqua;
-use kissj\Event\EventType\EventTypeCej;
+use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\EventTypeKorbo;
 use kissj\Event\EventType\EventTypeMiquik;

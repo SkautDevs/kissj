@@ -2,15 +2,27 @@
 
 declare(strict_types=1);
 
-namespace kissj\Event\EventType;
+namespace kissj\Event\EventType\Cej;
 
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\EventType\EventType;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeCej extends EventType
 {
+
+    /**
+     * @return array<string, string>
+     */
+    public function getTranslationFilePaths(): array
+    {
+        return [
+            'en' => __DIR__ . '/en_cej.yaml',
+        ];
+    }
+
     public function getMaximumClosedParticipants(Participant $participant): int
     {
         if ($participant instanceof PatrolLeader) {
@@ -54,5 +66,21 @@ class EventTypeCej extends EventType
         $ca->contingent = true;
 
         return $ca;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getFoodOptions(): array
+    {
+        return [
+            'detail.foodWithout',
+            'detail.foodHalfMeat',
+            'detail.foodVegetarian',
+            'detail.foodVegan',
+            'detail.foodLactoseFree',
+            'detail.foodGlutenFree',
+            'detail.foodOther',
+        ];
     }
 }
