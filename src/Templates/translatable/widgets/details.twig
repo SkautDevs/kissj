@@ -42,7 +42,7 @@
 {% endif %}{% if ca.unit %}
     {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
 {% endif %}{% if ca.tshirt %}
-    {% trans %}detail.thisrt{% endtrans %}: <b>{{ person.getTshirt }}</b><br/>
+    {% trans %}detail.tshirt{% endtrans %}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
 {% endif %}{% if ca.food %}
     {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences|trans }}</b><br/>
 {% endif %}{% if ca.health %}

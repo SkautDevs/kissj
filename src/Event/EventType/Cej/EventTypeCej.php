@@ -103,7 +103,6 @@ class EventTypeCej extends EventType
         ];
     }
 
-
     /**
      * @return array<string, string>
      */

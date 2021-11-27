@@ -92,37 +92,37 @@
                 required="required"></label>
     <br>
 {% endif %}{% if ca.tshirt %}
-    <label class="form-group form-group-inline">{% trans %}detail.thisrtGender{% endtrans %}:
+    <label class="form-group form-group-inline">{% trans %}detail.tshirtGender{% endtrans %}:
         <select class="form-control" name="tshirtShape" required="required">
-            <option value="lady"
-                    {% if personDetails.getTshirtShape == 'ladies' %}selected="selected"{% endif %}>
-                {% trans %}detail.thisrtGenderFemale{% endtrans %}
+            <option value="detail.tshirtGenderFemale"
+                    {% if personDetails.getTshirtShape == 'detail.tshirtGenderFemale' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtGenderFemale{% endtrans %}
             </option>
-            <option value="gentleman"
-                    {% if personDetails.getTshirtShape == 'gentleman' %}selected="selected"{% endif %}>
-                {% trans %}detail.thisrtGenderMale{% endtrans %}
+            <option value="detail.tshirtGenderMale"
+                    {% if personDetails.getTshirtShape == 'detail.tshirtGenderMale' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtGenderMale{% endtrans %}
             </option>
         </select>
     </label>
-    <label class="form-group form-group-inline">{% trans %}detail.thisrtSize{% endtrans %}:
+    <label class="form-group form-group-inline">{% trans %}detail.tshirtSize{% endtrans %}:
         <select class="form-control" name="tshirtSize" required="required">
-            <option value="s" {% if personDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
-                XS - smallest
+            <option value="detail.tshirtXS" {% if personDetails.getTshirtSize == 'detail.tshirtXS' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtXS{% endtrans %}
             </option>
-            <option value="s" {% if personDetails.getTshirtSize == 's' %}selected="selected"{% endif %}>
-                S - small
+            <option value="detail.tshirtS" {% if personDetails.getTshirtSize == 'detail.tshirtS' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtS{% endtrans %}
             </option>
-            <option value="m" {% if personDetails.getTshirtSize == 'm' %}selected="selected"{% endif %}>
-                M - medium
+            <option value="detail.tshirtM" {% if personDetails.getTshirtSize == 'detail.tshirtM' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtM{% endtrans %}
             </option>
-            <option value="l" {% if personDetails.getTshirtSize == 'l' %}selected="selected"{% endif %}>
-                L - large
+            <option value="detail.tshirtL" {% if personDetails.getTshirtSize == 'detail.tshirtL' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtL{% endtrans %}
             </option>
-            <option value="xl" {% if personDetails.getTshirtSize == 'xl' %}selected="selected"{% endif %}>
-                XL - larger
+            <option value="detail.tshirtXL" {% if personDetails.getTshirtSize == 'detail.tshirtXL' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtXL{% endtrans %}
             </option>
-            <option value="xxl" {% if personDetails.getTshirtSize == 'xxl' %}selected="selected"{% endif %}>
-                XXL - largest
+            <option value="detail.tshirtXXL" {% if personDetails.getTshirtSize == 'detail.tshirtXXL' %}selected="selected"{% endif %}>
+                {% trans %}detail.tshirtXXL{% endtrans %}
             </option>
         </select>
     </label>
