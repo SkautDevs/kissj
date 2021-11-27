@@ -21,7 +21,7 @@ dashboard:
     youWantDelete: "Opravdu chcete smazat účastníka "
     withoutName: "(prozatím bez jména)"
     wontBeAbleUndo: "? Toto smazání nepůjde vrátit zpět!"
-    details: "podrobnosti"
+    details: "Podrobnosti"
     listOfParticipants: "Seznam účastníků"
     addParticipant: "Přidat účastníka"
     youNeed: "Potřebuješ"

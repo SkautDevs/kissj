@@ -60,6 +60,7 @@ class AbstractService
             || ($ca->food && $p->foodPreferences === null)
             || ($ca->languages && $p->languages === null)
             || ($ca->swimming && $p->swimming === null)
+            || ($ca->idNumber && $p->idNumber === null)
             || ($ca->tshirt && $p->getTshirtShape() === null)
             || ($ca->tshirt && $p->getTshirtSize() === null)
         ) {

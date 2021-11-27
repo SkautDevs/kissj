@@ -6,7 +6,7 @@
         <h4>
             {% include('widgets/userCustomHelp.twig') with {'userRole': 'pl'} %}
         </h4>
-        {% if ist.getPayments %}
+        {% if pl.getPayments %}
             <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
             {% for payment in pl.getPayments %}
                 <div class="payment {% if payment.status == 'canceled' %} payment-overdue{% endif %}">

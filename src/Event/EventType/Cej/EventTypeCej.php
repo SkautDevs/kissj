@@ -6,6 +6,7 @@ namespace kissj\Event\EventType\Cej;
 
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -47,8 +48,9 @@ class EventTypeCej extends EventType
         $ca->email = true;
         $ca->swimming = true;
         $ca->contingent = true;
-
+        $ca->tshirt = true;
         $ca->skills = true;
+        $ca->unit = true;
 
         return $ca;
     }
@@ -64,10 +66,27 @@ class EventTypeCej extends EventType
         $ca->email = true;
         $ca->swimming = true;
         $ca->contingent = true;
+        $ca->unit = true;
 
         return $ca;
     }
 
+    public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
+    {
+        $ca = parent::getContentArbiterPatrolParticipant();
+        $ca->country = true;
+        $ca->idNumber = true;
+        $ca->languages = true;
+        $ca->food = true;
+        $ca->phone = true;
+        $ca->email = true;
+        $ca->swimming = true;
+        $ca->contingent = true;
+        $ca->unit = true;
+
+        return $ca;
+    }
+    
     /**
      * @return array<string>
      */
