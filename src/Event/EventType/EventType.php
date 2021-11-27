@@ -76,4 +76,16 @@ abstract class EventType
             'detail.foodOther',
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getLanguages(): array
+    {
+        return [
+            'cs' => '🇨🇿 Česky',
+            'sk' => '🇸🇰 Slovensky',
+            'en' => '🇬🇧 English',
+        ];
+    }
 }

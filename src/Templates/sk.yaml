@@ -77,6 +77,7 @@ detail:
     issues: "Zdravotné údaje"
     issues-placeholder: "pravidelne užívané lieky, prekonané operácie, závažné choroby, alergie - spúšťač, symptómy, podávané lieky..."
     language: "Ovládané jazyky + úroveň"
+    language-placeholder: "např. angličtina B1, francouština C1, němčina pasivně"
     idNumber: "Kurz prvej pomoci"
     idNumber-placeholder: "Máš platný kurz prvej pomoci alebo iné zdravotnícke vzdelanie?"
     swimSkill: "Úroveň plávania"
