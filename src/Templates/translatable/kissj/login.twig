@@ -3,12 +3,17 @@
 {% block content %}
     <div class="two-cards">
         <div class="card registration-theme">
+            <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
             <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="post">
-                <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
                 <div class="form-group">
-                    <label for="form-email">{% trans %}login.email{% endtrans %}</label>
-                    <input class="form-control form-wide" type="email" name="email" id="form-email"
-                           required/><br/>
+                    <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
+                    <input
+                        class="form-control form-wide"
+                        type="email"
+                        name="email"
+                        id="form-email"
+                        required
+                    />
                 </div>
                 <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
             </form>
@@ -23,9 +28,8 @@
                 <li>{% trans %}login.waitForApproval{% endtrans %}</li>
                 <li>{% trans %}login.pay{% endtrans %}</li>
             </ul>
-            <br/>
             <a href="{{ url_for('loginHelp', {'eventSlug': event.slug}) }}"
-               class="btn-sm btn btn-small btn-grey">{% trans %}login.more{% endtrans %}</a>
+               class="btn btn-grey">{% trans %}login.more{% endtrans %}</a>
         </div>
     </div>
 {% endblock %}
