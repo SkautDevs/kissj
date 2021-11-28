@@ -261,7 +261,7 @@ li.step:nth-child(5).is-active {
 .form-group {
 	font-size: 20px;
 	text-align: left;
-	padding: var(--borderRadius);
+	margin-bottom: 1rem;
 }
 
 .form-control {
@@ -270,10 +270,8 @@ li.step:nth-child(5).is-active {
 	border-radius: var(--borderRadius);
 	font-size: inherit;
 	padding: var(--borderRadius);
-	margin: calc(-1 * var(--borderRadius)) 0;
 	display: block;
 	flex-grow: 1;
-	margin-top: .5rem;
 }
 
 .form-group-inline {
@@ -295,6 +293,14 @@ li.step:nth-child(5).is-active {
 
 .overdue {
 	color: #a21f16;
+}
+
+.btn[type=submit] {
+	width: 100%;
+}
+
+textarea {
+	min-height: 3rem;
 }
 
 div.payment-overdue {
