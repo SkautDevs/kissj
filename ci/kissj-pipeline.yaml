@@ -277,6 +277,6 @@ jobs:
         value: ((mail.password))
         hide: true
 
-      
-
-
+      - key: app.sentry.dsn
+        value: ((sentry.dsn))
+        hide: true
