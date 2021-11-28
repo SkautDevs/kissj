@@ -1,23 +1,23 @@
 {% if ca.contingent %}
-    <label class="form-group form-group-inline">{% trans %}detail.contingentTitle{% endtrans %}:
-        <select class="form-control" name="contingent" required="required">
+    <div class="form-group">
+        <label for="contingent">{% trans %}detail.contingentTitle{% endtrans %}:</label>
+        <select
+            id="contingent"
+            class="form-control form-wide"
+            name="contingent"
+            required="required"
+        >
             {% for contingent in event.eventType.getContingents() %}
-                <option value="{{ contingent }}"
-                        {% if personDetails.getContingent == contingent %} selected="selected"{% endif %}
+                <option
+                    value="{{ contingent }}"
+                    {% if personDetails.getContingent == contingent %} selected="selected"{% endif %}
                 >
                     {{ contingent | trans }}
                 </option>
             {% endfor %}
         </select>
-    </label>
-{% endif %}{% if ca.firstName %}
-    <label class="form-group form-group-inline">{% trans %}detail.firstName{% endtrans %}: <input
-                class="form-control"
-                type="text"
-                name="firstName"
-                placeholder="{% trans %}detail.firstNamePlaceholder{% endtrans %}"
-                value="{{ personDetails.getFirstName }}"
-                required="required"></label>
+    </div>
+{% endif %}
 {% if ca.firstName %}
     <div class="form-group">
         <label for="firstName">{% trans %}detail.firstName{% endtrans %}:</label>
