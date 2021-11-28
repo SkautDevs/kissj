@@ -220,6 +220,9 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-mail
                 key: server
-          envFrom:
-            - secretRef:
-              name: {{ .Release.Name }}-sentry-dsn
+
+          - name: SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-sentry-dsn
+                key: dsn
