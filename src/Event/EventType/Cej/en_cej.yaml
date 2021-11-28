@@ -1,3 +1,7 @@
 detail:
     foodHalfMeat: "less meat (once every two days)"
     foodVegan: "vegan"
+    countryPoland: "Poland"
+    countryHungary: "Hungary"
+dashboard:
+    lockRegistration: "Lock & submit for approval"

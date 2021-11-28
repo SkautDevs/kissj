@@ -76,6 +76,18 @@ abstract class EventType
             'detail.foodOther',
         ];
     }
+    
+    /**
+     * @return array<string>
+     */
+    public function getParticipantCountries(): array
+    {
+        return [
+            'detail.countryCzechRepublic',
+            'detail.countrySlovakia',
+            'detail.countryOther'
+        ];
+    }
 
     /**
      * @return array<string, string>

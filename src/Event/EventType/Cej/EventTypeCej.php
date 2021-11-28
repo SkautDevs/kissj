@@ -104,6 +104,20 @@ class EventTypeCej extends EventType
     }
 
     /**
+     * @return array<string>
+     */
+    public function getParticipantCountries(): array
+    {
+        return [
+            'detail.countryCzechRepublic',
+            'detail.countrySlovakia',
+            'detail.countryPoland',
+            'detail.countryHungary',
+            'detail.countryOther'
+        ];
+    }
+    
+    /**
      * @return array<string, string>
      */
     public function getLanguages(): array

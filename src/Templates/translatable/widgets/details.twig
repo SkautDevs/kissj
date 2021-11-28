@@ -27,14 +27,7 @@
 {% endif %}{% if ca.address %}
     {% trans %}detail.address{% endtrans %}: <b>{{ person.getPermanentResidence }}</b><br/>
 {% endif %}{% if ca.country %}
-    {% trans %}detail.country{% endtrans %}: <b>
-        {% if person.getCountry == 'Czech' %}
-            {% trans %}detail.countryCzechRepublic{% endtrans %}
-        {% elseif person.getCountry == 'Slovak' %}
-            {% trans %}detail.countrySlovakia{% endtrans %}
-        {% elseif person.getCountry == 'other' %}
-            {% trans %}detail.countryOther{% endtrans %}
-        {% endif %}</b><br/>
+    {% trans %}detail.country{% endtrans %}: <b>{{ person.getCountry | trans }}</b><br/>
 {% endif %}{% if ca.email %}
     {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
 {% endif %}{% if ca.phone %}
