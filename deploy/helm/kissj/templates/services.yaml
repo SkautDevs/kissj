@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}-caddy
+    labels:
+      app.kubernetes.io/name: {{ .Chart.Name}}
+      app.kubernetes.io/version: {{ .Chart.AppVersion }}
+      app.kubernetes.io/component: webserver
+      app.kubernetes.io/part-of: {{ .Chart.Name }}
+      helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
+    annotations:
+      haproxy.org/load-balance: "leastconn"
+
+    
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: webserver
+  ports:
+    - protocol: TCP
+      port: 80
+      name: http
+    - protocol: TCP
+      port: 9253
+      name: metrics
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}-php-fpm
+    labels:
+      app.kubernetes.io/name: {{ .Chart.Name}}
+      app.kubernetes.io/version: {{ .Chart.AppVersion }}
+      app.kubernetes.io/component: php-fpm
+      app.kubernetes.io/part-of: {{ .Chart.Name }}
+      helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
+    annotations:
+      haproxy.org/load-balance: "leastconn"
+    
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: php-fpm
+  ports:
+    - protocol: TCP
+      port: 9000
+      name: php-fpm
+    - protocol: TCP
+      port: 9253
+      name: metrics
+{{- if .Values.postgres.incluster }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgresql
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name}}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: database
+  ports:
+    - protocol: TCP
+      port: 5432
+      name: psql
+    - protocol: TCP
+      port: 9187
+      name: metrics
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}-pgbouncer
+    labels:
+      app.kubernetes.io/name: {{ .Chart.Name}}
+      app.kubernetes.io/version: {{ .Chart.AppVersion }}
+      app.kubernetes.io/component: pgbouncer
+      app.kubernetes.io/part-of: {{ .Chart.Name }}
+      helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+    
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: pgbouncer
+  ports:
+    - protocol: TCP
+      port: 5432
+      name: psql

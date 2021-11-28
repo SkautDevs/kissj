@@ -1,0 +1,101 @@
+{{- if .Values.postgres.incluster }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name}}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: database
+  serviceName: {{ .Release.Name }}-postgresql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: database
+    spec:
+      
+      containers:
+      - name: postgresql-metrics
+        image: quay.io/prometheuscommunity/postgres-exporter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: metrics
+          containerPort: 9187
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "64m"
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+          - name: DATA_SOURCE_URI
+            value: localhost?sslmode=disable
+          
+          - name: DATA_SOURCE_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: username   
+
+          - name: DATA_SOURCE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: password
+          
+      - name: postgresql
+        image: {{ .Values.postgres.image.name }}:{{ .Values.postgres.image.tag}}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: psql
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/postgres/data
+          name: postgres-data
+        - mountPath: /etc/postgresql
+          name: postgres-config
+        resources:
+          requests:
+            memory: "1000Mi"
+            cpu: "1000m"
+          limits:
+            memory: "2000Mi"
+            cpu: "2000m"        
+        env:
+          # Define the environment variable
+        - name: POSTGRES_DB
+          value: {{ .Release.Name }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgres
+              key: password   
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgres
+              key: username
+
+        args: [ "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+      
+      restartPolicy: Always
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name}}-postgres
+      - name: postgres-config
+        configMap:
+          name: {{ .Release.Name }}-postgres-config
+{{- end }}

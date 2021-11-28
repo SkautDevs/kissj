@@ -1,0 +1,223 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name}}-php-fpm
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name}}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: php-fpm
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.php.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: php-fpm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: php-fpm
+    spec:
+      volumes:
+      - name: {{ .Release.Name}}-sessions
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name}}-sessions
+      
+     # initContainers:
+     # - name: migrate-database
+     #   image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
+     #   imagePullPolicy: Always
+     #   command: ["composer"]
+     #   args: ["phinx:migrate"]
+     #   resources:
+     #     requests:
+     #       memory: "64Mi"
+     #       cpu: "64m"
+     #     limits:
+     #       memory: "128Mi"
+     #       cpu: "128m"
+     #   env:    
+     #     - name: DB_TYPE
+     #       value: postgresql
+     #     
+     #     - name: DATABASE_HOST
+     #       value: {{ .Release.Name }}-pgbouncer
+     #     
+     #     - name: POSTGRES_DB
+     #       value: {{ .Values.postgres.dbname }}
+     #
+     #     - name: POSTGRES_USER
+     #       valueFrom:
+     #         secretKeyRef:
+     #           name: {{ .Release.Name }}-postgres
+     #           key: username 
+     #     
+     #     - name: POSTGRES_PASSWORD
+     #       valueFrom:
+     #         secretKeyRef:
+     #           name: {{ .Release.Name }}-postgres
+     #           key: password 
+
+      containers:
+      - name: php-fpm-metrics
+        image: hipages/php-fpm_exporter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9253
+          name: metrics
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "64m"
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+          - name: PHP_FPM_SCRAPE_URI
+            value: tcp://localhost:9000/status
+        
+      - name: php-fpm
+        image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /tmp
+          name: {{ .Release.Name}}-sessions
+        ports:
+        - containerPort: 9000
+          name: php-fpm
+          protocol: TCP
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "600m"
+          limits:
+            memory: "1024Mi"
+            cpu: "700m"
+        
+        env:    
+          - name: DB_TYPE
+            value: postgresql
+
+          - name: DATABASE_HOST
+            value: {{ .Release.Name }}-pgbouncer 
+
+          - name: POSTGRES_DB
+            value: {{ .Values.postgres.dbname }}
+          
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: username 
+          
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: password 
+          
+          - name: FILE_HANDLER_TYPE
+            value: s3bucket
+          
+          - name: S3_REGION
+            value: {{ .Values.app.s3.region }}
+
+          - name: S3_ENDPOINT
+            value: {{ .Values.app.s3.endpoint }}
+          
+          - name: S3_BUCKET
+            value: {{ .Values.app.s3.bucket }}
+          
+          - name: S3_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-s3
+                key: key
+
+          - name: S3_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-s3
+                key: secret 
+          
+          - name: ADMINER_LOGIN
+            valueFrom:
+              secretKeyRef: 
+                name: {{ .Release.Name }}-adminer
+                key: username
+          
+          - name: ADMINER_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                name: {{ .Release.Name }}-adminer
+                key: password
+          
+          - name: TEMPLATE_CACHE
+            value: "true"
+
+          - name: TESTING_SITE
+            value: {{ .Values.app.test_site | quote }}
+          
+          - name: BASEPATH
+            value: ""
+          
+          - name: DEBUG
+            value: {{ .Values.app.debug | quote }} 
+
+          - name: DEFAULT_LOCALE
+            value: {{ .Values.app.locale | quote }} 
+
+          - name: LOGGER_FILENAME
+            value: dummy
+
+          - name: LOGGER_LEVEL
+            value: {{ .Values.app.log_level | quote }}           
+          
+          - name: MAIL_DEBUG_OUTPUT_LEVEL
+            value: {{ .Values.app.mail.log_level | quote }}
+              
+          - name: MAIL_DISABLE_TLS
+            value: "false"
+          
+          - name: MAIL_SEND_MAIL_TO_MAIN_RECIPIENT
+            value: "true"
+              
+          - name: MAIL_SMTP
+            value: "true"
+              
+          - name: MAIL_SMTP_AUTH
+            value: "true"
+              
+          - name: MAIL_SMTP_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mail
+                key: username
+
+          - name: MAIL_SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mail
+                key: password
+          
+          - name: MAIL_SMTP_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-mail
+                key: port
+          
+          - name: MAIL_SMTP_SECURE
+            valueFrom:
+              configMapKeyRef: 
+                name: {{ .Release.Name }}-mail
+                key: encryption
+          
+          - name: MAIL_SMTP_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-mail
+                key: server
+                

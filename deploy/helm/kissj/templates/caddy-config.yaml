@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name}}-caddy-config
+data:
+    Caddyfile: |
+        :80 {
+        	root * /var/www/html/public
+        	file_server
+        	php_fastcgi {env.PHPFPM_HOST}:9000
+        	try_files {path} /index.php
+
+        	log {
+        		output stdout
+        	}
+        
+        }
+        :9253 {
+          metrics /metrics
+        }
+
+        :8000 {
+          respond /healthz 200
+        }
+
+        

@@ -1,0 +1,31 @@
+{{- if .Values.postgres.incluster }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-postgres
+
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgres.volume.size | quote }}
+  volumeMode: Filesystem
+  storageClassName: {{ .Values.postgres.volume.storageclass | quote }}
+
+---
+{{- end }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name}}-sessions
+
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.php.volume.size | quote }}
+  volumeMode: Filesystem
+  storageClassName: {{ .Values.php.volume.storageclass | quote }}

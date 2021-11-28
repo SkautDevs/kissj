@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name}}-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    haproxy.org/load-balance: "leastconn"
+
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name}}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  rules:
+  - host: www.{{ .Values.app.url}}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-caddy
+            port:
+              number: 80
+  - host: {{ .Values.app.url }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-caddy
+            port:
+              number: 80
+  tls:
+  - secretName: {{ .Release.Name }}-caddy-tls
+    hosts:
+    - {{ .Values.app.url }}
+    - www.{{ .Values.app.url }}

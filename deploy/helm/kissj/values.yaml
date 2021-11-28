@@ -1,0 +1,67 @@
+
+postgres:
+  incluster: true
+  username: PostgresUser
+  password: PostgresPassword
+  #Set if using external DB
+  host: PostgresHost
+  dbname: PostgresDB
+  
+  image:
+    name: postgres
+    tag: 11-alpine
+  
+  volume: 
+    size: 20Gi
+    storageclass: default
+
+  
+
+caddy:
+  image:
+    name: quay.io/kissj/caddy
+    tag: latest
+  replicas: 2
+
+php:
+  image:
+    name: quay.io/kissj/php
+    tag: latest
+  
+  replicas: 2
+  # Must support RWX
+  volume: 
+    size: 5Gi
+    storageclass: azurefile-csi
+
+
+app:
+  url: example.net
+  locale: cs
+
+  test_site: false
+  log_level: DEBUG
+  debug: false
+
+  adminer:
+    username: ChangeMe
+    password: ChangeMe
+
+  s3:
+    key: S3Key
+    secret: S3Secret
+    region: S3Region
+    endpoint: S3Endpoint
+    bucket: S3Bucket
+
+  mail:
+    server: MailServer
+    port: 587
+    encryption: "tls" #ssl or tls
+    log_level: "4" #0-4
+    username: MailUsername
+    password: MailPassword
+
+      
+
+

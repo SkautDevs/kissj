@@ -1,0 +1,13 @@
+apiVersion: v1
+name: kissj
+description: A Kissj Deployment chart
+
+home: https://github.com/SkautDevs/kissj
+sources:
+  - https://github.com/SkautDevs/kissj
+maintainers:
+  - name: SkautDevs
+
+
+version: 1.0.0 #Helm Chart version
+appVersion: 1.0.0 #Application version info. 
