@@ -27,6 +27,9 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
+use Sentry\ClientBuilder;
+use Sentry\Monolog\Handler as SentryHandler;
+use Sentry\State\Hub as SentryHub;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -91,6 +94,17 @@ class Settings
             $logger->pushHandler(
                 new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL'])
             );
+
+            $sentryClient = ClientBuilder::create([
+                'dsn' => $_ENV['SENTRY_DSN'],
+            ])->getClient();
+
+            $sentryHandler = new SentryHandler(
+                new SentryHub($sentryClient)
+            );
+
+            // Log only warnings or higher severity events/errors to Sentry
+            $logger->pushHandler($sentryHandler, Logger::WARNING);
 
             return $logger;
         };
@@ -205,6 +219,7 @@ class Settings
         $dotenv->required('POSTGRES_USER');
         $dotenv->required('POSTGRES_PASSWORD');
         $dotenv->required('POSTGRES_DB');
+        $dotenv->required('SENTRY_DSN');
 
         if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
             throw new ValidationException('Adminer password must be changed and cannot be empty');
