@@ -9,7 +9,6 @@ image_resource:
           
     
 inputs:
-  - name: kissj-infra
   - name: kissj-app
 outputs: 
   - name: helm-chart
@@ -18,9 +17,7 @@ run:
   path: helm
   args:
   - package
-  - kissj-infra/charts/kissj
-#  - --version=kissj-app/.git/describe_ref
-#  - --app-version=kissj-app/.git/describe_ref
+  - kissj-app/deploy/helm/charts/kissj
   - --destination=helm-chart
 
   
