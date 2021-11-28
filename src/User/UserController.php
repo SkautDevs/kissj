@@ -9,7 +9,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class UserController extends AbstractController {
     public function __construct(
-        protected UserService $userService, 
+        protected UserRepository $userRepository,
+        protected UserService $userService,
         protected UserRegeneration $userRegeneration,
     ) {
     }
@@ -32,15 +33,16 @@ class UserController extends AbstractController {
 
     public function sendLoginEmail(Request $request, Response $response): Response {
         $email = $request->getParsedBody()['email'];
-        if (!$this->userService->isEmailExisting($email)) {
-            $this->userService->registerUser($email, $this->getEvent($request));
+        $event = $this->getEvent($request);
+        if (!$this->userRepository->isUserExisting($email, $event)) {
+            $this->userService->registerUser($email, $event);
         }
 
         try {
-            $this->userService->sendLoginTokenByMail($email, $request, $this->getEvent($request));
+            $this->userService->sendLoginTokenByMail($email, $request, $event);
         } catch (\Exception $e) {
             $this->logger->addError('Error sending login email to '.$email.' with token '.
-                $this->userService->getTokenForEmail($email), [$e]);
+                $this->userService->getTokenForEmail($email, $event), [$e]);
             $this->flashMessages->error($this->translator->trans('flash.error.mailError'));
 
             return $this->redirect($request, $response, 'loginAskEmail');

@@ -20,10 +20,6 @@ class UserService {
     ) {
     }
 
-    public function isEmailExisting(string $email): bool {
-        return $this->userRepository->isExisting(['email' => $email]);
-    }
-
     public function registerUser(string $email, Event $event): User {
         $user = new User();
         $user->email = $email;
@@ -34,8 +30,7 @@ class UserService {
     }
 
     public function sendLoginTokenByMail(string $email, Request $request, Event $event): string {
-        /** @var User $user */
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->getUserFromEmailEvent($email, $event);
         $this->invalidateAllLoginTokens($user);
 
         // generate new token
@@ -68,13 +63,12 @@ class UserService {
         if (!$this->loginTokenRepository->isExisting($criteria)) {
             return false;
         }
+
+        /** @var LoginToken $lastToken */
         $lastToken = $this->loginTokenRepository->getOneBy(
             $criteria,
             ['created_at' => false]
         );
-        if ($lastToken === null) {
-            return false;
-        }
 
         $lastValidTime = new \DateTime();
         $lastValidTime->modify('-24 hours');
@@ -89,8 +83,8 @@ class UserService {
         return $loginToken;
     }
 
-    public function getTokenForEmail(string $email): string {
-        return $this->getTokenForUser($this->getUserFromEmail($email));
+    public function getTokenForEmail(string $email, Event $event): string {
+        return $this->getTokenForUser($this->userRepository->getUserFromEmailEvent($email, $event));
     }
 
     public function getTokenForUser(User $user): string {
@@ -100,19 +94,11 @@ class UserService {
         return $loginToken->token;
     }
 
-    public function getUserFromEmail(string $email): User {
-        /** @var User $user */
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-
-        return $user;
-    }
-
     public function logoutUser(): void {
         unset($_SESSION['user']);
     }
 
     public function invalidateAllLoginTokens(User $user): void {
-        // invalidate all not yet used login tokens
         $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
         foreach ($existingTokens as $token) {
             $token->used = true;
