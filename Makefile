@@ -2,7 +2,7 @@
 local-dev-postgresql:
 	docker-compose --file deploy/dev-postgres/docker-compose.yml up --build -d
 	sleep 5
-	docker exec -it $$(docker ps | grep dev-postgres-php-fpm-1 | awk '{print $$1}') bash -c "./bin/installl.sh"
+	docker exec -it $$(docker ps | grep php-fpm | awk '{print $$1}') bash -c "./bin/installl.sh"
 
 .PHONY: local-dev-sqlite
 local-dev-sqlite:
