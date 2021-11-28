@@ -61,6 +61,11 @@
 	--borderRadius: 6px;
 	font-family: 'themix', sans-serif;
 	background: #e6ebed;
+	box-sizing: border-box;
+}
+
+*, *::before, *::after {
+	box-sizing: inherit;
 }
 
 footer {
