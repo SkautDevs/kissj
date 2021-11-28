@@ -97,6 +97,7 @@ class Settings
 
             $sentryClient = ClientBuilder::create([
                 'dsn' => $_ENV['SENTRY_DSN'],
+                'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
             ])->getClient();
 
             $sentryHandler = new SentryHandler(
