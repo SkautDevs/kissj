@@ -1,0 +1,12 @@
+FROM caddy:2-alpine
+LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
+
+WORKDIR /var/www/html
+
+#Caddy Config
+COPY kissj-app/deploy/container_images/caddy/Caddyfile /etc/caddy/Caddyfile
+
+# Copy public folder which is needed for routing and static files
+COPY  kissj-app/public /var/www/html/public
+#Create dummy .env
+RUN touch /var/www/html/.env

@@ -1,0 +1,40 @@
+FROM php:8-fpm-buster
+
+LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
+
+WORKDIR /var/www/html
+
+RUN apt update && apt install -y \
+    curl \
+    git \
+    tar \
+    zip \
+    tzdata \
+    libpq-dev 
+
+RUN apt-get clean
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+
+
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
+
+
+COPY kissj-app/composer.json /var/www/html/composer.json
+COPY kissj-app/composer.lock /var/www/html/composer.lock
+COPY kissj-app/src /var/www/html/src
+COPY kissj-app/adminer /var/www/html/adminer
+COPY kissj-app/public /var/www/html/public
+
+# Allow environment variable access
+RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.conf
+RUN echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.conf
+
+
+
+#Create dummy .env
+RUN touch /var/www/html/.env
+
+RUN composer install --working-dir=/var/www/html --no-dev --no-interaction 
+
+
+RUN chown -R www-data:www-data /var/www/html 
