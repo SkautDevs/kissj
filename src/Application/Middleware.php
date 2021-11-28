@@ -30,6 +30,9 @@ class Middleware {
         // TODO CSRF PROTECTION
         // https://github.com/slimphp/Slim-Csrf
 
+        // Monolog *ContextProcessor hydration
+        $app->add(MonologAdditionalContextMiddleware::class);
+
         // USER AUTHENTICATION
         $app->add(UserAuthenticationMiddleware::class);
         

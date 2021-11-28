@@ -16,6 +16,7 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\MailerSettings;
 use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\MonologAdditionalContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
 use kissj\User\UserRegeneration;
@@ -190,6 +191,10 @@ class Settings
 
             return $view;
         };
+
+        $container[MonologAdditionalContextMiddleware::class]
+            = fn(Logger $logger) => new MonologAdditionalContextMiddleware($logger);
+
         $container[UserAuthenticationMiddleware::class]
             = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
 
