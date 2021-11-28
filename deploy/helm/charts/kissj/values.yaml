@@ -62,6 +62,8 @@ app:
     username: MailUsername
     password: MailPassword
 
+  sentry:
+    dsn: SentryDSN
       
 
 
