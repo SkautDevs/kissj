@@ -5,6 +5,7 @@ namespace kissj\Application;
 
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\MonologAdditionalContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use Middlewares\TrailingSlash;
 use Monolog\Logger;
