@@ -1,7 +1,16 @@
 detail:
+    contingentTitle: "Contingent"
     foodHalfMeat: "less meat (once every two days)"
     foodVegan: "vegan"
     countryPoland: "Poland"
     countryHungary: "Hungary"
+    unit: "Scout Organization"
+    contingent:
+        czechia: "🇨🇿 Český kontingent"
+        slovakia: "🇸🇰 Slovenský kontingent"
+        poland: "🇵🇱 Kontyngent Polski"
+        hungary: "🇭🇺 Magyar Csapat"
+        european: "🇪🇺 European Contingent"
+        team: "⚜ Organizing Team"
 dashboard:
-    lockRegistration: "Lock & submit for approval"
+    lockRegistration: "Proceed to lock & submit"

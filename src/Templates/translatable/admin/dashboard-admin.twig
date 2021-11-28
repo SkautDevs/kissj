@@ -2,7 +2,14 @@
 
 {% block content %}
     <div class="card paid-theme">
-        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ eventName }} {% trans %}dashboard-admin.admin{% endtrans %}</h2>
+        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ event.readableName }}
+            {% if user.role == 'contingentAdminCs' %} - {{ 'detail.contingent.czechia'|trans }}
+            {% elseif user.role == 'contingentAdminSk' %} - {{ 'detail.contingent.slovakia'|trans }}
+            {% elseif user.role == 'contingentAdminPl' %} - {{ 'detail.contingent.poland'|trans }}
+            {% elseif user.role == 'contingentAdminHu' %} - {{ 'detail.contingent.hungary'|trans }}
+            {% elseif user.role == 'contingentAdminEu' %} - {{ 'detail.contingent.european'|trans }}
+            {% endif %}
+        </h2>
         <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
         <div class="card-divide">
             <div>
@@ -61,17 +68,19 @@
             </div>
         </div>
     </div>
-    <div class="card card-half paid-theme">
-        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
-            <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
-                <input class="form-control form-wide" name="emailFrom" type="email" required></label>
-            <br/>
-            <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
-                <input class="form-control form-wide" name="emailTo" type="email" required></label>
-            <br/>
-            <input class="btn btn-small"
-                   type="submit"
-                   value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
-        </form>
-    </div>
+    {% if event.eventType.isSellingIstTicketsAllowed %}
+        <div class="card card-half paid-theme">
+            <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
+                <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
+                    <input class="form-control form-wide" name="emailFrom" type="email" required></label>
+                <br/>
+                <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
+                    <input class="form-control form-wide" name="emailTo" type="email" required></label>
+                <br/>
+                <input class="btn btn-small"
+                       type="submit"
+                       value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}

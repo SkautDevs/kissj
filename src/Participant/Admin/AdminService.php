@@ -14,7 +14,8 @@ use kissj\User\UserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AdminService {
+class AdminService
+{
     public function __construct(
         private UserRepository $userRepository,
         private ParticipantRepository $participantRepository,
@@ -24,6 +25,34 @@ class AdminService {
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
     ) {
+    }
+
+    /**
+     * @param User          $adminUser
+     * @param Participant[] $participants
+     * @return Participant[]
+     */
+    public function filterContingentAdminParticipants(User $adminUser, array $participants): array
+    {
+        return match ($adminUser->role) {
+            User::ROLE_ADMIN => $participants,
+            User::ROLE_CONTINGENT_ADMIN_CS => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.czechia';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_SK => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.slovakia';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_PL => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.poland';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.hungary';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.european';
+            }),
+            default => [],
+        };
     }
 
     public function isPaymentTransferPossible(
@@ -68,7 +97,8 @@ class AdminService {
      * Set To as paid and send him email about payment transfer
      * Handle scarf correction on To
      */
-    public function transferPayment(Participant $participantFrom, Participant $participantTo) {
+    public function transferPayment(Participant $participantFrom, Participant $participantTo)
+    {
         $correctPayment = null;
         foreach ($participantFrom->payment as $payment) {
             if ($payment->status === Payment::STATUS_PAID) {
@@ -85,7 +115,8 @@ class AdminService {
                 $this->paymentService->cancelPayment($payment);
                 $this->mailer->sendCancelledPayment(
                     $participantTo,
-                    $this->translator->trans('email.text.paymentTransfered', [], null, 'cs') // TODO add preference according to participant
+                    $this->translator->trans('email.text.paymentTransfered', [], null,
+                        'cs') // TODO add preference according to participant
                 );
             }
         }
@@ -111,7 +142,7 @@ class AdminService {
         $this->mailer->sendRegistrationPaid($participantTo);
         $this->mailer->sendPaymentTransferedFromYou($participantFrom);
 
-        $this->logger->info('Tranfered payment ID '.$correctPayment->id
-            .' from participant ID '.$userFrom->id.' to participant ID '.$userTo->id);
+        $this->logger->info('Tranfered payment ID ' . $correctPayment->id
+            . ' from participant ID ' . $userFrom->id . ' to participant ID ' . $userTo->id);
     }
 }

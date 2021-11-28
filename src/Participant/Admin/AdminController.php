@@ -6,10 +6,7 @@ use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
-use kissj\Event\ContentArbiterGuest;
-use kissj\Event\ContentArbiterIst;
-use kissj\Event\ContentArbiterPatrolLeader;
-use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\Event;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
 use kissj\Participant\Participant;
@@ -36,43 +33,52 @@ class AdminController extends AbstractController
         private IstService $istService,
         private GuestService $guestService,
         private AdminService $adminService,
-        private ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
-        private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
-        private ContentArbiterIst $contentArbiterIst,
-        private ContentArbiterGuest $contentArbiterGuest,
     ) {
     }
 
-    public function showDashboard(Response $response): Response
+    public function showDashboard(Response $response, Event $event, User $user): Response
     {
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
             [
-                'patrols' => $this->patrolService->getAllPatrolsStatistics(),
-                'ists' => $this->istService->getAllIstsStatistics(),
-                'guests' => $this->guestService->getAllGuestsStatistics(),
-            ]
+                'patrols' => $this->patrolService->getAllPatrolsStatistics($event, $user),
+                'ists' => $this->istService->getAllIstsStatistics($event, $user),
+                'guests' => $this->guestService->getAllGuestsStatistics($event, $user),
+            ],
         );
     }
 
     public function showApproving(
         Response $response,
-        ParticipantService $participantService
+        Event $event,
+        User $user,
     ): Response {
         return $this->view->render($response, 'admin/approve-admin.twig', [
-            'closedPatrolLeaders' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_CLOSED),
-            'closedIsts' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_CLOSED),
-            'closedFreeParticipants' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_CLOSED),
-            'closedGuests' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_CLOSED),
-            'caIst' => $this->contentArbiterIst,
-            'caPl' => $this->contentArbiterPatrolLeader,
-            'caPp' => $this->contentArbiterPatrolParticipant,
-            'caGuest' => $this->contentArbiterGuest,
+            'closedPatrolLeaders' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_CLOSED, $event),
+            ),
+            'closedIsts' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_CLOSED, $event),
+            ),
+            'closedFreeParticipants' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_CLOSED, $event),
+            ),
+            'closedGuests' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_CLOSED, $event),
+            ),
+            'caIst' => $event->getEventType()->getContentArbiterIst(),
+            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
+            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
+            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
         ]);
     }
 
@@ -85,6 +91,7 @@ class AdminController extends AbstractController
 
     public function denyParticipant(int $participantId, Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var Participant $participant */
         $participant = $this->participantRepository->get($participantId);
@@ -98,17 +105,30 @@ class AdminController extends AbstractController
 
     public function showPayments(
         Response $response,
-        ParticipantService $participantService
+        Event $event,
+        User $user,
     ): Response {
         return $this->view->render($response, 'admin/payments-admin.twig', [
-            'approvedPatrolLeaders' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_APPROVED),
-            'approvedIsts' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_APPROVED),
-            'approvedFreeParticipants' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_APPROVED),
-            'approvedGuests' => $participantService
-                ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_APPROVED),
+            'approvedPatrolLeaders' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_APPROVED, $event)
+            ),
+            'approvedIsts' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_APPROVED, $event)
+            ),
+            'approvedFreeParticipants' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_APPROVED, $event)
+            ),
+            'approvedGuests' => $this->adminService->filterContingentAdminParticipants(
+                $user,
+                $this->participantService
+                    ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_APPROVED, $event)
+            ),
         ]);
     }
 
@@ -121,6 +141,7 @@ class AdminController extends AbstractController
 
     public function cancelPayment(int $paymentId, Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
         /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
@@ -138,6 +159,7 @@ class AdminController extends AbstractController
 
     public function cancelAllDuePayments(Request $request, Response $response): Response
     {
+        // TODO check if correct event!!
         $this->paymentService->cancelDuePayments(5);
 
         return $this->redirect(
@@ -150,6 +172,7 @@ class AdminController extends AbstractController
 
     public function confirmPayment(int $paymentId, Request $request, Response $response): Response
     {
+        // TODO check if correct event
         /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
         $this->paymentService->confirmPayment($payment);
@@ -166,6 +189,7 @@ class AdminController extends AbstractController
 
     public function showFile(string $filename)
     {
+        // TODO check if correct event
         $file = $this->fileHandler->getFile($filename);
         $response = new \Slim\Psr7\Response(200, null, $file->stream);
         $response = $response->withAddedHeader('Content-Type', $file->mimeContentType);
@@ -188,6 +212,7 @@ class AdminController extends AbstractController
 
     public function setBreakpointFromRoute(Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'));
 
         if ($result) {
@@ -206,6 +231,7 @@ class AdminController extends AbstractController
 
     public function updatePayments(Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $this->paymentService->updatePayments(5);
 
         return $this->redirect(
@@ -218,6 +244,7 @@ class AdminController extends AbstractController
 
     public function markBankPaymentPaired(Request $request, Response $response, int $paymentId): Response
     {
+        // TODO check if correct event
         $notice = htmlspecialchars($request->getParsedBody()['notice'], ENT_QUOTES);
         $this->bankPaymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
@@ -247,6 +274,7 @@ class AdminController extends AbstractController
 
     public function showTransferPayment(Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $queryParams = $request->getQueryParams();
 
         $emailFrom = $queryParams['emailFrom'];
@@ -270,6 +298,7 @@ class AdminController extends AbstractController
 
     public function transferPayment(Request $request, Response $response): Response
     {
+        // TODO check if correct event
         $queryParams = $request->getParsedBody();
 
         $participantFrom = $this->participantService->findParticipantFromUserMail($queryParams['emailFrom']);

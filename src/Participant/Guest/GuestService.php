@@ -3,8 +3,10 @@
 namespace kissj\Participant\Guest;
 
 use kissj\AbstractService;
+use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\User\User;
 use kissj\User\UserService;
@@ -14,6 +16,7 @@ class GuestService extends AbstractService
 {
     public function __construct(
         private GuestRepository $guestRepository,
+        private AdminService $adminService,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
@@ -78,9 +81,12 @@ class GuestService extends AbstractService
         return $guest;
     }
 
-    public function getAllGuestsStatistics(): StatisticValueObject
+    public function getAllGuestsStatistics(Event $event, User $admin): StatisticValueObject
     {
-        $ists = $this->guestRepository->findAll();
+        $ists = $this->adminService->filterContingentAdminParticipants(
+            $admin,
+            $this->guestRepository->findAllWithEvent($event)
+        );
 
         return new StatisticValueObject($ists);
     }

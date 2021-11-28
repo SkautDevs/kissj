@@ -15,6 +15,7 @@ class AbstractService
      */
     public function addParamsIntoPerson(array $params, Participant $p): Participant
     {
+        $p->contingent = $params['contingent'] ?? null;
         $p->firstName = $params['firstName'] ?? null;
         $p->lastName = $params['lastName'] ?? null;
         $p->nickname = $params['nickname'] ?? null;
@@ -48,7 +49,8 @@ class AbstractService
     public function isPersonValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
         if (
-            ($ca->firstName && $p->firstName === null)
+            ($ca->contingent && $p->contingent === null)
+            || ($ca->firstName && $p->firstName === null)
             || ($ca->lastName && $p->lastName === null)
             || ($ca->birthDate && $p->birthDate === null)
             || ($ca->gender && $p->gender === null)

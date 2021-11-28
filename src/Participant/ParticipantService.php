@@ -2,6 +2,7 @@
 
 namespace kissj\Participant;
 
+use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
@@ -9,7 +10,8 @@ use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 
-class ParticipantService {
+class ParticipantService
+{
     public function __construct(
         private ParticipantRepository $participantRepository,
         private PaymentService $paymentService,
@@ -22,30 +24,32 @@ class ParticipantService {
     /**
      * @return Participant[]
      */
-    public function getAllParticipantsWithStatus(string $role, string $status): array {
+    public function getAllParticipantsWithStatus(string $role, string $status, Event $event): array
+    {
         if (!in_array($role, User::ROLES, true)) {
-            throw new \RuntimeException('Unknown role: '.$role);
+            throw new \RuntimeException('Unknown role: ' . $role);
         }
 
         if (!in_array($status, User::STATUSES, true)) {
-            throw new \RuntimeException('Unknown status: '.$status);
+            throw new \RuntimeException('Unknown status: ' . $status);
         }
 
         /** @var Participant[] $participants */
         $participants = $this->participantRepository->findBy(['role' => $role]);
 
-        $participantsWithRole = [];
+        $validParticipants = [];
         foreach ($participants as $participant) {
-            if ($participant->user->status === $status) {
-                $participantsWithRole[] = $participant;
+            if ($participant->user->status === $status && $participant->user->event->id === $event->id) {
+                $validParticipants[] = $participant;
             }
         }
 
-        return $participantsWithRole;
+        return $validParticipants;
     }
 
     // TODO move into payment service, same as comfirmPayment
-    public function cancelPayment(Payment $payment, string $reason): Payment {
+    public function cancelPayment(Payment $payment, string $reason): Payment
+    {
         $this->paymentService->cancelPayment($payment);
         $this->userService->closeRegistration($payment->participant->user);
 
@@ -54,7 +58,8 @@ class ParticipantService {
         return $payment;
     }
 
-    public function findParticipantFromUserMail(string $emailFrom): ?Participant {
+    public function findParticipantFromUserMail(string $emailFrom): ?Participant
+    {
         // TODO optimalize into one query with join
         $user = $this->userRepository->findBy(['email' => $emailFrom]);
         if (count($user) === 0) {

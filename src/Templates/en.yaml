@@ -132,7 +132,7 @@ _layout:
     editingBar: "Editing"
     lockedBar: "Locked"
     approvedBar: "Approved"
-    payedBar: "Payed! ;)"
+    payedBar: "Paid (:"
     creator: "with ♥ created by Lung"
 404:
     pardon: "Oops! Nothing is here... bad link maybe?"
@@ -252,7 +252,7 @@ deny-admin:
     back: "Back"
     denyAndSend: "Deny and send email"
 dashboard-admin:
-    dashboard: "Dashboard of event"
+    dashboard: "Administrator dashboard of event"
     admin: "Administrator"
     stats: "Statistics"
     count: "counts"

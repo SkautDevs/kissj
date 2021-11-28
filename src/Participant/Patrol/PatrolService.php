@@ -5,8 +5,10 @@ namespace kissj\Participant\Patrol;
 use kissj\AbstractService;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -19,6 +21,7 @@ class PatrolService extends AbstractService {
         private PatrolParticipantRepository $patrolParticipantRepository,
         private UserService $userService,
         private PaymentService $paymentService,
+        private AdminService $adminService,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
@@ -169,8 +172,11 @@ class PatrolService extends AbstractService {
         return $patrolLeader;
     }
 
-    public function getAllPatrolsStatistics(): StatisticValueObject {
-        $patrolLeaders = $this->patrolLeaderRepository->findAll();
+    public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject {
+        $patrolLeaders = $this->adminService->filterContingentAdminParticipants(
+            $admin,
+            $this->patrolLeaderRepository->findAllWithEvent($event)
+        );
 
         return new StatisticValueObject($patrolLeaders);
     }

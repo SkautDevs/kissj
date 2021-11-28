@@ -55,6 +55,11 @@ abstract class EventType
         return new ContentArbiterGuest();
     }
 
+    public function isSellingIstTicketsAllowed(): bool
+    {
+        return false;
+    }
+
     /**
      * @return array<string, string>
      */
@@ -76,7 +81,7 @@ abstract class EventType
             'detail.foodOther',
         ];
     }
-    
+
     /**
      * @return array<string>
      */
@@ -85,7 +90,7 @@ abstract class EventType
         return [
             'detail.countryCzechRepublic',
             'detail.countrySlovakia',
-            'detail.countryOther'
+            'detail.countryOther',
         ];
     }
 
@@ -99,5 +104,13 @@ abstract class EventType
             'sk' => '🇸🇰 Slovensky',
             'en' => '🇬🇧 English',
         ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getContingents(): array
+    {
+        return [];
     }
 }

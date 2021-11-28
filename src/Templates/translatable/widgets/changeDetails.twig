@@ -1,4 +1,16 @@
-{% if ca.firstName %}
+{% if ca.contingent %}
+    <label class="form-group form-group-inline">{% trans %}detail.contingentTitle{% endtrans %}:
+        <select class="form-control" name="contingent" required="required">
+            {% for contingent in event.eventType.getContingents() %}
+                <option value="{{ contingent }}"
+                        {% if personDetails.getContingent == contingent %} selected="selected"{% endif %}
+                >
+                    {{ contingent | trans }}
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+{% endif %}{% if ca.firstName %}
     <label class="form-group form-group-inline">{% trans %}detail.firstName{% endtrans %}: <input
                 class="form-control"
                 type="text"
@@ -62,7 +74,7 @@
         <select class="form-control" name="country">
             {% for country in event.eventType.getParticipantCountries() %}
                 <option value="{{ country }}"
-                {% if personDetails.getCountry == country %} selected="selected"{% endif %}
+                        {% if personDetails.getCountry == country %} selected="selected"{% endif %}
                 >
                     {{ country | trans }}
                 </option>

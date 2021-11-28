@@ -13,7 +13,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeCej extends EventType
 {
-
     /**
      * @return array<string, string>
      */
@@ -40,6 +39,7 @@ class EventTypeCej extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
+        $ca->contingent = true;
         $ca->country = true;
         $ca->idNumber = true;
         $ca->languages = true;
@@ -47,7 +47,6 @@ class EventTypeCej extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->swimming = true;
-        $ca->contingent = true;
         $ca->tshirt = true;
         $ca->skills = true;
         $ca->unit = true;
@@ -58,6 +57,7 @@ class EventTypeCej extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $ca = parent::getContentArbiterPatrolLeader();
+        $ca->contingent = true;
         $ca->country = true;
         $ca->idNumber = true;
         $ca->languages = true;
@@ -65,7 +65,6 @@ class EventTypeCej extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->swimming = true;
-        $ca->contingent = true;
         $ca->unit = true;
 
         return $ca;
@@ -81,7 +80,6 @@ class EventTypeCej extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->swimming = true;
-        $ca->contingent = true;
         $ca->unit = true;
 
         return $ca;
@@ -114,6 +112,21 @@ class EventTypeCej extends EventType
             'detail.countryPoland',
             'detail.countryHungary',
             'detail.countryOther'
+        ];
+    }
+    
+    /**
+     * @return string[]
+     */
+    public function getContingents(): array
+    {
+        return [
+            'detail.contingent.czechia',
+            'detail.contingent.slovakia',
+            'detail.contingent.poland',
+            'detail.contingent.hungary',
+            'detail.contingent.european',
+            'detail.contingent.team',
         ];
     }
     

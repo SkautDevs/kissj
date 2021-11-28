@@ -2,23 +2,31 @@
 
 namespace kissj\Participant\Guest;
 
+use kissj\Event\Event;
 use kissj\Orm\Repository;
 
 /**
  * @table participant
  */
-class GuestRepository extends Repository {
+class GuestRepository extends Repository
+{
     /**
      * @return Guest[]
      */
-    public function findAll(): array {
-        $guestsOnly = [];
-        foreach (parent::findAll() as $participant) {
-            if ($participant instanceof Guest) {
-                $guestsOnly[] = $participant;
+
+    /**
+     * @param Event $event
+     * @return Guest[]
+     */
+    public function findAllWithEvent(Event $event): array
+    {
+        $guests = [];
+        foreach ($this->findAll() as $participant) {
+            if ($participant instanceof Guest && $participant->user->event->id === $event->id) {
+                $guests[] = $participant;
             }
         }
 
-        return $guestsOnly;
+        return $guests;
     }
 }

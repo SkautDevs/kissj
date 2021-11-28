@@ -33,8 +33,13 @@ class User extends EntityDateTime {
     public const ROLE_GUEST = 'guest';
     public const ROLE_WITHOUT_ROLE = 'withoutRole';
     public const ROLE_FREE_PARTICIPANT = 'fp';
-
     public const ROLE_ADMIN = 'admin';
+    public const ROLE_CONTINGENT_ADMIN_CS = 'contingentAdminCs';
+    public const ROLE_CONTINGENT_ADMIN_SK = 'contingentAdminSk';
+    public const ROLE_CONTINGENT_ADMIN_PL = 'contingentAdminPl';
+    public const ROLE_CONTINGENT_ADMIN_HU = 'contingentAdminHu';
+    public const ROLE_CONTINGENT_ADMIN_EU = 'contingentAdminEu';
+
     public const ROLES = [
         self::ROLE_IST,
         self::ROLE_PATROL_LEADER,
@@ -43,5 +48,19 @@ class User extends EntityDateTime {
         self::ROLE_WITHOUT_ROLE,
         self::ROLE_FREE_PARTICIPANT,
         self::ROLE_ADMIN,
+        self::ROLE_CONTINGENT_ADMIN_CS,
+        self::ROLE_CONTINGENT_ADMIN_SK,
+        self::ROLE_CONTINGENT_ADMIN_PL,
+        self::ROLE_CONTINGENT_ADMIN_HU,
+        self::ROLE_CONTINGENT_ADMIN_EU,
+    ];
+
+    public const ADMIN_ROLES_ONLY = [
+        self::ROLE_ADMIN,
+        self::ROLE_CONTINGENT_ADMIN_CS,
+        self::ROLE_CONTINGENT_ADMIN_SK,
+        self::ROLE_CONTINGENT_ADMIN_PL,
+        self::ROLE_CONTINGENT_ADMIN_HU,
+        self::ROLE_CONTINGENT_ADMIN_EU,
     ];
 }

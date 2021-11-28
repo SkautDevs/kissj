@@ -3,8 +3,10 @@
 namespace kissj\Participant\Ist;
 
 use kissj\AbstractService;
+use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -17,6 +19,7 @@ class IstService extends AbstractService
         private IstRepository $istRepository,
         private UserService $userService,
         private PaymentService $paymentService,
+        private AdminService $adminService,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
@@ -98,9 +101,12 @@ class IstService extends AbstractService
         return $ist;
     }
 
-    public function getAllIstsStatistics(): StatisticValueObject
+    public function getAllIstsStatistics(Event $event, User $admin): StatisticValueObject
     {
-        $ists = $this->istRepository->findAll();
+        $ists = $this->adminService->filterContingentAdminParticipants(
+            $admin,
+            $this->istRepository->findAllWithEvent($event)
+        );
 
         return new StatisticValueObject($ists);
     }

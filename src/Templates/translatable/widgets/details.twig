@@ -1,3 +1,6 @@
+{% if ca.contingent %}
+    {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
+{% endif %}
 {% if useShortNaming %}
     <b>{{ person.getFullName }}</b><br/>
 {% else %}

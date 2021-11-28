@@ -75,6 +75,7 @@ class Route
 
                 $app->get('/loginHelp', UserController::class . '::showLoginHelp')
                     ->setName('loginHelp');
+
                 $app->get('/chooseRole', UserController::class . '::chooseRole')
                     ->add(LoggedOnlyMiddleware::class)
                     ->add(NonChoosedRoleOnlyMiddleware::class)

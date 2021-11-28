@@ -14,6 +14,7 @@ use kissj\User\User;
  * @property int                    $id
  * @property User|null              $user m:hasOne TODO check and get rid of null
  * @property string|null            $role needed for DB working (see Mapper.php)
+ * @property string|null            $contingent
  * @property string|null            $firstName
  * @property string|null            $lastName
  * @property string|null            $nickname
@@ -37,7 +38,6 @@ use kissj\User\User;
  * @property string|null            $uploadedFilename
  * @property string|null            $uploadedOriginalFilename
  * @property string|null            $uploadedContenttype
- * @property string|null            $contingent
  * @property string|null            $notes
  *
  * @property Payment[]              $payment m:belongsToMany

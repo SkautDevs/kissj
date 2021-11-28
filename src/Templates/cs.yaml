@@ -132,7 +132,7 @@ _layout:
     editingBar: "Vyplnění údajů"
     lockedBar: "Zamknuto"
     approvedBar: "Schváleno"
-    payedBar: "Zaplaceno! ;)"
+    payedBar: "Zaplaceno! (:"
     creator: "se ♥ na dlani vytvořil Lung"
 404:
     pardon: "Ups! Tady nic není... možná špatný odkaz?"
@@ -252,7 +252,7 @@ deny-admin:
     back: "Zpět"
     denyAndSend: "Zamítnout a poslat e-mail"
 dashboard-admin:
-    dashboard: "Přehled akce"
+    dashboard: "Administrátorský přehled akce"
     admin: "Administrátor"
     stats: "Statistiky"
     count: " počty"

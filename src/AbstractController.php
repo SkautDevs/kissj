@@ -57,7 +57,6 @@ abstract class AbstractController
         array $arguments = []
     ): Response {
         $event = $this->tryGetEvent($request);
-        
         if ($event instanceof Event) {
             $arguments = array_merge($arguments, ['eventSlug' => $event->slug]);
 

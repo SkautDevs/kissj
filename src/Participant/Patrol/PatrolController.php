@@ -121,12 +121,16 @@ class PatrolController extends AbstractController
             [
                 'pDetails' => $participant,
                 'plDetails' => $participant->patrolLeader,
-                'ca' => $user->event->eventType->getContentArbiterPatrolLeader(),
+                'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
             ]
         );
     }
 
-    public function changeDetailsPatrolParticipant(int $participantId, Request $request, Response $response): Response
+    public function changeDetailsPatrolParticipant(
+        int $participantId,
+        Request $request,
+        Response $response
+    ): Response
     {
         $patrolParticipant = $this->patrolService->addParamsIntoPatrolParticipant(
             $this->patrolService->getPatrolParticipant($participantId),
