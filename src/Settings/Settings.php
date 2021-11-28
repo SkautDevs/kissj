@@ -106,6 +106,12 @@ class Settings
             // Log only warnings or higher severity events/errors to Sentry
             $logger->pushHandler($sentryHandler, Logger::WARNING);
 
+            if ($_ENV['DEBUG'] === 'true') {
+                $logger->pushHandler(
+                    new StreamHandler(__DIR__ . '/../logs/debug.log', Logger::DEBUG)
+                );
+            }
+
             return $logger;
         };
         $container[LoggerInterface::class] = get(Logger::class);
