@@ -38,7 +38,6 @@ class LoggedOnlyMiddleware extends BaseMiddleware {
         if ($user->event->id !== $event->id) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.wrongEvent'));
 
-            // TODO fix one mail cannot attend multiple events
             return $this->userController->logout($request, new \Slim\Psr7\Response());
         }
 
