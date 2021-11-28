@@ -25,7 +25,9 @@ use LeanMapper\IEntityFactory;
 use LeanMapper\IMapper;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
+use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
 use Sentry\ClientBuilder;
 use Sentry\Monolog\Handler as SentryHandler;
@@ -91,6 +93,8 @@ class Settings
         $container[Logger::class] = function (): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
+            $logger->pushProcessor(new GitProcessor());
+            $logger->pushProcessor(new WebProcessor());
             $logger->pushHandler(
                 new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL'])
             );
