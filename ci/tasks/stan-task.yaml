@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+        type: registry-image
+        source:
+          repository: composer
+          tag: 2.1.9
+    
+inputs:
+  - name: kissj-app
+
+params:
+  COMPOSER_MEMORY_LIMIT: "512M"
+
+run:
+  path: composer 
+  args:
+  - stan
+  - --working-dir=kissj-app
+  - --no-interaction
+ 
+
+

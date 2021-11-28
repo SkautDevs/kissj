@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+        type: registry-image
+        source:
+          repository: alpine/helm
+          tag: latest
+          
+    
+inputs:
+  - name: kissj-infra
+  - name: kissj-app
+outputs: 
+  - name: helm-chart
+      
+run:
+  path: helm
+  args:
+  - package
+  - kissj-infra/charts/kissj
+#  - --version=kissj-app/.git/describe_ref
+#  - --app-version=kissj-app/.git/describe_ref
+  - --destination=helm-chart
+
+  
