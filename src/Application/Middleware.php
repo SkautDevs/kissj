@@ -48,7 +48,7 @@ class Middleware {
 
         // DEBUGGER
         // keep last to execute first
-        if ($_ENV['DEBUG'] !== 'false') {
+        if ($_ENV['DEBUG'] === 'true') {
             $app->add(new WhoopsMiddleware());
         } else {
             $container = $app->getContainer();
