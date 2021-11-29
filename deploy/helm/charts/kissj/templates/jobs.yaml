@@ -13,7 +13,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 
   annotations:
-    helm.sh/hook: post-install
+    helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: hook-succeeded
 spec:
@@ -28,35 +28,35 @@ spec:
       restartPolicy: Never
       containers:
       - name: migrate-database
-      image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
-      imagePullPolicy: Always
-      command: ["composer"]
-      args: ["phinx:migrate"]
-      resources:
-        requests:
-          memory: "64Mi"
-          cpu: "64m"
-        limits:
-          memory: "128Mi"
-          cpu: "128m"
-      env:    
-        - name: DB_TYPE
-          value: postgresql
-        
-        - name: DATABASE_HOST
-          value: {{ .Release.Name }}-pgbouncer
-        
-        - name: POSTGRES_DB
-          value: {{ .Values.postgres.dbname }}
+        image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
+        imagePullPolicy: Always
+        command: ["composer"]
+        args: ["phinx:migrate"]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "64m"
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+        env:    
+          - name: DB_TYPE
+            value: postgresql
 
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-postgres
-              key: username 
-        
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-postgres
-              key: password 
+          - name: DATABASE_HOST
+            value: {{ .Release.Name }}-pgbouncer
+
+          - name: POSTGRES_DB
+            value: {{ .Values.postgres.dbname }}
+
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: username 
+
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgres
+                key: password 
