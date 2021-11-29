@@ -5,6 +5,7 @@ detail:
     countryPoland: "Poland"
     countryHungary: "Hungary"
     unit: "Scout Organization"
+    uploadedFileNote: "PDF with consent can be found at <a target=\"_blank\" href=\"https://cej2022.cz/consent\">our website</a>."
     contingent:
         czechia: "🇨🇿 Český kontingent"
         slovakia: "🇸🇰 Slovenský kontingent"

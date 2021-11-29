@@ -4,7 +4,8 @@
     <div class="card text-left open-theme">
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST"
-              action="{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}">
+              action="{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}"
+              enctype="multipart/form-data">
             {% include 'widgets/changeDetails.twig' with {'personDetails': pDetails} %}
             <div class="text-center">
                 <br/>

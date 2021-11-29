@@ -114,7 +114,7 @@ class Settings
 
             if ($_ENV['DEBUG'] === 'true') {
                 $logger->pushHandler(
-                    new StreamHandler(__DIR__ . '/../../logs/debug.log', Logger::DEBUG)
+                    new StreamHandler(__DIR__ . '/../logs/debug.log', Logger::DEBUG)
                 );
             }
 

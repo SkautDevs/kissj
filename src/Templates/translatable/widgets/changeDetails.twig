@@ -437,17 +437,11 @@
         </select>
     </div>
 {% endif %}{% if ca.uploadFile %}
-    <div class="form-group">
-        <label for="">{% trans %}detail.uploadFile{% endtrans %}:</label>
-        <input
-            class="form-control form-wide"
-            type="file"
-            name="uploadFile"
-        >
-        <span>
-            PDF s potvrzením najdeš na <a href="">našem disku</a>. {% if personDetails.getUploadedFilename %}Soubor už od tebe úspěšně nahraný máme!{% endif %}
-        </span>
-    </div>
+    <label class="form-group form-group-inline">{% trans %}detail.uploadFile{% endtrans %}: <input
+                class="form-control" type="file" name="uploadFile">
+    </label>
+        {% trans %}detail.uploadedFileNote{% endtrans %}
+            {% if personDetails.getUploadedFilename %}{{ detail.uploadedFileSuccessful|trans }}{% endif %}
 {% endif %}{% if ca.notes %}
     <div class="form-group">
         <label for="notes">{% trans %}detail.notice{% endtrans %}:</label>
@@ -457,7 +451,6 @@
             type="text"
             name="notes"
             placeholder="{% trans %}detail.notice-placeholder{% endtrans %}"
-            value="{{ personDetails.getNotes }}"
-        ></textarea>
+        >{{ personDetails.getNotes }}</textarea>
     </div>
 {% endif %}

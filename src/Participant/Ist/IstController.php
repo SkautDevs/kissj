@@ -6,6 +6,7 @@ use kissj\AbstractController;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\UploadedFile;
 
 class IstController extends AbstractController
 {
@@ -42,12 +43,8 @@ class IstController extends AbstractController
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
         $ist = $this->istService->getIst($user);
-        if ($user->event->eventType->getContentArbiterIst()->uploadFile) { // TODO fix
-            $uploadedFile = $this->resolveUploadedFiles($request->getUploadedFiles());
-            if ($uploadedFile === null) {
-                return $this->redirect($request, $response, 'ist-dashboard');
-            }
-
+        $uploadedFile = $this->resolveUploadedFiles($request);
+        if ($uploadedFile instanceof UploadedFile) {
             $this->fileHandler->saveFileTo($ist, $uploadedFile);
         }
 
@@ -74,7 +71,7 @@ class IstController extends AbstractController
         return $this->redirect($request, $response, 'ist-dashboard');
     }
 
-// TODO join into admin
+    // TODO join into admin
     public function closeRegistration(Request $request, Response $response): Response
     {
         $ist = $this->istService->getIst($request->getAttribute('user'));
@@ -90,7 +87,7 @@ class IstController extends AbstractController
         return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
     }
 
-// TODO join into admin
+    // TODO join into admin
     public function approveIst(int $istId, Request $request, Response $response): Response
     {
         /** @var Ist $ist */

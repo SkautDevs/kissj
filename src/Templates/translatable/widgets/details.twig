@@ -65,9 +65,15 @@
 {% endif %}{% if ca.departureDate %}
     {% trans %}detail.departureDate{% endtrans %}: <b>{{ person.getDepartureDate.format('d. m. Y') }}</b><br/>
 {% endif %}{% if ca.uploadFile %}
+    {% trans %}detail.uploadFile{% endtrans %}:
     {% if person.getUploadedFilename %}
-        {% trans %}detail.uploadedFile{% endtrans %}: <b>Soubor úspěšně nahraný!</b><br/>
-    {% endif %}
+        <a target="_blank"
+           href="{{ url_for('admin-show-file', {'filename': person.getUploadedFilename, 'eventSlug': event.slug}) }}">
+            {{ person.getUploadedOriginalFilename }}
+        </a>
+    {% else %}
+        {{ detail.uploadFileMissing|trans }}
+    {% endif %}<br/>
 {% endif %}{% if ca.notes %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}

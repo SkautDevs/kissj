@@ -9,7 +9,6 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\UploadedFileInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Psr7\UploadedFile;
 use Slim\Routing\RouteContext;
@@ -77,13 +76,11 @@ abstract class AbstractController
         return RouteContext::fromRequest($request)->getRouteParser();
     }
 
-    /**
-     * @param UploadedFileInterface[] $uploadedFiles
-     */
-    protected function resolveUploadedFiles(array $uploadedFiles): ?UploadedFile
+    protected function resolveUploadedFiles(Request $request): ?UploadedFile
     {
+        $uploadedFiles = $request->getUploadedFiles();
         if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
-            // problem - too big file -> not safe anything, because always got nulls in request fields
+            // problem - too big file -> not save anything, because always got nulls in request fields
             $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
 
             return null;
@@ -108,7 +105,7 @@ abstract class AbstractController
 
                 return null;
             default:
-                $this->flashMessages->warning($this->translator->trans('flash.warning.general'));
+                $this->flashMessages->warning($this->translator->trans('flash.warning.fileNotUploaded'));
 
                 return null;
         }

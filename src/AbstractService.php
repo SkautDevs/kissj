@@ -15,6 +15,7 @@ class AbstractService
      */
     public function addParamsIntoPerson(array $params, Participant $p): Participant
     {
+        // TODO move into participant service
         $p->contingent = $params['contingent'] ?? null;
         $p->firstName = $params['firstName'] ?? null;
         $p->lastName = $params['lastName'] ?? null;
@@ -63,6 +64,7 @@ class AbstractService
             || ($ca->languages && $p->languages === null)
             || ($ca->swimming && $p->swimming === null)
             || ($ca->idNumber && $p->idNumber === null)
+            || ($ca->uploadFile && $p->uploadedFilename === null)
             || ($ca->tshirt && $p->getTshirtShape() === null)
             || ($ca->tshirt && $p->getTshirtSize() === null)
         ) {

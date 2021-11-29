@@ -5,12 +5,13 @@ namespace kissj\FileHandler;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
-use kissj\Participant\Participant;
 use Slim\Psr7\UploadedFile;
 
 class S3bucketFileHandler extends FileHandler {
-    public function __construct(private S3Client $s3client, private string $s3bucket)
-    {
+    public function __construct(
+        private S3Client $s3client, 
+        private string $s3bucket,
+    ) {
     }
 
     public function getFile(string $filename): File {
@@ -27,9 +28,7 @@ class S3bucketFileHandler extends FileHandler {
         return new File($stream, $contentType['ContentType']);
     }
 
-    public function saveFileTo(Participant $participant, UploadedFile $uploadedFile): Participant {
-        $newFilename = $this->getNewFilename();
-
+    public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile {
         try {
             $this->s3client->putObject([
                 'Bucket' => $this->s3bucket,
@@ -37,14 +36,11 @@ class S3bucketFileHandler extends FileHandler {
                 'Body' => $uploadedFile->getStream(),
                 'ContentType' => $uploadedFile->getClientMediaType(),
             ]);
-        } catch (S3Exception) {
+        } catch (S3Exception $e) {
             // TODO add log
+            throw $e;
         }
 
-        $participant->uploadedFilename = $newFilename;
-        $participant->uploadedOriginalFilename = $uploadedFile->getClientFilename();
-        $participant->uploadedContenttype = $uploadedFile->getClientMediaType();
-
-        return $participant;
+        return $uploadedFile;
     }
 }

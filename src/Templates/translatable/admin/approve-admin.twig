@@ -16,19 +16,7 @@
             {% for ist in closedIsts %}
                 <div class="card closed-theme">
                     <h4>{{ ist.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}{#
-                    {% if caIst.uploadFile %}
-                        {% trans %}approve-admin.uploadedFile{% endtrans %}
-                        {% if ist.getUploadedFilename %}
-                            <a target="_blank"
-                               href="{{ url_for('admin-show-file', {'filename': ist.getUploadedFilename, 'eventSlug': event.slug}) }}">
-                                {{ ist.getUploadedOriginalFilename }}
-                            </a>
-                        {% else %}
-                            <i>{% trans %}approve-admin.noFile{% endtrans %}</i>
-                        {% endif %}<br/>
-                    {% endif %}
-                    TODO move into widget #}
+                    {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>

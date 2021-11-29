@@ -7,6 +7,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\UploadedFile;
 
 class PatrolController extends AbstractController
 {
@@ -47,20 +48,18 @@ class PatrolController extends AbstractController
 
     public function changeDetailsLeader(Request $request, Response $response, User $user): Response
     {
-        $pl = $this->patrolService->getPatrolLeader($user);
+        $patrolLeader = $this->patrolService->getPatrolLeader($user);
 
         if ($user->event->eventType->getContentArbiterPatrolLeader()->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request->getUploadedFiles());
-            if ($uploadedFile === null) {
-                return $this->redirect($request, $response, 'pl-dashboard');
+            $uploadedFile = $this->resolveUploadedFiles($request);
+            if ($uploadedFile instanceof UploadedFile) {
+                $this->fileHandler->saveFileTo($patrolLeader, $uploadedFile);
             }
-
-            $this->patrolService->saveFileTo($pl, $uploadedFile);
         }
 
-        $pl = $this->patrolService->addParamsIntoPatrolLeader($pl, $request->getParsedBody());
+        $patrolLeader = $this->patrolService->addParamsIntoPatrolLeader($patrolLeader, $request->getParsedBody());
 
-        $this->patrolLeaderRepository->persist($pl);
+        $this->patrolLeaderRepository->persist($patrolLeader);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
         return $this->redirect($request, $response, 'pl-dashboard');
@@ -130,14 +129,20 @@ class PatrolController extends AbstractController
         int $participantId,
         Request $request,
         Response $response
-    ): Response
-    {
+    ): Response {
         $patrolParticipant = $this->patrolService->addParamsIntoPatrolParticipant(
             $this->patrolService->getPatrolParticipant($participantId),
             $request->getParsedBody()
         );
 
-        $this->patrolLeaderRepository->persist($patrolParticipant);
+        if ($patrolParticipant->patrolLeader->user->event->getEventType()->getContentArbiterPatrolParticipant()->uploadFile) {
+            $uploadedFile = $this->resolveUploadedFiles($request);
+            if ($uploadedFile instanceof UploadedFile) {
+                $this->fileHandler->saveFileTo($patrolParticipant, $uploadedFile);
+            }
+        }
+
+        $this->patrolParticipantRepository->persist($patrolParticipant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
         return $this->redirect(

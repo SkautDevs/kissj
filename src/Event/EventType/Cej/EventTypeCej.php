@@ -81,6 +81,7 @@ class EventTypeCej extends EventType
         $ca->email = true;
         $ca->swimming = true;
         $ca->unit = true;
+        $ca->uploadFile = true;
 
         return $ca;
     }
