@@ -15,7 +15,8 @@ use kissj\User\User;
 use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolService extends AbstractService {
+class PatrolService extends AbstractService
+{
     public function __construct(
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
@@ -30,7 +31,8 @@ class PatrolService extends AbstractService {
     ) {
     }
 
-    public function getPatrolLeader(User $user): PatrolLeader {
+    public function getPatrolLeader(User $user): PatrolLeader
+    {
         if ($this->patrolLeaderRepository->countBy(['user' => $user]) === 0) {
             $patrolLeader = new PatrolLeader();
             $patrolLeader->user = $user;
@@ -40,14 +42,16 @@ class PatrolService extends AbstractService {
         return $this->patrolLeaderRepository->findOneBy(['user' => $user]);
     }
 
-    public function addParamsIntoPatrolLeader(PatrolLeader $pl, array $params): PatrolLeader {
+    public function addParamsIntoPatrolLeader(PatrolLeader $pl, array $params): PatrolLeader
+    {
         $this->addParamsIntoPerson($params, $pl);
         $pl->patrolName = $params['patrolName'] ?? null;
 
         return $pl;
     }
 
-    public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant {
+    public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant
+    {
         $patrolParticipant = new PatrolParticipant();
         $patrolParticipant->patrolLeader = $patrolLeader;
 
@@ -56,17 +60,20 @@ class PatrolService extends AbstractService {
         return $patrolParticipant;
     }
 
-    public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant {
+    public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant
+    {
         return $this->patrolParticipantRepository->findOneBy(['id' => $patrolParticipantId]);
     }
 
-    public function addParamsIntoPatrolParticipant(PatrolParticipant $participant, array $params): PatrolParticipant {
+    public function addParamsIntoPatrolParticipant(PatrolParticipant $participant, array $params): PatrolParticipant
+    {
         $this->addParamsIntoPerson($params, $participant);
 
         return $participant;
     }
 
-    public function deletePatrolParticipant(PatrolParticipant $patrolParticipant) {
+    public function deletePatrolParticipant(PatrolParticipant $patrolParticipant)
+    {
         $this->patrolParticipantRepository->delete($patrolParticipant);
     }
 
@@ -77,21 +84,22 @@ class PatrolService extends AbstractService {
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
     }
 
-    public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool {
+    public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool
+    {
         $validityFlag = true;
 
         $event = $patrolLeader->user->event;
-        if ($event->maximalClosedPatrolsCount <= $this->userService->getClosedPatrolsCount($event)) {
+        if (
+            $this->userService->getClosedPatrolsCount($event)
+            >= $event->getEventType()->getMaximumClosedParticipants($patrolLeader)
+        ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));
 
             $validityFlag = false;
         }
 
-        $localMaxNumber = $event->getEventType()->getMaximumClosedParticipants($patrolLeader);
-
-        if ($localMaxNumber <= $this->userService->getClosedPatrolsCount($event)) {
-            $this->flashMessages->warning('Cannot lock the registration - for Patrols from your country 
-                we have full registration now. Please wait for limit rise');
+        if (!$event->getEventType()->isLockRegistrationAllowed()) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
 
             $validityFlag = false;
         }
@@ -142,7 +150,8 @@ class PatrolService extends AbstractService {
         return $validityFlag;
     }
 
-    private function isPatrolLeaderValidForClose(PatrolLeader $pl): bool {
+    private function isPatrolLeaderValidForClose(PatrolLeader $pl): bool
+    {
         if ($this->contentArbiterPatrolLeader->patrolName && $pl->patrolName === null) {
             return false;
         }
@@ -150,11 +159,13 @@ class PatrolService extends AbstractService {
         return $this->isPersonValidForClose($pl, $this->contentArbiterPatrolLeader);
     }
 
-    private function isPatrolParticipantValidForClose(PatrolParticipant $p): bool {
+    private function isPatrolParticipantValidForClose(PatrolParticipant $p): bool
+    {
         return $this->isPersonValidForClose($p, $this->contentArbiterPatrolParticipant);
     }
 
-    public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader {
+    public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader
+    {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $this->userService->closeRegistration($patrolLeader->user);
             $this->mailer->sendRegistrationClosed($patrolLeader->user);
@@ -163,7 +174,8 @@ class PatrolService extends AbstractService {
         return $patrolLeader;
     }
 
-    public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader {
+    public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader
+    {
         $payment = $this->paymentService->createAndPersistNewPayment($patrolLeader);
 
         $this->mailer->sendRegistrationApprovedWithPayment($patrolLeader, $payment);
@@ -172,7 +184,8 @@ class PatrolService extends AbstractService {
         return $patrolLeader;
     }
 
-    public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject {
+    public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject
+    {
         $patrolLeaders = $this->adminService->filterContingentAdminParticipants(
             $admin,
             $this->patrolLeaderRepository->findAllWithEvent($event)

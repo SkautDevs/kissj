@@ -47,6 +47,7 @@ class AbstractService
         return $p;
     }
 
+    // TODO move into ParticipantService
     public function isPersonValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
         if (

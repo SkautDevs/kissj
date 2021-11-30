@@ -71,8 +71,17 @@ class IstService extends AbstractService
         }
 
         $event = $ist->user->event;
-        if ($this->userService->getClosedIstsCount($event) >= $event->maximalClosedIstsCount) {
+        if (
+            $this->userService->getClosedIstsCount($event) 
+            >= $event->getEventType()->getMaximumClosedParticipants($ist)
+        ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.istFullRegistration'));
+
+            $validityFlag = false;
+        }
+        
+        if (!$event->getEventType()->isLockRegistrationAllowed()) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
 
             $validityFlag = false;
         }

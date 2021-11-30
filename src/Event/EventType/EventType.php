@@ -27,10 +27,12 @@ abstract class EventType
 
     public function getMaximumClosedParticipants(Participant $participant): int
     {
+        $event = $participant->user->event;
+
         return match (get_class($participant)) {
-            PatrolLeader::class => $participant->user->event->maximalClosedPatrolsCount,
-            Ist::class => $participant->user->event->maximalClosedIstsCount,
-            Guest::class => $participant->user->event->maximalClosedGuestsCount,
+            PatrolLeader::class => $event->maximalClosedPatrolsCount,
+            Ist::class => $event->maximalClosedIstsCount,
+            Guest::class => $event->maximalClosedGuestsCount,
             default => throw new \RuntimeException('Unexpected participent class: ' . get_class($participant)),
         };
     }
@@ -112,5 +114,10 @@ abstract class EventType
     public function getContingents(): array
     {
         return [];
+    }
+
+    public function isLockRegistrationAllowed(): bool
+    {
+        return true;
     }
 }

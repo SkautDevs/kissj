@@ -369,6 +369,7 @@ flash:
         fileTooBig: "Nahraný súbor je príliš veľký, prosím, skús nahrať menší."
         fileGeneral: "S nahraným súborom je niečo v neporiadku, prosím, skús to znovu."
         fileNotUploaded: "Soubor nebyl nahrán."
+        registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Počkej na správný čas prosím."
         nullParticipants: "Jedného alebo viacerých účastníkov sa nepodarilo nájsť v systéme"
         differentParticipants: "Participants have different roles"
         notPaid: "Predávajúci nedokončil svoju platbu."

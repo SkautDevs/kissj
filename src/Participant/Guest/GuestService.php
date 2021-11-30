@@ -62,8 +62,17 @@ class GuestService extends AbstractService
         }
 
         $event = $guest->user->event;
-        if ($this->userService->getClosedIstsCount($event) >= $event->maximalClosedGuestsCount) {
+        if (
+            $this->userService->getClosedIstsCount($event)
+            >= $event->getEventType()->getMaximumClosedParticipants($guest)
+        ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.guestFullRegistration'));
+
+            $validityFlag = false;
+        }
+
+        if (!$event->getEventType()->isLockRegistrationAllowed()) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
 
             $validityFlag = false;
         }
