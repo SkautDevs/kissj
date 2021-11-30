@@ -43,9 +43,12 @@ class IstController extends AbstractController
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
         $ist = $this->istService->getIst($user);
-        $uploadedFile = $this->resolveUploadedFiles($request);
-        if ($uploadedFile instanceof UploadedFile) {
-            $this->fileHandler->saveFileTo($ist, $uploadedFile);
+
+        if ($ist->user->event->getEventType()->getContentArbiterIst()->uploadFile) {
+            $uploadedFile = $this->resolveUploadedFiles($request);
+            if ($uploadedFile instanceof UploadedFile) {
+                $this->fileHandler->saveFileTo($ist, $uploadedFile);
+            }
         }
 
         $ist = $this->istService->addParamsIntoIst($ist, $request->getParsedBody());
