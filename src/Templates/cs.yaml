@@ -137,6 +137,7 @@ _layout:
     approvedBar: "Schváleno"
     payedBar: "Zaplaceno! (:"
     creator: "se ♥ na dlani vytvořil Lung"
+    analytics: "Využíváme Plausible Analytics, abychom získali základní informace o využití KISSJ. Plausible Analytics jsou zaměřené na soukromí uživatelů, jsou plně GDPR kompatibilní a nevyužívají cookies."
 404:
     pardon: "Ups! Tady nic není... možná špatný odkaz?"
     button: "Zpátky na začátek!"
