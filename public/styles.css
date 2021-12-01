@@ -383,3 +383,15 @@ tr:nth-child(even) {
 	color: var(--color);
 	vertical-align: middle;
 }
+
+.text-small {
+	font-size: .8rem;
+}
+
+.text-muted {
+	color: #333;
+}
+
+.m-0 {
+	margin: 0;
+}
