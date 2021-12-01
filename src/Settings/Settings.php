@@ -178,7 +178,7 @@ class Settings
 
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
-            $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG']);
+            $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG'] === "true");
             /*
             // TODO move into middleware
             if ($settings['useTestingSite']) {
