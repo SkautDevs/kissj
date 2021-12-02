@@ -140,7 +140,7 @@
             class="form-control form-wide"
             type="email"
             name="email"
-            value="{% if personDetails.getEmail is empty %}{{ user.email }}{% else %}{{ personDetails.getEmail }}{% endif %}"
+            value="{% if personDetails.getEmail is empty and personDetails.role != 'pp' %}{{ user.email }}{% else %}{{ personDetails.getEmail }}{% endif %}"
             required="required"
         >
     </div>
