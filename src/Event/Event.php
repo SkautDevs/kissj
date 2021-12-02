@@ -24,6 +24,7 @@ use kissj\Orm\EntityDatetime;
  * @property string            $contactEmail
  * @property EventType         $eventType m:useMethods(getEventType|)
  * @property string            $logoUrl
+ * @property bool              $testingSite
  *
  * @property string            $accountNumber with bank code after slash
  * @property int               $prefixVariableSymbol // TODO add null

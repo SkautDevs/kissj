@@ -377,6 +377,7 @@ flash:
         isPaid: "Buyer has completed payment"
         wrongEvent: "You are not registered on this event yet - register yourself please"
         nonexistentEvent: "This event do not exist. Bad link maybe?"
+        testingSite: "This site is for testing purposes only - do not enter any real personal or sensitive data!"
     error:
         adminOnly: "Sorry bro, admins only"
         istOnly: "Sorry, you are not logged as IST"

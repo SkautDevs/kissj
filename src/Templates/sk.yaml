@@ -377,6 +377,7 @@ flash:
         isPaid: "Kupujúci dokončil svoju platbu."
         wrongEvent: "Na tuto akci ještě nejsi registrovaný - registruj se, prosím"
         nonexistentEvent: "Tato akce nejspíš neexistuje. Asi špatný odkaz?"
+        testingSite: "Tato stránka je určena pouze pro testovací účely - nezadávej žádné reálné osobní či citlivé údaje!"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         istOnly: "Prepáč, ale nie si prihlásený/á ako servisný tím"

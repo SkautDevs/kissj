@@ -55,6 +55,7 @@ class Middleware {
         if ($_ENV['DEBUG'] === 'true') {
             $app->add(new WhoopsMiddleware());
         } else {
+            // TODO move into middleware
             $container = $app->getContainer();
 
             $simplyErrorHandler = function (Throwable $exception, Inspector $inspector, $run) use ($container) {

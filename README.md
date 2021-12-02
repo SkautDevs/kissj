@@ -24,6 +24,12 @@ kissj is scouts **registration system for national and international Scout Jambo
 - accountancy software
 - bloatware
 
+# Useful links
+
+ - main page: https://kissj.net/
+ - monitoring: https://plausible.io/kissj.net
+ - sentry: https://sentry.mareshq.com/organizations/skautdevs/
+
 ## Local setup with PostgreSQL
 
 ### Prerequisites

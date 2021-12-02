@@ -205,7 +205,6 @@ class Settings
     private function validateAllSettings(Dotenv $dotenv): void
     {
         $dotenv->required('DEBUG')->notEmpty()->isBoolean();
-        $dotenv->required('TESTING_SITE')->notEmpty()->isBoolean();
         $dotenv->required('TEMPLATE_CACHE')->notEmpty()->isBoolean();
         $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
