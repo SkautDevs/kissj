@@ -39,6 +39,7 @@ class ErrorHandlerGetter
 
             $this->logger->error('Exception! ' . $title . '(' . $code . ') -> ' . $message);
 
+            http_response_code(500);
             require __DIR__ . '/Templates/exception.php';
             die;
 
