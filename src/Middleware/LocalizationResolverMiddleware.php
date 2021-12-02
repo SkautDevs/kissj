@@ -5,7 +5,9 @@ namespace kissj\Middleware;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
+use kissj\Event\Event;
 use Negotiation\AcceptLanguage;
+use Negotiation\LanguageNegotiator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -16,13 +18,9 @@ class LocalizationResolverMiddleware extends BaseMiddleware
 {
     private const LOCALE_COOKIE_NAME = 'locale';
 
-    /**
-     * @param string[] $availableLanguages
-     */
     public function __construct(
         private Twig $view,
         private Translator $translator,
-        private array $availableLanguages,
         private string $defaultLocale,
     ) {
     }
@@ -33,7 +31,14 @@ class LocalizationResolverMiddleware extends BaseMiddleware
             $bestNegotiatedLanguage = htmlspecialchars($request->getQueryParams()[self::LOCALE_COOKIE_NAME],
                 ENT_QUOTES);
         } else {
-            $bestNegotiatedLanguage = $this->getBestLanguage($request);
+            $event = $this->getEvent($request);
+            if ($event instanceof Event) {
+                $availableLanguages = array_keys($event->getEventType()->getLanguages());
+            } else {
+                $availableLanguages = [];
+            }
+
+            $bestNegotiatedLanguage = $this->getBestLanguage($request, $availableLanguages);
         }
 
         $this->translator->setLocale($bestNegotiatedLanguage);
@@ -52,21 +57,25 @@ class LocalizationResolverMiddleware extends BaseMiddleware
         return $response;
     }
 
-    private function getBestLanguage(Request $request): string
+    /**
+     * @param Request  $request
+     * @param string[] $availableLanguages
+     * @return string
+     */
+    private function getBestLanguage(Request $request, array $availableLanguages): string
     {
         $localeCookie = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME);
         if ($localeCookie->getValue() !== null) {
             return $localeCookie->getValue();
         }
 
-        $negotiator = new \Negotiation\LanguageNegotiator();
+        $negotiator = new LanguageNegotiator();
         $header = $request->getHeaderLine('Accept-Language');
         if ($header === '') {
             return $this->defaultLocale;
         }
-
-        /** @var AcceptLanguage $negotiatedLanguage */
-        $negotiatedLanguage = $negotiator->getBest($header, $this->availableLanguages);
+        /** @var ?AcceptLanguage $negotiatedLanguage */
+        $negotiatedLanguage = $negotiator->getBest($header, $availableLanguages);
 
         return $negotiatedLanguage ? $negotiatedLanguage->getValue() : $this->defaultLocale;
     }

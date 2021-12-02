@@ -89,7 +89,6 @@ class Settings
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
         $container[LocalizationResolverMiddleware::class] = autowire()
-            ->constructorParameter('availableLanguages', self::LOCALES_AVAILABLE)
             ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
         $container[Logger::class] = function (): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);

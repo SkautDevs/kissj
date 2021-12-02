@@ -2,7 +2,6 @@
 
 namespace kissj\Middleware;
 
-use kissj\Middleware\BaseMiddleware;
 use kissj\Settings\Sentry\EventContextProcessor;
 use kissj\Settings\Sentry\UserContextProcessor;
 use Monolog\Logger;
@@ -11,21 +10,18 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 
 class MonologAdditionalContextMiddleware extends BaseMiddleware {
-
     public function __construct(
         private Logger $logger,
     ) {}
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $user = $request->getAttribute('user');
         $this->logger->pushProcessor(
-            new UserContextProcessor($user)
+            new UserContextProcessor($this->getUser($request))
         );
 
-        $event = $request->getAttribute('event');
         $this->logger->pushProcessor(
-            new EventContextProcessor($event),
+            new EventContextProcessor($this->getEvent($request)),
         );
 
         return $handler->handle($request);
