@@ -105,11 +105,12 @@ class Settings
             ])->getClient();
 
             $sentryHandler = new SentryHandler(
-                new SentryHub($sentryClient)
+                new SentryHub($sentryClient),
+                Logger::WARNING
             );
 
             // Log only warnings or higher severity events/errors to Sentry
-            $logger->pushHandler($sentryHandler, Logger::WARNING);
+            $logger->pushHandler($sentryHandler);
 
             if ($_ENV['DEBUG'] === 'true') {
                 $logger->pushHandler(
