@@ -4,19 +4,19 @@ namespace kissj\FlashMessages;
 
 
 class FlashMessagesBySession implements FlashMessagesInterface {
-    public function info($message): void {
+    public function info(string $message): void {
         $_SESSION['flashMessages'][] = ['type' => 'info', 'message' => $message];
     }
 
-    public function success($message): void {
+    public function success(string $message): void {
         $_SESSION['flashMessages'][] = ['type' => 'success', 'message' => $message];
     }
 
-    public function warning($message): void {
+    public function warning(string $message): void {
         $_SESSION['flashMessages'][] = ['type' => 'warning', 'message' => $message];
     }
 
-    public function error($message): void {
+    public function error(string $message): void {
         $_SESSION['flashMessages'][] = ['type' => 'error', 'message' => $message];
     }
 
