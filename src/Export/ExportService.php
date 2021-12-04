@@ -110,36 +110,37 @@ class ExportService
 
         $rows[] = [
             'id', // 0
+            'eventName',
             'role',
             'status',
             'contingent',
-            'firstName',
-            'lastName', // 5
+            'firstName', // 5
+            'lastName',
             'nickname',
             'permanentResidence',
             'telephoneNumber',
-            'gender',
-            'country', // 10
+            'gender', // 10
+            'country',
             'email_user',
             'email_custom',
             'scoutUnit',
-            'languages',
-            'birthDate', // 15
+            'languages', // 15
+            'birthDate',
             'birthPlace',
             'healthProblems',
             'foodPreferences',
-            'idNumber',
-            'swimming', // 20
+            'idNumber', // 20
+            'swimming',
             'tshirt',
             'arrivalDate',
             'departureDate',
-            'uploadedOriginalFilename',
-            'notes', // 25
+            'uploadedOriginalFilename', // 25
+            'notes',
             'patrolLeaderId_patrolParticipantId',
             'patrolName',
             'istSkills',
-            'istPreferredPosition',
-            'driverLicense', // 30
+            'istPreferredPosition', // 30
+            'driverLicense',
         ];
 
         foreach ($participants as $participant) {
@@ -177,32 +178,33 @@ class ExportService
             $rows[] = array_merge(
                 [
                     (string)$participant->id, // 0
+                    $participant->user?->event->readableName,
                     $participant->role,
                     $participant->user?->status,
                     $this->translator->trans($participant->contingent ?? ''),
-                    $participant->firstName,
-                    $participant->lastName, // 5
+                    $participant->firstName, // 5
+                    $participant->lastName,
                     $participant->nickname,
                     $participant->permanentResidence,
                     $participant->telephoneNumber,
-                    $participant->gender,
-                    $participant->country, // 10
+                    $participant->gender, // 10
+                    $participant->country,
                     $participant->user?->email,
                     $participant->email,
                     $participant->scoutUnit,
-                    $participant->languages,
-                    $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '', // 15
+                    $participant->languages, // 15
+                    $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
                     $participant->birthPlace,
                     $participant->healthProblems,
                     $this->translator->trans($participant->foodPreferences ?? ''),
-                    $participant->idNumber,
-                    $participant->swimming, // 20
+                    $participant->idNumber, // 20
+                    $this->translator->trans($participant->swimming ?? ''),
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                     . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
                     $participant->arrivalDate,
                     $participant->departureDate,
-                    $participant->uploadedOriginalFilename,
-                    $participant->notes, // 25
+                    $participant->uploadedOriginalFilename, // 25
+                    $participant->notes,
                 ],
                 $pPart,
                 $istPart
