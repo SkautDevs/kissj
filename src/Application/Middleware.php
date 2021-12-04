@@ -6,7 +6,9 @@ namespace kissj\Application;
 use kissj\ErrorHandlerGetter;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
-use kissj\Middleware\MonologAdditionalContextMiddleware;
+use kissj\Middleware\MonologContextMiddleware;
+use kissj\Middleware\SentryContextMiddleware;
+use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use Middlewares\TrailingSlash;
 use Selective\BasePath\BasePathMiddleware;
@@ -30,14 +32,20 @@ class Middleware
         // TODO CSRF PROTECTION
         // https://github.com/slimphp/Slim-Csrf
 
-        // Monolog *ContextProcessor hydration
-        $app->add(MonologAdditionalContextMiddleware::class);
+        // Monolog additional context
+        $app->add(MonologContextMiddleware::class);
+
+        // Sentry additional context
+        $app->add(SentryContextMiddleware::class);
 
         // USER AUTHENTICATION
         $app->add(UserAuthenticationMiddleware::class);
 
         // EVENT INFO
         $app->add(EventInfoMiddleware::class);
+
+        // Sentry HTTP request context
+        $app->add(SentryHttpContextMiddleware::class);
 
         // ROUTING
         $app->addRoutingMiddleware();

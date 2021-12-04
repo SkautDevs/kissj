@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace kissj\Settings\Sentry;
+namespace kissj\Logging\Monolog;
 
 use kissj\User\User;
 use Monolog\Processor\ProcessorInterface;

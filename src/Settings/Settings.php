@@ -16,7 +16,9 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\MailerSettings;
 use kissj\Middleware\LocalizationResolverMiddleware;
-use kissj\Middleware\MonologAdditionalContextMiddleware;
+use kissj\Middleware\MonologContextMiddleware;
+use kissj\Middleware\SentryContextMiddleware;
+use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
 use kissj\User\UserRegeneration;
@@ -30,7 +32,9 @@ use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
+use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
+use Sentry\Event as SentryEvent;
 use Sentry\Monolog\Handler as SentryHandler;
 use Sentry\State\Hub as SentryHub;
 use Slim\Views\Twig;
@@ -90,7 +94,26 @@ class Settings
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
         $container[LocalizationResolverMiddleware::class] = autowire()
             ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
-        $container[Logger::class] = function (): LoggerInterface {
+
+        $container[SentryClient::class] = function (): SentryClient {
+            return ClientBuilder::create([
+                'dsn' => $_ENV['SENTRY_DSN'],
+                'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
+                'before_send' => function(SentryEvent $event): ?SentryEvent {
+                    // Check if error is from middleware exception capturer
+                    // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
+                    if (str_contains($event->getMessage(), 'Exception!') AND $event->getLogger() === "monolog.KISSJ") {
+                        return null;
+                    }
+
+                    return $event;
+                }
+            ])->getClient();
+        };
+
+        $container[SentryHub::class] = fn (SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
+
+        $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
             $logger->pushProcessor(new GitProcessor());
@@ -99,13 +122,8 @@ class Settings
                 new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL'])
             );
 
-            $sentryClient = ClientBuilder::create([
-                'dsn' => $_ENV['SENTRY_DSN'],
-                'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
-            ])->getClient();
-
             $sentryHandler = new SentryHandler(
-                new SentryHub($sentryClient),
+                $sentryHub,
                 Logger::WARNING
             );
 
@@ -193,11 +211,18 @@ class Settings
             return $view;
         };
 
-        $container[MonologAdditionalContextMiddleware::class]
-            = fn(Logger $logger) => new MonologAdditionalContextMiddleware($logger);
 
         $container[UserAuthenticationMiddleware::class]
             = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
+
+        $container[SentryHttpContextMiddleware::class]
+            = fn(SentryHub $sentryHub): SentryHttpContextMiddleware => new SentryHttpContextMiddleware($sentryHub);
+
+        $container[SentryContextMiddleware::class]
+            = fn(SentryHub $sentryHub): SentryContextMiddleware => new SentryContextMiddleware($sentryHub);
+
+        $container[MonologContextMiddleware::class]
+            = fn(Logger $logger): MonologContextMiddleware => new MonologContextMiddleware($logger);
 
         return $container;
     }
