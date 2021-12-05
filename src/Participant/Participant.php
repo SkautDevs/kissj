@@ -4,6 +4,7 @@ namespace kissj\Participant;
 
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
 use kissj\User\User;
 
@@ -12,7 +13,7 @@ use kissj\User\User;
  * All commons are here, entitis are seaprated of course (:
  *
  * @property int                    $id
- * @property User|null              $user m:hasOne TODO check and get rid of null
+ * @property User|null              $user m:hasOne
  * @property string|null            $role needed for DB working (see Mapper.php)
  * @property string|null            $contingent
  * @property string|null            $firstName
@@ -59,6 +60,24 @@ class Participant extends EntityDatetime
         // Cannot write to read-only property 'user' in entity kissj\Participant\Participant.
         $this->row->user_id = $user->id;
         $this->row->cleanReferencedRowsCache('user', 'user_id');
+    }
+
+    public function getUserButNotNull(): User
+    {
+        if ($this instanceof PatrolParticipant) {
+            $patrolLeaderUser = $this->patrolLeader->user;
+            if ($patrolLeaderUser === null) {
+                throw new \Exception('Missing user for patrol leader ID ' . $this->patrolLeader->id);
+            }
+
+            return $patrolLeaderUser;
+        }
+
+        if ($this->user === null) {
+            throw new \Exception('Missing user for participant ID ' . $this->id);
+        }
+
+        return $this->user;
     }
 
     public function getTshirt(): ?string

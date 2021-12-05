@@ -22,29 +22,65 @@ class ParticipantService
     }
 
     /**
+     * TODO optimalize
+     *
+     * @param string[] $roles
+     * @param string[] $statuses
+     * @param Event    $event
+     * @param User     $adminUser
      * @return Participant[]
      */
-    public function getAllParticipantsWithStatus(string $role, string $status, Event $event): array
-    {
-        if (!in_array($role, User::ROLES, true)) {
-            throw new \RuntimeException('Unknown role: ' . $role);
-        }
-
-        if (!in_array($status, User::STATUSES, true)) {
-            throw new \RuntimeException('Unknown status: ' . $status);
-        }
-
+    public function getAllParticipantsWithStatus(
+        array $roles,
+        array $statuses,
+        Event $event,
+        User $adminUser,
+    ): array {
         /** @var Participant[] $participants */
-        $participants = $this->participantRepository->findBy(['role' => $role]);
+        $participants = $this->participantRepository->findAll();
+        $participants = $this->filterContingentAdminParticipants($participants, $adminUser);
 
         $validParticipants = [];
         foreach ($participants as $participant) {
-            if ($participant->user->status === $status && $participant->user->event->id === $event->id) {
-                $validParticipants[] = $participant;
+            $user = $participant->getUserButNotNull();
+            if (
+                $user->event->id === $event->id
+                && in_array($user->role, $roles, true)
+                && in_array($user->status, $statuses, true)
+            ) {
+                $validParticipants[$participant->id] = $participant;
             }
         }
 
         return $validParticipants;
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @param User          $adminUser
+     * @return Participant[]
+     */
+    public function filterContingentAdminParticipants(array $participants, User $adminUser): array
+    {
+        return match ($adminUser->role) {
+            User::ROLE_ADMIN => $participants,
+            User::ROLE_CONTINGENT_ADMIN_CS => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.czechia';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_SK => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.slovakia';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_PL => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.poland';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.hungary';
+            }),
+            User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === 'detail.contingent.european';
+            }),
+            default => [],
+        };
     }
 
     // TODO move into payment service, same as comfirmPayment

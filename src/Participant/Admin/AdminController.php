@@ -55,25 +55,23 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         return $this->view->render($response, 'admin/approve-admin.twig', [
-            'closedPatrolLeaders' => $this->adminService->filterContingentAdminParticipants(
+            'closedPatrolLeaders' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_CLOSED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_CLOSED, $event),
             ),
-            'closedIsts' => $this->adminService->filterContingentAdminParticipants(
+            'closedIsts' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_IST],
+                [USER::STATUS_CLOSED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_CLOSED, $event),
             ),
-            'closedFreeParticipants' => $this->adminService->filterContingentAdminParticipants(
+            'closedGuests' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_GUEST],
+                [USER::STATUS_CLOSED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_CLOSED, $event),
-            ),
-            'closedGuests' => $this->adminService->filterContingentAdminParticipants(
-                $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_CLOSED, $event),
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
@@ -109,25 +107,23 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         return $this->view->render($response, 'admin/payments-admin.twig', [
-            'approvedPatrolLeaders' => $this->adminService->filterContingentAdminParticipants(
+            'approvedPatrolLeaders' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_APPROVED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_PATROL_LEADER, USER::STATUS_APPROVED, $event)
             ),
-            'approvedIsts' => $this->adminService->filterContingentAdminParticipants(
+            'approvedIsts' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_IST],
+                [USER::STATUS_APPROVED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_IST, USER::STATUS_APPROVED, $event)
             ),
-            'approvedFreeParticipants' => $this->adminService->filterContingentAdminParticipants(
+            'approvedGuests' => $this->participantService->getAllParticipantsWithStatus(
+                [User::ROLE_GUEST],
+                [USER::STATUS_APPROVED],
+                $event,
                 $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_FREE_PARTICIPANT, USER::STATUS_APPROVED, $event)
-            ),
-            'approvedGuests' => $this->adminService->filterContingentAdminParticipants(
-                $user,
-                $this->participantService
-                    ->getAllParticipantsWithStatus(User::ROLE_GUEST, USER::STATUS_APPROVED, $event)
             ),
         ]);
     }

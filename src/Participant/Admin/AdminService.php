@@ -27,34 +27,6 @@ class AdminService
     ) {
     }
 
-    /**
-     * @param User          $adminUser
-     * @param Participant[] $participants
-     * @return Participant[]
-     */
-    public function filterContingentAdminParticipants(User $adminUser, array $participants): array
-    {
-        return match ($adminUser->role) {
-            User::ROLE_ADMIN => $participants,
-            User::ROLE_CONTINGENT_ADMIN_CS => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.czechia';
-            }),
-            User::ROLE_CONTINGENT_ADMIN_SK => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.slovakia';
-            }),
-            User::ROLE_CONTINGENT_ADMIN_PL => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.poland';
-            }),
-            User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.hungary';
-            }),
-            User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.european';
-            }),
-            default => [],
-        };
-    }
-
     public function isPaymentTransferPossible(
         ?Participant $participantFrom,
         ?Participant $participantTo,

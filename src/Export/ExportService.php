@@ -3,9 +3,8 @@
 namespace kissj\Export;
 
 use kissj\Event\Event;
-use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Ist\Ist;
-use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\User\User;
@@ -14,8 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExportService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
-        private AdminService $adminService,
+        private ParticipantService $participantService,
         private TranslatorInterface $translator,
     ) {
     }
@@ -27,8 +25,12 @@ class ExportService
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantRepository->getAllPaidParticipantsFromEvent($event);
-        $participants = $this->adminService->filterContingentAdminParticipants($adminUser, $participants);
+        $participants = $this->participantService->getAllParticipantsWithStatus(
+            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [User::STATUS_PAID],
+            $event,
+            $adminUser,
+        );
 
         $rows = [];
         $rows[] = [
@@ -67,8 +69,12 @@ class ExportService
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantRepository->getAllPaidParticipantsFromEvent($event);
-        $participants = $this->adminService->filterContingentAdminParticipants($adminUser, $participants);
+        $participants = $this->participantService->getAllParticipantsWithStatus(
+            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [User::STATUS_PAID],
+            $event,
+            $adminUser,
+        );
 
         $rows = [];
         $rows[] = [
@@ -105,8 +111,12 @@ class ExportService
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantRepository->getAllNonOpenParticipantsFromEvent($event);
-        $participants = $this->adminService->filterContingentAdminParticipants($adminUser, $participants);
+        $participants = $this->participantService->getAllParticipantsWithStatus(
+            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [User::STATUS_CLOSED, User::STATUS_APPROVED, User::STATUS_PAID],
+            $event,
+            $adminUser,
+        );
 
         $rows[] = [
             'id', // 0
@@ -164,7 +174,7 @@ class ExportService
             if ($participant instanceof Ist) {
                 $istPart = [
                     $participant->skills,
-                    implode(' | ', $participant->preferredPosition),
+                    implode(' | ', $participant->preferredPosition ?? ''),
                     $participant->driversLicense,
                 ];
             } else {
@@ -201,8 +211,8 @@ class ExportService
                     $this->translator->trans($participant->swimming ?? ''),
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                     . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
-                    $participant->arrivalDate,
-                    $participant->departureDate,
+                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
+                    $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename, // 25
                     $participant->notes,
                 ],
