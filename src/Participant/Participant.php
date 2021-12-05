@@ -14,7 +14,7 @@ use kissj\User\User;
  *
  * @property int                    $id
  * @property User|null              $user m:hasOne
- * @property string|null            $role needed for DB working (see Mapper.php)
+ * @property string|null            $role needed for DB working (see Mapper.php) // TODO make definite list of participant roles
  * @property string|null            $contingent
  * @property string|null            $firstName
  * @property string|null            $lastName

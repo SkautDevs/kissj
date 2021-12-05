@@ -6,8 +6,8 @@ use kissj\AbstractService;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\StatisticValueObject;
+use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,7 +16,7 @@ class GuestService extends AbstractService
 {
     public function __construct(
         private GuestRepository $guestRepository,
-        private AdminService $adminService,
+        private ParticipantRepository $participantRepository,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
@@ -92,12 +92,14 @@ class GuestService extends AbstractService
 
     public function getAllGuestsStatistics(Event $event, User $admin): StatisticValueObject
     {
-        $ists = $this->adminService->filterContingentAdminParticipants(
+        $guests = $this->participantRepository->getAllParticipantsWithStatus(
+            [User::ROLE_GUEST],
+            User::STATUSES,
+            $event,
             $admin,
-            $this->guestRepository->findAllWithEvent($event)
         );
 
-        return new StatisticValueObject($ists);
+        return new StatisticValueObject($guests);
     }
 
     public function finishRegistration(Guest $guest): Guest

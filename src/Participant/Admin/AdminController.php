@@ -55,19 +55,19 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         return $this->view->render($response, 'admin/approve-admin.twig', [
-            'closedPatrolLeaders' => $this->participantService->getAllParticipantsWithStatus(
+            'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
             ),
-            'closedIsts' => $this->participantService->getAllParticipantsWithStatus(
+            'closedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
             ),
-            'closedGuests' => $this->participantService->getAllParticipantsWithStatus(
+            'closedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
                 [USER::STATUS_CLOSED],
                 $event,
@@ -107,19 +107,19 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         return $this->view->render($response, 'admin/payments-admin.twig', [
-            'approvedPatrolLeaders' => $this->participantService->getAllParticipantsWithStatus(
+            'approvedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
                 [USER::STATUS_APPROVED],
                 $event,
                 $user,
             ),
-            'approvedIsts' => $this->participantService->getAllParticipantsWithStatus(
+            'approvedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
                 [USER::STATUS_APPROVED],
                 $event,
                 $user,
             ),
-            'approvedGuests' => $this->participantService->getAllParticipantsWithStatus(
+            'approvedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
                 [USER::STATUS_APPROVED],
                 $event,

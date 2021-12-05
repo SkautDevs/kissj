@@ -4,7 +4,7 @@ namespace kissj\Export;
 
 use kissj\Event\Event;
 use kissj\Participant\Ist\Ist;
-use kissj\Participant\ParticipantService;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\User\User;
@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExportService
 {
     public function __construct(
-        private ParticipantService $participantService,
+        private ParticipantRepository $participantRepository,
         private TranslatorInterface $translator,
     ) {
     }
@@ -25,7 +25,7 @@ class ExportService
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantService->getAllParticipantsWithStatus(
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
             [User::STATUS_PAID],
             $event,
@@ -69,7 +69,7 @@ class ExportService
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantService->getAllParticipantsWithStatus(
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
             [User::STATUS_PAID],
             $event,
@@ -111,7 +111,7 @@ class ExportService
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
-        $participants = $this->participantService->getAllParticipantsWithStatus(
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
             [User::STATUS_CLOSED, User::STATUS_APPROVED, User::STATUS_PAID],
             $event,
@@ -199,7 +199,7 @@ class ExportService
                     $participant->telephoneNumber,
                     $participant->gender, // 10
                     $participant->country,
-                    $participant->user?->email,
+                    $participant->getUserButNotNull()->email,
                     $participant->email,
                     $participant->scoutUnit,
                     $participant->languages, // 15
