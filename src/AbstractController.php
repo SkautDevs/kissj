@@ -105,8 +105,6 @@ abstract class AbstractController
 
                 return null;
             default:
-                $this->flashMessages->warning($this->translator->trans('flash.warning.fileNotUploaded'));
-
                 return null;
         }
     }

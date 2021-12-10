@@ -438,10 +438,13 @@
     </div>
 {% endif %}{% if ca.uploadFile %}
     <label class="form-group form-group-inline">{% trans %}detail.uploadFile{% endtrans %}: <input
-                class="form-control" type="file" name="uploadFile">
+                class="form-control" type="file" name="uploadFile"
+                {% if not personDetails.getUploadedFilename %} required="required"{% endif %}>
     </label>
-        {% trans %}detail.uploadedFileNote{% endtrans %}
-            {% if personDetails.getUploadedFilename %}{{ detail.uploadedFileSuccessful|trans }}{% endif %}
+        {% if personDetails.getUploadedOriginalFilename %}
+            <b>{{ personDetails.getUploadedOriginalFilename }} {% trans%}detail.uploadedFileSuccessful{% endtrans %}</b>
+        {% endif %}
+    {% trans %}detail.uploadedFileNote{% endtrans %}
 {% endif %}{% if ca.notes %}
     <div class="form-group">
         <label for="notes">{% trans %}detail.notice{% endtrans %}:</label>
