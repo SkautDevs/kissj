@@ -115,9 +115,4 @@ abstract class EventType
     {
         return [];
     }
-
-    public function isLockRegistrationAllowed(): bool
-    {
-        return true;
-    }
 }

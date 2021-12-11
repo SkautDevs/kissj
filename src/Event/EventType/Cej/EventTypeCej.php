@@ -148,11 +148,4 @@ class EventTypeCej extends EventType
             'en' => '🇬🇧 English',
         ];
     }
-    
-    public function isLockRegistrationAllowed(): bool
-    {
-        // TODO add dynamic date to open registration
-
-        return false;
-    }
 }

@@ -81,7 +81,7 @@ class IstService extends AbstractService
             $validityFlag = false;
         }
         
-        if (!$event->getEventType()->isLockRegistrationAllowed()) {
+        if (!$event->canRegistrationBeLocked()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
 
             $validityFlag = false;

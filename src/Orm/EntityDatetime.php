@@ -2,8 +2,9 @@
 
 namespace kissj\Orm;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use LeanMapper\Entity;
 
 /**
@@ -31,16 +32,16 @@ class EntityDatetime extends Entity
             return $val;
         }
 
-        return new DateTime($val);
+        return new DateTimeImmutable($val, new DateTimeZone('Europe/Berlin'));
     }
 
     public static function setUpdatedAtBeforePersist(EntityDatetime $entity): void
     {
-        $entity->updatedAt = new DateTime();
+        $entity->updatedAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
     }
 
     public static function setCreatedAtBeforeCreate(EntityDatetime $entity): void
     {
-        $entity->createdAt = new DateTime();
+        $entity->createdAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
     }
 }

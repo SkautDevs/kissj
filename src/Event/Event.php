@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use DateTimeImmutable;
 use DateTimeInterface;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeAqua;
@@ -46,6 +47,7 @@ use kissj\Orm\EntityDatetime;
  * @property bool              $allowGuests
  * @property int|null          $maximalClosedGuestsCount
  *
+ * @property DateTimeInterface $startRegistration m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $endDay m:passThru(dateFromString|dateToString)
  *
@@ -69,5 +71,10 @@ class Event extends EntityDatetime
         };
 
         return new $eventTypeClass;
+    }
+    
+    public function canRegistrationBeLocked(): bool
+    {
+        return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('Europe/Berlin'));
     }
 }
