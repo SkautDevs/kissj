@@ -1,10 +1,15 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans %}login-token.welcome{% endtrans %}</p>
-    <p>{% trans %}login-token.logging{% endtrans %}{{ event.readableName }}.</p>
-    <a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}"><font
-                color="white">{% trans %}login-token.logIn{% endtrans %}</font></a>
-    <p>{% trans %}login-token.buttonNotWorking{% endtrans %}<a
-                href="{{ baseHostScheme }}{{ link }}">{{ baseHostScheme }}{{ link }}</a></p>
+    <p>{% trans %}email.login-token.logging{% endtrans %}{{ event.readableName }}.</p>
+    <a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}">
+        <font color="white">
+            {% trans %}email.login-token.logIn{% endtrans %}
+        </font>
+    </a>
+    <p>{% trans %}email.login-token.buttonNotWorking{% endtrans %}
+        <a href="{{ baseHostScheme }}{{ link }}">
+            {{ baseHostScheme }}{{ link }}
+        </a>
+    </p>
 {% endblock %}

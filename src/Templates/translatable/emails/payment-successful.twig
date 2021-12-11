@@ -1,30 +1,9 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <div class="text-center"> {# TODO refactor into translations #}
-        <p>Milý účastníku / Milá účastnice,</p>
+    <div class="text-center">
+        <p>{% trans %}email.payment-successful.received{% endtrans %} {{ event.readableName }}{% trans %}email.payment-successful.thanks{% endtrans %}</p>
 
-        <p>jsme rádi, že ses přihlásil/a, zaplatil/a registrační poplatek, teď už Ti nic nebrání přijet na KORBO 2020 (hurá, hurá!), čerpat možnosti, které nabízí a třeba jich i pár přidat.</p>
-
-        <p><b>Tento e-mail obsahuje důležité údaje, a tak ho rozhodně nemaž.</b> Máme pro tebe totiž pár užitečných odkazů a informací, které Ti usnadní přípravu.</p>
-
-        <p><b>1) Na co se podívat před KORBEM?</b> | Ať jsi tu poprvé, nebo jsi otřískaný veterán, doporučujeme projít si sekce <a href="https://korbo.skauting.cz/fungovani-korba/">Fungování Korba</a> (třeba <a href="https://korbo.skauting.cz/obecne-principy/">Obecné principy</a>, mrk mrk).</p>
-
-        <p><b>2) Aktivity a Místa</b> | Na KORBO se sice můžeš přijet flákat, ale ti praví frajeři si připraví i něco víc. To něco mohou být právě <a href="https://korbo.skauting.cz/aktivity/">Aktivity</a> a <a href="https://korbo.skauting.cz/mista/"> Místa</a> (odkazy na web ti mohou pomoct s inspirací i realizací) a to je také to, co se na Korbu děje a z čeho Korbo žije.</p>
-        <ul>
-        <li>Svoje Aktivity zapisuj do <a href="https://teamup.com/ks8p1t9gd23kfphf6h">Tabulky Aktivit</a> (heslo: tripilirekorba), kde najdeš i již vzniklá Místa a Aktivity v nich probíhající. Když si budeš zařizovat Místo, dej nám vědět v <a href="https://docs.google.com/forms/d/e/1FAIpQLScbSyn9zPviVChjgqQn13UA3hF02O2GG6Eq5c2_sR7mwIDQdg/viewform">tomto formuláři.</a></li>
-        </ul>
-
-        <ul>
-        <li>Pokud budeš na svoje Místo či Aktivitu potřebovat nějaké materiální či finanční prostředky, ozvi se na e-mail <a href="mailto: korbo@skaut.cz">korbo@skaut.cz.</a> Čím dříve to uděláš, tím zvýšíš pravděpodobnost, že ti budeme moct pomoci. Letos je na podporu programů vyčleněno 75 000,-.</li>
-        </ul>
-
-        <p><b>3) Účastnická skupina</b> | Na Facebooku máme připravenou uzavřenou skupinu pro účastníky, kde se můžeš seznámit s ostatními účastníky, navrhovat je jako členy, nabízet jim svá Místa a Aktivity, nebo naopak nějaká poptávat, a vůbec ji využít jakkoliv Tě napadne. Přidávání účastníků do skupiny probíhá ručně, měj s námi tedy prosím trpělivost. Na Facebooku taktéž najdeš oficiální událost.</p>
-        
-        <p><b>4) Chybí ti nějaké informace?</b> | Zkus se podívat do <a href="https://korbo.skauting.cz/faq/">FAQ</a> na webu a rozhodně sleduj <a href="https://www.instagram.com/korboskaut/">Instagram<a> a <a href="https://www.facebook.com/skautkorbo/">Facebook!</a></p>
-        
-        <p>Korbo - svět, který si uděláš sám, ale užiješ si ho se všemi. #udelejmesisami </p>
-        
-        <p>KORBO tým</p>
+        <p>{% trans %}email.payment-successful.enjoy{% endtrans %}</p>
     </div>
 {% endblock %}

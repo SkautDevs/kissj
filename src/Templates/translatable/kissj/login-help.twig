@@ -7,5 +7,4 @@
         <a href="{{ url_for('landing', {'eventSlug': event.slug}) }}"
            class="btn btn-small btn-grey btn text-center">{% trans %}login-help.backToLogin{% endtrans %}</a>
     </div>
-    Server time: {{ 'now'|date('Y-m-d H:i:m') }}, CET: {{ cej }}
 {% endblock %}

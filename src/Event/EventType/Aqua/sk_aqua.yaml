@@ -1,0 +1,34 @@
+email:
+    layout:
+        welcome: "Ahoy!"
+        farewell: "Dobrý vietor za tím"
+    cancel-payment:
+        denied: "bohužiaľ, Tvoja platba za AQUA 2021 bola zamietnutá."
+        reason: "Dôvod:"
+        dontPay: "Neplať znovu predošlými platobnými údajmi!"
+        registerAgain: "Chceš ísť na akciu aj tak? Znovu odošli svoju registráciu cez"
+        newPayment: "(zadané údaje sú stále uložené), skontrolujeme a schválime ju nanovo a pošleme nové platobné údaje"
+    closed:
+        successfullySent: " Tvoja registrácia bola úspešne odoslaná na plavbu s AQUA! Teraz musíme skontrolovať, či je v nej všetko v poriadku a ak áno, pošleme Ti platobné údaje. Môže to trvať pár dní, maj trpezlivosť, prosím. :)"
+    denial:
+        denied: "bohužiaľ, zamietli sme Tvoju registráciu na"
+        requirements: ", pretože nespĺňaš všetky požiadavky."
+        reason: "Dôvod:"
+        editRegistration: "Prosím, pridaj či uprav dané podrobnosti v registračnom systéme a nezabudni opäť odoslať registráciu na schválenie."
+    finished:
+        approved: "Schválili sme Tvoju registráciu na"
+        thanks: ". Vďaka!"
+        enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na Liptove! Sleduj nás pre viac informácií. ;)"
+    payment-info:
+        approved: "práve sme schválili Tvoju registrácia na"
+        finish: " Pre riadne dokončenie registrácie ostáva ešte jeden krok - zaplatiť registračný poplatok do "
+        days: "14 dní"
+        paymentDetails: "Platobné údaje"
+        accountNumber: "Číslo účtu (IBAN):"
+        amount: "Suma:"
+        variableSymbol: "Variabilný symbol:"
+        paymentNote: "Poznámka:"
+    payment-successful:
+        recieved: "Obdržali sme Tvoju platbu na"
+        thanks: ". Vďaka!"
+        enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"

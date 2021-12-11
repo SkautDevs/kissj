@@ -9,10 +9,10 @@ closeRegistration:
 userCustomHelp:
     statusOpen: "Fill in all the details about yourself and then lock your registration via the button at the bottom."
     statusOpenPl: "Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom."
-    statusClosed: "Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an E-mail:"
-    statusClosedGuest: "Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an E-mail:"
+    statusClosed: "Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an email:"
+    statusClosedGuest: "Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an email:"
     statusApproved: "Your registration has been approved! Now you need to pay the registration fee. Payment details are below."
-    statusPaid: "Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2021!"
+    statusPaid: "Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2021!" # TOOD make dynamic
     statusPaidGuest: "Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2021!"
 dashboard:
     personalInfo: "Personal Information"
@@ -143,14 +143,14 @@ _layout:
     pardon: "Oops! Nothing is here... bad link maybe?"
     button: "From the top!"
 singupSuccess:
-    buttonSent: "A log-in token has been sent to your E-mail address."
+    buttonSent: "A log-in token has been sent to your email address."
     buttonClick: "Click on it in 15 minutes to log in into the registration system."
 login-help:
-    text: "<h2>Logging-in scheme of kissj system</h2><h3>How does it work, actually?</h3><p>Logging into the kissj registration system is done via one's E-mail address, without any password. </p><p>For the first access into the system, you submit your E-mail address. Subsequently you receive an E-mail with a button and a link to sign in. When following the links you will immediately be able to fill in the registration form. </p><p>You stay logged in until you manually log out. </p><p>After logging out, nobody can access your data, not even from the same device. </p><p>For logging back in and accessing your data, you have to submit your E-mail address at the log-in page again. Your will receive another button/link into your E-mail account to follow, just like when signing in for the first time. </p><h3>Expiration of access button/link</h3><p>The received button/link is valid only for 15 minutes. Later on you would have to submit your E-mail address again to get a new logging-in button/link. This is a protection against anyone, who could somehow get access to your old E-mails - so that the data you submitted into the registration system are not accessible via an old link. </p><p>The button/link is valid for one use only. Therefore if you log in and out in a short period of time, you cannot access the registration account with the same link again and have to get a new one. </p><p>All these security elements have one main goal - to keep your data as secure as possible, just like the banks and other big portals attempt to do it. </p><h3>Questions?</h3><p>Should there be any issue with logging in or with any other part of the system, write an E-mail to the particular event organizers, they will surely try to help you at their best. </p>"
+    text: "<h2>Logging-in scheme of kissj system</h2><h3>How does it work, actually?</h3><p>Logging into the kissj registration system is done via one's email address, without any password. </p><p>For the first access into the system, you submit your email address. Subsequently you receive an email with a button and a link to sign in. When following the links you will immediately be able to fill in the registration form. </p><p>You stay logged in until you manually log out. </p><p>After logging out, nobody can access your data, not even from the same device. </p><p>For logging back in and accessing your data, you have to submit your email address at the log-in page again. Your will receive another button/link into your email account to follow, just like when signing in for the first time. </p><h3>Expiration of access button/link</h3><p>The received button/link is valid only for 15 minutes. Later on you would have to submit your email address again to get a new logging-in button/link. This is a protection against anyone, who could somehow get access to your old emails - so that the data you submitted into the registration system are not accessible via an old link. </p><p>The button/link is valid for one use only. Therefore if you log in and out in a short period of time, you cannot access the registration account with the same link again and have to get a new one. </p><p>All these security elements have one main goal - to keep your data as secure as possible, just like the banks and other big portals attempt to do it. </p><h3>Questions?</h3><p>Should there be any issue with logging in or with any other part of the system, write an email to the particular event organizers, they will surely try to help you at their best. </p>"
     backToLogin: "Back to log in page"
 login-link-sent:
     accessToSystem: "Access into the registration system"
-    linkSent: "A signing-in link has been sent to your E-mail address."
+    linkSent: "A signing-in link has been sent to your email address."
     followLink: "Follow the link in 15 minutes to sign in into the registration system."
 role:
     pl: "Patrol Leader"
@@ -170,66 +170,68 @@ chooseRole:
     adviceGuestText: "is guest on the event with special rules. If you don't know if you are guest, you probably aren't (:"
 login:
     registrationFor: "Registration for "
-    email: "E-mail"
+    email: "email"
     sendMeEmail: "Send me an email to register"
     howItWorks: "How does the registration system work?"
-    submitEmail: "Submit your E-mail"
-    followButton: "Follow an access button in your E-mail"
+    submitEmail: "Submit your email"
+    followButton: "Follow an access button in your email"
     fillDetails: "Fill in your details"
     sentForApproval: "Send your registration for approval"
     waitForApproval: "Wait for approval and payment info"
     pay: "Pay and you are good to go!"
     more: "More information about registration system"
-_mail-layout:
-    registration: "Registration"
-    ifQuestion: "If you have any questions, you may seek the answer at our webpage"
-    sendEmail: "or send us an E-mail to"
-    farewell: "Fair winds and following seas from team of"
-cancel-payment:
-    welcome: "Ahoy,"
-    denied: "unfortunately, your payment for AQUA 2021 was denied."
-    reason: "Reason is:"
-    dontPay: "Don't take further attempts to pay again with the previous payment details!"
-    registerAgain: "Do you want to attend the event nevertheless? Send your registration again at"
-    newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
-closed:
-    welcome: "Ahoy,"
-    successfullySent: " You have successfully sent the registration onto an AQUA voyage. Now we need to check if everything is alright and if it is so, we will send you payment information. It may take several days, so be patient, please. :)"
-denial:
-    welcome: "Ahoy,"
-    denied: "unfortunately, we have denied your registration for"
-    requirements: ", as you hadn't met all the requirements."
-    reason: "Reason:"
-    editRegistration: ". Please, add or edit missing details in registration system and don't forget to send your registration for approval."
-finished:
-    welcome: "Ahoy!"
-    approved: "We approved your registration for"
-    thanks: ". Thank you!"
-    enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
-login-token:
-    welcome: "Ahoy!"
-    logging: "You are logging into the registration system of "
-    logIn: "Log in!"
-    buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser: "
-payment-info:
-    welcome: "Ahoy,"
-    approved: "we have just approved your registration for"
-    finish: " To finish your registration properly, there is only one more step - to pay the registration fee till"
-    days: "14 days"
-    paymentDetails: "Payment details"
-    accountNumber: "International Bank Account Number (IBAN):"
-    amount: "Amount:"
-    variableSymbol: "Variable symbol:"
-    paymentNote: "Note:"
-payment-successful:
-    welcome: "Ahoy!"
-    recieved: "We have received your payment for"
-    thanks: ". Thank you!"
-    enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
 email:
-    text:
-        paidRegistrationTransfered: "Ahoy, your payment was transferred to a different participant. If you do not know about this, please contact us."
-        paymentTransfered: "tranfering different payment into your registration"
+    layout:
+        welcome: "Hello!"
+        registration: "Registration"
+        ifQuestion: "If you have any questions, you may seek the answer at our webpage"
+        sendEmail: "or send us an email to"
+        farewell: "All the best from the team of"
+    login-token:
+        subject: "link for login"
+        logging: "You are logging into the registration system of "
+        logIn: "Log in!"
+        buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser: "
+    closed:
+        subject: "locked"
+        successfullySent: "You have successfully sent the registration for %event.getReadableName%. Now we need to check if everything is alright and if it is so, we will send you payment information. It may take several days, so be patient, please. :)"
+    denial:
+        subject: "denied"
+        denied: "Unfortunately, we denied your registration for"
+        requirements: ", as you hadn't met all the requirements."
+        reason: "Reason:"
+        editRegistration: ". Please, add or edit missing details in registration system and don't forget to send your registration for approval."
+    payment-info:
+        subject: "payment information"
+        approved: "We have just approved your registration for"
+        finish: "To finish your registration properly, there is only one more step - to pay the registration fee till"
+        days: "14 days" # TODO make dynamic
+        paymentDetails: "Payment details"
+        accountNumber: "International Bank Account Number (IBAN):"
+        amount: "Amount:"
+        variableSymbol: "Variable symbol:"
+        paymentNote: "Note:"
+    cancel-payment:
+        subject: "payment cancelled"
+        denied: "Unfortunately, your payment for %event.getReadableName% was denied."
+        reason: "Reason is:"
+        dontPay: "Don't take further attempts to pay again with the previous payment details!"
+        registerAgain: "Do you want to attend the event nevertheless? Send your registration again at"
+        newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
+    payment-successful:
+        subject: "payment successful"
+        received: "We have received your payment for"
+        thanks: ". Thank you!"
+        enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
+    finished:
+        subject: "approved"
+        approved: "We approved your registration for"
+        thanks: ". Thank you!"
+        enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
+    payment-transfered-from-you:
+        subject: "payment was transferred"
+        paidRegistrationTransfered: "Your payment was transferred to a different participant. If you do not know about this, please contact us."
+        paymentTransfered: "transferring different payment into your registration"
 payments-admin:
     confirmText: "Confirming payments on event"
     openDuePayments: "Unlock payments after due deadline"
@@ -344,7 +346,7 @@ flash:
         differentScarfs: "Participants have differently selected scarf option - it will be changed at the buyer's registration form to correspond the payment."
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
     success:
-        linkSent: "E-mail sent! Follow the link in it to log in."
+        linkSent: "Email sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
         detailsSaved: "Details successfully saved."
         locked: "Registration successfully locked and sent"
@@ -367,7 +369,7 @@ flash:
         notLogged: "Pardon, but you are not logged. Please log yourself via entering your email"
         loggedIn: "Pardon, but your are logged - you need to sign off first by click to \"Log off\""
         roleChoosed: "Pardon, you already chose your role for this event"
-        invalidLogin: "Log-in token you have used is not valid. Please, enter your e-mail at the registration homepage again to get a new one."
+        invalidLogin: "Log-in token you have used is not valid. Please, enter your email at the registration homepage again to get a new one."
         fileTooBig: "Uploaded file is too big, please try upload smaller"
         fileGeneral: "There is something wrong with uploaded file, please try it again."
         fileNotUploaded: "File was not uploaded."
@@ -385,4 +387,4 @@ flash:
         plOnly: "Sorry, you are not logged as Patrol Leader"
         wrongPatrol: "Pardon, but you cannot edit or view participants outside your patrol."
         wrongData: "Registration cannot be locked, data is not valid"
-        mailError: "Pardon, e-mail sending failed. Please try it in a couple of minutes."
+        mailError: "Pardon, email sending failed. Please try it in a couple of minutes."

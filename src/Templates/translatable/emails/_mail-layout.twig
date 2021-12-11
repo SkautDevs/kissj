@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>{% trans %}_mail-layout.registration{% endtrans %} {{ event.getReadableName }}</title>
+    <title>{% trans %}email.layout.registration{% endtrans %} {{ event.getReadableName }}</title>
     <style>
         .btn {
             background: #0b2a34;
@@ -33,14 +33,16 @@
 </head>
 <body>
 <main role="main" class="container">
+    <p>{% trans %}email.layout.welcome{% endtrans %}</p>
+
     {% block content %}{% endblock %}
 
-    <p>{% trans %}_mail-layout.ifQuestion{% endtrans %}
+    <p>{% trans %}email.layout.ifQuestion{% endtrans %}
         <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
-        {% trans %}_mail-layout.sendEmail{% endtrans %}
+        {% trans %}email.layout.sendEmail{% endtrans %}
         <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a><span class="noselect">.</span></p>
 
-    <p>{% trans %}_mail-layout.farewell{% endtrans %}<br/>
+    <p>{% trans %}email.layout.farewell{% endtrans %}<br/>
         {{ event.getReadableName }}</p>
 </main>
 </body>

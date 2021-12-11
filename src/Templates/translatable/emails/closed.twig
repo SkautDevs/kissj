@@ -1,7 +1,5 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans %}closed.welcome{% endtrans %}</p>
-
-    <p>{% trans with {'%event.getReadableName%': event.getReadableName} %}closed.successfullySent{% endtrans %}</p>
+    <p>{% trans with {'%event.getReadableName%': event.getReadableName} %}email.closed.successfullySent{% endtrans %}</p>
 {% endblock %}

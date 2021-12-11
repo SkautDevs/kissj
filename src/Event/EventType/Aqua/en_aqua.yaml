@@ -1,0 +1,41 @@
+email:
+    layout:
+        welcome: "Ahoy!"
+        farewell: "Fair winds and following seas from team of"
+    cancel-payment:
+        denied: "unfortunately, your payment for AQUA 2021 was denied."
+        reason: "Reason is:"
+        dontPay: "Don't take further attempts to pay again with the previous payment details!"
+        registerAgain: "Do you want to attend the event nevertheless? Send your registration again at"
+        newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
+    closed:
+        successfullySent: " You have successfully sent the registration onto an AQUA voyage. Now we need to check if everything is alright and if it is so, we will send you payment information. It may take several days, so be patient, please. :)"
+    denial:
+        denied: "unfortunately, we have denied your registration for"
+        requirements: ", as you hadn't met all the requirements."
+        reason: "Reason:"
+        editRegistration: ". Please, add or edit missing details in registration system and don't forget to send your registration for approval."
+    finished:
+        approved: "We approved your registration for"
+        thanks: ". Thank you!"
+        enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
+    login-token:
+        logging: "You are logging into the registration system of "
+        logIn: "Log in!"
+        buttonNotWorking: "If the button above is not visible or is not working, please copy&paste following link into the address line of your web browser: "
+    payment-info:
+        approved: "we have just approved your registration for"
+        finish: " To finish your registration properly, there is only one more step - to pay the registration fee till"
+        days: "14 days"
+        paymentDetails: "Payment details"
+        accountNumber: "International Bank Account Number (IBAN):"
+        amount: "Amount:"
+        variableSymbol: "Variable symbol:"
+        paymentNote: "Note:"
+    payment-successful:
+        recieved: "We have received your payment for"
+        thanks: ". Thank you!"
+        enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
+    text:
+        paidRegistrationTransfered: "Ahoy, your payment was transferred to a different participant. If you do not know about this, please contact us."
+        paymentTransfered: "tranfering different payment into your registration"

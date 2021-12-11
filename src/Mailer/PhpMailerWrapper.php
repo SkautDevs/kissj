@@ -8,12 +8,14 @@ use kissj\User\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PhpMailerWrapper
 {
     public function __construct(
         private Twig $renderer,
-        private MailerSettings $settings
+        private MailerSettings $settings,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -21,22 +23,27 @@ class PhpMailerWrapper
     {
         $this->sendMailFromTemplate(
             $user->email,
-            'odkaz pro přihlášení', // TODO make translatable
+            $this->translator->trans('email.login-token.subject'),
             'login-token',
-            ['link' => $link, 'event' => $user->event]
+            ['link' => $link, 'event' => $user->event],
         );
     }
 
     public function sendRegistrationClosed(User $user): void
     {
-        $this->sendMailFromTemplate($user->email, 'registrace uzamčena', 'closed', []);
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.closed.subject'),
+            'closed',
+            [],
+        );
     }
 
     public function sendDeniedRegistration(Participant $participant, string $reason): void
     {
         $this->sendMailFromTemplate(
-            $participant->user->email,
-            'zamítnutá registrace', // TODO make translatable
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.denial.subject'),
             'denial',
             ['reason' => $reason, 'event' => $participant->user->event]
         );
@@ -45,8 +52,8 @@ class PhpMailerWrapper
     public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment): void
     {
         $this->sendMailFromTemplate(
-            $participant->user->email,
-            'informace o platbě', // TODO make translatable
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.payment-info.subject'),
             'payment-info',
             [
                 'event' => $participant->user->event,
@@ -56,69 +63,65 @@ class PhpMailerWrapper
         );
     }
 
-    public function sendGuestRegistrationFinished(Participant $participant): void
-    {
-        $this->sendMailFromTemplate(
-            $participant->user->email,
-            'registrace dokončena', // TODO make translatable
-            'finished',
-            [
-                'event' => $participant->user->event,
-                'participant' => $participant,
-            ]
-        );
-    }
-
     public function sendCancelledPayment(Participant $participant, string $reason): void
     {
+        $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
-            $participant->user->email,
-            'platba zrušena', // TODO make translatable
+            $user->email,
+            $this->translator->trans('email.cancel-payment.subject'),
             'cancel-payment',
-            ['reason' => $reason, 'event' => $participant->user->event]
+            ['reason' => $reason, 'event' => $user->event],
         );
     }
 
     public function sendRegistrationPaid(Participant $participant): void
     {
         $this->sendMailFromTemplate(
-            $participant->user->email,
-            'platba úspěšně zaplacena!', // TODO make translatable
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
-            ['event' => $participant->user->event]
+            ['event' => $participant->getUserButNotNull()->event],
+        );
+    }
+
+    public function sendGuestRegistrationFinished(Participant $participant): void
+    {
+        $user = $participant->getUserButNotNull();
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.finished.subject'),
+            'finished',
+            ['event' => $user->event, 'participant' => $participant],
         );
     }
 
     public function sendPaymentTransferedFromYou(Participant $participant): void
     {
         $this->sendMailFromTemplate(
-            $participant->user->email,
-            'platba převedena na jiného účastníka',
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.payment-transfered-from-you.subject'),
             'payment-transfered-from-you',
-            []
-        );
-    }
-
-    public function sendWelcomeFreeParticipantMessage(Participant $participant): void
-    {
-        $this->sendMailFromTemplate(
-            $participant->user->email,
-            'registrace potvrzena', // TODO make translatable
-            'welcome-message-free-participant',
-            ['event' => $participant->user->event]
+            [],
         );
     }
 
     public function sendDuePaymentDenied(Participant $participant): void
-    {
+    {// TODO improve
         $this->sendMailFromTemplate(
-            $participant->user->email,
+            $participant->getUserButNotNull()->email,
             'platba neobdržena -> registrace zrušena', // TODO make translatable
             'cancel-payment',
-            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $participant->user->event]
+            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $participant->user->event],
         );
     }
 
+    /**
+     * @param string               $recipientEmail
+     * @param string               $subject
+     * @param string               $templateName
+     * @param array<string, mixed> $parameters
+     * @return void
+     */
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,

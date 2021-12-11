@@ -2,6 +2,7 @@
 
 namespace kissj\Payment;
 
+use DateInterval;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
 
@@ -33,12 +34,10 @@ class Payment extends EntityDatetime {
         return 14; // TODO move into db
     }
 
-    public function getPaymentUntil(): \DateTime {
-        /** @var $createdAt \DateTime */
-        $createdAt = $this->createdAt;
-        $dateInterval = new \DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
+    public function getPaymentUntil(): \DateTimeInterface {
+        $dateInterval = new DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
 
-        return $createdAt->add($dateInterval);
+        return $this->createdAt->add($dateInterval);
     }
 }
 
