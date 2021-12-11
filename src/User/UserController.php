@@ -122,6 +122,6 @@ class UserController extends AbstractController
 
     public function showLoginHelp(Response $response): Response
     {
-        return $this->view->render($response, 'kissj/login-help.twig');
+        return $this->view->render($response, 'kissj/login-help.twig', ['cej' => (new \DateTime('now', new \DateTimeZone('Europe/Berlin')))->format('Y-m-d H:i:m')]);
     }
 }

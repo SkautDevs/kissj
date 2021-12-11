@@ -117,14 +117,14 @@ class Participant extends EntityDatetime
         return ($this->firstName ?? '') . ' ' . ($this->lastName ?? '') . ($this->nickname ? ' - ' . $this->nickname : '');
     }
 
-    public function getAgeInYears(DateTimeInterface $eventStart): ?int
+    public function getAgeAtStartOfEvent(): ?int
     {
         $birthDate = $this->birthDate;
         if ($birthDate === null) {
             return null;
         }
 
-        return (int)$birthDate->diff($eventStart)->format('%y');
+        return (int)$birthDate->diff($this->getUserButNotNull()->event->startDay)->format('%y');
     }
 
     /**

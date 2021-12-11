@@ -24,7 +24,10 @@
         {% trans %}detail.genderOther{% endtrans %}
     {% endif %}</b><br/>
 {% endif %}{% if ca.birthDate %}
-    {% trans %}detail.birthDate{% endtrans %}: <b>{{ person.getBirthDate.format('d. m. Y') }}</b><br/>
+    {% trans %}detail.birthDate{% endtrans %}: <b>{{ person.getBirthDate.format('d. m. Y') }}</b>
+        {% if person.getBirthDate %}
+            ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
+        {% endif %}<br/>
 {% endif %}{% if ca.idNumber %}
     {% trans %}detail.idNumber{% endtrans %}: <b>{{ person.getIdNumber }}</b><br/>
 {% endif %}{% if ca.address %}

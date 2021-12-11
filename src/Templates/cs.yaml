@@ -49,6 +49,7 @@ detail:
     scoutNick: "Přezdívka"
     scoutNickPlaceholder: ""
     birthDate: "Datum narození"
+    birthDateYearsAtEvent: "let na začátku akce"
     gender: "Pohlaví"
     genderMan: "Muž"
     genderWoman: "Žena"

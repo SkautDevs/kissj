@@ -49,6 +49,7 @@ detail:
     scoutNick: "Scout nickname"
     scoutNickPlaceholder: ""
     birthDate: "Date of birth"
+    birthDateYearsAtEvent: "years at event start"
     gender: "Gender"
     genderMan: "Man"
     genderWoman: "Woman"
