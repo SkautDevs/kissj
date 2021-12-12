@@ -1,0 +1,6 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <p>{% trans %}email.payment-info-contingents.approved{% endtrans %} <b> {{ event.readableName }}</b>!</p>
+    <p>{% trans %}email.payment-info-contingents.wait{% endtrans %}</p>
+{% endblock %}

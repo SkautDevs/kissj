@@ -3,6 +3,7 @@
 namespace kissj\Participant\Ist;
 
 use kissj\AbstractController;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -12,7 +13,8 @@ class IstController extends AbstractController
 {
     public function __construct(
         private IstService $istService,
-        private IstRepository $istRepository
+        private IstRepository $istRepository,
+        private ParticipantService $participantService,
     ) {
     }
 
@@ -95,7 +97,7 @@ class IstController extends AbstractController
     {
         /** @var Ist $ist */
         $ist = $this->istRepository->get($istId);
-        $this->istService->approveRegistration($ist);
+        $this->participantService->approveRegistration($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
         $this->logger->info('Approved registration for IST with ID ' . $ist->id);
 

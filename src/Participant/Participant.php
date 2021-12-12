@@ -134,4 +134,12 @@ class Participant extends EntityDatetime
     {
         return $this->payment;
     }
+
+    public function isInSpecialPaymentContingent(): bool
+    {
+        return $this->contingent !== null
+            && $this->contingent !== ''
+            && $this->contingent !== 'detail.contingent.czechia'
+            && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
+    }
 }

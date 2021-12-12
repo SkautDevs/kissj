@@ -2,11 +2,9 @@
 
 namespace kissj\Participant;
 
-use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
-use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 
@@ -52,6 +50,20 @@ class ParticipantService
     {
         $this->mailer->sendDeniedRegistration($participant, $reason);
         $this->userService->openRegistration($participant->user);
+
+        return $participant;
+    }
+
+    public function approveRegistration(Participant $participant): Participant
+    {
+        $payment = $this->paymentService->createAndPersistNewPayment($participant);
+
+        if ($participant->isInSpecialPaymentContingent()) {
+            $this->mailer->sendRegistrationApprovedForForeignContingents($participant);
+        } else {
+            $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
+        }
+        $this->userService->approveRegistration($participant->getUserButNotNull());
 
         return $participant;
     }

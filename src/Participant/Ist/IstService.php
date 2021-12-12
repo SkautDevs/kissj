@@ -101,16 +101,6 @@ class IstService extends AbstractService
         return $ist;
     }
 
-    public function approveRegistration(Ist $ist): Ist
-    {
-        $payment = $this->paymentService->createAndPersistNewPayment($ist);
-
-        $this->mailer->sendRegistrationApprovedWithPayment($ist, $payment);
-        $this->userService->approveRegistration($ist->user);
-
-        return $ist;
-    }
-
     public function getAllIstsStatistics(Event $event, User $admin): StatisticValueObject
     {
         $ists = $this->participantRepository->getAllParticipantsWithStatus(

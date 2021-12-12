@@ -4,6 +4,7 @@ namespace kissj\Participant\Patrol;
 
 use kissj\AbstractController;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -15,6 +16,7 @@ class PatrolController extends AbstractController
         private PatrolService $patrolService,
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
+        private ParticipantService $participantService,
     ) {
     }
 
@@ -189,7 +191,7 @@ class PatrolController extends AbstractController
     {
         /** @var PatrolLeader $patrolLeader */
         $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
-        $this->patrolService->approveRegistration($patrolLeader);
+        $this->participantService->approveRegistration($patrolLeader);
         $this->flashMessages->success($this->translator->trans('flash.success.patrolApproved'));
         $this->logger->info('Approved registration for Patrol with Patrol Leader ID ' . $patrolLeader->id);
 

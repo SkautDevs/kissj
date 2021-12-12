@@ -41,25 +41,38 @@ class PhpMailerWrapper
 
     public function sendDeniedRegistration(Participant $participant, string $reason): void
     {
+        $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
-            $participant->getUserButNotNull()->email,
+            $user->email,
             $this->translator->trans('email.denial.subject'),
             'denial',
-            ['reason' => $reason, 'event' => $participant->user->event]
+            ['reason' => $reason, 'event' => $user->event],
         );
     }
 
     public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment): void
     {
+        $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
-            $participant->getUserButNotNull()->email,
+            $user->email,
             $this->translator->trans('email.payment-info.subject'),
             'payment-info',
             [
-                'event' => $participant->user->event,
+                'event' => $user->event,
                 'participant' => $participant,
                 'payment' => $payment,
             ]
+        );
+    }
+
+    public function sendRegistrationApprovedForForeignContingents(Participant $participant): void
+    {
+        $user = $participant->getUserButNotNull();
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.payment-info.subject'),
+            'payment-info-contingents',
+            ['event' => $user->event],
         );
     }
 
@@ -76,11 +89,12 @@ class PhpMailerWrapper
 
     public function sendRegistrationPaid(Participant $participant): void
     {
+        $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
-            $participant->getUserButNotNull()->email,
+            $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
-            ['event' => $participant->getUserButNotNull()->event],
+            ['event' => $user->event],
         );
     }
 
@@ -107,11 +121,12 @@ class PhpMailerWrapper
 
     public function sendDuePaymentDenied(Participant $participant): void
     {// TODO improve
+        $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
-            $participant->getUserButNotNull()->email,
+            $user->email,
             'platba neobdržena -> registrace zrušena', // TODO make translatable
             'cancel-payment',
-            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $participant->user->event],
+            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $user->event],
         );
     }
 

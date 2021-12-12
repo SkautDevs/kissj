@@ -15,3 +15,7 @@ detail:
         team: "⚜ Organizing Team"
 dashboard:
     lockRegistration: "Proceed to lock & submit"
+email:
+    payment-info-contingents:
+        approved: "Congratulations, you are approved to participate at"
+        wait: "Please wait for payment details to be received from your contingent."

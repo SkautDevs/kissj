@@ -174,16 +174,6 @@ class PatrolService extends AbstractService
         return $patrolLeader;
     }
 
-    public function approveRegistration(PatrolLeader $patrolLeader): PatrolLeader
-    {
-        $payment = $this->paymentService->createAndPersistNewPayment($patrolLeader);
-
-        $this->mailer->sendRegistrationApprovedWithPayment($patrolLeader, $payment);
-        $this->userService->approveRegistration($patrolLeader->user);
-
-        return $patrolLeader;
-    }
-
     public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject
     {
         $patrolLeaders = $this->participantRepository->getAllParticipantsWithStatus(
