@@ -3,6 +3,7 @@
 namespace kissj\Participant;
 
 use kissj\Event\Event;
+use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Repository;
 use kissj\User\User;
 
@@ -52,19 +53,19 @@ class ParticipantRepository extends Repository
         return match ($adminUser->role) {
             User::ROLE_ADMIN => $participants,
             User::ROLE_CONTINGENT_ADMIN_CS => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.czechia';
+                return $p->contingent === EventTypeCej::CONTINGENT_CZECHIA;
             }),
             User::ROLE_CONTINGENT_ADMIN_SK => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.slovakia';
+                return $p->contingent === EventTypeCej::CONTINGENT_SLOVAKIA;
             }),
             User::ROLE_CONTINGENT_ADMIN_PL => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.poland';
+                return $p->contingent === EventTypeCej::CONTINGENT_POLAND;
             }),
             User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.hungary';
+                return $p->contingent === EventTypeCej::CONTINGENT_HUNGARY;
             }),
             User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === 'detail.contingent.european';
+                return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
             }),
             default => [],
         };

@@ -3,6 +3,7 @@
 namespace kissj\Participant;
 
 use DateTimeInterface;
+use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
@@ -139,7 +140,7 @@ class Participant extends EntityDatetime
     {
         return $this->contingent !== null
             && $this->contingent !== ''
-            && $this->contingent !== 'detail.contingent.czechia'
+            && $this->contingent !== EventTypeCej::CONTINGENT_CZECHIA
             && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
     }
 }
