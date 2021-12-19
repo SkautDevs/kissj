@@ -248,10 +248,7 @@ payments-admin:
     cancel: "Cancel payment"
     confirm: "Confirm payment"
     allPatrolsPaid: "All patrols are paid up!"
-    ist: "International Service Team"
-    allIstPaid: " All ISTs are paid up!"
-    participants: "Free Participants"
-    allParticipantsPaid: "All Free Participants are paid up!"
+    allIstPaid: "All ISTs are paid up!"
 deny-admin:
     deny: "Deny participant with role"
     wantDeny: "Deny "

@@ -1,0 +1,36 @@
+<h4>{{ person.getFullName }}</h4>
+{% trans %}payments-admin.email{% endtrans %} <b>{{ person.user.getEmail }}</b><br/>
+{% if ca.contingent %}
+    {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
+{% endif %}{% if ca.notes %}
+    {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+{% endif %}
+<br>
+{% for payment in person.getPayments %}
+    <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+        {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
+        {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
+        {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
+                    class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
+                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }}
+        </b> {% trans %}payments-admin.days{% endtrans %}
+        <br/>
+        {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
+        {% trans %}payments-admin.amount{% endtrans %} <b> {{ payment.price }} {{ payment.currency }}</b><br/>
+        {% trans %}payments-admin.note{% endtrans %} <b>{{ payment.note }}</b><br/>
+        <br/>
+        {% if payment.status == 'waiting' %}
+            <a href="{{ url_for('admin-cancel-payment-show',
+                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
+            <br/>
+            <br/>
+            <form method="post" 
+                  action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+                <input type="submit"
+                       value="{% trans %}payments-admin.confirm{% endtrans %}"
+                       class="btn btn-small">
+            </form>
+        {% endif %}
+    </div>
+{% endfor %}

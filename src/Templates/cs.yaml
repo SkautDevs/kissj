@@ -248,10 +248,7 @@ payments-admin:
     cancel: "Zrušit platbu"
     confirm: "Potvrdit platbu"
     allPatrolsPaid: "Všechny patroly mají zaplaceno!"
-    ist: "ISTs"
-    allIstPaid: " Všichni ISTs mají zaplaceno!"
-    participants: "Bezplatný účastník"
-    allParticipantsPaid: "Všichni bezplatní účastníci jsou potvrzeni!"
+    allIstsPaid: "Všichni ISTs mají zaplaceno!"
 deny-admin:
     deny: "Zamítnout účastníka s rolí"
     wantDeny: "Zamítám"

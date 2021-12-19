@@ -107,20 +107,14 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         return $this->view->render($response, 'admin/payments-admin.twig', [
-            'approvedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_APPROVED],
-                $event,
-                $user,
-            ),
             'approvedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
                 [USER::STATUS_APPROVED],
                 $event,
                 $user,
             ),
-            'approvedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_GUEST],
+            'approvedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
                 [USER::STATUS_APPROVED],
                 $event,
                 $user,

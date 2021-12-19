@@ -10,138 +10,50 @@
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
     <br/>
-    {#
-        {% if approvedPatrolLeaders is not empty %}
+
+    {% if event.allowIsts %}
+        {% if approvedIsts is empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}payments-admin.allIstsPaid{% endtrans %}</h2>
+            </div>
+        {% else %}
             <div class="card approved-theme">
-                <h2>{% trans %}payments-admin.patrols{% endtrans %}</h2>
+                <h2>{% trans %}role.ist{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for ist in approvedIsts %}
+                <div class="card approved-theme">
+                    {% include 'widgets/paymentDetails.twig' with {
+                        'person': ist,
+                        'ca': event.getEventType.getContentArbiterIst
+                    } %}
+                </div>
+                <br/>
+            {% endfor %}
+        {% endif %}
+        <br/>
+    {% endif %}
+    
+    {% if event.allowPatrols %}
+        {% if approvedPatrolLeaders is empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}payments-admin.allPatrolsPaid{% endtrans %}</h2>
+            </div>
+        {% else %}
+            <div class="card approved-theme">
+                <h2>{% trans %}role.pl{% endtrans %}</h2>
             </div>
             <br/>
             {% for pl in approvedPatrolLeaders %}
                 <div class="card approved-theme">
-                    <h4>{{ pl.getFullName }}</h4>
-                    {% trans %}payments-admin.email{% endtrans %} <b>{{ pl.getEmail }}</b><br/>
-                    {% for payment in pl.getPayment %}
-                        {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
-                        {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b>
-                        <br/>
-                        {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
-                                class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }}</b> {% trans %}payments-admin.days{% endtrans %}
-                        <br/>
-                        {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
-                        {% trans %}payments-admin.amount{% endtrans %} <b>{{ payment.price }} {{ payment.currency }}</b><br/>
-                        <br/>
-                        {% if payment.status == 'waiting' %}
-                            <a href="{{ url_for('admin-cancel-payment-show',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                               class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
-                            <br/>
-                            <br/>
-                            <form method="post" action="{{ url_for('admin-confirm-payment',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                                <input type="submit" value="{% trans %}payments-admin.confirmText{% endtrans %}"
-                                       class="btn btn-small">
-                            </form>
-                        {% endif %}
-                    {% endfor %}
+                    {% include 'widgets/paymentDetails.twig' with {
+                        'person': pl,
+                        'ca': event.getEventType.getContentArbiterPatrolLeader
+                    } %}
                 </div>
                 <br/>
             {% endfor %}
-        {% else %}
-            <div class="card closed-theme">
-                <h2>{% trans %}payments-admin.allPatrolsPaid{% endtrans %}</h2>
-            </div>
-            <br/>
         {% endif %}
-    #}
-    {% if approvedIsts is not empty %}
-        <div class="card approved-theme">
-            <h2>{% trans %}payments-admin.ist{% endtrans %}</h2>
-        </div>
-        <br/>
-        {% for ist in approvedIsts %}
-            <div class="card approved-theme">
-                <h4>{{ ist.getFullName }}</h4>
-                {% trans %}payments-admin.email{% endtrans %} <b>{{ ist.user.getEmail }}</b><br/>
-                {% for payment in ist.getPayment %}
-                    <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
-                        {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
-                        {% trans %}payments-admin.paymentWas{% endtrans %}
-                        <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                        {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
-                                    class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-						overdue{% endif %}">{{ payment.getElapsedPaymentDays }}
-                        </b> {% trans %}payments-admin.days{% endtrans %}
-                        <br/>
-                        {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
-                        {% trans %}payments-admin.amount{% endtrans %}
-                        <b> {{ payment.price }} {{ payment.currency }}</b><br/>
-                        {% trans %}payments-admin.note{% endtrans %} <b>{{ payment.note }}</b><br/>
-                        <br/>
-                        {% if payment.status == 'waiting' %}
-                            <a href="{{ url_for('admin-cancel-payment-show',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                               class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
-                            <br/>
-                            <br/>
-                            <form method="post" action="{{ url_for('admin-confirm-payment',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                                <input type="submit" value="{% trans %}payments-admin.confirm{% endtrans %}"
-                                       class="btn btn-small">
-                            </form>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            <br/>
-        {% endfor %}
-    {% else %}
-        <div class="card closed-theme">
-            <h2>{% trans %}payments-admin.allIstPaid{% endtrans %}</h2>
-        </div>
         <br/>
     {% endif %}
-    {#
-        {% if approvedFreeParticipants is not empty %}
-            <div class="card approved-theme">
-                <h2>{% trans %}payments-admin.participants{% endtrans %}</h2>
-            </div>
-            <br/>
-            {% for fp in approvedFreeParticipants %}
-                <div class="card approved-theme">
-                    <h4>{{ fp.getFullName }}</h4>
-                    {% trans %}payments-admin.email{% endtrans %} <b>{{ fp.getEmail }}</b><br/>
-                    {% for payment in fp.getPayment %}
-                        {% trans %}payments-admin.status{% endtrans %} <b>{{ payment.status }}</b><br/>
-                        {% trans %}payments-admin.paymentWas{% endtrans %} <b>{{ payment.createdAt.format('d. m. Y') }}</b><br/>
-                        {% trans %}payments-admin.paymentIs{% endtrans %} <b><span
-                                class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-                            overdue{% endif %}"> {{ payment.getElapsedPaymentDays }}</b> {% trans %}payments-admin.days{% endtrans %}
-                        <br/>
-                        {% trans %}payments-admin.variableSymbol{% endtrans %} <b>{{ payment.variableSymbol }}</b><br/>
-                        {% trans %}payments-admin.Amount{% endtrans %} <b>{{ payment.price }} {{ payment.currency }}</b><br/>
-                        <br/>
-                        {% if payment.status == 'waiting' %}
-                            <a href="{{ url_for('admin-cancel-payment-show',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                               class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
-                            <br/>
-                            <br/>
-                            <form method="post" action="{{ url_for('admin-confirm-payment',
-                                {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
-                                <input type="submit" value="{% trans %}payments-admin.confirm{% endtrans %}"
-                                       class="btn btn-small">
-                            </form>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <br/>
-            {% endfor %}
-        {% else %}
-            <div class="card closed-theme">
-                <h2>{% trans %}payments-admin.allParticipantsPaid{% endtrans %}</h2>
-            </div>
-            <br/>
-        {% endif %}
-    #}
 {% endblock %}
