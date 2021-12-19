@@ -11,9 +11,9 @@ userCustomHelp:
     statusOpenPl: "Fill in all the details about yourself, add your patrol members, their details and then lock your registration via the button at the bottom."
     statusClosed: "Your registration is waiting for approval. We will notify you when it is ready and send you payment details. If it takes too long, drop us an email:"
     statusClosedGuest: "Your registration is waiting for approval. We will notify you when it is ready. If it takes too long, drop us an email:"
-    statusApproved: "Your registration has been approved! Now you need to pay the registration fee. Payment details are below."
-    statusPaid: "Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at AQUA 2021!" # TOOD make dynamic
-    statusPaidGuest: "Your registration is filled, sent and approved! ;) We are looking forward to see you at AQUA 2021!"
+    statusApproved: "Your registration has been approved! Now you need to pay the registration fee."
+    statusPaid: "Your registration is filled, sent, approved and payed! ;) We are looking forward to see you at %event.getReadableName%!"
+    statusPaidGuest: "Your registration is filled, sent and approved! ;) We are looking forward to see you at %event.getReadableName%!"
 dashboard:
     personalInfo: "Personal Information"
     editDetails: "Fill in details"
@@ -30,7 +30,7 @@ dashboard:
     andMaximally: "and at most"
     pForValidReg: "participants for a valid registration"
     paymentInfo: "Payment information"
-    accountNumber: "International Bank Account Number (IBAN)"
+    accountNumber: "Account number"
     amount: "Amount"
     variableSymbol: "Variable symbol"
     paymentNote: "Note for the receiver"
@@ -207,10 +207,10 @@ email:
         finish: "To finish your registration properly, there is only one more step - to pay the registration fee till"
         days: "14 days" # TODO make dynamic
         paymentDetails: "Payment details"
-        accountNumber: "International Bank Account Number (IBAN):"
-        amount: "Amount:"
-        variableSymbol: "Variable symbol:"
-        paymentNote: "Note:"
+        accountNumber: "Account number"
+        amount: "Amount"
+        variableSymbol: "Variable symbol"
+        paymentNote: "Note"
     cancel-payment:
         subject: "payment cancelled"
         denied: "Unfortunately, your payment for %event.getReadableName% was denied."

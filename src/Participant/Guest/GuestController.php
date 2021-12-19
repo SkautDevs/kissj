@@ -22,6 +22,7 @@ class GuestController extends AbstractController
         return $this->view->render($response, 'dashboard-guest.twig', [
             'user' => $user,
             'guest' => $guest,
+            'person' => $guest,
             'ca' => $user->event->eventType->getContentArbiterGuest(),
         ]);
     }

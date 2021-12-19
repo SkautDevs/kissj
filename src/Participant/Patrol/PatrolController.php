@@ -30,6 +30,7 @@ class PatrolController extends AbstractController
             [
                 'user' => $user,
                 'pl' => $patrolLeader,
+                'person' => $patrolLeader,
                 'participants' => $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader),
                 'ca' => $user->event->eventType->getContentArbiterPatrolLeader(),
             ]

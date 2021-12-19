@@ -2,23 +2,8 @@
 
 {% block content %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{{ pl.getPatrolName }} {% trans %}dashboard.details{% endtrans %}</h2>
-        <h4>
-            {% include('widgets/userCustomHelp.twig') with {'userRole': 'pl'} %}
-        </h4>
-        {% if pl.getPayments %}
-            <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
-            {% for payment in pl.getPayments %}
-                <div class="payment {% if payment.status == 'canceled' %} payment-overdue{% endif %}">
-                    {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
-                    {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
-                    <br/>
-                    {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
-                    {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
-                    <br/>
-                </div>
-            {% endfor %}
-        {% endif %}
+        <h2>{% trans %}role.pl{% endtrans %} {{ pl.getPatrolName }} {% trans %}dashboard.details{% endtrans %}</h2>
+        {% include('widgets/userCustomHelp.twig') %}
 
         <div class="card-divide">
             <!-- Patrol Leader -->

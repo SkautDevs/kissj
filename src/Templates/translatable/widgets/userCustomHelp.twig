@@ -1,21 +1,42 @@
-{% if userStatus == 'open' %}
-    {% if userRole == 'pl' %}
-        {% trans %}userCustomHelp.statusOpenPl{% endtrans %}
-    {% else %}
-        {% trans %}userCustomHelp.statusOpen{% endtrans %}
+<h4>
+    {% set userRole = person.getRole %}
+    {% if userStatus == 'open' %}
+        {% if userRole == 'pl' %}
+            {% trans %}userCustomHelp.statusOpenPl{% endtrans %}
+        {% else %}
+            {% trans %}userCustomHelp.statusOpen{% endtrans %}
+        {% endif %}
+    {% elseif userStatus == 'closed' %}
+        {% if userRole == 'guest' %}
+            {% trans %}userCustomHelp.statusClosedGuest{% endtrans %} <a
+                href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
+        {% else %}
+            {% trans %}userCustomHelp.statusClosed{% endtrans %} <a
+                href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
+        {% endif %}
+    {% elseif userStatus == 'approved' %}
+        {% trans %}userCustomHelp.statusApproved{% endtrans %}
+    {% elseif userStatus == 'paid' %}
+        {% if userRole == 'guest' %}
+            {% trans with {'%event.getReadableName%': event.getReadableName} %}userCustomHelp.statusPaidGuest{% endtrans %}
+        {% else %}
+            {% trans with {'%event.getReadableName%': event.getReadableName} %}userCustomHelp.statusPaid{% endtrans %}
+        {% endif %}
     {% endif %}
-{% elseif userStatus == 'closed' %}
-    {% if userRole == 'guest' %}
-        {% trans %}userCustomHelp.statusClosedGuest{% endtrans %} <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
-    {% else %}
-        {% trans %}userCustomHelp.statusClosed{% endtrans %} <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
-    {% endif %}
-{% elseif userStatus == 'approved' %}
-        {% trans %}userCustomHelp.statusApproved{% endtrans %}    
-{% elseif userStatus == 'paid' %}
-    {% if userRole == 'guest' %}
-        {% trans %}userCustomHelp.statusPaidGuest{% endtrans %}    
-    {% else %}
-        {% trans %}userCustomHelp.statusPaid{% endtrans %}    
+</h4>
+
+{% if person.getPayments %}
+    {% if person.contingent is null or person.contingent == 'detail.contingent.czechia' %}
+        <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
+        {% for payment in person.getPayments %}
+            <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+                {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
+                {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
+                <br/>
+                {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
+                {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
+                <br/>
+            </div>
+        {% endfor %}
     {% endif %}
 {% endif %}

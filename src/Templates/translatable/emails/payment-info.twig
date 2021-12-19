@@ -5,8 +5,8 @@
        {% trans %}email.payment-info.finish{% endtrans %} <b>{% trans %}email.payment-info.days{% endtrans %} </b> ({{ payment.paymentUntil|date('d. m. Y') }}).</p>
 
     <h3><u>{% trans %}email.payment-info.paymentDetails{% endtrans %}</u></h3>
-    <h4>{% trans %}email.payment-info.accountNumber{% endtrans %} {{ payment.accountNumber }}</h4>
-    <h4>{% trans %}email.payment-info.amount{% endtrans %} {{ payment.price }} {{ payment.currency }}</h4>
-    <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %} {{ payment.getVariableSymbol }}</h4>
-    <h4>{% trans %}email.payment-info.paymentNote{% endtrans %} {{ payment.note }}</h4>
+    <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
+    <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
+    <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
+    <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
 {% endblock %}

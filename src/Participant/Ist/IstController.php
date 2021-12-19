@@ -20,12 +20,15 @@ class IstController extends AbstractController
 
     public function showDashboard(Response $response, User $user): Response
     {
+        $ist = $this->istService->getIst($user);
+
         return $this->view->render(
             $response,
             'dashboard-ist.twig',
             [
                 'user' => $user,
-                'ist' => $this->istService->getIst($user),
+                'ist' => $ist,
+                'person' => $ist,
                 'ca' => $user->event->eventType->getContentArbiterIst(),
             ],
         );
