@@ -24,6 +24,10 @@ class UserRegeneration
      */
     private function recreateUserFromSession(array $userSession): ?User
     {
+        if (!array_key_exists('id', $userSession)) {
+            return null;
+        }
+        
         /** @var User|null $user */
         $user = $this->userRepository->findOneBy(['id' => $userSession['id']]);
 

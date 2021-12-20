@@ -27,8 +27,7 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
             throw new \RuntimeException('Cannot access route in CheckPatrolLeaderParticipatns middleware');
         }
 
-        /** @var int $participantId */
-        $participantId = $route->getArgument('participantId');
+        $participantId = (int)$route->getArgument('participantId');
         if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
             $this->patrolService->getPatrolParticipant($participantId),
             $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
