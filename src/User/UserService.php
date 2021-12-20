@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\User;
 
@@ -99,8 +99,7 @@ class UserService {
     }
 
     public function invalidateAllLoginTokens(User $user): void {
-        $existingTokens = $this->loginTokenRepository->findBy([$user, 'used' => false]);
-        foreach ($existingTokens as $token) {
+        foreach ($this->loginTokenRepository->findAllNonusedTokens($user) as $token) {
             $token->used = true;
             $this->loginTokenRepository->persist($token);
         }

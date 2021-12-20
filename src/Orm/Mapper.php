@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Orm;
 
@@ -112,34 +112,59 @@ class Mapper implements IMapper
         throw new InvalidStateException('Cannot determine table name.');
     }
 
+    /**
+     * @param string $entityClass
+     * @param ?Caller $caller
+     * @return string[]
+     */
     public function getImplicitFilters(string $entityClass, Caller $caller = null): array
     {
         return [];
     }
 
-    protected function trimNamespace($class): string
+    protected function trimNamespace(string $class): string
     {
-        $class = explode('\\', $class);
+        $pieces = explode('\\', $class);
 
-        return end($class);
+        return end($pieces);
     }
 
     protected function toUnderScore(string $string): string
     {
-        return lcfirst(preg_replace_callback('#(?<=.)([A-Z])#', fn($m) => '_' . strtolower($m[1]), $string));
+        $pregReplaced = preg_replace_callback('#(?<=.)([A-Z])#', fn($m) => '_' . strtolower($m[1]), $string);
+        if ($pregReplaced === null) {
+            throw new \RuntimeException('preg_replace_callback failed');
+        }
+
+        return lcfirst($pregReplaced);
     }
 
     protected function toCamelCase(string $string): string
     {
-        return preg_replace_callback('#_(.)#', fn($m) => strtoupper($m[1]), $string);
+        $pregReplaced = preg_replace_callback('#_(.)#', fn($m) => strtoupper($m[1]), $string);
+        if ($pregReplaced === null) {
+            throw new \RuntimeException('preg_replace_callback failed');
+        }
+
+        return $pregReplaced;
     }
 
-    function convertToRowData(string $table, array $values): array
+    /**
+     * @param string $table
+     * @param mixed[] $values
+     * @return mixed[]
+     */
+    public function convertToRowData(string $table, array $values): array
     {
         return $values;
     }
 
-    function convertFromRowData(string $table, array $data): array
+    /**
+     * @param string $table
+     * @param mixed[] $data
+     * @return mixed[]
+     */
+    public function convertFromRowData(string $table, array $data): array
     {
         return $data;
     }

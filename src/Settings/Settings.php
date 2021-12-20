@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace kissj\Settings;
 
@@ -102,16 +100,17 @@ class Settings
                 'before_send' => function(SentryEvent $event): ?SentryEvent {
                     // Check if error is from middleware exception capturer
                     // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
-                    if (str_contains($event->getMessage(), 'Exception!') AND $event->getLogger() === "monolog.KISSJ") {
+                    if ($event->getLogger() === "monolog.KISSJ"
+                        && str_contains($event->getMessage() ?? '', 'Exception!')) {
                         return null;
                     }
 
                     return $event;
-                }
+                },
             ])->getClient();
         };
 
-        $container[SentryHub::class] = fn (SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
+        $container[SentryHub::class] = fn(SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
 
         $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
@@ -210,7 +209,6 @@ class Settings
 
             return $view;
         };
-
 
         $container[UserAuthenticationMiddleware::class]
             = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);

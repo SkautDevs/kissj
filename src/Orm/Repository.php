@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Orm;
 
@@ -7,8 +7,8 @@ use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
 
 /**
- * @property array onBeforeCreate
- * @property array onBeforePersist
+ * @property string[] $onBeforeCreate
+ * @property string[] $onBeforePersist
  */
 class Repository extends BaseRepository
 {
@@ -18,6 +18,10 @@ class Repository extends BaseRepository
         $this->onBeforePersist[] = EntityDatetime::class . '::setUpdatedAtBeforePersist';
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @return bool
+     */
     public function isExisting(array $criteria): bool
     {
         $qb = $this->createFluent();
@@ -32,9 +36,14 @@ class Repository extends BaseRepository
         return $this->getOneBy(['id' => $id]);
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @param array<string,bool> $orderBy
+     * @return Entity
+     */
     public function getOneBy(array $criteria, array $orderBy = []): Entity
     {
-        $entity = $this->findOneBy($criteria);
+        $entity = $this->findOneBy($criteria, $orderBy);
         if ($entity === null) {
             throw new \RuntimeException('Entity was not found.');
         }
@@ -42,6 +51,11 @@ class Repository extends BaseRepository
         return $entity;
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @param array<string,bool> $orderBy
+     * @return Entity[]
+     */
     public function findBy(array $criteria, array $orderBy = []): array
     {
         $qb = $this->createFluent();
@@ -62,6 +76,11 @@ class Repository extends BaseRepository
         return $entities;
     }
 
+    /**
+     * @param array<array<string,Entity|Relation|bool|int|float|string>> $criterias
+     * @param array<string,bool> $orderBy
+     * @return Entity[]
+     */
     public function findByMultiple(array $criterias, array $orderBy = []): array
     {
         $qb = $this->createFluent();
@@ -81,6 +100,11 @@ class Repository extends BaseRepository
         return $entities;
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @param array<string,bool> $orderBy
+     * @return Entity|null
+     */
     public function findOneBy(array $criteria, array $orderBy = []): ?Entity
     {
         $qb = $this->createFluent();
@@ -95,9 +119,12 @@ class Repository extends BaseRepository
         return $this->createEntity($row);
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @return int
+     */
     public function countBy(array $criteria): int
     {
-        /** @var Fluent $qb */
         $qb = $this->connection->select('count(*)')->from($this->getTable());
         $this->addConditions($qb, $criteria);
         $row = $qb->fetchSingle();
@@ -105,6 +132,11 @@ class Repository extends BaseRepository
         return $row;
     }
 
+    /**
+     * @param Fluent $qb
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @return void
+     */
     protected function addConditions(Fluent $qb, array $criteria): void
     {
         foreach ($criteria as $field => $value) {
@@ -132,6 +164,10 @@ class Repository extends BaseRepository
         }
     }
 
+    /**
+     * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @return int
+     */
     public function findIdBy(array $criteria): int
     {
         $qb = $this->createFluent();
@@ -141,15 +177,20 @@ class Repository extends BaseRepository
         return $id;
     }
 
-    public function findAll()
+    /**
+     * @return Entity[]
+     */
+    public function findAll(): array
     {
-        return $this->createEntities(
-            $this->createFluent()
-                ->fetchAll()
-        );
+        return $this->createEntities($this->createFluent()->fetchAll());
     }
 
-    protected function addOrderBy(Fluent $qb, array $orderBy)
+    /**
+     * @param Fluent $qb
+     * @param array<string,bool> $orderBy
+     * @return void
+     */
+    protected function addOrderBy(Fluent $qb, array $orderBy): void
     {
         foreach ($orderBy as $order => $asc) {
             if ($asc) {

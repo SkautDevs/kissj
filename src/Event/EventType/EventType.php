@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace kissj\Event\EventType;
 
@@ -27,12 +25,12 @@ abstract class EventType
 
     public function getMaximumClosedParticipants(Participant $participant): int
     {
-        $event = $participant->user->event;
+        $event = $participant->getUserButNotNull()->event;
 
         return match (get_class($participant)) {
-            PatrolLeader::class => $event->maximalClosedPatrolsCount,
-            Ist::class => $event->maximalClosedIstsCount,
-            Guest::class => $event->maximalClosedGuestsCount,
+            PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
+            Ist::class => $event->maximalClosedIstsCount ?? 0,
+            Guest::class => $event->maximalClosedGuestsCount ?? 0,
             default => throw new \RuntimeException('Unexpected participent class: ' . get_class($participant)),
         };
     }

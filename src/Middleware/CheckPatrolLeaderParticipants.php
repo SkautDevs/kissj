@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Middleware;
 
@@ -26,6 +26,8 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
         if ($route === null) {
             throw new \RuntimeException('Cannot access route in CheckPatrolLeaderParticipatns middleware');
         }
+
+        /** @var int $participantId */
         $participantId = $route->getArgument('participantId');
         if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
             $this->patrolService->getPatrolParticipant($participantId),

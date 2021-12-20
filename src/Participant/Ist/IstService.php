@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Ist;
 
@@ -6,10 +6,8 @@ use kissj\AbstractService;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
-use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,7 +17,6 @@ class IstService extends AbstractService
     public function __construct(
         private IstRepository $istRepository,
         private UserService $userService,
-        private PaymentService $paymentService,
         private ParticipantRepository $participantRepository,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
@@ -35,9 +32,17 @@ class IstService extends AbstractService
             $this->istRepository->persist($ist);
         }
 
-        return $this->istRepository->findOneBy(['user' => $user]);
+        /** @var Ist $ist */
+        $ist = $this->istRepository->findOneBy(['user' => $user]);
+
+        return $ist;
     }
 
+    /**
+     * @param Ist $ist
+     * @param array<string> $params
+     * @return Ist
+     */
     public function addParamsIntoIst(Ist $ist, array $params): Ist
     {
         $this->addParamsIntoPerson($params, $ist);
@@ -50,7 +55,7 @@ class IstService extends AbstractService
 
     public function isIstValidForClose(Ist $ist): bool
     {
-        $ca = $ist->user->event->eventType->getContentArbiterIst();
+        $ca = $ist->getUserButNotNull()->event->eventType->getContentArbiterIst();
         if (
             ($ca->skills && $ist->skills === null)
             || ($ca->preferredPosition && $ist->preferredPosition === null)
@@ -71,16 +76,16 @@ class IstService extends AbstractService
             $validityFlag = false;
         }
 
-        $event = $ist->user->event;
+        $event = $ist->getUserButNotNull()->event;
         if (
-            $this->userService->getClosedIstsCount($event) 
+            $this->userService->getClosedIstsCount($event)
             >= $event->getEventType()->getMaximumClosedParticipants($ist)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.istFullRegistration'));
 
             $validityFlag = false;
         }
-        
+
         if (!$event->canRegistrationBeLocked()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
 
@@ -94,8 +99,9 @@ class IstService extends AbstractService
     public function closeRegistration(Ist $ist): Ist
     {
         if ($this->isCloseRegistrationValid($ist)) {
-            $this->userService->closeRegistration($ist->user);
-            $this->mailer->sendRegistrationClosed($ist->user);
+            $user = $ist->getUserButNotNull();
+            $this->userService->closeRegistration($user);
+            $this->mailer->sendRegistrationClosed($user);
         }
 
         return $ist;

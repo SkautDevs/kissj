@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace kissj\Application;
 
@@ -61,7 +60,11 @@ class Middleware
         // keep last to execute first
         $errorHandlers = [];
         if ($_ENV['DEBUG'] !== 'true') {
-            $errorHandlers = [(new ErrorHandlerGetter($app->getContainer()))->getErrorHandler()];
+            $container = $app->getContainer();
+            if ($container === null) {
+                throw new \RuntimeException('Cannot get container');
+            }
+            $errorHandlers = [(new ErrorHandlerGetter($container))->getErrorHandler()];
         }
         $app->add(new WhoopsMiddleware([], $errorHandlers));
 

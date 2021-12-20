@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
@@ -21,8 +21,7 @@ class GuestService extends AbstractService
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
         private UserService $userService,
-    ) {
-    }
+    ) {}
 
     public function getGuest(User $user): Guest
     {
@@ -38,6 +37,11 @@ class GuestService extends AbstractService
         return $guest;
     }
 
+    /**
+     * @param Guest $guest
+     * @param string[] $params
+     * @return Guest
+     */
     public function addParamsIntoGuest(Guest $guest, array $params): Guest
     {
         /** @var Guest $guest */
@@ -48,7 +52,10 @@ class GuestService extends AbstractService
 
     public function isGuestValidForClose(Guest $guest): bool
     {
-        return $this->isPersonValidForClose($guest, $guest->user->event->eventType->getContentArbiterGuest());
+        return $this->isPersonValidForClose(
+            $guest,
+            $guest->getUserButNotNull()->event->eventType->getContentArbiterGuest(),
+        );
     }
 
     public function isCloseRegistrationValid(Guest $guest): bool
@@ -61,7 +68,7 @@ class GuestService extends AbstractService
             $validityFlag = false;
         }
 
-        $event = $guest->user->event;
+        $event = $guest->getUserButNotNull()->event;
         if (
             $this->userService->getClosedIstsCount($event)
             >= $event->getEventType()->getMaximumClosedParticipants($guest)
@@ -83,8 +90,9 @@ class GuestService extends AbstractService
     public function closeRegistration(Guest $guest): Guest
     {
         if ($this->isCloseRegistrationValid($guest)) {
-            $this->userService->closeRegistration($guest->user);
-            $this->mailer->sendRegistrationClosed($guest->user);
+            $user = $guest->getUserButNotNull();
+            $this->userService->closeRegistration($user);
+            $this->mailer->sendRegistrationClosed($user);
         }
 
         return $guest;
@@ -104,7 +112,7 @@ class GuestService extends AbstractService
 
     public function finishRegistration(Guest $guest): Guest
     {
-        $this->userService->payRegistration($guest->user);
+        $this->userService->payRegistration($guest->getUserButNotNull());
         $this->mailer->sendGuestRegistrationFinished($guest);
 
         return $guest;

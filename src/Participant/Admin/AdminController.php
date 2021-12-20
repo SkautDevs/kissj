@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
@@ -90,7 +90,9 @@ class AdminController extends AbstractController
     public function denyParticipant(int $participantId, Request $request, Response $response): Response
     {
         // TODO check if correct event
-        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
+        /** @var array<string,string> $parsedBody */
+        $parsedBody = $request->getParsedBody();
+        $reason = htmlspecialchars($parsedBody['reason'], ENT_QUOTES);
         /** @var Participant $participant */
         $participant = $this->participantRepository->get($participantId);
         $this->participantService->denyRegistration($participant, $reason);
@@ -132,7 +134,9 @@ class AdminController extends AbstractController
     public function cancelPayment(int $paymentId, Request $request, Response $response): Response
     {
         // TODO check if correct event
-        $reason = htmlspecialchars($request->getParsedBody()['reason'], ENT_QUOTES);
+        /** @var array<string,string> $parsedBody */
+        $parsedBody = $request->getParsedBody();
+        $reason = htmlspecialchars($parsedBody['reason'], ENT_QUOTES);
         /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
         $this->participantService->cancelPayment($payment, $reason);
@@ -143,7 +147,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-payments',
-            ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
 
@@ -156,7 +159,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-payments',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 
@@ -173,11 +175,10 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-payments',
-            ['eventSlug' => $payment->participant->user->event->slug]
         );
     }
 
-    public function showFile(string $filename)
+    public function showFile(string $filename): Response
     {
         // TODO check if correct event
         $file = $this->fileHandler->getFile($filename);
@@ -203,7 +204,7 @@ class AdminController extends AbstractController
     public function setBreakpointFromRoute(Request $request, Response $response): Response
     {
         // TODO check if correct event
-        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'));
+        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'), $this->getEvent($request));
 
         if ($result) {
             $this->flashMessages->success('Set breakpoint successfully');
@@ -215,7 +216,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-auto-payments',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 
@@ -228,14 +228,15 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-auto-payments',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 
     public function markBankPaymentPaired(Request $request, Response $response, int $paymentId): Response
     {
         // TODO check if correct event
-        $notice = htmlspecialchars($request->getParsedBody()['notice'], ENT_QUOTES);
+        /** @var array<string,string> $parsedBody */
+        $parsedBody = $request->getParsedBody();
+        $notice = htmlspecialchars($parsedBody['notice'], ENT_QUOTES);
         $this->bankPaymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
         $this->flashMessages->info($this->translator->trans('flash.info.markedAsPaired'));
@@ -244,7 +245,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-auto-payments',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 
@@ -258,7 +258,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-show-auto-payments',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 
@@ -289,10 +288,11 @@ class AdminController extends AbstractController
     public function transferPayment(Request $request, Response $response): Response
     {
         // TODO check if correct event
-        $queryParams = $request->getParsedBody();
+        /** @var array<string,string> $parsedBody */
+        $parsedBody = $request->getParsedBody();
 
-        $participantFrom = $this->participantService->findParticipantFromUserMail($queryParams['emailFrom']);
-        $participantTo = $this->participantService->findParticipantFromUserMail($queryParams['emailTo']);
+        $participantFrom = $this->participantService->findParticipantFromUserMail($parsedBody['emailFrom']);
+        $participantTo = $this->participantService->findParticipantFromUserMail($parsedBody['emailTo']);
 
         // TODO refactor findParticipantFromUserMail into get method
         if ($participantFrom === null || $participantTo === null) {
@@ -314,7 +314,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-dashboard',
-            ['eventSlug' => $request->getAttribute('user')->event->slug]
         );
     }
 }

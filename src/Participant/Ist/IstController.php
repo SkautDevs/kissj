@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Ist;
 
@@ -34,14 +34,17 @@ class IstController extends AbstractController
         );
     }
 
-    public function showDetailsChangeable(Request $request, Response $response, User $user): Response
+    public function showDetailsChangeable(Response $response, User $user): Response
     {
-        $istDetails = $this->istService->getIst($user);
+        $ist = $this->istService->getIst($user);
 
         return $this->view->render(
             $response,
             'changeDetails-ist.twig',
-            ['istDetails' => $istDetails, 'ca' => $istDetails->user->event->eventType->getContentArbiterIst()]
+            [
+                'istDetails' => $ist,
+                'ca' => $user->event->eventType->getContentArbiterIst(),
+            ],
         );
     }
 
@@ -49,14 +52,16 @@ class IstController extends AbstractController
     {
         $ist = $this->istService->getIst($user);
 
-        if ($ist->user->event->getEventType()->getContentArbiterIst()->uploadFile) {
+        if ($user->event->getEventType()->getContentArbiterIst()->uploadFile) {
             $uploadedFile = $this->resolveUploadedFiles($request);
             if ($uploadedFile instanceof UploadedFile) {
                 $this->fileHandler->saveFileTo($ist, $uploadedFile);
             }
         }
 
-        $ist = $this->istService->addParamsIntoIst($ist, $request->getParsedBody());
+        /** @var string[] $parsed */
+        $parsed = $request->getParsedBody();
+        $ist = $this->istService->addParamsIntoIst($ist, $parsed);
 
         $this->istRepository->persist($ist);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
@@ -80,19 +85,19 @@ class IstController extends AbstractController
     }
 
     // TODO join into admin
-    public function closeRegistration(Request $request, Response $response): Response
+    public function closeRegistration(Request $request, Response $response, User $user): Response
     {
-        $ist = $this->istService->getIst($request->getAttribute('user'));
+        $ist = $this->istService->getIst($user);
         $ist = $this->istService->closeRegistration($ist);
 
-        if ($ist->user->status === User::STATUS_CLOSED) {
+        if ($user->status === User::STATUS_CLOSED) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
-            $this->logger->info('Locked registration for IST with ID ' . $ist->id . ', user ID ' . $ist->user->id);
+            $this->logger->info('Locked registration for IST with ID ' . $ist->id . ', user ID ' . $user->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
-        return $this->redirect($request, $response, 'ist-dashboard', ['eventSlug' => $ist->user->event->slug]);
+        return $this->redirect($request, $response, 'ist-dashboard');
     }
 
     // TODO join into admin
@@ -104,6 +109,6 @@ class IstController extends AbstractController
         $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
         $this->logger->info('Approved registration for IST with ID ' . $ist->id);
 
-        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $ist->user->event->slug]);
+        return $this->redirect($request, $response, 'admin-show-approving');
     }
 }

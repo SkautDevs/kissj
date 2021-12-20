@@ -2,7 +2,7 @@ parameters:
 	level: 8
 	paths:
 		- src
-		- tests
+		#- tests
 	ignoreErrors:
 		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#'
 	exceptions:

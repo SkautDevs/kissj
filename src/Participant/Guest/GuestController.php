@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
@@ -39,15 +39,17 @@ class GuestController extends AbstractController
 
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
+        /** @var string[] $parsedBody */
+        $parsedBody = $request->getParsedBody();
         $guest = $this->guestService->addParamsIntoGuest(
             $this->guestService->getGuest($user),
-            $request->getParsedBody()
+            $parsedBody,
         );
 
         $this->guestRepository->persist($guest);
         $this->flashMessages->success('Details successfully saved. ');
 
-        return $this->redirect($request, $response, 'guest-dashboard', ['eventSlug' => $guest->user->event->slug]);
+        return $this->redirect($request, $response, 'guest-dashboard');
     }
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
@@ -56,26 +58,26 @@ class GuestController extends AbstractController
         $validRegistration = $this->guestService->isCloseRegistrationValid($guest); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-guest.twig',
-                ['dataProtectionUrl' => $guest->user->event->dataProtectionUrl]);
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl]);
         }
 
-        return $this->redirect($request, $response, 'guest-dashboard', ['eventSlug' => $guest->user->event->slug]);
+        return $this->redirect($request, $response, 'guest-dashboard');
     }
 
-    public function closeRegistration(Request $request, Response $response): Response
+    public function closeRegistration(Request $request, Response $response, User $user): Response
     {
-        $guest = $this->guestService->getGuest($request->getAttribute('user'));
+        $guest = $this->guestService->getGuest($user);
         $guest = $this->guestService->closeRegistration($guest);
 
-        if ($guest->user->status === User::STATUS_CLOSED) {
+        if ($user->status === User::STATUS_CLOSED) {
             $this->flashMessages->success('Registration successfully locked and sent');
             $this->logger->info('Locked registration for Guest with ID ' . $guest->id
-                . ', user ID ' . $guest->user->id);
+                . ', user ID ' . $user->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
-        return $this->redirect($request, $response, 'guest-dashboard', ['eventSlug' => $guest->user->event->slug]);
+        return $this->redirect($request, $response, 'guest-dashboard');
     }
 
     public function approveGuest(int $guestId, Request $request, Response $response): Response
@@ -86,6 +88,6 @@ class GuestController extends AbstractController
         $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
         $this->logger->info('Approved (no payment was sent) registration for guest with ID ' . $guest->id);
 
-        return $this->redirect($request, $response, 'admin-show-approving', ['eventSlug' => $guest->user->event->slug]);
+        return $this->redirect($request, $response, 'admin-show-approving');
     }
 }

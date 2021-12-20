@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
@@ -11,10 +11,6 @@ use kissj\Orm\Repository;
 class GuestRepository extends Repository
 {
     /**
-     * @return Guest[]
-     */
-
-    /**
      * @param Event $event
      * @return Guest[]
      */
@@ -22,7 +18,7 @@ class GuestRepository extends Repository
     {
         $guests = [];
         foreach ($this->findAll() as $participant) {
-            if ($participant instanceof Guest && $participant->user->event->id === $event->id) {
+            if ($participant instanceof Guest && $participant->getUserButNotNull()->event->id === $event->id) {
                 $guests[] = $participant;
             }
         }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Export;
 
@@ -15,13 +15,12 @@ class ExportService
     public function __construct(
         private ParticipantRepository $participantRepository,
         private TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     /**
      * @param Event $event
-     * @param User  $adminUser
-     * @return array<array<string>>
+     * @param User $adminUser
+     * @return array<int, array<int, string>>
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
@@ -49,13 +48,13 @@ class ExportService
         foreach ($participants as $participant) {
             $rows[] = [
                 (string)$participant->id, // 0
-                $participant->role,
-                $participant->user?->status,
+                $participant->role ?? '',
+                $participant->user?->status ?? '',
                 $this->translator->trans($participant->contingent ?? ''),
-                $participant->firstName,
-                $participant->lastName, // 5
-                $participant->user?->email,
-                $participant->email,
+                $participant->firstName ?? '',
+                $participant->lastName ?? '', // 5
+                $participant->user?->email ?? '',
+                $participant->email ?? '',
             ];
         }
 
@@ -64,8 +63,8 @@ class ExportService
 
     /**
      * @param Event $event
-     * @param User  $adminUser
-     * @return array<array<string>>
+     * @param User $adminUser
+     * @return array<int, array<int, string>>
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
@@ -91,13 +90,13 @@ class ExportService
         foreach ($participants as $participant) {
             $rows[] = [
                 (string)$participant->id, // 0
-                $participant->role,
-                $participant->user?->status,
+                $participant->role ?? '',
+                $participant->user?->status ?? '',
                 $this->translator->trans($participant->contingent ?? ''),
-                $participant->firstName,
-                $participant->lastName, // 5
-                $participant->user?->email,
-                $participant->email,
+                $participant->firstName ?? '',
+                $participant->lastName ?? '', // 5
+                $participant->user?->email ?? '',
+                $participant->email ?? '',
             ];
         }
 
@@ -106,8 +105,8 @@ class ExportService
 
     /**
      * @param Event $event
-     * @param User  $adminUser
-     * @return array<array<string>>
+     * @param User $adminUser
+     * @return array<int, array<int, string>>
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
@@ -188,33 +187,33 @@ class ExportService
             $rows[] = array_merge(
                 [
                     (string)$participant->id, // 0
-                    $participant->user?->event->readableName,
-                    $participant->role,
-                    $participant->user?->status,
+                    $participant->user?->event->readableName ?? '',
+                    $participant->role ?? '',
+                    $participant->user?->status ?? '',
                     $this->translator->trans($participant->contingent ?? ''),
-                    $participant->firstName, // 5
-                    $participant->lastName,
-                    $participant->nickname,
-                    $participant->permanentResidence,
-                    $participant->telephoneNumber,
-                    $participant->gender, // 10
-                    $participant->country,
+                    $participant->firstName ?? '', // 5
+                    $participant->lastName ?? '',
+                    $participant->nickname ?? '',
+                    $participant->permanentResidence ?? '',
+                    $participant->telephoneNumber ?? '',
+                    $participant->gender ?? '', // 10
+                    $participant->country ?? '',
                     $participant->getUserButNotNull()->email,
-                    $participant->email,
-                    $participant->scoutUnit,
-                    $participant->languages, // 15
+                    $participant->email ?? '',
+                    $participant->scoutUnit ?? '',
+                    $participant->languages ?? '', // 15
                     $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
-                    $participant->birthPlace,
-                    $participant->healthProblems,
+                    $participant->birthPlace ?? '',
+                    $participant->healthProblems ?? '',
                     $this->translator->trans($participant->foodPreferences ?? ''),
-                    $participant->idNumber, // 20
+                    $participant->idNumber ?? '', // 20
                     $this->translator->trans($participant->swimming ?? ''),
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                     . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
                     $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
-                    $participant->uploadedOriginalFilename, // 25
-                    $participant->notes,
+                    $participant->uploadedOriginalFilename ?? '', // 25
+                    $participant->notes ?? '',
                 ],
                 $pPart,
                 $istPart

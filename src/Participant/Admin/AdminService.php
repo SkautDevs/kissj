@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
@@ -69,7 +69,7 @@ class AdminService
      * Set To as paid and send him email about payment transfer
      * Handle scarf correction on To
      */
-    public function transferPayment(Participant $participantFrom, Participant $participantTo)
+    public function transferPayment(Participant $participantFrom, Participant $participantTo): void
     {
         $correctPayment = null;
         foreach ($participantFrom->payment as $payment) {
@@ -100,10 +100,10 @@ class AdminService
 
         $correctPayment->participant = $participantTo;
 
-        $userFrom = $participantFrom->user;
+        $userFrom = $participantFrom->getUserButNotNull();
         $userFrom->status = User::STATUS_OPEN;
 
-        $userTo = $participantTo->user;
+        $userTo = $participantTo->getUserButNotNull();
         $userTo->status = User::STATUS_PAID;
 
         $this->paymentRepository->persist($correctPayment);

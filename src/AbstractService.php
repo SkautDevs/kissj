@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj;
 
@@ -8,7 +8,7 @@ use kissj\Participant\Participant;
 class AbstractService
 {
     /**
-     * @param string[]    $params
+     * @param string[] $params
      * @param Participant $p
      * @return Participant
      * @throws \Exception

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Export;
 
@@ -49,6 +49,13 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_full');
     }
 
+    /**
+     * @param Response             $response
+     * @param array<array<string>> $csvRows
+     * @param string               $fileName
+     * @param bool                 $addTimestamp
+     * @return Response
+     */
     private function outputCSVresponse(
         Response $response,
         array $csvRows,
