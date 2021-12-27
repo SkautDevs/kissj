@@ -4,7 +4,6 @@ namespace kissj\Participant\Patrol;
 
 use kissj\AbstractController;
 use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -16,7 +15,6 @@ class PatrolController extends AbstractController
         private PatrolService $patrolService,
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
-        private ParticipantService $participantService,
     ) {
     }
 
@@ -76,7 +74,7 @@ class PatrolController extends AbstractController
         $validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-pl.twig',
-                ['dataProtectionUrl' => $patrolLeader->getUserButNotNull()->event->dataProtectionUrl]);
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl]);
         }
 
         return $this->redirect($request, $response, 'pl-dashboard');
@@ -191,20 +189,6 @@ class PatrolController extends AbstractController
                 'pDetail' => $patrolParticipant,
                 'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
             ]
-        );
-    }
-
-    public function approvePatrol(int $patrolLeaderId, Request $request, Response $response): Response
-    {
-        /** @var PatrolLeader $patrolLeader */
-        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
-        $this->participantService->approveRegistration($patrolLeader);
-        $this->flashMessages->success($this->translator->trans('flash.success.patrolApproved'));
-        $this->logger->info('Approved registration for Patrol with Patrol Leader ID ' . $patrolLeader->id);
-
-        return $this->redirect($request,
-            $response,
-            'admin-show-approving',
         );
     }
 }

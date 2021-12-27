@@ -8,6 +8,7 @@ use kissj\Orm\Repository;
 /**
  * @table participant
  *
+ * @method PatrolLeader get(int $patrolLeaderId)
  * @method PatrolLeader[] findBy(mixed[] $criteria)
  * @method PatrolLeader|null findOneBy(mixed[] $criteria)
  * @method PatrolLeader getOneBy(mixed[] $criteria)

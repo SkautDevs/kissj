@@ -8,6 +8,7 @@ use kissj\Orm\Repository;
 /**
  * @table participant
  *
+ * @method Ist get(int $istId)
  * @method Ist[] findBy(mixed[] $criteria)
  * @method Ist|null findOneBy(mixed[] $criteria)
  * @method Ist getOneBy(mixed[] $criteria)

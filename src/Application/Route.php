@@ -185,13 +185,13 @@ class Route
                         $app->get('', AdminController::class . '::showApproving')
                             ->setName('admin-show-approving');
 
-                        $app->post('/approvePatrolLeader/{patrolLeaderId}', PatrolController::class . '::approvePatrol')
+                        $app->post('/approvePatrolLeader/{patrolLeaderId}', AdminController::class . '::approvePatrol')
                             ->setName('admin-approve-pl');
 
-                        $app->post('/approveIst/{istId}', IstController::class . '::approveIst')
+                        $app->post('/approveIst/{istId}', AdminController::class . '::approveIst')
                             ->setName('admin-approve-ist');
 
-                        $app->post('/approveGuest/{guestId}', GuestController::class . '::approveGuest')
+                        $app->post('/approveGuest/{guestId}', AdminController::class . '::approveGuest')
                             ->setName('admin-approve-guest');
                         
                         $app->get('/denyParticipant/{participantId}', AdminController::class . '::showDenyParticipant')

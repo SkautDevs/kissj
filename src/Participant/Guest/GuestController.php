@@ -79,15 +79,4 @@ class GuestController extends AbstractController
 
         return $this->redirect($request, $response, 'guest-dashboard');
     }
-
-    public function approveGuest(int $guestId, Request $request, Response $response): Response
-    {
-        /** @var Guest $guest */
-        $guest = $this->guestRepository->get($guestId);
-        $this->guestService->finishRegistration($guest);
-        $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
-        $this->logger->info('Approved (no payment was sent) registration for guest with ID ' . $guest->id);
-
-        return $this->redirect($request, $response, 'admin-show-approving');
-    }
 }
