@@ -49,7 +49,7 @@ class IstService extends AbstractService
         $ist->driversLicense = $params['driversLicense'] ?? null;
         $ist->skills = $params['skills'] ?? null;
         /** @var string[] $preferredPosition */
-        $preferredPosition = $params['preferredPosition'];
+        $preferredPosition = $params['preferredPosition'] ?? [];
         $ist->preferredPosition = $preferredPosition;
 
         return $ist;
