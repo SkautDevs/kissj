@@ -5,6 +5,7 @@ namespace kissj\Payment;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
+use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
@@ -103,11 +104,11 @@ class PaymentService
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
-    public function updatePayments(int $limit): void
+    public function updatePayments(int $limit, Event $event): void
     {
         $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
         if (count($freshBankPayments) === 0) {
-            $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank();
+            $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank($event);
 
             if ($newPaymentsCount > 0) {
                 $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);

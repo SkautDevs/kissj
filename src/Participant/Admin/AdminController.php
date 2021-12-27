@@ -257,10 +257,10 @@ class AdminController extends AbstractController
         );
     }
 
-    public function updatePayments(Request $request, Response $response): Response
+    public function updatePayments(Request $request, Response $response, Event $event): Response
     {
         // TODO check if correct event
-        $this->paymentService->updatePayments(5);
+        $this->paymentService->updatePayments(5, $event); // TODO add dynamic number of payments
 
         return $this->redirect(
             $request,

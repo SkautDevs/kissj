@@ -19,6 +19,10 @@ parameters:
 		     path: src\Orm\Repository.php
 		 - 
 		     # 3rd party library
+		     message: '#Access to an undefined property LeanMapper\\Entity::\$id.#'
+		     path: src\Orm\Repository.php
+		 - 
+		     # 3rd party library
 		     message: '#Method kissj\\BankPayment\\BankPayment::mapTransactionInto\(\) has parameter \$t with no value type specified in iterable type h4kuna\\Fio\\Response\\Read\\Transaction\.#'
 		     path: src\BankPayment\BankPayment.php
 		 - 
