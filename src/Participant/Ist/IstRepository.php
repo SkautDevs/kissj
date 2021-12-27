@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Ist;
 
@@ -7,6 +7,10 @@ use kissj\Orm\Repository;
 
 /**
  * @table participant
+ *
+ * @method Ist[] findBy(mixed[] $criteria)
+ * @method Ist|null findOneBy(mixed[] $criteria)
+ * @method Ist getOneBy(mixed[] $criteria)
  */
 class IstRepository extends Repository
 {
@@ -18,7 +22,7 @@ class IstRepository extends Repository
     {
         $ists = [];
         foreach ($this->findAll() as $participant) {
-            if ($participant instanceof Ist && $participant->user->event->id === $event->id) {
+            if ($participant instanceof Ist && $participant->getUserButNotNull()->event->id === $event->id) {
                 $ists[] = $participant;
             }
         }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: Martin Pecka
@@ -8,13 +8,12 @@
 
 namespace kissj\BankPayment;
 
-
 class Banks {
+    /** @var string[][] */
     protected array $banks = [
         'fio' => [
             'bankCode' => '2010',
             'name' => 'Fio Banka',
-            'importer' => \kissj\PaymentImport\FioPaymentImporter::class
         ],
         'air' => [
             'bankCode' => '3030',
@@ -225,8 +224,4 @@ class Banks {
             'name' => 'Wüstenrot hypoteční banka a.s.',
         ]
     ];
-
-    public function getBanks() {
-        return $this->banks;
-    }
 }

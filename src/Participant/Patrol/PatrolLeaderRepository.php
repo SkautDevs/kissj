@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
@@ -7,6 +7,10 @@ use kissj\Orm\Repository;
 
 /**
  * @table participant
+ *
+ * @method PatrolLeader[] findBy(mixed[] $criteria)
+ * @method PatrolLeader|null findOneBy(mixed[] $criteria)
+ * @method PatrolLeader getOneBy(mixed[] $criteria)
  */
 class PatrolLeaderRepository extends Repository
 {
@@ -18,7 +22,7 @@ class PatrolLeaderRepository extends Repository
     {
         $patrolLeaders = [];
         foreach ($this->findAll() as $participant) {
-            if ($participant instanceof PatrolLeader && $participant->user->event->id === $event->id) {
+            if ($participant instanceof PatrolLeader && $participant->getUserButNotNull()->event->id === $event->id) {
                 $patrolLeaders[] = $participant;
             }
         }

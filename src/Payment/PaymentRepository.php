@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Payment;
 
@@ -29,7 +29,11 @@ class PaymentRepository extends Repository {
         return $finalPayments;
     }
 
-    public function getDuePayments() {
+    /**
+     * @return Payment[]
+     */
+    public function getDuePayments(): array
+    {
         /** @var Payment[] $waitingPayments */
         $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
         

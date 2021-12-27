@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\User;
 
@@ -36,7 +36,7 @@ class UserController extends AbstractController
 
     public function sendLoginEmail(Request $request, Response $response): Response
     {
-        $email = $request->getParsedBody()['email'];
+        $email = $this->getParameterFromBody($request, 'email', true);
         $event = $this->getEvent($request);
         if (!$this->userRepository->isUserExisting($email, $event)) {
             $this->userService->registerUser($email, $event);
@@ -86,7 +86,7 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'landing');
     }
 
-    public function chooseRole(User $user, Request $request, Response $response): Response
+    public function chooseRole(User $user, Response $response): Response
     {
         // TODO add preference into get parameter
         return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $user->event,]);
@@ -94,7 +94,7 @@ class UserController extends AbstractController
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
-        $this->userService->setRole($user, $request->getParsedBody()['role']);
+        $this->userService->setRole($user, $this->getParameterFromBody($request, 'role'));
 
         return $this->redirect($request, $response, 'getDashboard');
     }

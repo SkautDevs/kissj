@@ -8,7 +8,7 @@ use kissj\Participant\Participant;
 class AbstractService
 {
     /**
-     * @param string[] $params
+     * @param array<string, string> $params
      * @param Participant $p
      * @return Participant
      * @throws \Exception

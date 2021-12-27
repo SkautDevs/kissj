@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -68,14 +68,14 @@ class Participant extends EntityDatetime
         if ($this instanceof PatrolParticipant) {
             $patrolLeaderUser = $this->patrolLeader->user;
             if ($patrolLeaderUser === null) {
-                throw new \Exception('Missing user for patrol leader ID ' . $this->patrolLeader->id);
+                throw new \RuntimeException('Missing user for patrol leader ID ' . $this->patrolLeader->id);
             }
 
             return $patrolLeaderUser;
         }
 
         if ($this->user === null) {
-            throw new \Exception('Missing user for participant ID ' . $this->id);
+            throw new \RuntimeException('Missing user for participant ID ' . $this->id);
         }
 
         return $this->user;

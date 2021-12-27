@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj;
 
@@ -43,9 +43,9 @@ abstract class AbstractController
     protected FileHandler $fileHandler;
 
     /**
-     * @param Request  $request
+     * @param Request $request
      * @param Response $response
-     * @param string   $routeName
+     * @param string $routeName
      * @param string[] $arguments
      * @return Response
      */
@@ -65,7 +65,7 @@ abstract class AbstractController
         }
 
         $this->flashMessages->warning($this->translator->trans('flash.warning.nonexistentEvent'));
-        
+
         return $response
             ->withHeader('Location', $this->getRouter($request)->urlFor('eventList', $arguments))
             ->withStatus(302);
@@ -117,5 +117,25 @@ abstract class AbstractController
     protected function tryGetEvent(Request $request): ?Event
     {
         return $request->getAttribute('event');
+    }
+
+    protected function getParameterFromBody(Request $request, string $parameterName, bool $escapeValue = false): string
+    {
+        $parsedBody = $request->getParsedBody();
+        if (!is_array($parsedBody)) {
+            throw new \RuntimeException('getParsedBody() did not returned array');
+        }
+
+        if (!array_key_exists($parameterName, $parsedBody)) {
+            throw new \RuntimeException('body does not contain parameter ' . $parameterName);
+        }
+
+        $parameter = $parsedBody[$parameterName];
+
+        if ($escapeValue) {
+            $parameter = htmlspecialchars($parameter, ENT_QUOTES);
+        }
+
+        return $parameter;
     }
 }

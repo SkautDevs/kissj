@@ -90,9 +90,7 @@ class AdminController extends AbstractController
     public function denyParticipant(int $participantId, Request $request, Response $response): Response
     {
         // TODO check if correct event
-        /** @var array<string,string> $parsedBody */
-        $parsedBody = $request->getParsedBody();
-        $reason = htmlspecialchars($parsedBody['reason'], ENT_QUOTES);
+        $reason = $this->getParameterFromBody($request, 'reason', true);
         /** @var Participant $participant */
         $participant = $this->participantRepository->get($participantId);
         $this->participantService->denyRegistration($participant, $reason);
@@ -134,9 +132,7 @@ class AdminController extends AbstractController
     public function cancelPayment(int $paymentId, Request $request, Response $response): Response
     {
         // TODO check if correct event
-        /** @var array<string,string> $parsedBody */
-        $parsedBody = $request->getParsedBody();
-        $reason = htmlspecialchars($parsedBody['reason'], ENT_QUOTES);
+        $reason = $this->getParameterFromBody($request, 'reason', true);
         /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
         $this->participantService->cancelPayment($payment, $reason);
@@ -204,7 +200,10 @@ class AdminController extends AbstractController
     public function setBreakpointFromRoute(Request $request, Response $response): Response
     {
         // TODO check if correct event
-        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2020-05-31'), $this->getEvent($request));
+        $result = $this->bankPaymentService->setBreakpoint(
+            new \DateTimeImmutable('2020-05-31'),
+            $this->getEvent($request)
+        );
 
         if ($result) {
             $this->flashMessages->success('Set breakpoint successfully');
@@ -234,9 +233,7 @@ class AdminController extends AbstractController
     public function markBankPaymentPaired(Request $request, Response $response, int $paymentId): Response
     {
         // TODO check if correct event
-        /** @var array<string,string> $parsedBody */
-        $parsedBody = $request->getParsedBody();
-        $notice = htmlspecialchars($parsedBody['notice'], ENT_QUOTES);
+        $notice = $this->getParameterFromBody($request, 'notice', true);
         $this->bankPaymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
         $this->flashMessages->info($this->translator->trans('flash.info.markedAsPaired'));
@@ -288,11 +285,12 @@ class AdminController extends AbstractController
     public function transferPayment(Request $request, Response $response): Response
     {
         // TODO check if correct event
-        /** @var array<string,string> $parsedBody */
-        $parsedBody = $request->getParsedBody();
-
-        $participantFrom = $this->participantService->findParticipantFromUserMail($parsedBody['emailFrom']);
-        $participantTo = $this->participantService->findParticipantFromUserMail($parsedBody['emailTo']);
+        $participantFrom = $this->participantService->findParticipantFromUserMail(
+            $this->getParameterFromBody($request, 'emailFrom')
+        );
+        $participantTo = $this->participantService->findParticipantFromUserMail(
+            $this->getParameterFromBody($request, 'emailTo')
+        );
 
         // TODO refactor findParticipantFromUserMail into get method
         if ($participantFrom === null || $participantTo === null) {

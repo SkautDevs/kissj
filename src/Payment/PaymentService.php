@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace kissj\Payment;
 
@@ -31,11 +29,10 @@ class PaymentService
 
     public function createAndPersistNewPayment(Participant $participant): Payment
     {
+        $event = $participant->getUserButNotNull()->event;
         do {
-            $variableNumber = $this->getVariableNumber($participant->user->event->prefixVariableSymbol);
+            $variableNumber = $this->getVariableNumber($event->prefixVariableSymbol);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
-
-        $event = $participant->user->event;
 
         $payment = new Payment();
         $payment->participant = $participant;
@@ -77,7 +74,7 @@ class PaymentService
         foreach (array_slice($duePayments, 0, $limit) as $payment) {
             $this->cancelPayment($payment);
 
-            $this->userService->openRegistration($payment->participant->user);
+            $this->userService->openRegistration($payment->participant->getUserButNotNull());
             $this->mailer->sendDuePaymentDenied($payment->participant);
             $this->logger->info('Payment ID ' . $payment->id . ' was automatically denied because payment due');
             $deniedPaymentsCount++;
@@ -93,7 +90,7 @@ class PaymentService
                 . Payment::STATUS_WAITING . '"');
         }
 
-        $this->userService->payRegistration($payment->participant->user);
+        $this->userService->payRegistration($payment->participant->getUserButNotNull());
         $payment->status = Payment::STATUS_PAID;
         $this->paymentRepository->persist($payment);
         $this->mailer->sendRegistrationPaid($payment->participant);
@@ -128,7 +125,7 @@ class PaymentService
 
         /** @var BankPayment $bankPayment */
         foreach (array_slice($freshBankPayments, 0, $limit) as $bankPayment) {
-            if (array_key_exists($bankPayment->variableSymbol, $participantKeydPayments)) {
+            if (array_key_exists($bankPayment->variableSymbol ?? '', $participantKeydPayments)) {
                 $payment = $participantKeydPayments[$bankPayment->variableSymbol];
                 if ($payment->price === $bankPayment->price) {
                     // match!

@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Payment;
 
 use DateInterval;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
-
 
 /**
  * @property int         $id
@@ -24,10 +23,15 @@ class Payment extends EntityDatetime {
     public const STATUS_CANCELED = 'canceled';
 
     public function getElapsedPaymentDays(): int {
-        /** @var $createdAt \DateTime */
+        /** @var \DateTimeInterface $createdAt */
         $createdAt = $this->createdAt;
 
-        return $createdAt->diff(new \DateTime('now'))->days;
+        $days = $createdAt->diff(new \DateTime('now'))->days;
+        if ($days === false) {
+            throw new \RuntimeException('days difference is returning false');
+        }
+
+        return $days;
     }
 
     public function getMaxElapsedPaymentDays(): int {
@@ -37,7 +41,10 @@ class Payment extends EntityDatetime {
     public function getPaymentUntil(): \DateTimeInterface {
         $dateInterval = new DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
 
-        return $this->createdAt->add($dateInterval);
+        /** @var \DateTimeInterface $createdAt */
+        $createdAt = $this->createdAt;
+
+        return $createdAt->add($dateInterval);
     }
 }
 

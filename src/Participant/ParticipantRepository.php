@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -7,6 +7,12 @@ use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Repository;
 use kissj\User\User;
 
+/**
+ * @method Participant[] findAll()
+ * @method Participant[] findBy(mixed[] $criteria)
+ * @method Participant|null findOneBy(mixed[] $criteria)
+ * @method Participant getOneBy(mixed[] $criteria)
+ */
 class ParticipantRepository extends Repository
 {
     /**
@@ -24,9 +30,7 @@ class ParticipantRepository extends Repository
         Event $event,
         User $adminUser,
     ): array {
-        /** @var Participant[] $participants */
-        $participants = $this->findAll();
-        $participants = $this->filterContingentAdminParticipants($participants, $adminUser);
+        $participants = $this->filterContingentAdminParticipants($this->findAll(), $adminUser);
 
         $validParticipants = [];
         foreach ($participants as $participant) {

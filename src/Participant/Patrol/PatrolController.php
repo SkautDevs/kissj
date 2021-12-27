@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
@@ -60,7 +60,9 @@ class PatrolController extends AbstractController
             }
         }
 
-        $patrolLeader = $this->patrolService->addParamsIntoPatrolLeader($patrolLeader, $request->getParsedBody());
+        /** @var array<string, string> $parsedBody */
+        $parsedBody = $request->getParsedBody();
+        $patrolLeader = $this->patrolService->addParamsIntoPatrolLeader($patrolLeader, $parsedBody);
 
         $this->patrolLeaderRepository->persist($patrolLeader);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
@@ -74,7 +76,7 @@ class PatrolController extends AbstractController
         $validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-pl.twig',
-                ['dataProtectionUrl' => $patrolLeader->user->event->dataProtectionUrl]);
+                ['dataProtectionUrl' => $patrolLeader->getUserButNotNull()->event->dataProtectionUrl]);
         }
 
         return $this->redirect($request, $response, 'pl-dashboard');
@@ -85,10 +87,11 @@ class PatrolController extends AbstractController
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
         $patrolLeader = $this->patrolService->closeRegistration($patrolLeader);
 
-        if ($patrolLeader->user->status === User::STATUS_CLOSED) {
+        $patrolLeaderUser = $patrolLeader->getUserButNotNull();
+        if ($patrolLeaderUser->status === User::STATUS_CLOSED) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for Patrol Leader with ID '
-                . $patrolLeader->id . ', user ID ' . $patrolLeader->user->id);
+                . $patrolLeader->id . ', user ID ' . $patrolLeaderUser->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
@@ -104,7 +107,7 @@ class PatrolController extends AbstractController
             $request,
             $response,
             'p-showChangeDetails',
-            ['participantId' => $patrolParticipant->id]
+            ['participantId' => (string)$patrolParticipant->id]
         );
     }
 
@@ -133,12 +136,15 @@ class PatrolController extends AbstractController
         Request $request,
         Response $response
     ): Response {
+        /** @var array<string, string> $params */
+        $params = $request->getParsedBody();
         $patrolParticipant = $this->patrolService->addParamsIntoPatrolParticipant(
             $this->patrolService->getPatrolParticipant($participantId),
-            $request->getParsedBody()
+            $params
         );
 
-        if ($patrolParticipant->patrolLeader->user->event->getEventType()->getContentArbiterPatrolParticipant()->uploadFile) {
+        if ($patrolParticipant->patrolLeader->getUserButNotNull()
+            ->event->getEventType()->getContentArbiterPatrolParticipant()->uploadFile) {
             $uploadedFile = $this->resolveUploadedFiles($request);
             if ($uploadedFile instanceof UploadedFile) {
                 $this->fileHandler->saveFileTo($patrolParticipant, $uploadedFile);

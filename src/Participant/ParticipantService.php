@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -23,7 +23,7 @@ class ParticipantService
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
-        $this->userService->closeRegistration($payment->participant->user);
+        $this->userService->closeRegistration($payment->participant->getUserButNotNull());
 
         $this->mailer->sendCancelledPayment($payment->participant, $reason);
 
@@ -49,7 +49,7 @@ class ParticipantService
     public function denyRegistration(Participant $participant, string $reason): Participant
     {
         $this->mailer->sendDeniedRegistration($participant, $reason);
-        $this->userService->openRegistration($participant->user);
+        $this->userService->openRegistration($participant->getUserButNotNull());
 
         return $participant;
     }
