@@ -4,7 +4,27 @@ parameters:
 		- src
 		#- tests
 	ignoreErrors:
-		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#'
+		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#' # 3rd party library
+		 - 
+		     # 3rd party library
+		     message: '#PHPDoc tag @var for variable \$row has no value type specified in iterable type Dibi\\Row\.#'
+		     path: src\Orm\Repository.php
+		 - 
+		     # 3rd party library
+		     message: '#Method kissj\\Orm\\Repository::addConditions\(\) has parameter \$qb with no value type specified in iterable type LeanMapper\\Fluent\.#'
+		     path: src\Orm\Repository.php
+		 - 
+		     # 3rd party library
+		     message: '#Method kissj\\Orm\\Repository::addOrderBy\(\) has parameter \$qb with no value type specified in iterable type LeanMapper\\Fluent\.#'
+		     path: src\Orm\Repository.php
+		 - 
+		     # 3rd party library
+		     message: '#Method kissj\\BankPayment\\BankPayment::mapTransactionInto\(\) has parameter \$t with no value type specified in iterable type h4kuna\\Fio\\Response\\Read\\Transaction\.#'
+		     path: src\BankPayment\BankPayment.php
+		 - 
+		     # 3rd party library
+		     message: '#Call to an undefined method Aws\\S3\\S3Client::HeadObject\(\)\.#'
+		     path: src\FileHandler\S3bucketFileHandler.php 
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
@@ -30,11 +30,15 @@ class BankPayment extends EntityDatetime
     public const STATUS_UNRELATED = 'unrelated';
     public const STATUS_RETURNED = 'returned';
 
+    /**
+     * @param Transaction $t
+     * @return $this
+     */
     public function mapTransactionInto(Transaction $t): self
     {
         $this->bankId = (string)$t->moveId;
-        $this->setMoveDate($t->moveDate);
-        $this->price = $t->volume;
+        $this->moveDate = $t->moveDate;
+        $this->price = (string)$t->volume;
         $this->variableSymbol = $t->variableSymbol;
         $this->accountNumber = $t->toAccount . '/' . $t->bankCode;
         $this->constantSymbol = $t->constantSymbol;

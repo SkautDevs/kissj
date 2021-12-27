@@ -5,8 +5,6 @@ namespace kissj\Settings;
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
-use h4kuna\Fio\FioRead;
-use h4kuna\Fio\Utils\FioFactory;
 use kissj\FileHandler\FileHandler;
 use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
@@ -32,6 +30,7 @@ use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
+use Sentry\ClientInterface;
 use Sentry\Event as SentryEvent;
 use Sentry\Monolog\Handler as SentryHandler;
 use Sentry\State\Hub as SentryHub;
@@ -93,11 +92,11 @@ class Settings
         $container[LocalizationResolverMiddleware::class] = autowire()
             ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
 
-        $container[SentryClient::class] = function (): SentryClient {
+        $container[SentryClient::class] = function(): ClientInterface {
             return ClientBuilder::create([
                 'dsn' => $_ENV['SENTRY_DSN'],
                 'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
-                'before_send' => function(SentryEvent $event): ?SentryEvent {
+                'before_send' => function (SentryEvent $event): ?SentryEvent {
                     // Check if error is from middleware exception capturer
                     // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
                     if ($event->getLogger() === "monolog.KISSJ"

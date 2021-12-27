@@ -41,7 +41,7 @@ class Payment extends EntityDatetime {
     public function getPaymentUntil(): \DateTimeInterface {
         $dateInterval = new DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
 
-        /** @var \DateTimeInterface $createdAt */
+        /** @var \DateTime $createdAt */
         $createdAt = $this->createdAt;
 
         return $createdAt->add($dateInterval);

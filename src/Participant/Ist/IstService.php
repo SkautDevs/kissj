@@ -48,7 +48,9 @@ class IstService extends AbstractService
         $this->addParamsIntoPerson($params, $ist);
         $ist->driversLicense = $params['driversLicense'] ?? null;
         $ist->skills = $params['skills'] ?? null;
-        $ist->preferredPosition = $params['preferredPosition'] ?? [];
+        /** @var string[] $preferredPosition */
+        $preferredPosition = $params['preferredPosition'];
+        $ist->preferredPosition = $preferredPosition;
 
         return $ist;
     }

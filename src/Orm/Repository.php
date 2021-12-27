@@ -2,6 +2,7 @@
 
 namespace kissj\Orm;
 
+use Dibi\Row;
 use LeanMapper\Entity;
 use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
@@ -110,6 +111,7 @@ class Repository extends BaseRepository
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
         $this->addOrderBy($qb, $orderBy);
+        /** @var ?Row $row */
         $row = $qb->fetch();
 
         if ($row === null) {

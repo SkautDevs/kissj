@@ -9,22 +9,23 @@ final class EventContextProcessor implements ProcessorInterface
 {
     public function __construct(
         private ?Event $event,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param array $record
-     * @return array
+     * @param array<mixed> $records
+     * @return array<mixed>
      */
-    public function __invoke(array $record): array
+    public function __invoke(array $records): array
     {
         $event = $this->event;
 
-        $record['context']['event'] = [
+        $records['context']['event'] = [
             'id' => $event?->id,
             'slug' => $event?->slug,
             'readableName' => $event?->readableName,
         ];
 
-        return $record;
+        return $records;
     }
 }

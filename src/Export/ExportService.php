@@ -156,12 +156,12 @@ class ExportService
             if ($participant instanceof PatrolLeader) {
                 $pPart = [
                     (string)$participant->id,
-                    $participant->patrolName,
+                    $participant->patrolName ?? '',
                 ];
             } elseif ($participant instanceof PatrolParticipant) {
                 $pPart = [
                     (string)$participant->patrolLeader->id,
-                    $participant->patrolLeader->patrolName,
+                    $participant->patrolLeader->patrolName ?? '',
                 ];
             } else {
                 $pPart = [
@@ -172,9 +172,9 @@ class ExportService
 
             if ($participant instanceof Ist) {
                 $istPart = [
-                    $participant->skills,
-                    implode(' | ', $participant->preferredPosition ?? ''),
-                    $participant->driversLicense,
+                    $participant->skills ?? '',
+                    implode(' | ', $participant->preferredPosition),
+                    $participant->driversLicense ?? '',
                 ];
             } else {
                 $istPart = [
