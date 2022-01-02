@@ -1,54 +1,58 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional;
 
-
+use kissj\Event\EventRepository;
 use kissj\Export\ExportService;
-use kissj\Participants\Patrol\PatrolService;
-use kissj\User\RoleService;
+use kissj\Participant\Patrol\PatrolService;
 use kissj\User\UserService;
+use Psr\Container\ContainerInterface;
+use Tests\AppTestCase;
 
+class ExportTest extends AppTestCase
+{
+    public function testExportMedicalData(): void
+    {
+        $app = $this->getTestApp();
+        /** @var ContainerInterface $container */
+        $container = $app->getContainer();
 
-class ExportTest extends BaseTestCase {
-
-    /**
-     * Test that the index route returns a rendered response containing the text 'SlimFramework' but not a greeting
-     */
-    public function testExportMedicalData() {
-        $app = $this->app();
         /** @var ExportService $exportService */
-        $exportService = $app->getContainer()->get('exportService');
+        $exportService = $container->get(ExportService::class);
         /** @var UserService $userService */
-        $userService = $app->getContainer()->get('userService');
+        $userService = $container->get(UserService::class);
         /** @var PatrolService $patrolService */
-        $patrolService = $app->getContainer()->get('patrolService');
-        /** @var RoleService $roleService */
-        $roleService = $app->getContainer()->get('roleService');
+        $patrolService = $container->get(PatrolService::class);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $testEvent = $eventRepository->get(1);
 
         for ($i = 0; $i < 10; $i++) {
-            $email = 'test-'.$i.'@example.com';
-            $user = $userService->registerUser($email);
+            $email = 'test-' . $i . '@example.com';
+            $user = $userService->registerUser($email, $testEvent);
             $patrolLeader = $patrolService->getPatrolLeader($user);
-            $patrolService->editPatrolLeaderInfo($patrolLeader,
-                "leader$i",
-                'leaderový',
-                'burákové máslo'.$i,
-                (new \DateTime())->format(DATE_ISO8601),
-                'Kalimdor',
-                'Azeroth',
-                'attack helicopter',
-                'Northrend',
-                'High Elves',
-                'none',
-                'test'.$i.'@test.moe',
-                'trolls',
-                'some',
-                'some note',
-                'my great patrol'
+            $patrolService->addParamsIntoPatrolLeader($patrolLeader, [
+                    'patrolName' => 'my great patrol no.' . $i,
+                    'firstName' => 'leader no.' . $i,
+                    'lastName' => 'leaderový',
+                    'nickname' => 'burákové máslo ' . $i,
+                    'birthDate' => (new \DateTime())->format(DATE_ATOM),
+                    'gender' => 'High Elves',
+                    'permanentResidence' => 'Kalimdor',
+                    'country' => 'Azeroth',
+                    'scoutUnit' => 'attack helicopter',
+                    'email' => 'test' . $i . '@example.com',
+                    'foodPreferences' => 'trolls',
+                    'healthProblems' => 'some',
+                    'notes' => 'some note',
+                ]
             );
         }
 
-        $rows = $exportService->medicalDataToCSV('cej2018');
+        $admin = $this->createAdminUser($app);
+        $this->markTestSkipped('TODO fix role for PL');
+        $rows = $exportService->healthDataToCSV($testEvent, $admin);
 
         $this->assertCount(11, $rows);
 

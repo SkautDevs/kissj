@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace kissj\Middleware;
 
-use kissj\Middleware\BaseMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -21,10 +20,10 @@ final class SentryHttpContextMiddleware extends BaseMiddleware {
         // Even though, the Slim implementation will be passed, the Interface does not provide methods like ::getUri() or ::getHeader($header)
         $this->hub->configureScope(function (Scope $scope): void {
             $scope->setContext('http', [
-                'url' => $_SERVER['REQUEST_URI'],
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'http_method' => $_SERVER['REQUEST_METHOD'],
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                'url' => $_SERVER['REQUEST_URI'] ?? '',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                'http_method' => $_SERVER['REQUEST_METHOD'] ?? '',
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             ]);
         });
 

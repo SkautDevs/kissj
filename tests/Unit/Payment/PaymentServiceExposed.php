@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tests\Unit;
+namespace Tests\Unit\Payment;
 
 use kissj\Payment\PaymentService;
 

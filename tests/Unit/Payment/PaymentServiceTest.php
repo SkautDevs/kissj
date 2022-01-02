@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tests\Unit;
+namespace Tests\Unit\Payment;
 
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -12,8 +12,10 @@ use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PaymentServiceTest extends TestCase {
-    public function testGetVariableNumber() {
+class PaymentServiceTest extends TestCase
+{
+    public function testGetVariableNumber(): void
+    {
         $paymentService = new PaymentServiceExposed(
             \Mockery::mock(FioBankPaymentService::class),
             \Mockery::mock(BankPaymentRepository::class),
@@ -26,8 +28,10 @@ class PaymentServiceTest extends TestCase {
         );
 
         for ($i = 0; $i < 100; $i++) {
-            $variableNumber = $paymentService->getVariableNumber(random_int(1, 9999));
+            $prefix = random_int(1, 9999);
+            $variableNumber = $paymentService->getVariableNumber($prefix);
             $this->assertEquals(10, strlen($variableNumber));
+            $this->assertEquals($prefix, substr($variableNumber, 0, strlen((string)$prefix)));
         }
 
         for ($i = 0; $i < 10; $i++) {

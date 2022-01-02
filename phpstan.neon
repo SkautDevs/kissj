@@ -3,6 +3,8 @@ parameters:
 	paths:
 		- src
 		#- tests
+	excludePaths:
+		- tests/temp/*
 	ignoreErrors:
 		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#' # 3rd party library
 		 - 

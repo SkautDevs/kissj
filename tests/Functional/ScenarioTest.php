@@ -1,50 +1,52 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional;
 
 use Tests\AppTestCase;
 
-class ScenarioTest extends AppTestCase {
-    public function testRunApp() {
-        $appRoot = $this->getTestApp();
+class ScenarioTest extends AppTestCase
+{
+    private const TEST_EVENT_PREFIX_URL = '/v2/event/test-event-slug/';
 
-        // first time login
-        $responseRoot = $appRoot->handle($this->createRequest('/'));
-        $this->assertSame(301, $responseRoot->getStatusCode());
+    public function testRunApp(): void
+    {
+        // redirect to login
+        $responseRoot = $this->getTestApp()->handle($this->createRequest(self::TEST_EVENT_PREFIX_URL));
+        $this->assertSame(302, $responseRoot->getStatusCode());
         $responseLandingHeader = $responseRoot->getHeaderLine('location');
 
-        $appLanding = $this->getTestApp(false);
-        $responseLanding = $appLanding->handle($this->createRequest($responseLandingHeader));
-        $this->assertSame(302, $responseLanding->getStatusCode());
-        $responseLoginHeader = $responseLanding->getHeaderLine('location');
-
-        $appLogin = $this->getTestApp(false);
-        $responseLogin = $appLogin->handle($this->createRequest($responseLoginHeader));
+        // show login
+        $responseLogin = $this->getTestApp(false)->handle($this->createRequest($responseLandingHeader));
         $this->assertSame(200, $responseLogin->getStatusCode());
-        $responseLoginBody = (string)$responseLogin->getBody();
-        $formItem = 'id="form-email"';
-        $this->assertStringContainsStringIgnoringCase($formItem, $responseLoginBody);
+        $this->assertStringContainsStringIgnoringCase('id="form-email"', (string)$responseLogin->getBody());
 
-        $appPostLogin = $this->getTestApp(false);
-        $loginParameters = ['email' => 'test%40test.com'];
-        $responsePostLogin = $appPostLogin->handle($this->createRequest('/v2/kissj/login', 'POST', $loginParameters));
+        // send login
+        $responsePostLogin = $this->getTestApp(false)->handle($this->createRequest(
+            self::TEST_EVENT_PREFIX_URL . 'login',
+            'POST',
+            ['email' => 'test@examnple.com'],
+        ));
         $this->assertEquals(302, $responsePostLogin->getStatusCode());
         $responsePostLoginHeader = $responsePostLogin->getHeaderLine('location');
 
-        $appLogin = $this->getTestApp(false);
-        $responseFinalAfterLogin = $appLogin->handle($this->createRequest($responsePostLoginHeader));
+        // show after login page
+        $responseFinalAfterLogin = $this->getTestApp(false)->handle($this->createRequest($responsePostLoginHeader));
         $this->assertSame(200, $responseFinalAfterLogin->getStatusCode());
-        $responseFinalAfterLoginBody = (string)$responseFinalAfterLogin->getBody();
-        $messagePostLogin = 'E-mail sent! Follow the link in it to log in.';
-        $this->assertStringContainsString($messagePostLogin, $messagePostLogin);
+        $this->assertStringContainsString(
+            'E-mail poslán! Přihlaš se pomocí odkazu v něm',
+            (string)$responseFinalAfterLogin->getBody(),
+        );
+        
+        // TODO catch email and follow link
 
-        // editing values
+        // choose role
 
+        // edit values
 
         // logout
 
-
         // second time login
-
+        
+        // lock registration
     }
 }

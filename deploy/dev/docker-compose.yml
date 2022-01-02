@@ -3,8 +3,8 @@ services:
   app:
     build: .
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
         - ../..:/var/www/html
     environment:
@@ -13,9 +13,9 @@ services:
   mailhog:
     image: mailhog/mailhog
     ports:
-      - 1025:1025
-      - 8025:8025
+      - "1025:1025"
+      - "8025:8025"
   adminer:
     image: adminer
     ports:
-      - 8080:8080
+      - "8080:8080"
