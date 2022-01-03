@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Middleware;
 
@@ -6,6 +6,7 @@ use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
 use kissj\Event\Event;
+use kissj\Event\EventType\EventTypeDefault;
 use Negotiation\AcceptLanguage;
 use Negotiation\LanguageNegotiator;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -27,22 +28,10 @@ class LocalizationResolverMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
-            $bestNegotiatedLanguage = htmlspecialchars($request->getQueryParams()[self::LOCALE_COOKIE_NAME],
-                ENT_QUOTES);
-        } else {
-            $event = $this->getEvent($request);
-            if ($event instanceof Event) {
-                $availableLanguages = array_keys($event->getEventType()->getLanguages());
-            } else {
-                $availableLanguages = [];
-            }
+        $bestLanguage = $this->getBestLanguage($request);
 
-            $bestNegotiatedLanguage = $this->getBestLanguage($request, $availableLanguages);
-        }
-
-        $this->translator->setLocale($bestNegotiatedLanguage);
-        $this->view->getEnvironment()->addGlobal('locale', $bestNegotiatedLanguage); // used in templates
+        $this->translator->setLocale($bestLanguage);
+        $this->view->getEnvironment()->addGlobal('locale', $bestLanguage); // used in templates
 
         $response = $handler->handle($request);
 
@@ -50,25 +39,56 @@ class LocalizationResolverMiddleware extends BaseMiddleware
             $response = FigResponseCookies::remove($response, self::LOCALE_COOKIE_NAME);
             $response = FigResponseCookies::set(
                 $response,
-                SetCookie::create(self::LOCALE_COOKIE_NAME, $bestNegotiatedLanguage)
+                SetCookie::create(self::LOCALE_COOKIE_NAME, $bestLanguage)
             );
         }
 
         return $response;
     }
 
+    private function getBestLanguage(Request $request): string
+    {
+        $availableLanguages = $this->getAvailableLanguages($request);
+
+        if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
+            $parameterLanguage = $request->getQueryParams()[self::LOCALE_COOKIE_NAME];
+            if (in_array($parameterLanguage, $availableLanguages, true)) {
+                return $parameterLanguage;
+            }
+        }
+
+        $cookieLanguage = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME)->getValue();
+        if ($cookieLanguage !== null && in_array($cookieLanguage, $availableLanguages, true)) {
+            return $cookieLanguage;
+        }
+
+        return $this->negotiateBestLanguage($request, $availableLanguages);
+    }
+
     /**
-     * @param Request  $request
+     * @param Request $request
+     * @return string[]
+     */
+    private function getAvailableLanguages(Request $request): array
+    {
+        $event = $this->getEvent($request);
+
+        if ($event instanceof Event) {
+            $availableLanguages = $event->getEventType()->getLanguages();
+        } else {
+            $availableLanguages = (new EventTypeDefault())->getLanguages();
+        }
+
+        return array_keys($availableLanguages);
+    }
+
+    /**
+     * @param Request $request
      * @param string[] $availableLanguages
      * @return string
      */
-    private function getBestLanguage(Request $request, array $availableLanguages): string
+    private function negotiateBestLanguage(Request $request, array $availableLanguages): string
     {
-        $localeCookie = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME);
-        if ($localeCookie->getValue() !== null) {
-            return $localeCookie->getValue();
-        }
-
         $negotiator = new LanguageNegotiator();
         $header = $request->getHeaderLine('Accept-Language');
         if ($header === '') {
