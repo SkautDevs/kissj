@@ -6,9 +6,29 @@ namespace kissj\Event\EventType\Navigamus;
 
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\EventType\EventType;
+use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
+use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeNavigamus extends EventType
 {
+    public function getPrice(Participant $participant): int
+    {
+        $now = new \DateTimeImmutable('now');
+        $patrolPrice = match (true) {
+            $now < new \DateTimeImmutable('2022-03-31 23:59:59') => 1100,
+            $now < new \DateTimeImmutable('2022-04-30 23:59:59') => 1150,
+            $now < new \DateTimeImmutable('2022-05-15 23:59:59') => 1200,
+            default => 1200,
+        };
+
+        return match (true) {
+            $participant instanceof Ist => 900,
+            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) + 1) * $patrolPrice,
+            default => throw new \Exception('Unknown participant class'),
+        };
+    }
+
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();

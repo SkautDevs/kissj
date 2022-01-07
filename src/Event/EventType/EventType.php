@@ -15,12 +15,7 @@ abstract class EventType
 {
     public function getPrice(Participant $participant): int
     {
-        $user = $participant->user;
-        if ($user === null) {
-            throw new \RuntimeException('User in participant is missing');
-        }
-
-        return $user->event->defaultPrice;
+        return $participant->getUserButNotNull()->event->defaultPrice;
     }
 
     public function getMaximumClosedParticipants(Participant $participant): int

@@ -26,7 +26,7 @@
 </h4>
 
 {% if person.getPayments %}
-    {% if person.contingent is null or person.contingent == 'detail.contingent.czechia' %}
+    {% if person.getContingent() is null or person.getContingent() == 'detail.contingent.czechia' %}
         <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
         {% for payment in person.getPayments %}
             <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
