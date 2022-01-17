@@ -33,7 +33,7 @@
 {% endif %}{% if ca.address %}
     {% trans %}detail.address{% endtrans %}: <b>{{ person.getPermanentResidence }}</b><br/>
 {% endif %}{% if ca.country %}
-    {% trans %}detail.country{% endtrans %}: <b>{{ person.getCountry | trans }}</b><br/>
+    {% trans %}detail.country{% endtrans %}: <b>{{ person.getCountry|trans }}</b><br/>
 {% endif %}{% if ca.email %}
     {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
 {% endif %}{% if ca.phone %}

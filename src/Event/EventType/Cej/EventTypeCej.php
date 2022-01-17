@@ -19,6 +19,7 @@ class EventTypeCej extends EventType
     public const CONTINGENT_POLAND = 'detail.contingent.poland';
     public const CONTINGENT_HUNGARY = 'detail.contingent.hungary';
     public const CONTINGENT_EUROPEAN = 'detail.contingent.european';
+    public const CONTINGENT_ISRAEL = 'detail.contingent.israel';
     public const CONTINGENT_TEAM = 'detail.contingent.team';
 
     public function getPrice(Participant $participant): int
@@ -49,6 +50,7 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_POLAND => 40,
                 self::CONTINGENT_HUNGARY => 20,
                 self::CONTINGENT_EUROPEAN => 30,
+                self::CONTINGENT_ISRAEL => 10,
                 default => 0,
             };
         }
@@ -157,6 +159,7 @@ class EventTypeCej extends EventType
             self::CONTINGENT_POLAND,
             self::CONTINGENT_HUNGARY,
             self::CONTINGENT_EUROPEAN,
+            self::CONTINGENT_ISRAEL,
             self::CONTINGENT_TEAM,
         ];
     }
