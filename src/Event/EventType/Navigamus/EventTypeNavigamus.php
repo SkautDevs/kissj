@@ -18,7 +18,7 @@ class EventTypeNavigamus extends EventType
         $patrolPrice = match (true) {
             $now < new \DateTimeImmutable('2022-03-31 23:59:59') => 1100,
             $now < new \DateTimeImmutable('2022-04-30 23:59:59') => 1150,
-            $now < new \DateTimeImmutable('2022-05-15 23:59:59') => 1200,
+            $now < new \DateTimeImmutable('2022-05-31 23:59:59') => 1200,
             default => 1200,
         };
 
