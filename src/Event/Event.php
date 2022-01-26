@@ -14,6 +14,7 @@ use kissj\Event\EventType\EventTypeKorbo;
 use kissj\Event\EventType\EventTypeMiquik;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\EventTypeNsj;
+use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Orm\EntityDatetime;
 
 /**
@@ -67,13 +68,14 @@ class Event extends EntityDatetime
             'miquik' => EventTypeMiquik::class,
             'navigamus' => EventTypeNavigamus::class,
             'nsj' => EventTypeNsj::class,
+            'wsj' => EventTypeWsj::class,
             default => throw new \RuntimeException('unknown event type: ' . $this->row->event_type),
         };
 
         return new $eventTypeClass;
     }
     
-    public function canRegistrationBeLocked(): bool
+    public function canRegistrationBeLocked(): bool // TODO fix
     {
         return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('Europe/Berlin'));
     }
