@@ -4,7 +4,6 @@ namespace kissj\User;
 
 use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Orm\Relation;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use PHPUnit\Framework\MockObject\RuntimeException;
@@ -120,28 +119,18 @@ class UserService {
         $this->userRepository->persist($user);
     }
 
-    public function getClosedIstsCount(Event $event): int {
-        return $this->userRepository->countBy([
-            'role' => User::ROLE_IST,
-            'event' => $event,
-            'status' => new Relation(User::STATUS_OPEN, '!='),
-        ]);
-    }
+    public function getClosedSameRoleParticipantsCount(Participant $participant): int {
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+            [$participant->role ?? ''],
+            [
+                User::STATUS_CLOSED,
+                User::STATUS_APPROVED,
+                User::STATUS_PAID,
+            ],
+            $participant->getUserButNotNull()->event,
+        );
 
-    public function getClosedPatrolsCount(Event $event): int {
-        return $this->userRepository->countBy([
-            'role' => User::ROLE_PATROL_LEADER,
-            'event' => $event,
-            'status' => new Relation(User::STATUS_OPEN, '!='),
-        ]);
-    }
-
-    public function getClosedGuestsCount(Event $event): int {
-        return $this->userRepository->countBy([
-            'role' => User::ROLE_GUEST,
-            'event' => $event,
-            'status' => new Relation(User::STATUS_OPEN, '!='),
-        ]);
+        return count($this->filterSameContingent($participants, $participant->contingent));
     }
 
     protected function isRoleValid(string $role): bool {
@@ -181,5 +170,16 @@ class UserService {
         $this->userRepository->persist($user);
 
         return $user;
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @param string|null $contingent
+     * @return Participant[]
+     */
+    private function filterSameContingent(array $participants, ?string $contingent): array {
+        return array_filter($participants, function(Participant $participant) use ($contingent): bool {
+            return $participant->contingent === $contingent;
+        });
     }
 }

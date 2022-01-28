@@ -21,16 +21,20 @@ class ParticipantRepository extends Repository
      * @param string[] $roles
      * @param string[] $statuses
      * @param Event    $event
-     * @param User     $adminUser
+     * @param ?User    $adminUser
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(
         array $roles,
         array $statuses,
         Event $event,
-        User $adminUser,
+        ?User $adminUser = null,
     ): array {
-        $participants = $this->filterContingentAdminParticipants($this->findAll(), $adminUser);
+        $participants = $this->findAll();
+
+        if ($adminUser instanceof User) {
+            $participants = $this->filterContingentAdminParticipants($participants, $adminUser);
+        }
 
         $validParticipants = [];
         foreach ($participants as $participant) {

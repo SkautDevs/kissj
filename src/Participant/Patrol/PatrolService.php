@@ -99,7 +99,7 @@ class PatrolService extends AbstractService
 
         $event = $patrolLeader->getUserButNotNull()->event;
         if (
-            $this->userService->getClosedPatrolsCount($event)
+            $this->userService->getClosedSameRoleParticipantsCount($patrolLeader)
             >= $event->getEventType()->getMaximumClosedParticipants($patrolLeader)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));

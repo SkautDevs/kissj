@@ -70,7 +70,7 @@ class GuestService extends AbstractService
 
         $event = $guest->getUserButNotNull()->event;
         if (
-            $this->userService->getClosedIstsCount($event)
+            $this->userService->getClosedSameRoleParticipantsCount($guest)
             >= $event->getEventType()->getMaximumClosedParticipants($guest)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.guestFullRegistration'));

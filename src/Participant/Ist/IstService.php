@@ -80,7 +80,7 @@ class IstService extends AbstractService
 
         $event = $ist->getUserButNotNull()->event;
         if (
-            $this->userService->getClosedIstsCount($event)
+            $this->userService->getClosedSameRoleParticipantsCount($ist)
             >= $event->getEventType()->getMaximumClosedParticipants($ist)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.istFullRegistration'));
