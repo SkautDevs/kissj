@@ -385,3 +385,4 @@ flash:
         wrongPatrol: "Pardon, but you cannot edit or view participants outside your patrol."
         wrongData: "Registration cannot be locked, data is not valid"
         mailError: "Pardon, email sending failed. Please try it in a couple of minutes."
+        confirmNotAllowed: "This payment is belong to different event, confirmation not allowed"

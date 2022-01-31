@@ -67,9 +67,9 @@ class PaymentService
         return $payment;
     }
 
-    public function cancelDuePayments(int $limit): void
+    public function cancelDuePayments(Event $event, int $limit = 5): void
     {
-        $duePayments = $this->paymentRepository->getDuePayments();
+        $duePayments = $this->paymentRepository->getDuePayments($event);
         $deniedPaymentsCount = 0;
 
         foreach (array_slice($duePayments, 0, $limit) as $payment) {
@@ -104,7 +104,7 @@ class PaymentService
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
-    public function updatePayments(int $limit, Event $event): void
+    public function updatePayments(Event $event, int $limit = 5): void
     {
         $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
         if (count($freshBankPayments) === 0) {

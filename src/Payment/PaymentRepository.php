@@ -2,25 +2,35 @@
 
 namespace kissj\Payment;
 
+use kissj\Event\Event;
 use kissj\Orm\Repository;
 
-class PaymentRepository extends Repository {
-    public function isVariableNumberExisting(string $variableNumber): bool {
+/**
+ * @method Payment[] findAll()
+ * @method Payment[] findBy(mixed[] $criteria)
+ * @method Payment|null findOneBy(mixed[] $criteria)
+ * @method Payment get(int $paymentId)
+ * @method Payment getOneBy(mixed[] $criteria)
+ */
+class PaymentRepository extends Repository
+{
+    public function isVariableNumberExisting(string $variableNumber): bool
+    {
         return $this->isExisting(['variable_symbol' => $variableNumber]);
     }
 
     /**
      * @return Payment[]
      */
-    public function getWaitingPaymentsKeydByVariableSymbols(): array {
+    public function getWaitingPaymentsKeydByVariableSymbols(): array
+    {
         $payments = $this->findBy(['status' => Payment::STATUS_WAITING]);
 
         $finalPayments = [];
-        /** @var Payment $payment */
         foreach ($payments as $payment) {
             if (array_key_exists($payment->variableSymbol, $finalPayments)) {
                 throw new \RuntimeException(
-                    'More payments with same variable symbol existing: '.$payment->variableSymbol
+                    'More payments with same variable symbol existing: ' . $payment->variableSymbol
                 );
             }
             $finalPayments[$payment->variableSymbol] = $payment;
@@ -32,11 +42,14 @@ class PaymentRepository extends Repository {
     /**
      * @return Payment[]
      */
-    public function getDuePayments(): array
+    public function getDuePayments(Event $event): array
     {
-        /** @var Payment[] $waitingPayments */
         $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
-        
+        $waitingPayments = array_filter(
+            $waitingPayments,
+            fn(Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
+        );
+
         return array_filter(
             $waitingPayments,
             fn(Payment $payment) => $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()

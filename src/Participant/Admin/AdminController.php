@@ -168,15 +168,20 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
 
-    public function cancelPayment(int $paymentId, Request $request, Response $response): Response
+    public function cancelPayment(int $paymentId, User $user, Request $request, Response $response): Response
     {
-        // TODO check if correct event
         $reason = $this->getParameterFromBody($request, 'reason', true);
-        /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
-        $this->participantService->cancelPayment($payment, $reason);
-        $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
-        $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
+        if ($payment->participant->getUserButNotNull()->event->id !== $user->event->id) {
+            $this->flashMessages->warning($this->translator->trans('flash.error.confirmNotAllowed'));
+            $this->logger->info('Payment ID ' . $paymentId
+                . ' cannot be confirmed from admin with event id ' . $user->event->id);
+        } else {
+            $this->participantService->cancelPayment($payment, $reason);
+            $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
+            $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
+        }
+
 
         return $this->redirect(
             $request,
@@ -185,10 +190,10 @@ class AdminController extends AbstractController
         );
     }
 
-    public function cancelAllDuePayments(Request $request, Response $response): Response
+    /** TODO test */
+    public function cancelAllDuePayments(Request $request, Response $response, User $user): Response
     {
-        // TODO check if correct event!!
-        $this->paymentService->cancelDuePayments(5);
+        $this->paymentService->cancelDuePayments($user->event);
 
         return $this->redirect(
             $request,
@@ -197,14 +202,18 @@ class AdminController extends AbstractController
         );
     }
 
-    public function confirmPayment(int $paymentId, Request $request, Response $response): Response
+    public function confirmPayment(int $paymentId, User $user, Request $request, Response $response): Response
     {
-        // TODO check if correct event
-        /** @var Payment $payment */
         $payment = $this->paymentRepository->get($paymentId);
-        $this->paymentService->confirmPayment($payment);
-        $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
-        $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
+        if ($payment->participant->getUserButNotNull()->event->id !== $user->event->id) {
+            $this->flashMessages->warning($this->translator->trans('flash.error.confirmNotAllowed'));
+            $this->logger->info('Payment ID ' . $paymentId
+                . ' cannot be confirmed from admin with event id ' . $user->event->id);
+        } else {
+            $this->paymentService->confirmPayment($payment);
+            $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
+            $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
+        }
 
         return $this->redirect(
             $request,
@@ -236,13 +245,9 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/paymentsAuto-admin.twig', $arguments);
     }
 
-    public function setBreakpointFromRoute(Request $request, Response $response): Response
+    public function setBreakpointFromRoute(Request $request, Response $response, Event $event): Response
     {
-        // TODO check if correct event
-        $result = $this->bankPaymentService->setBreakpoint(
-            new \DateTimeImmutable('2020-05-31'),
-            $this->getEvent($request)
-        );
+        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2022-01-01'), $event);
 
         if ($result) {
             $this->flashMessages->success('Set breakpoint successfully');
@@ -260,7 +265,7 @@ class AdminController extends AbstractController
     public function updatePayments(Request $request, Response $response, Event $event): Response
     {
         // TODO check if correct event
-        $this->paymentService->updatePayments(5, $event); // TODO add dynamic number of payments
+        $this->paymentService->updatePayments($event);
 
         return $this->redirect(
             $request,
@@ -297,6 +302,7 @@ class AdminController extends AbstractController
         );
     }
 
+    /** TODO check */
     public function showTransferPayment(Request $request, Response $response): Response
     {
         // TODO check if correct event
@@ -321,6 +327,7 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /** TODO check */
     public function transferPayment(Request $request, Response $response): Response
     {
         // TODO check if correct event

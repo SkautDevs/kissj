@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
@@ -22,7 +22,7 @@ class FioBankPaymentService implements IBankPaymentService {
 
             return false;
         }
-        $this->logger->error('Set breakpoint for Fio Bank on time '.$dateTime->format('Y-d-m'));
+        $this->logger->info('Set breakpoint for Fio Bank on time '.$dateTime->format('Y-d-m'));
 
         return true;
     }

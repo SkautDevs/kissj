@@ -385,3 +385,4 @@ flash:
         wrongPatrol: "Pardon, ale nemôžeš upravovať ani zobrazovať údaje o účastníkoch mimo svojej patroly."
         wrongData: "Registrácia nemôže byť uzavretá, údaje sú neplatné."
         mailError: "Pardon, odoslanie e-mailu zlyhalo. Skús to o pár minút."
+        confirmNotAllowed: "Tato platba nepřísluší tvé akce, potvrzení nelze provést"
