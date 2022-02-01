@@ -386,3 +386,4 @@ flash:
         wrongData: "Registration cannot be locked, data is not valid"
         mailError: "Pardon, email sending failed. Please try it in a couple of minutes."
         confirmNotAllowed: "This payment is belong to different event, confirmation not allowed"
+        fioConnectionFailed: "Connection to Fio bank failed, probably due to wrong API key"

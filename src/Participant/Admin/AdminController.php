@@ -232,13 +232,13 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    public function showAutoPayments(Response $response): Response
+    public function showAutoPayments(Response $response, Event $event): Response
     {
         $arguments = [
-            'bankPayments' => $this->bankPaymentRepository->findBy([], ['id' => false]),
-            'bankPaymentsTodo' => $this->bankPaymentRepository->findBy(
-                ['status' => BankPayment::STATUS_UNKNOWN],
-                ['id' => false]
+            'bankPayments' => $this->bankPaymentRepository->getAllBankPaymentsOrdered($event),
+            'bankPaymentsTodo' => $this->bankPaymentRepository->getBankPaymentsOrderedWithStatus(
+                $event,
+                BankPayment::STATUS_UNKNOWN,
             ),
         ];
 
@@ -264,7 +264,6 @@ class AdminController extends AbstractController
 
     public function updatePayments(Request $request, Response $response, Event $event): Response
     {
-        // TODO check if correct event
         $this->paymentService->updatePayments($event);
 
         return $this->redirect(

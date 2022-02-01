@@ -4,10 +4,12 @@ namespace kissj\BankPayment;
 
 use DateTimeInterface;
 use h4kuna\Fio\Response\Read\Transaction;
+use kissj\Event\Event;
 use kissj\Orm\EntityDatetime;
 
 /**
  * @property int                    $id
+ * @property Event                  $event m:hasOne
  * @property string|null            $bankId
  * @property DateTimeInterface|null $moveDate m:passThru(dateFromString|dateToString)
  * @property string|null            $price
@@ -32,10 +34,12 @@ class BankPayment extends EntityDatetime
 
     /**
      * @param Transaction $t
+     * @param Event $event
      * @return $this
      */
-    public function mapTransactionInto(Transaction $t): self
+    public function mapTransactionInto(Transaction $t, Event $event): self
     {
+        $this->event = $event;
         $this->bankId = (string)$t->moveId;
         $this->moveDate = $t->moveDate;
         $this->price = (string)$t->volume;

@@ -2,6 +2,7 @@
 
 namespace kissj\Payment;
 
+use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -104,23 +105,32 @@ class PaymentService
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
-    public function updatePayments(Event $event, int $limit = 5): void
+    public function updatePayments(Event $event, int $limit = 10): void
     {
-        $freshBankPayments = $this->bankPaymentRepository->findBy(['status' => BankPayment::STATUS_FRESH]);
-        if (count($freshBankPayments) === 0) {
-            $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank($event);
+        $freshBankPayments = $this->bankPaymentRepository->getBankPaymentsOrderedWithStatus(
+            $event,
+            BankPayment::STATUS_FRESH,
+        );
 
-            if ($newPaymentsCount > 0) {
-                $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);
-            } else {
-                $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
+        if (count($freshBankPayments) === 0) {
+            try {
+                $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank($event);
+
+                if ($newPaymentsCount > 0) {
+                    $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);
+                } else {
+                    $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
+                }
+            } catch (ServiceUnavailable $e) {
+                $this->flashMessages->error($this->translator->trans('flash.error.fioConnectionFailed'));
+                $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
             }
 
             return;
         }
 
         // TODO make more atomic - set "processing" status or something
-        $participantKeydPayments = $this->paymentRepository->getWaitingPaymentsKeydByVariableSymbols();
+        $participantKeydPayments = $this->paymentRepository->getWaitingPaymentsKeydByVariableSymbols($event);
         $counterNewPaid = 0;
         $counterUnknownPayment = 0;
 

@@ -33,7 +33,7 @@ class FioBankPaymentService implements IBankPaymentService {
         foreach ($freshPayments as $freshPayment) {
             if ($freshPayment->volume > 0) { // get only incomes
                 $bankPayment = new BankPayment();
-                $bankPayment->mapTransactionInto($freshPayment);
+                $bankPayment->mapTransactionInto($freshPayment, $event);
                 // TODO optimalize
                 $this->bankPaymentRepository->persist($bankPayment);
             }

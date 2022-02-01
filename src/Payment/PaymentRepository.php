@@ -20,14 +20,16 @@ class PaymentRepository extends Repository
     }
 
     /**
+     * @param Event $event
      * @return Payment[]
      */
-    public function getWaitingPaymentsKeydByVariableSymbols(): array
+    public function getWaitingPaymentsKeydByVariableSymbols(Event $event): array
     {
-        $payments = $this->findBy(['status' => Payment::STATUS_WAITING]);
+        $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
+        $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
 
         $finalPayments = [];
-        foreach ($payments as $payment) {
+        foreach ($waitingEventPayments as $payment) {
             if (array_key_exists($payment->variableSymbol, $finalPayments)) {
                 throw new \RuntimeException(
                     'More payments with same variable symbol existing: ' . $payment->variableSymbol
@@ -45,14 +47,24 @@ class PaymentRepository extends Repository
     public function getDuePayments(Event $event): array
     {
         $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
-        $waitingPayments = array_filter(
-            $waitingPayments,
-            fn(Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
-        );
+        $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
 
         return array_filter(
-            $waitingPayments,
+            $waitingEventPayments,
             fn(Payment $payment) => $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
+        );
+    }
+
+    /**
+     * @param Payment[] $waitingPayments
+     * @param Event $event
+     * @return Payment[]
+     */
+    private function filterOnlyEventPayments(array $waitingPayments, Event $event): array
+    {
+        return array_filter(
+            $waitingPayments,
+            fn(Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
         );
     }
 }
