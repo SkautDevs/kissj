@@ -220,14 +220,14 @@ email:
         newPayment: "(vyplněné informace jsou stále uloženy na tvém profilu), zkontrolujeme a schválíme tvou přihlášku znova a pošleme nové platební údaje."
     payment-successful:
         subject: "platba obdržena"
-        recieved: "Obdrželi jsme tvou platbu na"
+        received: "Obdrželi jsme tvou platbu na"
         thanks: ". Děkujeme!"
-        enjoy: "Nyní si můžeš plně užít čkání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
     finished:
         subject: "schváleno"
         approved: "Schválili jsme tvou přihlášku pro"
         thanks: ". Děkujeme!"
-        enjoy: "Nyní si můžeš plně užít čkání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
     payment-transfered-from-you:
         subject: "platba přesunuta"
         paidRegistrationTransfered: "Tvá platba byla přesunuta k registraci novému účastníkovi. Pokud o tomto nic nevíš, hned se nám prosím ozvi."
