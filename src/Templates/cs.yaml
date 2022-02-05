@@ -314,7 +314,7 @@ paymentsAuto-admin:
     status: "status"
     message: "zpráva"
     noPayments: "Prozatím nejsou z banky k dispozici žádné platby."
-    needToSolve: "Potřeba vyřešit tyo platby"
+    needToSolve: "Potřeba vyřešit tyto platby"
     allPaymenntsDone: "Žádné platby nepotřebují pozornost!"
     markPaymentPaired: "Označit jako zaplacenou"
     markPaymentUnrelated: "Označit jako nesouvisející"

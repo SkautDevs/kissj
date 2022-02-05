@@ -141,6 +141,7 @@ class Participant extends EntityDatetime
         return $this->contingent !== null
             && $this->contingent !== ''
             && $this->contingent !== EventTypeCej::CONTINGENT_CZECHIA
+            && $this->contingent !== EventTypeCej::CONTINGENT_TEAM
             && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
     }
 }
