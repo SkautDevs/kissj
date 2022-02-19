@@ -22,7 +22,6 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     public function __construct(
         private Twig $view,
         private Translator $translator,
-        private string $defaultLocale,
     ) {
     }
 
@@ -89,14 +88,23 @@ class LocalizationResolverMiddleware extends BaseMiddleware
      */
     private function negotiateBestLanguage(Request $request, array $availableLanguages): string
     {
+        $defaultLocale = reset($availableLanguages);
+        if ($defaultLocale === false) {
+            throw new \RuntimeException('available languages cannot be empty');
+        }
+        
         $negotiator = new LanguageNegotiator();
         $header = $request->getHeaderLine('Accept-Language');
         if ($header === '') {
-            return $this->defaultLocale;
+            return $defaultLocale;
         }
         /** @var ?AcceptLanguage $negotiatedLanguage */
         $negotiatedLanguage = $negotiator->getBest($header, $availableLanguages);
 
-        return $negotiatedLanguage ? $negotiatedLanguage->getValue() : $this->defaultLocale;
+        if ($negotiatedLanguage === null || !in_array($negotiatedLanguage->getValue(), $availableLanguages, true)) {
+            return $defaultLocale;
+        }
+
+        return $negotiatedLanguage->getValue();
     }
 }

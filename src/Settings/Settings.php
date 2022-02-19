@@ -89,8 +89,6 @@ class Settings
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-        $container[LocalizationResolverMiddleware::class] = autowire()
-            ->constructorParameter('defaultLocale', $_ENV['DEFAULT_LOCALE']);
 
         $container[SentryClient::class] = function(): ClientInterface {
             return ClientBuilder::create([
