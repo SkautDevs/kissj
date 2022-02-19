@@ -7,6 +7,7 @@ use kissj\Event\Event;
 class MailerSettings
 {
     private Event $event;
+    private string $fullUrlLink;
 
     public function __construct(
         public string $smtp,
@@ -30,5 +31,15 @@ class MailerSettings
     public function getEvent(): Event
     {
         return $this->event;
+    }
+    
+    public function setFullUrlLink(string $urlLink): void
+    {
+        $this->fullUrlLink = $urlLink;
+    }
+
+    public function getFullUrlLink(): string
+    {
+        return $this->fullUrlLink;
     }
 }

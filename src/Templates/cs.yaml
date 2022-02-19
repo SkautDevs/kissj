@@ -184,6 +184,7 @@ email:
     layout:
         welcome: "Ahoj!"
         registration: "Registrace"
+        yourRegistration: "Svou registraci můžeš nalézt na adrese"
         ifQuestion: "Pokud máš otázky, můžeš odpovědi na ně najít na našem webu"
         sendEmail: "nebo nám pošli e-mail na"
         farewell: "S přáním všeho dobrého od týmu akce"

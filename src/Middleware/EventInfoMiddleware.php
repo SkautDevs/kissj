@@ -48,6 +48,13 @@ class EventInfoMiddleware extends BaseMiddleware
             }
 
             $this->mailerSettings->setEvent($event);
+            $this->mailerSettings->setFullUrlLink(
+                $this->getRouter($request)->fullUrlFor(
+                    $request->getUri(),
+                    'landing',
+                    ['eventSlug' => $event->slug],
+                )
+            );
         } else {
             $request = $request->withAttribute('event', null);
         }

@@ -18,7 +18,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
         return $this->process($request, $handler);
     }
 
-    private function getRouter(Request $request): RouteParserInterface
+    protected function getRouter(Request $request): RouteParserInterface
     {
         return RouteContext::fromRequest($request)->getRouteParser();
     }

@@ -143,7 +143,10 @@ class PhpMailerWrapper
         string $templateName,
         array $parameters
     ): void {
-        $messageBody = $this->renderer->fetch('emails/' . $templateName . '.twig', $parameters);
+        $messageBody = $this->renderer->fetch(
+            'emails/' . $templateName . '.twig',
+            array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]),
+        );
         $mailer = new PHPMailer(true);
         $event = $this->settings->getEvent();
 

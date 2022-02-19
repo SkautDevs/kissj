@@ -184,6 +184,7 @@ email:
     layout:
         welcome: "Hello!"
         registration: "Registration"
+        yourRegistration: "Your registration can be found at address"
         ifQuestion: "If you have any questions, you may seek the answer at our webpage"
         sendEmail: "or send us an email to"
         farewell: "All the best from the team of"
