@@ -37,10 +37,14 @@
 
     {% block content %}{% endblock %}
 
-    <p>{% trans %}email.layout.ifQuestion{% endtrans %}
+    <p>
+        {% trans %}email.layout.yourRegistration{% endtrans %} 
+        <a href="{{ baseHostScheme }}{{ fullRegistrationLink }}">{{ baseHostScheme }}{{ fullRegistrationLink }}</a><span class="noselect">.</span>
+        {% trans %}email.layout.ifQuestion{% endtrans %}
         <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
         {% trans %}email.layout.sendEmail{% endtrans %}
-        <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a><span class="noselect">.</span></p>
+        <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a><span class="noselect">.</span>
+    </p>
 
     <p>{% trans %}email.layout.farewell{% endtrans %}<br/>
         {{ event.getReadableName }}</p>
