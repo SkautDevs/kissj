@@ -11,7 +11,6 @@ use kissj\FileHandler\S3bucketFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\MailerSettings;
-use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
@@ -94,6 +93,7 @@ class Settings
             return ClientBuilder::create([
                 'dsn' => $_ENV['SENTRY_DSN'],
                 'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
+                'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
                 'before_send' => function (SentryEvent $event): ?SentryEvent {
                     // Check if error is from middleware exception capturer
                     // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
@@ -256,6 +256,7 @@ class Settings
         $dotenv->required('POSTGRES_PASSWORD');
         $dotenv->required('POSTGRES_DB');
         $dotenv->required('SENTRY_DSN');
+        $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
 
         if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
             throw new ValidationException('Adminer password must be changed and cannot be empty');

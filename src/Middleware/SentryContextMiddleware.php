@@ -2,7 +2,6 @@
 
 namespace kissj\Middleware;
 
-use kissj\Middleware\BaseMiddleware;
 use kissj\User\User;
 use kissj\Event\Event;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -48,5 +47,4 @@ final class SentryContextMiddleware extends BaseMiddleware {
 
         return $handler->handle($request);
     }
-
 }
