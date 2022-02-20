@@ -9,6 +9,7 @@ resource_types:
   type: registry-image
   source:
     repository: typositoire/concourse-helm3-resource
+    tag: v1.20.0 
 
 resources:
 - name: kissj-app
