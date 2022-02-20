@@ -64,6 +64,8 @@ app:
 
   sentry:
     dsn: SentryDSN
+    profiling_rate: "0.5"
+    
       
 
 
