@@ -226,3 +226,6 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-sentry-dsn
                 key: dsn
+
+          - name: SENTRY_PROFILING_RATE
+            value: {{ .Values.app.sentry.profiling_rate }}
