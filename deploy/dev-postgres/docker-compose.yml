@@ -58,6 +58,15 @@ services:
             - 1025:1025
             - 8025:8025
 
+    adminer:
+        image: dockette/adminer:dg
+        depends_on:
+            - postgresql
+        links:
+            - postgresql
+        ports:
+            - 9090:80
+
 volumes:
     db-data:
 
