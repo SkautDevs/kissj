@@ -2,13 +2,15 @@
 
 namespace kissj\Participant;
 
+use kissj\AbstractService;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
+use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 
-class ParticipantService
+class ParticipantService extends AbstractService
 {
     public function __construct(
         private ParticipantRepository $participantRepository,
@@ -16,7 +18,42 @@ class ParticipantService
         private UserRepository $userRepository,
         private UserService $userService,
         private PhpMailerWrapper $mailer,
-    ) {
+    ) {}
+
+    /**
+     * @param Participant $participant
+     * @param string[] $params
+     * @return Participant
+     */
+    public function addParamsIntoParticipant(Participant $participant, array $params): Participant
+    {
+        $this->addParamsIntoPerson($params, $participant);
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
+    
+    public function isCloseRegistrationValid(Participant $participant): bool
+    {
+        $user = $participant->getUserButNotNull();
+        $ca = match ($user->role) {
+            User::ROLE_TROOP_LEADER => $user->event->eventType->getContentArbiterTroopLeader(),
+            User::ROLE_TROOP_PARTICIPANT => $user->event->eventType->getContentArbiterTroopParticipant(),
+            default => throw new \RuntimeException('Unexpected role ' . $user->role),
+        };
+
+        return $this->isPersonValidForClose($participant, $ca);
+    }
+
+    public function closeRegistration(Participant $participant): Participant
+    {
+        if ($this->isCloseRegistrationValid($participant)) {
+            $user = $participant->getUserButNotNull();
+            $this->userService->closeRegistration($user);
+            $this->mailer->sendRegistrationClosed($user);
+        }
+
+        return $participant;
     }
 
     // TODO move into payment service, same as comfirmPayment

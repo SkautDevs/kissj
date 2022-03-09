@@ -134,10 +134,12 @@ class UserService {
     }
 
     protected function isRoleValid(string $role): bool {
+        // TODO check if role is valid for specific event
         $allowedRoles = [
             User::ROLE_IST,
             User::ROLE_PATROL_LEADER,
-            User::ROLE_FREE_PARTICIPANT,
+            User::ROLE_TROOP_LEADER,
+            User::ROLE_TROOP_PARTICIPANT,
             User::ROLE_GUEST,
         ];
 

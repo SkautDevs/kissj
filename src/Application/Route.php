@@ -15,9 +15,11 @@ use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\TroopsOnlyMiddleware;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
+use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -150,8 +152,29 @@ class Route
                                 ->setName('ist-confirmCloseRegistration');
 
                         })->add(OpenStatusOnlyMiddleware::class);
-
                     })->add(IstsOnlyMiddleware::class);
+
+                    // currently for troops only, TODO refactor for all participants
+                    $app->group('/participant', function (RouteCollectorProxy $app) {
+                        $app->get('/dashboard', ParticipantController::class . '::showDashboard')
+                            ->setName('dashboard');
+
+                        $app->group('', function (RouteCollectorProxy $app) {
+                            $app->get('/showChangeDetails', ParticipantController::class . '::showDetailsChangeable')
+                                ->setName('showDetailsChangeable');
+
+                            $app->post('/changeDetails', ParticipantController::class . '::changeDetails')
+                                ->setName('changeDetails');
+
+                            $app->get('/closeRegistration', ParticipantController::class . '::showCloseRegistration')
+                                ->setName('showCloseRegistration');
+
+                            $app->post('/closeRegistration', ParticipantController::class . '::closeRegistration')
+                                ->setName('confirmCloseRegistration');
+
+                        })->add(OpenStatusOnlyMiddleware::class);
+                    })->add(TroopsOnlyMiddleware::class);
+
                     $app->group('/guest', function (RouteCollectorProxy $app) {
                         $app->get('/dashboard', GuestController::class . '::showDashboard')
                             ->setName('guest-dashboard');
@@ -170,7 +193,6 @@ class Route
                                 ->setName('guest-confirmCloseRegistration');
 
                         })->add(OpenStatusOnlyMiddleware::class);
-
                     })->add(GuestsOnlyMiddleware::class);
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 

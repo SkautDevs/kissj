@@ -10,6 +10,8 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\User\LoginToken;
 use kissj\User\User;
@@ -33,6 +35,8 @@ class Mapper implements IMapper
         $participantVariants = [
             PatrolLeader::class,
             PatrolParticipant::class,
+            TroopLeader::class,
+            TroopParticipant::class,
             Ist::class,
             Guest::class,
         ];
@@ -69,6 +73,8 @@ class Mapper implements IMapper
                 return match ($row->getData()['role']) {
                     User::ROLE_PATROL_LEADER => PatrolLeader::class,
                     User::ROLE_PATROL_PARTICIPANT => PatrolParticipant::class,
+                    User::ROLE_TROOP_LEADER => TroopLeader::class,
+                    User::ROLE_TROOP_PARTICIPANT => TroopParticipant::class,
                     User::ROLE_IST => Ist::class,
                     User::ROLE_GUEST => Guest::class,
                     User::ROLE_ADMIN => Admin::class,

@@ -1,0 +1,21 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card open-theme">
+        <h2>{% trans %}closeRegistration.title{% endtrans %}</h2>
+        <p>{% trans %}closeRegistration.lockRegistration{% endtrans %}
+            <b>{% trans %}closeRegistration.lockRegistrationBold{% endtrans %}</b></p>
+        <form method="POST" action="{{ url_for('confirmCloseRegistration', {'eventSlug': event.slug}) }}">
+            <label><input type="checkbox" required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
+                <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
+            </label><br/>
+            <br/>
+            <div class="text-center">
+                <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{% trans %}closeRegistration.back{% endtrans %}</a>
+                <input class="btn btn-small" type="submit"
+                       value="{% trans %}closeRegistration.lockRegistrationButton{% endtrans %}">
+            </div>
+        </form>
+    </div>
+{% endblock %}

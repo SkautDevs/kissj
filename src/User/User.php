@@ -32,7 +32,8 @@ class User extends EntityDateTime {
     public const ROLE_PATROL_PARTICIPANT = 'pp';
     public const ROLE_GUEST = 'guest';
     public const ROLE_WITHOUT_ROLE = 'withoutRole';
-    public const ROLE_FREE_PARTICIPANT = 'fp';
+    public const ROLE_TROOP_LEADER = 'tl';
+    public const ROLE_TROOP_PARTICIPANT = 'tp';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_CONTINGENT_ADMIN_CS = 'contingentAdminCs';
     public const ROLE_CONTINGENT_ADMIN_SK = 'contingentAdminSk';
@@ -46,7 +47,8 @@ class User extends EntityDateTime {
         self::ROLE_PATROL_PARTICIPANT,
         self::ROLE_GUEST,
         self::ROLE_WITHOUT_ROLE,
-        self::ROLE_FREE_PARTICIPANT,
+        self::ROLE_TROOP_LEADER,
+        self::ROLE_TROOP_PARTICIPANT,
         self::ROLE_ADMIN,
         self::ROLE_CONTINGENT_ADMIN_CS,
         self::ROLE_CONTINGENT_ADMIN_SK,

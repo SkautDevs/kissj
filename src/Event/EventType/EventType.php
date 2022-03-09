@@ -6,6 +6,8 @@ use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiterTroopLeader;
+use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -48,6 +50,16 @@ abstract class EventType
     public function getContentArbiterGuest(): ContentArbiterGuest
     {
         return new ContentArbiterGuest();
+    }
+
+    public function getContentArbiterTroopLeader(): ContentArbiterTroopLeader
+    {
+        return new ContentArbiterTroopLeader();
+    }
+
+    public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
+    {
+        return new ContentArbiterTroopParticipant();
     }
 
     public function isSellingIstTicketsAllowed(): bool
