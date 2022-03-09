@@ -19,6 +19,9 @@ class Ist extends Participant
     protected function getPreferredPosition(): array
     {
         $prefferedPositionFromDb = $this->row->preferred_position;
+        if ($prefferedPositionFromDb === null || $prefferedPositionFromDb === '') {
+            return [];
+        }
 
         return explode(self::PREFERRED_POSITION_DELIMITER, $prefferedPositionFromDb);
     }
