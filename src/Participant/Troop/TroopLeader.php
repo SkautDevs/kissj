@@ -6,7 +6,7 @@ use kissj\Participant\Participant;
 
 /**
  * @property string|null $troopName
- * @property TroopParticipant[] $troopParticipants m:belongsToMany(troop_leader_id:participant)
+ * @property TroopParticipant[] $troopParticipants m:belongsToMany(patrol_leader_id:participant)
  */
 class TroopLeader extends Participant
 {

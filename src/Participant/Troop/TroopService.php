@@ -3,6 +3,9 @@
 namespace kissj\Participant\Troop;
 
 use kissj\AbstractService;
+use kissj\Event\Event;
+use kissj\Participant\Admin\StatisticValueObject;
+use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 
 class TroopService extends AbstractService
@@ -10,6 +13,7 @@ class TroopService extends AbstractService
     public function __construct(
         private TroopLeaderRepository $troopLeaderRepository,
         private TroopParticipantRepository $troopParticipantRepository,
+        private ParticipantRepository $participantRepository,
     ) {
     }
     
@@ -37,5 +41,29 @@ class TroopService extends AbstractService
         }
 
         return $troopParticipant;
+    }
+
+    public function getAllTroopLeaderStatistics(Event $event, User $admin): StatisticValueObject
+    {
+        $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
+            [User::ROLE_TROOP_LEADER],
+            User::STATUSES,
+            $event,
+            $admin,
+        );
+
+        return new StatisticValueObject($troopLeaders);
+    }
+
+    public function getAllTroopParticipantStatistics(Event $event, User $admin): StatisticValueObject
+    {
+        $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
+            [User::ROLE_TROOP_PARTICIPANT],
+            User::STATUSES,
+            $event,
+            $admin,
+        );
+
+        return new StatisticValueObject($troopLeaders);
     }
 }

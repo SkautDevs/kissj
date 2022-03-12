@@ -26,5 +26,6 @@ abstract class AbstractContentArbiter
     public bool $arrivalDate = false;
     public bool $departureDate = false;
     public bool $uploadFile = false;
+    public bool $skills = false;
     public bool $notes = true;
 }

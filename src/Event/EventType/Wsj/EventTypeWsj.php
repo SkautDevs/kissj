@@ -18,6 +18,7 @@ class EventTypeWsj extends EventType
     {
         return [
             'en' => __DIR__ . '/en_wsj.yaml',
+            'cs' => __DIR__ . '/cs_wsj.yaml',
         ];
     }
 

@@ -5,7 +5,7 @@ namespace kissj\Participant\Troop;
 use kissj\Participant\Participant;
 
 /**
- * @property TroopLeader|null $troopLeader m:hasOne(troop_leader_id)
+ * @property TroopLeader|null $troopLeader m:hasOne(patrol_leader_id)
  */
 class TroopParticipant extends Participant
 {

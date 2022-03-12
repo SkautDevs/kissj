@@ -16,6 +16,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Troop\TroopService;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
@@ -38,6 +39,7 @@ class AdminController extends AbstractController
         private GuestRepository $guestRepository,
         private IstService $istService,
         private GuestService $guestService,
+        private TroopService $troopService,
         private AdminService $adminService,
     ) {
     }
@@ -50,6 +52,8 @@ class AdminController extends AbstractController
             [
                 'patrols' => $this->patrolService->getAllPatrolsStatistics($event, $user),
                 'ists' => $this->istService->getAllIstsStatistics($event, $user),
+                'troopLeaders' => $this->troopService->getAllTroopLeaderStatistics($event, $user),
+                'troopParticipants' => $this->troopService->getAllTroopParticipantStatistics($event, $user),
                 'guests' => $this->guestService->getAllGuestsStatistics($event, $user),
             ],
         );
@@ -63,6 +67,18 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/approve-admin.twig', [
             'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_CLOSED],
+                $event,
+                $user,
+            ),            
+            'closedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_LEADER],
+                [USER::STATUS_CLOSED],
+                $event,
+                $user,
+            ),  
+            'closedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_PARTICIPANT],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
@@ -82,8 +98,21 @@ class AdminController extends AbstractController
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
             'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
+            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
+            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
             'caGuest' => $event->getEventType()->getContentArbiterGuest(),
         ]);
+    }
+
+    public function approveParticipant(int $participantId, Request $request, Response $response): Response
+    {
+        $participant = $this->participantRepository->get($participantId);
+
+        $this->participantService->approveRegistration($participant);
+        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
+        $this->logger->info('Approved registration for participant with ID ' . $participant->id);
+
+        return $this->redirect($request, $response, 'admin-show-approving');
     }
 
     public function showDenyParticipant(int $participantId, Response $response): Response

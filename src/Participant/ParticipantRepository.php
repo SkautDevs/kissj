@@ -9,6 +9,7 @@ use kissj\User\User;
 
 /**
  * @method Participant[] findAll()
+ * @method Participant get(int $participantId)
  * @method Participant[] findBy(mixed[] $criteria)
  * @method Participant|null findOneBy(mixed[] $criteria)
  * @method Participant getOneBy(mixed[] $criteria)

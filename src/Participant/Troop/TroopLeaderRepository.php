@@ -17,7 +17,7 @@ class TroopLeaderRepository extends Repository
 {
     /**
      * @param Event $event
-     * @return TroopParticipant[]
+     * @return TroopLeader[]
      */
     public function findAllWithEvent(Event $event): array
     {

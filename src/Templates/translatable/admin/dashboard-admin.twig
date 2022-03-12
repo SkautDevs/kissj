@@ -22,6 +22,24 @@
                         ({{ patrols.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
                     <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ patrols.getPaidCount }}</p>
                 {% endif %}
+                {% if event.allowTroops %}
+                    <h3>{% trans %}role.tl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
+                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.getMaximalClosedTroopsCount }}</p>
+                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ troopLeaders.getOpenCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ troopLeaders.getClosedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ troopLeaders.getApprovedCount }}
+                        ({{ troopLeaders.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
+                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ troopLeaders.getPaidCount }}</p>
+                    <br>
+
+                    <h3>{% trans %}role.tp{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
+                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.getMaximalClosedTroopsCount }}</p>
+                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ troopParticipants.getOpenCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ troopParticipants.getClosedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ troopParticipants.getApprovedCount }}
+                        ({{ troopParticipants.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
+                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ troopParticipants.getPaidCount }}</p>
+                {% endif %}
             </div>
             <div>
                 {% if event.allowIsts %}

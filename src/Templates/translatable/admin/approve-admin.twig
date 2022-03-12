@@ -78,6 +78,79 @@
             <br/>
         {% endif %}
     {% endif %}
+    
+    {% if event.allowTroops %}
+        {% if closedTroopLeaders is not empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}role.tl{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for tl in closedTroopLeaders %}
+                <div class="card closed-theme">
+                    <h3>{{ tl.getTroopName }}</h3>
+                    <br/>
+                    <h4>{{ tl.getFullName }}</h4>
+                    {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}
+                    <br/>
+    
+                    <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
+                    {% for tp in tl.troopParticipants %}
+                        {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp, 'useShortNaming': true} %}
+                        <br/>
+                    {% endfor %}
+                    <a href="{{ url_for('admin-deny-participant-show', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
+                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                    <br/>
+                    <br/>
+                    <form method="post"
+                          action="{{ url_for('admin-approve', {'participantId': tl.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit"
+                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               class="btn btn-small">
+                    </form>
+                </div>
+                <br/>
+            {% endfor %}
+        {% else %}
+            <div class="card closed-theme">
+                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tl{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+            </div>
+            <br/>
+        {% endif %}
+    {% endif %}
+    
+    {% if event.allowTroops %}
+        {% if closedTroopParticipants is not empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}role.tp{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for tp in closedTroopParticipants %}
+                <div class="card closed-theme">
+                    <h4>{{ tp.getFullName }}</h4>
+                    {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp} %}
+                    <br/>
+                    
+                    <a href="{{ url_for('admin-deny-participant-show', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
+                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                    <br/>
+                    <br/>
+                    <form method="post"
+                          action="{{ url_for('admin-approve', {'participantId': tp.getId, 'eventSlug': event.slug}) }}">
+                        <input type="submit"
+                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               class="btn btn-small">
+                    </form>
+                </div>
+                <br/>
+            {% endfor %}
+        {% else %}
+            <div class="card closed-theme">
+                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tp{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+            </div>
+            <br/>
+        {% endif %}
+    {% endif %}
 
     {% if event.allowGuests %}
         {% if closedGuests is not empty %}

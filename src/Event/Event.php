@@ -49,6 +49,9 @@ use kissj\Orm\EntityDatetime;
  * @property int|null          $maximalClosedGuestsCount
  *
  * @property bool              $allowTroops
+ * @property int|null          $maximalClosedTroopsCount
+ * @property int|null          $minimalTroopParticipantsCount
+ * @property int|null          $maximalTroopParticipantsCount
  *
  * @property DateTimeInterface $startRegistration m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)

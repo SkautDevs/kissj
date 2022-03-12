@@ -215,6 +215,9 @@ class Route
 
                         $app->post('/approveGuest/{guestId}', AdminController::class . '::approveGuest')
                             ->setName('admin-approve-guest');
+
+                        $app->post('/approveParticipant/{participantId}', AdminController::class . '::approveParticipant')
+                            ->setName('admin-approve');
                         
                         $app->get('/denyParticipant/{participantId}', AdminController::class . '::showDenyParticipant')
                             ->setName('admin-deny-participant-show');

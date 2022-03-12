@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card {{ userStatus }}-theme">
-        <h2>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h2>
+        <h2>{{ ('role.' ~ person.role)|trans }} {% trans %}dashboard.details{% endtrans %}</h2>
         {% include('widgets/userCustomHelp.twig') %}
 
         <div>
