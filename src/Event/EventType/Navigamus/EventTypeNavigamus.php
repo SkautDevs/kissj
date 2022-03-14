@@ -47,4 +47,9 @@ class EventTypeNavigamus extends EventType
             'cs' => __DIR__ . '/cs_navigamus.yaml',
         ];
     }
+
+    public function isUnlockExpiredButtonAllowed(): bool
+    {
+        return true;
+    }
 }

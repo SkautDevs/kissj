@@ -3,9 +3,11 @@
 {% block content %}
     <div class="card approved-theme">
         <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
-        <form method="POST" action="{{ url_for('admin-cancel-due-payments', {'eventSlug': event.slug} ) }}">
-            <input type="submit" class="btn btn-small" value="{% trans %}payments-admin.openDuePayments{% endtrans %}">
-        </form><br/>
+        {% if event.getEventType.isUnlockExpiredButtonAllowed %}
+            <form method="POST" action="{{ url_for('admin-cancel-due-payments', {'eventSlug': event.slug} ) }}">
+                <input type="submit" class="btn btn-small" value="{% trans %}payments-admin.openDuePayments{% endtrans %}">
+            </form><br/>
+        {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>

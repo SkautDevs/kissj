@@ -16,4 +16,9 @@ class EventTypeKorbo extends EventType {
 
         return $price;
     }
+
+    public function isUnlockExpiredButtonAllowed(): bool
+    {
+        return true;
+    }
 }

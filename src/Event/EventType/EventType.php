@@ -134,4 +134,9 @@ abstract class EventType
     {
         return [];
     }
+    
+    public function isUnlockExpiredButtonAllowed(): bool
+    {
+        return false;
+    }
 }
