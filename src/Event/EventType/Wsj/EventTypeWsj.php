@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Wsj;
 
 use kissj\Event\ContentArbiterIst;
-use kissj\Event\ContentArbiterPatrolLeader;
-use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiterTroopLeader;
+use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\EventType\EventType;
 
 class EventTypeWsj extends EventType
@@ -22,9 +22,9 @@ class EventTypeWsj extends EventType
         ];
     }
 
-    public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
+    public function getContentArbiterTroopLeader(): ContentArbiterTroopLeader
     {
-        $ca = parent::getContentArbiterPatrolLeader();
+        $ca = parent::getContentArbiterTroopLeader();
 
         $ca->patrolName = false;
         $ca->idNumber = true;
@@ -39,9 +39,9 @@ class EventTypeWsj extends EventType
         return $ca;
     }
 
-    public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
+    public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
     {
-        $ca = parent::getContentArbiterPatrolParticipant();
+        $ca = parent::getContentArbiterTroopParticipant();
 
         $ca->idNumber = true;
         $ca->languages = true;
@@ -50,6 +50,7 @@ class EventTypeWsj extends EventType
         $ca->email = true;
         $ca->swimming = true;
         $ca->unit = true;
+        $ca->uploadFile = true;
 
         return $ca;
     }

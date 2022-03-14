@@ -5,15 +5,6 @@
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST" action="{{ url_for('pl-changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
-            {% if ca.patrolName %}
-                <label class="form-group form-group-inline">{% trans %}detail.patrolName{% endtrans %}: <input
-                            class="form-control"
-                            type="text"
-                            name="patrolName"
-                            placeholder="{% trans %}detail.patrolNamePlaceholder{% endtrans %}"
-                            value="{{ plDetails.getPatrolName }}"
-                            required="required"></label>
-            {% endif %}
             {% include 'widgets/changeDetails.twig' with {'personDetails': plDetails} %}
             <div class="text-center">
                 <br/>

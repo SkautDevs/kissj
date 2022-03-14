@@ -5,6 +5,7 @@ namespace kissj\Event;
 abstract class AbstractContentArbiter
 {
     public bool $contingent = false;
+    public bool $patrolName = false;
     public bool $firstName = true;
     public bool $lastName = true;
     public bool $nickname = true;
@@ -27,5 +28,7 @@ abstract class AbstractContentArbiter
     public bool $departureDate = false;
     public bool $uploadFile = false;
     public bool $skills = false;
+    public bool $preferredPosition = false;
+    public bool $driver = false;
     public bool $notes = true;
 }

@@ -97,7 +97,7 @@ detail:
     scarfNo: "Ne, už jeden mám..."
     arrivalDate: "Datum příjezdu"
     departureDate: "Datum odjezdu"
-    uploadFile: "Nahraj souhlas rodičů v PDF"
+    uploadFile: "Souhlas rodičů v PDF"
     uploadedFileSuccessful: "soubor úspěšně nahraný!"
     uploadedFileNote: "PDF s potvrzením najdeš na našem webu"
     uploadFileMissing: "soubor zatím není nahraný :("

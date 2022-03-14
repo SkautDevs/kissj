@@ -1,6 +1,9 @@
 {% if ca.contingent %}
     {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}
+{% if ca.patrolName %}
+    {% trans %}detail.patrolName{% endtrans %}: <b>{{ person.getPatrolName }}</b><br/>
+{% endif %}
 {% if useShortNaming %}
     <b>{{ person.getFullName }}</b><br/>
 {% else %}
@@ -51,11 +54,11 @@
 {% endif %}{% if ca.swimming %}
     {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming|trans }}</b><br/>
 {% endif %}{% if ca.driver %}
-    {% trans %}detail-ist.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
+    {% trans %}detail.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
 {% endif %}{% if ca.skills %}
-    {% trans %}detail-ist.skills{% endtrans %}: <b>{{ person.getSkills }}</b><br/>
+    {% trans %}detail.skills{% endtrans %}: <b>{{ person.getSkills }}</b><br/>
 {% endif %}{% if ca.preferredPosition %}
-    {% trans %}detail-ist.position{% endtrans %}: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
+    {% trans %}detail.position{% endtrans %}: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
 {% endif %}{% if ca.scarf %}
     {% trans %}detail.scarf{% endtrans %}: <b>
         {% if person.getScarf == 'yes' %}

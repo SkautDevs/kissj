@@ -14,9 +14,6 @@
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
-                    {% if ca.firstName %}
-                        {% trans %}detail.patrolName{% endtrans %}: <b>{{ pl.getPatrolName }}</b><br/>
-                    {% endif %}
                     {% include 'widgets/details.twig' with {'person': pl} %}
                     <br/>
                 </div>

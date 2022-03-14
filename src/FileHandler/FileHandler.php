@@ -16,7 +16,7 @@ abstract class FileHandler {
         $participant->uploadedFilename = $newFilename;
         $participant->uploadedOriginalFilename = $uploadedFile->getClientFilename();
         $participant->uploadedContenttype = $uploadedFile->getClientMediaType();
-        
+
         return $participant;
     }
     

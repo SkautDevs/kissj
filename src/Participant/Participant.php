@@ -16,6 +16,7 @@ use kissj\User\User;
  * @property int                    $id
  * @property User|null              $user m:hasOne
  * @property string|null            $role needed for DB working (see Mapper.php) // TODO make definite list of participant roles
+ * @property string|null            $patrolName
  * @property string|null            $contingent
  * @property string|null            $firstName
  * @property string|null            $lastName
@@ -40,6 +41,9 @@ use kissj\User\User;
  * @property string|null            $uploadedFilename
  * @property string|null            $uploadedOriginalFilename
  * @property string|null            $uploadedContenttype
+ * @property string|null            $skills
+ * @property array                  $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
+ * @property string|null            $driversLicense
  * @property string|null            $notes
  *
  * @property Payment[]              $payment m:belongsToMany
@@ -50,6 +54,7 @@ class Participant extends EntityDatetime
     protected ?string $tshirtShape = null;
 
     protected const TSHIRT_DELIMITER = '-';
+    protected const PREFERRED_POSITION_DELIMITER = ' & ';
 
     public const FOOD_OTHER = 'other';
     public const SCARF_NO = 'no';
@@ -143,5 +148,27 @@ class Participant extends EntityDatetime
             && $this->contingent !== EventTypeCej::CONTINGENT_CZECHIA
             && $this->contingent !== EventTypeCej::CONTINGENT_TEAM
             && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getPreferredPosition(): array
+    {
+        $prefferedPositionFromDb = $this->row->preferred_position;
+        if ($prefferedPositionFromDb === null || $prefferedPositionFromDb === '') {
+            return [];
+        }
+
+        return explode(self::PREFERRED_POSITION_DELIMITER, $prefferedPositionFromDb);
+    }
+
+    /**
+     * @param string[] $positions
+     * @return void
+     */
+    public function setPreferredPosition(array $positions): void
+    {
+        $this->row->preferred_position = implode(self::PREFERRED_POSITION_DELIMITER, $positions);
     }
 }

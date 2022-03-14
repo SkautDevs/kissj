@@ -17,8 +17,20 @@
             {% endfor %}
         </select>
     </div>
-{% endif %}
-{% if ca.firstName %}
+{% endif %}{% if ca.patrolName %}
+    <div class="form-group">
+        <label for="patrolName">{% trans %}detail.patrolName{% endtrans %}:</label>
+        <input
+            id="patrolName"
+            class="form-control form-wide"
+            type="text"
+            name="patrolName"
+            placeholder="{% trans %}detail.patrolNamePlaceholder{% endtrans %}"
+            value="{{ personDetails.getPatrolName }}"
+            required="required"
+        >
+    </div>
+{% endif %}{% if ca.firstName %}
     <div class="form-group">
         <label for="firstName">{% trans %}detail.firstName{% endtrans %}:</label>
         <input

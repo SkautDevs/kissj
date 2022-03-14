@@ -5,7 +5,6 @@ namespace kissj\Participant\Troop;
 use kissj\Participant\Participant;
 
 /**
- * @property string|null $troopName
  * @property TroopParticipant[] $troopParticipants m:belongsToMany(patrol_leader_id:participant)
  */
 class TroopLeader extends Participant
