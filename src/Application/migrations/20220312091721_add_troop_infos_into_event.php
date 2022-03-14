@@ -10,9 +10,9 @@ final class AddTroopInfosIntoEvent extends AbstractMigration
     {
         $event = $this->table('event');
         $event
-            ->addColumn('maximalClosedTroopsCount', 'integer', ['default' => null])
-            ->addColumn('minimalTroopParticipantsCount', 'integer', ['default' => null])
-            ->addColumn('maximalTroopParticipantsCount', 'integer', ['default' => null])
+            ->addColumn('maximalClosedTroopsCount', 'integer', ['default' => null, 'null' => true])
+            ->addColumn('minimalTroopParticipantsCount', 'integer', ['default' => null, 'null' => true])
+            ->addColumn('maximalTroopParticipantsCount', 'integer', ['default' => null, 'null' => true])
             ->save();
     }
 
