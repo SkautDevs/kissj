@@ -44,4 +44,30 @@ class EventTypeAqua extends EventType {
 
         return 160;
     }
+
+
+    /**
+     * @return array<string>
+     */
+    public function getPositionOptions(): array
+    {
+        return [
+            'detail.position.press',
+            'detail.position.centralServices',
+            'detail.position.kitchen',
+            'detail.position.technical',
+            'detail.position.program.sailing',
+            'detail.position.program.canoeing',
+            'detail.position.program.communityProject',
+            'detail.position.program.rafting',
+            'detail.position.program.hiking',
+            'detail.position.program.workshops',
+            'detail.position.program.climbing',
+            'detail.position.program.channel',
+            'detail.position.program.tour',
+            'detail.position.program.leisure',
+            'detail.position.program.teahouse',
+            'detail.position.program.subcamp',
+        ];
+    }
 }

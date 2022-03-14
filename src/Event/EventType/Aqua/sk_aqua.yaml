@@ -32,3 +32,22 @@ email:
         received: "Obdržali sme Tvoju platbu na"
         thanks: ". Vďaka!"
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
+detail:
+    position:
+        press: "PR (noviny, fotografovanie a ďalšie médiá...)"
+        centralServices: "centrálne služby (registrácia, administrácia, info stan...)"
+        kitchen: "kuchyňa (príprava a podávanie jedla)"
+        technical: "technická podpora (manipulácia, údržba, skladovanie a/alebo transport materiálu, riešenie technických problémov v kempe)"
+        program:
+            sailing: "hlavný program - plachtenie"
+            canoeing: "hlavný program - pádlovanie na vodnej hladine (paddleboardy, kanoe...)"
+            communityProject: "hlavný program - komunitný projekt"
+            rafting: "hlavný program - splav rieky"
+            hiking: "hlavný program - turistika"
+            workshops: "hlavný program - workshopy (akékoľvek zaujímavé schopnosti uveď do políčka zručností :))"
+            climbing: "hlavný program - lezenie"
+            channel: "hlavný program - divoká voda (kanál)"
+            tour: "hlavný program - prehliadka vodného diela"
+            leisure: "večerné aktivity (ceremoniály, tancovačky, párty, debaty...)"
+            teahouse: "staff čajovne"
+            subcamp: "subcamp leader"

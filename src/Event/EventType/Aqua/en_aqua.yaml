@@ -39,3 +39,22 @@ email:
     text:
         paidRegistrationTransfered: "Ahoy, your payment was transferred to a different participant. If you do not know about this, please contact us."
         paymentTransfered: "tranfering different payment into your registration"
+detail:
+    position:
+        press: "press (newspaper, photography and other media...)"
+        centralServices: "central services (registration, administration, info tent...)"
+        kitchen: "kitchen (food preparation - you must have a valid food handling certificate)"
+        technical: "technical support (material handling, storage or transport, fixing technical issues at the campsite)"
+        program:
+            sailing: "main program - sailing"
+            canoeing: "main program - canoeing on a flat water"
+            communityProject: "main program - community project"
+            rafting: "main program - river rafting"
+            hiking: "main program - hiking"
+            workshops: "main program - workshops (feel free to state any insteresting skills into skill field)"
+            climbing: "main program - climbing"
+            channel: "main program - wild water (channel)"
+            tour: "main program - tour of the waterworks"
+            leisure: "evening leisure activities (ceremonials, dances, parties, debates...)"
+            teahouse: "teahouse staff"
+            subcamp: "subcamp leader"

@@ -42,7 +42,7 @@ use kissj\User\User;
  * @property string|null            $uploadedOriginalFilename
  * @property string|null            $uploadedContenttype
  * @property string|null            $skills
- * @property array                  $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
+ * @property array|null             $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
  * @property string|null            $driversLicense
  * @property string|null            $notes
  *

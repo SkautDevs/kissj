@@ -58,7 +58,11 @@
 {% endif %}{% if ca.skills %}
     {% trans %}detail.skills{% endtrans %}: <b>{{ person.getSkills }}</b><br/>
 {% endif %}{% if ca.preferredPosition %}
-    {% trans %}detail.position{% endtrans %}: <b>{{ person.preferredPosition|join(', ', ' and ') }}</b><br/>
+    {% trans %}detail.position-title{% endtrans %}: <b>
+        {% for preferredPosition in person.preferredPosition %}
+            {{ preferredPosition|trans }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </b><br/>
 {% endif %}{% if ca.scarf %}
     {% trans %}detail.scarf{% endtrans %}: <b>
         {% if person.getScarf == 'yes' %}

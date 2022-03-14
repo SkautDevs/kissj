@@ -92,6 +92,20 @@ abstract class EventType
     /**
      * @return array<string>
      */
+    public function getPositionOptions(): array
+    {
+        return [
+            'detail.position.program',
+            'detail.position.kitchen',
+            'detail.position.hygiene',
+            'detail.position.technical',
+            'detail.position.press',
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
     public function getParticipantCountries(): array
     {
         return [

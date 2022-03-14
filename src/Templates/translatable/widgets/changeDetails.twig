@@ -226,7 +226,6 @@
 {% endif %}{% if ca.food %}
     <div class="form-group">
         <label for="foodPreferences">{% trans %}detail.foodHeader{% endtrans %}:</label>
-        {# todo dynamic into content arbiter #}
         <select
             id="foodPreferences"
             class="form-control form-wide"
@@ -242,7 +241,7 @@
             {% endfor %}
         </select>
     </div>
-    {% trans %}detail.foodNote{% endtrans %}
+    {% trans %}detail.food-placeholder{% endtrans %}
     <br><br>
 {% endif %}{% if ca.health %}
     <div class="form-group">
@@ -298,89 +297,33 @@
     </div>
 {% endif %}{% if ca.skills %}
     <div class="form-group">
-        <label for="skills">{% trans %}detail-ist.skills{% endtrans %}:</label>
+        <label for="skills">{% trans %}detail.skills{% endtrans %}:</label>
         <input
             id="skills"
             class="form-control form-wide"
             type="text"
             name="skills"
-            placeholder="{% trans %}detail-ist.skills-placeholder{% endtrans %}"
+            placeholder="{% trans %}detail.skills-placeholder{% endtrans %}"
             value="{{ personDetails.getSkills }}"
         >
     </div>
 {% endif %}{% if ca.preferredPosition %}
     <div class="form-group">
-        {% trans %}detail-ist.position{% endtrans %}:
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="press"
-                   {% if 'press' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-press{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="central services"
-                   {% if 'central services' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-centralServices{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="kitchen"
-                   {% if 'kitchen' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-kitchen{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="technical support"
-                   {% if 'technical support' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-technical{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - sailing"
-                   {% if 'program - sailing' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programSailing{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - canoeing"
-                   {% if 'program - canoeing' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programCanoeing{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - community project"
-                   {% if 'program - community project' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programCommunityProject{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - rafting"
-                   {% if 'program - rafting' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programRafting{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - hiking"
-                   {% if 'program - hiking' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programHiking{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="program - workshops"
-                   {% if 'program - workshops' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programWorkshops{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="evening activities"
-                   {% if 'evening activities' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programLeisure{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="teahouse staff"
-                   {% if 'teahouse staff' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-programTeahouse{% endtrans %}
-        </label>
-        <label class="form-control">
-            <input type="checkbox" name="preferredPosition[]" value="subcamp leader"
-                   {% if 'subcamp leader' in personDetails.preferredPosition %}checked="checked"{% endif %}>
-            {% trans %}detail-ist.position-subcamp{% endtrans %}
-        </label>
+        <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
+        {% set preferredPositions = personDetails.getPreferredPosition %}
+        {% for positionOption in event.eventType.getPositionOptions() %}
+            <label class="form-control">
+                <input type="checkbox" name="preferredPosition[]" value="{{ positionOption }}"
+                       {% if positionOption in personDetails.preferredPosition %}checked="checked"{% endif %}>
+                {{ positionOption|trans }}
+            </label>
+        {% endfor %}
     </div>
+    {% trans %}detail.position-placeholder{% endtrans %}
     <br>
 {% endif %}{% if ca.driver %}
     <div class="form-group">
-        <label for="driversLicense">{% trans %}detail-ist.driver{% endtrans %}:</label>
+        <label for="driversLicense">{% trans %}detail.driver{% endtrans %}:</label>
         <select
             id="driversLicense"
             class="form-control form-wide"
@@ -391,19 +334,19 @@
                 value="dont"
                 {% if personDetails.getDriversLicense == 'dont' %}selected="selected"{% endif %}
             >
-                {% trans %}detail-ist.driver-dont{% endtrans %}
+                {% trans %}detail.driver-dont{% endtrans %}
             </option>
             <option 
                 value="less 10000 km"
                 {% if personDetails.getDriversLicense == 'less 10000 km' %}selected="selected"{% endif %}
             >
-                {% trans %}detail-ist.driver-less10k{% endtrans %}
+                {% trans %}detail.driver-less10k{% endtrans %}
             </option>
             <option
                 value="more 10000 km"
                 {% if personDetails.getDriversLicense == 'more 10000 km' %}selected="selected"{% endif %}
             >
-                {% trans %}detail-ist.driver-more10k{% endtrans %}
+                {% trans %}detail.driver-more10k{% endtrans %}
             </option>
         </select>
     </div>
