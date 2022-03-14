@@ -49,5 +49,10 @@
     <p>{% trans %}email.layout.farewell{% endtrans %}<br/>
         {{ event.getReadableName }}</p>
 </main>
+<footer>
+    <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
+        <img src="data:image/jpg;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
+    </a>
+</footer>
 </body>
 </html>

@@ -84,4 +84,19 @@ class Event extends EntityDatetime
     {
         return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('Europe/Berlin'));
     }
+    
+    public function getLogoInBase64(): string
+    {
+        try {
+            $logo = file_get_contents(__DIR__ . '/../../public' . $this->logoUrl);
+        } catch (\Exception $e) {
+            $logo = false;
+        }
+
+        if ($logo === false) {
+            return '';
+        }
+
+        return base64_encode($logo);
+    }
 }
