@@ -8,9 +8,43 @@ use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\EventType\EventType;
+use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeWsj extends EventType
 {
+    public function getPrice(Participant $participant): int
+    {
+        $paymentsCount = count($participant->getNoncanceledPayments());
+
+        return match ($paymentsCount) {
+            0 => match (true) {
+                $participant instanceof TroopLeader,
+                $participant instanceof TroopParticipant,
+                $participant instanceof Ist,
+                    => 12_000,
+                default => throw new \Exception('Unknown participant class for payment count 0̈́'),
+            },
+            1 => match (true) {
+                $participant instanceof TroopLeader,
+                $participant instanceof TroopParticipant,
+                    => 15_000,
+                $participant instanceof Ist,
+                    => 12_000,
+                default => throw new \Exception('Unknown participant class for payment count 1'),
+            },
+            2 => match (true) {
+                $participant instanceof TroopLeader,
+                $participant instanceof TroopParticipant,
+                    => 17_000,
+                default => throw new \Exception('Unknown participant class for payment count 2'),
+            },
+            default => throw new \Exception('Problematic payment count: ' . $paymentsCount),
+        };
+    }
+
     /**
      * @return array<string, string>
      */

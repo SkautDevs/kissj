@@ -141,6 +141,16 @@ class Participant extends EntityDatetime
         return $this->payment;
     }
 
+    /**
+     * @return Payment[]
+     */
+    public function getNoncanceledPayments(): array
+    {
+        return array_filter($this->payment, function (Payment $payment): bool {
+            return $payment->status !== Payment::STATUS_CANCELED;
+        });
+    }
+
     public function isInSpecialPaymentContingent(): bool
     {
         return $this->contingent !== null
