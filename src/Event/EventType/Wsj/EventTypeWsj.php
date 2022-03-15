@@ -100,8 +100,9 @@ class EventTypeWsj extends EventType
             'detail-ist.position.graphics',
             'detail-ist.position.zza',
             'detail-ist.position.englishLector',
-            'detail-ist.position.krcma',
+            'detail-ist.position.wsj',
             'detail-ist.position.video',
+            'detail-ist.position.program',
         ];
     }
 }
