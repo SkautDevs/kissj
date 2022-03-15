@@ -1,5 +1,6 @@
 chooseRole:
     registerAsIst: "Registrovat se do IST!"
+    adviceTpText: "po přihlášení do poznámky uvede jméno vedoucího patroly. Vedoucí patroly při registraci uvede účastníky, se kterými je domluven. Následně patrolu spárujeme."
 detail:
     uploadedFileNote: "PDF se souhlasem rodičů najdeš na <a target=\"_blank\" href=\"https://jamboree.skauting.cz/wp-content/uploads/2022/03/Potvrzeni_k_podpisu.pdf\">našem webu</a>."
     contingent:
