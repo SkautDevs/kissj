@@ -128,7 +128,7 @@ _layout:
     lockedBar: "Locked"
     approvedBar: "Approved"
     payedBar: "Paid (:"
-    creator: "with ♥ created by Lung"
+    creator: "with ♥ created by Lung & company"
     analytics: "We are using Plausible Analytics to collect basic numbers on usage of KISSJ. Plausible Analytics is privacy focused, GDPR compliant and cookie-free analytcs."
 404:
     pardon: "Oops! Nothing is here... bad link maybe?"
@@ -210,10 +210,10 @@ email:
         paymentNote: "Note"
     cancel-payment:
         subject: "payment cancelled"
-        denied: "Unfortunately, your payment for %event.getReadableName% was denied."
-        reason: "Reason is:"
+        denied: "Unfortunately, your payment for %event.getReadableName% was denied"
+        reason: "with reason"
         dontPay: "Don't take further attempts to pay again with the previous payment details!"
-        registerAgain: "Do you want to attend the event nevertheless? Send your registration again at"
+        registerAgain: "Do you want to attend the event nevertheless? Edit and lock your registration again"
         newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
     payment-successful:
         subject: "payment successful"

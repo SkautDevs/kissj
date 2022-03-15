@@ -87,7 +87,7 @@
             <br/>
             {% for tl in closedTroopLeaders %}
                 <div class="card closed-theme">
-                    <h3>{{ tl.getTroopName }}</h3>
+                    <h3>{{ tl.getPatrolName }}</h3>
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}

@@ -6,3 +6,6 @@ chooseRole:
     adviceIstText: " - spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
 detail:
     patrolNamePlaceholder: "stejný název jako pro předprogram, pokud jste se účastnili"
+email:
+    payment-successful:
+        enjoy: "Prosím, vyplň dotazník o jídle a doprovodných programech na <a href='https://forms.gle/Y4MSmfdxoMw6gxRA9'>https://forms.gle/Y4MSmfdxoMw6gxRA9</a> a potom si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
