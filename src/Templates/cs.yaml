@@ -103,10 +103,6 @@ detail:
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"
-    position-title: "Jaké pozitě Tě zajímají, s čím nám můžeš pomoci?"
-    skills: "Dovednosti, které nám můžeš nabídnout"
-    skills-placeholder: ""
-detail-ist:
     skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position-title: "Preferovaná pozice"

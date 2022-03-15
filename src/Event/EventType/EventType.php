@@ -95,11 +95,11 @@ abstract class EventType
     public function getPositionOptions(): array
     {
         return [
-            'detail-ist.position.photo',
-            'detail-ist.position.kitchen',
-            'detail-ist.position.security',
-            'detail-ist.position.hygiene',
-            'detail-ist.position.programme',
+            'detail.position.photo',
+            'detail.position.kitchen',
+            'detail.position.security',
+            'detail.position.hygiene',
+            'detail.position.programme',
         ];
     }
 

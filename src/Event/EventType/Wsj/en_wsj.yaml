@@ -3,10 +3,9 @@ detail:
     contingent:
         czechia: "🇨🇿 Český kontingent"
         team: "⚜ Organizing Team"
-detail-ist:
     position:
         supportJOMeet: "Support with organizing meet for Jammo Patrols"
-        supportISTMeet: S"upport with organizing meet for IST"
+        supportISTMeet: "Support with organizing meet for IST"
         logistics: "Logistics (loading and unloading of containers, transport of resources in CZ)"
         fundraising: "Fundraising"
         pr: "Propagation and representation"
