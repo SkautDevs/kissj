@@ -115,4 +115,28 @@ class EventTypeWsj extends EventType
             'cs' => '🇨🇿 Česky',
         ];
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getPreferredPositionsOptions(): array
+    {
+        return array_merge(
+            parent::getPreferredPositionsOptions(),
+            [
+                'detail.position.supportJOMeet',
+                'detail.position.supportISTMeet',
+                'detail.position.logistics',
+                'detail.position.fundraising',
+                'detail.position.pr',
+                'detail.position.expo',
+                'detail.position.merchandise',
+                'detail.position.graphics',
+                'detail.position.zza',
+                'detail.position.englishLector',
+                'detail.position.krcma',
+                'detail.position.video',
+            ]
+        );
+    }
 }

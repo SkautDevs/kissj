@@ -139,4 +139,18 @@ abstract class EventType
     {
         return false;
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getPreferredPositionsOptions(): array
+    {
+        return [
+            'detail.position.photo',
+            'detail.position.kitchen',
+            'detail.position.security',
+            'detail.position.hygiene',
+            'detail.position.programme',
+        ];
+    }
 }

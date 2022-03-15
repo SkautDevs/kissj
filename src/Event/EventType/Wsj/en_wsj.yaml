@@ -3,3 +3,16 @@ detail:
     contingent:
         czechia: "🇨🇿 Český kontingent"
         team: "⚜ Organizing Team"
+    position:
+        supportJOMeet: "Support with organizing meet for Jammo Patrols"
+        supportISTMeet: S"upport with organizing meet for IST"
+        logistics: "Logistics (loading and unloading of containers, transport of resources in CZ)"
+        fundraising: "Fundraising"
+        pr: "Propagation and representation"
+        expo: "EXPO"
+        merchandise: "Merchandise"
+        graphics: "Graphic artist"
+        zza: "I have course 'Zdravotníka Zotavocích Akcí'"
+        englishLector: "I can teach English (I am good enough for that)"
+        krcma: "Support for 'Krčma'"
+        video: "Video, cameraman"

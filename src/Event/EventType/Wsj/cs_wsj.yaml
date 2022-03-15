@@ -2,3 +2,19 @@ chooseRole:
     registerAsIst: "Registrovat se do IST!"
 detail:
     uploadedFileNote: "PDF se souhlasem rodičů najdeš na <a target=\"_blank\" href=\"https://jamboree.skauting.cz/wp-content/uploads/2022/03/Potvrzeni_k_podpisu.pdf\">našem webu</a>."
+    contingent:
+        czechia: "🇨🇿 Český kontingent"
+        team: "⚜ Organizing Team"
+    position:
+        supportJOMeet: "Podpora organizace sektání Jammo Oddílů"
+        supportISTMeet: "Podpora organizace setkání IST"
+        logistics: "Logistika (nakládání/vykládání kontejnerů, převoz materiálu)"
+        fundraising: "Fundraising"
+        pr: "Propagace a reprezentace"
+        expo: "EXPO"
+        merchandise: "Propagační předměty"
+        graphics: "Grafik"
+        zza: "Mám kurz Zdravotníka Zotavocích Akcí"
+        englishLector: "Můžu vyučovat angličtinu (ovládám ji na dostatečně dobré úrovni)"
+        krcma: "Pomoc Krčmě"
+        video: "Video, kameraman"
