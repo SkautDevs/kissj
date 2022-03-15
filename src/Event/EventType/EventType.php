@@ -95,11 +95,11 @@ abstract class EventType
     public function getPositionOptions(): array
     {
         return [
-            'detail.position.program',
-            'detail.position.kitchen',
-            'detail.position.hygiene',
-            'detail.position.technical',
-            'detail.position.press',
+            'detail-ist.position.photo',
+            'detail-ist.position.kitchen',
+            'detail-ist.position.security',
+            'detail-ist.position.hygiene',
+            'detail-ist.position.programme',
         ];
     }
 
@@ -138,19 +138,5 @@ abstract class EventType
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return false;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getPreferredPositionsOptions(): array
-    {
-        return [
-            'detail.position.photo',
-            'detail.position.kitchen',
-            'detail.position.security',
-            'detail.position.hygiene',
-            'detail.position.programme',
-        ];
     }
 }

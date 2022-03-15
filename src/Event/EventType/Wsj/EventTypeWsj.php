@@ -119,24 +119,23 @@ class EventTypeWsj extends EventType
     /**
      * @return array<string>
      */
-    public function getPreferredPositionsOptions(): array
+    public function getPositionOptions(): array
     {
-        return array_merge(
-            parent::getPreferredPositionsOptions(),
-            [
-                'detail.position.supportJOMeet',
-                'detail.position.supportISTMeet',
-                'detail.position.logistics',
-                'detail.position.fundraising',
-                'detail.position.pr',
-                'detail.position.expo',
-                'detail.position.merchandise',
-                'detail.position.graphics',
-                'detail.position.zza',
-                'detail.position.englishLector',
-                'detail.position.krcma',
-                'detail.position.video',
-            ]
-        );
+        return [
+            'detail-ist.position.photo',
+            'detail-ist.position.photoMeets',
+            'detail-ist.position.supportJOMeet',
+            'detail-ist.position.supportISTMeet',
+            'detail-ist.position.logistics',
+            'detail-ist.position.fundraising',
+            'detail-ist.position.pr',
+            'detail-ist.position.expo',
+            'detail-ist.position.merchandise',
+            'detail-ist.position.graphics',
+            'detail-ist.position.zza',
+            'detail-ist.position.englishLector',
+            'detail-ist.position.krcma',
+            'detail-ist.position.video',
+        ];
     }
 }

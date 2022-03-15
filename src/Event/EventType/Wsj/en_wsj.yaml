@@ -3,6 +3,7 @@ detail:
     contingent:
         czechia: "🇨🇿 Český kontingent"
         team: "⚜ Organizing Team"
+detail-ist:
     position:
         supportJOMeet: "Support with organizing meet for Jammo Patrols"
         supportISTMeet: S"upport with organizing meet for IST"
@@ -16,3 +17,5 @@ detail:
         englishLector: "I can teach English (I am good enough for that)"
         krcma: "Support for 'Krčma'"
         video: "Video, cameraman"
+        photo: "Photograph (of the whole event, in Czechia and Korea)"
+        photoMeets: "Photograph of Czech Contingent meetings"

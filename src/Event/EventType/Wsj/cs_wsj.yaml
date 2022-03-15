@@ -5,6 +5,7 @@ detail:
     contingent:
         czechia: "🇨🇿 Český kontingent"
         team: "⚜ Organizing Team"
+detail-ist:
     position:
         supportJOMeet: "Podpora organizace sektání Jammo Oddílů"
         supportISTMeet: "Podpora organizace setkání IST"
@@ -18,3 +19,5 @@ detail:
         englishLector: "Můžu vyučovat angličtinu (ovládám ji na dostatečně dobré úrovni)"
         krcma: "Pomoc Krčmě"
         video: "Video, kameraman"
+        photo: "Fotograf (celé akce, jak v ČR tak v Koreji)"
+        photoMeets: "Fotograf setkání"
