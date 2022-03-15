@@ -88,21 +88,21 @@ class EventTypeWsj extends EventType
     public function getPositionOptions(): array
     {
         return [
-            'detail-ist.position.photo',
-            'detail-ist.position.photoMeets',
-            'detail-ist.position.supportJOMeet',
-            'detail-ist.position.supportISTMeet',
-            'detail-ist.position.logistics',
-            'detail-ist.position.fundraising',
-            'detail-ist.position.pr',
-            'detail-ist.position.expo',
-            'detail-ist.position.merchandise',
-            'detail-ist.position.graphics',
-            'detail-ist.position.zza',
-            'detail-ist.position.englishLector',
-            'detail-ist.position.wsj',
-            'detail-ist.position.video',
-            'detail-ist.position.program',
+            'detail.position.photo',
+            'detail.position.photoMeets',
+            'detail.position.supportJOMeet',
+            'detail.position.supportISTMeet',
+            'detail.position.logistics',
+            'detail.position.fundraising',
+            'detail.position.pr',
+            'detail.position.expo',
+            'detail.position.merchandise',
+            'detail.position.graphics',
+            'detail.position.zza',
+            'detail.position.englishLector',
+            'detail.position.wsj',
+            'detail.position.video',
+            'detail.position.program',
         ];
     }
 }

@@ -103,10 +103,6 @@ detail:
     uploadFileMissing: "file not uploaded yet :("
     notice: "Notice"
     notice-placeholder: "anything else?"
-    position-title: "In which positions are you interested?"
-    skills: "Skills, which you can offer"
-    skills-placeholder: ""
-detail-ist:
     skills: "Skills"
     skills-placeholder: "sailing; food handling certificate; advanced first aid; ..."
     position-title: "Preferred position"
