@@ -103,6 +103,13 @@ detail:
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"
+    position:
+        photo: "Fotograf"
+        kitchen: "Pomocník v kuchyni / kuchař(ka)"
+        security: "Hlídání areálu, kontrola vstupenek"
+        hygiene: "Úklid toalet"
+        programme: "Pomoc s programem"
+detail-ist:
     skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position-title: "Preferovaná pozice"

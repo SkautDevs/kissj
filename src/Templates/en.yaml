@@ -103,6 +103,13 @@ detail:
     uploadFileMissing: "file not uploaded yet :("
     notice: "Notice"
     notice-placeholder: "anything else?"
+    position:
+        photo: "Photographer"
+        kitchen: "Kitchen helper / chef"
+        security: "Campus guard, ticket control"
+        hygiene: "Toilet cleaning"
+        programme: "Support for program of the event"
+detail-ist:
     skills: "Skills"
     skills-placeholder: "sailing; food handling certificate; advanced first aid; ..."
     position-title: "Preferred position"
