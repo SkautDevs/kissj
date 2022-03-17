@@ -187,6 +187,18 @@ class AdminController extends AbstractController
                 $event,
                 $user,
             ),
+            'approvedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_LEADER],
+                [USER::STATUS_APPROVED],
+                $event,
+                $user,
+            ),
+            'approvedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_PARTICIPANT],
+                [USER::STATUS_APPROVED],
+                $event,
+                $user,
+            ),
         ]);
     }
 

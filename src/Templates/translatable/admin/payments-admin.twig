@@ -27,7 +27,7 @@
                 <div class="card approved-theme">
                     {% include 'widgets/paymentDetails.twig' with {
                         'person': ist,
-                        'ca': event.getEventType.getContentArbiterIst
+                        'ca': event.getEventType.getContentArbiterIst,
                     } %}
                 </div>
                 <br/>
@@ -50,7 +50,51 @@
                 <div class="card approved-theme">
                     {% include 'widgets/paymentDetails.twig' with {
                         'person': pl,
-                        'ca': event.getEventType.getContentArbiterPatrolLeader
+                        'ca': event.getEventType.getContentArbiterPatrolLeader,
+                    } %}
+                </div>
+                <br/>
+            {% endfor %}
+        {% endif %}
+        <br/>
+    {% endif %}
+    
+    {% if event.allowTroops %}
+        {% if approvedTroopLeaders is empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}payments-admin.allTroopLeadersPaid{% endtrans %}</h2>
+            </div>
+        {% else %}
+            <div class="card approved-theme">
+                <h2>{% trans %}role.tl{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for tl in approvedTroopLeaders %}
+                <div class="card approved-theme">
+                    {% include 'widgets/paymentDetails.twig' with {
+                        'person': tl,
+                        'ca': event.getEventType.getContentArbiterTroopLeader,
+                    } %}
+                </div>
+                <br/>
+            {% endfor %}
+        {% endif %}
+        <br/>
+
+        {% if approvedTroopParticipants is empty %}
+            <div class="card closed-theme">
+                <h2>{% trans %}payments-admin.allTroopParticipantsPaid{% endtrans %}</h2>
+            </div>
+        {% else %}
+            <div class="card approved-theme">
+                <h2>{% trans %}role.tp{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for tp in approvedTroopParticipants %}
+                <div class="card approved-theme">
+                    {% include 'widgets/paymentDetails.twig' with {
+                        'person': tp,
+                        'ca': event.getEventType.getContentArbiterTroopParticipant,
                     } %}
                 </div>
                 <br/>
