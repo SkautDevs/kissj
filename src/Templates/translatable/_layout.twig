@@ -26,6 +26,7 @@
 <body class="wrapper">
 <h1 class="text-center">{% trans %}_layout.title{% endtrans %} - {{ event.readableName }}</h1>
 <div class="user text-right">
+    <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a> |
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
     {% endfor %}
