@@ -25,7 +25,14 @@ class ExportService
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [
+                User::ROLE_PATROL_LEADER,
+                User::ROLE_PATROL_PARTICIPANT,
+                User::ROLE_TROOP_LEADER,
+                User::ROLE_TROOP_PARTICIPANT,
+                User::ROLE_IST,
+                User::ROLE_GUEST,
+            ],
             [User::STATUS_PAID],
             $event,
             $adminUser,
@@ -69,7 +76,14 @@ class ExportService
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [
+                User::ROLE_PATROL_LEADER,
+                User::ROLE_PATROL_PARTICIPANT,
+                User::ROLE_TROOP_LEADER,
+                User::ROLE_TROOP_PARTICIPANT,
+                User::ROLE_IST,
+                User::ROLE_GUEST,
+            ],
             [User::STATUS_PAID],
             $event,
             $adminUser,
@@ -111,7 +125,14 @@ class ExportService
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_PATROL_LEADER, User::ROLE_PATROL_PARTICIPANT, User::ROLE_IST, User::ROLE_GUEST],
+            [
+                User::ROLE_PATROL_LEADER,
+                User::ROLE_PATROL_PARTICIPANT,
+                User::ROLE_TROOP_LEADER,
+                User::ROLE_TROOP_PARTICIPANT,
+                User::ROLE_IST,
+                User::ROLE_GUEST,
+            ],
             [User::STATUS_CLOSED, User::STATUS_APPROVED, User::STATUS_PAID],
             $event,
             $adminUser,
