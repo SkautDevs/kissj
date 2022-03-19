@@ -24,7 +24,7 @@
                 {% endif %}
                 {% if event.allowTroops %}
                     <h3>{% trans %}role.tl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.getMaximalClosedTroopsCount }}</p>
+                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.getMaximalClosedTroopLeadersCount }}</p>
                     <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ troopLeaders.getOpenCount }}</p>
                     <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ troopLeaders.getClosedCount }}</p>
                     <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ troopLeaders.getApprovedCount }}
@@ -33,12 +33,12 @@
                     <br>
 
                     <h3>{% trans %}role.tp{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.getMaximalClosedTroopsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ troopParticipants.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ troopParticipants.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ troopParticipants.getApprovedCount }}
+                    <p>{% trans %}dashboard-admin.limitTp{% endtrans %}: {{ event.getMaximalClosedTroopParticipantsCount }}</p>
+                    <p>{% trans %}dashboard-admin.openTp{% endtrans %}: {{ troopParticipants.getOpenCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedTp{% endtrans %}: {{ troopParticipants.getClosedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedTp{% endtrans %}: {{ troopParticipants.getApprovedCount }}
                         ({{ troopParticipants.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
-                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ troopParticipants.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidTp{% endtrans %}: {{ troopParticipants.getPaidCount }}</p>
                 {% endif %}
             </div>
             <div>

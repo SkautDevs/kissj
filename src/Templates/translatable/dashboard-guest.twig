@@ -9,7 +9,7 @@
         <div>
             <h2>{% trans %}dashboard.personalInfo{% endtrans %}</h2>
             {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ url_for('guest-showDetailsChangeable', {'eventSlug': event.slug}) }}">
+                <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
                     {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
             {% endif %}
             <div class="text-center">

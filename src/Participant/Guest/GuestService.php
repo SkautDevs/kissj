@@ -2,23 +2,18 @@
 
 namespace kissj\Participant\Guest;
 
-use kissj\AbstractService;
 use kissj\Event\Event;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserService;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class GuestService extends AbstractService
+class GuestService
 {
     public function __construct(
         private GuestRepository $guestRepository,
         private ParticipantRepository $participantRepository,
-        private FlashMessagesBySession $flashMessages,
-        private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
         private UserService $userService,
     ) {}
@@ -33,67 +28,6 @@ class GuestService extends AbstractService
 
         /** @var Guest $guest */
         $guest = $this->guestRepository->findOneBy(['user' => $user]);
-
-        return $guest;
-    }
-
-    /**
-     * @param Guest $guest
-     * @param string[] $params
-     * @return Guest
-     */
-    public function addParamsIntoGuest(Guest $guest, array $params): Guest
-    {
-        /** @var Guest $guest */
-        $guest = $this->addParamsIntoPerson($params, $guest);
-
-        return $guest;
-    }
-
-    public function isGuestValidForClose(Guest $guest): bool
-    {
-        return $this->isPersonValidForClose(
-            $guest,
-            $guest->getUserButNotNull()->event->eventType->getContentArbiterGuest(),
-        );
-    }
-
-    public function isCloseRegistrationValid(Guest $guest): bool
-    {
-        $validityFlag = true;
-
-        if (!$this->isGuestValidForClose($guest)) {
-            $this->flashMessages->warning('flash.warning.guestWrongData');
-
-            $validityFlag = false;
-        }
-
-        $event = $guest->getUserButNotNull()->event;
-        if (
-            $this->userService->getClosedSameRoleParticipantsCount($guest)
-            >= $event->getEventType()->getMaximumClosedParticipants($guest)
-        ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.guestFullRegistration'));
-
-            $validityFlag = false;
-        }
-
-        if (!$event->canRegistrationBeLocked()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
-
-            $validityFlag = false;
-        }
-
-        return $validityFlag;
-    }
-
-    public function closeRegistration(Guest $guest): Guest
-    {
-        if ($this->isCloseRegistrationValid($guest)) {
-            $user = $guest->getUserButNotNull();
-            $this->userService->closeRegistration($user);
-            $this->mailer->sendRegistrationClosed($user);
-        }
 
         return $guest;
     }

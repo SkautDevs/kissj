@@ -49,7 +49,8 @@ use kissj\Orm\EntityDatetime;
  * @property int|null          $maximalClosedGuestsCount
  *
  * @property bool              $allowTroops
- * @property int|null          $maximalClosedTroopsCount
+ * @property int|null          $maximalClosedTroopLeadersCount
+ * @property int|null          $maximalClosedTroopParticipantsCount
  * @property int|null          $minimalTroopParticipantsCount
  * @property int|null          $maximalTroopParticipantsCount
  *

@@ -4,16 +4,16 @@ namespace kissj\Participant\Patrol;
 
 use kissj\AbstractController;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 
 class PatrolController extends AbstractController
 {
     public function __construct(
         private PatrolService $patrolService,
-        private PatrolLeaderRepository $patrolLeaderRepository,
+        private ParticipantService $participantService,
         private PatrolParticipantRepository $patrolParticipantRepository,
     ) {
     }
@@ -33,39 +33,6 @@ class PatrolController extends AbstractController
                 'ca' => $user->event->eventType->getContentArbiterPatrolLeader(),
             ]
         );
-    }
-
-    public function showDetailsChangeableLeader(Request $request, Response $response, User $user): Response
-    {
-        $patrolLeader = $this->patrolService->getPatrolLeader($user);
-
-        return $this->view->render($response, 'changeDetails-pl.twig',
-            [
-                'plDetails' => $patrolLeader,
-                'ca' => $user->event->eventType->getContentArbiterPatrolLeader(),
-            ]
-        );
-    }
-
-    public function changeDetailsLeader(Request $request, Response $response, User $user): Response
-    {
-        $patrolLeader = $this->patrolService->getPatrolLeader($user);
-
-        if ($user->event->eventType->getContentArbiterPatrolLeader()->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request);
-            if ($uploadedFile instanceof UploadedFile) {
-                $this->fileHandler->saveFileTo($patrolLeader, $uploadedFile);
-            }
-        }
-
-        /** @var array<string, string> $parsedBody */
-        $parsedBody = $request->getParsedBody();
-        $patrolLeader = $this->patrolService->addParamsIntoPatrolLeader($patrolLeader, $parsedBody);
-
-        $this->patrolLeaderRepository->persist($patrolLeader);
-        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
-
-        return $this->redirect($request, $response, 'pl-dashboard');
     }
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
@@ -136,18 +103,12 @@ class PatrolController extends AbstractController
     ): Response {
         /** @var array<string, string> $params */
         $params = $request->getParsedBody();
-        $patrolParticipant = $this->patrolService->addParamsIntoPatrolParticipant(
+        /** @var PatrolParticipant $patrolParticipant */
+        $patrolParticipant = $this->participantService->addParamsIntoParticipant(
             $this->patrolService->getPatrolParticipant($participantId),
             $params
         );
-
-        if ($patrolParticipant->patrolLeader->getUserButNotNull()
-            ->event->getEventType()->getContentArbiterPatrolParticipant()->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request);
-            if ($uploadedFile instanceof UploadedFile) {
-                $this->fileHandler->saveFileTo($patrolParticipant, $uploadedFile);
-            }
-        }
+        $this->participantService->handleUploadedFiles($patrolParticipant, $request);
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));

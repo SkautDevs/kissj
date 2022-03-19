@@ -4,6 +4,7 @@ namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
 use kissj\Export\ExportService;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
@@ -23,6 +24,8 @@ class ExportTest extends AppTestCase
         $userService = $container->get(UserService::class);
         /** @var PatrolService $patrolService */
         $patrolService = $container->get(PatrolService::class);
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
 
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
@@ -32,7 +35,7 @@ class ExportTest extends AppTestCase
             $email = 'test-' . $i . '@example.com';
             $user = $userService->registerUser($email, $testEvent);
             $patrolLeader = $patrolService->getPatrolLeader($user);
-            $patrolService->addParamsIntoPatrolLeader($patrolLeader, [
+            $participantService->addParamsIntoParticipant($patrolLeader, [
                     'patrolName' => 'my great patrol no.' . $i,
                     'firstName' => 'leader no.' . $i,
                     'lastName' => 'leaderový',

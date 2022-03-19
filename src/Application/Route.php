@@ -15,7 +15,6 @@ use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
-use kissj\Middleware\TroopsOnlyMiddleware;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Guest\GuestController;
 use kissj\Participant\Ist\IstController;
@@ -100,12 +99,6 @@ class Route
                             ->setName('p-show');
 
                         $app->group('', function (RouteCollectorProxy $app) {
-                            $app->get('/changeDetails', PatrolController::class . '::showDetailsChangeableLeader')
-                                ->setName('pl-showDetailsChangeable');
-
-                            $app->post('/changeDetails', PatrolController::class . '::changeDetailsLeader')
-                                ->setName('pl-changeDetails');
-
                             $app->get('/closeRegistration', PatrolController::class . '::showCloseRegistration')
                                 ->setName('pl-showCloseRegistration');
 
@@ -139,12 +132,6 @@ class Route
                             ->setName('ist-dashboard');
 
                         $app->group('', function (RouteCollectorProxy $app) {
-                            $app->get('/showChangeDetails', IstController::class . '::showDetailsChangeable')
-                                ->setName('ist-showDetailsChangeable');
-
-                            $app->post('/changeDetails', IstController::class . '::changeDetails')
-                                ->setName('ist-changeDetails');
-
                             $app->get('/closeRegistration', IstController::class . '::showCloseRegistration')
                                 ->setName('ist-showCloseRegistration');
 
@@ -173,19 +160,13 @@ class Route
                                 ->setName('confirmCloseRegistration');
 
                         })->add(OpenStatusOnlyMiddleware::class);
-                    })->add(TroopsOnlyMiddleware::class);
+                    });
 
                     $app->group('/guest', function (RouteCollectorProxy $app) {
                         $app->get('/dashboard', GuestController::class . '::showDashboard')
                             ->setName('guest-dashboard');
 
                         $app->group('', function (RouteCollectorProxy $app) {
-                            $app->get('/showChangeDetails', GuestController::class . '::showDetailsChangeable')
-                                ->setName('guest-showDetailsChangeable');
-
-                            $app->post('/changeDetails', GuestController::class . '::changeDetails')
-                                ->setName('guest-changeDetails');
-
                             $app->get('/closeRegistration', GuestController::class . '::showCloseRegistration')
                                 ->setName('guest-showCloseRegistration');
 

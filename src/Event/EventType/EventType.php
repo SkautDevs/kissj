@@ -12,6 +12,8 @@ use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 
 abstract class EventType
 {
@@ -26,6 +28,8 @@ abstract class EventType
 
         return match (get_class($participant)) {
             PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
+            TroopLeader::class => $event->maximalClosedTroopLeadersCount ?? 0,
+            TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
             Ist::class => $event->maximalClosedIstsCount ?? 0,
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
             default => throw new \RuntimeException('Unexpected participent class: ' . get_class($participant)),

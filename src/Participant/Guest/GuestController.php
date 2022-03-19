@@ -3,6 +3,7 @@
 namespace kissj\Participant\Guest;
 
 use kissj\AbstractController;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -11,7 +12,7 @@ class GuestController extends AbstractController
 {
     public function __construct(
         private GuestService $guestService,
-        private GuestRepository $guestRepository,
+        private ParticipantService $participantService,
     ) {
     }
 
@@ -27,35 +28,10 @@ class GuestController extends AbstractController
         ]);
     }
 
-    public function showDetailsChangeable(Response $response, User $user): Response
-    {
-        $guest = $this->guestService->getGuest($user);
-
-        return $this->view->render($response, 'changeDetails-guest.twig', [
-            'guestDetails' => $guest,
-            'ca' => $user->event->eventType->getContentArbiterGuest(),
-        ]);
-    }
-
-    public function changeDetails(Request $request, Response $response, User $user): Response
-    {
-        /** @var string[] $parsedBody */
-        $parsedBody = $request->getParsedBody();
-        $guest = $this->guestService->addParamsIntoGuest(
-            $this->guestService->getGuest($user),
-            $parsedBody,
-        );
-
-        $this->guestRepository->persist($guest);
-        $this->flashMessages->success('Details successfully saved. ');
-
-        return $this->redirect($request, $response, 'guest-dashboard');
-    }
-
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
         $guest = $this->guestService->getGuest($user);
-        $validRegistration = $this->guestService->isCloseRegistrationValid($guest); // call because of warnings
+        $validRegistration = $this->participantService->isCloseRegistrationValid($guest); // call because of warnings
         if ($validRegistration) {
             return $this->view->render($response, 'closeRegistration-guest.twig',
                 ['dataProtectionUrl' => $user->event->dataProtectionUrl]);
@@ -67,7 +43,7 @@ class GuestController extends AbstractController
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
         $guest = $this->guestService->getGuest($user);
-        $guest = $this->guestService->closeRegistration($guest);
+        $guest = $this->participantService->closeRegistration($guest);
 
         if ($user->status === User::STATUS_CLOSED) {
             $this->flashMessages->success('Registration successfully locked and sent');

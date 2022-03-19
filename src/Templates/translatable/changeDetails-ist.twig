@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card text-left open-theme">
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
-        <form method="POST" action="{{ url_for('ist-changeDetails', {'eventSlug': event.slug}) }}"
+        <form method="POST" action="{{ url_for('changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
             {% include 'widgets/changeDetails.twig' with {'personDetails': istDetails} %}
             <div class="text-center">

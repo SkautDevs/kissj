@@ -3,16 +3,16 @@
 namespace kissj\Participant\Ist;
 
 use kissj\AbstractController;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 
 class IstController extends AbstractController
 {
     public function __construct(
+        private ParticipantService $participantService,
         private IstService $istService,
-        private IstRepository $istRepository,
     ) {
     }
 
@@ -32,45 +32,10 @@ class IstController extends AbstractController
         );
     }
 
-    public function showDetailsChangeable(Response $response, User $user): Response
-    {
-        $ist = $this->istService->getIst($user);
-
-        return $this->view->render(
-            $response,
-            'changeDetails-ist.twig',
-            [
-                'istDetails' => $ist,
-                'ca' => $user->event->eventType->getContentArbiterIst(),
-            ],
-        );
-    }
-
-    public function changeDetails(Request $request, Response $response, User $user): Response
-    {
-        $ist = $this->istService->getIst($user);
-
-        if ($user->event->getEventType()->getContentArbiterIst()->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request);
-            if ($uploadedFile instanceof UploadedFile) {
-                $this->fileHandler->saveFileTo($ist, $uploadedFile);
-            }
-        }
-
-        /** @var string[] $parsed */
-        $parsed = $request->getParsedBody();
-        $ist = $this->istService->addParamsIntoIst($ist, $parsed);
-
-        $this->istRepository->persist($ist);
-        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
-
-        return $this->redirect($request, $response, 'ist-dashboard');
-    }
-
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
         $ist = $this->istService->getIst($user);
-        $validRegistration = $this->istService->isCloseRegistrationValid($ist); // call because of warnings
+        $validRegistration = $this->participantService->isCloseRegistrationValid($ist); // call because of warnings
         if ($validRegistration) {
             return $this->view->render(
                 $response,
@@ -85,7 +50,7 @@ class IstController extends AbstractController
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
         $ist = $this->istService->getIst($user);
-        $ist = $this->istService->closeRegistration($ist);
+        $ist = $this->participantService->closeRegistration($ist);
         $istUser = $ist->getUserButNotNull();
 
         if ($istUser->status === User::STATUS_CLOSED) {

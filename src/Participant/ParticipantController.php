@@ -3,18 +3,22 @@
 namespace kissj\Participant;
 
 use kissj\AbstractController;
-use kissj\Event\AbstractContentArbiter;
+use kissj\Participant\Guest\GuestService;
+use kissj\Participant\Ist\IstService;
+use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 
 // now usage for TroopParticipants and TroopLeaders, TODO for all roles
 class ParticipantController extends AbstractController
 {
     public function __construct(
+        private PatrolService $patrolService,
         private TroopService $troopService,
+        private IstService $istService,
+        private GuestService $guestService,
         private ParticipantService $participantService,
         private ParticipantRepository $participantRepository,
     ) {}
@@ -44,18 +48,12 @@ class ParticipantController extends AbstractController
         /** @var string[] $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
-
-        if ($this->getContentArbiterForParticipant($user)->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request);
-            if ($uploadedFile instanceof UploadedFile) {
-                $this->fileHandler->saveFileTo($participant, $uploadedFile);
-            }
-        }
+        $this->participantService->handleUploadedFiles($participant, $request);
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
-        return $this->redirect($request, $response, 'dashboard');
+        return $this->redirect($request, $response, 'getDashboard'); // TODO change to common dashboard when possible
     }
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
@@ -95,16 +93,28 @@ class ParticipantController extends AbstractController
      */
     private function getTemplateData(User $user): array
     {
+        $eventType = $user->event->eventType;
+
         return match ($user->role) {
+            User::ROLE_PATROL_LEADER => [
+                'user' => $user,
+                'person' => $this->patrolService->getPatrolLeader($user),
+                'ca' => $eventType->getContentArbiterPatrolLeader(),
+            ],
             User::ROLE_TROOP_LEADER => [
                 'user' => $user,
                 'person' => $this->troopService->getTroopLeader($user),
-                'ca' => $user->event->eventType->getContentArbiterTroopLeader(),
+                'ca' => $eventType->getContentArbiterTroopLeader(),
             ],
             User::ROLE_TROOP_PARTICIPANT => [
                 'user' => $user,
                 'person' => $this->troopService->getTroopParticipant($user),
-                'ca' => $user->event->eventType->getContentArbiterTroopParticipant(),
+                'ca' => $eventType->getContentArbiterTroopParticipant(),
+            ],
+            User::ROLE_IST => [
+                'user' => $user,
+                'person' => $this->istService->getIst($user),
+                'ca' => $eventType->getContentArbiterIst(),
             ],
             default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };
@@ -113,17 +123,11 @@ class ParticipantController extends AbstractController
     private function getParticipantFromUser(User $user): Participant
     {
         return match ($user->role) {
+            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
             User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
             User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
-            default => throw new \RuntimeException('Unexpected role ' . $user->role),
-        };
-    }
-    
-    private function getContentArbiterForParticipant(User $user): AbstractContentArbiter
-    {
-        return match ($user->role) {
-            User::ROLE_TROOP_LEADER => $user->event->eventType->getContentArbiterTroopLeader(),
-            User::ROLE_TROOP_PARTICIPANT => $user->event->eventType->getContentArbiterTroopParticipant(),
+            User::ROLE_IST => $this->istService->getIst($user),
+            User::ROLE_GUEST => $this->guestService->getGuest($user),
             default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };
     }

@@ -2,30 +2,27 @@
 
 namespace kissj\Participant\Patrol;
 
-use kissj\AbstractService;
-use kissj\Event\ContentArbiterPatrolLeader;
-use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolService extends AbstractService
+class PatrolService
 {
     public function __construct(
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
         private UserService $userService,
+        private ParticipantService $participantService,
         private ParticipantRepository $participantRepository,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
-        private ContentArbiterPatrolLeader $contentArbiterPatrolLeader,
-        private ContentArbiterPatrolParticipant $contentArbiterPatrolParticipant,
     ) {}
 
     public function getPatrolLeader(User $user): PatrolLeader
@@ -37,19 +34,6 @@ class PatrolService extends AbstractService
             $patrolLeader->user = $user;
             $this->patrolLeaderRepository->persist($patrolLeader);
         }
-
-        return $patrolLeader;
-    }
-
-    /**
-     * @param PatrolLeader $patrolLeader
-     * @param array<string,string> $params
-     * @return PatrolLeader
-     */
-    public function addParamsIntoPatrolLeader(PatrolLeader $patrolLeader, array $params): PatrolLeader
-    {
-        $this->addParamsIntoPerson($params, $patrolLeader);
-        $patrolLeader->patrolName = $params['patrolName'] ?? null;
 
         return $patrolLeader;
     }
@@ -69,18 +53,6 @@ class PatrolService extends AbstractService
         return $this->patrolParticipantRepository->getOneBy(['id' => $patrolParticipantId]);
     }
 
-    /**
-     * @param PatrolParticipant $participant
-     * @param array<string, string> $params
-     * @return PatrolParticipant
-     */
-    public function addParamsIntoPatrolParticipant(PatrolParticipant $participant, array $params): PatrolParticipant
-    {
-        $this->addParamsIntoPerson($params, $participant);
-
-        return $participant;
-    }
-
     public function deletePatrolParticipant(PatrolParticipant $patrolParticipant): void
     {
         $this->patrolParticipantRepository->delete($patrolParticipant);
@@ -98,9 +70,10 @@ class PatrolService extends AbstractService
         $validityFlag = true;
 
         $event = $patrolLeader->getUserButNotNull()->event;
+        $eventType = $event->getEventType();
         if (
             $this->userService->getClosedSameRoleParticipantsCount($patrolLeader)
-            >= $event->getEventType()->getMaximumClosedParticipants($patrolLeader)
+            >= $eventType->getMaximumClosedParticipants($patrolLeader)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));
 
@@ -113,7 +86,10 @@ class PatrolService extends AbstractService
             $validityFlag = false;
         }
 
-        if (!$this->isPatrolLeaderValidForClose($patrolLeader)) {
+        if (!$this->participantService->isPersonValidForClose(
+            $patrolLeader,
+            $eventType->getContentArbiterPatrolLeader(),
+        )) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.plWrongData'));
 
             $validityFlag = false;
@@ -142,8 +118,12 @@ class PatrolService extends AbstractService
             $validityFlag = false;
         }
 
+        $contentArbiterPatrolParticipant = $eventType->getContentArbiterPatrolParticipant();
         foreach ($participants as $participant) {
-            if (!$this->isPatrolParticipantValidForClose($participant)) {
+            if (!$this->participantService->isPersonValidForClose(
+                $participant,
+                $contentArbiterPatrolParticipant,
+            )) {
                 $this->flashMessages->warning(
                     $this->translator->trans(
                         'flash.warning.plWrongDataParticipant',
@@ -157,20 +137,6 @@ class PatrolService extends AbstractService
 
         // to show all warnings
         return $validityFlag;
-    }
-
-    private function isPatrolLeaderValidForClose(PatrolLeader $pl): bool
-    {
-        if ($this->contentArbiterPatrolLeader->patrolName && $pl->patrolName === null) {
-            return false;
-        }
-
-        return $this->isPersonValidForClose($pl, $this->contentArbiterPatrolLeader);
-    }
-
-    private function isPatrolParticipantValidForClose(PatrolParticipant $p): bool
-    {
-        return $this->isPersonValidForClose($p, $this->contentArbiterPatrolParticipant);
     }
 
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader

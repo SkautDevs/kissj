@@ -10,7 +10,7 @@
             <div>
                 <h2>{% trans %}role.pl{% endtrans %} {{ pl.getFullName }}</h2>
                 {% if userStatus == 'open' %}
-                    <a class="btn btn-small" href="{{ url_for('pl-changeDetails', {'eventSlug': event.slug}) }}">
+                    <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">

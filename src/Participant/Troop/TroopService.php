@@ -2,13 +2,12 @@
 
 namespace kissj\Participant\Troop;
 
-use kissj\AbstractService;
 use kissj\Event\Event;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 
-class TroopService extends AbstractService
+class TroopService
 {
     public function __construct(
         private TroopLeaderRepository $troopLeaderRepository,
