@@ -72,7 +72,7 @@ class PatrolService
         $event = $patrolLeader->getUserButNotNull()->event;
         $eventType = $event->getEventType();
         if (
-            $this->userService->getClosedSameRoleParticipantsCount($patrolLeader)
+            $this->participantService->getClosedSameRoleParticipantsCount($patrolLeader)
             >= $eventType->getMaximumClosedParticipants($patrolLeader)
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));

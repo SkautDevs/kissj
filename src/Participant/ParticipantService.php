@@ -90,7 +90,7 @@ class ParticipantService
     public function handleUploadedFiles(Participant $participant, Request $request): void
     {
         $contentArbiter = $this->getContentArbiterForParticipant($participant);
-        
+
         if ($contentArbiter->uploadFile) {
             $uploadedFile = $this->resolveUploadedFiles($request);
             if ($uploadedFile instanceof UploadedFile) {
@@ -177,7 +177,7 @@ class ParticipantService
 
         return true;
     }
-    
+
     public function isCloseRegistrationValid(Participant $participant): bool
     {
         $validityFlag = true;
@@ -190,8 +190,17 @@ class ParticipantService
         }
 
         if (
-            $this->userService->getClosedSameRoleParticipantsCount($participant)
+            $this->getClosedSameRoleParticipantsCount($participant)
             >= $event->eventType->getMaximumClosedParticipants($participant)
+        ) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
+
+            $validityFlag = false;
+        }
+
+        if (
+            $event->maximalClosedParticipantsCount !== null 
+            && $this->getClosedParticipantsCount($participant) >= $event->maximalClosedParticipantsCount
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
 
@@ -206,6 +215,55 @@ class ParticipantService
 
         // to show all warnings
         return $validityFlag;
+    }
+
+    public function getClosedSameRoleParticipantsCount(Participant $participant): int
+    {
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+            [$participant->role ?? ''],
+            [
+                User::STATUS_CLOSED,
+                User::STATUS_APPROVED,
+                User::STATUS_PAID,
+            ],
+            $participant->getUserButNotNull()->event,
+        );
+
+        return count($this->filterSameContingent($participants, $participant->contingent));
+    }
+
+    public function getClosedParticipantsCount(Participant $participant): int
+    {
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+            [
+                User::ROLE_PATROL_LEADER,
+                User::ROLE_PATROL_PARTICIPANT,
+                User::ROLE_TROOP_LEADER,
+                User::ROLE_TROOP_PARTICIPANT,
+                User::ROLE_IST,
+                User::ROLE_GUEST,
+            ],
+            [
+                User::STATUS_CLOSED,
+                User::STATUS_APPROVED,
+                User::STATUS_PAID,
+            ],
+            $participant->getUserButNotNull()->event,
+        );
+
+        return count($participants);
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @param string|null $contingent
+     * @return Participant[]
+     */
+    private function filterSameContingent(array $participants, ?string $contingent): array
+    {
+        return array_filter($participants, function (Participant $participant) use ($contingent): bool {
+            return $participant->contingent === $contingent;
+        });
     }
 
     public function closeRegistration(Participant $participant): Participant

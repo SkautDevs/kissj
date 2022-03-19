@@ -119,20 +119,6 @@ class UserService {
         $this->userRepository->persist($user);
     }
 
-    public function getClosedSameRoleParticipantsCount(Participant $participant): int {
-        $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [$participant->role ?? ''],
-            [
-                User::STATUS_CLOSED,
-                User::STATUS_APPROVED,
-                User::STATUS_PAID,
-            ],
-            $participant->getUserButNotNull()->event,
-        );
-
-        return count($this->filterSameContingent($participants, $participant->contingent));
-    }
-
     protected function isRoleValid(string $role): bool {
         // TODO check if role is valid for specific event
         $allowedRoles = [
@@ -172,16 +158,5 @@ class UserService {
         $this->userRepository->persist($user);
 
         return $user;
-    }
-
-    /**
-     * @param Participant[] $participants
-     * @param string|null $contingent
-     * @return Participant[]
-     */
-    private function filterSameContingent(array $participants, ?string $contingent): array {
-        return array_filter($participants, function(Participant $participant) use ($contingent): bool {
-            return $participant->contingent === $contingent;
-        });
     }
 }
