@@ -4,6 +4,7 @@ namespace kissj\Participant;
 
 use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\User\User;
 
@@ -21,8 +22,9 @@ class ParticipantRepository extends Repository
      *
      * @param string[] $roles
      * @param string[] $statuses
-     * @param Event    $event
-     * @param ?User    $adminUser
+     * @param Event $event
+     * @param ?User $adminUser
+     * @param ?Order $order
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(
@@ -30,6 +32,7 @@ class ParticipantRepository extends Repository
         array $statuses,
         Event $event,
         ?User $adminUser = null,
+        ?Order $order = null,
     ): array {
         $participants = $this->findAll();
 
@@ -49,12 +52,25 @@ class ParticipantRepository extends Repository
             }
         }
 
+        if ($order instanceof Order) {
+            uasort(
+                $validParticipants,
+                function (Participant $firstParticipant, Participant $secondParticipant) use ($order): int {
+                    $fieldName = $order->getField();
+
+                    $result = $firstParticipant->$fieldName <=> $secondParticipant->$fieldName;
+
+                    return $order->isOrderAsc() ? $result : -$result;
+                }
+            );
+        }
+
         return $validParticipants;
     }
 
     /**
      * @param Participant[] $participants
-     * @param User          $adminUser
+     * @param User $adminUser
      * @return Participant[]
      */
     private function filterContingentAdminParticipants(array $participants, User $adminUser): array

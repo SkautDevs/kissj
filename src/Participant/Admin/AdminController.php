@@ -7,6 +7,7 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstRepository;
@@ -17,7 +18,6 @@ use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopService;
-use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -64,36 +64,43 @@ class AdminController extends AbstractController
         Event $event,
         User $user,
     ): Response {
+        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+
         return $this->view->render($response, 'admin/approve-admin.twig', [
             'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
-            ),            
+                $orderByUpdatedAtDesc,
+            ),
             'closedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
-            ),  
+                $orderByUpdatedAtDesc,
+            ),
             'closedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
+                $orderByUpdatedAtDesc,
             ),
             'closedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
+                $orderByUpdatedAtDesc,
             ),
             'closedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
                 [USER::STATUS_CLOSED],
                 $event,
                 $user,
+                $orderByUpdatedAtDesc,
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
