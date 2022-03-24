@@ -3,10 +3,12 @@
 namespace kissj\Export;
 
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\User\User;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -87,31 +89,39 @@ class ExportService
             [User::STATUS_PAID],
             $event,
             $adminUser,
+            new Order(Order::FILED_UPDATED_AT),
         );
 
         $rows = [];
         $rows[] = [
             'id', // 0
             'role',
-            'status',
+            'patrol participants',
             'contingent',
-            'name',
-            'surname', // 5
+            'nickname',
+            'first name', // 5
+            'surname',
             'registration email',
             'contact email',
         ];
 
         foreach ($participants as $participant) {
-            $rows[] = [
-                (string)$participant->id, // 0
-                $participant->role ?? '',
-                $participant->user?->status ?? '',
-                $this->translator->trans($participant->contingent ?? ''),
-                $participant->firstName ?? '',
-                $participant->lastName ?? '', // 5
-                $participant->user?->email ?? '',
-                $participant->email ?? '',
-            ];
+            if (!$participant instanceof PatrolParticipant) {
+                $rows[] = [
+                    (string)$participant->id, // 0
+                    $participant->role ?? '',
+                    match (true) {
+                        $participant instanceof PatrolLeader => (string)count($participant->patrolParticipants),
+                        $participant instanceof TroopLeader => (string)count($participant->troopParticipants),
+                        default => '',
+                    },
+                    $this->translator->trans($participant->contingent ?? ''),
+                    $participant->firstName ?? '', // 5
+                    $participant->lastName ?? '',
+                    $participant->user?->email ?? '',
+                    $participant->email ?? '',
+                ];
+            }
         }
 
         return $rows;
