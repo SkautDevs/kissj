@@ -125,7 +125,6 @@ class EventTypeCej extends EventType
     {
         return [
             'detail.foodWithout',
-            'detail.foodHalfMeat',
             'detail.foodVegetarian',
             'detail.foodVegan',
             'detail.foodLactoseFree',
