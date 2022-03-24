@@ -116,6 +116,7 @@ class ExportService
                         default => '',
                     },
                     $this->translator->trans($participant->contingent ?? ''),
+                    $participant->nickname ?? '',
                     $participant->firstName ?? '', // 5
                     $participant->lastName ?? '',
                     $participant->user?->email ?? '',
