@@ -184,6 +184,9 @@ class Route
                     $app->get('/showFile/{filename}', AdminController::class . '::showFile')
                         ->setName('admin-show-file');
 
+                    $app->get('/showOpen', AdminController::class . '::showOpen')
+                        ->setName('admin-show-open');
+
                     $app->group('/approving', function (RouteCollectorProxy $app) {
                         $app->get('', AdminController::class . '::showApproving')
                             ->setName('admin-show-approving');

@@ -12,7 +12,6 @@ use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
-use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
@@ -57,6 +56,58 @@ class AdminController extends AbstractController
                 'guests' => $this->guestService->getAllGuestsStatistics($event, $user),
             ],
         );
+    }
+
+    public function showOpen(
+        Response $response,
+        Event $event,
+        User $user,
+    ): Response {
+        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+
+        return $this->view->render($response, 'admin/open-admin.twig', [
+            'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_LEADER],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_PARTICIPANT],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_IST],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_GUEST],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'caIst' => $event->getEventType()->getContentArbiterIst(),
+            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
+            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
+            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
+            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
+            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
+        ]);
     }
 
     public function showApproving(

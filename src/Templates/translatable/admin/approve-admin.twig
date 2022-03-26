@@ -155,7 +155,7 @@
     {% if event.allowGuests %}
         {% if closedGuests is not empty %}
             <div class="card closed-theme">
-                <h2>Guests</h2>
+                <h2>{% trans %}role.guest{% endtrans %}</h2>
             </div>
             <br/>
             {% for guest in closedGuests %}

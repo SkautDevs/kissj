@@ -22,7 +22,7 @@ dashboard:
     youWantDelete: "Opravdu chcete smazat účastníka "
     withoutName: "(prozatím bez jména)"
     wontBeAbleUndo: "? Toto smazání nepůjde vrátit zpět!"
-    details: "Podrobnosti"
+    details: "podrobnosti"
     listOfParticipants: "Seznam účastníků"
     addParticipant: "Přidat účastníka"
     youNeed: "Potřebuješ"
@@ -278,6 +278,7 @@ dashboard-admin:
     paidTp: "zaplacení účastníci"
     paidGuest: "potvrzení hosté (nemuseli platit)"
     adminActions: "Akce administrátora"
+    open: "Neuzamčení účastníci"
     approving: "Schvalování účastníků"
     newPayments: "Párovaní nových plateb s bankou"
     confirmPayments: "Potvrzování plateb ručně"
@@ -287,6 +288,10 @@ dashboard-admin:
     checkMovePayments: "Zkontrolovat přesun platby"
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
+open-admin:
+    open: "Neuzamčení účastníci na akci"
+    none: "Žádní účastníci s rolí"
+    need: "nejsou uzamčení"
 cancelPayment-admin:
     cancel: "Zrušit platbu"
     wantCancel: "Opravdu chceš zrušit platbu pro účastníka"

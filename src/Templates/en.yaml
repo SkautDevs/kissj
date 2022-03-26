@@ -22,7 +22,7 @@ dashboard:
     youWantDelete: "Do you really want to delete participant "
     withoutName: "(without a name yet)"
     wontBeAbleUndo: "? You won't be able to undo this action!"
-    details: "Details"
+    details: "details"
     listOfParticipants: "List of participants"
     addParticipant: "Add participant"
     youNeed: "You need"
@@ -278,6 +278,7 @@ dashboard-admin:
     paidTp: "Paid Participants"
     paidGuest: "Paid Guests"
     adminActions: "Administator actions"
+    open: "Unlocked participants"
     approving: "Approving participants"
     newPayments: "Pair new payments with bank"
     confirmPayments: "Confirming payments by hand"
@@ -287,6 +288,10 @@ dashboard-admin:
     checkMovePayments: "Check payment move"
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
+open-admin:
+    open: "Unlocked participants on event"
+    none: "No participants with role"
+    need: "is in unlocked status"
 cancelPayment-admin:
     cancel: "Cancel payment"
     wantCancel: "You really want to cancel payment for participant"
