@@ -132,7 +132,46 @@ class ParticipantService
         }
     }
 
-    public function isPersonValidForClose(Participant $p, AbstractContentArbiter $ca): bool
+    public function isCloseRegistrationValid(Participant $participant): bool
+    {
+        $validityFlag = true;
+
+        $event = $participant->getUserButNotNull()->event;
+        if (!$this->isParticipantValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.noLock'));
+
+            $validityFlag = false;
+        }
+
+        if (
+            $this->getClosedSameRoleParticipantsCount($participant)
+            >= $event->eventType->getMaximumClosedParticipants($participant)
+        ) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
+
+            $validityFlag = false;
+        }
+
+        if (
+            $event->maximalClosedParticipantsCount !== null
+            && $this->getClosedParticipantsCount($participant) >= $event->maximalClosedParticipantsCount
+        ) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
+
+            $validityFlag = false;
+        }
+
+        if (!$event->canRegistrationBeLocked()) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
+
+            $validityFlag = false;
+        }
+
+        // to show all warnings
+        return $validityFlag;
+    }
+
+    public function isParticipantValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
         if (
             ($ca->patrolName && $p->patrolName === null)
@@ -176,45 +215,6 @@ class ParticipantService
         }
 
         return true;
-    }
-
-    public function isCloseRegistrationValid(Participant $participant): bool
-    {
-        $validityFlag = true;
-
-        $event = $participant->getUserButNotNull()->event;
-        if (!$this->isPersonValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.noLock'));
-
-            $validityFlag = false;
-        }
-
-        if (
-            $this->getClosedSameRoleParticipantsCount($participant)
-            >= $event->eventType->getMaximumClosedParticipants($participant)
-        ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
-
-            $validityFlag = false;
-        }
-
-        if (
-            $event->maximalClosedParticipantsCount !== null 
-            && $this->getClosedParticipantsCount($participant) >= $event->maximalClosedParticipantsCount
-        ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
-
-            $validityFlag = false;
-        }
-
-        if (!$event->canRegistrationBeLocked()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
-
-            $validityFlag = false;
-        }
-
-        // to show all warnings
-        return $validityFlag;
     }
 
     public function getClosedSameRoleParticipantsCount(Participant $participant): int

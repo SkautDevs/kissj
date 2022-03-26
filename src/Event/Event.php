@@ -83,9 +83,9 @@ class Event extends EntityDatetime
         return new $eventTypeClass;
     }
     
-    public function canRegistrationBeLocked(): bool // TODO fix
+    public function canRegistrationBeLocked(): bool
     {
-        return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('Europe/Berlin'));
+        return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('UTC'));
     }
     
     public function getLogoInBase64(): string

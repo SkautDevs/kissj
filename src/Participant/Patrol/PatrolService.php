@@ -67,35 +67,10 @@ class PatrolService
 
     public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool
     {
-        $validityFlag = true;
-
+        $validityFlag = $this->participantService->isCloseRegistrationValid($patrolLeader);
         $event = $patrolLeader->getUserButNotNull()->event;
-        $eventType = $event->getEventType();
-        if (
-            $this->participantService->getClosedSameRoleParticipantsCount($patrolLeader)
-            >= $eventType->getMaximumClosedParticipants($patrolLeader)
-        ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.plFullRegistration'));
-
-            $validityFlag = false;
-        }
-
-        if (!$event->canRegistrationBeLocked()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
-
-            $validityFlag = false;
-        }
-
-        if (!$this->participantService->isPersonValidForClose(
-            $patrolLeader,
-            $eventType->getContentArbiterPatrolLeader(),
-        )) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.plWrongData'));
-
-            $validityFlag = false;
-        }
-
-        $participants = $this->patrolParticipantRepository->findBy(['patrol_leader_id' => $patrolLeader->id]);
+        $participants = $patrolLeader->patrolParticipants;
+        
         $participantsCount = count($participants);
         if ($participantsCount < $event->minimalPatrolParticipantsCount) {
             $this->flashMessages->warning(
@@ -118,9 +93,9 @@ class PatrolService
             $validityFlag = false;
         }
 
-        $contentArbiterPatrolParticipant = $eventType->getContentArbiterPatrolParticipant();
+        $contentArbiterPatrolParticipant = $event->getEventType()->getContentArbiterPatrolParticipant();
         foreach ($participants as $participant) {
-            if (!$this->participantService->isPersonValidForClose(
+            if (!$this->participantService->isParticipantValidForClose(
                 $participant,
                 $contentArbiterPatrolParticipant,
             )) {
