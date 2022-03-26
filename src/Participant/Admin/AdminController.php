@@ -133,10 +133,9 @@ class AdminController extends AbstractController
     {
         // TODO check if correct event
         $reason = $this->getParameterFromBody($request, 'reason', true);
-        /** @var Participant $participant */
         $participant = $this->participantRepository->get($participantId);
         $this->participantService->denyRegistration($participant, $reason);
-        $this->flashMessages->info($this->translator->trans('flash.info.istDenied')); // TODO re-word deny flash message
+        $this->flashMessages->info($this->translator->trans('flash.info.denied'));
         $this->logger->info('Denied registration for participant with ID '
             . $participantId . ' and role ' . $participant->role . ' with reason: ' . $reason);
 
