@@ -353,9 +353,7 @@ flash:
         detailsSaved: "Údaje boli uložené."
         locked: "Registrácia bola uzakmnutá a odoslaná"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
-        istApproved: "Servisák schválen, platební údaje vygenerovány a e-mail odeslán"
-        guestApproved: "Host schválen, platební údaje vygenerovány a e-mail odeslán (bez platby)"
-        patrolApproved: "Patrola schválena, platební údaje vygenerovány a e-mail odeslán"
+        guestApproved: "Host schválen a e-mail odeslán (bez platby)"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:

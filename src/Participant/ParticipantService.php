@@ -6,6 +6,7 @@ use kissj\Event\AbstractContentArbiter;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\Guest\Guest;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -74,8 +75,8 @@ class ParticipantService
         if (array_key_exists('arrivalDate', $params) && $params['arrivalDate'] !== null) {
             $p->arrivalDate = new \DateTime($params['arrivalDate']);
         }
-        if (array_key_exists('departueDate', $params) && $params['departueDate'] !== null) {
-            $p->departureDate = new \DateTime($params['departueDate']);
+        if (array_key_exists('departureDate', $params) && $params['departureDate'] !== null) {
+            $p->departureDate = new \DateTime($params['departureDate']);
         }
         $p->skills = $params['skills'] ?? null;
         /** @var string[] $preferredPosition */
@@ -201,12 +202,10 @@ class ParticipantService
             || ($ca->tshirt && $p->getTshirtSize() === null)
         ) {
             return false;
-
         }
 
         if ($ca->email && !empty($p->email) && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
             return false;
-
         }
 
         // numbers and plus sight up front only
@@ -314,6 +313,14 @@ class ParticipantService
 
     public function approveRegistration(Participant $participant): Participant
     {
+        if ($participant instanceof Guest) {
+            $this->userService->payRegistration($participant->getUserButNotNull());
+            $this->mailer->sendGuestRegistrationFinished($participant);
+            $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
+            
+            return $participant;
+        }
+
         $payment = $this->paymentService->createAndPersistNewPayment($participant);
 
         if ($participant->isInSpecialPaymentContingent()) {
@@ -322,6 +329,7 @@ class ParticipantService
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
         }
         $this->userService->approveRegistration($participant->getUserButNotNull());
+        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
 
         return $participant;
     }

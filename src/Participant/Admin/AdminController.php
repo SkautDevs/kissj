@@ -8,13 +8,10 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\Event\Event;
 use kissj\Orm\Order;
-use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Guest\GuestService;
-use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
-use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
@@ -33,9 +30,6 @@ class AdminController extends AbstractController
         private BankPaymentRepository $bankPaymentRepository,
         private FioBankPaymentService $bankPaymentService,
         private PatrolService $patrolService,
-        private PatrolLeaderRepository $patrolLeaderRepository,
-        private IstRepository $istRepository,
-        private GuestRepository $guestRepository,
         private IstService $istService,
         private GuestService $guestService,
         private TroopService $troopService,
@@ -167,7 +161,6 @@ class AdminController extends AbstractController
         $participant = $this->participantRepository->get($participantId);
 
         $this->participantService->approveRegistration($participant);
-        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
         $this->logger->info('Approved registration for participant with ID ' . $participant->id);
 
         return $this->redirect($request, $response, 'admin-show-approving');
@@ -189,39 +182,6 @@ class AdminController extends AbstractController
         $this->flashMessages->info($this->translator->trans('flash.info.denied'));
         $this->logger->info('Denied registration for participant with ID '
             . $participantId . ' and role ' . $participant->role . ' with reason: ' . $reason);
-
-        return $this->redirect($request, $response, 'admin-show-approving');
-    }
-
-    public function approvePatrol(int $patrolLeaderId, Request $request, Response $response): Response
-    {
-        $patrolLeader = $this->patrolLeaderRepository->get($patrolLeaderId);
-        $this->participantService->approveRegistration($patrolLeader);
-        $this->flashMessages->success($this->translator->trans('flash.success.patrolApproved'));
-        $this->logger->info('Approved registration for Patrol with Patrol Leader ID ' . $patrolLeader->id);
-
-        return $this->redirect($request,
-            $response,
-            'admin-show-approving',
-        );
-    }
-
-    public function approveIst(int $istId, Request $request, Response $response): Response
-    {
-        $ist = $this->istRepository->get($istId);
-        $this->participantService->approveRegistration($ist);
-        $this->flashMessages->success($this->translator->trans('flash.success.istApproved'));
-        $this->logger->info('Approved registration for IST with ID ' . $ist->id);
-
-        return $this->redirect($request, $response, 'admin-show-approving');
-    }
-
-    public function approveGuest(int $guestId, Request $request, Response $response): Response
-    {
-        $guest = $this->guestRepository->get($guestId);
-        $this->guestService->finishRegistration($guest);
-        $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
-        $this->logger->info('Approved (no payment was sent) registration for guest with ID ' . $guest->id);
 
         return $this->redirect($request, $response, 'admin-show-approving');
     }

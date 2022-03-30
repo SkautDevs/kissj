@@ -57,32 +57,5 @@ class EventController extends AbstractController {
 
         return $response->withRedirect($this->router->urlFor('createEvent'));
         // TODO add event-admins (roles table?)
-    }
-
-    public function getDashboard(Request $request, Response $response, array $args) {
-        $roleName = $this->roleService->getRole($request->getAttribute('user'))->name;
-        if (!$this->roleService->isUserRoleNameValid($roleName)) {
-            throw new \RuntimeException('Unknown role "'.$roleName.'"');
-        }
-
-        switch ($roleName) {
-            case 'patrol-leader':
-            {
-                return $response->withRedirect($this->router->urlFor('pl-dashboard'));
-            }
-            case 'ist':
-            {
-                return $response->withRedirect($this->router->urlFor('ist-dashboard'));
-            }
-            case 'admin':
-            {
-                return $response->withRedirect($this->router->urlFor('admin-dashboard'));
-            }
-            default:
-            {
-                throw new \RuntimeException('Non-implemented role "'.$roleName.'"!');
-            }
-        }
-
     }*/
 }

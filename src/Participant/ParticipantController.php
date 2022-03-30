@@ -11,7 +11,6 @@ use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-// now usage for TroopParticipants and TroopLeaders, TODO for all roles
 class ParticipantController extends AbstractController
 {
     public function __construct(
@@ -115,6 +114,11 @@ class ParticipantController extends AbstractController
                 'user' => $user,
                 'person' => $this->istService->getIst($user),
                 'ca' => $eventType->getContentArbiterIst(),
+            ],
+            User::ROLE_GUEST => [
+                'user' => $user,
+                'person' => $this->guestService->getGuest($user),
+                'ca' => $eventType->getContentArbiterGuest(),
             ],
             default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };

@@ -105,12 +105,12 @@ class UserController extends AbstractController
 
         return match ($user->role) {
             null => $this->redirect($request, $response, 'chooseRole', $routerEventSlug),
-            User::ROLE_IST => $this->redirect($request, $response, 'ist-dashboard', $routerEventSlug),
             User::ROLE_PATROL_LEADER => $this->redirect($request, $response, 'pl-dashboard', $routerEventSlug),
             User::ROLE_TROOP_LEADER,
             User::ROLE_TROOP_PARTICIPANT,
+            User::ROLE_IST,
+            User::ROLE_GUEST,
                 => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
-            User::ROLE_GUEST => $this->redirect($request, $response, 'guest-dashboard', $routerEventSlug),
             User::ROLE_ADMIN,
             User::ROLE_CONTINGENT_ADMIN_CS,
             User::ROLE_CONTINGENT_ADMIN_SK,

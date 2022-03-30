@@ -362,14 +362,14 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.departueDate %}
+{% endif %}{% if ca.departureDate %}
     <div class="form-group">
-        <label for="departueDate">{% trans %}detail.departueDate{% endtrans %}:</label>
+        <label for="departureDate">{% trans %}detail.departureDate{% endtrans %}:</label>
         <input
-            id="departueDate"
-            class="form-control form-wide"
+            id="departureDate"
+            class="form-control"
             type="date"
-            name="departueDate"
+            name="departureDate"
             value="{{ (personDetails.getDepartureDate ?? event.endDay)|date('Y-m-d') }}"
             required="required"
         >

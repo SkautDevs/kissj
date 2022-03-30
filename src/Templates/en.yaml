@@ -353,9 +353,7 @@ flash:
         detailsSaved: "Details successfully saved."
         locked: "Registration successfully locked and sent"
         approved: "Participant is approved, payment is generated and mail sent"
-        istApproved: "IST is approved, payment is generated and mail sent"
         guestApproved: "Guest is approved and mail sent (withnout payment)"
-        patrolApproved: "Patrol is approved, payment is generated and mail sent"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:
