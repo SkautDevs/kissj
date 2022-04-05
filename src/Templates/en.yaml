@@ -57,7 +57,7 @@ detail:
     genderOther: "Other"
     email: "Email"
     phone: "Phone number"
-    address: "Permanent Address"
+    address: "Permanent Address (street and no., city, postal code)"
     address-placeholder: "street and no., city, postal code"
     country: "Country"
     countryCzechRepublic: "Czech Republic"
