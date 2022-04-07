@@ -13,6 +13,17 @@ data:
         	log {
         		output stdout
         	}
+
+          header {
+            Strict-Transport-Security: max-age=31536000;
+            X-Frame-Options DENY
+            X-Content-Type-Options nosniff
+            Referrer-Policy: no-referrer-when-downgrade
+            Permission-Policy: * 'none'
+
+            -Server
+            -x-powered-by
+          }
         
         }
         :9253 {
