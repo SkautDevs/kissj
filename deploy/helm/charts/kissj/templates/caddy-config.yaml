@@ -19,7 +19,7 @@ data:
             X-Frame-Options DENY
             X-Content-Type-Options nosniff
             Referrer-Policy: no-referrer-when-downgrade
-            Permission-Policy: * 'none'
+            Permission-Policy: '*' 'none'
 
             -Server
             -x-powered-by
