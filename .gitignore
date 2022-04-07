@@ -9,7 +9,7 @@
 /temp/*
 /tests/temp/*
 !/tests/temp/.gitkeep
-.phpunit.result.cache
+*.cache
 
 *.env
 *.sqlite

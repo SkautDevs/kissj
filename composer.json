@@ -52,6 +52,7 @@
     },
     "require-dev": {
         "ext-pdo": "*",
+        "friendsofphp/php-cs-fixer": "^3.8",
         "mockery/mockery": "dev-master",
         "phpstan/phpstan": "^0.12.9",
         "phpunit/phpunit": "^9",
@@ -76,11 +77,11 @@
     "scripts": {
         "unit": "vendor/bin/phpunit tests/",
         "stan": "vendor/bin/phpstan analyse --configuration phpstan.neon",
-        "lint": "",
+        "cs": "vendor/bin/php-cs-fixer fix src --rules=@PSR12,-indentation_type",
         "test": [
             "@unit",
             "@stan",
-            "@lint"
+            "@cs"
         ],
         "phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",
         "phinx:migrate": "vendor/bin/phinx migrate --configuration src/Settings/phinxConfiguration.php",
