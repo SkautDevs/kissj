@@ -229,8 +229,6 @@ class Settings
         $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
         $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(array_flip(Logger::getLevels()));
-        $dotenv->required('ADMINER_LOGIN')->notEmpty();
-        $dotenv->required('ADMINER_PASSWORD')->notEmpty();
         $dotenv->required('MAIL_SMTP');
         $dotenv->required('MAIL_SMTP_SERVER');
         $dotenv->required('MAIL_SMTP_AUTH');
@@ -257,9 +255,5 @@ class Settings
         $dotenv->required('POSTGRES_DB');
         $dotenv->required('SENTRY_DSN');
         $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
-
-        if ($_ENV['ADMINER_PASSWORD'] === 'changeThisPassword' || $_ENV['ADMINER_PASSWORD'] === '') {
-            throw new ValidationException('Adminer password must be changed and cannot be empty');
-        }
     }
 }

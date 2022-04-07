@@ -41,9 +41,10 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 ### Setup
 
-1. clone this repository: `git clone https://github.com/SkautDevs/kissj.git`
-2. Run the make target, so you don't have to do everything manually: `make local-dev-postgresql`
-3. Open `http://localhost:8080/v2/event/test-event-slug/` in your browser
+1. Clone this repository: `git clone https://github.com/SkautDevs/kissj.git`
+2. Setup environment (dotenv) `cp .env.example .env`
+3. Run the make target, so you don't have to do everything manually: `make local-dev-postgresql`
+4. Open `http://localhost:8080/v2/event/test-event-slug/` in your browser
 
 
 # Devstack
