@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -27,7 +29,8 @@ class ParticipantService
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
         private FileHandler $fileHandler,
-    ) {}
+    ) {
+    }
 
     /**
      * @param Participant $participant
@@ -209,7 +212,7 @@ class ParticipantService
         }
 
         // numbers and plus sight up front only
-        if ($ca->phone && !empty ($p->telephoneNumber) && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
+        if ($ca->phone && !empty($p->telephoneNumber) && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
             return false;
         }
 
@@ -317,7 +320,7 @@ class ParticipantService
             $this->userService->payRegistration($participant->getUserButNotNull());
             $this->mailer->sendGuestRegistrationFinished($participant);
             $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
-            
+
             return $participant;
         }
 

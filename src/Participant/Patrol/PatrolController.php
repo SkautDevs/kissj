@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
@@ -40,8 +42,11 @@ class PatrolController extends AbstractController
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
         $validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
         if ($validRegistration) {
-            return $this->view->render($response, 'closeRegistration-pl.twig',
-                ['dataProtectionUrl' => $user->event->dataProtectionUrl]);
+            return $this->view->render(
+                $response,
+                'closeRegistration-pl.twig',
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl]
+            );
         }
 
         return $this->redirect($request, $response, 'pl-dashboard');

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Logging\Monolog;
 
@@ -9,7 +11,8 @@ final class UserContextProcessor implements ProcessorInterface
 {
     public function __construct(
         private ?User $user,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<mixed> $record

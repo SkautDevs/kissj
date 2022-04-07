@@ -5,9 +5,10 @@ namespace kissj\FileHandler;
 use kissj\Participant\Participant;
 use Slim\Psr7\UploadedFile;
 
-abstract class FileHandler {
+abstract class FileHandler
+{
     abstract public function getFile(string $filename): File;
-    
+
     public function saveFileTo(Participant $participant, UploadedFile $uploadedFile): Participant
     {
         $newFilename = $this->getNewFilename();
@@ -19,10 +20,11 @@ abstract class FileHandler {
 
         return $participant;
     }
-    
+
     abstract public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile;
-    
-    protected function getNewFilename(): string {
+
+    protected function getNewFilename(): string
+    {
         return \md5((string)microtime(true));
     }
 }

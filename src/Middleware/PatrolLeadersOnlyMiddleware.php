@@ -9,14 +9,16 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolLeadersOnlyMiddleware extends BaseMiddleware {
+class PatrolLeadersOnlyMiddleware extends BaseMiddleware
+{
     public function __construct(
         private FlashMessagesInterface $flashMessages,
         private TranslatorInterface $translator,
     ) {
     }
 
-    public function process(Request $request, ResponseHandler $handler): Response {
+    public function process(Request $request, ResponseHandler $handler): Response
+    {
         $user = $request->getAttribute('user');
 
         if ($user instanceof User && $user->role !== User::ROLE_PATROL_LEADER) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Export;
 
@@ -17,7 +19,8 @@ class ExportService
     public function __construct(
         private ParticipantRepository $participantRepository,
         private TranslatorInterface $translator,
-    ) {}
+    ) {
+    }
 
     /**
      * @param Event $event

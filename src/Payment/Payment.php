@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Payment;
 
@@ -17,12 +19,14 @@ use kissj\Participant\Participant;
  * @property string      $note
  * @property Participant $participant m:hasOne
  */
-class Payment extends EntityDatetime {
+class Payment extends EntityDatetime
+{
     public const STATUS_WAITING = 'waiting';
     public const STATUS_PAID = 'paid';
     public const STATUS_CANCELED = 'canceled';
 
-    public function getElapsedPaymentDays(): int {
+    public function getElapsedPaymentDays(): int
+    {
         /** @var \DateTimeInterface $createdAt */
         $createdAt = $this->createdAt;
 
@@ -34,11 +38,13 @@ class Payment extends EntityDatetime {
         return $days;
     }
 
-    public function getMaxElapsedPaymentDays(): int {
+    public function getMaxElapsedPaymentDays(): int
+    {
         return 14; // TODO move into db
     }
 
-    public function getPaymentUntil(): \DateTimeInterface {
+    public function getPaymentUntil(): \DateTimeInterface
+    {
         $dateInterval = new DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
 
         /** @var \DateTime $createdAt */

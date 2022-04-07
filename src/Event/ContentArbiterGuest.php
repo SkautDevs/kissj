@@ -2,7 +2,8 @@
 
 namespace kissj\Event;
 
-class ContentArbiterGuest extends AbstractContentArbiter {
+class ContentArbiterGuest extends AbstractContentArbiter
+{
     public bool $address = false;
     public bool $birthDate = false;
     public bool $health = false;

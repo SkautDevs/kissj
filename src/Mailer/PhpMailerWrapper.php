@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Mailer;
 
@@ -151,7 +153,7 @@ class PhpMailerWrapper
         $event = $this->settings->getEvent();
 
         try {
-            // phpamiler echoing debug, content-length middleware addds length header, 
+            // phpamiler echoing debug, content-length middleware addds length header,
             // thus browser do not redirect, but shows content (debug) of that length
             ob_start();
             $mailer->SMTPDebug = (int)$this->settings->debugOutputLevel; // Enable debug output

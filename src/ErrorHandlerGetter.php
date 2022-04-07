@@ -38,7 +38,7 @@ class ErrorHandlerGetter
             }
 
             // Sentry client is wrapped in Sentry\State\Hub::withScope(...) to pass HTTP, Event and User context
-            $this->sentryHub->withScope(function(Scope $scope) use ($exception, $inspector): void {
+            $this->sentryHub->withScope(function (Scope $scope) use ($exception, $inspector): void {
                 $scope->setFingerprint([md5($inspector->getExceptionName())]);
 
                 $this->sentryHub->captureException($exception);

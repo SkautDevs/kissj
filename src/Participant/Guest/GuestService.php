@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
@@ -16,7 +18,8 @@ class GuestService
         private ParticipantRepository $participantRepository,
         private PhpMailerWrapper $mailer,
         private UserService $userService,
-    ) {}
+    ) {
+    }
 
     public function getGuest(User $user): Guest
     {

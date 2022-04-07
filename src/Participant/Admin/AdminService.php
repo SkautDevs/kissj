@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
@@ -87,8 +89,12 @@ class AdminService
                 $this->paymentService->cancelPayment($payment);
                 $this->mailer->sendCancelledPayment(
                     $participantTo,
-                    $this->translator->trans('email.text.paymentTransfered', [], null,
-                        'cs') // TODO add preference according to participant
+                    $this->translator->trans(
+                        'email.text.paymentTransfered',
+                        [],
+                        null,
+                        'cs'
+                    ) // TODO add preference according to participant
                 );
             }
         }

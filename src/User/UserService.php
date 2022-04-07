@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\User;
 
@@ -10,7 +12,8 @@ use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
-class UserService {
+class UserService
+{
     public function __construct(
         private LoginTokenRepository $loginTokenRepository,
         private ParticipantRepository $participantRepository,
@@ -19,7 +22,8 @@ class UserService {
     ) {
     }
 
-    public function registerUser(string $email, Event $event): User {
+    public function registerUser(string $email, Event $event): User
+    {
         $user = new User();
         $user->email = $email;
         $user->event = $event;
@@ -28,7 +32,8 @@ class UserService {
         return $user;
     }
 
-    public function sendLoginTokenByMail(string $email, Request $request, Event $event): string {
+    public function sendLoginTokenByMail(string $email, Request $request, Event $event): string
+    {
         $user = $this->userRepository->getUserFromEmailEvent($email, $event);
         $this->invalidateAllLoginTokens($user);
 
@@ -44,8 +49,8 @@ class UserService {
         // need to use full route
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
         $fullLink = $routeParser->fullUrlFor(
-            $request->getUri(), 
-            'loginWithToken', 
+            $request->getUri(),
+            'loginWithToken',
             ['token' => $token, 'eventSlug' => $event->slug]
         );
         $this->mailer->sendLoginToken($user, $fullLink);
@@ -53,11 +58,13 @@ class UserService {
         return $token;
     }
 
-    public function generateTokenString(): string {
+    public function generateTokenString(): string
+    {
         return md5((string)random_int(PHP_INT_MIN, PHP_INT_MAX));
     }
 
-    public function isLoginTokenValid(string $loginToken): bool {
+    public function isLoginTokenValid(string $loginToken): bool
+    {
         $criteria = ['token' => $loginToken, 'used' => false];
         if (!$this->loginTokenRepository->isExisting($criteria)) {
             return false;
@@ -75,36 +82,42 @@ class UserService {
         return $lastToken->createdAt > $lastValidTime;
     }
 
-    public function getLoginTokenFromStringToken(string $token): LoginToken {
+    public function getLoginTokenFromStringToken(string $token): LoginToken
+    {
         /** @var LoginToken $loginToken */
         $loginToken = $this->loginTokenRepository->findOneBy(['token' => $token]);
 
         return $loginToken;
     }
 
-    public function getTokenForEmail(string $email, Event $event): string {
+    public function getTokenForEmail(string $email, Event $event): string
+    {
         return $this->getTokenForUser($this->userRepository->getUserFromEmailEvent($email, $event));
     }
 
-    public function getTokenForUser(User $user): string {
+    public function getTokenForUser(User $user): string
+    {
         /** @var LoginToken $loginToken */
         $loginToken = $this->loginTokenRepository->findOneBy(['user' => $user]);
 
         return $loginToken->token;
     }
 
-    public function logoutUser(): void {
+    public function logoutUser(): void
+    {
         unset($_SESSION['user']);
     }
 
-    public function invalidateAllLoginTokens(User $user): void {
+    public function invalidateAllLoginTokens(User $user): void
+    {
         foreach ($this->loginTokenRepository->findAllNonusedTokens($user) as $token) {
             $token->used = true;
             $this->loginTokenRepository->persist($token);
         }
     }
 
-    public function setRole(User $user, string $role): void {
+    public function setRole(User $user, string $role): void
+    {
         if (!$this->isRoleValid($role)) {
             throw new RuntimeException('Role '.$role.' is not valid!');
         }
@@ -119,7 +132,8 @@ class UserService {
         $this->userRepository->persist($user);
     }
 
-    protected function isRoleValid(string $role): bool {
+    protected function isRoleValid(string $role): bool
+    {
         // TODO check if role is valid for specific event
         $allowedRoles = [
             User::ROLE_IST,
@@ -132,28 +146,32 @@ class UserService {
         return in_array($role, $allowedRoles, true);
     }
 
-    public function openRegistration(User $user): User {
+    public function openRegistration(User $user): User
+    {
         $user->status = User::STATUS_OPEN;
         $this->userRepository->persist($user);
 
         return $user;
     }
 
-    public function closeRegistration(User $user): User {
+    public function closeRegistration(User $user): User
+    {
         $user->status = User::STATUS_CLOSED;
         $this->userRepository->persist($user);
 
         return $user;
     }
 
-    public function approveRegistration(User $user): User {
+    public function approveRegistration(User $user): User
+    {
         $user->status = User::STATUS_APPROVED;
         $this->userRepository->persist($user);
 
         return $user;
     }
 
-    public function payRegistration(User $user): User {
+    public function payRegistration(User $user): User
+    {
         $user->status = User::STATUS_PAID;
         $this->userRepository->persist($user);
 

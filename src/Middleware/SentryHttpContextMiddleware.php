@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Middleware;
 
@@ -8,11 +10,12 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Sentry\State\Hub;
 use Sentry\State\Scope;
 
-final class SentryHttpContextMiddleware extends BaseMiddleware {
-
+final class SentryHttpContextMiddleware extends BaseMiddleware
+{
     public function __construct(
         private Hub $hub,
-    ) {}
+    ) {
+    }
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
@@ -29,5 +32,4 @@ final class SentryHttpContextMiddleware extends BaseMiddleware {
 
         return $handler->handle($request);
     }
-
 }

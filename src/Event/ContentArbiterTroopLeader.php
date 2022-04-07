@@ -2,6 +2,7 @@
 
 namespace kissj\Event;
 
-class ContentArbiterTroopLeader extends AbstractContentArbiter {
+class ContentArbiterTroopLeader extends AbstractContentArbiter
+{
     public bool $patrolName = true;
 }

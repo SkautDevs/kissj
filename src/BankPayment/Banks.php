@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: Martin Pecka
@@ -8,7 +10,8 @@
 
 namespace kissj\BankPayment;
 
-class Banks {
+class Banks
+{
     /** @var string[][] */
     protected array $banks = [
         'fio' => [

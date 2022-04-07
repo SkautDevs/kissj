@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace kissj\Application;
@@ -36,7 +37,7 @@ class Route
                 $app->get('/createEvent', function (Request $request, Response $response) {
                     return $this->get('view')->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
                 })->setName('createEvent')->add($helper['loggedOnly']);
-        
+
                 $app->post('/createEvent', EventController::class.'createEvent')
                     ->add($helper['loggedOnly'])
                     ->setName('postCreateEvent');
@@ -105,12 +106,16 @@ class Route
                                 ->setName('pl-addParticipant');
 
                             $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
-                                $app->get('/showChangeDetails',
-                                    PatrolController::class . '::showChangeDetailsPatrolParticipant')
+                                $app->get(
+                                    '/showChangeDetails',
+                                    PatrolController::class . '::showChangeDetailsPatrolParticipant'
+                                )
                                     ->setName('p-showChangeDetails');
 
-                                $app->post('/changeDetails',
-                                    PatrolController::class . '::changeDetailsPatrolParticipant')
+                                $app->post(
+                                    '/changeDetails',
+                                    PatrolController::class . '::changeDetailsPatrolParticipant'
+                                )
                                     ->setName('p-changeDetails');
 
                                 $app->get('/showDelete', PatrolController::class . '::showDeleteParticipant')
@@ -118,7 +123,6 @@ class Route
 
                                 $app->post('/delete', PatrolController::class . '::deleteParticipant')
                                     ->setName('p-delete');
-
                             })->add(CheckPatrolLeaderParticipants::class);
                         })->add(OpenStatusOnlyMiddleware::class);
                     })->add(PatrolLeadersOnlyMiddleware::class);
@@ -140,7 +144,6 @@ class Route
 
                             $app->post('/closeRegistration', ParticipantController::class . '::closeRegistration')
                                 ->setName('confirmCloseRegistration');
-
                         })->add(OpenStatusOnlyMiddleware::class);
                     });
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
@@ -161,7 +164,7 @@ class Route
 
                         $app->post('/approveParticipant/{participantId}', AdminController::class . '::approveParticipant')
                             ->setName('admin-approve');
-                        
+
                         $app->get('/denyParticipant/{participantId}', AdminController::class . '::showDenyParticipant')
                             ->setName('admin-deny-participant-show');
 
@@ -195,12 +198,16 @@ class Route
                             $app->post('/updatePayments', AdminController::class . '::updatePayments')
                                 ->setName('admin-update-payments');
 
-                            $app->post('/setPaymentPaired/{paymentId}',
-                                AdminController::class . '::markBankPaymentPaired')
+                            $app->post(
+                                '/setPaymentPaired/{paymentId}',
+                                AdminController::class . '::markBankPaymentPaired'
+                            )
                                 ->setName('admin-set-payment-paired');
 
-                            $app->post('/setPaymentUnrelated/{paymentId}',
-                                AdminController::class . '::markBankPaymentUnrelated')
+                            $app->post(
+                                '/setPaymentUnrelated/{paymentId}',
+                                AdminController::class . '::markBankPaymentUnrelated'
+                            )
                                 ->setName('admin-set-payment-unrelated');
                         });
 
@@ -221,7 +228,6 @@ class Route
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
                     });
-
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });

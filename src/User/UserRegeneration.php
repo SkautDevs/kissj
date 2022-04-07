@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\User;
 
@@ -27,7 +29,7 @@ class UserRegeneration
         if (!array_key_exists('id', $userSession)) {
             return null;
         }
-        
+
         /** @var User|null $user */
         $user = $this->userRepository->findOneBy(['id' => $userSession['id']]);
 

@@ -7,14 +7,16 @@ use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
 use Slim\Psr7\UploadedFile;
 
-class S3bucketFileHandler extends FileHandler {
+class S3bucketFileHandler extends FileHandler
+{
     public function __construct(
-        private S3Client $s3client, 
+        private S3Client $s3client,
         private string $s3bucket,
     ) {
     }
 
-    public function getFile(string $filename): File {
+    public function getFile(string $filename): File
+    {
         $this->s3client->registerStreamWrapper();
         $file = file_get_contents('s3://'.$this->s3bucket.'/'.$filename);
         $stream = Utils::streamFor($file);
@@ -28,7 +30,8 @@ class S3bucketFileHandler extends FileHandler {
         return new File($stream, $contentType['ContentType']);
     }
 
-    public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile {
+    public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile
+    {
         try {
             $this->s3client->putObject([
                 'Bucket' => $this->s3bucket,

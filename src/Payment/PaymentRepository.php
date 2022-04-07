@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Payment;
 
@@ -51,7 +53,7 @@ class PaymentRepository extends Repository
 
         return array_filter(
             $waitingEventPayments,
-            fn(Payment $payment) => $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
+            fn (Payment $payment) => $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
         );
     }
 
@@ -64,7 +66,7 @@ class PaymentRepository extends Repository
     {
         return array_filter(
             $waitingPayments,
-            fn(Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
+            fn (Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
         );
     }
 }

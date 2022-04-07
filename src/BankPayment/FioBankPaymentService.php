@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
@@ -7,7 +9,8 @@ use h4kuna\Fio\Response\Read\Transaction;
 use kissj\Event\Event;
 use Psr\Log\LoggerInterface;
 
-class FioBankPaymentService implements IBankPaymentService {
+class FioBankPaymentService implements IBankPaymentService
+{
     public function __construct(
         private BankPaymentRepository $bankPaymentRepository,
         private FioBankReaderFactory $fioBankReaderFactory,
@@ -15,7 +18,8 @@ class FioBankPaymentService implements IBankPaymentService {
     ) {
     }
 
-    public function setBreakpoint(\DateTimeImmutable $dateTime, Event $event): bool {
+    public function setBreakpoint(\DateTimeImmutable $dateTime, Event $event): bool
+    {
         try {
             $this->fioBankReaderFactory->getFioRead($event)->setLastDate($dateTime);
         } catch (ServiceUnavailable $e) {
@@ -28,7 +32,8 @@ class FioBankPaymentService implements IBankPaymentService {
         return true;
     }
 
-    public function getAndSafeFreshPaymentsFromBank(Event $event): int {
+    public function getAndSafeFreshPaymentsFromBank(Event $event): int
+    {
         // TODO deduplicate persisted and new ones, possibly by moveId
         /** @var Transaction[] $freshPayments */
         $freshPayments = $this->fioBankReaderFactory->getFioRead($event)->lastDownload();
@@ -44,7 +49,8 @@ class FioBankPaymentService implements IBankPaymentService {
         return count($freshPayments);
     }
 
-    public function setBankPaymentPaired(int $paymentId): BankPayment {
+    public function setBankPaymentPaired(int $paymentId): BankPayment
+    {
         /** @var BankPayment $bankPayment */
         $bankPayment = $this->bankPaymentRepository->get($paymentId);
         $bankPayment->status = BankPayment::STATUS_PAIRED;
@@ -53,7 +59,8 @@ class FioBankPaymentService implements IBankPaymentService {
         return $bankPayment;
     }
 
-    public function setBankPaymentUnrelated(int $paymentId): BankPayment {
+    public function setBankPaymentUnrelated(int $paymentId): BankPayment
+    {
         /** @var BankPayment $bankPayment */
         $bankPayment = $this->bankPaymentRepository->get($paymentId);
         $bankPayment->status = BankPayment::STATUS_UNRELATED;

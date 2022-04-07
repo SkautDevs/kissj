@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Middleware;
 
@@ -92,7 +94,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware
         if ($defaultLocale === false) {
             throw new \RuntimeException('available languages cannot be empty');
         }
-        
+
         $negotiator = new LanguageNegotiator();
         $header = $request->getHeaderLine('Accept-Language');
         if ($header === '') {

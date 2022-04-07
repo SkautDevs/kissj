@@ -32,7 +32,7 @@ class MailerSettings
     {
         return $this->event;
     }
-    
+
     public function setFullUrlLink(string $urlLink): void
     {
         $this->fullUrlLink = $urlLink;

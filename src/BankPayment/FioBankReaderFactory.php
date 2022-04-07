@@ -15,7 +15,7 @@ class FioBankReaderFactory
         if ($this->event === null) {
             $this->event = $this->createFioRead($event);
         }
-        
+
         return $this->event;
     }
 

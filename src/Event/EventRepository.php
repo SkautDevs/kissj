@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Event;
 
@@ -11,6 +13,6 @@ use kissj\Orm\Repository;
  * @method Event get(int $id)
  * @method Event getOneBy(mixed[] $criteria)
  */
-class EventRepository extends Repository {
-
+class EventRepository extends Repository
+{
 }

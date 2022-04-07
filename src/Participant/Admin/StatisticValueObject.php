@@ -6,7 +6,8 @@ use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\User\User;
 
-class StatisticValueObject {
+class StatisticValueObject
+{
     protected int $openCount;
     protected int $closedCount;
     protected int $approvedCount;
@@ -16,7 +17,8 @@ class StatisticValueObject {
     /**
      * @param Participant[] $participants
      */
-    public function __construct(array $participants) {
+    public function __construct(array $participants)
+    {
         $this->openCount = 0;
         $this->closedCount = 0;
         $this->approvedCount = 0;
@@ -54,23 +56,28 @@ class StatisticValueObject {
         }
     }
 
-    public function getOpenCount(): int {
+    public function getOpenCount(): int
+    {
         return $this->openCount;
     }
 
-    public function getClosedCount(): int {
+    public function getClosedCount(): int
+    {
         return $this->closedCount;
     }
 
-    public function getApprovedCount(): int {
+    public function getApprovedCount(): int
+    {
         return $this->approvedCount;
     }
 
-    public function getAfterPayment(): int {
+    public function getAfterPayment(): int
+    {
         return $this->afterPayment;
     }
 
-    public function getPaidCount(): int {
+    public function getPaidCount(): int
+    {
         return $this->paidCount;
     }
 }

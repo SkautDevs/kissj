@@ -53,7 +53,7 @@ use kissj\Orm\EntityDatetime;
  * @property int|null          $maximalClosedTroopParticipantsCount
  * @property int|null          $minimalTroopParticipantsCount
  * @property int|null          $maximalTroopParticipantsCount
- * 
+ *
  * @property int|null          $maximalClosedParticipantsCount
  *
  * @property DateTimeInterface $startRegistration m:passThru(dateFromString|dateToString)
@@ -80,14 +80,14 @@ class Event extends EntityDatetime
             default => throw new \RuntimeException('unknown event type: ' . $this->row->event_type),
         };
 
-        return new $eventTypeClass;
+        return new $eventTypeClass();
     }
-    
+
     public function canRegistrationBeLocked(): bool
     {
         return $this->startRegistration <= new DateTimeImmutable('now', new \DateTimeZone('UTC'));
     }
-    
+
     public function getLogoInBase64(): string
     {
         try {

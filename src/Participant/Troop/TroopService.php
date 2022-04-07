@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Troop;
 
@@ -15,7 +17,7 @@ class TroopService
         private ParticipantRepository $participantRepository,
     ) {
     }
-    
+
     public function getTroopLeader(User $user): TroopLeader
     {
         $troopLeader = $this->troopLeaderRepository->findOneBy(['user' => $user]);
@@ -28,7 +30,7 @@ class TroopService
 
         return $troopLeader;
     }
-    
+
     public function getTroopParticipant(User $user): TroopParticipant
     {
         $troopParticipant = $this->troopParticipantRepository->findOneBy(['user' => $user]);

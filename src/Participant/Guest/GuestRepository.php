@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
@@ -7,7 +9,7 @@ use kissj\Orm\Repository;
 
 /**
  * @table participant
- * 
+ *
  * @method Guest get(int $istId)
  * @method Guest[] findBy(mixed[] $criteria)
  * @method Guest|null findOneBy(mixed[] $criteria)

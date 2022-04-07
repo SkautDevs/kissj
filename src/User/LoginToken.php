@@ -10,6 +10,6 @@ use kissj\Orm\EntityDatetime;
  * @property User    $user    m:hasOne
  * @property boolean $used
  */
-class LoginToken extends EntityDatetime {
-
+class LoginToken extends EntityDatetime
+{
 }

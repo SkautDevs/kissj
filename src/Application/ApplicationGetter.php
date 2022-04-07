@@ -2,11 +2,12 @@
 
 namespace kissj\Application;
 
-class ApplicationGetter {
+class ApplicationGetter
+{
     public function getApp(
         string $envPath = __DIR__.'/../../',
         string $envFilename = '.env',
-        string $dbFullPath = __DIR__.'/../db_dev.sqlite', 
+        string $dbFullPath = __DIR__.'/../db_dev.sqlite',
         string $tempPath = __DIR__.'/../../temp'
     ): \Slim\App {
         $containerBuilder = new \DI\ContainerBuilder();

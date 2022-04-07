@@ -9,14 +9,16 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NonChoosedRoleOnlyMiddleware extends BaseMiddleware {
+class NonChoosedRoleOnlyMiddleware extends BaseMiddleware
+{
     public function __construct(
         private FlashMessagesInterface $flashMessages,
         private TranslatorInterface $translator,
     ) {
     }
 
-    public function process(Request $request, ResponseHandler $handler): Response {
+    public function process(Request $request, ResponseHandler $handler): Response
+    {
         $user = $request->getAttribute('user');
 
         if ($user instanceof User && $user->status !== User::STATUS_WITHOUT_ROLE) {

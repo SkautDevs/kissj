@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Middleware;
 
@@ -13,7 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * participants actions are allowed only for their Patrol Leader
  */
-class CheckPatrolLeaderParticipants extends BaseMiddleware {
+class CheckPatrolLeaderParticipants extends BaseMiddleware
+{
     public function __construct(
         private PatrolService $patrolService,
         private FlashMessagesInterface $flashMessages,
@@ -21,7 +24,8 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
     ) {
     }
 
-    public function process(Request $request, ResponseHandler $handler): Response {
+    public function process(Request $request, ResponseHandler $handler): Response
+    {
         $route = RouteContext::fromRequest($request)->getRoute();
         if ($route === null) {
             throw new \RuntimeException('Cannot access route in CheckPatrolLeaderParticipatns middleware');
@@ -30,8 +34,8 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware {
         $participantId = (int)$route->getArgument('participantId');
         if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
             $this->patrolService->getPatrolParticipant($participantId),
-            $this->patrolService->getPatrolLeader($request->getAttribute('user')))) {
-
+            $this->patrolService->getPatrolLeader($request->getAttribute('user'))
+        )) {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
 
             return $this->createRedirectResponse($request, 'pl-dashboard');

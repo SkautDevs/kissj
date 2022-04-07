@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
@@ -23,7 +25,8 @@ class PatrolService
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private PhpMailerWrapper $mailer,
-    ) {}
+    ) {
+    }
 
     public function getPatrolLeader(User $user): PatrolLeader
     {
@@ -70,7 +73,7 @@ class PatrolService
         $validityFlag = $this->participantService->isCloseRegistrationValid($patrolLeader);
         $event = $patrolLeader->getUserButNotNull()->event;
         $participants = $patrolLeader->patrolParticipants;
-        
+
         $participantsCount = count($participants);
         if ($participantsCount < $event->minimalPatrolParticipantsCount) {
             $this->flashMessages->warning(

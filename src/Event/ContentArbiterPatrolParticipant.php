@@ -2,5 +2,6 @@
 
 namespace kissj\Event;
 
-class ContentArbiterPatrolParticipant extends AbstractContentArbiter {
+class ContentArbiterPatrolParticipant extends AbstractContentArbiter
+{
 }

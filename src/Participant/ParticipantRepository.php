@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -89,9 +91,12 @@ class ParticipantRepository extends Repository
             User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_HUNGARY;
             }),
-            User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
+            User::ROLE_CONTINGENT_ADMIN_EU => array_filter(
+                $participants,
+                function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
-            }),
+            }
+            ),
             default => [],
         };
     }

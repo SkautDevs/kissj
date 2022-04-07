@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Settings;
 
@@ -89,7 +91,7 @@ class Settings
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
 
-        $container[SentryClient::class] = function(): ClientInterface {
+        $container[SentryClient::class] = function (): ClientInterface {
             return ClientBuilder::create([
                 'dsn' => $_ENV['SENTRY_DSN'],
                 'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
@@ -107,7 +109,7 @@ class Settings
             ])->getClient();
         };
 
-        $container[SentryHub::class] = fn(SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
+        $container[SentryHub::class] = fn (SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
 
         $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
@@ -150,8 +152,8 @@ class Settings
             );
         };
         $container[S3bucketFileHandler::class]
-            = fn(S3Client $s3Client) => new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
-        $container[S3Client::class] = fn() => new S3Client([
+            = fn (S3Client $s3Client) => new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
+        $container[S3Client::class] = fn () => new S3Client([
             'version' => 'latest',
             'region' => $_ENV['S3_REGION'],
             'endpoint' => $_ENV['S3_ENDPOINT'],
@@ -208,16 +210,16 @@ class Settings
         };
 
         $container[UserAuthenticationMiddleware::class]
-            = fn(UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
+            = fn (UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
 
         $container[SentryHttpContextMiddleware::class]
-            = fn(SentryHub $sentryHub): SentryHttpContextMiddleware => new SentryHttpContextMiddleware($sentryHub);
+            = fn (SentryHub $sentryHub): SentryHttpContextMiddleware => new SentryHttpContextMiddleware($sentryHub);
 
         $container[SentryContextMiddleware::class]
-            = fn(SentryHub $sentryHub): SentryContextMiddleware => new SentryContextMiddleware($sentryHub);
+            = fn (SentryHub $sentryHub): SentryContextMiddleware => new SentryContextMiddleware($sentryHub);
 
         $container[MonologContextMiddleware::class]
-            = fn(Logger $logger): MonologContextMiddleware => new MonologContextMiddleware($logger);
+            = fn (Logger $logger): MonologContextMiddleware => new MonologContextMiddleware($logger);
 
         return $container;
     }

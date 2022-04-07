@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Event\EventType;
 
@@ -138,7 +140,7 @@ abstract class EventType
     {
         return [];
     }
-    
+
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return false;

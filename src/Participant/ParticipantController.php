@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Participant;
 
@@ -20,7 +22,8 @@ class ParticipantController extends AbstractController
         private GuestService $guestService,
         private ParticipantService $participantService,
         private ParticipantRepository $participantRepository,
-    ) {}
+    ) {
+    }
 
     public function showDashboard(Response $response, User $user): Response
     {
@@ -77,7 +80,7 @@ class ParticipantController extends AbstractController
 
         if ($participant->getUserButNotNull()->status === User::STATUS_CLOSED) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
-            $this->logger->info('Locked registration for IST with ID ' . $participant->id 
+            $this->logger->info('Locked registration for IST with ID ' . $participant->id
                 . ', user ID ' . $participant->id);
         } else {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
