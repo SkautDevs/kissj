@@ -24,9 +24,6 @@ class ParticipantRepository extends Repository
      *
      * @param string[] $roles
      * @param string[] $statuses
-     * @param Event $event
-     * @param ?User $adminUser
-     * @param ?Order $order
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(
@@ -35,6 +32,7 @@ class ParticipantRepository extends Repository
         Event $event,
         ?User $adminUser = null,
         ?Order $order = null,
+        bool $filterEmptyParticipants = false,
     ): array {
         $participants = $this->findAll();
 
@@ -65,6 +63,10 @@ class ParticipantRepository extends Repository
                     return $order->isOrderAsc() ? $result : -$result;
                 }
             );
+        }
+        
+        if ($filterEmptyParticipants) {
+            $validParticipants = $this->filterEmptyParticipants($validParticipants);
         }
 
         return $validParticipants;
@@ -99,5 +101,15 @@ class ParticipantRepository extends Repository
             ),
             default => [],
         };
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @return Participant[]
+     */
+    private function filterEmptyParticipants(array $participants): array {
+        return array_filter($participants, function (Participant $participant): bool {
+            return $participant->getFullName() !== ' ';
+        });
     }
 }

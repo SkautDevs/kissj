@@ -54,6 +54,98 @@ class AdminController extends AbstractController
         );
     }
 
+    public function showStats(
+        Response $response,
+        Event $event,
+        User $user,
+    ): Response {
+        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+
+        return $this->view->render($response, 'admin/stats-admin.twig', [
+            'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+                true,
+            ),
+            'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_LEADER],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+                true,
+            ),
+            'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_PARTICIPANT],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+                true,
+            ),
+            'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_IST],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+                true,
+            ),
+            'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_GUEST],
+                [USER::STATUS_OPEN],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+                true,
+            ),
+            'paidPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_PATROL_LEADER],
+                [USER::STATUS_PAID],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'paidTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_LEADER],
+                [USER::STATUS_PAID],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'paidTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_TROOP_PARTICIPANT],
+                [USER::STATUS_PAID],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'paidIsts' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_IST],
+                [USER::STATUS_PAID],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'paidGuests' => $this->participantRepository->getAllParticipantsWithStatus(
+                [User::ROLE_GUEST],
+                [USER::STATUS_PAID],
+                $event,
+                $user,
+                $orderByUpdatedAtDesc,
+            ),
+            'caIst' => $event->getEventType()->getContentArbiterIst(),
+            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
+            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
+            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
+            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
+            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
+        ]);
+    }
+
     public function showOpen(
         Response $response,
         Event $event,
@@ -68,6 +160,7 @@ class AdminController extends AbstractController
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
+                true,
             ),
             'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
@@ -75,6 +168,7 @@ class AdminController extends AbstractController
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
+                true,
             ),
             'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
@@ -82,6 +176,7 @@ class AdminController extends AbstractController
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
+                true,
             ),
             'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
@@ -89,6 +184,7 @@ class AdminController extends AbstractController
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
+                true,
             ),
             'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
@@ -96,6 +192,7 @@ class AdminController extends AbstractController
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
+                true,
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
@@ -241,7 +338,6 @@ class AdminController extends AbstractController
             $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
             $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
         }
-
 
         return $this->redirect(
             $request,

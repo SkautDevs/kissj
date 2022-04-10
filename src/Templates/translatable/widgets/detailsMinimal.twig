@@ -1,0 +1,18 @@
+<h4>{{ person.getFullName }}</h4>
+{% if person is PatrolLeader %}
+    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getPatrolParticipants|length + 1}}</b><br/>
+{% endif %}{% if person is TroopLeader %}
+    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getPatrolParticipants|length + 1}}</b><br/>
+{% endif %}{% if ca.contingent %}
+    {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
+{% endif %}{% if ca.email %}
+    {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
+{% else %}
+    {% trans %}detail.email{% endtrans %}: <b>{{ person.user.email }}</b><br/>
+{% endif %}{% if ca.phone %}
+    {% trans %}detail.phone{% endtrans %}: <b>{{ person.getTelephoneNumber }}</b><br/>
+{% endif %}{% if ca.unit %}
+    {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
+{% endif %}{% if ca.notes %}
+    {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+{% endif %}

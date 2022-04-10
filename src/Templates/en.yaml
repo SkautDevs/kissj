@@ -278,6 +278,7 @@ dashboard-admin:
     paidTp: "Paid Participants"
     paidGuest: "Paid Guests"
     adminActions: "Administator actions"
+    showStats: "Statistics"
     open: "Unlocked participants"
     approving: "Approving participants"
     newPayments: "Pair new payments with bank"
@@ -288,6 +289,11 @@ dashboard-admin:
     checkMovePayments: "Check payment move"
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
+stats-admin:
+    stats: "Statistics for event"
+    numberPatrolParticipants: "Patrol participants in total"
+    numberPatrolParticipantsTotal: "participants in total"
+    paid: "Paid participants for event"
 open-admin:
     open: "Unlocked participants on event"
     none: "No participants with role"

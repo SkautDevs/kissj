@@ -278,6 +278,7 @@ dashboard-admin:
     paidTp: "zaplacení účastníci"
     paidGuest: "potvrzení hosté (nemuseli platit)"
     adminActions: "Akce administrátora"
+    showStats: "Souhrnné statistiky"
     open: "Neuzamčení účastníci"
     approving: "Schvalování účastníků"
     newPayments: "Párovaní nových plateb s bankou"
@@ -288,6 +289,11 @@ dashboard-admin:
     checkMovePayments: "Zkontrolovat přesun platby"
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
+stats-admin:
+    stats: "Statistiky akce"
+    numberPatrolParticipants: "Účastníků v patrole celkem"
+    numberPatrolParticipantsTotal: "v patrole celkem"
+    paid: "Zaplacení účastníci akce"
 open-admin:
     open: "Neuzamčení účastníci na akci"
     none: "Žádní účastníci s rolí"

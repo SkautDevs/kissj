@@ -155,6 +155,9 @@ class Route
                     $app->get('/showFile/{filename}', AdminController::class . '::showFile')
                         ->setName('admin-show-file');
 
+                    $app->get('/showStats', AdminController::class . '::showStats')
+                        ->setName('admin-show-stats');
+
                     $app->get('/showOpen', AdminController::class . '::showOpen')
                         ->setName('admin-show-open');
 

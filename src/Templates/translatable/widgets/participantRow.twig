@@ -1,0 +1,13 @@
+<b>{{ person.getFullName }}</b>
+{% if person is PatrolLeader %}
+    , {{ person.getPatrolParticipants|length }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
+{% endif %}{% if person is TroopLeader %}
+    , {{ person.getPatrolParticipants|length }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
+{% endif %}
+{% if ca.contingent %}
+    , <b>{{ person.getContingent|trans }}</b>
+{% endif %}{% if ca.email %}
+    , {{ person.getEmail }}
+{% else %}
+    , {{ person.user.email }}
+{% endif %}

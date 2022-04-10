@@ -195,16 +195,10 @@ class Settings
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
             $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG'] === "true");
-            /*
-            // TODO move into middleware
-            if ($settings['useTestingSite']) {
-                $flashMessages->info('Test version - please do not imput any real personal details!');
-                $flashMessages->info('Administration login: admin, password: admin, link: '
-                    .$router->getRouteParser()->urlFor('administration'));
-            }*/
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));
+            $view->addExtension(new TwigExtension());
 
             return $view;
         };

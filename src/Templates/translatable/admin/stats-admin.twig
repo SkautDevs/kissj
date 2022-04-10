@@ -1,0 +1,115 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card closed-theme">
+        <h2>{% trans %}stats-admin.stats{% endtrans %} {{ event.readableName }}</h2>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
+           class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
+    </div>
+    <br/>
+
+    <div class="card closed-theme">
+        <h2>{% trans %}stats-admin.paid{% endtrans %} {{ event.readableName }}</h2>
+
+        {% if event.allowIsts %}
+            <h4>{% trans %}role.ist{% endtrans %}</h4>
+            {% for ist in paidIsts %}
+                {% include 'widgets/participantRow.twig' with {'person': ist, 'ca': caIst} %}<br/>
+            {% endfor %}
+        {% endif %}
+
+        {% if event.allowPatrols %}
+            <h4>{% trans %}role.pl{% endtrans %}</h4>
+            {% for pl in paidPatrolLeaders %}
+                {% include 'widgets/participantRow.twig' with {'person': pl, 'ca': caPl} %}<br/>
+            {% endfor %}
+        {% endif %}
+
+        {% if event.allowTroops %}
+            <h4>{% trans %}role.tl{% endtrans %}</h4>
+            {% for tl in paidTroopLeaders %}
+                {% include 'widgets/participantRow.twig' with {'person': tl, 'ca': caTl} %}<br/>
+            {% endfor %}
+
+            <h4>{% trans %}role.tp{% endtrans %}</h4>
+            {% for tp in paidITroopParticipants %}
+                {% include 'widgets/participantRow.twig' with {'person': tp, 'ca': caTp} %}<br/>
+            {% endfor %}
+        {% endif %}
+
+        {% if event.allowGuests %}
+            <h4>{% trans %}role.guest{% endtrans %}</h4>
+            {% for guest in paidGuests %}
+                {% include 'widgets/participantRow.twig' with {'person': guest, 'ca': caGuest} %}<br/>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <br/>
+
+    <div class="card closed-theme">
+        <h2>{% trans %}open-admin.open{% endtrans %} {{ event.readableName }}</h2>
+    </div>
+    <br/>
+    {% if event.allowIsts %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.ist{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for ist in openIsts %}
+            <div class="card closed-theme">
+                {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
+            </div>
+            <br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if event.allowPatrols %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.pl{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for pl in openPatrolLeaders %}
+            <div class="card closed-theme">
+                {% include 'widgets/detailsMinimal.twig' with {'person': pl, 'ca': caPl} %}
+            </div>
+            <br/>
+        {% endfor %}
+    {% endif %}
+    
+    {% if event.allowTroops %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.tl{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for tl in openTroopLeaders %}
+            <div class="card closed-theme">
+                {% include 'widgets/detailsMinimal.twig' with {'person': tl, 'ca': caTl} %}
+            </div>
+            <br/>
+        {% endfor %}
+
+        <div class="card closed-theme">
+            <h2>{% trans %}role.tp{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for tp in openTroopParticipants %}
+            <div class="card closed-theme">
+                {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
+            </div>
+            <br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if event.allowGuests %}
+        <div class="card closed-theme">
+            <h2>{% trans %}role.guest{% endtrans %}</h2>
+        </div>
+        <br/>
+        {% for guest in openGuests %}
+            <div class="card closed-theme">
+                {% include 'widgets/detailsMinimal.twig' with {'person': guest, 'ca': caGuest} %}
+            </div>
+            <br/>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
