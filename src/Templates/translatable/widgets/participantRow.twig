@@ -2,7 +2,7 @@
 {% if person is PatrolLeader %}
     , {{ person.getPatrolParticipants|length }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
 {% endif %}{% if person is TroopLeader %}
-    , {{ person.getPatrolParticipants|length }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
+    , {{ person.getTroopParticipants|length }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
 {% endif %}
 {% if ca.contingent %}
     , <b>{{ person.getContingent|trans }}</b>
