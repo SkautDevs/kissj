@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use DateTimeImmutable;
 use kissj\Event\AbstractContentArbiter;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -272,6 +273,8 @@ class ParticipantService
     {
         if ($this->isCloseRegistrationValid($participant)) {
             $user = $participant->getUserButNotNull();
+            $participant->registrationClosedDate = new DateTimeImmutable();
+            $this->participantRepository->persist($participant);
             $this->userService->closeRegistration($user);
             $this->mailer->sendRegistrationClosed($user);
         }
