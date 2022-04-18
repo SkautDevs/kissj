@@ -1,7 +1,7 @@
 <?php
+
 declare(strict_types=1);
 
-use DateTimeImmutable;
 use Phinx\Migration\AbstractMigration;
 
 final class AddParticipantRegistrationCloseDate extends AbstractMigration
@@ -10,10 +10,16 @@ final class AddParticipantRegistrationCloseDate extends AbstractMigration
     {
         $participant = $this->table('participant');
         $participant
-            ->addColumn('registration_close_date', 'datetime', ['default' => null ,null => true])
+            ->addColumn('registration_close_date', 'datetime', ['default' => null, 'null' => true])
             ->save();
 
-        $this->execute('UPDATE participant SET registration_close_date = ' . new DateTimeImmutable() . ' WHERE ...');
+        $this->execute('
+            UPDATE participant
+            SET participant.registration_close_date = participant.updated_at
+            FROM participant
+            JOIN user ON user.id = participant.user_id
+            WHERE user.status IN ("closed", "approved", "paid");
+        ');
     }
 
     public function down(): void

@@ -250,7 +250,7 @@ class ExportService
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '', // 25
                     $participant->notes ?? '',
-                    $participant->registrationClosedDate ? $participant->registrationClosedDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
                 ],
                 $pPart,
                 $istPart

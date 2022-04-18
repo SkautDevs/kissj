@@ -64,7 +64,7 @@ class ParticipantRepository extends Repository
                 }
             );
         }
-        
+
         if ($filterEmptyParticipants) {
             $validParticipants = $this->filterEmptyParticipants($validParticipants);
         }
@@ -96,8 +96,8 @@ class ParticipantRepository extends Repository
             User::ROLE_CONTINGENT_ADMIN_EU => array_filter(
                 $participants,
                 function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
-            }
+                    return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
+                }
             ),
             default => [],
         };
@@ -107,7 +107,8 @@ class ParticipantRepository extends Repository
      * @param Participant[] $participants
      * @return Participant[]
      */
-    private function filterEmptyParticipants(array $participants): array {
+    private function filterEmptyParticipants(array $participants): array
+    {
         return array_filter($participants, function (Participant $participant): bool {
             return $participant->getFullName() !== ' ';
         });

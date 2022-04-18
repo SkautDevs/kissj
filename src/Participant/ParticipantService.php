@@ -273,7 +273,7 @@ class ParticipantService
     {
         if ($this->isCloseRegistrationValid($participant)) {
             $user = $participant->getUserButNotNull();
-            $participant->registrationClosedDate = new DateTimeImmutable();
+            $participant->registrationCloseDate = new DateTimeImmutable();
             $this->participantRepository->persist($participant);
             $this->userService->closeRegistration($user);
             $this->mailer->sendRegistrationClosed($user);
@@ -282,7 +282,7 @@ class ParticipantService
         return $participant;
     }
 
-    // TODO move into payment service, same as comfirmPayment
+    // TODO move into payment service, same as confirmPayment
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
