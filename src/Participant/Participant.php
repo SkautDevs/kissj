@@ -47,6 +47,7 @@ use kissj\User\User;
  * @property array|null             $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
  * @property string|null            $driversLicense
  * @property string|null            $notes
+ * @property DateTimeInterface|null $registrationCloseDate m:passThru(dateFromString|dateToString)
  *
  * @property Payment[]              $payment m:belongsToMany
  */

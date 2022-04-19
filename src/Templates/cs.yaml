@@ -117,6 +117,7 @@ detail:
     driver-dont: "Nemám nebo na akci nechci řídit"
     driver-less10k: "Mám, na akci chci řídit, ale mám najeto méně než 10 000 km"
     driver-more10k: "Mám, na akci řídit chci a mám najeto víc než 10 000 km"
+    closed-at: "Uzamknut"
 detail-guest:
     notice: "Zvoucí a účel"
     notice-placeholder: "Od koho máš pozvánku a jaký je tvůj záměr na akci?"
@@ -311,7 +312,7 @@ approve-admin:
     back: "Zpět"
     willHave: "(Bude mu/jí na akci "
     years: " let)"
-    deny: "Stornovat"
+    deny: "Odemknout"
     approveAndSend: "Schválit a poslat e-mail"
     none: "Žádní účastníci s rolí"
     need: "nevyžadují schválení"

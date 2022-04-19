@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use DateTimeImmutable;
 use kissj\Event\AbstractContentArbiter;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -272,6 +273,8 @@ class ParticipantService
     {
         if ($this->isCloseRegistrationValid($participant)) {
             $user = $participant->getUserButNotNull();
+            $participant->registrationCloseDate = new DateTimeImmutable();
+            $this->participantRepository->persist($participant);
             $this->userService->closeRegistration($user);
             $this->mailer->sendRegistrationClosed($user);
         }
@@ -279,7 +282,7 @@ class ParticipantService
         return $participant;
     }
 
-    // TODO move into payment service, same as comfirmPayment
+    // TODO move into payment service, same as confirmPayment
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
