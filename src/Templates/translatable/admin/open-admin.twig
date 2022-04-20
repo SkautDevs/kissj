@@ -17,7 +17,7 @@
                 <div class="card open-theme">
                     <h4>{{ ist.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.registrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
                 </div>
             {% endfor %}
@@ -41,7 +41,7 @@
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ pl.registrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ pl.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
     
                     <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
@@ -72,7 +72,7 @@
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tl.registrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tl.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                 </div>
                 <br/>
             {% endfor %}
@@ -92,7 +92,7 @@
                 <div class="card open-theme">
                     <h4>{{ tp.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.registrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
                 </div>
                 <br/>
@@ -115,7 +115,7 @@
                 <div class="card open-theme">
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ guest.registrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ guest.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
                 </div>
                 <br/>
