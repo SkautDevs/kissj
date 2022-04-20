@@ -14,11 +14,11 @@ final class AddParticipantRegistrationCloseDate extends AbstractMigration
             ->save();
 
         $this->execute('
-            UPDATE participant
-            SET participant.registration_close_date = participant.updated_at
-            FROM participant
-            JOIN user ON user.id = participant.user_id
-            WHERE user.status IN ("closed", "approved", "paid");
+            UPDATE public.participant
+            SET registration_close_date = participant.updated_at
+            FROM public.user
+            WHERE public.user.id = participant.user_id
+            AND public.user.status IN (\'closed\', \'approved\', \'paid\');
         ');
     }
 
