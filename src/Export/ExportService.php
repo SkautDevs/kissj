@@ -181,9 +181,11 @@ class ExportService
             'uploadedOriginalFilename', // 25
             'notes',
             'registrationCloseDate',
-            'patrolLeaderId_patrolParticipantId',
+            'registrationApproveDate',
+            'registrationPayDate',
+            'patrolLeaderId_patrolParticipantId', // 30
             'patrolName',
-            'istSkills', // 30
+            'istSkills',
             'istPreferredPosition',
             'driverLicense',
         ];
@@ -251,6 +253,8 @@ class ExportService
                     $participant->uploadedOriginalFilename ?? '', // 25
                     $participant->notes ?? '',
                     $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                 ],
                 $pPart,
                 $istPart

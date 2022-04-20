@@ -319,6 +319,9 @@ class ParticipantService
 
     public function approveRegistration(Participant $participant): Participant
     {
+        $participant->registrationApproveDate = new DateTimeImmutable();
+        $this->participantRepository->persist($participant);
+
         if ($participant instanceof Guest) {
             $this->userService->payRegistration($participant->getUserButNotNull());
             $this->mailer->sendGuestRegistrationFinished($participant);

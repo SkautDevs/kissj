@@ -48,6 +48,8 @@ use kissj\User\User;
  * @property string|null            $driversLicense
  * @property string|null            $notes
  * @property DateTimeInterface|null $registrationCloseDate m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $registrationApproveDate m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $registrationPayDate m:passThru(dateFromString|dateToString)
  *
  * @property Payment[]              $payment m:belongsToMany
  */
