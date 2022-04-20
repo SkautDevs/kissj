@@ -180,12 +180,12 @@ class ExportService
             'departureDate',
             'uploadedOriginalFilename', // 25
             'notes',
+            'registrationCloseDate',
             'patrolLeaderId_patrolParticipantId',
             'patrolName',
-            'istSkills',
-            'istPreferredPosition', // 30
+            'istSkills', // 30
+            'istPreferredPosition',
             'driverLicense',
-            'registrationCloseDate',
         ];
 
         foreach ($participants as $participant) {
