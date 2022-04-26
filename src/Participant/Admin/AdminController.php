@@ -63,46 +63,6 @@ class AdminController extends AbstractController
         $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
 
         return $this->view->render($response, 'admin/stats-admin.twig', [
-            'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_OPEN],
-                $event,
-                $user,
-                $orderByUpdatedAtDesc,
-                true,
-            ),
-            'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_TROOP_LEADER],
-                [USER::STATUS_OPEN],
-                $event,
-                $user,
-                $orderByUpdatedAtDesc,
-                true,
-            ),
-            'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_TROOP_PARTICIPANT],
-                [USER::STATUS_OPEN],
-                $event,
-                $user,
-                $orderByUpdatedAtDesc,
-                true,
-            ),
-            'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_IST],
-                [USER::STATUS_OPEN],
-                $event,
-                $user,
-                $orderByUpdatedAtDesc,
-                true,
-            ),
-            'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
-                [User::ROLE_GUEST],
-                [USER::STATUS_OPEN],
-                $event,
-                $user,
-                $orderByUpdatedAtDesc,
-                true,
-            ),
             'paidPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
                 [USER::STATUS_PAID],
