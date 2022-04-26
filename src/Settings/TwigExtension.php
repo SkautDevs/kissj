@@ -17,10 +17,10 @@ class TwigExtension extends AbstractExtension
     public function getTests(): array
     {
         return [
-            new TwigTest('PatrolLeader', function ($participant) {
+            new TwigTest('PatrolLeader', function ($participant): bool {
                 return $participant instanceof PatrolLeader;
             }),
-            new TwigTest('TroopLeader', function ($participant) {
+            new TwigTest('TroopLeader', function ($participant): bool {
                 return $participant instanceof TroopLeader;
             }),
         ];
