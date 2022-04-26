@@ -38,7 +38,7 @@
             {% for pl in openPatrolLeaders %}
                 <div class="card open-theme">
                     <h3>{{ pl.getPatrolName }}</h3>
-                    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ pl.getPatrolParticipants|length + 1}}</b><br/>
+                    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ pl.getPatrolParticipantsCount + 1}}</b><br/>
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
@@ -70,7 +70,7 @@
             {% for tl in openTroopLeaders %}
                 <div class="card open-theme">
                     <h3>{{ tl.getPatrolName }}</h3>
-                    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ tl.getPatrolParticipants|length + 1}}</b><br/>
+                    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ tl.getTroopParticipantsCount + 1}}</b><br/>
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}

@@ -11,4 +11,8 @@ use kissj\Participant\Participant;
  */
 class TroopLeader extends Participant
 {
+    public function getTroopParticipantsCount(): int
+    {
+        return count($this->troopParticipants);
+    }
 }

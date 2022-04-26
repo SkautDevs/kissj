@@ -9,4 +9,8 @@ use kissj\Participant\Participant;
  */
 class PatrolLeader extends Participant
 {
+    public function getPatrolParticipantsCount(): int
+    {
+        return count($this->patrolParticipants);
+    }
 }
