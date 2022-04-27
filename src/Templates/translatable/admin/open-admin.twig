@@ -17,7 +17,6 @@
                 <div class="card open-theme">
                     <h4>{{ ist.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
                 </div>
             {% endfor %}
