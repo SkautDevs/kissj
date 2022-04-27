@@ -16,7 +16,7 @@
             {% for ist in openIsts %}
                 <div class="card open-theme">
                     <h4>{{ ist.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}
+                    {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
                     {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
                     <br/>
                 </div>
@@ -41,13 +41,12 @@
                     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ pl.getPatrolParticipantsCount + 1}}</b><br/>
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ pl.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% include 'widgets/detailsMinimal.twig' with {'person': pl, 'ca': caPl} %}
                     <br/>
     
                     <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
                     {% for pp in pl.patrolParticipants %}
-                        {% include 'widgets/details.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
+                        {% include 'widgets/detailsMinimal.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
                 </div>
@@ -73,8 +72,7 @@
                     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ tl.getTroopParticipantsCount + 1}}</b><br/>
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tl.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% include 'widgets/detailsMinimal.twig' with {'person': tl, 'ca': caTl} %}
                 </div>
                 <br/>
             {% endfor %}
@@ -93,8 +91,7 @@
             {% for tp in openTroopParticipants %}
                 <div class="card open-theme">
                     <h4>{{ tp.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
                 </div>
                 <br/>
@@ -116,8 +113,7 @@
             {% for guest in openGuests %}
                 <div class="card open-theme">
                     <h4>{{ guest.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ guest.getRegistrationCloseDate.format('d. m. Y') }}</b><br/>
+                    {% include 'widgets/detailsMinimal.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
                 </div>
                 <br/>

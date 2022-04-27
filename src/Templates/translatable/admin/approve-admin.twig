@@ -17,6 +17,7 @@
                 <div class="card closed-theme">
                     <h4>{{ ist.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
@@ -51,6 +52,7 @@
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ pl.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                     <br/>
     
                     <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
@@ -91,11 +93,13 @@
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tl.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                     <br/>
     
                     <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
                     {% for tp in tl.troopParticipants %}
                         {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp, 'useShortNaming': true} %}
+                        {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                         <br/>
                     {% endfor %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
@@ -117,9 +121,7 @@
             </div>
             <br/>
         {% endif %}
-    {% endif %}
-    
-    {% if event.allowTroops %}
+
         {% if closedTroopParticipants is not empty %}
             <div class="card closed-theme">
                 <h2>{% trans %}role.tp{% endtrans %}</h2>
@@ -129,6 +131,7 @@
                 <div class="card closed-theme">
                     <h4>{{ tp.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp} %}
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                     <br/>
                     
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
@@ -162,6 +165,7 @@
                 <div class="card closed-theme">
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
+                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ guest.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
