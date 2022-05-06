@@ -119,6 +119,7 @@ class UserController extends AbstractController
             User::ROLE_CONTINGENT_ADMIN_PL,
             User::ROLE_CONTINGENT_ADMIN_HU,
             User::ROLE_CONTINGENT_ADMIN_EU,
+            User::ROLE_CONTINGENT_ADMIN_RO,
                 => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
             default => throw new RuntimeException('got unknown role for User id ' . $user->id . ' with role ' . $user->role),
         };
