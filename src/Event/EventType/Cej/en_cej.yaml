@@ -4,6 +4,7 @@ detail:
     foodVegan: "vegan"
     countryPoland: "Poland"
     countryHungary: "Hungary"
+    countryRomania: "Romania"
     unit: "Scout Organization"
     uploadedFileNote: "PDF with consent can be found at <a target=\"_blank\" href=\"https://cej2022.cz/wp-content/uploads/2021/11/Parental-Consent-Form.pdf\">our website</a>."
     contingent:

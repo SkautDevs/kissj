@@ -19,7 +19,7 @@ class EventTypeCej extends EventType
     public const CONTINGENT_POLAND = 'detail.contingent.poland';
     public const CONTINGENT_HUNGARY = 'detail.contingent.hungary';
     public const CONTINGENT_EUROPEAN = 'detail.contingent.european';
-    public const CONTINGENT_HUNGARY = 'detail.contingent.romania';
+    public const CONTINGENT_ROMANIA = 'detail.contingent.romania';
     public const CONTINGENT_ISRAEL = 'detail.contingent.israel';
     public const CONTINGENT_TEAM = 'detail.contingent.team';
 
