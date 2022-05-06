@@ -93,6 +93,9 @@ class ParticipantRepository extends Repository
             User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_HUNGARY;
             }),
+            User::ROLE_CONTINGENT_ADMIN_RO => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === EventTypeCej::CONTINGENT_ROMANIA;
+            }),
             User::ROLE_CONTINGENT_ADMIN_EU => array_filter(
                 $participants,
                 function (Participant $p): bool {

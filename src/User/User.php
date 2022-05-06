@@ -41,6 +41,7 @@ class User extends EntityDateTime
     public const ROLE_CONTINGENT_ADMIN_PL = 'contingentAdminPl';
     public const ROLE_CONTINGENT_ADMIN_HU = 'contingentAdminHu';
     public const ROLE_CONTINGENT_ADMIN_EU = 'contingentAdminEu';
+    public const ROLE_CONTINGENT_ADMIN_RO = 'contingentAdminRo';
 
     public const ROLES = [
         self::ROLE_IST,
@@ -56,6 +57,7 @@ class User extends EntityDateTime
         self::ROLE_CONTINGENT_ADMIN_PL,
         self::ROLE_CONTINGENT_ADMIN_HU,
         self::ROLE_CONTINGENT_ADMIN_EU,
+        self::ROLE_CONTINGENT_ADMIN_RO,
     ];
 
     public const ADMIN_ROLES_ONLY = [
@@ -65,5 +67,6 @@ class User extends EntityDateTime
         self::ROLE_CONTINGENT_ADMIN_PL,
         self::ROLE_CONTINGENT_ADMIN_HU,
         self::ROLE_CONTINGENT_ADMIN_EU,
+        self::ROLE_CONTINGENT_ADMIN_RO,
     ];
 }
