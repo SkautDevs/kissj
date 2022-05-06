@@ -49,9 +49,8 @@ class EventTypeAqua extends EventType
         return 160;
     }
 
-
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getPositionOptions(): array
     {

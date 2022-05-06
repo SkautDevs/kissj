@@ -59,7 +59,7 @@ class EventTypeCej extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getTranslationFilePaths(): array
     {
@@ -119,7 +119,7 @@ class EventTypeCej extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getFoodOptions(): array
     {
@@ -134,7 +134,7 @@ class EventTypeCej extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getParticipantCountries(): array
     {
@@ -148,7 +148,7 @@ class EventTypeCej extends EventType
     }
 
     /**
-     * @return string[]
+     * @inheritDoc
      */
     public function getContingents(): array
     {
@@ -164,7 +164,7 @@ class EventTypeCej extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getLanguages(): array
     {

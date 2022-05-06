@@ -13,7 +13,7 @@ use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\EventTypeKorbo;
 use kissj\Event\EventType\EventTypeMiquik;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
-use kissj\Event\EventType\EventTypeNsj;
+use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Orm\EntityDatetime;
 
