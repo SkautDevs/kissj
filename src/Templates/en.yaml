@@ -281,7 +281,7 @@ dashboard-admin:
     paidTp: "Paid Participants"
     paidGuest: "Paid Guests"
     adminActions: "Administator actions"
-    showStats: "Statistics"
+    showStats: "Paid participants"
     open: "Unlocked participants"
     approving: "Approving participants"
     newPayments: "Pair new payments with bank"

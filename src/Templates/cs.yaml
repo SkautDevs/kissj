@@ -281,7 +281,7 @@ dashboard-admin:
     paidTp: "zaplacení účastníci"
     paidGuest: "potvrzení hosté (nemuseli platit)"
     adminActions: "Akce administrátora"
-    showStats: "Souhrnné statistiky"
+    showStats: "Zaplacení účastníci"
     open: "Neuzamčení účastníci"
     approving: "Schvalování účastníků"
     newPayments: "Párovaní nových plateb s bankou"

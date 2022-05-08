@@ -70,8 +70,6 @@
         <h3>{% trans %}dashboard-admin.adminActions{% endtrans %}</h3>
         <div class="card-divide">
             <div>
-                <a href="{{ url_for('admin-show-stats', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.showStats{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-open', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.open{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
@@ -84,6 +82,8 @@
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
                 {% endif %}
+                <a href="{{ url_for('admin-show-stats', {'eventSlug': event.slug}) }}"
+                   class="btn">{% trans %}dashboard-admin.showStats{% endtrans %}</a><br/>
             </div>
             <div>
                 <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
