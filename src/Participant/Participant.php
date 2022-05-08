@@ -50,7 +50,8 @@ use kissj\User\User;
  * @property DateTimeInterface|null $registrationCloseDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $registrationApproveDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $registrationPayDate m:passThru(dateFromString|dateToString)
- *
+ * @property string                 $adminNote
+ * 
  * @property Payment[]              $payment m:belongsToMany
  */
 class Participant extends EntityDatetime

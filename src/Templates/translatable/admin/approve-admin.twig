@@ -16,8 +16,7 @@
             {% for ist in closedIsts %}
                 <div class="card closed-theme">
                     <h4>{{ ist.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': ist, 'ca': caIst} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ ist.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                    {% include 'widgets/detailsForAdmin.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
@@ -51,13 +50,12 @@
                     <h3>{{ pl.getPatrolName }}</h3>
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': pl, 'ca': caPl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ pl.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                    {% include 'widgets/detailsForAdmin.twig' with {'person': pl, 'ca': caPl} %}
                     <br/>
     
                     <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
                     {% for pp in pl.patrolParticipants %}
-                        {% include 'widgets/details.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
+                        {% include 'widgets/detailsForAdmin.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': pl.getId, 'eventSlug': event.slug}) }}"
@@ -92,14 +90,12 @@
                     <h3>{{ tl.getPatrolName }}</h3>
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': tl, 'ca': caTl} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tl.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                    {% include 'widgets/detailsForAdmin.twig' with {'person': tl, 'ca': caTl} %}
                     <br/>
     
                     <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
                     {% for tp in tl.troopParticipants %}
-                        {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp, 'useShortNaming': true} %}
-                        {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                        {% include 'widgets/detailsForAdmin.twig' with {'person': tp, 'ca': caTp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
@@ -130,8 +126,7 @@
             {% for tp in closedTroopParticipants %}
                 <div class="card closed-theme">
                     <h4>{{ tp.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': tp, 'ca': caTp} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ tp.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                    {% include 'widgets/detailsForAdmin.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
                     
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
@@ -164,8 +159,7 @@
             {% for guest in closedGuests %}
                 <div class="card closed-theme">
                     <h4>{{ guest.getFullName }}</h4>
-                    {% include 'widgets/details.twig' with {'person': guest, 'ca': caGuest} %}
-                    {% trans %}detail.closed-at{% endtrans %}: <b>{{ guest.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b><br/>
+                    {% include 'widgets/detailsForAdmin.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>

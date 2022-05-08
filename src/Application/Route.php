@@ -152,6 +152,9 @@ class Route
                     $app->get('/dashboard', AdminController::class . '::showDashboard')
                         ->setName('admin-dashboard');
 
+                    $app->post('/changeAdminNote', AdminController::class . '::changeAdminNote')
+                        ->setName('admin-change-note');
+
                     $app->get('/showFile/{filename}', AdminController::class . '::showFile')
                         ->setName('admin-show-file');
 

@@ -479,4 +479,9 @@ class AdminController extends AbstractController
             'admin-dashboard',
         );
     }
+
+    public function changeAdminNote(Request $request, Response $response): Response
+    {
+        return new \Slim\Psr7\Response(); // TODO implement
+    }
 }

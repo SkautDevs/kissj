@@ -1,0 +1,5 @@
+{% include 'widgets/details.twig' with {'person': person, 'ca': ca} %}
+{% if person.getRegistrationCloseDate %}
+    <i>{% trans %}detail.closed-at{% endtrans %}: <b>{{ person.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b></i><br/>
+{% endif %}
+<i>{% trans %}detail.adminNotice{% endtrans %}: <b>{{ person.adminNote }}</b></i> <button class="btn btn-mini">TODO change note from admin</button><br/>
