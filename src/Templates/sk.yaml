@@ -78,6 +78,7 @@ detail:
     foodHeader: "Jedlo"
     foodWithout: "bez obmedzení"
     foodVegetarian: "vegetariánske"
+    foodVegan: "veganske"
     foodLactoseFree: "bez laktózy"
     foodGlutenFree: "bez lepku"
     foodOther: "iné - prosím upresni v poznámke"

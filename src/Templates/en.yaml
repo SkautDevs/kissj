@@ -78,6 +78,7 @@ detail:
     foodHeader: "Diet restriction"
     foodWithout: "no restriction"
     foodVegetarian: "vegetarian"
+    foodVegan: "vegan"
     foodLactoseFree: "lactose free"
     foodGlutenFree: "gluten free"
     foodOther: "other - please specify in the note"

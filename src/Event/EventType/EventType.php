@@ -89,6 +89,7 @@ abstract class EventType
         return [
             'detail.foodWithout',
             'detail.foodVegetarian',
+            // 'detail.foodVegan',
             'detail.foodLactoseFree',
             'detail.foodGlutenFree',
             'detail.foodOther',

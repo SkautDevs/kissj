@@ -35,15 +35,34 @@ class EventTypeNsj extends EventType
     /**
      * @inheritDoc
      */
+    public function getFoodOptions(): array
+    {
+        return [
+            'detail.foodWithout',
+            'detail.foodVegetarian',
+            'detail.foodVegan',
+            'detail.foodLactoseFree',
+            'detail.foodGlutenFree',
+            'detail.foodOther',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getPositionOptions(): array
     {
         return [
-            // TODO Veverka will create final list
+            'detail.position.programme',
             'detail.position.photo',
             'detail.position.kitchen',
             'detail.position.security',
             'detail.position.hygiene',
-            'detail.position.programme',
+            'detail.position.stage',
+            'detail.position.builds',
+            'detail.position.registration',
+            'detail.position.subcamps',
+            'detail.position.people',
         ];
     }
 

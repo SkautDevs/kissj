@@ -1,2 +1,14 @@
 detail:
     notice-placeholder: "Už tě kontaktoval někdo z týmu? Cokoli dalšího?"
+    position-placeholder: "Vyber max. 5. Nezaručujeme zařazení na vybranou pozici, ale posnažíme se!"
+    position:
+        programme: "Program"
+        photo: "Komunikace - web, foto + video, socky..."
+        kitchen: "Stravování"
+        security: "Bezpečnost"
+        hygiene: "Úklid"
+        stage: "Stage"
+        builds: "Stavby"
+        registration: "Registrace"
+        subcamps: "Infostany a subcampy"
+        people: "Lidé"
