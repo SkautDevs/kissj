@@ -1,0 +1,63 @@
+name: Build & Push Container Images
+
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    branches: [master]
+    types: 
+      - completed
+
+jobs:
+  
+  php:
+    name: Build & Push PHP Container Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Container Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: php-ubi
+          tags: ${{ github.sha }}
+          containerfiles: |
+            ./deploy/container_images/php/Containerfile-ubi
+        
+      - name: Push Container Image To Registry
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/kissj
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+
+  caddy:
+    name: Build & Push Caddy container
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Container Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: caddy-ubi
+          tags: ${{ github.sha }}
+          containerfiles: |
+            ./deploy/container_images/caddy/Containerfile-ubi
+        
+      - name: Push Container Image To Registry
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/kissj
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}

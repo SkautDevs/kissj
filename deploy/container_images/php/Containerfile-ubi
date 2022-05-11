@@ -11,11 +11,11 @@ RUN dnf module enable php:remi-8.1 -y
 RUN dnf install php-fpm php-cli composer php-pgsql php-pdo vim procps-ng -y
 
 #copy app
-COPY ../../../composer.json /var/www/html/composer.json
-COPY ../../../composer.lock /var/www/html/composer.lock
-COPY ../../../src /var/www/html/src
-COPY ../../../adminer /var/www/html/adminer
-COPY ../../../public /var/www/html/public
+COPY ./composer.json /var/www/html/composer.json
+COPY ./composer.lock /var/www/html/composer.lock
+COPY ./src /var/www/html/src
+COPY ./adminer /var/www/html/adminer
+COPY ./public /var/www/html/public
 
 #configure php-fpm
 RUN sed -i 's\listen = /run/php-fpm/www.sock\listen = '9000'\g' /etc/php-fpm.d/www.conf
