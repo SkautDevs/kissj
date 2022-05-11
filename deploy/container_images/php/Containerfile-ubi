@@ -8,7 +8,7 @@ WORKDIR /var/www/html
 RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y 
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.1 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo vim procps-ng -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo -y
 
 #copy app
 COPY ./composer.json /var/www/html/composer.json
