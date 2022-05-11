@@ -87,7 +87,20 @@ jobs:
         run: composer run-script unit --no-interaction
         env:
           COMPOSER_ALLOW_SUPERUSER: 1
-
+ 
+  lint: 
+    name: Check PHP syntax
+    runs-on: ubuntu-latest
+    container: docker.io/composer/composer:2.2.12
+    needs: deps
+    steps:
+    
+      - name: Check PHP syntax errors
+        uses: overtrue/phplint@5.1.0
+        with:
+          path: .
+          options: --exclude=vendor --warning
+  
 #  cs: 
 #    name: CodeSniffer 
 #    runs-on: ubuntu-latest
