@@ -10,7 +10,8 @@ RUN apt update && apt install -y \
     tar \
     zip \
     tzdata \
-    libpq-dev 
+    libpq-dev \
+    vim
 
 RUN apt-get clean
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
@@ -25,16 +26,28 @@ COPY kissj-app/src /var/www/html/src
 COPY kissj-app/adminer /var/www/html/adminer
 COPY kissj-app/public /var/www/html/public
 
-# Allow environment variable access
-RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.conf
-RUN echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.conf
-
-
-
 #Create dummy .env
 RUN touch /var/www/html/.env
 
+#create prod config
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+#increse memory limit
+RUN sed -i '/memory_limit/ s/128/512/' /usr/local/etc/php/php.ini
+
+#change variable ordeiring at startup
+RUN sed -i '/variables_order/ s/"GPCS"/"EGPCS"/' /usr/local/etc/php/php.ini
+
+#allow env variable access
+RUN sed -i 's\;clear_env = no\clear_env = no\' /usr/local/etc/php-fpm.d/www.conf
+
+#export metrics
+RUN sed -i 's\;pm.status_path = /status\pm.status_path = /status\' /usr/local/etc/php-fpm.d/www.conf
+
+# increse max pool max_children
+RUN sed -i '/pm.max_children/ s/5/20/' /usr/local/etc/php/php.ini
+
+#install deps
 RUN composer install --working-dir=/var/www/html --no-dev --no-interaction 
 
-
-RUN chown -R www-data:www-data /var/www/html 
+RUN chown -R www-data:www-data /var/www/html

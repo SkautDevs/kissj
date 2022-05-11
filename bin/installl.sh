@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-composer install
+composer install --no-interaction
 
-composer phinx:migrate
+composer phinx:migrate --no-interaction
