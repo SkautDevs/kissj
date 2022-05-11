@@ -36,11 +36,14 @@ jobs:
       env:
         COMPOSER_ALLOW_SUPERUSER: 1
 
-    - name: Upload workdir
+    - name: Create tarball
+      run: tar -czpf /tmp/workdir.tgz . 
+    
+    - name: Upload workdir tarball
       uses: actions/upload-artifact@v3
       with:
         name: workdir
-        path: .
+        path: /tmp/workdir.tgz
 
 
   stan:
@@ -55,6 +58,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: workdir
+          path: .
+
+      - name: Unpack workdir tarball 
+        run: tar -xzf workdir.tgz 
 
       - name: stan
         run: composer run-script stan --no-interaction
@@ -73,6 +80,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: workdir
+          path: .
+          
+      - name: Unpack workdir tarball 
+        run: tar -xzf workdir.tgz 
 
       - name: Test 
         run: composer run-script unit --no-interaction
@@ -90,6 +101,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: workdir
+          path: .
+          
+      - name: Unpack workdir tarball 
+        run: tar -xzf workdir.tgz 
 
       - name: cs 
         run: composer run-script cs --no-interaction
