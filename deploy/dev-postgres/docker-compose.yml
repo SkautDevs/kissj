@@ -5,7 +5,7 @@ services:
 
     #database
     postgresql:
-        image: postgres:alpine
+        image: postgres:11-alpine
         volumes:
             - db-data:/var/lib/postgresql/data
         ports:
@@ -18,7 +18,7 @@ services:
 
     #php-fpm
     php-fpm:
-        image: localhost/kissj-php
+        image: quay.io/kissj/php
         depends_on:
             - postgresql
         links:
