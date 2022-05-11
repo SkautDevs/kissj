@@ -1,0 +1,59 @@
+FROM registry.access.redhat.com/ubi9-beta/ubi:latest
+LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
+
+
+WORKDIR /var/www/html
+
+#enable needed epel & remi repos
+RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y 
+#enable php81 module and install php
+RUN dnf module enable php:remi-8.1 -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo vim procps-ng -y
+
+#copy app
+COPY ../../../composer.json /var/www/html/composer.json
+COPY ../../../composer.lock /var/www/html/composer.lock
+COPY ../../../src /var/www/html/src
+COPY ../../../adminer /var/www/html/adminer
+COPY ../../../public /var/www/html/public
+
+#configure php-fpm
+RUN sed -i 's\listen = /run/php-fpm/www.sock\listen = '9000'\g' /etc/php-fpm.d/www.conf
+RUN sed -i '/pid/d' /etc/php-fpm.conf 
+RUN sed -i '/listen.allowed_clients/d' /etc/php-fpm.d/www.conf 
+
+RUN useradd www-data -s /sbin/nologin -d /var/www/html
+
+RUN sed -i 's\user = apache\user = www-data\g' /etc/php-fpm.d/www.conf
+RUN sed -i 's\group = apache\group = www-data\g' /etc/php-fpm.d/www.conf
+
+
+#Create dummy .env
+RUN touch /var/www/html/.env
+
+
+#increse memory limit
+RUN sed -i '/memory_limit/ s/128/512/' /etc/php.ini
+
+#change variable ordeiring at startup
+RUN sed -i '/variables_order/ s/"GPCS"/"EGPCS"/' /etc/php.ini
+
+#allow env variable access
+RUN sed -i 's\;clear_env = no\clear_env = no\' /etc/php-fpm.d/www.conf
+
+#export metrics
+RUN sed -i 's\;pm.status_path = /status\pm.status_path = /status\' /etc/php-fpm.d/www.conf
+
+# increse max pool max_children
+RUN sed -i '/pm.max_children/ s/5/20/' /etc/php.ini
+
+#install deps
+RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3
+
+
+RUN chown -R www-data:www-data /var/www/html 
+
+
+STOPSIGNAL SIGQUIT
+EXPOSE 9000
+CMD ["php-fpm", "-F"]

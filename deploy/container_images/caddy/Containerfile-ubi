@@ -1,0 +1,25 @@
+FROM registry.access.redhat.com/ubi9-beta/ubi:latest
+
+LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
+
+WORKDIR /var/www/html
+RUN dnf copr enable @caddy/caddy epel-9-$(arch) -y
+RUN dnf install caddy -y 
+
+#Caddy Config
+COPY ./deploy/container_images/caddy/Caddyfile /etc/caddy/Caddyfile
+
+# Copy public folder which is needed for routing and static files
+COPY ./public /var/www/html/public
+
+#Create dummy .env
+RUN touch /var/www/html/.env
+
+STOPSIGNAL SIGQUIT
+
+EXPOSE 80
+EXPOSE 443
+EXPOSE 8000
+EXPOSE 9253
+
+ CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
