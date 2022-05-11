@@ -1,0 +1,97 @@
+name: Kissj Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  deps:
+    name: Install & Cache Dependencies
+
+    runs-on: ubuntu-latest
+    #container: docker.io/composer/composer:2.2.12
+    container: quay.io/kissj/php
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict --no-interaction
+      env:
+        COMPOSER_ALLOW_SUPERUSER: 1
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+      
+    - name: Install Dependencies
+      run: composer install --no-interaction
+      env:
+        COMPOSER_ALLOW_SUPERUSER: 1
+
+    - name: Upload workdir
+      uses: actions/upload-artifact@v3
+      with:
+        name: workdir
+        path: .
+
+
+  stan:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    #container: docker.io/composer/composer:2.2.12
+    container: quay.io/kissj/php
+    needs: deps
+    steps:
+
+      - name: Download workdir
+        uses: actions/download-artifact@v3
+        with:
+          name: workdir
+
+      - name: stan
+        run: composer run-script stan --no-interaction
+        env:
+          COMPOSER_ALLOW_SUPERUSER: 1
+ 
+
+  unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    container: quay.io/kissj/php
+    needs: deps
+    steps:
+
+      - name: Download workdir
+        uses: actions/download-artifact@v3
+        with:
+          name: workdir
+
+      - name: Test 
+        run: composer run-script unit --no-interaction
+        env:
+          COMPOSER_ALLOW_SUPERUSER: 1
+
+  cs: 
+    name: CodeSniffer 
+    runs-on: ubuntu-latest
+    container: quay.io/kissj/php
+    needs: deps
+    steps:
+
+      - name: Download workdir
+        uses: actions/download-artifact@v3
+        with:
+          name: workdir
+
+      - name: cs 
+        run: composer run-script cs --no-interaction
+        env:
+          COMPOSER_ALLOW_SUPERUSER: 1 
