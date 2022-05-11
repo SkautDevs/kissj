@@ -11,8 +11,7 @@ jobs:
     name: Install & Cache Dependencies
 
     runs-on: ubuntu-latest
-    #container: docker.io/composer/composer:2.2.12
-    container: quay.io/kissj/php
+    container: docker.io/composer/composer:2.2.12
 
     steps:
     - uses: actions/checkout@v3
@@ -36,7 +35,7 @@ jobs:
       env:
         COMPOSER_ALLOW_SUPERUSER: 1
 
-    - name: Create tarball
+    - name: Create workdir tarball
       run: tar -czpf /tmp/workdir.tgz . 
     
     - name: Upload workdir tarball
@@ -49,12 +48,11 @@ jobs:
   stan:
     name: Static Analysis
     runs-on: ubuntu-latest
-    #container: docker.io/composer/composer:2.2.12
-    container: quay.io/kissj/php
+    container: docker.io/composer/composer:2.2.12
     needs: deps
     steps:
 
-      - name: Download workdir
+      - name: Download workdir tarball
         uses: actions/download-artifact@v3
         with:
           name: workdir
@@ -72,11 +70,11 @@ jobs:
   unit:
     name: Unit Tests
     runs-on: ubuntu-latest
-    container: quay.io/kissj/php
+    container: docker.io/composer/composer:2.2.12
     needs: deps
     steps:
 
-      - name: Download workdir
+      - name: Download workdir tarball
         uses: actions/download-artifact@v3
         with:
           name: workdir
@@ -90,23 +88,23 @@ jobs:
         env:
           COMPOSER_ALLOW_SUPERUSER: 1
 
-  cs: 
-    name: CodeSniffer 
-    runs-on: ubuntu-latest
-    container: quay.io/kissj/php
-    needs: deps
-    steps:
-
-      - name: Download workdir
-        uses: actions/download-artifact@v3
-        with:
-          name: workdir
-          path: .
-          
-      - name: Unpack workdir tarball 
-        run: tar -xzf workdir.tgz 
-
-      - name: cs 
-        run: composer run-script cs --no-interaction
-        env:
-          COMPOSER_ALLOW_SUPERUSER: 1 
+#  cs: 
+#    name: CodeSniffer 
+#    runs-on: ubuntu-latest
+#    container: docker.io/composer/composer:2.2.12
+#    needs: deps
+#    steps:
+#
+#      - name: Download workdir tarball
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: workdir
+#          path: .
+#          
+#      - name: Unpack workdir tarball 
+#        run: tar -xzf workdir.tgz 
+#
+#      - name: cs 
+#        run: composer run-script cs --no-interaction
+#        env:
+#          COMPOSER_ALLOW_SUPERUSER: 1 
