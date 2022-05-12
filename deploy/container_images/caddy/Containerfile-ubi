@@ -1,9 +1,9 @@
-FROM registry.access.redhat.com/ubi9-beta/ubi:latest
+FROM registry.access.redhat.com/ubi8/ubi:latest
 
 LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
 
 WORKDIR /var/www/html
-RUN dnf copr enable @caddy/caddy epel-9-$(arch) -y
+RUN dnf copr enable @caddy/caddy epel-8-$(arch) -y
 RUN dnf install caddy -y 
 
 #Caddy Config

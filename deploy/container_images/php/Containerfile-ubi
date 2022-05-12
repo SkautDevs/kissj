@@ -1,11 +1,11 @@
-FROM registry.access.redhat.com/ubi9-beta/ubi:latest
+FROM registry.access.redhat.com/ubi8/ubi:latest
 LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
 
 
 WORKDIR /var/www/html
 
 #enable needed epel & remi repos
-RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y 
+RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y 
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.1 -y
 RUN dnf install php-fpm php-cli composer php-pgsql php-pdo -y
