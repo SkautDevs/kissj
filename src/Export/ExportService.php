@@ -185,9 +185,10 @@ class ExportService
             'registrationPayDate',
             'patrolLeaderId_patrolParticipantId', // 30
             'patrolName',
+            'patrolParticipantCount',
             'istSkills',
             'istPreferredPosition',
-            'driverLicense',
+            'driverLicense', // 35
         ];
 
         foreach ($participants as $participant) {
@@ -195,14 +196,17 @@ class ExportService
                 $pPart = [
                     (string)$participant->id,
                     $participant->patrolName ?? '',
+                    (string)$participant->getPatrolParticipantsCount(),
                 ];
             } elseif ($participant instanceof PatrolParticipant) {
                 $pPart = [
                     (string)$participant->patrolLeader->id,
                     $participant->patrolLeader->patrolName ?? '',
+                    '',
                 ];
             } else {
                 $pPart = [
+                    '',
                     '',
                     '',
                 ];
