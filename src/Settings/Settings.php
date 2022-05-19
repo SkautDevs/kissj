@@ -6,7 +6,6 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
-use Dotenv\Exception\ValidationException;
 use kissj\FileHandler\FileHandler;
 use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
@@ -31,9 +30,9 @@ use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
-use Sentry\ClientInterface;
 use Sentry\Event as SentryEvent;
 use Sentry\Monolog\Handler as SentryHandler;
+use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
@@ -64,6 +63,27 @@ class Settings
         $dotenv->load();
         $this->validateAllSettings($dotenv);
 
+        // init every time for capturing performance
+        $sentryClient = ClientBuilder::create([
+            'dsn' => $_ENV['SENTRY_DSN'],
+            'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
+            'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
+            'before_send' => function (SentryEvent $event): ?SentryEvent {
+                // Check if error is from middleware exception capturer
+                // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
+                if ($event->getLogger() === "monolog.KISSJ"
+                    && str_contains($event->getMessage() ?? '', 'Exception!')) {
+                    return null;
+                }
+
+                return $event;
+            },
+        ])->getClient();
+        SentrySdk::init()->bindClient($sentryClient);
+
+        $sentryHub = new SentryHub($sentryClient);
+        SentrySdk::setCurrentHub($sentryHub);
+
         $container = [];
         $container[Connection::class] = function (): Connection {
             return match ($_ENV['DB_TYPE']) {
@@ -91,25 +111,8 @@ class Settings
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
 
-        $container[SentryClient::class] = function (): ClientInterface {
-            return ClientBuilder::create([
-                'dsn' => $_ENV['SENTRY_DSN'],
-                'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
-                'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
-                'before_send' => function (SentryEvent $event): ?SentryEvent {
-                    // Check if error is from middleware exception capturer
-                    // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
-                    if ($event->getLogger() === "monolog.KISSJ"
-                        && str_contains($event->getMessage() ?? '', 'Exception!')) {
-                        return null;
-                    }
-
-                    return $event;
-                },
-            ])->getClient();
-        };
-
-        $container[SentryHub::class] = fn (SentryClient $sentryClient): SentryHub => new SentryHub($sentryClient);
+        $container[SentryClient::class] = $sentryClient;
+        $container[SentryHub::class] = $sentryHub;
 
         $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
             $logger = new Logger($_ENV['APP_NAME']);
