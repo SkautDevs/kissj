@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Payment;
 
-use DateInterval;
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
@@ -28,32 +27,25 @@ class Payment extends EntityDatetime
     public const STATUS_PAID = 'paid';
     public const STATUS_CANCELED = 'canceled';
 
-    public function getElapsedPaymentDays(): int
+    public function getRemainingDays(): int
     {
-        /** @var \DateTimeInterface $createdAt */
-        $createdAt = $this->createdAt;
+        $now = new \DateTimeImmutable();
+        $daysDiff = ($now)->diff($this->due, false)->days;
 
-        $days = $createdAt->diff(new \DateTime('now'))->days;
-        if ($days === false) {
-            throw new \RuntimeException('days difference is returning false');
+        if ($daysDiff === false) {
+            throw new \RuntimeException('DateTime diff returns false');
         }
 
-        return $days;
+        if ($now > $this->due) {
+            return -$daysDiff;
+        }
+
+        return $daysDiff;
     }
-
-    public function getMaxElapsedPaymentDays(): int
+    
+    public function isPaymentOverdue(): bool
     {
-        return 14; // TODO move into db
-    }
-
-    public function getPaymentUntil(): \DateTimeInterface
-    {
-        $dateInterval = new DateInterval('P'.$this->getMaxElapsedPaymentDays().'D');
-
-        /** @var \DateTime $createdAt */
-        $createdAt = $this->createdAt;
-
-        return $createdAt->add($dateInterval);
+        return $this->getRemainingDays() < 0;
     }
 
     public function getQrPaymentString(): string

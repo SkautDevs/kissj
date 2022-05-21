@@ -34,7 +34,6 @@ use kissj\Orm\EntityDatetime;
  * @property bool              $automaticPaymentPairing
  * @property int|null          $bankId currently not in use
  * @property string|null       $bankApiKey
- * @property int               $maxElapsedPaymentDays
  * @property int               $defaultPrice
  * @property string            $currency
  *

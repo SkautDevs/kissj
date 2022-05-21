@@ -47,7 +47,7 @@ class PaymentService
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         $payment->iban = $event->iban;
-        $payment->due = new \DateTimeImmutable('now + ' . $payment->getMaxElapsedPaymentDays() . 'days');
+        $payment->due = $event->getEventType()->calculatePaymentDueDate(new \DateTimeImmutable('now'));
         if ($participant instanceof PatrolLeader) {
             $payment->note = $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
         } else {

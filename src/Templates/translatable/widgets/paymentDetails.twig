@@ -11,10 +11,8 @@
     <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
         {% trans %}payments-admin.status{% endtrans %}: <b>{{ payment.status }}</b><br/>
         {% trans %}payments-admin.paymentWas{% endtrans %}: <b>{{ payment.createdAt.format('d. m. Y') }}</b>
-        (<b><span class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }} {# TODO refactor #}
-        </b> {% trans %}payments-admin.days{% endtrans %})
-        <br/>
+        (<span class="{% if payment.isPaymentOverdue %}overdue{% endif %}"><b>{{ payment.getRemainingDays|abs }}</b>
+            {% if payment.isPaymentOverdue %}{% trans %}payments-admin.daysAfterDeadline{% endtrans %}{% else %}{% trans %}payments-admin.daysBeforeDeadline{% endtrans %}{% endif %}</span>)<br/>
         {% trans %}payments-admin.variableSymbol{% endtrans %}: <b>{{ payment.variableSymbol }}</b><br/>
         {% trans %}payments-admin.amount{% endtrans %}: <b> {{ payment.price }} {{ payment.currency }}</b><br/>
         {% trans %}payments-admin.note{% endtrans %}: <b>{{ payment.note }}</b><br/>

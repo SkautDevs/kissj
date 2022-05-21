@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType;
 
+use DateInterval;
+use DateTimeImmutable;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
@@ -34,7 +36,7 @@ abstract class EventType
             TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
             Ist::class => $event->maximalClosedIstsCount ?? 0,
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
-            default => throw new \RuntimeException('Unexpected participent class: ' . get_class($participant)),
+            default => throw new \RuntimeException('Unexpected participant class: ' . get_class($participant)),
         };
     }
 
@@ -135,7 +137,7 @@ abstract class EventType
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getContingents(): array
     {
@@ -150,5 +152,10 @@ abstract class EventType
     public function showParticipantInfoInMail(): bool
     {
         return false;
+    }
+
+    public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
+    {
+        return $dateFrom->add(DateInterval::createFromDateString('14 days'));
     }
 }

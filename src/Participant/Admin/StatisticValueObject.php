@@ -40,7 +40,7 @@ class StatisticValueObject
 
                     foreach ($participant->getPayments() as $payment) {
                         if ($payment->status !== Payment::STATUS_CANCELED &&
-                            $payment->getElapsedPaymentDays() > $payment->getMaxElapsedPaymentDays()
+                            $payment->isPaymentOverdue()
                         ) {
                             $this->afterPayment++;
                             // only one waiting payment is sufficient
