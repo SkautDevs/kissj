@@ -211,6 +211,7 @@ email:
         amount: "Suma"
         variableSymbol: "Variabilný symbol"
         paymentNote: "Poznámka"
+        qrCode: "QR platba"
     cancel-payment:
         subject: "platba zrušena"
         denied: "Bohužiaľ, Tvoja platba za %event.getReadableName% bola zamietnutá"

@@ -12,7 +12,7 @@
         {% trans %}payments-admin.status{% endtrans %}: <b>{{ payment.status }}</b><br/>
         {% trans %}payments-admin.paymentWas{% endtrans %}: <b>{{ payment.createdAt.format('d. m. Y') }}</b>
         (<b><span class="{% if payment.getElapsedPaymentDays > payment.getMaxElapsedPaymentDays %}
-                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }}
+                            overdue{% endif %}">{{ payment.getElapsedPaymentDays }} {# TODO refactor #}
         </b> {% trans %}payments-admin.days{% endtrans %})
         <br/>
         {% trans %}payments-admin.variableSymbol{% endtrans %}: <b>{{ payment.variableSymbol }}</b><br/>

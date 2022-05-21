@@ -6,6 +6,7 @@ namespace kissj\Mailer;
 
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
+use kissj\Payment\QrCodeService;
 use kissj\User\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -17,6 +18,7 @@ class PhpMailerWrapper
     public function __construct(
         private Twig $renderer,
         private MailerSettings $settings,
+        private QrCodeService $qrCodeService,
         private TranslatorInterface $translator,
     ) {
     }
@@ -63,6 +65,9 @@ class PhpMailerWrapper
                 'event' => $user->event,
                 'participant' => $participant,
                 'payment' => $payment,
+                'base64qr' => $this->qrCodeService->generateQrBase64FromString(
+                    $payment->getQrPaymentString()
+                ),
             ]
         );
     }

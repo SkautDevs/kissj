@@ -2,23 +2,23 @@ FROM php:8.0-apache
 
 # Preparation for apt
 RUN set -ex
-RUN apt-get update
-
-# Tools installation
-RUN apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
 	sqlite3 \
 	curl \
 	nano \
 	git \
-	zip
-
-# Preparation for postgress
-RUN apt-get install -y \
-    libpq-dev
+	zip \
+    libpq-dev \
+    zlib1g-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev
 
 RUN docker-php-ext-install \
-  pcntl \ 
-  pdo \ 
+  gd \
+  pcntl \
+  pdo \
   pdo_pgsql \
   pgsql
   

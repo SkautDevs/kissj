@@ -211,6 +211,7 @@ email:
         amount: "Cena"
         variableSymbol: "Variabilní symbol"
         paymentNote: "Zpráva pro příjemce"
+        qrCode: "QR platba"
     cancel-payment:
         subject: "platba zrušena"
         denied: "bohužel tvá platba pro %event.getReadableName% byla stornována"

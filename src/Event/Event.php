@@ -29,6 +29,7 @@ use kissj\Orm\EntityDatetime;
  * @property bool              $testingSite
  *
  * @property string            $accountNumber with bank code after slash
+ * @property string            $iban
  * @property int               $prefixVariableSymbol // TODO add null
  * @property bool              $automaticPaymentPairing
  * @property int|null          $bankId currently not in use

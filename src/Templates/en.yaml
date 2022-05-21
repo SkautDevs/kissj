@@ -211,6 +211,7 @@ email:
         amount: "Amount"
         variableSymbol: "Variable symbol"
         paymentNote: "Note"
+        qrCode: "QR payment"
     cancel-payment:
         subject: "payment cancelled"
         denied: "Unfortunately, your payment for %event.getReadableName% was denied"

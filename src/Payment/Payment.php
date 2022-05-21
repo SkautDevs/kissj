@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace kissj\Payment;
 
 use DateInterval;
+use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
 
 /**
- * @property int         $id
- * @property string      $variableSymbol
- * @property string      $price
- * @property string      $currency
- * @property string      $status
- * @property string      $purpose
- * @property string      $accountNumber
- * @property string      $note
- * @property Participant $participant m:hasOne
+ * @property int               $id
+ * @property string            $variableSymbol
+ * @property string            $price
+ * @property string            $currency
+ * @property string            $status
+ * @property string            $purpose
+ * @property string            $accountNumber
+ * @property string            $iban
+ * @property DateTimeInterface $due m:passThru(dateFromString|dateToString)
+ * @property string            $note
+ * @property Participant       $participant m:hasOne
  */
 class Payment extends EntityDatetime
 {
@@ -51,6 +54,17 @@ class Payment extends EntityDatetime
         $createdAt = $this->createdAt;
 
         return $createdAt->add($dateInterval);
+    }
+
+    public function getQrPaymentString(): string
+    {
+        return
+            'SPD*1.0*ACC:' . $this->iban . '*'
+            . 'AM:' . $this->price . '*'
+            . 'CC:' . 'CZK' . '*' // TODO change into $payment->currency
+            . 'DT:' . $this->due->format('Ymd') . '*'
+            . 'MSG:' . $this->note . '*'
+            . 'X-VS:' . $this->variableSymbol;
     }
 }
 
