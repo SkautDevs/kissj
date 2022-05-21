@@ -166,6 +166,14 @@ class Participant extends EntityDatetime
             && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
     }
 
+    public function getQrParticipantInfoString(): string
+    {
+        return $this->id . '|'
+            . $this->getUserButNotNull()->event->readableName . '|'
+            . $this->getFullName() . '|'
+            . $this->email;
+    }
+
     /**
      * @return string[]
      */

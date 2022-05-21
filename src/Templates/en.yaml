@@ -223,6 +223,7 @@ email:
         subject: "payment successful"
         received: "We have received your payment for"
         thanks: ". Thank you!"
+        qrInfo: "Here is QR code, which organisers shall need during your event access:"
         enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
     finished:
         subject: "approved"

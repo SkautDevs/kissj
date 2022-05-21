@@ -146,4 +146,9 @@ abstract class EventType
     {
         return false;
     }
+    
+    public function showParticipantInfoInMail(): bool
+    {
+        return false;
+    }
 }

@@ -29,7 +29,9 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.login-token.subject'),
             'login-token',
-            ['link' => $link, 'event' => $user->event],
+            [
+                'link' => $link,
+            ],
         );
     }
 
@@ -50,7 +52,9 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.denial.subject'),
             'denial',
-            ['reason' => $reason, 'event' => $user->event],
+            [
+                'reason' => $reason,
+            ],
         );
     }
 
@@ -62,7 +66,6 @@ class PhpMailerWrapper
             $this->translator->trans('email.payment-info.subject'),
             'payment-info',
             [
-                'event' => $user->event,
                 'participant' => $participant,
                 'payment' => $payment,
                 'base64qr' => $this->qrCodeService->generateQrBase64FromString(
@@ -79,7 +82,7 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
             'payment-info-contingents',
-            ['event' => $user->event],
+            [],
         );
     }
 
@@ -90,7 +93,9 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.cancel-payment.subject'),
             'cancel-payment',
-            ['reason' => $reason, 'event' => $user->event],
+            [
+                'reason' => $reason,
+            ],
         );
     }
 
@@ -101,7 +106,11 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
-            ['event' => $user->event],
+            [
+                'base64qr' => $this->qrCodeService->generateQrBase64FromString(
+                    $participant->getQrParticipantInfoString(),
+                ),
+            ],
         );
     }
 
@@ -112,7 +121,9 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.finished.subject'),
             'finished',
-            ['event' => $user->event, 'participant' => $participant],
+            [
+                'participant' => $participant,
+            ],
         );
     }
 
@@ -133,7 +144,9 @@ class PhpMailerWrapper
             $user->email,
             'platba neobdržena -> registrace zrušena', // TODO make translatable
             'cancel-payment',
-            ['reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení', 'event' => $user->event],
+            [
+                'reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení',
+            ],
         );
     }
 

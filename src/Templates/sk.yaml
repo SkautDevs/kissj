@@ -223,6 +223,7 @@ email:
         subject: "platba obdržena"
         received: "Obdržali sme Tvoju platbu na"
         thanks: ". Vďaka!"
+        qrInfo: "Tady je QR kód, který budou chtít organizátoři při vstupu na akci:"
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
     finished:
         subject: "schváleno"

@@ -4,6 +4,11 @@
     <div class="text-center">
         <p>{% trans %}email.payment-successful.received{% endtrans %} {{ event.readableName }}{% trans %}email.payment-successful.thanks{% endtrans %}</p>
 
+        {% if event.getEventType.showParticipantInfoInMail %}
+            <p>{% trans %}email.payment-successful.qrInfo{% endtrans %}</p>
+            <img src="{{ base64qr }}" alt="QR participant info"/>
+        {% endif %}
+
         <p>{% trans %}email.payment-successful.enjoy{% endtrans %}</p>
     </div>
 {% endblock %}
