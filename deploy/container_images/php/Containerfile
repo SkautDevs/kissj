@@ -11,13 +11,21 @@ RUN apt update && apt install -y \
     zip \
     tzdata \
     libpq-dev \
+    zlib1g-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     vim
 
 RUN apt-get clean
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 
-RUN docker-php-ext-install pdo pdo_pgsql pgsql
+RUN docker-php-ext-install \
+    gd \
+    pdo \
+    pdo_pgsql \
+    pgsql
 
 
 COPY kissj-app/composer.json /var/www/html/composer.json

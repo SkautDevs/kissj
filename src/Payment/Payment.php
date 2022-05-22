@@ -42,7 +42,7 @@ class Payment extends EntityDatetime
 
         return $daysDiff;
     }
-    
+
     public function isPaymentOverdue(): bool
     {
         return $this->getRemainingDays() < 0;
