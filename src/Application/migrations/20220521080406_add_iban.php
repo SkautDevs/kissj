@@ -15,14 +15,9 @@ final class AddIban extends AbstractMigration
 
         $payment = $this->table('payment');
         $payment
-            ->addColumn('iban', 'string', ['null' => false])
+            ->addColumn('iban', 'string', ['null' => false, 'default' => '',])
             ->addColumn('due', 'datetime', ['default' => 'NOW()', 'null' => false])
             ->save();
-
-        $this->execute('
-            UPDATE public.payment
-            SET due = created_at + INTERVAL \'14 days\';
-        ');
     }
 
     public function down(): void
