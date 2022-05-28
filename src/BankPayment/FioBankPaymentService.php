@@ -36,22 +36,27 @@ class FioBankPaymentService implements IBankPaymentService
 
     public function getAndSafeFreshPaymentsFromBank(Event $event): int
     {
-        // TODO deduplicate persisted and new ones, possibly by moveId
-        $this->setBreakpoint($event->bankBreakpoint, $event);
-        $event->bankBreakpoint = new \DateTimeImmutable();
-        $this->eventRepository->persist($event);
+        $now = new \DateTimeImmutable();
+
         /** @var Transaction[] $freshPayments */
-        $freshPayments = $this->fioBankReaderFactory->getFioRead($event)->lastDownload();
+        $freshPayments = $this->fioBankReaderFactory->getFioRead($event)->movements($event->bankBreakpoint, $now);
+
+        $this->setBreakpoint($event->bankBreakpoint, $event);
+        $event->bankBreakpoint = $now;
+        $this->eventRepository->persist($event);
+
+        $savedBankPaymentsCount = 0;
         foreach ($freshPayments as $freshPayment) {
             if ($freshPayment->volume > 0) { // get only incomes
                 $bankPayment = new BankPayment();
-                $bankPayment->mapTransactionInto($freshPayment, $event);
+                $bankPayment = $bankPayment->mapTransactionInto($freshPayment, $event);
                 // TODO optimalize
                 $this->bankPaymentRepository->persist($bankPayment);
+                $savedBankPaymentsCount++;
             }
         }
 
-        return count($freshPayments);
+        return $savedBankPaymentsCount;
     }
 
     public function setBankPaymentPaired(int $paymentId): BankPayment
