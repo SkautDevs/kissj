@@ -34,6 +34,7 @@ use kissj\Orm\EntityDatetime;
  * @property bool              $automaticPaymentPairing
  * @property int|null          $bankId currently not in use
  * @property string|null       $bankApiKey
+ * @property DateTimeImmutable $bankBreakpoint m:passThru(dateFromString|dateToString)
  * @property int               $defaultPrice
  * @property string            $currency
  *
