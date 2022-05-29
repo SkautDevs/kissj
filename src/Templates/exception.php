@@ -15,10 +15,9 @@
 		}
 		.error-container {
 			display: block;
-			margin: 0 auto;
-			max-width: 36rem;
-			margin-top: 18rem;
-		}
+            max-width: 36rem;
+            margin: 8rem auto 0;
+        }
 
 		.error-container > h1 {
 			text-align: center;
