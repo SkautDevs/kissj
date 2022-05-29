@@ -121,6 +121,8 @@ class PatrolService
     {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $user = $patrolLeader->getUserButNotNull();
+            $patrolLeader->registrationCloseDate = new \DateTimeImmutable();
+            $this->patrolLeaderRepository->persist($patrolLeader);
             $this->userService->closeRegistration($user);
             $this->mailer->sendRegistrationClosed($user);
         }
