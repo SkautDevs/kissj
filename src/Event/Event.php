@@ -10,7 +10,7 @@ use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeAqua;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Event\EventType\EventTypeDefault;
-use kissj\Event\EventType\EventTypeKorbo;
+use kissj\Event\EventType\Korbo\EventTypeKorbo;
 use kissj\Event\EventType\EventTypeMiquik;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\Nsj\EventTypeNsj;
