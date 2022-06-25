@@ -139,7 +139,8 @@ h2, h3 {
 .btn-mini {
 	display: inline-block;
 	font-size: inherit;
-	padding: 5px;
+	padding: 2px 6px;
+	margin: 1px 0;
 }
 
 .two-cards {

@@ -295,6 +295,7 @@ dashboard-admin:
     checkMovePayments: "Check payment move"
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
+    editParticipant: "Edit details"
 stats-admin:
     stats: "Statistics for event"
     numberPatrolParticipants: "Patrol participants in total"

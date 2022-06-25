@@ -11,3 +11,21 @@
 {% else %}
     - {{ person.user.email }}
 {% endif %}
+<a
+    href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': person.id}) }}"
+    class="btn btn-mini">
+    {% trans %}dashboard-admin.editParticipant{% endtrans %}
+</a>
+
+{# draw all patrol or troop participants on their separate rows #}
+{% if person is PatrolLeader %}
+    {% for patrolParticipant in person.patrolParticipants %}
+        <br/>{% include 'widgets/participantRow.twig' with {'person': patrolParticipant, 'ca': caPp} %}
+    {% endfor %}
+    <br/>
+{% endif %}{% if person is TroopLeader %}
+    {% for troopParticipant in person.troopParticipants %}
+        <br/>{% include 'widgets/participantRow.twig' with {'person': troopParticipant, 'ca': caTp} %}
+    {% endfor %}
+    <br/>
+{% endif %}

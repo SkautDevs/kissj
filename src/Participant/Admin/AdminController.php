@@ -484,4 +484,40 @@ class AdminController extends AbstractController
     {
         return new \Slim\Psr7\Response(); // TODO implement
     }
+
+    public function showParticipantDetails(Response $response, int $participantId, Event $event): Response
+    {
+        $participant = $this->participantRepository->get($participantId);
+        // TODO check if correct event
+
+        return $this->view->render(
+            $response,
+            'admin/changeParticipantDetails.twig',
+            [
+                'person' => $participant,
+                'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+                'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
+                'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
+            ],
+        );
+    }
+
+    public function changeParticipantDetails(Request $request, Response $response, int $participantId): Response
+    {
+        $participant = $this->participantRepository->get($participantId);
+
+        /** @var string[] $parsed */
+        $parsed = $request->getParsedBody();
+        $this->participantService->addParamsIntoParticipant($participant, $parsed);
+        $this->participantService->handleUploadedFiles($participant, $request);
+
+        $this->participantRepository->persist($participant);
+        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-stats',
+        );
+    }
 }

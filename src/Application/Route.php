@@ -158,6 +158,14 @@ class Route
                     $app->get('/showFile/{filename}', AdminController::class . '::showFile')
                         ->setName('admin-show-file');
 
+                    $app->group('/{participantId}', function (RouteCollectorProxy $app) {
+                        $app->get('/showDetails', AdminController::class . '::showParticipantDetails')
+                            ->setName('admin-show-participant-details-changeable');
+
+                        $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
+                            ->setName('admin-change-participant-details');
+                    });
+
                     $app->get('/showStats', AdminController::class . '::showStats')
                         ->setName('admin-show-stats');
 

@@ -295,6 +295,7 @@ dashboard-admin:
     checkMovePayments: "Zkontrolovat přesun platby"
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
+    editParticipant: "Editovat údaje"
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"

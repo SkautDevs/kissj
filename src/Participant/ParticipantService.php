@@ -343,7 +343,7 @@ class ParticipantService
         return $participant;
     }
 
-    private function getContentArbiterForParticipant(
+    public function getContentArbiterForParticipant(
         Participant $participant,
     ): AbstractContentArbiter {
         $eventType = $participant->getUserButNotNull()->event->eventType;
