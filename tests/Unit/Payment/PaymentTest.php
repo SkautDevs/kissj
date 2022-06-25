@@ -35,7 +35,7 @@ class PaymentTest extends TestCase
         $examplePayment0->accountNumber = '';
         $examplePayment0->iban = 'CZ5608000000000002171532';
         $examplePayment0->due = new \DateTimeImmutable('2015-05-18');
-        $examplePayment0->note = 'Zpráva';
+        $examplePayment0->note = 'Zpráva ěščŘŽÝÁíé';
 
         $examplePayment1 = new Payment();
         $examplePayment1->variableSymbol = '1234567890';
@@ -49,9 +49,9 @@ class PaymentTest extends TestCase
         $examplePayment1->note = 'PLATBA ZA ZBOZI';
 
         return [
-            'examplePayment #0' => [
+            'examplePayment with diacritic' => [
                 $examplePayment0,
-                'SPD*1.0*ACC:CZ5608000000000002171532*AM:999*CC:CZK*DT:20150518*MSG:Zpráva*X-VS:1212'
+                'SPD*1.0*ACC:CZ5608000000000002171532*AM:999*CC:CZK*DT:20150518*MSG:Zprava escRZYAie*X-VS:1212'
             ],
             'examplePayment' => [
                 $examplePayment1,
