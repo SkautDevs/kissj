@@ -4,8 +4,9 @@ platform: linux
 image_resource:
         type: registry-image
         source:
-          repository: composer
-          tag: 2.1.9
+          repository: quay.io/kissj/php
+          tag: latest
+    
           
     
 inputs:
