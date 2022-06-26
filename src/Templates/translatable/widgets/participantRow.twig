@@ -8,7 +8,7 @@
     - <b>{{ person.getContingent|trans }}</b>
 {% endif %}{% if ca.email %}
     - {{ person.getEmail }}
-{% else %}
+{% elseif person.getUser %}
     - {{ person.user.email }}
 {% endif %}
 <a
