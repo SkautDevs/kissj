@@ -10,7 +10,7 @@ use kissj\Orm\Repository;
 /**
  * @method BankPayment[] findAll()
  * @method BankPayment[] findBy(mixed[] $criteria, mixed[] $orderBy = [])
- * @method BankPayment|null findOneBy(mixed[] $criteria)
+ * @method BankPayment|null findOneBy(mixed[] $criteria, mixed[] $orderBy = [])
  * @method BankPayment getOneBy(mixed[] $criteria)
  */
 class BankPaymentRepository extends Repository
@@ -22,9 +22,7 @@ class BankPaymentRepository extends Repository
     public function getAllBankPaymentsOrdered(Event $event): array
     {
         return $this->findBy(
-            [
-                'event' => $event,
-            ],
+            ['event' => $event],
             ['id' => false],
         );
     }
@@ -43,5 +41,15 @@ class BankPaymentRepository extends Repository
             ],
             ['id' => false],
         );
+    }
+
+    public function getLastBankPaymentId(Event $event): ?string
+    {
+        $bankPayment = $this->findOneBy(
+            ['event' => $event],
+            ['bank_id' => false],
+        );
+
+        return $bankPayment?->bankId;
     }
 }

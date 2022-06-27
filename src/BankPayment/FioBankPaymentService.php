@@ -7,13 +7,11 @@ namespace kissj\BankPayment;
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use h4kuna\Fio\Response\Read\Transaction;
 use kissj\Event\Event;
-use kissj\Event\EventRepository;
 use Psr\Log\LoggerInterface;
 
 class FioBankPaymentService implements IBankPaymentService
 {
     public function __construct(
-        private EventRepository $eventRepository,
         private BankPaymentRepository $bankPaymentRepository,
         private FioBankReaderFactory $fioBankReaderFactory,
         private LoggerInterface $logger,
@@ -36,14 +34,14 @@ class FioBankPaymentService implements IBankPaymentService
 
     public function getAndSafeFreshPaymentsFromBank(Event $event): int
     {
-        $now = new \DateTimeImmutable();
+        $fioRead = $this->fioBankReaderFactory->getFioRead($event);
+        $lastBankPaymentId = $this->bankPaymentRepository->getLastBankPaymentId($event);
+        if ($lastBankPaymentId !== null) {
+            $fioRead->setLastId((int)$lastBankPaymentId);
+        }
 
         /** @var Transaction[] $freshPayments */
-        $freshPayments = $this->fioBankReaderFactory->getFioRead($event)->movements($event->bankBreakpoint, $now);
-
-        $this->setBreakpoint($event->bankBreakpoint, $event);
-        $event->bankBreakpoint = $now;
-        $this->eventRepository->persist($event);
+        $freshPayments = $fioRead->lastDownload();
 
         $savedBankPaymentsCount = 0;
         foreach ($freshPayments as $freshPayment) {
