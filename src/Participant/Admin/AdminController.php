@@ -513,6 +513,7 @@ class AdminController extends AbstractController
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
+        // TODO log participant edit
 
         return $this->redirect(
             $request,

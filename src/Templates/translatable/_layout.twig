@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ locale|default('cs') }}">
 
 <head>
     <meta charset="utf-8"/>
@@ -31,7 +31,7 @@
     {% endfor %}
     {% if user is not null %}
         | {{ user.email }}
-        <a class="" href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{% trans %}_layout.logOut{% endtrans %}</a>
+        | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{% trans %}_layout.logOut{% endtrans %}</a>
         {% set userStatus = user.status %}
     {% else %}
         {% set userStatus = "unregistred" %}
