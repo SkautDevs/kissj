@@ -13,7 +13,7 @@ userCustomHelp:
     statusClosed: "Tvá přihláška čeká na schválení. Dáme Ti vědět, až bude připravena, a následně Ti pošleme informace k platbě. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusClosedGuest: "Tvá přihláška čeká na schválení. Dáme Ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek."
-    statusPaid: "Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až Tě uvidíme na akci %event.getReadableName%!"
+    statusPaid: "Tvá přihláška je vyplněna, schválena a zaplacena! ;) Těšíme se až Tě uvidíme na Korbu!"
     statusPaidGuest: "Tvá přihláška je vyplněna a schválena! ;) Těšíme se až Tě uvidíme na akci %event.getReadableName%!"
 dashboard:
     personalInfo: "Osobní údaje"
@@ -103,7 +103,7 @@ detail:
     uploadedFileNote: "PDF s potvrzením najdeš na našem webu"
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
-    notice-placeholder: "Jméno a příjmení zletlého dozoru na akci"
+    notice-placeholder: "Jméno a příjmení zletilého dozoru na akci"
     skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position-title: "Preferovaná pozice"
@@ -194,7 +194,7 @@ email:
         buttonNotWorking: "Pokud přihlašovací tlačítko nefunguje nebo není vidět, zkopíruj a vlož tento odkaz do vyhledávacího řádku svého prohlížeče: "
     closed:
         subject: "uzamčeno"
-        successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
+        successfullySent: "Úspěšně jsi poslal/a svou přihlášku na KORBO 2022. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
     denial:
         subject: "odemknuto"
         denied: "bohužel jsme museli odemknout tvou přihlášku pro"
