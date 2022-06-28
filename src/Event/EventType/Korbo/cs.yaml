@@ -165,7 +165,7 @@ chooseRole:
     advicePlText: "je vedoucí skupiny účastníků. Účastníci se neregistrují samostatně, ale prostřednictvím svého patrol leadra. Ten je odpovědný za svoji patrolu v průběhu celé akce a také za ní jako celek platí registrační poplatek."
     adviceTlText: "je vedoucí skupiny účastníků. Účastníci se registrují samostatně. Patrol leader je odpovědný za svoji patrolu v průběhu celé akce. Registrační poplatek platí sám za sebe."
     adviceTpText: "jede na akci se svým vedoucím patroly. Registruje se samostatně a platí sám za sebe."
-    adviceIstText: "Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostaním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. "
+    adviceIstText: "Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. "
     adviceGuestText: "je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:"
 login:
     registrationFor: "Registrace pro "

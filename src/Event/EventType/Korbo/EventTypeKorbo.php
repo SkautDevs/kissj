@@ -14,7 +14,7 @@ class EventTypeKorbo extends EventType
 
     public function getPrice(Participant $participant): int
     {
-        $price = 500;
+        $price = 600;
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
         }
