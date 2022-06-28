@@ -22,5 +22,5 @@ spec:
     kind: Deployment
     name: {{ .Release.Name }}-php-fpm
   minReplicas: 2
-  maxReplicas: 10
+  maxReplicas: 20
   targetCPUUtilizationPercentage: 80

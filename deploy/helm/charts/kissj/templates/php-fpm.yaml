@@ -91,11 +91,11 @@ spec:
           protocol: TCP
         resources:
           requests:
+            memory: "256Mi"
+            cpu: "400m"
+          limits:
             memory: "512Mi"
             cpu: "600m"
-          limits:
-            memory: "1024Mi"
-            cpu: "700m"
         
         env:    
           - name: DB_TYPE
