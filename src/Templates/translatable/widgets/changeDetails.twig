@@ -166,7 +166,6 @@
             value="{{ personDetails.getTelephoneNumber }}"
             placeholder="digits including country dial-in code"
             pattern="^\+?[0-9 ]+$"
-            required="required"
         >
     </div>
 {% endif %}{% if ca.unit %}
@@ -394,7 +393,7 @@
 {% endif %}{% if ca.uploadFile %}
     <label class="form-group form-group-inline">{% trans %}detail.uploadFile{% endtrans %}: <input
                 class="form-control" type="file" name="uploadFile"
-                {% if not personDetails.getUploadedFilename %} required="required"{% endif %}>
+                {% if not personDetails.getUploadedFilename %} {% endif %}>
     </label>
         {% if personDetails.getUploadedOriginalFilename %}
             <b>{{ personDetails.getUploadedOriginalFilename }} {% trans%}detail.uploadedFileSuccessful{% endtrans %}</b>
