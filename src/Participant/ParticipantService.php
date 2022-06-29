@@ -198,7 +198,7 @@ class ParticipantService
             || ($ca->swimming && $p->swimming === null)
             || ($ca->arrivalDate && $p->arrivalDate === null)
             || ($ca->departureDate && $p->departureDate === null)
-            || ($ca->uploadFile && $p->uploadedFilename === null)
+            #|| ($ca->uploadFile && $p->uploadedFilename === null)
             || ($ca->skills && $p->skills === null)
             || ($ca->preferredPosition && $p->preferredPosition === null)
             || ($ca->driver && $p->driversLicense === null)
