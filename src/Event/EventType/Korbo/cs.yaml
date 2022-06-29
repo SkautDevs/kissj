@@ -100,7 +100,7 @@ detail:
     departureDate: "Datum odjezdu"
     uploadFile: "Souhlas rodičů v PDF"
     uploadedFileSuccessful: "soubor úspěšně nahraný!"
-    uploadedFileNote: "PDF s potvrzením najdeš na našem webu"
+    uploadedFileNote: "PDF s potvrzením najdeš na <a target=\"_blank\" href=\"https://drive.google.com/file/d/1xRpMx1YVaql8fpwnIzpl5sfRmE5vSOo2/view\">webu Korba</a>."
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
     notice-placeholder: "Jméno a příjmení zletlého dozoru na akci"
