@@ -103,7 +103,7 @@ detail:
     uploadedFileNote: "PDF s potvrzením najdeš na <a target=\"_blank\" href=\"https://drive.google.com/file/d/1xRpMx1YVaql8fpwnIzpl5sfRmE5vSOo2/view\">webu Korba</a>."
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
-    notice-placeholder: "Jméno a příjmení zletlého dozoru na akci"
+    notice-placeholder: "Telefonní číslo zákonného zástupce pokud je ti méně než 18 let"
     skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position-title: "Preferovaná pozice"
