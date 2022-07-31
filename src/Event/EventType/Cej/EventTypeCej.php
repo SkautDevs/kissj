@@ -138,7 +138,7 @@ class EventTypeCej extends EventType
             'detail.foodLactoseAndGlutenFree',
             'detail.foodLactoseFreeVegetarian',
             'detail.foodKosher',
-            'detaiů.foodHalal',
+            'detail.foodHalal',
         ];
     }
 
