@@ -180,15 +180,16 @@ class ExportService
             'departureDate',
             'uploadedOriginalFilename', // 25
             'notes',
+            'updatedAt',
             'registrationCloseDate',
             'registrationApproveDate',
-            'registrationPayDate',
-            'patrolLeaderId_patrolParticipantId', // 30
+            'registrationPayDate', // 30
+            'patrolLeaderId_patrolParticipantId',
             'patrolName',
             'patrolParticipantCount',
             'istSkills',
-            'istPreferredPosition',
-            'driverLicense', // 35
+            'istPreferredPosition', // 35
+            'driverLicense',
         ];
 
         foreach ($participants as $participant) {
@@ -256,6 +257,7 @@ class ExportService
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '', // 25
                     $participant->notes ?? '',
+                    $participant->updatedAt->format('d. m. Y H:i:s'),
                     $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
