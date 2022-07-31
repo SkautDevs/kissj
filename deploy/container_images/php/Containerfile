@@ -53,7 +53,7 @@ RUN sed -i 's\;clear_env = no\clear_env = no\' /usr/local/etc/php-fpm.d/www.conf
 RUN sed -i 's\;pm.status_path = /status\pm.status_path = /status\' /usr/local/etc/php-fpm.d/www.conf
 
 # increse max pool max_children
-RUN sed -i '/pm.max_children/ s/5/20/' /usr/local/etc/php/php.ini
+RUN sed -i '/pm.max_children/ s/5/20/' /usr/local/etc/php-fpm.d/www.conf
 
 #install deps
 RUN composer install --working-dir=/var/www/html --no-dev --no-interaction 

@@ -1,0 +1,28 @@
+helm upgrade kissj /tmp/build/put/kissj-app/deploy/helm/charts/kissj \
+--install \
+--namespace=kissj-prod \
+--wait \
+--timeout=5m0s \
+--history-max=0 \
+--set postgres.incluster= \
+--set-string postgres.username=***HIDDEN*** \
+--set-string postgres.password=***HIDDEN*** \
+--set-string postgres.dbname=***HIDDEN*** \
+--set-string postgres.host=***HIDDEN*** \
+--set-string caddy.image.name=quay.io/kissj/caddy \
+--set-string caddy.image.tag=a150ada \
+--set-string php.image.name=quay.io/kissj/php \
+--set-string php.image.tag=a150ada \
+--set app.url=kissj.apps.sno.infra.int.kpml.net \
+--set app.adminer.username=***HIDDEN*** \
+--set app.adminer.password=***HIDDEN*** \
+--set app.s3.key=***HIDDEN*** \
+--set app.s3.secret=***HIDDEN*** \
+--set app.s3.region=***HIDDEN*** \
+--set app.s3.endpoint=***HIDDEN*** \
+--set app.s3.bucket=***HIDDEN*** \
+--set app.mail.server=***HIDDEN*** \
+--set app.mail.port=587 \
+--set app.mail.encryption=tls \
+--set app.mail.username=***HIDDEN*** \
+--set app.mail.password=***HIDDEN*** \
