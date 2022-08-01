@@ -10,6 +10,7 @@ detail:
     foodKosher: "kosher"
     foodHalal: "halal"
     foodMenu: "menu"
+    foodKosherPeanutAllergy: "kosher peanut allergy"
     countryPoland: "Poland"
     countryHungary: "Hungary"
     countryRomania: "Romania"
