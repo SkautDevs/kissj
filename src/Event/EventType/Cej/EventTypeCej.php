@@ -141,6 +141,7 @@ class EventTypeCej extends EventType
             'detail.foodHalal',
             'detail.foodMenu',
             'detail.foodKosherPeanutAllergy',
+            'detail.foodNoPorkVege',
         ];
     }
 

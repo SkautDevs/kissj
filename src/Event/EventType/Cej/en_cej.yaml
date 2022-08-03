@@ -11,6 +11,7 @@ detail:
     foodHalal: "halal"
     foodMenu: "menu"
     foodKosherPeanutAllergy: "kosher peanut allergy"
+    foodNoPorkVege: "no pork / vege"
     countryPoland: "Poland"
     countryHungary: "Hungary"
     countryRomania: "Romania"
