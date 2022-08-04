@@ -142,6 +142,7 @@ class EventTypeCej extends EventType
             'detail.foodMenu',
             'detail.foodKosherPeanutAllergy',
             'detail.foodNoPorkVege',
+            'detail.foodGlutenFreeVegetarian',
         ];
     }
 
