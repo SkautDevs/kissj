@@ -11,5 +11,5 @@
     <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
     <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
     <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
-    <img src="{{ base64qr }}" alt="QR payment code"/>
+    <img src="cid:qr_payment" alt="QR payment code"/>
 {% endblock %}
