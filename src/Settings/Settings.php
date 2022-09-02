@@ -232,7 +232,6 @@ class Settings
         $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
         $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(array_flip(Logger::getLevels()));
-        $dotenv->required('MAIL_DSN');
         $dotenv->required('MAIL_SMTP');
         $dotenv->required('MAIL_SMTP_SERVER');
         $dotenv->required('MAIL_SMTP_AUTH');
