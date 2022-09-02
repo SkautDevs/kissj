@@ -55,7 +55,6 @@ app:
     bucket: S3Bucket
 
   mail:
-    dsn: smtp://user:pass@smtp.example.com:port
     server: MailServer
     port: 587
     encryption: "tls" #ssl or tls

@@ -281,7 +281,3 @@ jobs:
       - key: app.sentry.dsn
         value: ((sentry.dsn))
         hide: true
-
-      - key: app.mail.dsn
-        value: ((mail.dsn))
-        hide: true
