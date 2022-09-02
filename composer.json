@@ -45,7 +45,6 @@
         "slim/psr7": "^1.1",
         "slim/slim": "^4",
         "slim/twig-view": "^3.1",
-        "symfony/mailer": "^6.0",
         "symfony/translation": "^5.0",
         "symfony/twig-bridge": "^5.1",
         "symfony/yaml": "^5.1",

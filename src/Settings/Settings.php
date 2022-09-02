@@ -142,7 +142,6 @@ class Settings
         $container[LoggerInterface::class] = get(Logger::class);
         $container[MailerSettings::class] = function (): MailerSettings {
             return new MailerSettings(
-                $_ENV['MAIL_DSN'],
                 $_ENV['MAIL_SMTP'],
                 $_ENV['MAIL_SMTP_SERVER'],
                 $_ENV['MAIL_SMTP_AUTH'],
@@ -186,10 +185,7 @@ class Settings
             FlashMessagesBySession $flashMessages
         ) {
             $view = Twig::create(
-                [
-                    __DIR__ . '/../Templates/translatable',
-                    __DIR__ . '/../../public',
-                ],
+                __DIR__ . '/../Templates/translatable',
                 [
                     // env. variables are parsed into strings
                     'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/twig' : false,

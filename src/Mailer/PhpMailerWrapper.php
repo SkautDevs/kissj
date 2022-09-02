@@ -8,15 +8,9 @@ use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Payment\QrCodeService;
 use kissj\User\User;
-use Psr\Log\LoggerInterface;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Mime\BodyRenderer;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Mailer\EventListener\MessageListener;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PhpMailerWrapper
@@ -26,7 +20,6 @@ class PhpMailerWrapper
         private MailerSettings $settings,
         private QrCodeService $qrCodeService,
         private TranslatorInterface $translator,
-        private LoggerInterface $logger,
     ) {
     }
 
@@ -67,18 +60,7 @@ class PhpMailerWrapper
 
     public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment): void
     {
-        $qrCode = fopen(
-            $this->qrCodeService->generateQrBase64FromString($payment->getQrPaymentString()),
-            'rb',
-        );
-        $embeds = [];
-        if ($qrCode !== false) {
-            $embeds = [
-                'qr_payment' => $qrCode,
-            ];
-        }
         $user = $participant->getUserButNotNull();
-
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
@@ -86,8 +68,10 @@ class PhpMailerWrapper
             [
                 'participant' => $participant,
                 'payment' => $payment,
-            ],
-            $embeds,
+                'base64qr' => $this->qrCodeService->generateQrBase64FromString(
+                    $payment->getQrPaymentString()
+                ),
+            ]
         );
     }
 
@@ -167,44 +151,73 @@ class PhpMailerWrapper
     }
 
     /**
-     * @param array<string, mixed>    $parameters
-     * @param array<string, resource> $embeds
-     * @param array<string, string>   $attachments
+     * @param string               $recipientEmail
+     * @param string               $subject
+     * @param string               $templateName
+     * @param array<string, mixed> $parameters
+     * @return void
      */
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,
         string $templateName,
-        array $parameters,
-        array $embeds = [],
-        array $attachments = [],
+        array $parameters
     ): void {
+        $messageBody = $this->renderer->fetch(
+            'emails/' . $templateName . '.twig',
+            array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]),
+        );
+        $mailer = new PHPMailer(true);
         $event = $this->settings->getEvent();
 
-        $email = new TemplatedEmail();
-        $email->from(new Address($event->emailFrom, $event->emailFromName));
-        if ($this->settings->sendMailToMainRecipient) {
-            $email->to(new Address($recipientEmail));
-        }
-        if ($event->emailBccFrom !== null) {
-            $email->bcc(new Address($event->emailBccFrom, $event->emailFromName));
-        }
-        $email->subject($event->readableName . ' - ' . $subject);
-        $email->htmlTemplate('emails/' . $templateName . '.twig');
-        $email->context(array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]));
-        array_map(fn(string $attachment) => $email->attach($attachment), $attachments);
-        foreach ($embeds as $name => $resource) {
-            $email->embed($resource, $name);
-        }
+        try {
+            // phpamiler echoing debug, content-length middleware addds length header,
+            // thus browser do not redirect, but shows content (debug) of that length
+            ob_start();
+            $mailer->SMTPDebug = (int)$this->settings->debugOutputLevel; // Enable debug output
+            if ($this->settings->smtp) {
+                $mailer->isSMTP();
+            } else {
+                $mailer->isMail();
+            }
+            if ($this->settings->disableTls) {
+                $mailer->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ];
+            }
+            $mailer->Host = $this->settings->smtpServer; // Specify main and backup SMTP servers
+            $mailer->Port = (int)$this->settings->smtpPort; // TCP port to connect to
+            $mailer->SMTPAuth = (bool)$this->settings->smtpAuth; // Enable SMTP authentication
+            $mailer->Username = $this->settings->smtpUsername; // SMTP username
+            $mailer->Password = $this->settings->smtpPassword; // SMTP password
+            $mailer->SMTPSecure = $this->settings->smtpSecure; // Enable TLS encryption, `ssl` or null also accepted
+            $mailer->CharSet = 'UTF-8';
 
-        $eventDispatcher = new EventDispatcher();
-        $eventDispatcher->addSubscriber(
-            new MessageListener(renderer: new BodyRenderer($this->renderer->getEnvironment())),
-        );
+            //Recipients
+            $mailer->setFrom($event->emailFrom, $event->emailFromName);
+            if ($event->emailBccFrom !== null) {
+                $mailer->addCC($event->emailBccFrom, $event->emailFromName);
+            }
 
-        $transport = Transport::fromDsn($this->settings->mailDsn, $eventDispatcher, logger: $this->logger);
-        $mailer = new Mailer($transport, dispatcher: $eventDispatcher);
+            if ($this->settings->sendMailToMainRecipient) {
+                $mailer->addAddress($recipientEmail);
+            }
 
-        $mailer->send($email);
+            // Content
+            $mailer->isHTML();
+            $mailer->Subject = $event->readableName . ' - ' . $subject;
+            $mailer->Body = $messageBody;
+            $mailer->AltBody = strip_tags($messageBody);
+
+            $mailer->send();
+        } catch (\Exception $e) {
+            throw new Exception('Error sending email', $e->getCode(), $e);
+        } finally {
+            ob_get_clean();
+        }
     }
 }
