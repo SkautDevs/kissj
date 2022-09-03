@@ -36,7 +36,7 @@ jobs:
       name: ${{ inputs.envName }}
       url: ${{ inputs.envUrl }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     - name: 'Deploy'
       uses: 'vimeda/helm@v1.6.8'
@@ -48,9 +48,35 @@ jobs:
         atomic: true
         token: '${{ github.token }}'
         secrets: |
-          postgres.password: ${{ secrets.TEST_SECRET }}
-          postgres.username: ${{ secrets.TEST_SECRET }}
+          {
+              "postgres": {
+                  "username": "${{ secrets.POSTGRES_USERNAME }}", 
+                  "password": "${{ secrets.POSTGRES_PASSWORD }}",
+                  "host": "${{ secrets.POSTGRES_HOST }}",
+                  "dbname": "${{ secrets.POSTGRES_DBNAME }}" 
+              }, 
+              "app": {
+                  "s3": {
+                      "endpoint": "${{ secrets.S3_ENDPOINT }}", 
+                      "region": "${{ secrets.S3_REGION }}",
+                      "bucket": "${{ secrets.S3_BUCKET }}",
+                      "key": "${{ secrets.S3_KEY }}" ,
+                      "secret": "${{ secrets.S3_SECRET }}" 
+                  }, 
+                  "mail": {
+                      "server": "${{ secrets.MAIL_SERVER }}",
+                      "port": "${{ secrets.MAIL_PORT }}",
+                      "username": "${{ secrets.MAIL_USERNAME }}",
+                      "password": "${{ secrets.MAIL_PASSWORD }}",
+                      "dsn": "${{ secrets.MAIL_DSN }}"
+                  }, 
 
+                  "sentry": {
+                      "dsn": "${{ secrets.SENTRY_DSN }}"
+                  }
+              }
+          }
+          
         values: |
           postgres:
             incluster: true
