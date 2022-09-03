@@ -28,14 +28,18 @@ jobs:
       envUrl: ${{ github.event.inputs.envUrl }}
 
   staging-build:
+    needs: staging-test
     uses: SkautDevs/kissj/.github/workflows/build.yaml@master
     with:
       envName: 'staging'
       envUrl: 'staging.kissj.net'
+
+    secrets:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 
 
   staging-deploy:
+    needs: staging-build
     uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
     with:
       envName: 'staging'

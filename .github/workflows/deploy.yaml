@@ -17,6 +17,7 @@ on:
 
 jobs:
   deploy-stage:
+    name: Deploy Staging to Kubernetes
     runs-on: 'ubuntu-latest'
     environment: 
       name: ${{ inputs.envName }}
