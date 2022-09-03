@@ -1,0 +1,39 @@
+# .github/workflows/deploy.yml
+name: Deploy to Kubernetes 
+on: 
+  workflow_call:
+    inputs:
+      envName:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+        default: staging
+      
+      envUrl:
+        description: 'URL of the environment'
+        required: true
+        type: string
+        default: 'https://staging.kissj.net'
+
+jobs:
+  deploy-stage:
+    runs-on: 'ubuntu-latest'
+    environment: 
+      name: ${{ inputs.envName }}
+      url: ${{ inputs.envUrl }}
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: 'Deploy'
+      uses: 'deliverybot/helm@master'
+      with:
+        release: 'kissj'
+        namespace: 'kissj-${{ inputs.envName }}'
+        track: ${{ inputs.envName }}
+        chart: 'deploy/helm/charts/kissj'
+        helm: 'helm3'
+        token: '${{ github.token }}'
+        values: |
+          name: 
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'

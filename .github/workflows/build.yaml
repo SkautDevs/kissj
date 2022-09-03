@@ -1,15 +1,28 @@
+# .github/workflows/build.yml
 name: Build & Push Container Images
 
 on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    branches: [master]
-    types: 
-      - completed
+  workflow_call:
+    inputs:
+      envName:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+        default: staging
+
+    secrets:
+      REGISTRY_USER:
+        description: 'Username for the registry'
+        required: true
+      
+      REGISTRY_PASSWORD:
+        description: 'Password for the registry'
+        required: true
+      
 
 jobs:
   
-  php:
+  build-php:
     name: Build & Push PHP Container Image
     runs-on: ubuntu-latest
 
@@ -36,7 +49,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
 
-  caddy:
+  build-caddy:
     name: Build & Push Caddy container
     runs-on: ubuntu-latest
 
@@ -47,8 +60,9 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
+
           image: caddy-ubi
-          tags: ${{ github.sha }}
+          tags: ${{ inputs.envName}}-${{ github.sha }}
           containerfiles: |
             ./deploy/container_images/caddy/Containerfile-ubi
         
