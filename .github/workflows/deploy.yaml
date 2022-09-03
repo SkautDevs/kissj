@@ -47,7 +47,11 @@ jobs:
         helm: 'helm3'
         atomic: true
         token: '${{ github.token }}'
-        secrets: '${{ { "postgres": [{"username": "${{ secrets.POSTGRES_USERNAME }}" }, {"password": "${{ secrets.POSTGRES_PASSWORD }}" }, {"host": "${{ secrets.POSTGRES_HOST }}" }, {"dbname": "${{ secrets.POSTGRES_DBNAME }}" }], "app": {"s3": [{"endpoint": "${{ secrets.S3_ENDPOINT }}" }, {"region": "${{ secrets.S3_REGION }}" },{"bucket": "${{ secrets.S3_BUCKET }}" },{"key": "${{ secrets.S3_KEY }}" },{"secret": "${{ secrets.S3_SECRET }}" }],"mail": [{"server": "${{ secrets.MAIL_SERVER }}" },{"port": "${{ secrets.MAIL_PORT }}" },{"username": "${{ secrets.MAIL_USERNAME }}" },{"password": "${{ secrets.MAIL_PASSWORD }}" },{"dsn": "${{ secrets.MAIL_DSN }}" }], "sentry": [{"dsn": "${{ secrets.SENTRY_DSN }}" }]}} }}'
+        secrets: |
+          postgres:
+            password: ${{ secrets.TEST_SECRET }}
+            username: ${{ secrets.TEST_SECRET }}
+
         values: |
           postgres:
             incluster: true
