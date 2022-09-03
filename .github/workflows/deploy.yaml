@@ -93,4 +93,4 @@ jobs:
               dsn: ${{ secrets.SENTRY_DSN }}
 
       env:
-        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+        KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
