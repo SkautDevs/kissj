@@ -15,6 +15,19 @@ on:
         type: string
         default: 'https://staging.kissj.net'
 
+  workflow_dispatch:
+    inputs:
+      envName:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+        default: staging
+      envUrl:
+        description: 'URL of the environment'
+        required: true
+        type: string
+        default: 'https://staging.kissj.net'
+
 jobs:
   deploy-stage:
     name: Deploy Staging to Kubernetes
@@ -26,7 +39,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: 'Deploy'
-      uses: 'deliverybot/helm@master'
+      uses: 'vimeda/helm@v1.6.8'
       with:
         release: kissj-${{ inputs.envName }}
         namespace: 'kissj-${{ inputs.envName }}'
