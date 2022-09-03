@@ -45,16 +45,40 @@ jobs:
         namespace: 'kissj-${{ inputs.envName }}'
         chart: 'deploy/helm/charts/kissj'
         helm: 'helm3'
-        atomic: false
+        atomic: true
         token: '${{ github.token }}'
-        secrets: ${{ toJSON(secrets) }}'
+        secrets: |
+          {
+              "postgres": [
+                  {"username": "${{ secrets.POSTGRES_USERNAME }}" }, 
+                  {"password": "${{ secrets.POSTGRES_PASSWORD }}" },
+                  {"host": "${{ secrets.POSTGRES_HOST }}" },
+                  {"dbname": "${{ secrets.POSTGRES_DBNAME }}" }
+              ], 
+              "app": {
+                  "s3": [
+                      {"endpoint": "${{ secrets.S3_ENDPOINT }}" }, 
+                      {"region": "${{ secrets.S3_REGION }}" },
+                      {"bucket": "${{ secrets.S3_BUCKET }}" },
+                      {"key": "${{ secrets.S3_KEY }}" },
+                      {"secret": "${{ secrets.S3_SECRET }}" }
+                  ], 
+                  "mail": [
+                      {"server": "${{ secrets.MAIL_SERVER }}" },
+                      {"port": "${{ secrets.MAIL_PORT }}" },
+                      {"username": "${{ secrets.MAIL_USERNAME }}" },
+                      {"password": "${{ secrets.MAIL_PASSWORD }}" },
+                      {"dsn": "${{ secrets.MAIL_DSN }}" }
+                  ], 
+
+                  "sentry": [
+                      {"dsn": "${{ secrets.SENTRY_DSN }}" }
+                  ]
+              }
+          }
         values: |
           postgres:
             incluster: true
-            username: dummy
-            password: dummy
-            dbname: kissj
-            host: dummy
           caddy:
             image:
               name: quay.io/kissj/caddy-ubi
@@ -65,24 +89,6 @@ jobs:
               tag: ${{ inputs.envName}}-${{ github.sha }}
           app:
             url: ${{ inputs.envUrl }}
-            
-            s3:
-              key: ${{ secrets.TEST_SECRET }}
-              secret: dummy
-              region: dummy
-              endpoint: dummy
-              bucket: dummy
-            
-            mail:
-              server: dummy
-              port: 587
-              encryption: tls
-              username: dummy
-              password: dummy
-            
-            adminer:
-              username: dummy
-              password: dummy    
 
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
