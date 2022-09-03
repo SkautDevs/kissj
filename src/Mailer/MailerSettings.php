@@ -8,9 +8,10 @@ class MailerSettings
 {
     private Event $event;
     private string $fullUrlLink;
+    public string $mailDsn;
 
     public function __construct(
-        public string $mailDsn,
+        string $mailDsn,
         public string $smtp,
         public string $smtpServer,
         public string $smtpAuth,
@@ -22,6 +23,7 @@ class MailerSettings
         public string $debugOutputLevel,
         public string $sendMailToMainRecipient,
     ) {
+        $this->mailDsn = urlencode($mailDsn);
     }
 
     public function setEvent(Event $event): void
