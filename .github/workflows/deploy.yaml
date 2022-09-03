@@ -48,9 +48,8 @@ jobs:
         atomic: true
         token: '${{ github.token }}'
         secrets: |
-          postgres:
-            password: ${{ secrets.TEST_SECRET }}
-            username: ${{ secrets.TEST_SECRET }}
+          postgres.password: ${{ secrets.TEST_SECRET }}
+          postgres.username: ${{ secrets.TEST_SECRET }}
 
         values: |
           postgres:
