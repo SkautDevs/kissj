@@ -21,26 +21,22 @@ on:
 
 jobs:
 
-  staging:
-    runs-on: ubuntu-latest
+  staging-test:
+    uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
+    with:
+      envName: ${{ github.event.inputs.envName }}
+      envUrl: ${{ github.event.inputs.envUrl }}
 
-    steps:
-      - name: run-tests
-        uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
-        with:
-          envName: ${{ github.event.inputs.envName }}
-          envUrl: ${{ github.event.inputs.envUrl }}
+  staging-build:
+    uses: SkautDevs/kissj/.github/workflows/build.yaml@master
+    with:
+      envName: 'staging'
+      envUrl: 'staging.kissj.net'
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 
 
-      - name: build-images
-        uses: SkautDevs/kissj/.github/workflows/build.yaml@master
-        with:
-          envName: 'staging'
-          envUrl: 'staging.kissj.net'
-          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 
-
-      - name: deploy
-        uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
-        with:
-          envName: 'staging'
-          envUrl: 'staging.kissj.net'
+  staging-deploy:
+    uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
+    with:
+      envName: 'staging'
+      envUrl: 'staging.kissj.net'
