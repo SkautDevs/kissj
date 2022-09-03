@@ -51,7 +51,7 @@
 </main>
 <footer>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-        <img src="data:image/jpg;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
+        <img src="{{ email.image( event.logoUrl ) }}" alt="logo of {{ event.readableName }}">
     </a>
 </footer>
 </body>

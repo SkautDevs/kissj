@@ -10,6 +10,7 @@ class MailerSettings
     private string $fullUrlLink;
 
     public function __construct(
+        public string $mailDsn,
         public string $smtp,
         public string $smtpServer,
         public string $smtpAuth,
