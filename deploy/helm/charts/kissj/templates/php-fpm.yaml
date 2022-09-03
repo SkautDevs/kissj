@@ -190,7 +190,13 @@ spec:
               
           - name: MAIL_SMTP_AUTH
             value: "true"
-              
+          
+          - name: MAIL_DSN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mail
+                key: dsn
+
           - name: MAIL_SMTP_USERNAME
             valueFrom:
               secretKeyRef:
