@@ -17,7 +17,7 @@ on:
         description: 'URL of the environment'
         required: true
         type: string
-        default: 'staging.kissj.net'
+        default: 'https://staging.kissj.net'
 
 jobs:
 
@@ -39,4 +39,4 @@ jobs:
     uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
     with:
       envName: 'staging'
-      envUrl: 'staging.kissj.net'
+      envUrl: 'https://staging.kissj.net'
