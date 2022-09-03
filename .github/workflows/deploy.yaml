@@ -45,8 +45,9 @@ jobs:
         namespace: 'kissj-${{ inputs.envName }}'
         chart: 'deploy/helm/charts/kissj'
         helm: 'helm3'
+        atomic: false
         token: '${{ github.token }}'
-        secrets: ${{ toJSON(secrets.TEST_SECRET) }}'
+        secrets: ${{ toJSON(secrets) }}'
         values: |
           postgres:
             incluster: true
