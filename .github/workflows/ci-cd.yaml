@@ -17,7 +17,7 @@ on:
         description: 'URL of the environment'
         required: true
         type: string
-        default: 'https://staging.kissj.net'
+        default: 'staging.kissj.net'
 
 jobs:
 

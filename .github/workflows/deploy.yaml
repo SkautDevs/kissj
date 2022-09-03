@@ -13,7 +13,7 @@ on:
         description: 'URL of the environment'
         required: true
         type: string
-        default: 'https://staging.kissj.net'
+        default: 'staging.kissj.net'
 
   workflow_dispatch:
     inputs:
@@ -26,7 +26,7 @@ on:
         description: 'URL of the environment'
         required: true
         type: string
-        default: 'https://staging.kissj.net'
+        default: 'staging.kissj.net'
 
 jobs:
   deploy-stage:
@@ -46,7 +46,7 @@ jobs:
         chart: 'deploy/helm/charts/kissj'
         helm: 'helm3'
         token: '${{ github.token }}'
-        secrets: ${{ toJSON(secrets.test_secret) }}'
+        secrets: ${{ toJSON(secrets.TEST_SECRET) }}'
         values: |
           postgres:
             incluster: true
@@ -66,7 +66,7 @@ jobs:
             url: ${{ inputs.envUrl }}
             
             s3:
-              key: dummy
+              key: ${{ secrets.TEST_SECRET }}
               secret: dummy
               region: dummy
               endpoint: dummy
