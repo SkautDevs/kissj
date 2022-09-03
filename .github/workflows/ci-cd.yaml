@@ -23,10 +23,7 @@ jobs:
 
   staging-test:
     uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
-    with:
-      envName: ${{ github.event.inputs.envName }}
-      envUrl: ${{ github.event.inputs.envUrl }}
-
+    
   staging-build:
     needs: staging-test
     uses: SkautDevs/kissj/.github/workflows/build.yaml@master
