@@ -1,0 +1,29 @@
+name: Staging
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+
+  staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: run-tests
+        uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
+        with:
+          envName: ${{ github.event.inputs.envName }}
+          envUrl: ${{ github.event.inputs.envUrl }}
+
+      - name: build-images
+        uses: SkautDevs/kissj/.github/workflows/build.yaml@master
+        with:
+          envName: 'staging'
+          envUrl: 'staging.kissj.net'
+          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 

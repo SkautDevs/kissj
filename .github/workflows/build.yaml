@@ -34,7 +34,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: php-ubi
-          tags: ${{ github.sha }}
+          tags: ${{ inputs.envName}}-${{ github.sha }
           containerfiles: |
             ./deploy/container_images/php/Containerfile-ubi
         
@@ -60,7 +60,6 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
-
           image: caddy-ubi
           tags: ${{ inputs.envName}}-${{ github.sha }}
           containerfiles: |
