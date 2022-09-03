@@ -44,11 +44,11 @@ jobs:
           caddy:
             image:
               name: quay.io/kissj/caddy-ubi
-              tag: ${{ inputs.envName}}-${{ github.sha }
+              tag: ${{ inputs.envName}}-${{ github.sha }}
           php:
             image:
               name: quay.io/kissj/php-ubi
-              tag: ${{ inputs.envName}}-${{ github.sha }
+              tag: ${{ inputs.envName}}-${{ github.sha }}
           app:
             url: ${{ inputs.envUrl }}
             
