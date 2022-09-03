@@ -23,13 +23,12 @@ jobs:
 
   staging-test:
     uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
-    
+
   staging-build:
     needs: staging-test
     uses: SkautDevs/kissj/.github/workflows/build.yaml@master
     with:
       envName: 'staging'
-      envUrl: 'staging.kissj.net'
 
     secrets:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
