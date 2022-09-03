@@ -86,7 +86,7 @@ jobs:
               server: ${{ secrets.MAIL_SERVER }}
               username:  ${{ secrets.MAIL_USERNAME }}
               password: ${{ secrets.MAIL_PASSWORD }}
-              port : ${{ secrets.MAIL_PORT }}
+              port: ${{ secrets.MAIL_PORT }}
               dsn: ${{ secrets.MAIL_DSN }}
             
             sentry:
