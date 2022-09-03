@@ -38,7 +38,7 @@ jobs:
     
     steps:
 
-    - uses: bhowell2/github-substring-action
+    - uses: bhowell2/github-substring-action@v1.0.0
       id: url
       with:
        value: ${{ inputs.envUrl }}
