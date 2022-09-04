@@ -37,10 +37,12 @@ jobs:
   staging-deploy:
     needs: staging-build
     uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
+    environment: 
+      envName: ${{ inputs.envName }}
+      envUrl: ${{ inputs.envUrl }}
     with:
       envName: 'staging'
       envUrl: 'https://staging.kissj.net'
 
     secrets:
       KUBECONFIG: ${{ secrets.KUBECONFIG }}
-      
