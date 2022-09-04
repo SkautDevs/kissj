@@ -16,7 +16,9 @@ on:
         default: 'https://staging.kissj.net'
     
     secrets:
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      KUBECONFIG:
+        description: 'KUBECONFIG for the cluster'
+        required: true
 
   workflow_dispatch:
     inputs:
