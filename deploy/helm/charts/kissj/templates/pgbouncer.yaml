@@ -43,7 +43,7 @@ spec:
 
           {{- if .Values.postgres.incluster}}
           - name: POSTGRESQL_HOST
-            value: {{ .Release.Name }}-pgbouncer
+            value: {{ .Release.Name }}-postgresql
           {{ else }}
           - name: POSTGRESQL_HOST
             value: {{ .Values.postgres.host }}
