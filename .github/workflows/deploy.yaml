@@ -38,11 +38,12 @@ jobs:
     
     steps:
 
-    - uses: bhowell2/github-substring-action@v1.0.0
+    - name: split url
+      uses: bhowell2/github-substring-action@v1.0.0
       id: url
       with:
        value: ${{ inputs.envUrl }}
-       index_of_str: "https://"
+       index_of_str: 'https://'
     
     - uses: actions/checkout@v3
 
