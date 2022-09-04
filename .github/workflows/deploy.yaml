@@ -70,11 +70,13 @@ jobs:
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
+            replicas: 1
             image:
               name: quay.io/kissj/caddy-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}
           
           php:
+            replicas: 1 
             image:
               name: quay.io/kissj/php-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}

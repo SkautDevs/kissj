@@ -76,7 +76,7 @@ spec:
         env:
           # Define the environment variable
         - name: POSTGRES_DB
-          value: {{ .Release.Name }}
+          value: {{ .Values.postgres.dbname }}
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
