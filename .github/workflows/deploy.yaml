@@ -14,6 +14,9 @@ on:
         required: true
         type: string
         default: 'https://staging.kissj.net'
+    
+    secrets:
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   workflow_dispatch:
     inputs:
@@ -27,9 +30,6 @@ on:
         required: true
         type: string
         default: 'https://staging.kissj.net'
-
-    secrets:
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
 jobs:
   deploy-stage:
@@ -98,4 +98,4 @@ jobs:
 
       env:
         KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
-        
+
