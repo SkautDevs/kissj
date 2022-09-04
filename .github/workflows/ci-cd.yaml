@@ -43,3 +43,4 @@ jobs:
 
     secrets:
       KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      
