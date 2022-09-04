@@ -1,10 +1,10 @@
-FROM registry.access.redhat.com/ubi8/ubi:latest
+FROM registry.access.redhat.com/ubi9/ubi:latest
 LABEL maintainers "Kissj devs <github.com/SkautDevs>"
 
 WORKDIR /var/www/html
 
 #enable needed epel & remi repos
-RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y 
+RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y 
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.1 -y
 RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd -y
@@ -44,7 +44,7 @@ RUN sed -i 's\;clear_env = no\clear_env = no\' /etc/php-fpm.d/www.conf
 RUN sed -i 's\;pm.status_path = /status\pm.status_path = /status\' /etc/php-fpm.d/www.conf
 
 # increse max pool max_children
-RUN sed -i '/pm.max_children/ s/5/20/' /etc/php.ini
+RUN sed -i '/pm.max_children/ s/5/20/' /etc/php-fpm.d/www.conf
 
 #install deps
 RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3
