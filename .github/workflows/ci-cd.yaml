@@ -41,5 +41,4 @@ jobs:
       envName: 'staging'
       envUrl: 'https://staging.kissj.net'
 
-    secrets:
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+    secrets: inherit
