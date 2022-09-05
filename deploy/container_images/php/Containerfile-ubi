@@ -13,7 +13,6 @@ RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap -y
 COPY ./composer.json /var/www/html/composer.json
 COPY ./composer.lock /var/www/html/composer.lock
 COPY ./src /var/www/html/src
-COPY ./adminer /var/www/html/adminer
 COPY ./public /var/www/html/public
 
 #configure php-fpm

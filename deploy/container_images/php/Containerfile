@@ -31,7 +31,6 @@ RUN docker-php-ext-install \
 COPY kissj-app/composer.json /var/www/html/composer.json
 COPY kissj-app/composer.lock /var/www/html/composer.lock
 COPY kissj-app/src /var/www/html/src
-COPY kissj-app/adminer /var/www/html/adminer
 COPY kissj-app/public /var/www/html/public
 
 #Create dummy .env
