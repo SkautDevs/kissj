@@ -40,7 +40,7 @@ spec:
           - name: WEB_HOST
             value: {{ .Values.app.url }}
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         - containerPort: 9253
         - containerPort: 8000
 

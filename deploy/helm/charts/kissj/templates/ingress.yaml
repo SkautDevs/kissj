@@ -25,7 +25,7 @@ spec:
           service:
             name: {{ .Release.Name }}-caddy
             port:
-              number: 80
+              number: 8080
   - host: {{ .Values.app.url }}
     http:
       paths:
@@ -35,7 +35,7 @@ spec:
           service:
             name: {{ .Release.Name }}-caddy
             port:
-              number: 80
+              number: 8080
   tls:
   - secretName: {{ .Release.Name }}-caddy-tls
     hosts:

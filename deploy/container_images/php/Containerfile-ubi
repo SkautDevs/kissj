@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/ubi8/ubi:latest
-LABEL maintainers "Kissj devs <github.com/SkautDevs>"
+LABEL maintainers "Kissj devs <https://github.com/SkautDevs>"
 
 WORKDIR /var/www/html
 
@@ -7,7 +7,7 @@ WORKDIR /var/www/html
 RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y 
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.1 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap -y
 
 #copy app
 COPY ./composer.json /var/www/html/composer.json
@@ -19,12 +19,23 @@ COPY ./public /var/www/html/public
 #configure php-fpm
 RUN sed -i 's\listen = /run/php-fpm/www.sock\listen = '9000'\g' /etc/php-fpm.d/www.conf
 RUN sed -i '/pid/d' /etc/php-fpm.conf 
-RUN sed -i '/listen.allowed_clients/d' /etc/php-fpm.d/www.conf 
+RUN sed -i '/listen.allowed_clients/d' /etc/php-fpm.d/www.conf
+RUN sed -i '/upload_max_filesize/ s/2M/16M/' /etc/php.ini
+
+#PHP logging sed magic
+RUN sed -i '/;error_log = syslog/a error_log= /proc/self/fd/2' /etc/php.ini
+RUN sed -i 's\error_log = /var/log/php-fpm/error.log\error_log= /proc/self/fd/2\g' /etc/php-fpm.conf
+RUN sed -i '/;access.log/a access.log = /proc/self/fd/2' /etc/php-fpm.d/www.conf
+RUN sed -i 's\slowlog = /var/log/php-fpm/www-slow.log\slowlog = /proc/self/fd/2\g' /etc/php-fpm.d/www.conf
+RUN sed -i '/php_admin_value\[error_log\]/d' /etc/php-fpm.d/www.conf
+
 
 RUN useradd www-data -s /sbin/nologin -d /var/www/html
 
 RUN sed -i 's\user = apache\user = www-data\g' /etc/php-fpm.d/www.conf
 RUN sed -i 's\group = apache\group = www-data\g' /etc/php-fpm.d/www.conf
+RUN chown -R www-data:www-data /var/lib/php 
+
 
 
 #Create dummy .env

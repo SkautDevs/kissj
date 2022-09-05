@@ -21,7 +21,7 @@ spec:
     app.kubernetes.io/component: webserver
   ports:
     - protocol: TCP
-      port: 80
+      port: 8080
       name: http
     - protocol: TCP
       port: 9253
