@@ -45,9 +45,6 @@ class Route
                 $app->get('/events', EventController::class . '::list')
                     ->setName('eventList');
 
-                $app->any('/administration', function (Request $request, Response $response) {
-                    require __DIR__ . '/../../adminer/customAdminerEditor.php';
-                    die();
                 })->setName('administration');
             });
 
