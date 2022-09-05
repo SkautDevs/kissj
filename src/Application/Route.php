@@ -44,8 +44,6 @@ class Route
                 */
                 $app->get('/events', EventController::class . '::list')
                     ->setName('eventList');
-
-                })->setName('administration');
             });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
