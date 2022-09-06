@@ -31,10 +31,6 @@ app:
   log_level: DEBUG
   debug: false
 
-  adminer:
-    username: ChangeMe
-    password: ChangeMe
-
   s3:
     key: S3Key
     secret: S3Secret
