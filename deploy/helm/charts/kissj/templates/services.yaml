@@ -10,10 +10,6 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-
-    annotations:
-      haproxy.org/load-balance: "leastconn"
-
     
 spec:
   type: ClusterIP
@@ -40,9 +36,6 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-
-    annotations:
-      haproxy.org/load-balance: "leastconn"
     
 spec:
   type: ClusterIP

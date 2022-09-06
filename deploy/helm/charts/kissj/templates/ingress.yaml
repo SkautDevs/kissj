@@ -3,8 +3,9 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name}}-ingress
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-production
-    haproxy.org/load-balance: "leastconn"
+    {{- if .Values.caddy.tls.enabled
+    cert-manager.io/cluster-issuer: {{ .Values.caddy.tls.issuer |quote }}
+    {{- end }}
 
   labels:
     app.kubernetes.io/name: {{ .Chart.Name}}
@@ -36,8 +37,11 @@ spec:
             name: {{ .Release.Name }}-caddy
             port:
               number: 8080
+              
+  {{- if .Values.caddy.tls.enabled }}
   tls:
   - secretName: {{ .Release.Name }}-caddy-tls
     hosts:
     - {{ .Values.app.url }}
     - www.{{ .Values.app.url }}
+  {{- end }}

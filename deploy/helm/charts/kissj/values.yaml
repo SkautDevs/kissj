@@ -10,6 +10,13 @@ caddy:
     name: quay.io/kissj/caddy
     tag: latest
   replicas: 2
+  hpa:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 10
+  tls:
+    enabled: true
+    issuer: letsencrypt-production
 
 php:
   image:
@@ -17,13 +24,19 @@ php:
     tag: latest
   
   replicas: 2
+  hpa:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 20
+
   # Must support RWX
   volume: 
     size: 5Gi
-    storageclass: azurefile-csi
+    storageclass: default
 
 
 app:
+
   url: example.net
   locale: cs
 
