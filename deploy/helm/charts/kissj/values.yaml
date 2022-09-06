@@ -1,21 +1,9 @@
 
 postgres:
-  incluster: true
   username: PostgresUser
   password: PostgresPassword
-  #Set if using external DB
   host: PostgresHost
   dbname: PostgresDB
-  
-  image:
-    name: postgres
-    tag: 11-alpine
-  
-  volume: 
-    size: 20Gi
-    storageclass: default
-
-  
 
 caddy:
   image:

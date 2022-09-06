@@ -41,13 +41,6 @@ spec:
           - name: POSTGRESQL_DATABASE
             value: {{ .Values.postgres.dbname }}
 
-          {{- if .Values.postgres.incluster}}
-          - name: POSTGRESQL_HOST
-            value: {{ .Release.Name }}-postgresql
-          {{ else }}
-          - name: POSTGRESQL_HOST
-            value: {{ .Values.postgres.host }}
-          {{- end }}
 
           - name: PGBOUNCER_PORT
             value: "5432"
