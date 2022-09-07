@@ -6,7 +6,7 @@
 
         {% if event.getEventType.showParticipantInfoInMail %}
             <p>{% trans %}email.payment-successful.qrInfo{% endtrans %}</p>
-            <img src="{{ base64qr }}" alt="QR participant info"/>
+            <img src="cid:qr_info" alt="QR participant info"/>
         {% endif %}
 
         <p>{% trans %}email.payment-successful.enjoy{% endtrans %}</p>

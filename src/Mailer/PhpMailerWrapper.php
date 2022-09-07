@@ -74,7 +74,7 @@ class PhpMailerWrapper
         $embeds = [];
         if ($qrCode !== false) {
             $embeds = [
-                'qr_payment' => $qrCode,
+                new EmbedDTO('qr_payment', $qrCode, 'image/png'),
             ];
         }
         $user = $participant->getUserButNotNull();
@@ -118,15 +118,23 @@ class PhpMailerWrapper
     public function sendRegistrationPaid(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();
+        $qrCode = fopen(
+            $this->qrCodeService->generateQrBase64FromString($participant->getQrParticipantInfoString()),
+            'rb',
+        );
+        $embeds = [];
+        if ($qrCode !== false) {
+            $embeds = [
+                new EmbedDTO('qr_info', $qrCode, 'image/png'),
+            ];
+        }
+        
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
-            [
-                'base64qr' => $this->qrCodeService->generateQrBase64FromString(
-                    $participant->getQrParticipantInfoString(),
-                ),
-            ],
+            [],
+            $embeds,
         );
     }
 
@@ -168,7 +176,7 @@ class PhpMailerWrapper
 
     /**
      * @param array<string, mixed>    $parameters
-     * @param array<string, resource> $embeds
+     * @param array<EmbedDTO> $embeds
      * @param array<string, string>   $attachments
      */
     private function sendMailFromTemplate(
@@ -193,8 +201,8 @@ class PhpMailerWrapper
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]));
         array_map(fn(string $attachment) => $email->attach($attachment), $attachments);
-        foreach ($embeds as $name => $resource) {
-            $email->embed($resource, $name);
+        foreach ($embeds as $embed) {
+            $email->embed($embed->resource, $embed->name, $embed->contentType);
         }
 
         $eventDispatcher = new EventDispatcher();
