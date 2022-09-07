@@ -38,6 +38,6 @@
             <h2>{% trans %}transferPayment-admin.notPossible{% endtrans %}</h2>
         {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
-           class="btn btn-grey btn-small">Zpět</a>
+           class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
     </div>
 {% endblock %}

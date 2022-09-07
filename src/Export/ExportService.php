@@ -65,8 +65,10 @@ class ExportService
                 $this->translator->trans($participant->contingent ?? ''),
                 $participant->firstName ?? '',
                 $participant->lastName ?? '', // 5
-                $participant->user?->email ?? '',
-                $participant->email ?? '',
+                $participant->gender ?? '',
+                $participant->healthProblems ?? '',
+                $participant->swimming ?? '',
+                $participant->notes ?? '',
             ];
         }
 
