@@ -19,6 +19,11 @@ class UserRepository extends Repository
         return $this->getOneBy(['email' => $email, 'event' => $event]);
     }
 
+    public function findUserFromEmailEvent(string $email, Event $event): ?User
+    {
+        return $this->findOneBy(['email' => $email, 'event' => $event]);
+    }
+
     public function isUserExisting(string $email, Event $event): bool
     {
         return $this->isExisting(['email' => $email, 'event' => $event]);
