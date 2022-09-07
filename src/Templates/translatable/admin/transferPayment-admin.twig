@@ -8,7 +8,7 @@
                 <h2>{% trans %}transferPayment-admin.seller{% endtrans %}</h2>
                 <p>{% trans %}transferPayment-admin.sellerInfo{% endtrans %}</p>
                 {% if from %}
-                    {{ include('admin/snippet/details-ist.twig', {ist: from}) }}
+                    {{ include('widgets/details.twig', {person: from, ca: event.eventType.getContentArbiterIst}) }}
                     Mail: <b>{{ emailFrom }}</b><br/>
                     Status: <b>{{ from.user.status }}</b>
                 {% else %}
@@ -19,7 +19,7 @@
                 <h2>{% trans %}transferPayment-admin.buyer{% endtrans %}</h2>
                 <p>{% trans %}transferPayment-admin.buyerInfo{% endtrans %}</p>
                 {% if to %}
-                    {{ include('admin/snippet/details-ist.twig', {ist: to}) }}
+                    {{ include('widgets/details.twig', {person: to, ca: event.eventType.getContentArbiterIst}) }}
                     Mail: <b>{{ emailTo }}</b><br/>
                     Status: <b>{{ to.user.status }}</b>
                 {% else %}
