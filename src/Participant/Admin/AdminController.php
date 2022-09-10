@@ -421,17 +421,13 @@ class AdminController extends AbstractController
         );
     }
 
-    /** TODO check */
-    public function showTransferPayment(Request $request, Response $response): Response
+    public function showTransferPayment(Request $request, Response $response, Event $event): Response
     {
-        // TODO check if correct event
-        $queryParams = $request->getQueryParams();
+        $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
+        $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        $emailFrom = $queryParams['emailFrom'];
-        $emailTo = $queryParams['emailTo'];
-
-        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom);
-        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo);
+        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom, $event);
+        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo, $event);
 
         return $this->view->render($response, 'admin/transferPayment-admin.twig', [
             'emailFrom' => $emailFrom,
@@ -446,18 +442,14 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /** TODO check */
-    public function transferPayment(Request $request, Response $response): Response
+    public function transferPayment(Request $request, Response $response, Event $event): Response
     {
-        // TODO check if correct event
-        $participantFrom = $this->participantService->findParticipantFromUserMail(
-            $this->getParameterFromBody($request, 'emailFrom')
-        );
-        $participantTo = $this->participantService->findParticipantFromUserMail(
-            $this->getParameterFromBody($request, 'emailTo')
-        );
+        $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
+        $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        // TODO refactor findParticipantFromUserMail into get method
+        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom, $event);
+        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo, $event);
+
         if ($participantFrom === null || $participantTo === null) {
             throw new \RuntimeException('Found no participant');
         }

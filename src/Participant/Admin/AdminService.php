@@ -39,7 +39,7 @@ class AdminService
         if ($participantFrom === null || $participantTo === null) {
             $flash->warning($this->translator->trans('flash.warning.nullParticipants'));
 
-            return false; // no point to compare futher
+            return false; // no point to compare further
         }
 
         if (!$participantFrom instanceof $participantTo) {

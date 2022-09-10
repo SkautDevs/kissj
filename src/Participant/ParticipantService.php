@@ -6,10 +6,15 @@ namespace kissj\Participant;
 
 use DateTimeImmutable;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
+use kissj\Participant\Guest\GuestService;
+use kissj\Participant\Ist\IstService;
+use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Troop\TroopService;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -22,6 +27,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ParticipantService
 {
     public function __construct(
+        private PatrolService $patrolService,
+        private TroopService $troopService,
+        private IstService $istService,
+        private GuestService $guestService,
         private ParticipantRepository $participantRepository,
         private PaymentService $paymentService,
         private UserRepository $userRepository,
@@ -293,20 +302,14 @@ class ParticipantService
         return $payment;
     }
 
-    public function findParticipantFromUserMail(string $emailFrom): ?Participant
+    public function findParticipantFromUserMail(string $emailFrom, Event $event): ?Participant
     {
-        // TODO optimalize into one query with join
-        $user = $this->userRepository->findBy(['email' => $emailFrom]);
-        if (count($user) === 0) {
+        $user = $this->userRepository->findUserFromEmailEvent($emailFrom, $event);
+        if ($user === null) {
             return null;
         }
 
-        $participant = $this->participantRepository->findBy(['user_id' => $user[0]->id]);
-        if (count($participant) === 0) {
-            return null;
-        }
-
-        return $participant[0];
+        return $this->getParticipantFromUser($user);
     }
 
     public function denyRegistration(Participant $participant, string $reason): Participant
@@ -356,6 +359,18 @@ class ParticipantService
             User::ROLE_IST => $eventType->getContentArbiterIst(),
             User::ROLE_GUEST => $eventType->getContentArbiterGuest(),
             default => throw new \RuntimeException('Unexpected role ' . $participant->role),
+        };
+    }
+
+    public function getParticipantFromUser(User $user): Participant
+    {
+        return match ($user->role) {
+            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
+            User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
+            User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
+            User::ROLE_IST => $this->istService->getIst($user),
+            User::ROLE_GUEST => $this->guestService->getGuest($user),
+            default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };
     }
 }
