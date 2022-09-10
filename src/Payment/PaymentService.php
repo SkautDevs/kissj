@@ -75,9 +75,13 @@ class PaymentService
     public function cancelDuePayments(Event $event, int $limit = 5): void
     {
         $duePayments = $this->paymentRepository->getDuePayments($event);
+        $singleDuePayments = array_filter(
+            $duePayments,
+            fn(Payment $payment) => count($payment->participant->payment) === 1,
+        );
         $deniedPaymentsCount = 0;
 
-        foreach (array_slice($duePayments, 0, $limit) as $payment) {
+        foreach (array_slice($singleDuePayments, 0, $limit) as $payment) {
             $this->cancelPayment($payment);
 
             $this->userService->openRegistration($payment->participant->getUserButNotNull());

@@ -53,7 +53,7 @@ class PaymentRepository extends Repository
 
         return array_filter(
             $waitingEventPayments,
-            fn (Payment $payment) => $payment->isPaymentOverdue()
+            fn (Payment $payment) => $payment->isPaymentOverdue(),
         );
     }
 

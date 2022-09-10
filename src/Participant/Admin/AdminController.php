@@ -310,7 +310,6 @@ class AdminController extends AbstractController
         );
     }
 
-    /** TODO test */
     public function cancelAllDuePayments(Request $request, Response $response, User $user): Response
     {
         $this->paymentService->cancelDuePayments($user->event);
