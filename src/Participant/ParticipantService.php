@@ -27,13 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ParticipantService
 {
     public function __construct(
-        private PatrolService $patrolService,
-        private TroopService $troopService,
-        private IstService $istService,
-        private GuestService $guestService,
         private ParticipantRepository $participantRepository,
         private PaymentService $paymentService,
-        private UserRepository $userRepository,
         private UserService $userService,
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
@@ -302,16 +297,6 @@ class ParticipantService
         return $payment;
     }
 
-    public function findParticipantFromUserMail(string $emailFrom, Event $event): ?Participant
-    {
-        $user = $this->userRepository->findUserFromEmailEvent($emailFrom, $event);
-        if ($user === null) {
-            return null;
-        }
-
-        return $this->getParticipantFromUser($user);
-    }
-
     public function denyRegistration(Participant $participant, string $reason): Participant
     {
         $this->mailer->sendDeniedRegistration($participant, $reason);
@@ -359,18 +344,6 @@ class ParticipantService
             User::ROLE_IST => $eventType->getContentArbiterIst(),
             User::ROLE_GUEST => $eventType->getContentArbiterGuest(),
             default => throw new \RuntimeException('Unexpected role ' . $participant->role),
-        };
-    }
-
-    public function getParticipantFromUser(User $user): Participant
-    {
-        return match ($user->role) {
-            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
-            User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
-            User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
-            User::ROLE_IST => $this->istService->getIst($user),
-            User::ROLE_GUEST => $this->guestService->getGuest($user),
-            default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };
     }
 }

@@ -13,6 +13,7 @@ use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstService;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolService;
@@ -20,6 +21,7 @@ use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
+use kissj\User\UserRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -37,6 +39,7 @@ class AdminController extends AbstractController
         private GuestService $guestService,
         private TroopService $troopService,
         private AdminService $adminService,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -426,8 +429,11 @@ class AdminController extends AbstractController
         $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
         $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom, $event);
-        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo, $event);
+        $userFrom = $this->userRepository->getUserFromEmailEvent($emailFrom, $event);
+        $userTo = $this->userRepository->getUserFromEmailEvent($emailTo, $event);
+        
+        $participantFrom = $this->getParticipantFromUser($userFrom);
+        $participantTo = $this->getParticipantFromUser($userTo);
 
         return $this->view->render($response, 'admin/transferPayment-admin.twig', [
             'emailFrom' => $emailFrom,
@@ -447,17 +453,16 @@ class AdminController extends AbstractController
         $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
         $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        $participantFrom = $this->participantService->findParticipantFromUserMail($emailFrom, $event);
-        $participantTo = $this->participantService->findParticipantFromUserMail($emailTo, $event);
+        $userFrom = $this->userRepository->getUserFromEmailEvent($emailFrom, $event);
+        $userTo = $this->userRepository->getUserFromEmailEvent($emailTo, $event);
 
-        if ($participantFrom === null || $participantTo === null) {
-            throw new \RuntimeException('Found no participant');
-        }
+        $participantFrom = $this->getParticipantFromUser($userFrom);
+        $participantTo = $this->getParticipantFromUser($userTo);
 
         if (!$this->adminService->isPaymentTransferPossible(
             $participantFrom,
             $participantTo,
-            $this->flashMessages
+            $this->flashMessages,
         )) {
             throw new \RuntimeException('Cannot do transfer');
         }
@@ -512,5 +517,18 @@ class AdminController extends AbstractController
             $response,
             'admin-show-stats',
         );
+    }
+
+    // TODO deduplicate
+    public function getParticipantFromUser(User $user): Participant
+    {
+        return match ($user->role) {
+            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
+            User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
+            User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
+            User::ROLE_IST => $this->istService->getIst($user),
+            User::ROLE_GUEST => $this->guestService->getGuest($user),
+            default => throw new \RuntimeException('Unexpected role ' . $user->role),
+        };
     }
 }

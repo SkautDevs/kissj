@@ -45,7 +45,7 @@ class ParticipantController extends AbstractController
 
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->participantService->getParticipantFromUser($user);
+        $participant = $this->getParticipantFromUser($user);
 
         /** @var string[] $parsed */
         $parsed = $request->getParsedBody();
@@ -60,7 +60,7 @@ class ParticipantController extends AbstractController
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->participantService->getParticipantFromUser($user);
+        $participant = $this->getParticipantFromUser($user);
 
         if ($this->participantService->isCloseRegistrationValid($participant)) {
             return $this->view->render(
@@ -75,7 +75,7 @@ class ParticipantController extends AbstractController
 
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->participantService->getParticipantFromUser($user);
+        $participant = $this->getParticipantFromUser($user);
         $participant = $this->participantService->closeRegistration($participant);
 
         if ($participant->getUserButNotNull()->status === User::STATUS_CLOSED) {
@@ -123,6 +123,19 @@ class ParticipantController extends AbstractController
                 'person' => $this->guestService->getGuest($user),
                 'ca' => $eventType->getContentArbiterGuest(),
             ],
+            default => throw new \RuntimeException('Unexpected role ' . $user->role),
+        };
+    }
+
+    // TODO deduplicate
+    public function getParticipantFromUser(User $user): Participant
+    {
+        return match ($user->role) {
+            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
+            User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
+            User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
+            User::ROLE_IST => $this->istService->getIst($user),
+            User::ROLE_GUEST => $this->guestService->getGuest($user),
             default => throw new \RuntimeException('Unexpected role ' . $user->role),
         };
     }
