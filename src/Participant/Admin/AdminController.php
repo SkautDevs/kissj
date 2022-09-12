@@ -428,11 +428,11 @@ class AdminController extends AbstractController
         $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
         $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        $userFrom = $this->userRepository->getUserFromEmailEvent($emailFrom, $event);
-        $userTo = $this->userRepository->getUserFromEmailEvent($emailTo, $event);
-        
-        $participantFrom = $this->getParticipantFromUser($userFrom);
-        $participantTo = $this->getParticipantFromUser($userTo);
+        $userFrom = $this->userRepository->findUserFromEmailEvent($emailFrom, $event);
+        $userTo = $this->userRepository->findUserFromEmailEvent($emailTo, $event);
+
+        $participantFrom = ($userFrom === null ? null : $this->getParticipantFromUser($userFrom));
+        $participantTo = ($userTo === null ? null : $this->getParticipantFromUser($userTo));
 
         return $this->view->render($response, 'admin/transferPayment-admin.twig', [
             'emailFrom' => $emailFrom,
@@ -462,7 +462,7 @@ class AdminController extends AbstractController
             $participantFrom,
             $participantTo,
             $this->flashMessages,
-        )) {
+        ) || $participantFrom === null || $participantTo === null) {
             throw new \RuntimeException('Cannot do transfer');
         }
 
@@ -519,7 +519,7 @@ class AdminController extends AbstractController
     }
 
     // TODO deduplicate
-    public function getParticipantFromUser(User $user): Participant
+    public function getParticipantFromUser(User $user): ?Participant
     {
         return match ($user->role) {
             User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
@@ -527,7 +527,7 @@ class AdminController extends AbstractController
             User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
             User::ROLE_IST => $this->istService->getIst($user),
             User::ROLE_GUEST => $this->guestService->getGuest($user),
-            default => throw new \RuntimeException('Unexpected role ' . $user->role),
+            default => null,
         };
     }
 }
