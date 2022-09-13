@@ -425,8 +425,8 @@ class AdminController extends AbstractController
 
     public function showTransferPayment(Request $request, Response $response, Event $event): Response
     {
-        $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
-        $emailTo = $this->getParameterFromBody($request, 'emailTo');
+        $emailFrom = $request->getQueryParams()['emailFrom'];
+        $emailTo = $request->getQueryParams()['emailTo'];
 
         $userFrom = $this->userRepository->findUserFromEmailEvent($emailFrom, $event);
         $userTo = $this->userRepository->findUserFromEmailEvent($emailTo, $event);
