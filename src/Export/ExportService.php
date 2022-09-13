@@ -177,20 +177,21 @@ class ExportService
             'foodPreferences',
             'foodPreferencesRaw', // 20
             'idNumber',
+            'scarf',
             'swimming',
             'tshirt',
-            'arrivalDate',
-            'departureDate', // 25
+            'arrivalDate', // 25
+            'departureDate',
             'uploadedOriginalFilename',
             'notes',
             'updatedAt',
-            'registrationCloseDate',
-            'registrationApproveDate', // 30
+            'registrationCloseDate', // 30
+            'registrationApproveDate',
             'registrationPayDate',
             'patrolLeaderId_patrolParticipantId',
             'patrolName',
-            'patrolParticipantCount',
-            'istSkills', // 35
+            'patrolParticipantCount', // 35
+            'istSkills',
             'istPreferredPosition',
             'driverLicense',
         ];
@@ -254,15 +255,16 @@ class ExportService
                     $this->translator->trans($participant->foodPreferences ?? ''),
                     $participant->foodPreferences ?? '', // 20
                     $participant->idNumber ?? '',
+                    $participant->scarf ?? '',
                     $this->translator->trans($participant->swimming ?? ''),
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                         . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
-                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
-                    $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '', // 25
+                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '', // 25
+                    $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '',
                     $participant->notes ?? '',
                     $participant->updatedAt ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
-                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '', // 30
                     $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                 ],
