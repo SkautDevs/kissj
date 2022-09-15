@@ -11,15 +11,6 @@ class MailerSettings
 
     public function __construct(
         public string $mailDsn,
-        public string $smtp,
-        public string $smtpServer,
-        public string $smtpAuth,
-        public string $smtpPort,
-        public string $smtpUsername,
-        public string $smtpPassword,
-        public string $smtpSecure,
-        public string $disableTls,
-        public string $debugOutputLevel,
         public string $sendMailToMainRecipient,
     ) {
     }

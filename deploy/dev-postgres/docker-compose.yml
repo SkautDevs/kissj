@@ -1,7 +1,5 @@
-version: "3.9"
+version: "3.3"
 services:
-
-
 
     #database
     postgresql:
@@ -9,7 +7,7 @@ services:
         volumes:
             - db-data:/var/lib/postgresql/data
         ports:
-            - 5432:5432
+            - "5432:5432"
 
         environment:
             - POSTGRES_USER=user
@@ -24,9 +22,6 @@ services:
         links:
             - postgresql
 
-        ports:
-            - 9000:9000
-
         environment:
             - POSTGRES_USER=user
             - POSTGRES_PASSWORD=password
@@ -35,7 +30,6 @@ services:
             - DB_TYPE=postgresql
         volumes:
             - ../../:/var/www/html
-
 
     #Frontend Web Server
     caddy:
@@ -57,8 +51,7 @@ services:
     mailhog:
         image: mailhog/mailhog
         ports:
-            - 1025:1025
-            - 8025:8025
+            - "8025:8025"
 
 volumes:
     db-data:

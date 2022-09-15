@@ -143,16 +143,7 @@ class Settings
         $container[MailerSettings::class] = function (): MailerSettings {
             return new MailerSettings(
                 $_ENV['MAIL_DSN'],
-                $_ENV['MAIL_SMTP'],
-                $_ENV['MAIL_SMTP_SERVER'],
-                $_ENV['MAIL_SMTP_AUTH'],
-                $_ENV['MAIL_SMTP_PORT'],
-                $_ENV['MAIL_SMTP_USERNAME'],
-                $_ENV['MAIL_SMTP_PASSWORD'],
-                $_ENV['MAIL_SMTP_SECURE'],
-                $_ENV['MAIL_DISABLE_TLS'],
-                $_ENV['MAIL_DEBUG_OUTPUT_LEVEL'],
-                $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT']
+                $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
             );
         };
         $container[S3bucketFileHandler::class]
@@ -233,15 +224,6 @@ class Settings
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
         $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(array_flip(Logger::getLevels()));
         $dotenv->required('MAIL_DSN');
-        $dotenv->required('MAIL_SMTP');
-        $dotenv->required('MAIL_SMTP_SERVER');
-        $dotenv->required('MAIL_SMTP_AUTH');
-        $dotenv->required('MAIL_SMTP_PORT');
-        $dotenv->required('MAIL_SMTP_USERNAME');
-        $dotenv->required('MAIL_SMTP_PASSWORD');
-        $dotenv->required('MAIL_SMTP_SECURE');
-        $dotenv->required('MAIL_DISABLE_TLS');
-        $dotenv->required('MAIL_DEBUG_OUTPUT_LEVEL')->allowedValues(['0', '1', '2', '3', '4']);
         $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
         $dotenv->required('FILE_HANDLER_TYPE')->allowedValues([
             'local',
