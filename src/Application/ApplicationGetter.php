@@ -7,14 +7,12 @@ class ApplicationGetter
     public function getApp(
         string $envPath = __DIR__.'/../../',
         string $envFilename = '.env',
-        string $dbFullPath = __DIR__.'/../db_dev.sqlite',
         string $tempPath = __DIR__.'/../../temp'
     ): \Slim\App {
         $containerBuilder = new \DI\ContainerBuilder();
         $containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getContainerDefinition(
             $envPath,
             $envFilename,
-            $dbFullPath
         ));
         $containerBuilder->useAnnotations(true); // used in AbstractController
         if ($_ENV['DEBUG'] === 'false') {

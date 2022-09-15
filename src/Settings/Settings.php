@@ -49,15 +49,11 @@ class Settings
     private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
     /**
-     * @param string $envPath
-     * @param string $envFilename
-     * @param string $dbFullPath
      * @return array<string, mixed>
      */
-    public function getContainerDefinition(string $envPath, string $envFilename, string $dbFullPath): array
+    public function getContainerDefinition(string $envPath, string $envFilename): array
     {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
-        $_ENV['DB_FULL_PATH'] = $dbFullPath; // do not allow change DB path in .env
 
         $dotenv = Dotenv::createImmutable($envPath, $envFilename);
         $dotenv->load();
@@ -86,20 +82,13 @@ class Settings
 
         $container = [];
         $container[Connection::class] = function (): Connection {
-            return match ($_ENV['DB_TYPE']) {
-                'sqlite' => new Connection([
-                    'driver' => 'sqlite3',
-                    'database' => $_ENV['DB_FULL_PATH'],
-                ]),
-                'postgresql' => new Connection([
+            return new Connection([
                     'driver' => 'postgre',
                     'host' => $_ENV['DATABASE_HOST'],
                     'username' => $_ENV['POSTGRES_USER'],
                     'password' => $_ENV['POSTGRES_PASSWORD'],
                     'database' => $_ENV['POSTGRES_DB'],
-                ]),
-                default => throw new \UnexpectedValueException('Got unknown database type parameter: ' . $_ENV['DB_TYPE']),
-            };
+                ]);
         };
         $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
             'local' => new LocalFileHandler(),
@@ -234,7 +223,6 @@ class Settings
         $dotenv->required('S3_SECRET');
         $dotenv->required('S3_REGION');
         $dotenv->required('S3_ENDPOINT');
-        $dotenv->required('DB_TYPE')->allowedValues(['sqlite', 'postgresql']);
         $dotenv->required('DATABASE_HOST');
         $dotenv->required('POSTGRES_USER');
         $dotenv->required('POSTGRES_PASSWORD');

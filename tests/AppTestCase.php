@@ -34,11 +34,9 @@ class AppTestCase extends TestCase
             $phinx->run(new ArrayInput($arguments), new BufferedOutput());
         }
 
-        $testDbFullPath = __DIR__ . '/temp/db_tests.sqlite';
         $app = (new ApplicationGetter())->getApp(
             __DIR__ . '/',
             'env.testing',
-            $testDbFullPath,
             __DIR__ . '/temp'
         );
 
