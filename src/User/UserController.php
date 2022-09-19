@@ -24,7 +24,7 @@ class UserController extends AbstractController
             return $this->redirect($request, $response, 'loginAskEmail');
         }
 
-        if ($user->role === User::STATUS_WITHOUT_ROLE) {
+        if ($user->getStatus() === UserStatus::WithoutRole) {
             return $this->redirect($request, $response, 'chooseRole');
         }
 

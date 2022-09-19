@@ -12,6 +12,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\User\User;
+use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportService
@@ -38,7 +39,7 @@ class ExportService
                 User::ROLE_IST,
                 User::ROLE_GUEST,
             ],
-            [User::STATUS_PAID],
+            [UserStatus::Paid],
             $event,
             $adminUser,
         );
@@ -91,7 +92,7 @@ class ExportService
                 User::ROLE_IST,
                 User::ROLE_GUEST,
             ],
-            [User::STATUS_PAID],
+            [UserStatus::Paid],
             $event,
             $adminUser,
             new Order(Order::FILED_UPDATED_AT),
@@ -149,7 +150,7 @@ class ExportService
                 User::ROLE_IST,
                 User::ROLE_GUEST,
             ],
-            [User::STATUS_CLOSED, User::STATUS_APPROVED, User::STATUS_PAID],
+            [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
             $event,
             $adminUser,
         );

@@ -8,6 +8,7 @@ use kissj\AbstractController;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
+use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -58,7 +59,7 @@ class PatrolController extends AbstractController
         $patrolLeader = $this->patrolService->closeRegistration($patrolLeader);
 
         $patrolLeaderUser = $patrolLeader->getUserButNotNull();
-        if ($patrolLeaderUser->status === User::STATUS_CLOSED) {
+        if ($patrolLeaderUser->getStatus() === UserStatus::Closed) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for Patrol Leader with ID '
                 . $patrolLeader->id . ', user ID ' . $patrolLeaderUser->id);

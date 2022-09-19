@@ -6,20 +6,15 @@ namespace kissj\Participant;
 
 use DateTimeImmutable;
 use kissj\Event\AbstractContentArbiter;
-use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
-use kissj\Participant\Guest\GuestService;
-use kissj\Participant\Ist\IstService;
-use kissj\Participant\Patrol\PatrolService;
-use kissj\Participant\Troop\TroopService;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
-use kissj\User\UserRepository;
 use kissj\User\UserService;
+use kissj\User\UserStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -229,9 +224,9 @@ class ParticipantService
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [$participant->role ?? ''],
             [
-                User::STATUS_CLOSED,
-                User::STATUS_APPROVED,
-                User::STATUS_PAID,
+                UserStatus::Closed,
+                UserStatus::Approved,
+                UserStatus::Paid,
             ],
             $participant->getUserButNotNull()->event,
         );
@@ -251,9 +246,9 @@ class ParticipantService
                 User::ROLE_GUEST,
             ],
             [
-                User::STATUS_CLOSED,
-                User::STATUS_APPROVED,
-                User::STATUS_PAID,
+                UserStatus::Closed,
+                UserStatus::Approved,
+                UserStatus::Paid,
             ],
             $participant->getUserButNotNull()->event,
         );

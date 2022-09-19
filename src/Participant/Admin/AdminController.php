@@ -22,6 +22,7 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
 use kissj\User\UserRepository;
+use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -68,35 +69,35 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/stats-admin.twig', [
             'paidPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_PAID],
+                [UserStatus::Paid],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'paidTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
-                [USER::STATUS_PAID],
+                [UserStatus::Paid],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'paidTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
-                [USER::STATUS_PAID],
+                [UserStatus::Paid],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'paidIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
-                [USER::STATUS_PAID],
+                [UserStatus::Paid],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'paidGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
-                [USER::STATUS_PAID],
+                [UserStatus::Paid],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -120,7 +121,7 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/open-admin.twig', [
             'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_OPEN],
+                [UserStatus::Open],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -128,7 +129,7 @@ class AdminController extends AbstractController
             ),
             'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
-                [USER::STATUS_OPEN],
+                [UserStatus::Open],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -136,7 +137,7 @@ class AdminController extends AbstractController
             ),
             'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
-                [USER::STATUS_OPEN],
+                [UserStatus::Open],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -144,7 +145,7 @@ class AdminController extends AbstractController
             ),
             'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
-                [USER::STATUS_OPEN],
+                [UserStatus::Open],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -152,7 +153,7 @@ class AdminController extends AbstractController
             ),
             'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
-                [USER::STATUS_OPEN],
+                [UserStatus::Open],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -177,35 +178,35 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/approve-admin.twig', [
             'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_CLOSED],
+                [UserStatus::Closed],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'closedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
-                [USER::STATUS_CLOSED],
+                [UserStatus::Closed],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'closedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
-                [USER::STATUS_CLOSED],
+                [UserStatus::Closed],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'closedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
-                [USER::STATUS_CLOSED],
+                [UserStatus::Closed],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
             ),
             'closedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_GUEST],
-                [USER::STATUS_CLOSED],
+                [UserStatus::Closed],
                 $event,
                 $user,
                 $orderByUpdatedAtDesc,
@@ -257,25 +258,25 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/payments-admin.twig', [
             'approvedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_IST],
-                [USER::STATUS_APPROVED],
+                [UserStatus::Approved],
                 $event,
                 $user,
             ),
             'approvedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_PATROL_LEADER],
-                [USER::STATUS_APPROVED],
+                [UserStatus::Approved],
                 $event,
                 $user,
             ),
             'approvedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_LEADER],
-                [USER::STATUS_APPROVED],
+                [UserStatus::Approved],
                 $event,
                 $user,
             ),
             'approvedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [User::ROLE_TROOP_PARTICIPANT],
-                [USER::STATUS_APPROVED],
+                [UserStatus::Approved],
                 $event,
                 $user,
             ),

@@ -11,8 +11,8 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
-use kissj\User\User;
 use kissj\User\UserRepository;
+use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -47,12 +47,12 @@ class AdminService
             $isPossible = false;
         }
 
-        if ($participantFrom->getUserButNotNull()->status !== User::STATUS_PAID) {
+        if ($participantFrom->getUserButNotNull()->getStatus() !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.notPaid'));
             $isPossible = false;
         }
 
-        if ($participantTo->getUserButNotNull()->status === User::STATUS_PAID) {
+        if ($participantTo->getUserButNotNull()->getStatus() !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.isPaid'));
             $isPossible = false;
         }
@@ -107,10 +107,10 @@ class AdminService
         $correctPayment->participant = $participantTo;
 
         $userFrom = $participantFrom->getUserButNotNull();
-        $userFrom->status = User::STATUS_OPEN;
+        $userFrom->setStatus(UserStatus::Open);
 
         $userTo = $participantTo->getUserButNotNull();
-        $userTo->status = User::STATUS_PAID;
+        $userTo->setStatus(UserStatus::Paid);
 
         $this->paymentRepository->persist($correctPayment);
         $this->participantRepository->persist($participantTo);
