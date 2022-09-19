@@ -39,7 +39,10 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "128m"
-        env:    
+        env:
+          - name: COMPOSER_ALLOW_SUPERUSER 
+            value: "1"
+            
           - name: DB_TYPE
             value: postgresql
 
