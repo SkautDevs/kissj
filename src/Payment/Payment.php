@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Payment;
 
 use DateTimeInterface;
+use kissj\Application\StringUtils;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
 
@@ -66,23 +67,8 @@ class Payment extends EntityDatetime
             . 'AM:' . $this->price . '*'
             . 'CC:' . 'CZK' . '*' // TODO change into $payment->currency
             . 'DT:' . $this->due->format('Ymd') . '*'
-            . 'MSG:' . $this->getNoteWithoutDiacritic() . '*'
+            . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
             . 'X-VS:' . $this->variableSymbol;
-    }
-
-    // TODO move into string utils
-    public function getNoteWithoutDiacritic(): string
-    {
-        $diacritic = [
-            'ě', 'š', 'č', 'ř', 'ž', 'ý', 'á', 'í', 'é', 'ú', 'ů', 'ť', 'ď', 'ó', 'ä', 'ë', 'ü',
-            'Ě', 'Š', 'Č', 'Ř', 'Ž', 'Ý', 'Á', 'Í', 'É', 'Ú', 'Ů', 'Ť', 'Ď', 'Ó', 'Ä', 'Ë', 'Ü',
-        ];
-        $without = [
-            'e', 's', 'c', 'r', 'z', 'y', 'a', 'i', 'e', 'u', 'u', 't', 'd', 'ó', 'a', 'e', 'u',
-            'E', 'S', 'C', 'R', 'Z', 'Y', 'A', 'I', 'E', 'U', 'U', 'T', 'D', 'Ó', 'A', 'E', 'U',
-        ];
-
-        return str_replace($diacritic, $without, $this->note);
     }
 }
 
