@@ -8,9 +8,9 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentStatus;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
@@ -75,7 +75,7 @@ class AdminService
     {
         $correctPayment = null;
         foreach ($participantFrom->payment as $payment) {
-            if ($payment->status === Payment::STATUS_PAID) {
+            if ($payment->status === PaymentStatus::Paid) {
                 $correctPayment = $payment;
             }
         }
@@ -85,7 +85,7 @@ class AdminService
         }
 
         foreach ($participantTo->payment as $payment) {
-            if ($payment->status === Payment::STATUS_WAITING) {
+            if ($payment->status === PaymentStatus::Waiting) {
                 $this->paymentService->cancelPayment($payment);
                 $this->mailer->sendCancelledPayment(
                     $participantTo,

@@ -13,7 +13,7 @@ use kissj\Participant\Participant;
  * @property string            $variableSymbol
  * @property string            $price
  * @property string            $currency
- * @property string            $status
+ * @property PaymentStatus     $status m:passThru(statusFromString|statusToString)
  * @property string            $purpose
  * @property string            $accountNumber
  * @property string            $iban
@@ -23,9 +23,20 @@ use kissj\Participant\Participant;
  */
 class Payment extends EntityDatetime
 {
-    public const STATUS_WAITING = 'waiting';
-    public const STATUS_PAID = 'paid';
-    public const STATUS_CANCELED = 'canceled';
+    public function initDefaults(): void
+    {
+        $this->status = PaymentStatus::Waiting;
+    }
+
+    public function statusFromString(string $status): PaymentStatus
+    {
+        return PaymentStatus::from($status);
+    }
+
+    public function statusToString(PaymentStatus $status): string
+    {
+        return $status->value;
+    }
 
     public function getRemainingDays(): int
     {
@@ -59,6 +70,7 @@ class Payment extends EntityDatetime
             . 'X-VS:' . $this->variableSymbol;
     }
 
+    // TODO move into string utils
     public function getNoteWithoutDiacritic(): string
     {
         $diacritic = [

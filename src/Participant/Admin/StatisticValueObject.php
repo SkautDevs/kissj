@@ -3,7 +3,7 @@
 namespace kissj\Participant\Admin;
 
 use kissj\Participant\Participant;
-use kissj\Payment\Payment;
+use kissj\Payment\PaymentStatus;
 use kissj\User\UserStatus;
 
 class StatisticValueObject
@@ -39,7 +39,7 @@ class StatisticValueObject
                     $this->approvedCount++;
 
                     foreach ($participant->getPayments() as $payment) {
-                        if ($payment->status !== Payment::STATUS_CANCELED &&
+                        if ($payment->status !== PaymentStatus::Canceled &&
                             $payment->isPaymentOverdue()
                         ) {
                             $this->afterPayment++;

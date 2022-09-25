@@ -43,7 +43,7 @@ class PaymentService
         $payment->variableSymbol = $variableNumber;
         $payment->price = (string)$event->getEventType()->getPrice($participant);
         $payment->currency = $event->currency;
-        $payment->status = Payment::STATUS_WAITING;
+        $payment->status = PaymentStatus::Waiting;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         $payment->iban = $event->iban;
@@ -61,12 +61,12 @@ class PaymentService
 
     public function cancelPayment(Payment $payment): Payment
     {
-        if ($payment->status !== Payment::STATUS_WAITING) {
-            throw new \RuntimeException('Payment cancellation is allow only for payments with status "'
-                . Payment::STATUS_WAITING . '"');
+        if ($payment->status !== PaymentStatus::Waiting) {
+            throw new \RuntimeException('Payment cancellation is allow only for payments with status '
+                . PaymentStatus::Waiting->value);
         }
 
-        $payment->status = Payment::STATUS_CANCELED;
+        $payment->status = PaymentStatus::Canceled;
         $this->paymentRepository->persist($payment);
 
         return $payment;
@@ -95,13 +95,13 @@ class PaymentService
 
     public function confirmPayment(Payment $payment): Payment
     {
-        if ($payment->status !== Payment::STATUS_WAITING) {
-            throw new \RuntimeException('Payment confirmation is allow only for payments with status "'
-                . Payment::STATUS_WAITING . '"');
+        if ($payment->status !== PaymentStatus::Waiting) {
+            throw new \RuntimeException('Payment confirmation is allow only for payments with status '
+                . PaymentStatus::Waiting->value);
         }
 
         $this->userService->payRegistration($payment->participant->getUserButNotNull());
-        $payment->status = Payment::STATUS_PAID;
+        $payment->status = PaymentStatus::Paid;
         $this->paymentRepository->persist($payment);
         $this->mailer->sendRegistrationPaid($payment->participant);
 
@@ -149,7 +149,8 @@ class PaymentService
                 if ($payment->price === $bankPayment->price) {
                     // match!
                     $this->confirmPayment($payment);
-                    $this->logger->info('Payment ID ' . $payment->id . ' automatically set to status ' . $payment->status);
+                    $this->logger->info('Payment ID ' . $payment->id 
+                        . ' automatically set to status ' . $payment->status->value);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;

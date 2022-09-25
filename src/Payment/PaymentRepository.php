@@ -27,7 +27,7 @@ class PaymentRepository extends Repository
      */
     public function getWaitingPaymentsKeydByVariableSymbols(Event $event): array
     {
-        $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
+        $waitingPayments = $this->findBy(['status' => PaymentStatus::Waiting]);
         $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
 
         $finalPayments = [];
@@ -48,7 +48,7 @@ class PaymentRepository extends Repository
      */
     public function getDuePayments(Event $event): array
     {
-        $waitingPayments = $this->findBy(['status' => Payment::STATUS_WAITING]);
+        $waitingPayments = $this->findBy(['status' => PaymentStatus::Waiting]);
         $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
 
         return array_filter(

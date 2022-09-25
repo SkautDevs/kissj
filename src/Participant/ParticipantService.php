@@ -281,7 +281,6 @@ class ParticipantService
         return $participant;
     }
 
-    // TODO move into payment service, same as confirmPayment
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
