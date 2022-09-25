@@ -19,9 +19,9 @@ class OpenStatusOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->getStatus() !== UserStatus::Open) {
+        if ($user instanceof User && $user->status !== UserStatus::Open) {
             $this->logger->warning(
-                'User ' . $user->email . ' is trying to change data, even he has role "' . $user->getStatus()->value . '"'
+                'User ' . $user->email . ' is trying to change data, even he has role "' . $user->status->value . '"'
             );
             throw new \RuntimeException('You cannot change your data when you are not in editing status');
         }

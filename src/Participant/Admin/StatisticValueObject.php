@@ -26,7 +26,7 @@ class StatisticValueObject
         $this->paidCount = 0;
 
         foreach ($participants as $participant) {
-            switch ($participant->getUserButNotNull()->getStatus()) {
+            switch ($participant->getUserButNotNull()->status) {
                 case UserStatus::Open:
                     $this->openCount++;
                     break;

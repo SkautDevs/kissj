@@ -22,7 +22,7 @@ class NonChoosedRoleOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->getStatus() !== UserStatus::WithoutRole) {
+        if ($user instanceof User && $user->status !== UserStatus::WithoutRole) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.roleChoosed'));
 
             return $this->createRedirectResponse($request, 'landing');

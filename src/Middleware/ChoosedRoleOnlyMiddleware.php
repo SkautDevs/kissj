@@ -22,7 +22,7 @@ class ChoosedRoleOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->getStatus() === UserStatus::WithoutRole) {
+        if ($user instanceof User && $user->status === UserStatus::WithoutRole) {
             $this->flashMessages->info($this->translator->trans('flash.info.chooseRoleNeeded'));
 
             return $this->createRedirectResponse($request, 'landing');

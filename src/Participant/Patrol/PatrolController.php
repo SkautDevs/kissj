@@ -59,7 +59,7 @@ class PatrolController extends AbstractController
         $patrolLeader = $this->patrolService->closeRegistration($patrolLeader);
 
         $patrolLeaderUser = $patrolLeader->getUserButNotNull();
-        if ($patrolLeaderUser->getStatus() === UserStatus::Closed) {
+        if ($patrolLeaderUser->status === UserStatus::Closed) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for Patrol Leader with ID '
                 . $patrolLeader->id . ', user ID ' . $patrolLeaderUser->id);

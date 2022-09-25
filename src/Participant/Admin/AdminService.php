@@ -47,12 +47,12 @@ class AdminService
             $isPossible = false;
         }
 
-        if ($participantFrom->getUserButNotNull()->getStatus() !== UserStatus::Paid) {
+        if ($participantFrom->getUserButNotNull()->status !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.notPaid'));
             $isPossible = false;
         }
 
-        if ($participantTo->getUserButNotNull()->getStatus() !== UserStatus::Paid) {
+        if ($participantTo->getUserButNotNull()->status !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.isPaid'));
             $isPossible = false;
         }
@@ -107,10 +107,10 @@ class AdminService
         $correctPayment->participant = $participantTo;
 
         $userFrom = $participantFrom->getUserButNotNull();
-        $userFrom->setStatus(UserStatus::Open);
+        $userFrom->status = UserStatus::Open;
 
         $userTo = $participantTo->getUserButNotNull();
-        $userTo->setStatus(UserStatus::Paid);
+        $userTo->status = UserStatus::Paid;
 
         $this->paymentRepository->persist($correctPayment);
         $this->participantRepository->persist($participantTo);

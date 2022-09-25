@@ -128,7 +128,7 @@ class UserService
         $this->participantRepository->persist($participant);
 
         $user->role = $role;
-        $user->setStatus(UserStatus::Open);
+        $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
     }
 
@@ -148,7 +148,7 @@ class UserService
 
     public function openRegistration(User $user): User
     {
-        $user->setStatus(UserStatus::Open);
+        $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
 
         return $user;
@@ -156,7 +156,7 @@ class UserService
 
     public function closeRegistration(User $user): User
     {
-        $user->setStatus(UserStatus::Closed);
+        $user->status = UserStatus::Closed;
         $this->userRepository->persist($user);
 
         return $user;
@@ -164,7 +164,7 @@ class UserService
 
     public function approveRegistration(User $user): User
     {
-        $user->setStatus(UserStatus::Approved);
+        $user->status = UserStatus::Approved;
         $this->userRepository->persist($user);
 
         return $user;
@@ -172,7 +172,7 @@ class UserService
 
     public function payRegistration(User $user): User
     {
-        $user->setStatus(UserStatus::Paid);
+        $user->status = UserStatus::Paid;
         $this->userRepository->persist($user);
 
         return $user;

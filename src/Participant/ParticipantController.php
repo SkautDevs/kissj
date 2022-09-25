@@ -79,7 +79,7 @@ class ParticipantController extends AbstractController
         $participant = $this->getParticipantFromUser($user);
         $participant = $this->participantService->closeRegistration($participant);
 
-        if ($participant->getUserButNotNull()->getStatus() === UserStatus::Closed) {
+        if ($participant->getUserButNotNull()->status === UserStatus::Closed) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for IST with ID ' . $participant->id
                 . ', user ID ' . $participant->id);

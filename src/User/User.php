@@ -6,10 +6,11 @@ use kissj\Event\Event;
 use kissj\Orm\EntityDatetime;
 
 /**
- * @property int    $id
- * @property string $email
- * @property string $role   m:enum(self::ROLE_*) // TODO change to roles "admins or participant"
- * @property Event  $event  m:hasOne
+ * @property int        $id
+ * @property string     $email
+ * @property string     $role   m:enum(self::ROLE_*) // TODO change to roles "admins or participant"
+ * @property Event      $event  m:hasOne
+ * @property UserStatus $status m:passThru(statusFromString|statusToString)
  */
 class User extends EntityDateTime
 {
@@ -57,15 +58,16 @@ class User extends EntityDateTime
     
     public function initDefaults(): void
     {
-        $this->row->status = UserStatus::WithoutRole->value;
+        $this->status = UserStatus::WithoutRole;
     }
 
-    public function getStatus(): UserStatus {
-        return UserStatus::from($this->row->status);
-    }
-    
-    public function setStatus(UserStatus $status): void
+    public function statusFromString(string $status): UserStatus
     {
-        $this->row->status = $status->value;
+        return UserStatus::from($status);
+    }
+
+    public function statusToString(UserStatus $status): string
+    {
+        return $status->value;
     }
 }

@@ -46,7 +46,7 @@ class ParticipantRepository extends Repository
             $user = $participant->getUserButNotNull();
             if (
                 $user->event->id === $event->id
-                && in_array($user->getStatus(), $statuses, true)
+                && in_array($user->status, $statuses, true)
                 && in_array($participant->role, $roles, true)
             ) {
                 $validParticipants[$participant->id] = $participant;

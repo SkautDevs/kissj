@@ -62,7 +62,7 @@ class ExportService
             $rows[] = [
                 (string)$participant->id, // 0
                 $participant->role ?? '',
-                $participant->user?->status ?? '',
+                $participant->user?->status->value ?? '',
                 $this->translator->trans($participant->contingent ?? ''),
                 $participant->firstName ?? '',
                 $participant->lastName ?? '', // 5
@@ -237,7 +237,7 @@ class ExportService
                     (string)$participant->id, // 0
                     $participant->user?->event->readableName ?? '',
                     $participant->role ?? '',
-                    $participant->user?->status ?? '',
+                    $participant->user?->status->value ?? '',
                     $this->translator->trans($participant->contingent ?? ''),
                     $participant->firstName ?? '', // 5
                     $participant->lastName ?? '',
