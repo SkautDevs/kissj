@@ -143,18 +143,6 @@ spec:
                 name: {{ .Release.Name }}-s3
                 key: secret 
           
-          - name: ADMINER_LOGIN
-            valueFrom:
-              secretKeyRef: 
-                name: {{ .Release.Name }}-adminer
-                key: username
-          
-          - name: ADMINER_PASSWORD
-            valueFrom:
-              secretKeyRef: 
-                name: {{ .Release.Name }}-adminer
-                key: password
-          
           - name: TEMPLATE_CACHE
             value: "true"
 

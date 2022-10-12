@@ -10,10 +10,6 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-
-    annotations:
-      haproxy.org/load-balance: "leastconn"
-
     
 spec:
   type: ClusterIP
@@ -40,9 +36,6 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-
-    annotations:
-      haproxy.org/load-balance: "leastconn"
     
 spec:
   type: ClusterIP
@@ -55,33 +48,7 @@ spec:
     - protocol: TCP
       port: 9253
       name: metrics
-{{- if .Values.postgres.incluster }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-postgresql
-  labels:
-    app.kubernetes.io/name: {{ .Chart.Name}}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: {{ .Chart.Name }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-spec:
-  type: ClusterIP
-  selector:
-    app.kubernetes.io/component: database
-  ports:
-    - protocol: TCP
-      port: 5432
-      name: psql
-    - protocol: TCP
-      port: 9187
-      name: metrics
-{{- end }}
-
+      
 ---
 apiVersion: v1
 kind: Service

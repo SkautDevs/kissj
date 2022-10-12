@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name}}-caddy-config
 data:
     Caddyfile: |
-        :80 {
+        :8080 {
         	root * /var/www/html/public
         	file_server
         	php_fastcgi {env.PHPFPM_HOST}:9000
