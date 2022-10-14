@@ -7,7 +7,7 @@ postgres:
 
 caddy:
   image:
-    name: quay.io/kissj/caddy
+    name: quay.io/kissj/caddy-ubi
     tag: latest
   replicas: 2
   hpa:
@@ -22,7 +22,7 @@ caddy:
 
 php:
   image:
-    name: quay.io/kissj/php
+    name: quay.io/kissj/php-ubi
     tag: latest
   metrics:
     enabled: false
@@ -36,7 +36,7 @@ php:
   # Must support RWX
   volume: 
     size: 5Gi
-    storageclass: default
+    storageclass: ""
 
 
 app:

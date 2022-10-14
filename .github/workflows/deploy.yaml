@@ -76,6 +76,8 @@ jobs:
               tag: ${{ inputs.envName}}-${{ github.sha }}
             tls: 
               enabled: true
+              issuer: letsencrypt-production
+
           
           php:
             replicas: 1 
