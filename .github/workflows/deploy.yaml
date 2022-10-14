@@ -64,9 +64,9 @@ jobs:
         values: |
           
           postgres:
-            incluster: true
             username: ${{ secrets.POSTGRES_USERNAME }}
             password: ${{ secrets.POSTGRES_PASSWORD }}
+            host: ${{ secrets.POSTGRES_HOST }}
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
