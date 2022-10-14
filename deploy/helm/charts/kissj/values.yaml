@@ -17,11 +17,15 @@ caddy:
   tls:
     enabled: true
     issuer: letsencrypt-production
+  metrics: 
+    enabled: false
 
 php:
   image:
     name: quay.io/kissj/php
     tag: latest
+  metrics:
+    enabled: false
   
   replicas: 2
   hpa:

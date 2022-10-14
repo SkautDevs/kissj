@@ -1,3 +1,5 @@
+{{- if .Values.caddy.metrics.enabled }}
+
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -16,7 +18,9 @@ spec:
           app.kubernetes.io/component: webserver
   endpoints:
   - port: metrics
+{{- end }}
 ---
+{{- if .Values.php.metrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -35,3 +39,4 @@ spec:
           app.kubernetes.io/component: php-fpm
   endpoints:
   - port: metrics
+{{- end }}
