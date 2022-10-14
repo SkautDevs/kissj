@@ -26,6 +26,8 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           #Define the environment variable
+          - name: POSTGRESQL_HOST
+            value: {{ .Values.postgres.host }}
           - name: POSTGRESQL_USERNAME
             valueFrom:
               secretKeyRef:
