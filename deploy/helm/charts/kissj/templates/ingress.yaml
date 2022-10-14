@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name}}-ingress
   annotations:
-    {{- if .Values.caddy.tls.enabled
+    {{- if .Values.caddy.tls.enabled }}
     cert-manager.io/cluster-issuer: {{ .Values.caddy.tls.issuer |quote }}
     {{- end }}
 
