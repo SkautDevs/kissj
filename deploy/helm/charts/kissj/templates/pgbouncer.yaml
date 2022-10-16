@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-pgbouncer
+  name: {{ .Release.Name }}-pgbouncer
   labels:
     app.kubernetes.io/name: {{ .Chart.Name}}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
