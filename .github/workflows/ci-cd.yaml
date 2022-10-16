@@ -21,22 +21,22 @@ on:
 
 jobs:
 
-  staging-test:
-    uses: SkautDevs/kissj/.github/workflows/tests.yaml@master
+  test:
+    uses: ./.github/workflows/tests.yaml
 
-  staging-build:
-    needs: staging-test
-    uses: SkautDevs/kissj/.github/workflows/build.yaml@master
+  build:
+    needs: test
+    uses: ./.github/workflows/build.yaml
     with:
-      envName: 'staging'
+      envName: ${{ github.ref_name }}
 
     secrets:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 
 
   staging-deploy:
-    needs: staging-build
-    uses: SkautDevs/kissj/.github/workflows/deploy.yaml@master
+    needs: build
+    uses: ./.github/workflows/deploy.yaml
     with:
       envName: 'staging'
       envUrl: 'https://staging.kissj.net'
