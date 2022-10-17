@@ -22,11 +22,11 @@ on:
 jobs:
 
   test:
-    uses: ./.github/workflows/reusable/tests.yaml
+    uses: ./.github/workflows/tests.yaml
 
   build:
     needs: test
-    uses: ./.github/workflows/reusable/build.yaml
+    uses: ./.github/workflows/build.yaml
     with:
       envName: ${{ github.ref_name }}
 
@@ -36,7 +36,7 @@ jobs:
 
   staging-deploy:
     needs: build
-    uses: ./.github/workflows/reusable/deploy.yaml
+    uses: ./.github/workflows/deploy.yaml
     with:
       envName: 'staging'
       envUrl: 'https://staging.kissj.net'
