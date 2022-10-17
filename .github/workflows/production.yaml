@@ -28,7 +28,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/build.yaml
     with:
-      envName: ${{ github.ref_name }}
+      envName: production
 
     secrets:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
