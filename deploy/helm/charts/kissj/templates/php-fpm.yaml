@@ -20,46 +20,15 @@ spec:
       labels:
         app.kubernetes.io/component: php-fpm
     spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
       volumes:
       - name: {{ .Release.Name}}-sessions
         persistentVolumeClaim:
           claimName: {{ .Release.Name}}-sessions
-      
-     # initContainers:
-     # - name: migrate-database
-     #   image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
-     #   imagePullPolicy: Always
-     #   command: ["composer"]
-     #   args: ["phinx:migrate"]
-     #   resources:
-     #     requests:
-     #       memory: "64Mi"
-     #       cpu: "64m"
-     #     limits:
-     #       memory: "128Mi"
-     #       cpu: "128m"
-     #   env:    
-     #     - name: DB_TYPE
-     #       value: postgresql
-     #     
-     #     - name: DATABASE_HOST
-     #       value: {{ .Release.Name }}-pgbouncer
-     #     
-     #     - name: POSTGRES_DB
-     #       value: {{ .Values.postgres.dbname }}
-     #
-     #     - name: POSTGRES_USER
-     #       valueFrom:
-     #         secretKeyRef:
-     #           name: {{ .Release.Name }}-postgres
-     #           key: username 
-     #     
-     #     - name: POSTGRES_PASSWORD
-     #       valueFrom:
-     #         secretKeyRef:
-     #           name: {{ .Release.Name }}-postgres
-     #           key: password 
-
+          
       containers:
       - name: php-fpm-metrics
         image: hipages/php-fpm_exporter:latest
@@ -83,7 +52,7 @@ spec:
         image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
         imagePullPolicy: Always
         volumeMounts:
-        - mountPath: /tmp
+        - mountPath: /var/lib/php/session/
           name: {{ .Release.Name}}-sessions
         ports:
         - containerPort: 9000
@@ -142,18 +111,6 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-s3
                 key: secret 
-          
-          - name: ADMINER_LOGIN
-            valueFrom:
-              secretKeyRef: 
-                name: {{ .Release.Name }}-adminer
-                key: username
-          
-          - name: ADMINER_PASSWORD
-            valueFrom:
-              secretKeyRef: 
-                name: {{ .Release.Name }}-adminer
-                key: password
           
           - name: TEMPLATE_CACHE
             value: "true"

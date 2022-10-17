@@ -1,3 +1,4 @@
+{{- if .Values.caddy.hpa.enabled }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -7,11 +8,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-caddy
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: {{ .Values.caddy.hpa.minReplicas }}
+  maxReplicas: {{ .Values.caddy.hpa.maxReplicas }}
   targetCPUUtilizationPercentage: 80
-
+{{- end }}
 ---
+{{- if .Values.php.hpa.enabled }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -21,6 +23,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-php-fpm
-  minReplicas: 2
-  maxReplicas: 20
+  minReplicas: {{ .Values.php.hpa.minReplicas }}
+  maxReplicas: {{ .Values.php.hpa.maxReplicas }}
   targetCPUUtilizationPercentage: 80
+{{- end }}

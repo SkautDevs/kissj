@@ -64,9 +64,9 @@ jobs:
         values: |
           
           postgres:
-            incluster: true
             username: ${{ secrets.POSTGRES_USERNAME }}
             password: ${{ secrets.POSTGRES_PASSWORD }}
+            host: ${{ secrets.POSTGRES_HOST }}
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
@@ -74,9 +74,15 @@ jobs:
             image:
               name: quay.io/kissj/caddy-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}
+            tls: 
+              enabled: true
+              issuer: ${{ secrets.CERT_ISSUER}}
+
           
           php:
             replicas: 1 
+            volume:
+              storageclass: ${{ secrets.STORAGE_CLASS }}
             image:
               name: quay.io/kissj/php-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}

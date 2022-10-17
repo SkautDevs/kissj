@@ -1,0 +1,44 @@
+name: Production
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+    inputs:
+      envName:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+        default: production
+      envUrl:
+        description: 'URL of the environment'
+        required: true
+        type: string
+        default: 'https://kissj.net'
+
+jobs:
+
+  test:
+    uses: ./.github/workflows/reusable/tests.yaml
+
+  build:
+    needs: test
+    uses: ./.github/workflows/reusable/build.yaml
+    with:
+      envName: ${{ github.ref_name }}
+
+    secrets:
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }} 
+
+  production-deploy:
+    needs: build
+    uses: ./.github/workflows/reusable/deploy.yaml
+    with:
+      envName: 'production'
+      envUrl: 'https://kissj.net'
+
+    secrets: inherit
