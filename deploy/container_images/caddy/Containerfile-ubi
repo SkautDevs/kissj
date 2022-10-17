@@ -15,11 +15,14 @@ COPY ./public /var/www/html/public
 #Create dummy .env
 RUN touch /var/www/html/.env
 
+RUN chown -R caddy:caddy /var/www/html 
+
+
 STOPSIGNAL SIGQUIT
 
 EXPOSE 8080
 EXPOSE 443
 EXPOSE 8000
 EXPOSE 9253
-
- CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+USER caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
