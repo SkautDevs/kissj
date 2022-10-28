@@ -531,4 +531,22 @@ class AdminController extends AbstractController
             default => null,
         };
     }
+
+    public function generateMorePayments(Request $request, Response $response, Event $event): Response
+    {
+        if ($event->getEventType()->isMultiplePaymentsAllowed() === false) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.multiplePaymentsNotAllowed'));
+        } else {
+            $participants = $this->participantRepository->getPaidParticipantsWithExactPayments($event, 1, 10);
+            $count = $this->participantService->generatePaymentsFor($participants);
+
+            $this->flashMessages->info($this->translator->trans('flash.info.generatedPayments') . ': ' . $count);
+        }
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-stats',
+        );
+    }
 }

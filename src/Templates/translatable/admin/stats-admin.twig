@@ -3,6 +3,12 @@
 {% block content %}
     <div class="card closed-theme">
         <h2>{% trans %}stats-admin.stats{% endtrans %} {{ event.readableName }}</h2>
+        {% if event.eventType.isMultiplePaymentsAllowed %}
+            <form method="POST" action="{{ url_for('admin-generate-more-payments', {'eventSlug': event.slug} ) }}">
+                <input class="btn btn-small" type="submit" 
+                       value="{% trans %}stats-admin.generate-more-payments{% endtrans %}">
+            </form>
+        {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
     </div>

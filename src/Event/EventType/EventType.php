@@ -158,4 +158,9 @@ abstract class EventType
     {
         return $dateFrom->add(DateInterval::createFromDateString('14 days'));
     }
+
+    public function isMultiplePaymentsAllowed(): bool
+    {
+        return false;
+    }
 }

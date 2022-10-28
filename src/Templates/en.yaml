@@ -31,10 +31,15 @@ dashboard:
     andMaximally: "and at most"
     pForValidReg: "participants for a valid registration"
     paymentInfo: "Payment information"
+    paymentStatusTitle: "Status platby"
     accountNumber: "Account number"
     amount: "Amount"
     variableSymbol: "Variable symbol"
     paymentNote: "Note for the receiver"
+    paymentStatus:
+        waiting: "waiting for payment"
+        paid: "paid (:"
+        canceled: "cancelled"
     lockRegistration: "Lock registration"
 changeDetails:
     editDetails: "Edit details"
@@ -251,6 +256,8 @@ payments-admin:
     confirm: "Confirm payment"
     allPatrolsPaid: "All patrols are paid up!"
     allIstPaid: "All ISTs are paid up!"
+    allTroopLeadersPaid: "All troop leaders are paid up!"
+    allTroopParticipantsPaid: "All troop participants are paid up!"
 deny-admin:
     deny: "Deny participant with role"
     wantDeny: "Deny "
@@ -301,6 +308,7 @@ stats-admin:
     numberPatrolParticipants: "Patrol participants in total"
     numberPatrolParticipantsTotal: "participants in total"
     paid: "Paid participants for event"
+    generate-more-payments: "Generate more payments"
 open-admin:
     open: "Unlocked participants on event"
     none: "No participants with role"
@@ -360,6 +368,7 @@ flash:
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
         differentScarfs: "Participants have differently selected scarf option - it will be changed at the buyer's registration form to correspond the payment."
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
+        generatedPayments: "Generated payments and emails sent"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -391,6 +400,7 @@ flash:
         wrongEvent: "You are not registered on this event yet - register yourself please"
         nonexistentEvent: "This event do not exist. Bad link maybe?"
         testingSite: "This site is for testing purposes only - do not enter any real personal or sensitive data!"
+        multiplePaymentsNotAllowed: "Sorry, but generating multiple payments is not allowed."
     error:
         adminOnly: "Sorry bro, admins only"
         plOnly: "Sorry, you are not logged as Patrol Leader"

@@ -77,7 +77,7 @@ class PaymentService
         $duePayments = $this->paymentRepository->getDuePayments($event);
         $singleDuePayments = array_filter(
             $duePayments,
-            fn(Payment $payment) => count($payment->participant->payment) === 1,
+            fn (Payment $payment) => count($payment->participant->payment) === 1,
         );
         $deniedPaymentsCount = 0;
 
@@ -149,7 +149,7 @@ class PaymentService
                 if ($payment->price === $bankPayment->price) {
                     // match!
                     $this->confirmPayment($payment);
-                    $this->logger->info('Payment ID ' . $payment->id 
+                    $this->logger->info('Payment ID ' . $payment->id
                         . ' automatically set to status ' . $payment->status->value);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;

@@ -29,7 +29,10 @@
     {% if person.getContingent() is null or person.getContingent() == 'detail.contingent.czechia' %}
         <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
         {% for payment in person.getPayments %}
-            <div class="payment{% if payment.status == 'canceled' %} payment-overdue{% endif %}">
+            <div class="payment{% if payment.status.value == 'canceled' %} payment-overdue{% endif %}">
+                {% trans %}dashboard.paymentStatusTitle{% endtrans %}: <b>
+                    {{ ('dashboard.paymentStatus.' ~ payment.status.value)|trans }}
+                </b><br/>
                 {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
                 {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
                 <br/>

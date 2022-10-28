@@ -81,9 +81,9 @@
         "stan": "vendor/bin/phpstan analyse --configuration phpstan.neon",
         "cs": "vendor/bin/php-cs-fixer fix src --rules=@PSR12,-indentation_type",
         "test": [
-            "@unit",
             "@stan",
-            "@cs"
+            "@cs",
+            "@unit"
         ],
         "phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",
         "phinx:migrate": "vendor/bin/phinx migrate --configuration src/Settings/phinxConfiguration.php",

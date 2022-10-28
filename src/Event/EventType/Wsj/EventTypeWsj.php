@@ -24,23 +24,23 @@ class EventTypeWsj extends EventType
                 $participant instanceof TroopLeader,
                 $participant instanceof TroopParticipant,
                 $participant instanceof Ist,
-                    => 12_000,
+                => 12_000,
                 default => throw new \Exception('Unknown participant class for payment count 0̈́'),
             },
             1 => match (true) {
                 $participant instanceof TroopLeader,
                 $participant instanceof TroopParticipant,
-                    => 15_000,
+                => 15_000,
                 $participant instanceof Ist,
-                    => 12_000,
+                => 12_000,
                 default => throw new \Exception('Unknown participant class for payment count 1'),
             },
-            2 => match (true) {
+            /*2 => match (true) {
                 $participant instanceof TroopLeader,
                 $participant instanceof TroopParticipant,
                     => 17_000,
                 default => throw new \Exception('Unknown participant class for payment count 2'),
-            },
+            },*/
             default => throw new \Exception('Problematic payment count: ' . $paymentsCount),
         };
     }
@@ -138,5 +138,10 @@ class EventTypeWsj extends EventType
             'detail.position.video',
             'detail.position.program',
         ];
+    }
+
+    public function isMultiplePaymentsAllowed(): bool
+    {
+        return true;
     }
 }

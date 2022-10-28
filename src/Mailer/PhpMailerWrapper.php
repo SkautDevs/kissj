@@ -65,7 +65,21 @@ class PhpMailerWrapper
         );
     }
 
-    public function sendRegistrationApprovedWithPayment(Participant $participant, Payment $payment): void
+    public function sendRegistrationApprovedWithPayment(
+        Participant $participant,
+        Payment $payment,
+    ): void {
+        $this->sendMailWithPayment($participant, $payment, true);
+    }
+
+    public function sendRegistrationApprovedWithNonFirstPayment(
+        Participant $participant,
+        Payment $payment,
+    ): void {
+        $this->sendMailWithPayment($participant, $payment, false);
+    }
+
+    private function sendMailWithPayment(Participant $participant, Payment $payment, bool $isFirstPayment): void
     {
         $qrCode = fopen(
             $this->qrCodeService->generateQrBase64FromString($payment->getQrPaymentString()),
@@ -79,10 +93,11 @@ class PhpMailerWrapper
         }
         $user = $participant->getUserButNotNull();
 
+        $templateName = $isFirstPayment ? 'payment-info' : 'payment-nonfirst-info';
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
-            'payment-info',
+            $templateName,
             [
                 'participant' => $participant,
                 'payment' => $payment,
@@ -128,7 +143,7 @@ class PhpMailerWrapper
                 new EmbedDTO('qr_info', $qrCode, 'image/png'),
             ];
         }
-        
+
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
@@ -200,7 +215,7 @@ class PhpMailerWrapper
         $email->subject($event->readableName . ' - ' . $subject);
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]));
-        array_map(fn(string $attachment) => $email->attach($attachment), $attachments);
+        array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {
             $email->embed($embed->resource, $embed->name, $embed->contentType);
         }

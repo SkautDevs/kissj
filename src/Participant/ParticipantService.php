@@ -319,11 +319,29 @@ class ParticipantService
         } else {
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
         }
-        $this->userService->approveRegistration($participant->getUserButNotNull());
+        $this->userService->setUserApproved($participant->getUserButNotNull());
         $this->flashMessages->success($this->translator->trans('flash.success.approved'));
 
         return $participant;
     }
+
+
+    /**
+     * @param Participant[] $participants
+     */
+    public function generatePaymentsFor(array $participants): int
+    {
+        $count = 0;
+        foreach ($participants as $participant) {
+            $payment = $this->paymentService->createAndPersistNewPayment($participant);
+            $this->userService->setUserApproved($participant->getUserButNotNull());
+            $this->mailer->sendRegistrationApprovedWithNonFirstPayment($participant, $payment);
+            $count++;
+        }
+
+        return $count;
+    }
+
 
     public function getContentArbiterForParticipant(
         Participant $participant,

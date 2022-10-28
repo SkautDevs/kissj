@@ -225,6 +225,9 @@ class Route
 
                         $app->post('/transferPayment', AdminController::class . '::transferPayment')
                             ->setName('admin-transfer-payment');
+
+                        $app->post('/generateMorePayments', AdminController::class . '::generateMorePayments')
+                            ->setName('admin-generate-more-payments');
                     });
 
                     $app->group('/export', function (RouteCollectorProxy $app) {

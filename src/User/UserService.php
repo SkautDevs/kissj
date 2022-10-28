@@ -162,7 +162,7 @@ class UserService
         return $user;
     }
 
-    public function approveRegistration(User $user): User
+    public function setUserApproved(User $user): User
     {
         $user->status = UserStatus::Approved;
         $this->userRepository->persist($user);

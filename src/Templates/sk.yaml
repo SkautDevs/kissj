@@ -31,10 +31,15 @@ dashboard:
     andMaximally: "a najviac"
     pForValidReg: "účastníkov pre validnú registráciu"
     paymentInfo: "Platobné údaje"
+    paymentStatusTitle: "Status platby"
     accountNumber: "Číslo účtu"
     amount: "Suma"
     variableSymbol: "Variabilný symbol"
     paymentNote: "Poznámka pre príjemcu"
+    paymentStatus:
+        waiting: "čekáme na zaplacení"
+        paid: "zaplacená (:"
+        canceled: "zrušená"
     lockRegistration: "Uzamknúť registráciu"
 changeDetails:
     editDetails: "Upraviť údaje"
@@ -251,6 +256,8 @@ payments-admin:
     confirm: "Potvrdit platbu"
     allPatrolsPaid: "Všechny patroly mají zaplaceno!"
     allIstPaid: "Všichni ISTs mají zaplaceno!"
+    allTroopLeadersPaid: "Všichni vedoucí mají zaplaceno!"
+    allTroopParticipantsPaid: "Všichni účastníci mají zaplaceno!"
 deny-admin:
     deny: "Zamítnout účastníka s rolí"
     wantDeny: "Zamítám"
@@ -301,6 +308,7 @@ stats-admin:
     numberPatrolParticipants: "Účastníků v patrole celkem"
     numberPatrolParticipantsTotal: "v patrole celkem"
     paid: "Zaplacení účastníci akce"
+    generate-more-payments: "Vygenerovat více plateb"
 open-admin:
     open: "Neuzamčení účastníci na akci"
     none: "Žádní účastníci s rolí"
@@ -360,6 +368,7 @@ flash:
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
+        generatedPayments: "Vygenerováno plateb a rozposláno emailů"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -391,6 +400,7 @@ flash:
         wrongEvent: "Na tuto akci ještě nejsi registrovaný - registruj se, prosím"
         nonexistentEvent: "Tato akce nejspíš neexistuje. Asi špatný odkaz?"
         testingSite: "Tato stránka je určena pouze pro testovací účely - nezadávej žádné reálné osobní či citlivé údaje!"
+        multiplePaymentsNotAllowed: "Pardon, ale generování více plateb pro účastníka není pro tuto akci povoleno."
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"

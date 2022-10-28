@@ -40,6 +40,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
+
 use function DI\autowire;
 use function DI\create;
 use function DI\get;

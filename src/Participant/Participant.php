@@ -14,7 +14,7 @@ use kissj\User\User;
 
 /**
  * Master table for all participants, using Single Table Inheritance
- * All commons are here, entitis are seaprated of course (:
+ * All commons are here, entities are separated of course (:
  *
  * @property int                    $id
  * @property User|null              $user m:hasOne

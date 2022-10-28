@@ -55,7 +55,7 @@ class User extends EntityDateTime
         self::ROLE_CONTINGENT_ADMIN_EU,
         self::ROLE_CONTINGENT_ADMIN_RO,
     ];
-    
+
     public function initDefaults(): void
     {
         $this->status = UserStatus::WithoutRole;

@@ -31,10 +31,15 @@ dashboard:
     andMaximally: "a nejvíce"
     pForValidReg: "účastníků pro validní registraci"
     paymentInfo: "Informace k platbě"
+    paymentStatusTitle: "Status platby"
     accountNumber: "Číslo bankovního účtu"
     amount: "Cena"
     variableSymbol: "Variabilní symbol"
     paymentNote: "Poznámka"
+    paymentStatus:
+        waiting: "čekáme na zaplacení"
+        paid: "zaplacená (:"
+        canceled: "zrušená"
     lockRegistration: "Uzamknout registraci"
 changeDetails:
     editDetails: "Upravit údaje"
@@ -251,6 +256,8 @@ payments-admin:
     confirm: "Potvrdit platbu"
     allPatrolsPaid: "Všechny patroly mají zaplaceno!"
     allIstsPaid: "Všichni ISTs mají zaplaceno!"
+    allTroopLeadersPaid: "Všichni vedoucí mají zaplaceno!"
+    allTroopParticipantsPaid: "Všichni účastníci mají zaplaceno!"
 deny-admin:
     deny: "Odemknout účastníka s rolí"
     wantDeny: "Odemykám"
@@ -301,6 +308,7 @@ stats-admin:
     numberPatrolParticipants: "Účastníků v patrole celkem"
     numberPatrolParticipantsTotal: "v patrole celkem"
     paid: "Zaplacení účastníci akce"
+    generate-more-payments: "Vygenerovat více plateb"
 open-admin:
     open: "Neuzamčení účastníci na akci"
     none: "Žádní účastníci s rolí"
@@ -360,6 +368,7 @@ flash:
         markedAsUnrelated: "Platba byla označena jako nesouvisející s registrací"
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Kvůli nezaplacení emaily odemknuto účastníků"
+        generatedPayments: "Vygenerováno plateb a rozposláno emailů"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -391,6 +400,7 @@ flash:
         wrongEvent: "Na tuto akci ještě nejsi registrovaný - registruj se, prosím"
         nonexistentEvent: "Tato akce nejspíš neexistuje. Asi špatný odkaz?"
         testingSite: "Tato stránka je určena pouze pro testovací účely - nezadávej žádné reálné osobní či citlivé údaje!"
+        multiplePaymentsNotAllowed: "Pardon, ale generování více plateb pro účastníka není pro tuto akci povoleno."
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"

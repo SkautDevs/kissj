@@ -111,7 +111,7 @@ class UserController extends AbstractController
             User::ROLE_TROOP_PARTICIPANT,
             User::ROLE_IST,
             User::ROLE_GUEST,
-                => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
+            => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
             User::ROLE_ADMIN,
             User::ROLE_CONTINGENT_ADMIN_CS,
             User::ROLE_CONTINGENT_ADMIN_SK,
@@ -119,7 +119,7 @@ class UserController extends AbstractController
             User::ROLE_CONTINGENT_ADMIN_HU,
             User::ROLE_CONTINGENT_ADMIN_EU,
             User::ROLE_CONTINGENT_ADMIN_RO,
-                => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
+            => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
             default => throw new RuntimeException('got unknown role for User id ' . $user->id . ' with role ' . $user->role),
         };
     }

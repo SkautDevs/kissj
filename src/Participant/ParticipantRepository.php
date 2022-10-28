@@ -105,6 +105,34 @@ class ParticipantRepository extends Repository
     }
 
     /**
+     * @return Participant[]
+     */
+    public function getPaidParticipantsWithExactPayments(Event $event, int $countPayments, int $limit): array
+    {
+        $participants = $this->getAllParticipantsWithStatus(
+            [
+                User::ROLE_IST,
+                User::ROLE_TROOP_LEADER,
+                User::ROLE_TROOP_PARTICIPANT,
+            ],
+            [
+                UserStatus::Paid,
+            ],
+            $event,
+            null,
+            new Order('id'),
+        );
+
+        $participants = array_slice($participants, 0, $limit);
+
+        $participants = array_filter($participants, function (Participant $participant) use ($countPayments): bool {
+            return count($participant->payment) === $countPayments;
+        });
+
+        return $participants;
+    }
+
+    /**
      * @param Participant[] $participants
      * @return Participant[]
      */
