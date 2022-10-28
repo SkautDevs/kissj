@@ -3,6 +3,7 @@
 namespace Tests\Unit\Payment;
 
 use kissj\Payment\Payment;
+use kissj\Payment\PaymentStatus;
 use PHPUnit\Framework\TestCase;
 
 class PaymentTest extends TestCase
@@ -30,7 +31,7 @@ class PaymentTest extends TestCase
         $examplePayment0->variableSymbol = '1212';
         $examplePayment0->price = '999';
         $examplePayment0->currency = 'CZK';
-        $examplePayment0->status = 'waiting';
+        $examplePayment0->status = PaymentStatus::Waiting;
         $examplePayment0->purpose = 'fee';
         $examplePayment0->accountNumber = '';
         $examplePayment0->iban = 'CZ5608000000000002171532';
@@ -41,7 +42,7 @@ class PaymentTest extends TestCase
         $examplePayment1->variableSymbol = '1234567890';
         $examplePayment1->price = '450';
         $examplePayment1->currency = 'CZK';
-        $examplePayment1->status = 'waiting';
+        $examplePayment1->status = PaymentStatus::Waiting;
         $examplePayment1->purpose = 'fee';
         $examplePayment1->accountNumber = '';
         $examplePayment1->iban = 'CZ2806000000000168540115';

@@ -8,11 +8,11 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
-use kissj\User\User;
+use kissj\Payment\PaymentStatus;
 use kissj\User\UserRepository;
+use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -47,12 +47,12 @@ class AdminService
             $isPossible = false;
         }
 
-        if ($participantFrom->getUserButNotNull()->status !== User::STATUS_PAID) {
+        if ($participantFrom->getUserButNotNull()->status !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.notPaid'));
             $isPossible = false;
         }
 
-        if ($participantTo->getUserButNotNull()->status === User::STATUS_PAID) {
+        if ($participantTo->getUserButNotNull()->status !== UserStatus::Paid) {
             $flash->warning($this->translator->trans('flash.warning.isPaid'));
             $isPossible = false;
         }
@@ -75,7 +75,7 @@ class AdminService
     {
         $correctPayment = null;
         foreach ($participantFrom->payment as $payment) {
-            if ($payment->status === Payment::STATUS_PAID) {
+            if ($payment->status === PaymentStatus::Paid) {
                 $correctPayment = $payment;
             }
         }
@@ -85,7 +85,7 @@ class AdminService
         }
 
         foreach ($participantTo->payment as $payment) {
-            if ($payment->status === Payment::STATUS_WAITING) {
+            if ($payment->status === PaymentStatus::Waiting) {
                 $this->paymentService->cancelPayment($payment);
                 $this->mailer->sendCancelledPayment(
                     $participantTo,
@@ -107,10 +107,10 @@ class AdminService
         $correctPayment->participant = $participantTo;
 
         $userFrom = $participantFrom->getUserButNotNull();
-        $userFrom->status = User::STATUS_OPEN;
+        $userFrom->status = UserStatus::Open;
 
         $userTo = $participantTo->getUserButNotNull();
-        $userTo->status = User::STATUS_PAID;
+        $userTo->status = UserStatus::Paid;
 
         $this->paymentRepository->persist($correctPayment);
         $this->participantRepository->persist($participantTo);

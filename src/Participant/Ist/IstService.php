@@ -8,6 +8,7 @@ use kissj\Event\Event;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
+use kissj\User\UserStatus;
 
 class IstService
 {
@@ -35,7 +36,7 @@ class IstService
     {
         $ists = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_IST],
-            User::STATUSES,
+            UserStatus::cases(),
             $event,
             $admin,
         );

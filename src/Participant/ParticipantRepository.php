@@ -9,6 +9,7 @@ use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\User\User;
+use kissj\User\UserStatus;
 
 /**
  * @method Participant[] findAll()
@@ -23,7 +24,7 @@ class ParticipantRepository extends Repository
      * TODO optimalize
      *
      * @param string[] $roles
-     * @param string[] $statuses
+     * @param UserStatus[] $statuses
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(

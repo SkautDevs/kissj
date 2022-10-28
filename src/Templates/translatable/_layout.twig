@@ -32,7 +32,7 @@
     {% if user is not null %}
         | {{ user.email }}
         | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{% trans %}_layout.logOut{% endtrans %}</a>
-        {% set userStatus = user.status %}
+        {% set userStatus = user.status.value %}
     {% else %}
         {% set userStatus = "unregistred" %}
     {% endif %}

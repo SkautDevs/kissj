@@ -10,6 +10,7 @@ use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserService;
+use kissj\User\UserStatus;
 
 class GuestService
 {
@@ -39,7 +40,7 @@ class GuestService
     {
         $guests = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_GUEST],
-            User::STATUSES,
+            UserStatus::cases(),
             $event,
             $admin,
         );

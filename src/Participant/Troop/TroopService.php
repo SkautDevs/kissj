@@ -8,6 +8,7 @@ use kissj\Event\Event;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
+use kissj\User\UserStatus;
 
 class TroopService
 {
@@ -48,7 +49,7 @@ class TroopService
     {
         $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_TROOP_LEADER],
-            User::STATUSES,
+            UserStatus::cases(),
             $event,
             $admin,
         );
@@ -60,7 +61,7 @@ class TroopService
     {
         $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_TROOP_PARTICIPANT],
-            User::STATUSES,
+            UserStatus::cases(),
             $event,
             $admin,
         );

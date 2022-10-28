@@ -9,18 +9,6 @@ parameters:
 		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#' # 3rd party library
 		 - 
 		     # 3rd party library
-		     message: '#PHPDoc tag @var for variable \$row has no value type specified in iterable type Dibi\\Row\.#'
-		     path: src\Orm\Repository.php
-		 - 
-		     # 3rd party library
-		     message: '#Method kissj\\Orm\\Repository::addConditions\(\) has parameter \$qb with no value type specified in iterable type LeanMapper\\Fluent\.#'
-		     path: src\Orm\Repository.php
-		 - 
-		     # 3rd party library
-		     message: '#Method kissj\\Orm\\Repository::addOrderBy\(\) has parameter \$qb with no value type specified in iterable type LeanMapper\\Fluent\.#'
-		     path: src\Orm\Repository.php
-		 - 
-		     # 3rd party library
 		     message: '#Access to an undefined property LeanMapper\\Entity::\$id.#'
 		     path: src\Orm\Repository.php
 		 - 

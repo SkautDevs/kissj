@@ -24,7 +24,7 @@ class UserController extends AbstractController
             return $this->redirect($request, $response, 'loginAskEmail');
         }
 
-        if ($user->role === User::STATUS_WITHOUT_ROLE) {
+        if ($user->status === UserStatus::WithoutRole) {
             return $this->redirect($request, $response, 'chooseRole');
         }
 
@@ -106,7 +106,6 @@ class UserController extends AbstractController
         $routerEventSlug = ['eventSlug' => $user->event->slug];
 
         return match ($user->role) {
-            null => $this->redirect($request, $response, 'chooseRole', $routerEventSlug),
             User::ROLE_PATROL_LEADER => $this->redirect($request, $response, 'pl-dashboard', $routerEventSlug),
             User::ROLE_TROOP_LEADER,
             User::ROLE_TROOP_PARTICIPANT,

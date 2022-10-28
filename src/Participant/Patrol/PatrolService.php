@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use kissj\User\UserService;
+use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PatrolService
@@ -134,7 +135,7 @@ class PatrolService
     {
         $patrolLeaders = $this->participantRepository->getAllParticipantsWithStatus(
             [User::ROLE_PATROL_LEADER],
-            User::STATUSES,
+            UserStatus::cases(),
             $event,
             $admin,
         );

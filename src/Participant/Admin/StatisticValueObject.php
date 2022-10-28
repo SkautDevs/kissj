@@ -3,8 +3,8 @@
 namespace kissj\Participant\Admin;
 
 use kissj\Participant\Participant;
-use kissj\Payment\Payment;
-use kissj\User\User;
+use kissj\Payment\PaymentStatus;
+use kissj\User\UserStatus;
 
 class StatisticValueObject
 {
@@ -27,19 +27,19 @@ class StatisticValueObject
 
         foreach ($participants as $participant) {
             switch ($participant->getUserButNotNull()->status) {
-                case User::STATUS_OPEN:
+                case UserStatus::Open:
                     $this->openCount++;
                     break;
 
-                case User::STATUS_CLOSED:
+                case UserStatus::Closed:
                     $this->closedCount++;
                     break;
 
-                case User::STATUS_APPROVED:
+                case UserStatus::Approved:
                     $this->approvedCount++;
 
                     foreach ($participant->getPayments() as $payment) {
-                        if ($payment->status !== Payment::STATUS_CANCELED &&
+                        if ($payment->status !== PaymentStatus::Canceled &&
                             $payment->isPaymentOverdue()
                         ) {
                             $this->afterPayment++;
@@ -49,8 +49,11 @@ class StatisticValueObject
                     }
                     break;
 
-                case User::STATUS_PAID:
+                case UserStatus::Paid:
                     $this->paidCount++;
+                    break;
+                case UserStatus::WithoutRole:
+                case UserStatus::Cancelled:
                     break;
             }
         }

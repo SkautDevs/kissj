@@ -16,7 +16,7 @@ services:
 
     #php-fpm
     php-fpm:
-        image: quay.io/kissj/php
+        image: quay.io/kissj/php-ubi
         depends_on:
             - postgresql
         links:
@@ -33,7 +33,7 @@ services:
 
     #Frontend Web Server
     caddy:
-        image: quay.io/kissj/caddy
+        image: quay.io/kissj/caddy-ubi
         ports:
             - 8080:80
         depends_on:

@@ -9,6 +9,7 @@ use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
+use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 
 /**
@@ -153,7 +154,7 @@ class Participant extends EntityDatetime
     public function getNoncanceledPayments(): array
     {
         return array_filter($this->payment, function (Payment $payment): bool {
-            return $payment->status !== Payment::STATUS_CANCELED;
+            return $payment->status !== PaymentStatus::Canceled;
         });
     }
 

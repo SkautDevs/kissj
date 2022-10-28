@@ -10,6 +10,7 @@ use kissj\Participant\Ist\IstService;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopService;
 use kissj\User\User;
+use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -78,7 +79,7 @@ class ParticipantController extends AbstractController
         $participant = $this->getParticipantFromUser($user);
         $participant = $this->participantService->closeRegistration($participant);
 
-        if ($participant->getUserButNotNull()->status === User::STATUS_CLOSED) {
+        if ($participant->getUserButNotNull()->status === UserStatus::Closed) {
             $this->flashMessages->success($this->translator->trans('flash.success.locked'));
             $this->logger->info('Locked registration for IST with ID ' . $participant->id
                 . ', user ID ' . $participant->id);
