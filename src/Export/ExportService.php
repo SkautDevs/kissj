@@ -8,6 +8,7 @@ use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
@@ -32,12 +33,12 @@ class ExportService
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [
-                User::ROLE_PATROL_LEADER,
-                User::ROLE_PATROL_PARTICIPANT,
-                User::ROLE_TROOP_LEADER,
-                User::ROLE_TROOP_PARTICIPANT,
-                User::ROLE_IST,
-                User::ROLE_GUEST,
+                ParticipantRole::PatrolLeader,
+                ParticipantRole::PatrolParticipant,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant,
+                ParticipantRole::Ist,
+                ParticipantRole::Guest,
             ],
             [UserStatus::Paid],
             $event,
@@ -61,7 +62,7 @@ class ExportService
         foreach ($participants as $participant) {
             $rows[] = [
                 (string)$participant->id, // 0
-                $participant->role ?? '',
+                $participant->role?->value ?? '',
                 $participant->user?->status->value ?? '',
                 $this->translator->trans($participant->contingent ?? ''),
                 $participant->firstName ?? '',
@@ -85,12 +86,12 @@ class ExportService
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [
-                User::ROLE_PATROL_LEADER,
-                User::ROLE_PATROL_PARTICIPANT,
-                User::ROLE_TROOP_LEADER,
-                User::ROLE_TROOP_PARTICIPANT,
-                User::ROLE_IST,
-                User::ROLE_GUEST,
+                ParticipantRole::PatrolLeader,
+                ParticipantRole::PatrolParticipant,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant,
+                ParticipantRole::Ist,
+                ParticipantRole::Guest,
             ],
             [UserStatus::Paid],
             $event,
@@ -115,7 +116,7 @@ class ExportService
             if (!$participant instanceof PatrolParticipant) {
                 $rows[] = [
                     (string)$participant->id, // 0
-                    $participant->role ?? '',
+                    $participant->role?->value ?? '',
                     match (true) {
                         $participant instanceof PatrolLeader => (string)count($participant->patrolParticipants),
                         $participant instanceof TroopLeader => (string)count($participant->troopParticipants),
@@ -143,12 +144,12 @@ class ExportService
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [
-                User::ROLE_PATROL_LEADER,
-                User::ROLE_PATROL_PARTICIPANT,
-                User::ROLE_TROOP_LEADER,
-                User::ROLE_TROOP_PARTICIPANT,
-                User::ROLE_IST,
-                User::ROLE_GUEST,
+                ParticipantRole::PatrolLeader,
+                ParticipantRole::PatrolParticipant,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant,
+                ParticipantRole::Ist,
+                ParticipantRole::Guest,
             ],
             [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
             $event,
@@ -236,7 +237,7 @@ class ExportService
                 [
                     (string)$participant->id, // 0
                     $participant->user?->event->readableName ?? '',
-                    $participant->role ?? '',
+                    $participant->role?->value ?? '',
                     $participant->user?->status->value ?? '',
                     $this->translator->trans($participant->contingent ?? ''),
                     $participant->firstName ?? '', // 5

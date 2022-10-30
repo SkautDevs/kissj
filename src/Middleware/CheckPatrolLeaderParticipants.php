@@ -38,7 +38,7 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware
         )) {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
 
-            return $this->createRedirectResponse($request, 'pl-dashboard');
+            return $this->createRedirectResponse($request, 'dashboard');
         }
 
         return $handler->handle($request);

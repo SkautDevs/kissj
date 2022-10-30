@@ -4,7 +4,7 @@
     <div class="card card-half approved-theme">
         <h2>{% trans %}cancelPayment-admin.cancel{% endtrans %}</h2>
         <p>{% trans %}cancelPayment-admin.wantCancel{% endtrans %}<b> {{ payment.participant.getFullName }}</b>
-            {% trans %}cancelPayment-admin.inRole{% endtrans %} {{ payment.participant.getRole }}?</p>
+            {% trans %}cancelPayment-admin.inRole{% endtrans %} {{ payment.participant.role.value }}?</p>
         <p>{% trans %}cancelPayment-admin.participantNeedsToKnow{% endtrans %}</p>
         <form method="post" action="{{ url_for('admin-cancel-payment',
             {'paymentId' : payment.id, 'eventSlug': event.slug}) }}">

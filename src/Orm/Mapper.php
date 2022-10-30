@@ -6,10 +6,10 @@ namespace kissj\Orm;
 
 use kissj\BankPayment\BankPayment;
 use kissj\Event\Event;
-use kissj\Participant\Admin\Admin;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
@@ -73,14 +73,14 @@ class Mapper implements IMapper
                 }
 
                 return match ($row->getData()['role']) {
-                    User::ROLE_PATROL_LEADER => PatrolLeader::class,
-                    User::ROLE_PATROL_PARTICIPANT => PatrolParticipant::class,
-                    User::ROLE_TROOP_LEADER => TroopLeader::class,
-                    User::ROLE_TROOP_PARTICIPANT => TroopParticipant::class,
-                    User::ROLE_IST => Ist::class,
-                    User::ROLE_GUEST => Guest::class,
-                    User::ROLE_ADMIN => Admin::class,
-                    default => throw new \UnexpectedValueException('Got unknown Participant role: ' . $row->getData()['role']),
+                    ParticipantRole::PatrolLeader->value => PatrolLeader::class,
+                    ParticipantRole::PatrolParticipant->value => PatrolParticipant::class,
+                    ParticipantRole::TroopLeader->value => TroopLeader::class,
+                    ParticipantRole::TroopParticipant->value => TroopParticipant::class,
+                    ParticipantRole::Ist->value => Ist::class,
+                    ParticipantRole::Guest->value => Guest::class,
+                    default => throw new \UnexpectedValueException('Got unknown Participant role: ' 
+                        . $row->getData()['role'] . ' for Participant with ID: ' . $row->getData()['id']),
                 };
 
             default:

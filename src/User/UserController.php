@@ -106,21 +106,16 @@ class UserController extends AbstractController
         $routerEventSlug = ['eventSlug' => $user->event->slug];
 
         return match ($user->role) {
-            User::ROLE_PATROL_LEADER => $this->redirect($request, $response, 'pl-dashboard', $routerEventSlug),
-            User::ROLE_TROOP_LEADER,
-            User::ROLE_TROOP_PARTICIPANT,
-            User::ROLE_IST,
-            User::ROLE_GUEST,
-            => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
-            User::ROLE_ADMIN,
-            User::ROLE_CONTINGENT_ADMIN_CS,
-            User::ROLE_CONTINGENT_ADMIN_SK,
-            User::ROLE_CONTINGENT_ADMIN_PL,
-            User::ROLE_CONTINGENT_ADMIN_HU,
-            User::ROLE_CONTINGENT_ADMIN_EU,
-            User::ROLE_CONTINGENT_ADMIN_RO,
-            => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
-            default => throw new RuntimeException('got unknown role for User id ' . $user->id . ' with role ' . $user->role),
+            UserRole::Participant
+                => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
+            UserRole::Admin,
+            UserRole::ContingentAdminCs,
+            UserRole::ContingentAdminSk,
+            UserRole::ContingentAdminPl,
+            UserRole::ContingentAdminHu,
+            UserRole::ContingentAdminEu,
+            UserRole::ContingentAdminRo,
+                => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
         };
     }
 

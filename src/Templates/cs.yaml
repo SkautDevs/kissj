@@ -63,7 +63,7 @@ detail:
     email: "Email"
     phone: "Telefonní číslo"
     address: "Trvalá adresa"
-    address-placeholder: "ulice, číslo popisné, město, PSČ"
+    addressPlaceholder: "ulice, číslo popisné, město, PSČ"
     country: "Země"
     countryCzechRepublic: "Česká republika"
     countrySlovakia: "Slovensko"

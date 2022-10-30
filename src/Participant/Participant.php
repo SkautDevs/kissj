@@ -18,7 +18,7 @@ use kissj\User\User;
  *
  * @property int                    $id
  * @property User|null              $user m:hasOne
- * @property string|null            $role needed for DB working (see Mapper.php) // TODO make definite list of participant roles
+ * @property ParticipantRole|null   $role m:passThru(roleFromString|roleToString) needed for DB working (see Mapper.php)
  * @property string|null            $patrolName
  * @property string|null            $contingent
  * @property string|null            $firstName
@@ -195,5 +195,15 @@ class Participant extends EntityDatetime
     public function setPreferredPosition(array $positions): void
     {
         $this->row->preferred_position = implode(self::PREFERRED_POSITION_DELIMITER, $positions);
+    }
+
+    public function roleFromString(string $role): ParticipantRole
+    {
+        return ParticipantRole::from($role);
+    }
+
+    public function roleToString(ParticipantRole $role): string
+    {
+        return $role->value;
     }
 }

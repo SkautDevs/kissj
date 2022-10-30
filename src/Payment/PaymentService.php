@@ -84,7 +84,7 @@ class PaymentService
         foreach (array_slice($singleDuePayments, 0, $limit) as $payment) {
             $this->cancelPayment($payment);
 
-            $this->userService->openRegistration($payment->participant->getUserButNotNull());
+            $this->userService->setUserOpen($payment->participant->getUserButNotNull());
             $this->mailer->sendDuePaymentDenied($payment->participant);
             $this->logger->info('Payment ID ' . $payment->id . ' was automatically denied because payment due');
             $deniedPaymentsCount++;
@@ -100,7 +100,7 @@ class PaymentService
                 . PaymentStatus::Waiting->value);
         }
 
-        $this->userService->payRegistration($payment->participant->getUserButNotNull());
+        $this->userService->setUserPaid($payment->participant->getUserButNotNull());
         $payment->status = PaymentStatus::Paid;
         $this->paymentRepository->persist($payment);
         $this->mailer->sendRegistrationPaid($payment->participant);

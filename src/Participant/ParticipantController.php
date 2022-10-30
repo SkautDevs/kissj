@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace kissj\Participant;
 
 use kissj\AbstractController;
-use kissj\Participant\Guest\GuestService;
-use kissj\Participant\Ist\IstService;
-use kissj\Participant\Patrol\PatrolService;
-use kissj\Participant\Troop\TroopService;
+use kissj\Event\AbstractContentArbiter;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -17,12 +17,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class ParticipantController extends AbstractController
 {
     public function __construct(
-        private PatrolService $patrolService,
-        private TroopService $troopService,
-        private IstService $istService,
-        private GuestService $guestService,
         private ParticipantService $participantService,
         private ParticipantRepository $participantRepository,
+        private PatrolParticipantRepository $patrolParticipantRepository,
     ) {
     }
 
@@ -31,7 +28,7 @@ class ParticipantController extends AbstractController
         return $this->view->render(
             $response,
             'participant/dashboard.twig',
-            $this->getTemplateData($user),
+            $this->getTemplateData($this->participantRepository->getParticipantFromUser($user)),
         );
     }
 
@@ -40,13 +37,13 @@ class ParticipantController extends AbstractController
         return $this->view->render(
             $response,
             'participant/changeDetails.twig',
-            $this->getTemplateData($user),
+            $this->getTemplateData($this->participantRepository->getParticipantFromUser($user)),
         );
     }
 
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->getParticipantFromUser($user);
+        $participant = $this->participantRepository->getParticipantFromUser($user);
 
         /** @var string[] $parsed */
         $parsed = $request->getParsedBody();
@@ -61,7 +58,7 @@ class ParticipantController extends AbstractController
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->getParticipantFromUser($user);
+        $participant = $this->participantRepository->getParticipantFromUser($user);
 
         if ($this->participantService->isCloseRegistrationValid($participant)) {
             return $this->view->render(
@@ -76,7 +73,7 @@ class ParticipantController extends AbstractController
 
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
-        $participant = $this->getParticipantFromUser($user);
+        $participant = $this->participantRepository->getParticipantFromUser($user);
         $participant = $this->participantService->closeRegistration($participant);
 
         if ($participant->getUserButNotNull()->status === UserStatus::Closed) {
@@ -91,53 +88,21 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @param User $user
-     * @return array<string, mixed>
+     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]>
      */
-    private function getTemplateData(User $user): array
+    private function getTemplateData(Participant $participant): array
     {
-        $eventType = $user->event->eventType;
-
-        return match ($user->role) {
-            User::ROLE_PATROL_LEADER => [
-                'user' => $user,
-                'person' => $this->patrolService->getPatrolLeader($user),
-                'ca' => $eventType->getContentArbiterPatrolLeader(),
-            ],
-            User::ROLE_TROOP_LEADER => [
-                'user' => $user,
-                'person' => $this->troopService->getTroopLeader($user),
-                'ca' => $eventType->getContentArbiterTroopLeader(),
-            ],
-            User::ROLE_TROOP_PARTICIPANT => [
-                'user' => $user,
-                'person' => $this->troopService->getTroopParticipant($user),
-                'ca' => $eventType->getContentArbiterTroopParticipant(),
-            ],
-            User::ROLE_IST => [
-                'user' => $user,
-                'person' => $this->istService->getIst($user),
-                'ca' => $eventType->getContentArbiterIst(),
-            ],
-            User::ROLE_GUEST => [
-                'user' => $user,
-                'person' => $this->guestService->getGuest($user),
-                'ca' => $eventType->getContentArbiterGuest(),
-            ],
-            default => throw new \RuntimeException('Unexpected role ' . $user->role),
-        };
-    }
-
-    // TODO deduplicate
-    public function getParticipantFromUser(User $user): Participant
-    {
-        return match ($user->role) {
-            User::ROLE_PATROL_LEADER => $this->patrolService->getPatrolLeader($user),
-            User::ROLE_TROOP_LEADER => $this->troopService->getTroopLeader($user),
-            User::ROLE_TROOP_PARTICIPANT => $this->troopService->getTroopParticipant($user),
-            User::ROLE_IST => $this->istService->getIst($user),
-            User::ROLE_GUEST => $this->guestService->getGuest($user),
-            default => throw new \RuntimeException('Unexpected role ' . $user->role),
-        };
+        $user = $participant->getUserButNotNull();
+        $participants = [];
+        if ($participant instanceof PatrolLeader) {
+            $participants = $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($participant);
+        }
+    
+        return [
+            'user' => $user,
+            'person' => $participant,
+            'participants' => $participants,
+            'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+        ];
     }
 }

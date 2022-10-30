@@ -5,7 +5,7 @@
         <h2>{% trans %}role.p{% endtrans %} - {% trans %}dashboard.details{% endtrans %}</h2>
         {% include 'widgets/details.twig' with {'person': pDetail} %}
         <br/>
-        <a class="btn btn-grey btn-small" href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}">
+        <a class="btn btn-grey btn-small" href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}">
             {% trans %}changeDetails.back{% endtrans %}
         </a>
     </div>

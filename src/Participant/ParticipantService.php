@@ -12,7 +12,6 @@ use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
-use kissj\User\User;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -222,7 +221,7 @@ class ParticipantService
     public function getClosedSameRoleParticipantsCount(Participant $participant): int
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [$participant->role ?? ''],
+            $participant->role === null ? [] : [$participant->role],
             [
                 UserStatus::Closed,
                 UserStatus::Approved,
@@ -238,12 +237,12 @@ class ParticipantService
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             [
-                User::ROLE_PATROL_LEADER,
-                User::ROLE_PATROL_PARTICIPANT,
-                User::ROLE_TROOP_LEADER,
-                User::ROLE_TROOP_PARTICIPANT,
-                User::ROLE_IST,
-                User::ROLE_GUEST,
+                ParticipantRole::PatrolLeader,
+                ParticipantRole::PatrolParticipant,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant,
+                ParticipantRole::Ist,
+                ParticipantRole::Guest,
             ],
             [
                 UserStatus::Closed,
@@ -274,7 +273,7 @@ class ParticipantService
             $user = $participant->getUserButNotNull();
             $participant->registrationCloseDate = new DateTimeImmutable();
             $this->participantRepository->persist($participant);
-            $this->userService->closeRegistration($user);
+            $this->userService->setUserClosed($user);
             $this->mailer->sendRegistrationClosed($user);
         }
 
@@ -284,7 +283,7 @@ class ParticipantService
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
-        $this->userService->closeRegistration($payment->participant->getUserButNotNull());
+        $this->userService->setUserClosed($payment->participant->getUserButNotNull());
 
         $this->mailer->sendCancelledPayment($payment->participant, $reason);
 
@@ -294,7 +293,7 @@ class ParticipantService
     public function denyRegistration(Participant $participant, string $reason): Participant
     {
         $this->mailer->sendDeniedRegistration($participant, $reason);
-        $this->userService->openRegistration($participant->getUserButNotNull());
+        $this->userService->setUserOpen($participant->getUserButNotNull());
 
         return $participant;
     }
@@ -305,7 +304,7 @@ class ParticipantService
         $this->participantRepository->persist($participant);
 
         if ($participant instanceof Guest) {
-            $this->userService->payRegistration($participant->getUserButNotNull());
+            $this->userService->setUserPaid($participant->getUserButNotNull());
             $this->mailer->sendGuestRegistrationFinished($participant);
             $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
 
@@ -349,13 +348,13 @@ class ParticipantService
         $eventType = $participant->getUserButNotNull()->event->eventType;
 
         return match ($participant->role) {
-            User::ROLE_PATROL_LEADER => $eventType->getContentArbiterPatrolLeader(),
-            User::ROLE_PATROL_PARTICIPANT => $eventType->getContentArbiterPatrolParticipant(),
-            User::ROLE_TROOP_LEADER => $eventType->getContentArbiterTroopLeader(),
-            User::ROLE_TROOP_PARTICIPANT => $eventType->getContentArbiterTroopParticipant(),
-            User::ROLE_IST => $eventType->getContentArbiterIst(),
-            User::ROLE_GUEST => $eventType->getContentArbiterGuest(),
-            default => throw new \RuntimeException('Unexpected role ' . $participant->role),
+            ParticipantRole::PatrolLeader => $eventType->getContentArbiterPatrolLeader(),
+            ParticipantRole::PatrolParticipant => $eventType->getContentArbiterPatrolParticipant(),
+            ParticipantRole::TroopLeader => $eventType->getContentArbiterTroopLeader(),
+            ParticipantRole::TroopParticipant => $eventType->getContentArbiterTroopParticipant(),
+            ParticipantRole::Ist => $eventType->getContentArbiterIst(),
+            ParticipantRole::Guest => $eventType->getContentArbiterGuest(),
+            null => throw new \RuntimeException('Missing role for participant ID: ' . $participant->id),
         };
     }
 }

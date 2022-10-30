@@ -7,48 +7,21 @@ namespace kissj\Participant\Troop;
 use kissj\Event\Event;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\User\User;
 use kissj\User\UserStatus;
 
 class TroopService
 {
     public function __construct(
-        private TroopLeaderRepository $troopLeaderRepository,
-        private TroopParticipantRepository $troopParticipantRepository,
         private ParticipantRepository $participantRepository,
     ) {
-    }
-
-    public function getTroopLeader(User $user): TroopLeader
-    {
-        $troopLeader = $this->troopLeaderRepository->findOneBy(['user' => $user]);
-
-        if ($troopLeader === null) {
-            $troopLeader = new TroopLeader();
-            $troopLeader->user = $user;
-            $this->troopLeaderRepository->persist($troopLeader);
-        }
-
-        return $troopLeader;
-    }
-
-    public function getTroopParticipant(User $user): TroopParticipant
-    {
-        $troopParticipant = $this->troopParticipantRepository->findOneBy(['user' => $user]);
-
-        if ($troopParticipant === null) {
-            $troopParticipant = new TroopParticipant();
-            $troopParticipant->user = $user;
-            $this->troopParticipantRepository->persist($troopParticipant);
-        }
-
-        return $troopParticipant;
     }
 
     public function getAllTroopLeaderStatistics(Event $event, User $admin): StatisticValueObject
     {
         $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_TROOP_LEADER],
+            [ParticipantRole::TroopLeader],
             UserStatus::cases(),
             $event,
             $admin,
@@ -60,7 +33,7 @@ class TroopService
     public function getAllTroopParticipantStatistics(Event $event, User $admin): StatisticValueObject
     {
         $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_TROOP_PARTICIPANT],
+            [ParticipantRole::TroopParticipant],
             UserStatus::cases(),
             $event,
             $admin,

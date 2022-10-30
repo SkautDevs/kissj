@@ -21,23 +21,6 @@ class PatrolController extends AbstractController
     ) {
     }
 
-    public function showDashboard(Response $response, User $user): Response
-    {
-        $patrolLeader = $this->patrolService->getPatrolLeader($user);
-
-        return $this->view->render(
-            $response,
-            'dashboard-pl.twig',
-            [
-                'user' => $user,
-                'pl' => $patrolLeader,
-                'person' => $patrolLeader,
-                'participants' => $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader),
-                'ca' => $user->event->eventType->getContentArbiterPatrolLeader(),
-            ]
-        );
-    }
-
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
@@ -50,7 +33,7 @@ class PatrolController extends AbstractController
             );
         }
 
-        return $this->redirect($request, $response, 'pl-dashboard');
+        return $this->redirect($request, $response, 'dashboard');
     }
 
     public function closeRegistration(Request $request, Response $response, User $user): Response
@@ -67,7 +50,7 @@ class PatrolController extends AbstractController
             $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
         }
 
-        return $this->redirect($request, $response, 'pl-dashboard');
+        return $this->redirect($request, $response, 'dashboard');
     }
 
     public function addParticipant(Request $request, Response $response, User $user): Response
@@ -122,7 +105,7 @@ class PatrolController extends AbstractController
         return $this->redirect(
             $request,
             $response,
-            'pl-dashboard',
+            'dashboard',
         );
     }
 
@@ -141,7 +124,7 @@ class PatrolController extends AbstractController
         return $this->redirect(
             $request,
             $response,
-            'pl-dashboard',
+            'dashboard',
         );
     }
 

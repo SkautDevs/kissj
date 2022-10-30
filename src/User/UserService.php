@@ -8,7 +8,7 @@ use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use PHPUnit\Framework\MockObject\RuntimeException;
+use kissj\Participant\ParticipantRole;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
@@ -65,16 +65,10 @@ class UserService
 
     public function isLoginTokenValid(string $loginToken): bool
     {
-        $criteria = ['token' => $loginToken, 'used' => false];
-        if (!$this->loginTokenRepository->isExisting($criteria)) {
+        $lastToken = $this->loginTokenRepository->findOneBy(['token' => $loginToken, 'used' => false]);
+        if ($lastToken === null) {
             return false;
         }
-
-        /** @var LoginToken $lastToken */
-        $lastToken = $this->loginTokenRepository->getOneBy(
-            $criteria,
-            ['created_at' => false]
-        );
 
         $lastValidTime = new \DateTime();
         $lastValidTime->modify('-24 hours');
@@ -92,15 +86,9 @@ class UserService
 
     public function getTokenForEmail(string $email, Event $event): string
     {
-        return $this->getTokenForUser($this->userRepository->getUserFromEmailEvent($email, $event));
-    }
-
-    public function getTokenForUser(User $user): string
-    {
-        /** @var LoginToken $loginToken */
-        $loginToken = $this->loginTokenRepository->findOneBy(['user' => $user]);
-
-        return $loginToken->token;
+        return $this->loginTokenRepository->getTokenForUser(
+            $this->userRepository->getUserFromEmailEvent($email, $event)
+        );
     }
 
     public function logoutUser(): void
@@ -118,35 +106,19 @@ class UserService
 
     public function setRole(User $user, string $role): void
     {
-        if (!$this->isRoleValid($role)) {
-            throw new RuntimeException('Role '.$role.' is not valid!');
-        }
+        $participantRole = ParticipantRole::from($role);
 
         $participant = new Participant();
         $participant->user = $user;
-        $participant->role = $role;
+        $participant->role = $participantRole;
         $this->participantRepository->persist($participant);
 
-        $user->role = $role;
+        $user->role = UserRole::Participant;
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
     }
 
-    protected function isRoleValid(string $role): bool
-    {
-        // TODO check if role is valid for specific event
-        $allowedRoles = [
-            User::ROLE_IST,
-            User::ROLE_PATROL_LEADER,
-            User::ROLE_TROOP_LEADER,
-            User::ROLE_TROOP_PARTICIPANT,
-            User::ROLE_GUEST,
-        ];
-
-        return in_array($role, $allowedRoles, true);
-    }
-
-    public function openRegistration(User $user): User
+    public function setUserOpen(User $user): User
     {
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
@@ -154,7 +126,7 @@ class UserService
         return $user;
     }
 
-    public function closeRegistration(User $user): User
+    public function setUserClosed(User $user): User
     {
         $user->status = UserStatus::Closed;
         $this->userRepository->persist($user);
@@ -170,7 +142,7 @@ class UserService
         return $user;
     }
 
-    public function payRegistration(User $user): User
+    public function setUserPaid(User $user): User
     {
         $user->status = UserStatus::Paid;
         $this->userRepository->persist($user);

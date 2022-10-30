@@ -9,6 +9,7 @@ use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\User\User;
+use kissj\User\UserRole;
 use kissj\User\UserStatus;
 
 /**
@@ -23,7 +24,7 @@ class ParticipantRepository extends Repository
     /**
      * TODO optimalize
      *
-     * @param string[] $roles
+     * @param ParticipantRole[] $roles
      * @param UserStatus[] $statuses
      * @return Participant[]
      */
@@ -81,23 +82,23 @@ class ParticipantRepository extends Repository
     private function filterContingentAdminParticipants(array $participants, User $adminUser): array
     {
         return match ($adminUser->role) {
-            User::ROLE_ADMIN => $participants,
-            User::ROLE_CONTINGENT_ADMIN_CS => array_filter($participants, function (Participant $p): bool {
+            UserRole::Admin => $participants,
+            UserRole::ContingentAdminCs => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_CZECHIA;
             }),
-            User::ROLE_CONTINGENT_ADMIN_SK => array_filter($participants, function (Participant $p): bool {
+            UserRole::ContingentAdminSk => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_SLOVAKIA;
             }),
-            User::ROLE_CONTINGENT_ADMIN_PL => array_filter($participants, function (Participant $p): bool {
+            UserRole::ContingentAdminPl => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_POLAND;
             }),
-            User::ROLE_CONTINGENT_ADMIN_HU => array_filter($participants, function (Participant $p): bool {
+            UserRole::ContingentAdminHu => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_HUNGARY;
             }),
-            User::ROLE_CONTINGENT_ADMIN_EU => array_filter($participants, function (Participant $p): bool {
+            UserRole::ContingentAdminEu => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
             }),
-            User::ROLE_CONTINGENT_ADMIN_RO => array_filter($participants, function (Participant $p): bool {
+            UserRole::ContingentAdminRo => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_ROMANIA;
             }),
             default => [],
@@ -111,9 +112,9 @@ class ParticipantRepository extends Repository
     {
         $participants = $this->getAllParticipantsWithStatus(
             [
-                User::ROLE_IST,
-                User::ROLE_TROOP_LEADER,
-                User::ROLE_TROOP_PARTICIPANT,
+                ParticipantRole::Ist,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant,
             ],
             [
                 UserStatus::Paid,
@@ -126,7 +127,7 @@ class ParticipantRepository extends Repository
         $participants = array_slice($participants, 0, $limit);
 
         $participants = array_filter($participants, function (Participant $participant) use ($countPayments): bool {
-            return count($participant->payment) === $countPayments;
+            return count($participant->getNoncanceledPayments()) === $countPayments;
         });
 
         return $participants;
@@ -141,5 +142,19 @@ class ParticipantRepository extends Repository
         return array_filter($participants, function (Participant $participant): bool {
             return $participant->getFullName() !== ' ';
         });
+    }
+
+    public function getParticipantFromUser(User $user): Participant
+    {
+        return $this->getOneBy(['user' => $user]);
+    }
+
+    public function findParticipantFromUser(?User $user): ?Participant
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        return $this->findOneBy(['user' => $user]);
     }
 }

@@ -11,7 +11,7 @@
         <form method="POST"
               action="{{ url_for('p-delete', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
             <input class="btn btn-small" type="submit" value="{% trans %}dashboard.delete{% endtrans %}">
-            <a href="{{ url_for('pl-dashboard', {'eventSlug': event.slug}) }}"
+            <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
                class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
         </form>
     </div>

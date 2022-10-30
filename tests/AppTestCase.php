@@ -6,6 +6,7 @@ use kissj\Application\ApplicationGetter;
 use kissj\Event\EventRepository;
 use kissj\User\User;
 use kissj\User\UserRepository;
+use kissj\User\UserRole;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -103,7 +104,7 @@ class AppTestCase extends TestCase
         
         $user = new User();
         $user->event = $testEvent;
-        $user->role = User::ROLE_ADMIN;
+        $user->role = UserRole::Admin;
         $user->email = 'admin@example.com';
         $userRepository->persist($user);
         

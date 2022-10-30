@@ -3,12 +3,12 @@
 {% block content %}
     <div class="card paid-theme">
         <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ event.readableName }}
-            {% if user.role == 'contingentAdminCs' %} - {{ 'detail.contingent.czechia'|trans }}
-            {% elseif user.role == 'contingentAdminSk' %} - {{ 'detail.contingent.slovakia'|trans }}
-            {% elseif user.role == 'contingentAdminPl' %} - {{ 'detail.contingent.poland'|trans }}
-            {% elseif user.role == 'contingentAdminHu' %} - {{ 'detail.contingent.hungary'|trans }}
-            {% elseif user.role == 'contingentAdminEu' %} - {{ 'detail.contingent.european'|trans }}
-            {% elseif user.role == 'contingentAdminRo' %} - {{ 'detail.contingent.romania'|trans }}
+            {% if user.role.value == 'contingentAdminCs' %} - {{ 'detail.contingent.czechia'|trans }}
+            {% elseif user.role.value == 'contingentAdminSk' %} - {{ 'detail.contingent.slovakia'|trans }}
+            {% elseif user.role.value == 'contingentAdminPl' %} - {{ 'detail.contingent.poland'|trans }}
+            {% elseif user.role.value == 'contingentAdminHu' %} - {{ 'detail.contingent.hungary'|trans }}
+            {% elseif user.role.value == 'contingentAdminEu' %} - {{ 'detail.contingent.european'|trans }}
+            {% elseif user.role.value == 'contingentAdminRo' %} - {{ 'detail.contingent.romania'|trans }}
             {% endif %}
         </h2>
         <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
@@ -74,11 +74,11 @@
                    class="btn">{% trans %}dashboard-admin.open{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                {% if user.role == 'admin' or user.role == 'contingentAdminCs' %}
+                {% if user.role.value == 'admin' or user.role.value == 'contingentAdminCs' %}
                     <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 {% endif %}
-                {% if user.role == 'admin' or user.role == 'contingentAdminCs' %}
+                {% if user.role.value == 'admin' or user.role.value == 'contingentAdminCs' %}
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
                 {% endif %}

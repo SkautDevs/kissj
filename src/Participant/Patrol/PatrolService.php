@@ -9,6 +9,7 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Admin\StatisticValueObject;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use kissj\User\UserService;
@@ -124,7 +125,7 @@ class PatrolService
             $user = $patrolLeader->getUserButNotNull();
             $patrolLeader->registrationCloseDate = new \DateTimeImmutable();
             $this->patrolLeaderRepository->persist($patrolLeader);
-            $this->userService->closeRegistration($user);
+            $this->userService->setUserClosed($user);
             $this->mailer->sendRegistrationClosed($user);
         }
 
@@ -134,7 +135,7 @@ class PatrolService
     public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject
     {
         $patrolLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [User::ROLE_PATROL_LEADER],
+            [ParticipantRole::PatrolLeader],
             UserStatus::cases(),
             $event,
             $admin,

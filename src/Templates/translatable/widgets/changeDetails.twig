@@ -122,7 +122,7 @@
             type="text"
             name="permanentResidence"
             value="{{ personDetails.getPermanentResidence }}"
-            placeholder="{% trans %}detail.address-placeholder{% endtrans %}"
+            placeholder="{% trans %}detail.addressPlaceholder{% endtrans %}"
             required="required"
         >
     </div>
@@ -160,11 +160,12 @@
     <div class="form-group">
         <label for="telephoneNumber">{% trans %}detail.phone{% endtrans %}:</label>
         <input
+            id="telephoneNumber"
             class="form-control form-wide"
             type="text"
             name="telephoneNumber"
             value="{{ personDetails.getTelephoneNumber }}"
-            placeholder="digits including country dial-in code"
+            placeholder="{% trans %}detail.phonePlaceholder{% endtrans %}"
             pattern="^\+?[0-9 ]+$"
             required="required"
         >
@@ -247,6 +248,7 @@
     <div class="form-group">
         <label for="healthProblems">{% trans %}detail.issues{% endtrans %}:</label>
         <input
+            id="healthProblems"
             class="form-control form-wide"
             type="text"
             name="healthProblems"
@@ -258,6 +260,7 @@
     <div class="form-group">
         <label for="languages">{% trans %}detail.language{% endtrans %}:</label>
         <input
+            id="languages"
             class="form-control form-wide"
             type="text"
             name="languages"

@@ -21,7 +21,7 @@ class PatrolLeadersOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->role !== User::ROLE_PATROL_LEADER) {
+        if ($user instanceof User && $user->role !== 'pl') { // TODO fix, get role from participant
             $this->flashMessages->error($this->translator->trans('flash.error.plOnly'));
 
             return $this->createRedirectResponse($request, 'loginAskEmail');

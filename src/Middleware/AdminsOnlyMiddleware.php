@@ -21,7 +21,7 @@ class AdminsOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && !in_array($user->role, User::ADMIN_ROLES_ONLY, true)) {
+        if ($user instanceof User && !$user->isAdmin()) {
             $this->flashMessages->error($this->translator->trans('flash.error.adminOnly'));
 
             return $this->createRedirectResponse($request, 'loginAskEmail');

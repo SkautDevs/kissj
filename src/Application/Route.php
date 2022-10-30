@@ -84,9 +84,6 @@ class Route
                         ->setName('getDashboard');
 
                     $app->group('/patrol', function (RouteCollectorProxy $app) {
-                        $app->get('/dashboard', PatrolController::class . '::showDashboard')
-                            ->setName('pl-dashboard');
-
                         $app->get('/participant/{participantId}/show', PatrolController::class . '::showParticipant')
                             ->setName('p-show');
 
