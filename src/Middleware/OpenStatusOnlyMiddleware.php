@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 class OpenStatusOnlyMiddleware extends BaseMiddleware
 {
-    public function __construct(private LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
     }
 

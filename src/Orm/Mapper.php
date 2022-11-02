@@ -115,7 +115,7 @@ class Mapper implements IMapper
     {
         $matches = [];
         if (preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches)) {
-            return strtolower($matches[1]);
+            return strtolower((string) $matches[1]);
         }
         throw new InvalidStateException('Cannot determine table name.');
     }

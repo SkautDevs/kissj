@@ -101,7 +101,7 @@ abstract class AbstractController
         $parameter = $parsedBody[$parameterName];
 
         if ($escapeValue) {
-            $parameter = htmlspecialchars($parameter, ENT_QUOTES);
+            $parameter = htmlspecialchars((string)$parameter, ENT_QUOTES);
         }
 
         return $parameter;

@@ -15,10 +15,10 @@ use Slim\Routing\RouteContext;
 class UserService
 {
     public function __construct(
-        private LoginTokenRepository $loginTokenRepository,
-        private ParticipantRepository $participantRepository,
-        private UserRepository $userRepository,
-        private PhpMailerWrapper $mailer,
+        private readonly LoginTokenRepository $loginTokenRepository,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly UserRepository $userRepository,
+        private readonly PhpMailerWrapper $mailer,
     ) {
     }
 

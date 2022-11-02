@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 class MonologContextMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private Logger $logger,
+        private readonly Logger $logger,
     ) {
     }
 

@@ -12,8 +12,8 @@ class Order
     public const FILED_UPDATED_AT = 'updatedAt';
 
     public function __construct(
-        private string $field,
-        private string $order = self::DIRECTION_ASC,
+        private readonly string $field,
+        private readonly string $order = self::DIRECTION_ASC,
     ) {
     }
 

@@ -19,8 +19,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExportService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
-        private TranslatorInterface $translator,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 

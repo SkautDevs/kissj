@@ -20,14 +20,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PaymentService
 {
     public function __construct(
-        private FioBankPaymentService $bankPaymentService,
-        private BankPaymentRepository $bankPaymentRepository,
-        private PaymentRepository $paymentRepository,
-        private UserService $userService,
-        private FlashMessagesBySession $flashMessages,
-        private PhpMailerWrapper $mailer,
-        private TranslatorInterface $translator,
-        private Logger $logger,
+        private readonly FioBankPaymentService $bankPaymentService,
+        private readonly BankPaymentRepository $bankPaymentRepository,
+        private readonly PaymentRepository $paymentRepository,
+        private readonly UserService $userService,
+        private readonly FlashMessagesBySession $flashMessages,
+        private readonly PhpMailerWrapper $mailer,
+        private readonly TranslatorInterface $translator,
+        private readonly Logger $logger,
     ) {
     }
 

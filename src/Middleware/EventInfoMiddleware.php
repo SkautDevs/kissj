@@ -18,9 +18,9 @@ use Symfony\Component\Translation\Translator;
 class EventInfoMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private EventRepository $eventRepository,
-        private Twig $view,
-        private MailerSettings $mailerSettings,
+        private readonly EventRepository $eventRepository,
+        private readonly Twig $view,
+        private readonly MailerSettings $mailerSettings,
     ) {
     }
 

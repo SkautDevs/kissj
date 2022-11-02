@@ -21,13 +21,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ParticipantService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
-        private PaymentService $paymentService,
-        private UserService $userService,
-        private FlashMessagesBySession $flashMessages,
-        private TranslatorInterface $translator,
-        private PhpMailerWrapper $mailer,
-        private FileHandler $fileHandler,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly PaymentService $paymentService,
+        private readonly UserService $userService,
+        private readonly FlashMessagesBySession $flashMessages,
+        private readonly TranslatorInterface $translator,
+        private readonly PhpMailerWrapper $mailer,
+        private readonly FileHandler $fileHandler,
     ) {
     }
 

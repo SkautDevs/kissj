@@ -16,9 +16,9 @@ use Whoops\Exception\Inspector;
 
 class ErrorHandlerGetter
 {
-    private LoggerInterface $logger;
-    private Twig $twig;
-    private Hub $sentryHub;
+    private readonly LoggerInterface $logger;
+    private readonly Twig $twig;
+    private readonly Hub $sentryHub;
 
     public function __construct(
         ContainerInterface $container

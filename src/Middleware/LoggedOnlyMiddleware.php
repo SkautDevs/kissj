@@ -14,9 +14,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class LoggedOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private FlashMessagesInterface $flashMessages,
-        private TranslatorInterface $translator,
-        private UserController $userController,
+        private readonly FlashMessagesInterface $flashMessages,
+        private readonly TranslatorInterface $translator,
+        private readonly UserController $userController,
     ) {
     }
 

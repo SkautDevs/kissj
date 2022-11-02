@@ -15,14 +15,13 @@ use Sentry\State\Scope;
 final class SentryContextMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private Hub $hub,
+        private readonly Hub $hub,
     ) {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        // Add user info
-        /** @var User|null */
+        /** @var $user User|null */
         $user = $request->getAttribute('user');
 
         if ($user instanceof User) {
@@ -34,8 +33,7 @@ final class SentryContextMiddleware extends BaseMiddleware
             });
         }
 
-        // Add Event info
-        /** @var Event|null */
+        /** @var $event Event|null */
         $event = $request->getAttribute('event');
 
         if ($event instanceof Event) {

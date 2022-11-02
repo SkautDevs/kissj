@@ -6,9 +6,9 @@ namespace kissj\User;
 
 class UserRegeneration
 {
-    private ?User $currentUser;
+    private readonly ?User $currentUser;
 
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
         $userSession = $_SESSION['user'] ?? [];
 

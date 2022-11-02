@@ -16,9 +16,9 @@ use kissj\User\UserStatus;
 class GuestService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
-        private PhpMailerWrapper $mailer,
-        private UserService $userService,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly PhpMailerWrapper $mailer,
+        private readonly UserService $userService,
     ) {
     }
 

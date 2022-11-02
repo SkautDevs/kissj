@@ -14,14 +14,14 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeCej extends EventType
 {
-    public const CONTINGENT_CZECHIA = 'detail.contingent.czechia';
-    public const CONTINGENT_SLOVAKIA = 'detail.contingent.slovakia';
-    public const CONTINGENT_POLAND = 'detail.contingent.poland';
-    public const CONTINGENT_HUNGARY = 'detail.contingent.hungary';
-    public const CONTINGENT_EUROPEAN = 'detail.contingent.european';
-    public const CONTINGENT_ROMANIA = 'detail.contingent.romania';
-    public const CONTINGENT_ISRAEL = 'detail.contingent.israel';
-    public const CONTINGENT_TEAM = 'detail.contingent.team';
+    final public const CONTINGENT_CZECHIA = 'detail.contingent.czechia';
+    final public const CONTINGENT_SLOVAKIA = 'detail.contingent.slovakia';
+    final public const CONTINGENT_POLAND = 'detail.contingent.poland';
+    final public const CONTINGENT_HUNGARY = 'detail.contingent.hungary';
+    final public const CONTINGENT_EUROPEAN = 'detail.contingent.european';
+    final public const CONTINGENT_ROMANIA = 'detail.contingent.romania';
+    final public const CONTINGENT_ISRAEL = 'detail.contingent.israel';
+    final public const CONTINGENT_TEAM = 'detail.contingent.team';
 
     public function getPrice(Participant $participant): int
     {

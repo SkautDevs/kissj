@@ -19,14 +19,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PatrolService
 {
     public function __construct(
-        private PatrolLeaderRepository $patrolLeaderRepository,
-        private PatrolParticipantRepository $patrolParticipantRepository,
-        private UserService $userService,
-        private ParticipantService $participantService,
-        private ParticipantRepository $participantRepository,
-        private FlashMessagesBySession $flashMessages,
-        private TranslatorInterface $translator,
-        private PhpMailerWrapper $mailer,
+        private readonly PatrolLeaderRepository $patrolLeaderRepository,
+        private readonly PatrolParticipantRepository $patrolParticipantRepository,
+        private readonly UserService $userService,
+        private readonly ParticipantService $participantService,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly FlashMessagesBySession $flashMessages,
+        private readonly TranslatorInterface $translator,
+        private readonly PhpMailerWrapper $mailer,
     ) {
     }
 

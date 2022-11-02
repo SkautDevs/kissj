@@ -9,7 +9,7 @@ use Slim\Psr7\UploadedFile;
 
 class LocalFileHandler extends FileHandler
 {
-    public function __construct(private string $uploadFolder = __DIR__ . '/../../uploads/')
+    public function __construct(private readonly string $uploadFolder = __DIR__ . '/../../uploads/')
     {
     }
 

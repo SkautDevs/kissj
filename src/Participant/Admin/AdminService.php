@@ -19,13 +19,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AdminService
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private ParticipantRepository $participantRepository,
-        private PaymentRepository $paymentRepository,
-        private PaymentService $paymentService,
-        private PhpMailerWrapper $mailer,
-        private TranslatorInterface $translator,
-        private LoggerInterface $logger,
+        private readonly UserRepository $userRepository,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly PaymentRepository $paymentRepository,
+        private readonly PaymentService $paymentService,
+        private readonly PhpMailerWrapper $mailer,
+        private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 class ExportController extends AbstractController
 {
     public function __construct(
-        private ExportService $exportService,
+        private readonly ExportService $exportService,
     ) {
     }
 

@@ -185,7 +185,7 @@ class Participant extends EntityDatetime
             return [];
         }
 
-        return explode(self::PREFERRED_POSITION_DELIMITER, $prefferedPositionFromDb);
+        return explode(self::PREFERRED_POSITION_DELIMITER, (string)$prefferedPositionFromDb);
     }
 
     /**

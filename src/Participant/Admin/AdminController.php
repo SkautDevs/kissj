@@ -29,18 +29,18 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private ParticipantService $participantService,
-        private ParticipantRepository $participantRepository,
-        private PaymentService $paymentService,
-        private PaymentRepository $paymentRepository,
-        private BankPaymentRepository $bankPaymentRepository,
-        private FioBankPaymentService $bankPaymentService,
-        private PatrolService $patrolService,
-        private IstService $istService,
-        private GuestService $guestService,
-        private TroopService $troopService,
-        private AdminService $adminService,
-        private UserRepository $userRepository,
+        private readonly ParticipantService $participantService,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly PaymentService $paymentService,
+        private readonly PaymentRepository $paymentRepository,
+        private readonly BankPaymentRepository $bankPaymentRepository,
+        private readonly FioBankPaymentService $bankPaymentService,
+        private readonly PatrolService $patrolService,
+        private readonly IstService $istService,
+        private readonly GuestService $guestService,
+        private readonly TroopService $troopService,
+        private readonly AdminService $adminService,
+        private readonly UserRepository $userRepository,
     ) {
     }
 

@@ -12,9 +12,9 @@ use Psr\Log\LoggerInterface;
 class FioBankPaymentService implements IBankPaymentService
 {
     public function __construct(
-        private BankPaymentRepository $bankPaymentRepository,
-        private FioBankReaderFactory $fioBankReaderFactory,
-        private LoggerInterface $logger,
+        private readonly BankPaymentRepository $bankPaymentRepository,
+        private readonly FioBankReaderFactory $fioBankReaderFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

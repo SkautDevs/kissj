@@ -18,9 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CheckPatrolLeaderParticipants extends BaseMiddleware
 {
     public function __construct(
-        private PatrolService $patrolService,
-        private FlashMessagesInterface $flashMessages,
-        private TranslatorInterface $translator,
+        private readonly PatrolService $patrolService,
+        private readonly FlashMessagesInterface $flashMessages,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 

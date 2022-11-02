@@ -10,8 +10,8 @@ use Slim\Psr7\UploadedFile;
 class S3bucketFileHandler extends FileHandler
 {
     public function __construct(
-        private S3Client $s3client,
-        private string $s3bucket,
+        private readonly S3Client $s3client,
+        private readonly string $s3bucket,
     ) {
     }
 

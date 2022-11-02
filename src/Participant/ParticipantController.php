@@ -17,9 +17,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class ParticipantController extends AbstractController
 {
     public function __construct(
-        private ParticipantService $participantService,
-        private ParticipantRepository $participantRepository,
-        private PatrolParticipantRepository $patrolParticipantRepository,
+        private readonly ParticipantService $participantService,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly PatrolParticipantRepository $patrolParticipantRepository,
     ) {
     }
 

@@ -10,7 +10,7 @@ use Monolog\Processor\ProcessorInterface;
 final class UserContextProcessor implements ProcessorInterface
 {
     public function __construct(
-        private ?User $user,
+        private readonly ?User $user,
     ) {
     }
 

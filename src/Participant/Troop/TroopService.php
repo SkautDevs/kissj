@@ -14,7 +14,7 @@ use kissj\User\UserStatus;
 class TroopService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
+        private readonly ParticipantRepository $participantRepository,
     ) {
     }
 

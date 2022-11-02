@@ -22,8 +22,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     private const LOCALE_COOKIE_NAME = 'locale';
 
     public function __construct(
-        private Twig $view,
-        private Translator $translator,
+        private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 

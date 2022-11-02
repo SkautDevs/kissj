@@ -10,7 +10,7 @@ use Monolog\Processor\ProcessorInterface;
 final class EventContextProcessor implements ProcessorInterface
 {
     public function __construct(
-        private ?Event $event,
+        private readonly ?Event $event,
     ) {
     }
 

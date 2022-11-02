@@ -22,11 +22,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PhpMailerWrapper
 {
     public function __construct(
-        private Twig $renderer,
-        private MailerSettings $settings,
-        private QrCodeService $qrCodeService,
-        private TranslatorInterface $translator,
-        private LoggerInterface $logger,
+        private readonly Twig $renderer,
+        private readonly MailerSettings $settings,
+        private readonly QrCodeService $qrCodeService,
+        private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

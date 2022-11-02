@@ -13,7 +13,7 @@ use Sentry\State\Scope;
 final class SentryHttpContextMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private Hub $hub,
+        private readonly Hub $hub,
     ) {
     }
 

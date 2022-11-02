@@ -13,8 +13,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ChoosedRoleOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private FlashMessagesInterface $flashMessages,
-        private TranslatorInterface $translator,
+        private readonly FlashMessagesInterface $flashMessages,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
