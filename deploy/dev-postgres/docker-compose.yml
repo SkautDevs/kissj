@@ -3,7 +3,7 @@ services:
 
     #database
     postgresql:
-        image: postgres:11-alpine
+        image: postgres:14-alpine
         volumes:
             - db-data:/var/lib/postgresql/data
         ports:
