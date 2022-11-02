@@ -15,4 +15,11 @@ use kissj\Orm\Repository;
  */
 class EventRepository extends Repository
 {
+    /**
+     * @return Event[]
+     */
+    public function findActiveEvents(): array
+    {
+        return $this->findBy([]); // TODO
+    }
 }

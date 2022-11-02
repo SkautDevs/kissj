@@ -27,7 +27,7 @@ class Route
 {
     public function addRoutesInto(App $app): App
     {
-        $app->redirect($app->getBasePath() ?: '/', $app->getBasePath() . '/v2/kissj', 301);
+        $app->redirect($app->getBasePath() ?: '/', $app->getBasePath() . '/v2/kissj/events', 301);
 
         $app->group($app->getBasePath() . '/v2', function (RouteCollectorProxy $app) {
             $app->redirect('', $app->getBasePath() . '/v2/kissj', 301);

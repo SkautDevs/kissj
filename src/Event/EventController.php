@@ -8,9 +8,17 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class EventController extends AbstractController
 {
-    public function list(Request $request, Response $response): Response
+    public function __construct(
+        private readonly EventRepository $eventRepository,
+    ) {}
+
+    public function list(Response $response): Response
     {
-        return $this->view->render($response, 'event/landing.twig');
+        return $this->view->render(
+            $response,
+            'event/landing.twig',
+            ['events' => $this->eventRepository->findActiveEvents()],
+        );
     }
     /*
     public function createEvent(Request $request, Response $response, array $args) {
