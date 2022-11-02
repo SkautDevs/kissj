@@ -97,7 +97,7 @@ class ParticipantController extends AbstractController
         if ($participant instanceof PatrolLeader) {
             $participants = $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($participant);
         }
-    
+
         return [
             'user' => $user,
             'person' => $participant,

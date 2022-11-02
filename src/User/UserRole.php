@@ -6,7 +6,6 @@ namespace kissj\User;
 
 enum UserRole: string
 {
-
     case Participant = 'participant';
     case Admin = 'admin';
     case ContingentAdminCs = 'contingentAdminCs';

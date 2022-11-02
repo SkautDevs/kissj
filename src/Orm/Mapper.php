@@ -79,7 +79,7 @@ class Mapper implements IMapper
                     ParticipantRole::TroopParticipant->value => TroopParticipant::class,
                     ParticipantRole::Ist->value => Ist::class,
                     ParticipantRole::Guest->value => Guest::class,
-                    default => throw new \UnexpectedValueException('Got unknown Participant role: ' 
+                    default => throw new \UnexpectedValueException('Got unknown Participant role: '
                         . $row->getData()['role'] . ' for Participant with ID: ' . $row->getData()['id']),
                 };
 

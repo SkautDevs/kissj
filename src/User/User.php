@@ -38,7 +38,7 @@ class User extends EntityDateTime
     {
         return $role->value;
     }
-    
+
     public function isAdmin(): bool
     {
         return in_array($this->role, UserRole::adminRoles(), true);
