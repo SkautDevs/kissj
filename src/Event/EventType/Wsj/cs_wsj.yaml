@@ -22,3 +22,9 @@ detail:
         photoMeets: "Fotograf setkání"
         wsj: "Mám předchozí zkušenost s WSJ"
         program: "Chci pomoci s programem na Jamboree"
+email:
+    payment-info:
+        nonfirst:
+            approved: "těší nás tvůj přetrvávající zájem o"
+            finish: "Přes technické komplikace a zpoždění přišel čas na zaplacení druhé splátky. Splatnost je"
+            days: "dní od doručení tohoto emailu"

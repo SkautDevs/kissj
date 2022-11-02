@@ -212,6 +212,10 @@ email:
         approved: "Práve sme schválili Tvoju registrácia na"
         finish: " Pre riadne dokončenie registrácie ostáva ešte jeden krok - zaplatiť registračný poplatok do "
         days: "dní"
+        nonfirst:
+            approved: "těší nás tvůj přetrvávající zájem o"
+            finish: "Přišel čas na zaplacení druhé splátky. Splatnost je"
+            days: "dní"
         paymentDetails: "Platobné údaje"
         accountNumber: "Číslo účtu"
         amount: "Suma"
