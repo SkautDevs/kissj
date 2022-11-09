@@ -38,7 +38,7 @@
             {% endfor %}
 
             <h4>{% trans %}role.tp{% endtrans %}</h4>
-            {% for tp in paidITroopParticipants %}
+            {% for tp in paidTroopParticipants %}
                 {% include 'widgets/participantRow.twig' with {'person': tp, 'ca': caTp} %}<br/>
             {% endfor %}
         {% endif %}
