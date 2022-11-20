@@ -13,6 +13,7 @@ class EventTypeAqua extends EventType
     /**
      * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
      * discount 40€ for self-eating participant (not for ISTs)
+     * TODO update
      */
     public function getPrice(Participant $participant): int
     {
@@ -40,7 +41,7 @@ class EventTypeAqua extends EventType
 
     private function getFullPriceForToday(): int
     {
-        $lastDiscountDay = new \DateTime('2020-03-20');
+        $lastDiscountDay = new \DateTime('2022-12-20');
 
         if (new \DateTime('now') <= $lastDiscountDay) {
             return 150;
@@ -71,6 +72,16 @@ class EventTypeAqua extends EventType
             'detail.position.program.leisure',
             'detail.position.program.teahouse',
             'detail.position.program.subcamp',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLanguages(): array
+    {
+        return [
+            'sk' => '🇸🇰 Slovensky',
         ];
     }
 }
