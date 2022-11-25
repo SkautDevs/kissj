@@ -74,14 +74,4 @@ class EventTypeAqua extends EventType
             'detail.position.program.subcamp',
         ];
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLanguages(): array
-    {
-        return [
-            'sk' => '🇸🇰 Slovensky',
-        ];
-    }
 }
