@@ -1,0 +1,19 @@
+detail:
+    food-placeholder: "Zabezpečujeme diety uvedené v seznamu výše. Pokud potřebuješ jinou dietu, musíš si stravu na celou akci zabezpečit samostatně a účastnický poplatek máš nižší."
+    position:
+        press: "PR (noviny, fotografování a další media...)"
+        centralServices: "centrální služby (registrace, administrace, info stan...)"
+        technical: "technická podpora (manipulace, údržba, skladování a/nebo transport materiálu, řešení technických problémů v kempu)"
+        program:
+            sailing: "hlavní program - plachtění"
+            canoeing: "hlavní program - pádlování na vodní hladině (paddleboardy, kanoe...)"
+            communityProject: "hlavní program - komunitní projekt"
+            rafting: "hlavní program - sjezd řeky"
+            hiking: "hlavní program - turistika"
+            workshops: "hlavní program - workshopy (jakékoliv zajímavé schopnosti uveď do políčka zručností :))"
+            climbing: "hlavní program - lezení"
+            channel: "hlavní program - divoká voda (kanál)"
+            tour: "hlavní program - prohlídka vodního díla"
+            leisure: "večerní aktivity (ceremoniály, tancovačky, párty, debaty...)"
+            teahouse: "staff čajovny"
+            subcamp: "subcamp leader"

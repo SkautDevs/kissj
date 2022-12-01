@@ -33,10 +33,10 @@ email:
         thanks: ". Vďaka!"
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
 detail:
+    food-placeholder: "Zabezpečujeme diéty uvedené vo výbere vyššie. Pokiaľ potrebuješ inú diétu, musíš si stravu na celú akciu zabezpečiť samostatne a účastnícky poplatok máš znížený."
     position:
         press: "PR (noviny, fotografovanie a ďalšie médiá...)"
         centralServices: "centrálne služby (registrácia, administrácia, info stan...)"
-        kitchen: "kuchyňa (príprava a podávanie jedla)"
         technical: "technická podpora (manipulácia, údržba, skladovanie a/alebo transport materiálu, riešenie technických problémov v kempe)"
         program:
             sailing: "hlavný program - plachtenie"

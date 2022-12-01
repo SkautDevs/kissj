@@ -62,6 +62,7 @@ class EventTypeAqua extends EventType
         return [
             'en' => __DIR__ . '/en_aqua.yaml',
             'sk' => __DIR__ . '/sk_aqua.yaml',
+            'cs' => __DIR__ . '/cs_aqua.yaml',
         ];
     }
     
@@ -152,7 +153,6 @@ class EventTypeAqua extends EventType
         return [
             'detail.position.press',
             'detail.position.centralServices',
-            'detail.position.kitchen',
             'detail.position.technical',
             'detail.position.program.sailing',
             'detail.position.program.canoeing',
