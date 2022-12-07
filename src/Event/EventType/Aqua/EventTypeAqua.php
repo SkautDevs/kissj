@@ -106,7 +106,6 @@ class EventTypeAqua extends EventType
         $ca = parent::getContentArbiterPatrolParticipant();
         $ca->country = true;
         $ca->idNumber = true;
-        $ca->languages = true;
         $ca->food = true;
         $ca->phone = true;
         $ca->tshirt = true;

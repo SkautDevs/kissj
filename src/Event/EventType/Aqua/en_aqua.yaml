@@ -41,6 +41,7 @@ email:
         paymentTransfered: "tranfering different payment into your registration"
 detail:
     food-placeholder: "We arrange only above stated options of diet restriction. In case of other restrictions, you have to arrange all the food for whole event yourself and your participant fee is reduced."
+    position-title: "Preferred position - select max. 5. We don't guarantee you to be placed at the selected position, but we'll try our best"
     position:
         press: "press (newspaper, photography and other media...)"
         centralServices: "central services (registration, administration, info tent...)"

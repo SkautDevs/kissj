@@ -34,6 +34,7 @@ email:
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
 detail:
     food-placeholder: "Zabezpečujeme diéty uvedené vo výbere vyššie. Pokiaľ potrebuješ inú diétu, musíš si stravu na celú akciu zabezpečiť samostatne a účastnícky poplatok máš znížený."
+    position-title: "Preferovaná pozícia na akcii - vyber max. 5. Nezaručujeme priradenie na vybranú možnosť, ale posnažíme sa vyhovieť"
     position:
         press: "PR (noviny, fotografovanie a ďalšie médiá...)"
         centralServices: "centrálne služby (registrácia, administrácia, info stan...)"

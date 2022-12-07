@@ -14,13 +14,13 @@
         <div class="card-divide">
             <!-- Patrol Leader -->
             <div>
-                <h2>{% trans %}role.pl{% endtrans %} {{ pl.getFullName }}</h2>
+                <h2>{% trans %}role.pl{% endtrans %} {{ person.getFullName }}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
-                    {% include 'widgets/details.twig' with {'person': pl} %}
+                    {% include 'widgets/details.twig' with {'person': person} %}
                     <br/>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 detail:
     food-placeholder: "Zabezpečujeme diety uvedené v seznamu výše. Pokud potřebuješ jinou dietu, musíš si stravu na celou akci zabezpečit samostatně a účastnický poplatek máš nižší."
+    position-title: "Preferovaná pozice - vyber max. 5. Nezaručujeme zařazení na vybranou pozici, ale posnažíme se vyhovět"
     position:
         press: "PR (noviny, fotografování a další media...)"
         centralServices: "centrální služby (registrace, administrace, info stan...)"
