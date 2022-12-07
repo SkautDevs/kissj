@@ -18,8 +18,11 @@ class EventRepository extends Repository
     /**
      * @return Event[]
      */
-    public function findActiveEvents(): array
+    public function findActiveNontestEvents(): array
     {
-        return $this->findBy([]); // TODO
+        return $this->findBy([
+            'testing_site' => false,
+            // TODO start and end registration dates
+        ]);
     }
 }
