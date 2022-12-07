@@ -15,7 +15,7 @@ final class EventContextProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array<mixed> $records
+     * @param array<array<mixed>> $records
      * @return array<mixed>
      */
     public function __invoke(array $records): array

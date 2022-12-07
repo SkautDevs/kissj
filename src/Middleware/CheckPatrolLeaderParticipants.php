@@ -34,7 +34,7 @@ class CheckPatrolLeaderParticipants extends BaseMiddleware
         $participantId = (int)$route->getArgument('participantId');
         if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
             $this->patrolService->getPatrolParticipant($participantId),
-            $this->patrolService->getPatrolLeader($request->getAttribute('user'))
+            $this->patrolService->getPatrolLeader($this->getUser($request)),
         )) {
             $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
 

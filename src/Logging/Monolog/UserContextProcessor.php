@@ -15,7 +15,7 @@ final class UserContextProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array<mixed> $record
+     * @param array<array<mixed>> $record
      * @return array<mixed>
      */
     public function __invoke(array $record): array

@@ -21,7 +21,7 @@ final class SentryContextMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        /** @var $user User|null */
+        /** @var User|null $user */
         $user = $request->getAttribute('user');
 
         if ($user instanceof User) {
@@ -33,7 +33,7 @@ final class SentryContextMiddleware extends BaseMiddleware
             });
         }
 
-        /** @var $event Event|null */
+        /** @var Event|null $event */
         $event = $request->getAttribute('event');
 
         if ($event instanceof Event) {

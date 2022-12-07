@@ -72,7 +72,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware
      */
     private function getAvailableLanguages(Request $request): array
     {
-        $event = $this->getEvent($request);
+        $event = $this->tryGetEvent($request);
 
         if ($event instanceof Event) {
             $availableLanguages = $event->getEventType()->getLanguages();

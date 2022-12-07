@@ -23,9 +23,17 @@ class ErrorHandlerGetter
     public function __construct(
         ContainerInterface $container
     ) {
-        $this->logger = $container->get(Logger::class);
-        $this->twig = $container->get(Twig::class);
-        $this->sentryHub = $container->get(Hub::class);
+        /** @var LoggerInterface $logger */
+        $logger = $container->get(Logger::class);
+        $this->logger = $logger;
+        
+        /** @var Twig $twig */
+        $twig = $container->get(Twig::class);
+        $this->twig = $twig;
+
+        /** @var Hub $hub */
+        $hub = $container->get(Hub::class);
+        $this->sentryHub = $hub;
     }
 
     public function getErrorHandler(): callable

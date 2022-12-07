@@ -26,7 +26,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
     protected function createRedirectResponse(Request $request, string $routeName): Response
     {
         $parameters = [];
-        if ($event = $this->getEvent($request)) {
+        if ($event = $this->tryGetEvent($request)) {
             $parameters['eventSlug'] = $event->slug;
         }
         $url = $this->getRouter($request)->urlFor($routeName, $parameters);
@@ -34,13 +34,27 @@ abstract class BaseMiddleware implements MiddlewareInterface
         return (new \Slim\Psr7\Response())->withHeader('Location', $url)->withStatus(302);
     }
 
-    protected function getEvent(Request $request): ?Event
+    protected function tryGetEvent(Request $request): ?Event
     {
-        return $request->getAttribute('event');
+        /** @var Event|null $event */
+        $event = $request->getAttribute('event');
+
+        return $event;
     }
 
-    protected function getUser(Request $request): ?User
+    protected function tryGetUser(Request $request): ?User
     {
-        return $request->getAttribute('user');
+        /** @var User|null $user */
+        $user = $request->getAttribute('user');
+
+        return $user;
+    }
+
+    protected function getUser(Request $request): User
+    {
+        /** @var User $user */
+        $user = $request->getAttribute('user');
+
+        return $user;
     }
 }

@@ -79,12 +79,19 @@ abstract class AbstractController
 
     protected function getEvent(Request $request): Event
     {
-        return $request->getAttribute('event');
+        /** @var Event $event */
+        $event = $request->getAttribute('event');
+
+        return $event;
     }
 
     protected function tryGetEvent(Request $request): ?Event
     {
-        return $request->getAttribute('event');
+        /** @var Event|null $event 
+         */
+        $event = $request->getAttribute('event');
+
+        return $event;
     }
 
     protected function getParameterFromBody(Request $request, string $parameterName, bool $escapeValue = false): string

@@ -131,6 +131,7 @@ class Repository extends BaseRepository
     {
         $qb = $this->connection->select('count(*)')->from($this->getTable());
         $this->addConditions($qb, $criteria);
+        /** @var int $row */
         $row = $qb->fetchSingle();
 
         return $row;
@@ -176,6 +177,7 @@ class Repository extends BaseRepository
     {
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
+        /** @var int $id */
         $id = $qb->fetchSingle();
 
         return $id;

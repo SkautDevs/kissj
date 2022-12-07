@@ -21,11 +21,11 @@ class MonologContextMiddleware extends BaseMiddleware
     public function process(Request $request, ResponseHandler $handler): Response
     {
         $this->logger->pushProcessor(
-            new UserContextProcessor($this->getUser($request)),
+            new UserContextProcessor($this->tryGetUser($request)),
         );
 
         $this->logger->pushProcessor(
-            new EventContextProcessor($this->getEvent($request)),
+            new EventContextProcessor($this->tryGetEvent($request)),
         );
 
         return $handler->handle($request);
