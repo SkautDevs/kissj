@@ -35,10 +35,16 @@ class EventTypeWsj extends EventType
                 => 12_000,
                 default => throw new \Exception('Unknown participant class for payment count 1'),
             },
-            /*2 => match (true) {
+            2 => match (true) {
                 $participant instanceof TroopLeader,
                 $participant instanceof TroopParticipant,
                     => 17_000,
+                default => throw new \Exception('Unknown participant class for payment count 2'),
+            },
+            /*3 => match (true) {
+                $participant instanceof TroopLeader,
+                $participant instanceof TroopParticipant,
+                    => 10_000,
                 default => throw new \Exception('Unknown participant class for payment count 2'),
             },*/
             default => throw new \Exception('Problematic payment count: ' . $paymentsCount),
