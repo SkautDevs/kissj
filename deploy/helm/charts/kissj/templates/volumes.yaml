@@ -6,8 +6,9 @@ metadata:
     cas.openebs.io/config: |
       - name: FilePermissions
         data:
-          GID: "120"
-          mode: "g+s"
+          UID: "1001"
+          GID: "1001"
+          mode: "g+rw"
 
 spec:
   accessModes:
