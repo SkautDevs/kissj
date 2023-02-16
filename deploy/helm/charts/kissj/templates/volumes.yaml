@@ -2,6 +2,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name}}-sessions
+  annotations:
+    cas.openebs.io/config: |
+      - name: FilePermissions
+        data:
+          GID: "120"
+          mode: "g+s"
 
 spec:
   accessModes:
