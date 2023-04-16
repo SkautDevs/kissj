@@ -27,9 +27,9 @@ kissj is scouts **registration system for national and international Scout Jambo
 # Useful links
 
  - main page: https://kissj.net/
- - analytics: https://plausible.io/kissj.net
- - sentry: https://sentry.mareshq.com/organizations/skautdevs/
- - monitoring and logs: https://monitoring.kissj.net/
+ - analytics: ~https://plausible.io/kissj.net~ - TODO fix
+ - sentry: https://skautdevs.sentry.io/discover/homepage/
+ - monitoring and logs: ~https://monitoring.kissj.net/~ - TODO fix
 
 ## Local setup with PostgreSQL
 
