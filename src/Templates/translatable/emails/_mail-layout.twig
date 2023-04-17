@@ -50,9 +50,11 @@
         {{ event.getReadableName }}</p>
 </main>
 <footer>
-    <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-        {# TODO check if image exists, because if not, mail will not be sent #}<img src="{{ email.image( event.logoUrl ) }}" alt="logo of {{ event.readableName }}">
-    </a>
+    {% if eventImageExists %}
+        <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
+            <img src="{{ email.image( event.logoUrl ) }}" alt="logo of {{ event.readableName }}">
+        </a>
+    {% endif %}
 </footer>
 </body>
 </html>

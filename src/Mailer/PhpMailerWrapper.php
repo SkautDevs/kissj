@@ -214,7 +214,10 @@ class PhpMailerWrapper
         }
         $email->subject($event->readableName . ' - ' . $subject);
         $email->htmlTemplate('emails/' . $templateName . '.twig');
-        $email->context(array_merge($parameters, ['fullRegistrationLink' => $this->settings->getFullUrlLink()]));
+        $email->context(array_merge($parameters, [
+            'fullRegistrationLink' => $this->settings->getFullUrlLink(),
+            'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->logoUrl),
+            ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {
             $email->embed($embed->resource, $embed->name, $embed->contentType);
