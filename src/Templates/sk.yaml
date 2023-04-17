@@ -381,6 +381,7 @@ flash:
         locked: "Registrácia bola uzakmnutá a odoslaná"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
         guestApproved: "Host schválen a e-mail odeslán (bez platby)"
+        notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:

@@ -300,6 +300,14 @@ class ParticipantService
 
     public function approveRegistration(Participant $participant): Participant
     {
+        if ($participant->getUserButNotNull()->status === UserStatus::Approved) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.notApproved'));
+            
+            return $participant;
+        }
+        
+        $this->userService->setUserApproved($participant->getUserButNotNull());
+
         $participant->registrationApproveDate = new DateTimeImmutable();
         $this->participantRepository->persist($participant);
 
@@ -318,7 +326,6 @@ class ParticipantService
         } else {
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
         }
-        $this->userService->setUserApproved($participant->getUserButNotNull());
         $this->flashMessages->success($this->translator->trans('flash.success.approved'));
 
         return $participant;
