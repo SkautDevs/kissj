@@ -74,7 +74,7 @@
     {% trans %}detail.arrivalDate{% endtrans %}: <b>{{ person.getArrivalDate.format('d. m. Y') }}</b><br/>
 {% endif %}{% if ca.departureDate %}
     {% trans %}detail.departureDate{% endtrans %}: <b>{{ person.getDepartureDate.format('d. m. Y') }}</b><br/>
-{% endif %}{% if ca.uploadFile %}
+{% endif %}{% if ca.uploadFile and person.getAgeAtStartOfEvent < 18%}
     {% trans %}detail.uploadFile{% endtrans %}:
     {% if person.getUploadedFilename %}
         <a target="_blank"

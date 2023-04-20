@@ -279,11 +279,11 @@ li.step:nth-child(5).is-active {
 	display: block;
 	flex-grow: 1;
 }
-
 .form-group-inline {
 	display: flex;
 	margin-bottom: 10px;
 }
+
 
 .form-control:valid {
 	box-shadow: 1px 1px 1px #1e341b;
