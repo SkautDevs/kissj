@@ -187,6 +187,7 @@
             type="email"
             name="email"
             value="{% if personDetails.getEmail is empty and personDetails.role != 'pp' %}{{ user.email }}{% else %}{{ personDetails.getEmail }}{% endif %}"
+            placeholder="{% trans %}detail.emailPlaceholder{% endtrans %}"
             required="required"
         >
     </div>
@@ -213,6 +214,7 @@
             type="text"
             name="scoutUnit"
             value="{{ personDetails.getScoutUnit }}"
+            placeholder="{% trans %}detail.unitPlaceholder{% endtrans %}"
             required="required"
         >
     </div>
