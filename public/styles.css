@@ -279,6 +279,7 @@ li.step:nth-child(5).is-active {
 	display: block;
 	flex-grow: 1;
 }
+
 .form-group-inline {
 	display: flex;
 	margin-bottom: 10px;
