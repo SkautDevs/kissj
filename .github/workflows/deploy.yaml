@@ -53,7 +53,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: 'Deploy'
-      uses: 'vimeda/helm@v1.6.8'
+      uses: 'vimeda/helm@v1.7.0'
       with:
         release: kissj-${{ inputs.envName }}
         namespace: 'kissj-${{ inputs.envName }}'
