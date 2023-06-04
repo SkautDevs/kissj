@@ -48,6 +48,7 @@ class ExportTest extends AppTestCase
                     'email' => 'test' . $i . '@example.com',
                     'foodPreferences' => 'trolls',
                     'healthProblems' => 'some',
+                    'supervisor' => 'Franta šlic - dozor 18+',
                     'notes' => 'some note',
                 ]
             );

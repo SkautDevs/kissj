@@ -85,6 +85,7 @@ class ParticipantService
         $preferredPosition = $params['preferredPosition'] ?? [];
         $p->preferredPosition = $preferredPosition;
         $p->driversLicense = $params['driversLicense'] ?? null;
+        $p->supervisor = $params['supervisor'] ?? null;
         $p->notes = $params['notes'] ?? null;
 
         return $p;
@@ -197,6 +198,7 @@ class ParticipantService
             || ($ca->arrivalDate && $p->arrivalDate === null)
             || ($ca->departureDate && $p->departureDate === null)
             #|| ($ca->uploadFile && $p->uploadedFilename === null)
+            #|| ($ca->supervisor && $p->supervisor === null)
             || ($ca->skills && $p->skills === null)
             || ($ca->preferredPosition && $p->preferredPosition === null)
             || ($ca->driver && $p->driversLicense === null)
