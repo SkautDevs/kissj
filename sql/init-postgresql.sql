@@ -103,7 +103,6 @@ create table "participant"
 	updated_at TIMESTAMP,
 	patrol_leader_id int,
 	patrol_name TEXT,
-	supervisor TEXT,
 	drivers_license TEXT,
 	languages TEXT,
 	skills TEXT,

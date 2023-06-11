@@ -57,7 +57,7 @@ class ErrorHandlerGetter
             $message = $inspector->getExceptionMessage();
 
             $this->logger->error('Exception! ' . $title . '(' . $code . ') -> ' . $message, [ 'exception' => $exception ]);
-            printf($message);
+
             http_response_code(500);
             require __DIR__ . '/Templates/exception.php';
             die;

@@ -185,7 +185,6 @@ class ExportService
             'arrivalDate', // 25
             'departureDate',
             'uploadedOriginalFilename',
-            'supervisor',
             'notes',
             'updatedAt',
             'registrationCloseDate', // 30
@@ -265,7 +264,6 @@ class ExportService
                     $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '', // 25
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '',
-                    $participant->supervisor ?? '',
                     $participant->notes ?? '',
                     $participant->updatedAt ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
                     $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '', // 30

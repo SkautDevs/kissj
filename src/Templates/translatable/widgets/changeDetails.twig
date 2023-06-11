@@ -1,20 +1,20 @@
  <script>
         function OnBirthDateChange(element) {
+            let EighteenMinusForm = document.getElementById("uploadFileForm")
+            if (!EighteenMinusForm) return;
             if (element.value) {
-                let EighteenMinusForms = ["uploadFile", "supervisor"]
-                let birthTimestamp = new Date(element.value)
-                let isUnderEighteen = birthTimestamp.setFullYear(birthTimestamp.getFullYear() + 18) / 1000 > {{ event.startDay.getTimestamp() }}
-                for(let f of EighteenMinusForms) {
-                    let EighteenMinusFormElement = document.getElementById(f+"Form")
-                    if(!EighteenMinusFormElement) continue;
-                    if(isUnderEighteen) {
-                        EighteenMinusFormElement.hidden = false
-                        document.getElementById(f).setAttribute("required", "true")
-                    } else {
-                        EighteenMinusFormElement.hidden = true
-                        document.getElementById(f).removeAttribute("required")
-                    }
+                let EighteenYearsAt = new Date(element.value)
+                EighteenYearsAt.setFullYear(EighteenYearsAt.getFullYear() + 18)
+                if (EighteenYearsAt.getTime() / 1000 > {{ event.startDay.getTimestamp() }}) {
+                    EighteenMinusForm.hidden = false
+                    document.getElementById("uploadFile").setAttribute("required", "true")
+                } else {
+                    EighteenMinusForm.hidden = true
+                    document.getElementById("uploadFile").removeAttribute("required")
                 }
+            } else {
+                EighteenMinusForm.hidden = false
+                document.getElementById("uploadFile").setAttribute("required", "true")
             }
         }
         window.addEventListener( "load", () => OnBirthDateChange(document.getElementById("birthDate")))
@@ -125,28 +125,13 @@
 {% endif %}{% if ca.uploadFile %}
      <div id="uploadFileForm" class="form-group" hidden>
          <label>{% trans %}detail.uploadFile{% endtrans %}:
-             <input
-                id="uploadFile"
-                class="form-control form-group-inline"
-                type="file"
-                name="uploadFile">
+             <input id="uploadFile" class="form-control form-group-inline" type="file" name="uploadFile"
+                     {% if not personDetails.getUploadedFilename %} {% endif %}>
          </label>
          {% if personDetails.getUploadedOriginalFilename %}
              <b>{{ personDetails.getUploadedOriginalFilename }} {% trans%}detail.uploadedFileSuccessful{% endtrans %}</b>
          {% endif %}
          {% trans %}detail.uploadedFileNote{% endtrans %}
-     </div>
-
- {% endif %}{% if ca.supervisor %}
-     <div id="supervisorForm" class="form-group" hidden>
-         <label>{% trans %}detail.supervisor{% endtrans %}:
-             <input
-                id="supervisor"
-                class="form-control form-wide"
-                type="text"
-                name="supervisor"
-                placeholder="{% trans %}detail.supervisor-placeholder{% endtrans %}">
-         </label>
      </div>
 
  {% endif %}{% if ca.idNumber %}

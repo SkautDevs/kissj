@@ -110,8 +110,6 @@ detail:
     uploadedFileSuccessful: "file successfully uploaded!"
     uploadedFileNote: "PDF with consent can be found at our website"
     uploadFileMissing: "file not uploaded yet :("
-    supervisor: "supervisor"
-    supervisor-placeholder: "18+ supervisor, that will be responsible for you. He must be registered as well."
     notice: "Notice"
     notice-placeholder: "anything else?"
     skills: "Skills"

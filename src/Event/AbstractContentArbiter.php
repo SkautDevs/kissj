@@ -6,7 +6,6 @@ abstract class AbstractContentArbiter
 {
     public bool $contingent = false;
     public bool $patrolName = false;
-    public bool $supervisor = false;
     public bool $firstName = true;
     public bool $lastName = true;
     public bool $nickname = true;

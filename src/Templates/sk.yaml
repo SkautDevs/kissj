@@ -110,8 +110,6 @@ detail:
     uploadedFileSuccessful: "soubor úspěšně nahraný!"
     uploadedFileNote: "PDF s potvrzením najdeš na našem webu"
     uploadFileMissing: "soubor zatím není nahraný :("
-    supervisor: "dozor"
-    supervisor-placeholder: "18+ účastník, ktorý za teba na akciu zodpovedá, napíš celé meno aj predmurovku"
     notice: "Poznámka"
     notice-placeholder: "ešte niečo?"
     skills: "Zručnosti"
