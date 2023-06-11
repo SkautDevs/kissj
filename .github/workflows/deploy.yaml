@@ -44,7 +44,7 @@ jobs:
     steps:
 
     - name: split url
-      uses: bhowell2/github-substring-action@v1.0.1
+      uses: bhowell2/github-substring-action@1.0.2
       id: url
       with:
        value: ${{ inputs.envUrl }}
