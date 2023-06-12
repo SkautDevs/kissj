@@ -105,7 +105,6 @@ detail:
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
     notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci (povinné pokud jsi pod 18 let) a jakékoliv další poznámky"
-    notice-additional-field-description: ""
     skills: "Dovednosti"
     skills-placeholder: "potravinářský průkaz, štrikování, oprava elektrických zásuvek ..."
     position-title: "Preferovaná pozice"
