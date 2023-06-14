@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card card-half closed-theme">
-        <h2>{% trans %}deny-admin.deny{% endtrans %} {{ ('role.' ~ participant.role)|trans }}</h2>
+        <h2>{% trans %}deny-admin.deny{% endtrans %} {{ ('role.' ~ participant.role.value)|trans }}</h2>
         <p></p>
         <form method="post"
               action="{{ url_for('admin-deny-participant', {'participantId' : participant.getId, 'eventSlug': event.slug}) }}">

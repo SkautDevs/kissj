@@ -21,8 +21,7 @@ final class SentryContextMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        /** @var User|null $user */
-        $user = $request->getAttribute('user');
+        $user = $this->tryGetUser($request);
 
         if ($user instanceof User) {
             $this->hub->configureScope(function (Scope $scope) use ($user): void {
@@ -33,8 +32,7 @@ final class SentryContextMiddleware extends BaseMiddleware
             });
         }
 
-        /** @var Event|null $event */
-        $event = $request->getAttribute('event');
+        $event = $this->tryGetEvent($request);
 
         if ($event instanceof Event) {
             $this->hub->configureScope(function (Scope $scope) use ($event): void {

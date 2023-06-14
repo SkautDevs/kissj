@@ -57,7 +57,7 @@
     "require-dev": {
         "ext-pdo": "*",
         "friendsofphp/php-cs-fixer": "^3.8",
-        "mockery/mockery": "dev-master",
+        "mockery/mockery": "^1.6",
         "phpstan/phpstan": "^1.0",
         "phpunit/phpunit": "^9",
         "roave/security-advisories": "dev-latest",

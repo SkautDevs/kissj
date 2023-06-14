@@ -149,7 +149,7 @@ login-link-sent:
     followLink: "Následuj odkaz do 15 minut k přihlášení se do registračního systému."
 role:
     pl: "vedoucí patroly"
-    ist: ""
+    ist: "účastník"
     p: "účastník"
     pp: "účastník v patrole"
     tl: "vedoucí patroly"
