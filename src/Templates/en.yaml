@@ -383,7 +383,6 @@ flash:
         locked: "Registration successfully locked and sent"
         approved: "Participant is approved, payment is generated and mail sent"
         guestApproved: "Guest is approved and mail sent (without payment)"
-        notApproved: "Participant is not approved, because it already has approved status"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:
@@ -400,6 +399,7 @@ flash:
         fileTooBig: "Uploaded file is too big, please try upload smaller"
         fileGeneral: "There is something wrong with uploaded file, please try it again."
         fileNotUploaded: "File was not uploaded."
+        notApproved: "Participant is not approved, because it already has approved status"
         registrationNotAllowed: "Lock your registration is not yet allowed. Please wait for the right time."
         nullParticipants: "One or both participants was not found in system"
         differentParticipants: "Participants have different roles"

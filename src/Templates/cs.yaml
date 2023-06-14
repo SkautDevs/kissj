@@ -383,7 +383,6 @@ flash:
         locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
         guestApproved: "Host schválen a e-mail odeslán (bez platby)"
-        notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         adminPairedPayments: "Spárováno bankovních transakcí: "
         transfer: "Platba úspěšně přesunuta!"
     warning:
@@ -400,6 +399,7 @@ flash:
         fileTooBig: "Nahraný soubor je příliš velký, nahraj prosím menší"
         fileGeneral: "S nahraným souborem je něco v nepořádku, prosím, zkus to znovu."
         fileNotUploaded: "Soubor nebyl nahrán."
+        notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Počkej na správný čas prosím."
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
         differentParticipants: "Účastníci jsou různých rolí"
