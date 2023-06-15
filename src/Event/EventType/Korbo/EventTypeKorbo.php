@@ -37,6 +37,7 @@ class EventTypeKorbo extends EventType
         $ca->unit = true;
         $ca->scarf = true;
         $ca->uploadFile = true;
+        $ca->skills = true;
 
         return $ca;
     }
