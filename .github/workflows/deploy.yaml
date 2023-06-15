@@ -70,7 +70,7 @@ jobs:
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
-            replicas: 1
+            replicas: 3
             image:
               name: quay.io/kissj/caddy-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}
@@ -80,7 +80,7 @@ jobs:
 
           
           php:
-            replicas: 1 
+            replicas: 5 
             volume:
               storageclass: ${{ secrets.STORAGE_CLASS }}
             image:
