@@ -198,7 +198,7 @@ email:
         successfullySent: |
             Úspěšně jsi poslal/a svou přihlášku na KORBO 2023. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)
             <br/>
-            Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/zgJ4mnySKVK28mFUA">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
+            Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/Ek9sHfJGj8jNstFLA">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
     denial:
         subject: "odemknuto"
         denied: "bohužel jsme museli odemknout tvou přihlášku pro"
