@@ -101,7 +101,7 @@ detail:
     departureDate: "Datum odjezdu"
     uploadFile: "Souhlas rodičů v PDF"
     uploadedFileSuccessful: "soubor úspěšně nahraný!"
-    uploadedFileNote: "PDF s potvrzením najdeš na <a target=\"_blank\" href=\"https://drive.google.com/file/d/1xRpMx1YVaql8fpwnIzpl5sfRmE5vSOo2/view\">webu Korba</a>."
+    uploadedFileNote: "PDF s potvrzením najdeš na <a target=\"_blank\" href=\"https://drive.google.com/file/d/1A5HeULxyUcUMZ6_KLXWDKPkSv-9kl25t/view\">webu Korba</a>."
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
     notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci (povinné pokud jsi pod 18 let) a jakékoliv další poznámky"
@@ -195,7 +195,10 @@ email:
         buttonNotWorking: "Pokud přihlašovací tlačítko nefunguje nebo není vidět, zkopíruj a vlož tento odkaz do vyhledávacího řádku svého prohlížeče: "
     closed:
         subject: "uzamčeno"
-        successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
+        successfullySent: |
+            Úspěšně jsi poslal/a svou přihlášku na KORBO 2023. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)
+            <br/>
+            Mezitím budeme rádi, pokud nám vyplníš <a href="https://www.facebook.com/events/3629371247292159/">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
     denial:
         subject: "odemknuto"
         denied: "bohužel jsme museli odemknout tvou přihlášku pro"
