@@ -104,7 +104,7 @@ detail:
     uploadedFileNote: "PDF s potvrzením najdeš na <a target=\"_blank\" href=\"https://drive.google.com/file/d/1A5HeULxyUcUMZ6_KLXWDKPkSv-9kl25t/view\">webu Korba</a>."
     uploadFileMissing: "soubor zatím není nahraný :("
     notice: "Poznámky"
-    notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci  a telefonní číslo na zákonného zástupce  vpřípadě, že jsi pod 18 let) a jakékoliv další poznámky"
+    notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci (povinné pokud jsi pod 18 let) a jakékoliv další poznámky"
     skills: "Telefonní číslo na zákonného zástupce (pouze pro mladší 18 let)"
     skills-placeholder: ""
     position-title: "Preferovaná pozice"
