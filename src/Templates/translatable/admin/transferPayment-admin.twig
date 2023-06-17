@@ -10,7 +10,7 @@
                 {% if from %}
                     {{ include('widgets/details.twig', {person: from, ca: event.eventType.getContentArbiterIst}) }}
                     Mail: <b>{{ emailFrom }}</b><br/>
-                    Status: <b>{{ from.user.status }}</b>
+                    Status: <b>{{ from.user.status.value }}</b>
                 {% else %}
                     <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailFrom }}</h4>
                 {% endif %}
@@ -21,7 +21,7 @@
                 {% if to %}
                     {{ include('widgets/details.twig', {person: to, ca: event.eventType.getContentArbiterIst}) }}
                     Mail: <b>{{ emailTo }}</b><br/>
-                    Status: <b>{{ to.user.status }}</b>
+                    Status: <b>{{ to.user.status.value }}</b>
                 {% else %}
                     <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailTo }}</h4>
                 {% endif %}

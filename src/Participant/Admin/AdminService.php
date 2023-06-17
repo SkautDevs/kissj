@@ -47,12 +47,12 @@ class AdminService
             $isPossible = false;
         }
 
-        if ($participantFrom->getUserButNotNull()->status !== UserStatus::Paid) {
+        if (!$participantFrom->getUserButNotNull()->status->isPaidOrCancelled()) {
             $flash->warning($this->translator->trans('flash.warning.notPaid'));
             $isPossible = false;
         }
 
-        if ($participantTo->getUserButNotNull()->status !== UserStatus::Paid) {
+        if ($participantTo->getUserButNotNull()->status->isPaidOrCancelled()) {
             $flash->warning($this->translator->trans('flash.warning.isPaid'));
             $isPossible = false;
         }
