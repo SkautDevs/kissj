@@ -36,6 +36,7 @@ use kissj\Orm\EntityDatetime;
  * @property string|null       $bankApiKey
  * @property int               $defaultPrice
  * @property string            $currency
+ * @property DateTimeInterface $lastBankSync
  *
  * @property bool              $allowPatrols
  * @property int|null          $maximalClosedPatrolsCount

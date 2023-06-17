@@ -25,4 +25,16 @@ class EventRepository extends Repository
             // TODO start and end registration dates
         ]);
     }
+
+    /**
+     * @return Event[]
+     */
+    public function findActiveNontestAutopaymentsOnEvents(): array
+    {
+        return $this->findBy([
+            'testing_site' => false,
+            'automatic_payment_pairing' => true,
+            // TODO start and end registration dates
+        ]);
+    }
 }
