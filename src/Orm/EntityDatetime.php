@@ -2,9 +2,8 @@
 
 namespace kissj\Orm;
 
-use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
+use kissj\Application\DateTimeUtils;
 use LeanMapper\Entity;
 
 /**
@@ -13,35 +12,31 @@ use LeanMapper\Entity;
  */
 class EntityDatetime extends Entity
 {
-    public function dateToString(?DateTimeInterface $val): ?string
+    public function dateToString(?DateTimeInterface $value): ?string
     {
-        if ($val === null) {
-            return null;
-        }
-
-        return $val->format(DATE_ATOM);
+        return $value?->format(DATE_ATOM);
     }
 
-    public function dateFromString(DateTimeInterface|string|null $val): ?DateTimeInterface
+    public function dateFromString(DateTimeInterface|string|null $value): ?DateTimeInterface
     {
-        if (empty($val)) {
+        if (empty($value)) {
             return null;
         }
 
-        if ($val instanceof DateTimeInterface) {
-            return $val;
+        if ($value instanceof DateTimeInterface) {
+            return $value;
         }
 
-        return new DateTimeImmutable($val, new DateTimeZone('Europe/Berlin'));
+        return DateTimeUtils::getDateTime($value);
     }
 
     public static function setUpdatedAtBeforePersist(EntityDatetime $entity): void
     {
-        $entity->updatedAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
+        $entity->updatedAt = DateTimeUtils::getDateTime();
     }
 
     public static function setCreatedAtBeforeCreate(EntityDatetime $entity): void
     {
-        $entity->createdAt = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
+        $entity->createdAt = DateTimeUtils::getDateTime();
     }
 }

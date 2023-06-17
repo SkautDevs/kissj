@@ -378,7 +378,7 @@ flash:
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
-        comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
+        confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
         detailsSaved: "Údaje boli uložené."
         locked: "Registrácia bola uzakmnutá a odoslaná"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"

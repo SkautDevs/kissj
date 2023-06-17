@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
-use DateTimeImmutable;
 use kissj\AbstractController;
+use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -331,10 +331,10 @@ class AdminController extends AbstractController
             $this->logger->info('Payment ID ' . $paymentId
                 . ' cannot be confirmed from admin with event id ' . $user->event->id);
         } else {
-            $participant->registrationCloseDate = new DateTimeImmutable();
+            $participant->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->participantRepository->persist($participant);
             $this->paymentService->confirmPayment($payment);
-            $this->flashMessages->success($this->translator->trans('flash.success.comfirmPayment'));
+            $this->flashMessages->success($this->translator->trans('flash.success.confirmPayment'));
             $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
         }
 

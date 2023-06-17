@@ -378,7 +378,7 @@ flash:
         generatedPayments: "Generated payments and emails sent"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
-        comfirmPayment: "Participant payment is confirmed, email about confirmation is sent"
+        confirmPayment: "Participant payment is confirmed, email about confirmation is sent"
         detailsSaved: "Details successfully saved."
         locked: "Registration successfully locked and sent"
         approved: "Participant is approved, payment is generated and mail sent"

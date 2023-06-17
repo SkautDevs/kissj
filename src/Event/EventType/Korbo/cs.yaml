@@ -380,7 +380,7 @@ flash:
         duePaymentDenied: "Kvůli nezaplacení emaily odemknuto účastníků"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
-        comfirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
+        confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
         detailsSaved: "Informace úspěšně uloženy."
         locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"

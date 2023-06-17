@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace kissj\User;
 
 use kissj\AbstractController;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -122,6 +121,6 @@ class UserController extends AbstractController
 
     public function showLoginHelp(Response $response): Response
     {
-        return $this->view->render($response, 'kissj/login-help.twig', ['cej' => (new \DateTime('now', new \DateTimeZone('Europe/Berlin')))->format('Y-m-d H:i:m')]);
+        return $this->view->render($response, 'kissj/login-help.twig');
     }
 }
