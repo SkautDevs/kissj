@@ -2,6 +2,7 @@
 
 namespace Tests\Functional;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Export\ExportService;
 use kissj\Participant\ParticipantService;
@@ -40,7 +41,7 @@ class ExportTest extends AppTestCase
                     'firstName' => 'leader no.' . $i,
                     'lastName' => 'leaderový',
                     'nickname' => 'burákové máslo ' . $i,
-                    'birthDate' => (new \DateTime())->format(DATE_ATOM),
+                    'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
                     'gender' => 'High Elves',
                     'permanentResidence' => 'Kalimdor',
                     'country' => 'Azeroth',

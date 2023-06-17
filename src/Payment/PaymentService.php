@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Payment;
 
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
+use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -47,7 +48,7 @@ class PaymentService
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         $payment->iban = $event->iban;
-        $payment->due = $event->getEventType()->calculatePaymentDueDate(new \DateTimeImmutable('now'));
+        $payment->due = $event->getEventType()->calculatePaymentDueDate(DateTimeUtils::getDateTime());
         if ($participant instanceof PatrolLeader) {
             $payment->note = $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
         } else {

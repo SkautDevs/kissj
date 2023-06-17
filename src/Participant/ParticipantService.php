@@ -65,7 +65,7 @@ class ParticipantService
         $p->scoutUnit = $params['scoutUnit'] ?? null;
         $p->languages = $params['languages'] ?? null;
         if (array_key_exists('birthDate', $params) && $params['birthDate'] !== null) {
-            $p->birthDate = new \DateTime($params['birthDate']);
+            $p->birthDate = DateTimeUtils::getDateTime($params['birthDate']);
         }
         $p->birthPlace = $params['birthPlace'] ?? null;
         $p->healthProblems = $params['healthProblems'] ?? null;
@@ -75,10 +75,10 @@ class ParticipantService
         $p->swimming = $params['swimming'] ?? null;
         $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
         if (array_key_exists('arrivalDate', $params) && $params['arrivalDate'] !== null) {
-            $p->arrivalDate = new \DateTime($params['arrivalDate']);
+            $p->arrivalDate = DateTimeUtils::getDateTime($params['arrivalDate']);
         }
         if (array_key_exists('departureDate', $params) && $params['departureDate'] !== null) {
-            $p->departureDate = new \DateTime($params['departureDate']);
+            $p->departureDate = DateTimeUtils::getDateTime($params['departureDate']);
         }
         $p->skills = $params['skills'] ?? null;
         /** @var string[] $preferredPosition */

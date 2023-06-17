@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Navigamus;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
@@ -14,11 +15,11 @@ class EventTypeNavigamus extends EventType
 {
     public function getPrice(Participant $participant): int
     {
-        $now = new \DateTimeImmutable('now');
+        $now = DateTimeUtils::getDateTime();
         $patrolPrice = match (true) {
-            $now < new \DateTimeImmutable('2022-03-31 23:59:59') => 1100,
-            $now < new \DateTimeImmutable('2022-05-01 23:59:59') => 1150,
-            $now < new \DateTimeImmutable('2022-05-31 23:59:59') => 1200,
+            $now < DateTimeUtils::getDateTime('2022-03-31 23:59:59') => 1100,
+            $now < DateTimeUtils::getDateTime('2022-05-01 23:59:59') => 1150,
+            $now < DateTimeUtils::getDateTime('2022-05-31 23:59:59') => 1200,
             default => 1200,
         };
 

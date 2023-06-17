@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Payment;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +36,7 @@ class PaymentTest extends TestCase
         $examplePayment0->purpose = 'fee';
         $examplePayment0->accountNumber = '';
         $examplePayment0->iban = 'CZ5608000000000002171532';
-        $examplePayment0->due = new \DateTimeImmutable('2015-05-18');
+        $examplePayment0->due = DateTimeUtils::getDateTime('2015-05-18');
         $examplePayment0->note = 'Zpráva ěščŘŽÝÁíé';
 
         $examplePayment1 = new Payment();
@@ -46,7 +47,7 @@ class PaymentTest extends TestCase
         $examplePayment1->purpose = 'fee';
         $examplePayment1->accountNumber = '';
         $examplePayment1->iban = 'CZ2806000000000168540115';
-        $examplePayment1->due = new \DateTimeImmutable('2022-05-21');
+        $examplePayment1->due = DateTimeUtils::getDateTime('2022-05-21');
         $examplePayment1->note = 'PLATBA ZA ZBOZI';
 
         return [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
@@ -123,7 +124,7 @@ class PatrolService
     {
         if ($this->isCloseRegistrationValid($patrolLeader)) {
             $user = $patrolLeader->getUserButNotNull();
-            $patrolLeader->registrationCloseDate = new \DateTimeImmutable();
+            $patrolLeader->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->patrolLeaderRepository->persist($patrolLeader);
             $this->userService->setUserClosed($user);
             $this->mailer->sendRegistrationClosed($user);

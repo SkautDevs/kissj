@@ -370,7 +370,7 @@ class AdminController extends AbstractController
 
     public function setBreakpointFromRoute(Request $request, Response $response, Event $event): Response
     {
-        $result = $this->bankPaymentService->setBreakpoint(new \DateTimeImmutable('2022-01-01'), $event);
+        $result = $this->bankPaymentService->setBreakpoint(DateTimeUtils::getDateTime('2022-01-01'), $event);
 
         if ($result) {
             $this->flashMessages->success('Set breakpoint successfully');

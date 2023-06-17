@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Payment;
 
 use DateTimeInterface;
+use kissj\Application\DateTimeUtils;
 use kissj\Application\StringUtils;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
@@ -41,7 +42,7 @@ class Payment extends EntityDatetime
 
     public function getRemainingDays(): int
     {
-        $now = new \DateTimeImmutable();
+        $now = DateTimeUtils::getDateTime();
         $daysDiff = ($now)->diff($this->due, false)->days;
 
         if ($daysDiff === false) {

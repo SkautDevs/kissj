@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Aqua;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
@@ -45,9 +46,7 @@ class EventTypeAqua extends EventType
 
     private function getFullPriceForToday(): int
     {
-        $lastDiscountDay = new \DateTime('2022-12-20');
-
-        if (new \DateTime('now') <= $lastDiscountDay) {
+        if (DateTimeUtils::getDateTime() <= DateTimeUtils::getDateTime('2022-12-20')) {
             return 150;
         }
 
