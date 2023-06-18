@@ -54,7 +54,7 @@ class Settings
      */
     public function getContainerDefinition(string $envPath, string $envFilename): array
     {
-        $_ENV['APP_NAME'] = 'KISSJ'; // do not wanted to be changed soon (:
+        $_ENV['APP_NAME'] = 'KISSJ'; // do not want to be changed soon (:
 
         $dotenv = Dotenv::createImmutable($envPath, $envFilename);
         $dotenv->load();

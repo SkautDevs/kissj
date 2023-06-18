@@ -46,6 +46,9 @@ class UserController extends AbstractController
         try {
             $this->userService->sendLoginTokenByMail($email, $request, $event);
         } catch (\Exception $e) {
+            if ($_ENV['DEBUG'] === 'true') {
+                throw new \Exception($e->getMessage(), $e->getCode(), $e);
+            }
             // TODO add Sentry log
             $this->logger->addError('Error sending login email to ' . $email . ' with token ' .
                 $this->userService->getTokenForEmail($email, $event), [$e]);

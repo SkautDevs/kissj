@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
@@ -70,10 +71,7 @@ class UserService
             return false;
         }
 
-        $lastValidTime = new \DateTime();
-        $lastValidTime->modify('-24 hours');
-
-        return $lastToken->createdAt > $lastValidTime;
+        return $lastToken->createdAt > DateTimeUtils::getDateTime('now - 24 hours');
     }
 
     public function getLoginTokenFromStringToken(string $token): LoginToken
