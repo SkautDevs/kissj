@@ -165,7 +165,9 @@ class ParticipantService
         }
 
         if (!$event->canRegistrationBeLocked()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed'));
+            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed', [
+                '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%h:%i:%s'),
+            ]));
 
             $validityFlag = false;
         }

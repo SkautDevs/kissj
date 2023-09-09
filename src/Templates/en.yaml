@@ -401,7 +401,7 @@ flash:
         fileGeneral: "There is something wrong with uploaded file, please try it again."
         fileNotUploaded: "File was not uploaded."
         notApproved: "Participant is not approved, because it already has approved status"
-        registrationNotAllowed: "Lock your registration is not yet allowed. Please wait for the right time."
+        registrationNotAllowed: "Lock your registration is not yet allowed. We're opening after %difference%"
         nullParticipants: "One or both participants was not found in system"
         differentParticipants: "Participants have different roles"
         notPaid: "Seller has not completed payment"

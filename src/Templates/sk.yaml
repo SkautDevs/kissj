@@ -401,7 +401,7 @@ flash:
         fileGeneral: "S nahraným súborom je niečo v neporiadku, prosím, skús to znovu."
         fileNotUploaded: "Soubor nebyl nahrán."
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
-        registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Počkej na správný čas prosím."
+        registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"
         nullParticipants: "Jedného alebo viacerých účastníkov sa nepodarilo nájsť v systéme"
         differentParticipants: "Participants have different roles"
         notPaid: "Predávajúci nedokončil svoju platbu."
