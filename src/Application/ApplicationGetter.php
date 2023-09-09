@@ -14,7 +14,7 @@ class ApplicationGetter
             $envPath,
             $envFilename,
         ));
-        $containerBuilder->useAnnotations(true); // used in AbstractController
+        $containerBuilder->useAttributes(true); // used in AbstractController
         if ($_ENV['DEBUG'] === 'false') {
             // TODO add autowired definitions into container to get more performace
             // https://php-di.org/doc/performances.html#optimizing-for-compilation

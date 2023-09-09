@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj;
 
-use DI\Annotation\Inject;
+use DI\Attribute\Inject;
 use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -15,32 +15,23 @@ use Slim\Interfaces\RouteParserInterface;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractController
 {
-    /**
-     * @Inject()
-     */
+    #[Inject]
     protected FlashMessagesBySession $flashMessages;
 
-    /**
-     * @Inject("Psr\Log\LoggerInterface")
-     */
+    #[Inject(LoggerInterface::class)]
     protected Logger $logger;
 
-    /**
-     * @Inject()
-     */
+    #[Inject]
     protected Twig $view;
 
-    /**
-     * @Inject()
-     */
+    #[Inject]
     protected TranslatorInterface $translator;
 
-    /**
-     * @Inject()
-     */
+    #[Inject]
     protected FileHandler $fileHandler;
 
     /**

@@ -38,7 +38,6 @@
         "middlewares/negotiation": "^2.0",
         "middlewares/trailing-slash": "^2.0",
         "monolog/monolog": "^1.25",
-        "php-di/php-di": "^6.0",
         "php-di/slim-bridge": "^3",
         "phpmailer/phpmailer": "^6.0",
         "robmorgan/phinx": "^0.12.5",
