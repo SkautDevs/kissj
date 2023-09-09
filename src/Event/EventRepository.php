@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use kissj\Application\DateTimeUtils;
+use kissj\Orm\Relation;
 use kissj\Orm\Repository;
 
 /**
@@ -22,7 +24,7 @@ class EventRepository extends Repository
     {
         return $this->findBy([
             'testing_site' => false,
-            // TODO start and end registration dates
+            'end_day' => new Relation(DateTimeUtils::getDateTime('-1 month')->format(DATE_ATOM), '>'),
         ]);
     }
 
@@ -34,7 +36,8 @@ class EventRepository extends Repository
         return $this->findBy([
             'testing_site' => false,
             'automatic_payment_pairing' => true,
-            // TODO start and end registration dates
+            'start_registration' => new Relation(DateTimeUtils::getDateTime()->format(DATE_ATOM), '<'),
+            'end_day' => new Relation(DateTimeUtils::getDateTime('-3 month')->format(DATE_ATOM), '>'),
         ]);
     }
 }
