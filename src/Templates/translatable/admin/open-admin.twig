@@ -15,7 +15,6 @@
             <br/>
             {% for ist in openIsts %}
                 <div class="card open-theme">
-                    <h4>{{ ist.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
                 </div>
