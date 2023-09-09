@@ -4,10 +4,37 @@
     <meta charset="utf-8"/>
     <title>{% trans %}email.layout.registration{% endtrans %} {{ event.getReadableName }}</title>
     <style>
+        :root {
+            --border-radius: 6px;
+            font-family: 'themix', sans-serif;
+            color: var(--color-main);
+            color-scheme: light dark;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                background: #e6ebed;
+                --color-card-background: #f9f9f9;
+                --color-main: #0D71B9;
+                --color-link: #0000ee;
+                --color-link-visited: #551a8b;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                background: #212121;
+                --color-card-background: #252525;
+                --color-main: #85A2D5;
+                --color-link: lightskyblue;
+                --color-link-visited: #ad76de;
+            }
+        }
+
         .btn {
-            background: #0b2a34;
-            color: white;
-            border-radius: 6px;
+            background: var(--color-main);
+            color: var(--color-card-background);
+            border-radius: var(--border-radius);
             text-decoration: none;
             font-size: 25px;
             display: block;
@@ -29,6 +56,8 @@
             -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
         }
+
+        {{ event.getEventType.getEventSpecificStyles }}
     </style>
 </head>
 <body>

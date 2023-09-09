@@ -47,6 +47,15 @@ class EventTypeKorbo extends EventType
         return ["cs" => __DIR__ . "/cs.yaml"];
     }
 
+    public function getEventSpecificStyles(): string
+    {
+        $styles = file_get_contents(__DIR__ . '/stylesKorbo.css');
+        if ($styles === false) {
+            return '';
+        }
+
+        return $styles;
+    }
 
     public function getLanguages(): array
     {

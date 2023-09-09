@@ -9,6 +9,9 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ base_path() }}/styles.css">
+    <style>
+        {{ event.getEventType.getEventSpecificStyles }}
+    </style>
     {% if debug == false %}
         <!-- Plausible Analytics -->
         <!--

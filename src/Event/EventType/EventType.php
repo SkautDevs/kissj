@@ -83,6 +83,11 @@ abstract class EventType
         return [];
     }
 
+    public function getEventSpecificStyles(): string
+    {
+        return '';
+    }
+
     /**
      * @return array<string>
      */
