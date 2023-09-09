@@ -22,7 +22,7 @@ use kissj\User\UserStatus;
 class ParticipantRepository extends Repository
 {
     /**
-     * TODO optimalize
+     * TODO optimize
      *
      * @param ParticipantRole[] $roles
      * @param UserStatus[] $statuses

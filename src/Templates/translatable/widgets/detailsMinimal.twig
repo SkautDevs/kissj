@@ -16,4 +16,4 @@
 {% endif %}{% if ca.notes %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
-<i>{% trans %}detail.adminNotice{% endtrans %}: <b>{{ person.adminNote }}</b></i> <button class="btn btn-mini">TODO change note from admin</button><br/>
+{% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}

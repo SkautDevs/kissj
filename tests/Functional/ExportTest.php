@@ -60,8 +60,8 @@ class ExportTest extends AppTestCase
 
         $this->assertCount(11, $rows);
 
-        $this->assertSame(null, $rows[0][0]);
-        $this->assertSame(null, $rows[0][1]);
+        $this->assertNull($rows[0][0]);
+        $this->assertNull($rows[0][1]);
         $this->assertSame('leader0', $rows[1][0]);
         $this->assertSame('leaderový', $rows[1][1]);
         $this->assertSame('leader1', $rows[2][0]);

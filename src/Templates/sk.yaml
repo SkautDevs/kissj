@@ -127,7 +127,7 @@ detail:
     driver-less10k: "Mám, ale mám najazdených menej ako 10 000 km"
     driver-more10k: "Mám a mám najazdených viac ako 10 000 km"
     closed-at: "Uzamknut"
-    adminNotice: "Poznámka od administrátora"
+    adminNotice: "Poznámka od admina"
 detail-guest:
     notice: "Zvoucí a účel"
     notice-placeholder: "Od koho máš pozvánku a jaký je tvůj záměr na akci?"
@@ -310,6 +310,7 @@ dashboard-admin:
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
     editParticipant: "Editovat údaje"
+    changeNotice: "Upravit"
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"

@@ -63,6 +63,19 @@ abstract class AbstractController
             ->withStatus(302);
     }
 
+    /**
+     * @param array<string,string> $json
+     */
+    protected function getResponseWithJson(Response $response, array $json): Response
+    {
+        $encodedJson = \GuzzleHttp\json_encode($json);
+        $response->getBody()->write($encodedJson);
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
     protected function getRouter(Request $request): RouteParserInterface
     {
         return RouteContext::fromRequest($request)->getRouteParser();

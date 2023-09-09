@@ -477,9 +477,14 @@ class AdminController extends AbstractController
         );
     }
 
-    public function changeAdminNote(Request $request, Response $response): Response
+    public function changeAdminNote(Request $request, Response $response, int $participantId): Response
     {
-        return new \Slim\Psr7\Response(); // TODO implement
+        $participant = $this->participantRepository->get($participantId);
+        // TODO check if participant is from correct event
+        $participant->adminNote = $this->getParameterFromBody($request, 'adminNote');
+        $this->participantRepository->persist($participant);
+
+        return $this->getResponseWithJson($response, ['adminNote' => $participant->adminNote]);
     }
 
     public function showParticipantDetails(Response $response, int $participantId, Event $event): Response

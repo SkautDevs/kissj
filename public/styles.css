@@ -309,6 +309,10 @@ li.step.is-active::after {
 	width: 100%;
 }
 
+.btn-mini[type=submit] {
+	width: inherit;
+}
+
 textarea {
 	min-height: 3rem;
 }

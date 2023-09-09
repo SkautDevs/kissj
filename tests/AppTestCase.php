@@ -45,12 +45,9 @@ class AppTestCase extends TestCase
     }
 
     /**
-     * @param string $path
-     * @param string $method
      * @param array<string,string> $body
      * @param array<string,string> $serverParams
      * @param array<string,string> $cookies
-     * @return Request
      */
     protected function createRequest(
         string $path,

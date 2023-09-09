@@ -310,6 +310,7 @@ dashboard-admin:
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
     editParticipant: "Edit details"
+    changeNotice: "Edit"
 stats-admin:
     stats: "Statistics for event"
     numberPatrolParticipants: "Patrol participants in total"

@@ -144,9 +144,6 @@ class Route
                     $app->get('/dashboard', AdminController::class . '::showDashboard')
                         ->setName('admin-dashboard');
 
-                    $app->post('/changeAdminNote', AdminController::class . '::changeAdminNote')
-                        ->setName('admin-change-note');
-
                     $app->get('/showFile/{filename}', AdminController::class . '::showFile')
                         ->setName('admin-show-file');
 
@@ -236,6 +233,18 @@ class Route
 
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
+                    });
+                })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
+            });
+        });
+
+        // TODO make full v3 async api for JS frontend
+        $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
+            $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
+                $app->group('/admin', function (RouteCollectorProxy $app) {
+                    $app->group('/{participantId}', function (RouteCollectorProxy $app) {
+                        $app->post('/adminNote', AdminController::class . '::changeAdminNote')
+                            ->setName('admin-change-note');
                     });
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });

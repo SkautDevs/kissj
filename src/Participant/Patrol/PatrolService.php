@@ -36,8 +36,10 @@ class PatrolService
         $patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
 
         if ($patrolLeader === null) {
+            // TODO remove, it is here only for testing
             $patrolLeader = new PatrolLeader();
             $patrolLeader->user = $user;
+            $patrolLeader->role = ParticipantRole::PatrolLeader;
             $this->patrolLeaderRepository->persist($patrolLeader);
         }
 

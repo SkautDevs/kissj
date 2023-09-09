@@ -1,0 +1,41 @@
+{# TODO optimalize JS #}
+<script>
+    function sendData(form) {
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            const resultElement = form.getElementsByClassName("formResult")[0];
+            resultElement.innerText = "↻";
+
+            try {
+                const data = new FormData(form);
+                const response = await fetch(
+                    form.action,
+                    {
+                        method: 'POST',
+                        body: data,
+                    },
+                );
+
+                const responseData = await response.json();
+                if (response.ok) {
+                    resultElement.innerText = "✔"
+                }
+            } catch (error) {
+                resultElement.innerText = "☠";
+                console.log(error.message);
+            }
+        });
+    }
+</script>
+<form
+        method="POST"
+        action="{{ url_for('admin-change-note', {'participantId': participantId, 'eventSlug': event.slug}) }}"
+        onclick="sendData(this)"
+>
+    <label for="adminNote">
+        <i>{% trans %}detail.adminNotice{% endtrans %}:</i>
+    </label>
+    <input type="text" id="adminNote" name="adminNote" value="{{ person.adminNote }}">
+    <input type="submit" class="btn btn-small btn-mini" value="{% trans %}dashboard-admin.changeNotice{% endtrans %}">
+    <span class="formResult">✔</span>
+</form>
