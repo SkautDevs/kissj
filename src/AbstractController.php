@@ -87,7 +87,8 @@ abstract class AbstractController
 
     protected function tryGetEvent(Request $request): ?Event
     {
-        /** @var Event|null $event 
+        /**
+         * @var Event|null $event
          */
         $event = $request->getAttribute('event');
 

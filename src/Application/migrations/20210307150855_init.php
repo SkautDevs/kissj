@@ -74,7 +74,7 @@ final class Init extends AbstractMigration
 			->addColumn('updated_at', 'datetime')
 			->create();
 
-        $participant= $this->table('participant');
+        $participant = $this->table('participant');
         $participant->addColumn('user_id', 'integer', ['null' => true])
 			->addForeignKey('user_id', 'user', ['id'], ['constraint' => 'ist_userId_fk'])
 			->addColumn('first_name', 'text', ['null' => true])
@@ -162,7 +162,7 @@ final class Init extends AbstractMigration
         $event = $this->table('event');
         $user = $this->table('user');
         $logintoken = $this->table('logintoken');
-        $participant= $this->table('participant');
+        $participant = $this->table('participant');
         $payment = $this->table('payment');
 
         $event->drop();

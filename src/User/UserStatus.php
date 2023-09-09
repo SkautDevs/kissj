@@ -12,7 +12,7 @@ enum UserStatus: string
     case Approved = 'approved';
     case Paid = 'paid';
     case Cancelled = 'cancelled';
-    
+
     public function isPaidOrCancelled(): bool
     {
         return in_array($this, [self::Paid, self::Cancelled], true);

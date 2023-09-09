@@ -302,10 +302,10 @@ class ParticipantService
     {
         if ($participant->getUserButNotNull()->status === UserStatus::Approved) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.notApproved'));
-            
+
             return $participant;
         }
-        
+
         $this->userService->setUserApproved($participant->getUserButNotNull());
 
         $participant->registrationApproveDate = DateTimeUtils::getDateTime();

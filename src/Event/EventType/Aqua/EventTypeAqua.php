@@ -64,7 +64,7 @@ class EventTypeAqua extends EventType
             'cs' => __DIR__ . '/cs_aqua.yaml',
         ];
     }
-    
+
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();

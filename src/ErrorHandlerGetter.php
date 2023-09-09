@@ -26,7 +26,7 @@ class ErrorHandlerGetter
         /** @var LoggerInterface $logger */
         $logger = $container->get(Logger::class);
         $this->logger = $logger;
-        
+
         /** @var Twig $twig */
         $twig = $container->get(Twig::class);
         $this->twig = $twig;
