@@ -51,14 +51,17 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 - [Slim framework 4](https://www.slimframework.com/) - handles routing and middleware
 - [LeanMapper](http://leanmapper.com/) as ORM
-- [SQLite3](https://www.sqlite.org/) as database
+- [Phinx](https://phpunit.de/) for database migrations
+- [PostgreSQL](https://www.postgresql.org/) as database
 - [php-di](https://php-di.org/) for dependency injection
+- [PHPUnit](https://phpunit.de/) for unit and functional tests
+- [PHPStan](https://phpstan.org/) for static typechecking
 - & more in `composer.json`
 
 
 # Backlog
 
-Backlog is in project github issues
+Backlog is in project GitHub issues
 
 
 # Standards
@@ -73,23 +76,10 @@ Backlog is in project github issues
 
 # Possible problems & fixies
 
-#### Database could not be read
-
-- databasefile `db.sqlite` *and its directory* must be writable by execution program
-
-#### Random errors on DB
-
-- make sure you have all PHP extensions by running `composer update`
-
 #### STMP connection error
 
- - if TLS is not working correctly, try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
+ - if TLS is not working correctly (for gmail especially), try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
 
-#### Local mail service at Linux/Mac
+#### Local mail service
 
-- using https://gist.github.com/raelgc/6031274 and on Linux Mint works like a charm!
-- on others:
-    - https://serverfault.com/questions/184138/quick-linux-mail-server-setup-for-programming
-        - good to setup the aliases, so that the mail falls into your account's mailbox
-        - installing procmail fixed it for me (instead of postfix)
-    - easier than setting up thinderbird is just typing `mail` in commandline 
+ - use Mailhog at `http://localhost:8025/`
