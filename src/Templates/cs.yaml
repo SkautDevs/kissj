@@ -23,6 +23,7 @@ dashboard:
     withoutName: "(prozatím bez jména)"
     wontBeAbleUndo: "? Toto smazání nepůjde vrátit zpět!"
     details: "podrobnosti"
+    tieCode: "Kód pro připnutí"
     listOfParticipants: "Seznam účastníků"
     addParticipant: "Přidat účastníka"
     youNeed: "Potřebuješ"

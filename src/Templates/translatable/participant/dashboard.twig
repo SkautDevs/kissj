@@ -4,13 +4,18 @@
 <div class="card {{ userStatus }}-theme">
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
-        {% if (person is TroopLeader or person is PatrolLeader) %}{{ person.getPatrolName }}{% endif %}
+        {% if (person is Leader) %}{{ person.getPatrolName }}{% endif %}
         {% trans %}dashboard.details{% endtrans %}
     </h2>
     {% include('widgets/userCustomHelp.twig') %}
+    
+    {% if person is Troop %}
+        <h2>
+            {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
+        </h2>
+    {% endif %}
 
-    {% if person is PatrolLeader %}
-
+    {% if person is Leader %}
         <div class="card-divide">
             <!-- Patrol Leader -->
             <div>

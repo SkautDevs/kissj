@@ -23,6 +23,7 @@ dashboard:
     withoutName: "(without a name yet)"
     wontBeAbleUndo: "? You won't be able to undo this action!"
     details: "details"
+    tieCode: "Code for join"
     listOfParticipants: "List of participants"
     addParticipant: "Add participant"
     youNeed: "You need"

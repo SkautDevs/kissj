@@ -52,6 +52,7 @@ use kissj\User\User;
  * @property DateTimeInterface|null $registrationApproveDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $registrationPayDate m:passThru(dateFromString|dateToString)
  * @property string                 $adminNote
+ * @property string                 $tieCode
  *
  * @property Payment[]              $payment m:belongsToMany
  */
@@ -66,6 +67,12 @@ class Participant extends EntityDatetime
     public const FOOD_OTHER = 'other';
     public const SCARF_NO = 'no';
     public const SCARF_YES = 'yes';
+    
+    protected function initDefaults(): void
+    {
+        parent::initDefaults();
+        $this->tieCode = $this->generateTieCode(6); // TODO check if another code exists
+    }
 
     public function setUser(User $user): void
     {
@@ -205,5 +212,10 @@ class Participant extends EntityDatetime
     public function roleToString(ParticipantRole $role): string
     {
         return $role->value;
+    }
+
+    private function generateTieCode(int $length): string
+    {
+        return substr(str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', $length * 9)), 0, $length);
     }
 }

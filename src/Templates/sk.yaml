@@ -23,6 +23,7 @@ dashboard:
     withoutName: "(zatiaľ bez mena)"
     wontBeAbleUndo: "? Tento krok nepôjde vrátiť späť!"
     details: "podrobnosti"
+    tieCode: "Kód pro připnutí"
     listOfParticipants: "Zoznam účastníkov"
     addParticipant: "Pridať účastníka"
     youNeed: "Potrebuješ"

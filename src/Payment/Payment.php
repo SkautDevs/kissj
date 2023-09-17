@@ -27,6 +27,7 @@ class Payment extends EntityDatetime
 {
     public function initDefaults(): void
     {
+        parent::initDefaults();
         $this->status = PaymentStatus::Waiting;
     }
 

@@ -16,6 +16,7 @@ class User extends EntityDateTime
 {
     public function initDefaults(): void
     {
+        parent::initDefaults();
         $this->status = UserStatus::WithoutRole;
     }
 

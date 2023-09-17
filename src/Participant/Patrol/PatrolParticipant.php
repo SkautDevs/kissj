@@ -12,6 +12,7 @@ class PatrolParticipant extends Participant
 {
     protected function initDefaults(): void
     {
+        parent::initDefaults();
         $this->role = ParticipantRole::PatrolParticipant;
     }
 }
