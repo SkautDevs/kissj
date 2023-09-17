@@ -106,7 +106,7 @@ class PhpMailerWrapper
         );
     }
 
-    public function sendRegistrationApprovedForForeignContingents(Participant $participant): void
+    public function sendRegistrationApprovedWithoutPayment(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
@@ -160,6 +160,19 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.finished.subject'),
             'finished',
+            [
+                'participant' => $participant,
+            ],
+        );
+    }
+
+    public function sendTroopParticipantRegistrationFinished(Participant $participant): void
+    {
+        $user = $participant->getUserButNotNull();
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.finished-tp.subject'),
+            'finished-tp',
             [
                 'participant' => $participant,
             ],

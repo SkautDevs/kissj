@@ -238,6 +238,11 @@ email:
         qrInfo: "Here is QR code, which organisers shall need during your event access:"
         enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
     finished:
+        subject: "schváleno"
+        approved: "Schválili jsme tvou přihlášku pro"
+        thanks: ". Děkujeme!"
+        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+    finished-tp:
         subject: "approved"
         approved: "We approved your registration for"
         thanks: ". Thank you!"
@@ -384,6 +389,7 @@ flash:
         locked: "Registration successfully locked and sent"
         approved: "Participant is approved, payment is generated and mail sent"
         guestApproved: "Guest is approved and mail sent (without payment)"
+        tpApproved: "Troop participant is approved and mail sent (without payment)"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:

@@ -239,6 +239,11 @@ email:
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
     finished:
         subject: "schváleno"
+        approved: "Schválili jsme tvou přihlášku pro"
+        thanks: ". Děkujeme!"
+        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+    finished-tp:
+        subject: "schváleno"
         approved: "Schválili sme Tvoju registráciu na"
         thanks: ". Vďaka!"
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na Liptove! Sleduj nás pre viac informácií. ;)"
@@ -384,6 +389,7 @@ flash:
         locked: "Registrácia bola uzakmnutá a odoslaná"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
         guestApproved: "Host schválen a e-mail odeslán (bez platby)"
+        tpApproved: "Účastník akce schválen a e-mail odeslán (bez platby)"
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
     warning:

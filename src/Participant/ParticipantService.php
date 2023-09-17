@@ -10,6 +10,7 @@ use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\UserService;
@@ -321,10 +322,17 @@ class ParticipantService
             return $participant;
         }
 
+        if ($participant instanceof TroopParticipant) {
+            $this->mailer->sendTroopParticipantRegistrationFinished($participant);
+            $this->flashMessages->success($this->translator->trans('flash.success.tpApproved'));
+
+            return $participant;
+        }
+
         $payment = $this->paymentService->createAndPersistNewPayment($participant);
 
         if ($participant->isInSpecialPaymentContingent()) {
-            $this->mailer->sendRegistrationApprovedForForeignContingents($participant);
+            $this->mailer->sendRegistrationApprovedWithoutPayment($participant);
         } else {
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
         }
