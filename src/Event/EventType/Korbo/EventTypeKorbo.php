@@ -70,9 +70,9 @@ class EventTypeKorbo extends EventType
         return true;
     }
 
-	public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
-	{
-		// TODO remove for 2024, hotfix only
-		return new DateTimeImmutable('2023-09-18');
-	}
+    public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
+    {
+        // TODO remove for 2024, hotfix only
+        return new DateTimeImmutable('2023-09-18');
+    }
 }

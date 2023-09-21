@@ -11,7 +11,7 @@ final class AddTieCode extends AbstractMigration
         $table = $this->table('participant');
         $table->addColumn('tie_code', 'string', ['null' => false, 'default' => '123456',]);
         $table->save();
-        
+
         $table->changeColumn('tie_code', 'string', ['null' => false]);
         $table->save();
     }

@@ -6,6 +6,7 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
+use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\User\UserService;
 use Monolog\Logger;
@@ -20,6 +21,7 @@ class PaymentServiceTest extends TestCase
             \Mockery::mock(FioBankPaymentService::class),
             \Mockery::mock(BankPaymentRepository::class),
             \Mockery::mock(PaymentRepository::class),
+            \Mockery::mock(ParticipantRepository::class),
             \Mockery::mock(UserService::class),
             \Mockery::mock(FlashMessagesBySession::class),
             \Mockery::mock(PhpMailerWrapper::class),

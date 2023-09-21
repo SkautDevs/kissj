@@ -36,10 +36,10 @@ class TwigExtension extends AbstractExtension
             }),
             new TwigTest('eligibleForShowTieCode', function ($participant): bool {
                 return (
-                        $participant instanceof TroopLeader && $participant->user->status === UserStatus::Open
-                    ) || (
-                        $participant instanceof TroopParticipant && $participant->troopLeader === null
-                    );
+                    $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Open
+                ) || (
+                    $participant instanceof TroopParticipant && $participant->troopLeader === null
+                );
             }),
         ];
     }

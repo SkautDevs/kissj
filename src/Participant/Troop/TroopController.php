@@ -64,7 +64,7 @@ class TroopController extends AbstractController
 
             return $this->redirect($request, $response, 'getDashboard');
         }
-        
+
         $tieCode = $this->getParameterFromBody($request, 'tieCode');
         $troopLeader = $this->troopLeaderRepository->findTroopLeaderFromTieCode($tieCode, $event);
 

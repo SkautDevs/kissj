@@ -41,19 +41,21 @@ class TroopParticipantRepository extends Repository
             'tie_code' => strtoupper($tieCode),
             'role' => ParticipantRole::TroopParticipant,
         ]);
-        if ($troopParticipant?->user->event->id !== $event->id) {
+        if ($troopParticipant?->getUserButNotNull()->event->id !== $event->id) {
             return null;
         }
 
         return $troopParticipant;
     }
 
+    /**
+     * @return TroopParticipant[]
+     */
     public function findAllTroopParticipantsForTroopLeader(TroopLeader $troopLeader): array
     {
         return $this->findBy(['patrol_leader_id' => $troopLeader->id]);
     }
 
-    // TODO check why?
     public function getFromUser(User $user): TroopParticipant
     {
         return $this->getOneBy(['user' => $user]);

@@ -67,7 +67,7 @@ class Participant extends EntityDatetime
     public const FOOD_OTHER = 'other';
     public const SCARF_NO = 'no';
     public const SCARF_YES = 'yes';
-    
+
     protected function initDefaults(): void
     {
         parent::initDefaults();

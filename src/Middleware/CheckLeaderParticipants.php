@@ -41,7 +41,7 @@ class CheckLeaderParticipants extends BaseMiddleware
 
         $participantId = (int)$route->getArgument('participantId');
         $leader = $this->participantRepository->getParticipantFromUser($this->getUser($request));
-        
+
         if ($leader instanceof PatrolLeader) {
             if (!$this->patrolService->patrolParticipantBelongsPatrolLeader(
                 $this->patrolService->getPatrolParticipant($participantId),

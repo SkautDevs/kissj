@@ -161,7 +161,7 @@ abstract class EventType
 
     public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
     {
-		// TODO edit to take 14 days or day before event start date, whatever comes sooner 
+        // TODO edit to take 14 days or day before event start date, whatever comes sooner
         return $dateFrom->add(DateInterval::createFromDateString('14 days'));
     }
 

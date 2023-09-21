@@ -227,9 +227,8 @@ class ParticipantService
 
                 $validityFlag = false;
             }
-            
-            if ($participant->user->status !== UserStatus::Closed) {
 
+            if ($participant->getUserButNotNull()->status !== UserStatus::Closed) {
                 $this->flashMessages->warning(
                     $this->translator->trans(
                         'flash.warning.tpNotClosed',

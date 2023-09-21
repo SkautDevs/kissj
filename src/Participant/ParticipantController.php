@@ -10,6 +10,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserStatus;
@@ -91,7 +92,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]>
+     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]>
      */
     private function getTemplateData(Participant $participant): array
     {

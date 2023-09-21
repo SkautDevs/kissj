@@ -121,7 +121,7 @@ class Route
                             })->add(CheckLeaderParticipants::class);
                         })->add(OpenStatusOnlyMiddleware::class);
                     })->add(PatrolLeadersOnlyMiddleware::class);
-                    
+
                     $app->group('/troop', function (RouteCollectorProxy $app) {
                         $app->post('/tieParticipantToTroopByLeader', TroopController::class . '::tieParticipantToTroopByLeader')
                             ->setName('tie-tp-by-tl')

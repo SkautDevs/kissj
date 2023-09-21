@@ -58,7 +58,7 @@ class TroopService
 
             return $troopParticipant;
         }
-        
+
         if ($troopParticipant->troopLeader?->id === $troopLeader->id) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantAlreadyTied'));
 
@@ -76,7 +76,7 @@ class TroopService
         TroopParticipant $troopParticipant,
         TroopLeader $troopLeader
     ): bool {
-        return $troopParticipant->troopLeader->id === $troopLeader->id;
+        return $troopParticipant->troopLeader?->id === $troopLeader->id;
     }
 
     public function untieTroopParticipant(int $participantId): TroopParticipant
@@ -84,7 +84,7 @@ class TroopService
         $troopParticipant = $this->troopParticipantRepository->get($participantId);
         $troopParticipant->troopLeader = null;
         $this->troopParticipantRepository->persist($troopParticipant);
-        
-        return $troopParticipant;   
+
+        return $troopParticipant;
     }
 }

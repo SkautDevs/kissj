@@ -117,7 +117,7 @@ class PaymentService
         if ($participant instanceof TroopLeader) {
             foreach ($participant->troopParticipants as $tp) {
                 $this->userService->setUserPaid($tp->getUserButNotNull());
-                
+
                 $tp->registrationCloseDate = $now;
                 $this->participantRepository->persist($tp);
             }

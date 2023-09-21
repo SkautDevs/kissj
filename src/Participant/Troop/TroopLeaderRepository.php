@@ -41,7 +41,7 @@ class TroopLeaderRepository extends Repository
             'tie_code' => strtoupper($tieCode),
             'role' => ParticipantRole::TroopLeader,
         ]);
-        if ($troopLeader?->user->event->id !== $event->id) {
+        if ($troopLeader?->getUserButNotNull()->event->id !== $event->id) {
             return null;
         }
 
