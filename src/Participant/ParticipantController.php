@@ -9,6 +9,8 @@ use kissj\Event\AbstractContentArbiter;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -20,6 +22,7 @@ class ParticipantController extends AbstractController
         private readonly ParticipantService $participantService,
         private readonly ParticipantRepository $participantRepository,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
+        private readonly TroopParticipantRepository $troopParticipantRepository,
     ) {
     }
 
@@ -96,6 +99,8 @@ class ParticipantController extends AbstractController
         $participants = [];
         if ($participant instanceof PatrolLeader) {
             $participants = $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($participant);
+        } elseif ($participant instanceof TroopLeader) {
+            $participants = $this->troopParticipantRepository->findAllTroopParticipantsForTroopLeader($participant);
         }
 
         return [

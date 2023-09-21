@@ -276,6 +276,13 @@ li.step.is-active::after {
 	margin-bottom: 1rem;
 }
 
+.form-group-middle {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	row-gap: 10px;
+}
+
 .form-control {
 	border: none;
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
@@ -306,8 +313,16 @@ li.step.is-active::after {
 	color: var(--color-accent);
 }
 
+.hightlight {
+	color: var(--color-accent);
+}
+
 .btn[type=submit] {
 	width: 100%;
+}
+
+.btn-small[type=submit] {
+	width: inherit;
 }
 
 .btn-mini[type=submit] {

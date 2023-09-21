@@ -16,7 +16,6 @@ use kissj\Orm\Repository;
 class PatrolParticipantRepository extends Repository
 {
     /**
-     * @param PatrolLeader $patrolLeader
      * @return PatrolParticipant[]
      */
     public function findAllPatrolParticipantsForPatrolLeader(PatrolLeader $patrolLeader): array

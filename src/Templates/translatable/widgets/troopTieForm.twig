@@ -1,0 +1,19 @@
+<form
+        method="POST"
+        action="{{ formUrl }}"
+        class="form-group form-group-middle"
+>
+    <label for="tieCode">{{ textInputLabel|trans }}:</label>
+    <input
+            id="tieCode"
+            name="tieCode"
+            type="text"
+            required="required"
+            class="form-control"
+            pattern="[a-zA-Z]{6}"
+            title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+            placeholder="ABCDEF"
+    ><br>
+    <input type="submit" value="{{ buttonLabel|trans }}"
+           class="btn btn-small">
+</form>

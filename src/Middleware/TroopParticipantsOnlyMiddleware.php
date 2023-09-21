@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolLeadersOnlyMiddleware extends BaseMiddleware
+class TroopParticipantsOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
@@ -26,9 +26,9 @@ class PatrolLeadersOnlyMiddleware extends BaseMiddleware
 
         if (
             $user instanceof User
-            && $this->participantRepository->getParticipantFromUser($user)->role !== ParticipantRole::PatrolLeader
+            && $this->participantRepository->getParticipantFromUser($user)->role !== ParticipantRole::TroopParticipant
         ) {
-            $this->flashMessages->error($this->translator->trans('flash.error.plOnly'));
+            $this->flashMessages->error($this->translator->trans('flash.error.tpOnly'));
 
             return $this->createRedirectResponse($request, 'landing');
         }

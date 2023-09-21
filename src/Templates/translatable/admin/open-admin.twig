@@ -88,7 +88,6 @@
             <br/>
             {% for tp in openTroopParticipants %}
                 <div class="card open-theme">
-                    <h4>{{ tp.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
                 </div>

@@ -7,16 +7,19 @@ namespace kissj\Application;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AdminsOnlyMiddleware;
-use kissj\Middleware\CheckPatrolLeaderParticipants;
+use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\TroopLeadersOnlyMiddleware;
+use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
+use kissj\Participant\Troop\TroopController;
 use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -85,7 +88,7 @@ class Route
 
                     $app->group('/patrol', function (RouteCollectorProxy $app) {
                         $app->get('/participant/{participantId}/show', PatrolController::class . '::showParticipant')
-                            ->setName('p-show');
+                            ->setName('p-show'); // TODO check if CheckLeaderParticipants is needed here
 
                         $app->group('', function (RouteCollectorProxy $app) {
                             $app->get('/closeRegistration', PatrolController::class . '::showCloseRegistration')
@@ -115,9 +118,31 @@ class Route
 
                                 $app->post('/delete', PatrolController::class . '::deleteParticipant')
                                     ->setName('p-delete');
-                            })->add(CheckPatrolLeaderParticipants::class);
+                            })->add(CheckLeaderParticipants::class);
                         })->add(OpenStatusOnlyMiddleware::class);
                     })->add(PatrolLeadersOnlyMiddleware::class);
+                    
+                    $app->group('/troop', function (RouteCollectorProxy $app) {
+                        $app->post('/tieParticipantToTroopByLeader', TroopController::class . '::tieParticipantToTroopByLeader')
+                            ->setName('tie-tp-by-tl')
+                            ->add(TroopLeadersOnlyMiddleware::class)
+                            ->add(OpenStatusOnlyMiddleware::class);
+
+                        $app->post('/tieParticipantToTroopByParticipant', TroopController::class . '::tieParticipantToTroopByParticipant')
+                            ->setName('tie-tp-by-tp')
+                            ->add(TroopParticipantsOnlyMiddleware::class);
+
+                        $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
+                            $app->get('/show', TroopController::class . '::showParticipant')
+                                ->setName('tp-show');
+
+                            $app->get('/showUntie', TroopController::class . '::showUntieParticipant')
+                                ->setName('tp-showUntie');
+
+                            $app->post('/untie', TroopController::class . '::untieParticipant')
+                                ->setName('tp-untie');
+                        })->add(CheckLeaderParticipants::class);
+                    });
 
                     // TODO refactor for patrols
                     $app->group('/participant', function (RouteCollectorProxy $app) {

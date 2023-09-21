@@ -6,10 +6,12 @@ namespace kissj\Participant;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
@@ -141,6 +143,13 @@ class ParticipantService
         $validityFlag = true;
 
         $event = $participant->getUserButNotNull()->event;
+
+        // TODO move check for patrol leader here
+
+        if ($participant instanceof TroopLeader) {
+            $validityFlag = $this->isCloseRegistrationValidForTroopLeader($participant, $event);
+        }
+
         if (!$this->isParticipantValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.noLock'));
 
@@ -174,6 +183,64 @@ class ParticipantService
         }
 
         // to show all warnings
+        return $validityFlag;
+    }
+
+    private function isCloseRegistrationValidForTroopLeader(TroopLeader $troopLeader, Event $event): bool
+    {
+        $validityFlag = true;
+        $troopParticipants = $troopLeader->troopParticipants;
+
+        $participantsCount = count($troopParticipants);
+        if ($participantsCount < $event->minimalTroopParticipantsCount) {
+            $this->flashMessages->warning(
+                $this->translator->trans(
+                    'flash.warning.plTooFewParticipantsTroop',
+                    ['%minimalTroopParticipantsCount%' => $event->minimalTroopParticipantsCount],
+                )
+            );
+
+            $validityFlag = false;
+        }
+        if ($participantsCount > $event->maximalTroopParticipantsCount) {
+            $this->flashMessages->warning(
+                $this->translator->trans(
+                    'flash.warning.plTooManyParticipantsTroop',
+                    ['%maximalTroopParticipantsCount%' => $event->maximalTroopParticipantsCount],
+                )
+            );
+
+            $validityFlag = false;
+        }
+
+        foreach ($troopParticipants as $participant) {
+            if (!$this->isParticipantValidForClose(
+                $participant,
+                $event->getEventType()->getContentArbiterTroopParticipant(),
+            )) {
+                $this->flashMessages->warning(
+                    $this->translator->trans(
+                        'flash.warning.tlWrongDataParticipant',
+                        ['%participantFullName%' => $participant->getFullName()],
+                    )
+                );
+
+                $validityFlag = false;
+            }
+            
+            if ($participant->user->status !== UserStatus::Closed) {
+
+                $this->flashMessages->warning(
+                    $this->translator->trans(
+                        'flash.warning.tpNotClosed',
+                        ['%participantFullName%' => $participant->getFullName()],
+                    )
+                );
+
+                $validityFlag = false;
+            }
+        }
+
         return $validityFlag;
     }
 

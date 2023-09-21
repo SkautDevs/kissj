@@ -1,0 +1,18 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card open-theme">
+        <h2>{% trans %}dashboard.untie{% endtrans %} - {% trans %}role.tp{% endtrans %}</h2>
+        <p>
+            {% trans %}dashboard.youWantUntie{% endtrans %}
+            {% if pDetail.getFirstName is not empty %}<b>{{ pDetail.getFullName }}</b>{% else %}
+                <i>{% trans %}dashboard.withoutName{% endtrans %}</i>{% endif %}?
+        </p>
+        <form method="POST"
+              action="{{ url_for('tp-untie', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
+            <input class="btn btn-small" type="submit" value="{% trans %}dashboard.untie{% endtrans %}">
+            <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+        </form>
+    </div>
+{% endblock %}

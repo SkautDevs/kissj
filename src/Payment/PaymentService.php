@@ -13,7 +13,9 @@ use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\User\UserService;
 use Monolog\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,6 +26,7 @@ class PaymentService
         private readonly FioBankPaymentService $bankPaymentService,
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly PaymentRepository $paymentRepository,
+        private readonly ParticipantRepository $participantRepository,
         private readonly UserService $userService,
         private readonly FlashMessagesBySession $flashMessages,
         private readonly PhpMailerWrapper $mailer,
@@ -101,10 +104,26 @@ class PaymentService
                 . PaymentStatus::Waiting->value);
         }
 
-        $this->userService->setUserPaid($payment->participant->getUserButNotNull());
         $payment->status = PaymentStatus::Paid;
         $this->paymentRepository->persist($payment);
-        $this->mailer->sendRegistrationPaid($payment->participant);
+
+        $participant = $payment->participant;
+        $this->userService->setUserPaid($participant->getUserButNotNull());
+
+        $now = DateTimeUtils::getDateTime();
+        $participant->registrationCloseDate = $now;
+        $this->participantRepository->persist($participant);
+
+        if ($participant instanceof TroopLeader) {
+            foreach ($participant->troopParticipants as $tp) {
+                $this->userService->setUserPaid($tp->getUserButNotNull());
+                
+                $tp->registrationCloseDate = $now;
+                $this->participantRepository->persist($tp);
+            }
+        }
+
+        $this->mailer->sendRegistrationPaid($participant);
 
         return $payment;
     }

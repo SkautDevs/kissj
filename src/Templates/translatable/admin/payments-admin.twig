@@ -80,26 +80,5 @@
             {% endfor %}
         {% endif %}
         <br/>
-
-        {% if approvedTroopParticipants is empty %}
-            <div class="card closed-theme">
-                <h2>{% trans %}payments-admin.allTroopParticipantsPaid{% endtrans %}</h2>
-            </div>
-        {% else %}
-            <div class="card approved-theme">
-                <h2>{% trans %}role.tp{% endtrans %}</h2>
-            </div>
-            <br/>
-            {% for tp in approvedTroopParticipants %}
-                <div class="card approved-theme">
-                    {% include 'widgets/paymentDetails.twig' with {
-                        'person': tp,
-                        'ca': event.getEventType.getContentArbiterTroopParticipant,
-                    } %}
-                </div>
-                <br/>
-            {% endfor %}
-        {% endif %}
-        <br/>
     {% endif %}
 {% endblock %}

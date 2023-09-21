@@ -1,10 +1,12 @@
 <h4>
-    {% set userRole = person.getRole %}
+    {% set userRole = person.getRole.value %}
     {% if userStatus == 'open' %}
         {% if userRole == 'pl' %}
             {% trans %}userCustomHelp.statusOpenPl{% endtrans %}
-        {% else %}
-            {% trans %}userCustomHelp.statusOpen{% endtrans %}
+        {% elseif userRole == 'tl' %}
+            {% trans %}userCustomHelp.statusOpenTl{% endtrans %}
+        {% elseif userRole == 'tp' %}
+            {% trans %}userCustomHelp.statusOpenTp{% endtrans %}
         {% endif %}
     {% elseif userStatus == 'closed' %}
         {% if userRole == 'guest' %}

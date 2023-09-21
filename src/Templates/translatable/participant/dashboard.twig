@@ -1,15 +1,15 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-<div class="card {{ userStatus }}-theme">
+<div class="card {{ userStatus }}-theme">{# TODO remove different themes #}
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
-        {% if (person is Leader) %}{{ person.getPatrolName }}{% endif %}
+        {% if person is Leader %}{{ person.getPatrolName }}{% endif %}
         {% trans %}dashboard.details{% endtrans %}
     </h2>
     {% include('widgets/userCustomHelp.twig') %}
     
-    {% if person is Troop %}
+    {% if person is eligibleForShowTieCode %}
         <h2>
             {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
         </h2>
@@ -17,7 +17,7 @@
 
     {% if person is Leader %}
         <div class="card-divide">
-            <!-- Patrol Leader -->
+            {#  Patrol/Troop Leader #}
             <div>
                 <h2>{% trans %}role.pl{% endtrans %} {{ person.getFullName }}</h2>
                 {% if userStatus == 'open' %}
@@ -29,61 +29,114 @@
                     <br/>
                 </div>
             </div>
-            <!-- Participants -->
+            {# Participants #}
             <div>
                 <h2>{% trans %}dashboard.listOfParticipants{% endtrans %}</h2>
-                {% if userStatus == 'open' %}
-                    <form method="POST" action="{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
-                        <input type="submit" value="{% trans %}dashboard.addParticipant{% endtrans %}"
-                               class="btn btn-small">
-                    </form>
-                    <br/>
-                {% endif %}
+                {# list of participants in group #}
                 {% set count = 1 %}
                 <ol class="text-center">
                     {% for p in participants %}
                         <li>
-                            {% trans %}role.p{% endtrans %} <b>{{ p.getFullName }}</b>
-                            {% if userStatus == 'open' %}
-                                <!-- edit --><a
-                                    href="{{ url_for('p-showChangeDetails',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                        class="material-icons">edit</i></a>
-                                <!-- delete --><a
-                                    href="{{ url_for('p-showDelete',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                        class="material-icons">delete</i></a>
-                            {% else %}
-                                <!-- show --><a
-                                    href="{{ url_for('p-show',{'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                        class="material-icons">search</i></a>
+                            {% if person is PatrolLeader %}
+                                {% trans %}role.p{% endtrans %} <b>{{ p.getFullName }}</b>
+                                {% if userStatus == 'open' %}
+                                    <a href="{{ url_for('p-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">edit</i></a>
+                                    <a href="{{ url_for('p-showDelete', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">delete</i></a>
+                                {% else %}
+                                    <a href="{{ url_for('p-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">search</i></a>
+                                {% endif %}
+                            {% elseif person is TroopLeader %}
+                                {% set participantUserStatus = p.user.status.value %}
+                                <span class="{% if participantUserStatus == 'open' %}hightlight{% endif %}">
+                                    {% trans %}role.tp{% endtrans %}
+                                    {% if p.getFullName != " " %}
+                                        <b>{{ p.getFullName }}</b>
+                                    {% else %}
+                                        <i>{% trans %}dashboard.withoutFullName{% endtrans %}</i>
+                                    {% endif %}
+                                    - {{ ('dashboard.userStatus.' ~ participantUserStatus)|trans }}
+                                </span>
+                                <a href="{{ url_for('tp-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                            class="material-icons">search</i></a>
+                                {% if userStatus == 'open' %}
+                                    <a href="{{ url_for('tp-showUntie', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">delete</i></a>
+                                {% endif %}
                             {% endif %}
                         </li>
                         {% set count = count + 1 %}
                     {% endfor %}
                 </ol>
+
+                {# help text how many participants is needed #}
                 {% if userStatus == 'open' %}
                     <p>
                         {% trans %}dashboard.youNeed {% endtrans %}
-                        {% if event.minimalPatrolParticipantsCount == event.maximalPatrolParticipantsCount %}
-                            {% trans %}dashboard.exactly {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
-                        {% else %}
-                            {% trans %}dashboard.minimally {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
-                            {% trans %}dashboard.andMaximally {% endtrans %} {{ event.maximalPatrolParticipantsCount }}
+                            {% if person is PatrolLeader %}
+                            {% if event.minimalPatrolParticipantsCount == event.maximalPatrolParticipantsCount %}
+                                {% trans %}dashboard.exactly {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
+                            {% else %}
+                                {% trans %}dashboard.minimally {% endtrans %} {{ event.minimalPatrolParticipantsCount }}
+                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.maximalPatrolParticipantsCount }}
+                            {% endif %}
+                        {% elseif person is TroopLeader %}
+                            {% if event.minimalTroopParticipantsCount == event.maximalTroopParticipantsCount %}
+                                {% trans %}dashboard.exactly {% endtrans %} {{ event.minimalTroopParticipantsCount }}
+                            {% else %}
+                                {% trans %}dashboard.minimally {% endtrans %} {{ event.minimalTroopParticipantsCount }}
+                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.maximalTroopParticipantsCount }}
+                            {% endif %}
                         {% endif %}
                         {% trans %}dashboard.pForValidReg {% endtrans %}
                     </p>
+                {% endif %}
+
+                {# adding new participants into group #}
+                {% if userStatus == 'open' %}
+                    {% if person is PatrolLeader %}
+                        <form method="POST" action="{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
+                            <input type="submit" value="{% trans %}dashboard.addParticipant{% endtrans %}"
+                                   class="btn btn-small">
+                        </form>
+                    {% elseif person is TroopLeader %}
+                        {% include('widgets/troopTieForm.twig') with {
+                            formUrl: url_for('tie-tp-by-tl', {'eventSlug': event.slug}),
+                            textInputLabel: 'dashboard.tieCodeLabel',
+                            buttonLabel: 'dashboard.tieTroopParticipant'
+                        } %}
+                    {% endif %}
+                    <br/>
                 {% endif %}
             </div>
         </div>
     
         {% if userStatus == 'open' %}
-            <a class="btn btn-small" href="{{ url_for('pl-showCloseRegistration', {'eventSlug': event.slug}) }}">
+            {% if person is PatrolLeader %}
+                {% set linkLeaderLock = url_for('pl-showCloseRegistration', {'eventSlug': event.slug}) %}
+            {% elseif person is TroopLeader %}
+                {% set linkLeaderLock = url_for('showCloseRegistration', {'eventSlug': event.slug}) %}
+            {% endif %}                
+            <a class="btn btn-small" href="{{ linkLeaderLock }}">
                 {% trans %}dashboard.lockRegistration{% endtrans %}
             </a>
         {% endif %}
     
-    {% else %}
-
+    {% else %}{# participant #}
             <div>
+                {% if person is TroopParticipant %}
+                    {% if person.getTroopLeader() is null %}
+                        {% include('widgets/troopTieForm.twig') with {
+                            formUrl: url_for('tie-tp-by-tp', {'eventSlug': event.slug}),
+                            textInputLabel: 'dashboard.codeForTieToTroop',
+                            buttonLabel: 'dashboard.tieToTroopLeader'
+                        } %}<br/>
+                    {% else %}
+                        <h2>{% trans  with {'%troopName%': person.troopLeader.patrolName, '%troopLeaderFullName%': person.troopLeader.getFullName()} %}dashboard.youHaveTroop{% endtrans %}</h2>
+                    {% endif %}
+                {% endif %}
                 <h2>{% trans %}dashboard.personalInfo{% endtrans %}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">

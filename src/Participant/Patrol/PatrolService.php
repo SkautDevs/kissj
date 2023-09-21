@@ -56,6 +56,7 @@ class PatrolService
         return $patrolParticipant;
     }
 
+    // TODO refactor to repository->get()
     public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant
     {
         return $this->patrolParticipantRepository->getOneBy(['id' => $patrolParticipantId]);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\FlashMessages;
 
+// TODO add translator to this class and make all messages translatable
 class FlashMessagesBySession implements FlashMessagesInterface
 {
     public function info(string $message): void
