@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use kissj\Entry\EntryController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AdminsOnlyMiddleware;
@@ -263,8 +264,9 @@ class Route
             });
         });
 
-        // TODO make full v3 async api for JS frontend
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
+            $app->post('/entry/{entryCode}', EntryController::class . '::entry')
+                ->setName('entry');
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {

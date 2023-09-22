@@ -134,7 +134,7 @@
                             buttonLabel: 'dashboard.tieToTroopLeader'
                         } %}<br/>
                     {% else %}
-                        <h2>{% trans  with {'%troopName%': person.troopLeader.patrolName, '%troopLeaderFullName%': person.troopLeader.getFullName()} %}dashboard.youHaveTroop{% endtrans %}</h2>
+                        <h2>{% trans with {'%troopName%': person.troopLeader.getPatrolName(), '%troopLeaderFullName%': person.troopLeader.getFullName()} %}dashboard.youHaveTroop{% endtrans %}</h2>
                     {% endif %}
                 {% endif %}
                 <h2>{% trans %}dashboard.personalInfo{% endtrans %}</h2>

@@ -228,7 +228,7 @@ class ParticipantService
                 $validityFlag = false;
             }
 
-            if ($participant->getUserButNotNull()->status !== UserStatus::Closed) {
+            if ($participant->getUserButNotNull()->status === UserStatus::Open) {
                 $this->flashMessages->warning(
                     $this->translator->trans(
                         'flash.warning.tpNotClosed',
@@ -407,7 +407,6 @@ class ParticipantService
         return $participant;
     }
 
-
     /**
      * @param Participant[] $participants
      */
@@ -424,7 +423,6 @@ class ParticipantService
         return $count;
     }
 
-
     public function getContentArbiterForParticipant(
         Participant $participant,
     ): AbstractContentArbiter {
@@ -439,5 +437,13 @@ class ParticipantService
             ParticipantRole::Guest => $eventType->getContentArbiterGuest(),
             null => throw new \RuntimeException('Missing role for participant ID: ' . $participant->id),
         };
+    }
+
+    public function setAsEntered(Participant $participant): Participant
+    {
+        $participant->entryDate = DateTimeUtils::getDateTime();
+        $this->participantRepository->persist($participant);
+        
+        return $participant;
     }
 }

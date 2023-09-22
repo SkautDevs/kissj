@@ -55,6 +55,7 @@ dashboard:
     userStatus:
         open: "odemčený ⚠"
         closed: "uzamčený ✔"
+        approved: "schválený ✔"
         paid: "zaplacený (:"
     lockRegistration: "Uzamknout registraci"
 changeDetails:

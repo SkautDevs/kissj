@@ -65,6 +65,8 @@ use kissj\Orm\EntityDatetime;
  * @property string            $emailFrom
  * @property string            $emailFromName
  * @property string|null       $emailBccFrom
+ * 
+ * @property string            $apiSecret
  */
 class Event extends EntityDatetime
 {

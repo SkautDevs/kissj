@@ -157,4 +157,9 @@ class ParticipantRepository extends Repository
 
         return $this->findOneBy(['user' => $user]);
     }
+
+    public function findOneByEntryCode(string $entryCode): ?Participant
+    {
+        return $this->findOneBy(['entry_code' => $entryCode]);
+    }
 }

@@ -11,6 +11,7 @@ use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Master table for all participants, using Single Table Inheritance
@@ -53,6 +54,8 @@ use kissj\User\User;
  * @property DateTimeInterface|null $registrationPayDate m:passThru(dateFromString|dateToString)
  * @property string                 $adminNote
  * @property string                 $tieCode
+ * @property string                 $entryCode
+ * @property DateTimeInterface|null $entryDate m:passThru(dateFromString|dateToString)
  *
  * @property Payment[]              $payment m:belongsToMany
  */
@@ -72,6 +75,7 @@ class Participant extends EntityDatetime
     {
         parent::initDefaults();
         $this->tieCode = $this->generateTieCode(6); // TODO check if another code exists in DB
+        $this->entryCode = Uuid::uuid4()->toString();
     }
 
     public function setUser(User $user): void
