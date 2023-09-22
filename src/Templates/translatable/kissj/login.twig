@@ -18,18 +18,18 @@
                 <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
             </form>
         </div>
-        <div class="card approved-theme">
+        <div class="card approved-theme text-muted">
             <h2>{% trans %}login.howItWorks{% endtrans %}</h2>
-            <ul>
+            <ol class="text-left">
                 <li>{% trans %}login.submitEmail{% endtrans %}</li>
                 <li>{% trans %}login.followButton{% endtrans %}</li>
                 <li>{% trans %}login.fillDetails{% endtrans %}</li>
                 <li>{% trans %}login.sentForApproval{% endtrans %}</li>
                 <li>{% trans %}login.waitForApproval{% endtrans %}</li>
                 <li>{% trans %}login.pay{% endtrans %}</li>
-            </ul>
+            </ol>
             <a href="{{ url_for('loginHelp', {'eventSlug': event.slug}) }}"
-               class="btn btn-grey">{% trans %}login.more{% endtrans %}</a>
+               class="btn btn-grey btn-small">{% trans %}login.more{% endtrans %}</a>
         </div>
     </div>
 {% endblock %}
