@@ -24,7 +24,7 @@ class EntryController extends AbstractController
         if ($participant === null) {
             return $this->getResponseWithJson(
                 $response,
-                ['status' => 'unvalid', 'reason' => 'participant not found'],
+                ['status' => 'invalid', 'reason' => 'participant not found'],
                 403,
             );
         }
@@ -34,7 +34,7 @@ class EntryController extends AbstractController
         if ($event->apiSecret !== $eventSecret) {
             return $this->getResponseWithJson(
                 $response,
-                ['status' => 'unvalid', 'rason' => 'unvalid event secret'],
+                ['status' => 'invalid', 'reason' => 'invalid event secret'],
                 403,
             );
         }

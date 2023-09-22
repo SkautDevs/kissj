@@ -156,7 +156,7 @@ abstract class EventType
 
     public function showParticipantInfoInMail(): bool
     {
-        return false;
+        return true;
     }
 
     public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable

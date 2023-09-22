@@ -133,23 +133,13 @@ class PhpMailerWrapper
     public function sendRegistrationPaid(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();
-        $qrCode = fopen(
-            $this->qrCodeService->generateQrBase64FromString($participant->getQrParticipantInfoString()),
-            'rb',
-        );
-        $embeds = [];
-        if ($qrCode !== false) {
-            $embeds = [
-                new EmbedDTO('qr_info', $qrCode, 'image/png'),
-            ];
-        }
 
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
             [],
-            $embeds,
+            $this->getEmbeddedQr($participant),
         );
     }
 
@@ -163,6 +153,7 @@ class PhpMailerWrapper
             [
                 'participant' => $participant,
             ],
+            $this->getEmbeddedQr($participant),
         );
     }
 
@@ -245,5 +236,25 @@ class PhpMailerWrapper
         $mailer = new Mailer($transport, dispatcher: $eventDispatcher);
 
         $mailer->send($email);
+    }
+
+    /**
+     * @return EmbedDTO[]
+     */
+    private function getEmbeddedQr(Participant $participant): array
+    {
+        $qrCode = fopen(
+            $this->qrCodeService->generateQrBase64FromString($participant->getQrParticipantInfoString()),
+            'rb',
+        );
+
+        $embeds = [];
+        if ($qrCode !== false) {
+            $embeds = [
+                new EmbedDTO('qr_info', $qrCode, 'image/png'),
+            ];
+        }
+        
+        return $embeds;
     }
 }

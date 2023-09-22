@@ -180,10 +180,7 @@ class Participant extends EntityDatetime
 
     public function getQrParticipantInfoString(): string
     {
-        return $this->id . '|'
-            . $this->getUserButNotNull()->event->readableName . '|'
-            . $this->getFullName() . '|'
-            . $this->email;
+        return $this->entryCode;
     }
 
     /**
