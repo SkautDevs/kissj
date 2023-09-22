@@ -17,7 +17,11 @@
                 href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
         {% endif %}
     {% elseif userStatus == 'approved' %}
-        {% trans %}userCustomHelp.statusApproved{% endtrans %}
+        {% if userRole == 'tp' %}
+            {% trans %}userCustomHelp.statusApprovedTp{% endtrans %}
+        {% else %}
+            {% trans %}userCustomHelp.statusApproved{% endtrans %}
+        {% endif %}
     {% elseif userStatus == 'paid' %}
         {% if userRole == 'guest' %}
             {% trans with {'%event.getReadableName%': event.getReadableName} %}userCustomHelp.statusPaidGuest{% endtrans %}

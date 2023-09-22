@@ -352,9 +352,15 @@ class ParticipantService
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
-        $this->userService->setUserClosed($payment->participant->getUserButNotNull());
+        $participant = $payment->participant;
+        $this->userService->setUserClosed($participant->getUserButNotNull());
+        if ($participant instanceof TroopLeader) {
+            foreach ($participant->troopParticipants as $tp) {
+                $this->userService->setUserClosed($tp->getUserButNotNull());
+            }
+        }
 
-        $this->mailer->sendCancelledPayment($payment->participant, $reason);
+        $this->mailer->sendCancelledPayment($participant, $reason);
 
         return $payment;
     }
