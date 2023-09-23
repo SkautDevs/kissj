@@ -5,7 +5,7 @@
     {% trans %}detail.patrolName{% endtrans %}: <b>{{ person.getPatrolName }}</b><br/>
 {% endif %}
 {% if useShortNaming %}
-    <b>{{ person.getFullName }}</b><br/>
+    {% if person.getFullName == " " %}<i>{% trans %}dashboard.withoutFullName {% endtrans %}</i>{% else %}<b>{{ person.getFullName }}</b>{% endif %}<br/>
 {% else %}
     {% if ca.firstName %}
         {% trans %}detail.firstName{% endtrans %}: <b>{{ person.getFirstName }}</b><br/>

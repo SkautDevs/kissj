@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Troop;
 
 use kissj\Event\Event;
+use kissj\Orm\Relation;
 use kissj\Orm\Repository;
 use kissj\Participant\ParticipantRole;
 use kissj\User\User;
@@ -59,5 +60,22 @@ class TroopParticipantRepository extends Repository
     public function getFromUser(User $user): TroopParticipant
     {
         return $this->getOneBy(['user' => $user]);
+    }
+
+    /**
+     * @return TroopParticipant[]
+     */
+    public function getAllWithoutTroop(): array
+    {
+        $troopParticipants = $this->findBy([
+            'role' => ParticipantRole::TroopParticipant,
+            'patrol_leader_id' => new Relation(null, 'IS'),
+        ]);
+        
+        $troopParticipants = array_filter($troopParticipants, function (TroopParticipant $tp): bool {
+            return $tp->troopLeader === null;
+        });
+
+        return $troopParticipants;
     }
 }

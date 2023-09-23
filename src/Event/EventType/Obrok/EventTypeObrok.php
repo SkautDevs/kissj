@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Obrok;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Event\ContentArbiterIst;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -32,6 +33,14 @@ class EventTypeObrok extends EventType
         };
     }
 
+    public function getContentArbiterIst(): ContentArbiterIst
+    {
+        $ca = parent::getContentArbiterIst();
+        $ca->tshirt = true;
+        
+        return $ca;
+    }
+    
     /**
      * @inheritDoc
      */

@@ -17,6 +17,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
@@ -39,6 +40,7 @@ class AdminController extends AbstractController
         private readonly IstService $istService,
         private readonly GuestService $guestService,
         private readonly TroopService $troopService,
+        private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly AdminService $adminService,
         private readonly UserRepository $userRepository,
     ) {
@@ -532,5 +534,19 @@ class AdminController extends AbstractController
             $response,
             'admin-show-stats',
         );
+    }
+    
+    public function showTroopManagement(Request $request, Response $response, $event): Response
+    {
+        return $this->view->render($response, 'admin/troopManagement.twig', [
+            'troopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
+                [ParticipantRole::TroopLeader],
+                [UserStatus::Open],
+                $event,
+            ),
+            'troopParticipants' => $this->troopParticipantRepository->getAllWithoutTroop(),
+            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
+            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
+        ]);
     }
 }

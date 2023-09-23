@@ -331,6 +331,7 @@ dashboard-admin:
     approving: "Schvalování účastníků"
     newPayments: "Párovaní nových plateb s bankou"
     confirmPayments: "Potvrzování plateb ručně"
+    troopManagement: "Management skupin"
     exportMedData: "Export zdravotních informací do .csv"
     exportEmailsPaid: "Export zaplacených do .csv"
     exportFullData: "Export VŠECH informací do .csv"
@@ -390,6 +391,12 @@ transferPayment-admin:
     participantNotFound: "Účastník nebyl nalezen :( Mail:"
     transfer: "Přesuň platbu"
     notPossible: "Přesun nelze uskutečnit"
+troopManagement-admin:
+    troopManagement: "management skupin"
+    noTroopLeaders: "žádné odemčené skupiny nejsou k dispozici"
+    openTroopLeaders: "odemčené skupiny"
+    noTroopParticipants: "žádní účastníci bez skupiny nejsou k dispozici"
+    troopParticipantsWithoutLeader: "účastníci bez skupiny"
 flash:
     info:
         participantDeleted: "Účastník byl smazán"

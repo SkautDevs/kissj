@@ -86,6 +86,10 @@
                    class="btn">{% trans %}dashboard-admin.showStats{% endtrans %}</a><br/>
             </div>
             <div>
+                {% if event.allowTroops %}
+                    <a href="{{ url_for('admin-troop-management', {'eventSlug': event.slug}) }}"
+                       class="btn">{% trans %}dashboard-admin.troopManagement{% endtrans %}</a><br/>    
+                {% endif %}
                 <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
