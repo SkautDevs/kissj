@@ -29,8 +29,17 @@ class EntryController extends AbstractController
             );
         }
 
-        $eventSecret = $this->getParameterFromBody($request, 'eventSecret');
+        $bodyJson = $this->getParsedJsonFromBody($request);
+        if (!array_key_exists('eventSecret', $bodyJson)) {
+            return $this->getResponseWithJson(
+                $response,
+                ['status' => 'invalid', 'reason' => 'in JSON request key eventSecret is missing'],
+                422,
+            );
+        }
+        $eventSecret = $bodyJson['eventSecret'];
         $event = $participant->getUserButNotNull()->event;
+
         if ($event->apiSecret !== $eventSecret) {
             return $this->getResponseWithJson(
                 $response,
@@ -62,7 +71,7 @@ class EntryController extends AbstractController
             $response,
             $participantInfo + [
                 'status' => 'valid',
-            ]
+            ],
         );
     }
 }

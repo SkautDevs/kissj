@@ -118,4 +118,15 @@ abstract class AbstractController
 
         return $parameter;
     }
+
+    protected function getParsedJsonFromBody(Request $request): array
+    {
+        try {
+            $json = json_decode((string)$request->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return [];
+        }
+        
+        return $json;
+    }
 }
