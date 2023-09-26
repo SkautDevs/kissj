@@ -28,18 +28,14 @@ class EventTypeCej extends EventType
     public function getPrice(Participant $participant): int
     {
         if ($participant->contingent === self::CONTINGENT_TEAM) {
-            return 1450;
+            return 150;
         }
 
         $price = match (true) {
-            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) * 5800) + 2900,
-            $participant instanceof Ist => 2900,
+            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) * 250) + 250,
+            $participant instanceof Ist => 150,
             default => throw new \Exception('Unknown participant class'),
         };
-
-        if ($participant instanceof PatrolLeader && $participant->contingent === self::CONTINGENT_CZECHIA) {
-            $price += count($participant->patrolParticipants) * 400;
-        }
 
         return $price;
     }
@@ -180,6 +176,16 @@ class EventTypeCej extends EventType
             self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_TEAM,
         ];
+    }
+
+    public function getEventSpecificStyles(): string
+    {
+        $styles = file_get_contents(__DIR__ . '/stylesCej24.css');
+        if ($styles === false) {
+            return '';
+        }
+
+        return $styles;
     }
 
     /**
