@@ -101,6 +101,12 @@ class ParticipantRepository extends Repository
             UserRole::ContingentAdminRo => array_filter($participants, function (Participant $p): bool {
                 return $p->contingent === EventTypeCej::CONTINGENT_ROMANIA;
             }),
+            UserRole::ContingentAdminGb => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === EventTypeCej::CONTINGENT_BRITAIN;
+            }),
+            UserRole::ContingentAdminSw => array_filter($participants, function (Participant $p): bool {
+                return $p->contingent === EventTypeCej::CONTINGENT_SWEDEN;
+            }),
             default => [],
         };
     }

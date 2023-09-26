@@ -14,6 +14,8 @@ enum UserRole: string
     case ContingentAdminHu = 'contingentAdminHu';
     case ContingentAdminEu = 'contingentAdminEu';
     case ContingentAdminRo = 'contingentAdminRo';
+    case ContingentAdminGb = 'contingentAdminGb';
+    case ContingentAdminSw = 'contingentAdminSw';
 
     /**
      * @return UserRole[]

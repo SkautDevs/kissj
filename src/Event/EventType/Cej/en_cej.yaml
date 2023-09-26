@@ -26,6 +26,8 @@ detail:
         european: "🇪🇺 European Contingent"
         romania: "🇷🇴 Contingent Romanesc"
         israel: "🇮🇱 Israel Contingent"
+        britain: "🇬🇧 British Contingent"
+        sweden: "🇸🇪 Svensk kontingent"
         team: "⚜ Organizing Team"
     address: "Permanent Address (street and no., city, postal code)"
 dashboard:
