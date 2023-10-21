@@ -13,10 +13,10 @@ input, textarea, select, button {
         background: #ede9e6;
         --color-card-background: #f9f9f9;
         --color-input-background: #ffffff;
-        --color-main: #989898;
+        --color-main: #014b86;
         --color-accent: #d43b00;
-        --color-fading: #cbcbcb;
-        --color-light: #cbcbcb;
+        --color-fading: #712d8a;
+        --color-light: #712d8a;
         --color-dark: #3b3b3b;
         --color-grey: #818181;
     }
@@ -24,15 +24,15 @@ input, textarea, select, button {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        background: #212121;
-        --color-card-background: #252525;
-        --color-input-background: #2f2f2f;
-        --color-main: #989898;
-        --color-accent: #e37f00;
-        --color-fading: #626262;
-        --color-light: #626262;
-        --color-dark: #eaeaea;
-        --color-grey: #6e6e6e;
+        background: #ede9e6;
+        --color-card-background: #f9f9f9;
+        --color-input-background: #ffffff;
+        --color-main: #014b86;
+        --color-accent: #d43b00;
+        --color-fading: #712d8a;
+        --color-light: #712d8a;
+        --color-dark: #3b3b3b;
+        --color-grey: #818181;
     }
 }
 
