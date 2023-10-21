@@ -131,18 +131,9 @@ class EventTypeCej extends EventType
             'detail.foodVegan',
             'detail.foodLactoseFree',
             'detail.foodGlutenFree',
-            'detail.foodOther',
-            'detail.foodGlutenNoTraces',
-            'detail.foodLactoseNoTraces',
-            'detail.foodNoMilk',
             'detail.foodLactoseAndGlutenFree',
-            'detail.foodLactoseFreeVegetarian',
-            'detail.foodKosher',
-            'detail.foodHalal',
-            'detail.foodMenu',
-            'detail.foodKosherPeanutAllergy',
-            'detail.foodNoPorkVege',
             'detail.foodGlutenFreeVegetarian',
+            'detail.foodOther',
         ];
     }
 
@@ -152,11 +143,10 @@ class EventTypeCej extends EventType
     public function getParticipantCountries(): array
     {
         return [
-            'detail.countryCzechRepublic',
             'detail.countrySlovakia',
+            'detail.countryCzechRepublic',
             'detail.countryPoland',
             'detail.countryHungary',
-            'detail.countryRomania',
             'detail.countryOther',
         ];
     }
@@ -167,13 +157,13 @@ class EventTypeCej extends EventType
     public function getContingents(): array
     {
         return [
-            self::CONTINGENT_CZECHIA,
             self::CONTINGENT_SLOVAKIA,
-            self::CONTINGENT_POLAND,
+            self::CONTINGENT_CZECHIA,
             self::CONTINGENT_HUNGARY,
+            self::CONTINGENT_POLAND,
+            self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_BRITAIN,
             self::CONTINGENT_SWEDEN,
-            self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_TEAM,
         ];
     }
