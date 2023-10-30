@@ -107,25 +107,28 @@ class PaymentService
         $payment->status = PaymentStatus::Paid;
         $this->paymentRepository->persist($payment);
 
-        $participant = $payment->participant;
-        $this->userService->setUserPaid($participant->getUserButNotNull());
-
         $now = DateTimeUtils::getDateTime();
-        $participant->registrationCloseDate = $now;
-        $this->participantRepository->persist($participant);
+
+        $participant = $payment->participant;
+        $this->setParticipantPaidWithTime($participant, $now);
 
         if ($participant instanceof TroopLeader) {
             foreach ($participant->troopParticipants as $tp) {
-                $this->userService->setUserPaid($tp->getUserButNotNull());
-
-                $tp->registrationCloseDate = $now;
-                $this->participantRepository->persist($tp);
+                $this->setParticipantPaidWithTime($tp, $now);
             }
         }
 
         $this->mailer->sendRegistrationPaid($participant);
 
         return $payment;
+    }
+
+    private function setParticipantPaidWithTime(Participant $participant, \DateTimeImmutable $now): void
+    {
+        $this->userService->setUserPaid($participant->getUserButNotNull());
+
+        $participant->registrationPayDate = $now;
+        $this->participantRepository->persist($participant);
     }
 
     /**
