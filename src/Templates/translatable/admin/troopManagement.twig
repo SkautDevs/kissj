@@ -6,6 +6,40 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
+    <div class="card approved-theme">
+        <h2>{% trans %}troopManagement-admin.tieTogether{% endtrans %}</h2>
+        <form
+                method="POST"
+                action="{{ url_for('tie-tp-by-tp', {'eventSlug': event.slug}) }}"{# TODO use new correct address #}
+                class="form-group form-group-middle"
+        >
+            <label for="tieCodeLeader">{% trans %}dashboard.codeForTieToTroop{% endtrans %}:</label>
+            <input
+                    id="tieCodeLeader"
+                    name="tieCodeLeader"
+                    type="text"
+                    required="required"
+                    class="form-control"
+                    pattern="[a-zA-Z]{6}"
+                    title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+                    placeholder="ABCDEF"
+            >
+            <label for="tieCodeParticipant">{% trans %}dashboard.tieCodeLabel{% endtrans %}:</label>
+            <input
+                    id="tieCodeParticipant"
+                    name="tieCodeParticipant"
+                    type="text"
+                    required="required"
+                    class="form-control"
+                    pattern="[a-zA-Z]{6}"
+                    title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+                    placeholder="ABCDEF"
+            >
+            <input type="submit" value="{% trans %}dashboard.tie{% endtrans %}"
+                   class="btn btn-small">
+        </form>
+    </div>
+
     {% if troopLeaders is empty %}
         <div class="card closed-theme">
             <h2>{% trans %}troopManagement-admin.noTroopLeaders{% endtrans %}</h2>

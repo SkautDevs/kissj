@@ -30,6 +30,8 @@ enum UserRole: string
             self::ContingentAdminHu,
             self::ContingentAdminEu,
             self::ContingentAdminRo,
+            self::ContingentAdminGb,
+            self::ContingentAdminSw,
         ];
     }
 }
