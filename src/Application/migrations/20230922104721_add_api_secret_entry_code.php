@@ -28,7 +28,7 @@ final class AddApiSecretEntryCode extends AbstractMigration
         $participantTable->removeColumn('entry_date');
         $participantTable->removeColumn('entry_code');
         $participantTable->save();
-        
+
         $eventTable = $this->table('event');
         $eventTable->removeColumn('api_secret');
         $eventTable->save();

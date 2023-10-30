@@ -249,7 +249,7 @@ class Route
                         $app->post('/generateMorePayments', AdminController::class . '::generateMorePayments')
                             ->setName('admin-generate-more-payments');
                     });
-                    
+
                     $app->get('/troopManagement', AdminController::class . '::showTroopManagement')
                         ->setName('admin-troop-management');
 

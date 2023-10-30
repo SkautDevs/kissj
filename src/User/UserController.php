@@ -109,16 +109,8 @@ class UserController extends AbstractController
         $routerEventSlug = ['eventSlug' => $user->event->slug];
 
         return match ($user->role) {
-            UserRole::Participant
-                => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
-            UserRole::Admin,
-            UserRole::ContingentAdminCs,
-            UserRole::ContingentAdminSk,
-            UserRole::ContingentAdminPl,
-            UserRole::ContingentAdminHu,
-            UserRole::ContingentAdminEu,
-            UserRole::ContingentAdminRo
-                => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
+            UserRole::Participant => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
+            default => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
         };
     }
 

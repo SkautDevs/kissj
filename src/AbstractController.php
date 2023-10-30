@@ -64,7 +64,7 @@ abstract class AbstractController
     }
 
     /**
-     * @param array<string,string> $json
+     * @param array<string,int|string|null> $json
      */
     protected function getResponseWithJson(Response $response, array $json, int $statusCode = 200): Response
     {
@@ -119,14 +119,18 @@ abstract class AbstractController
         return $parameter;
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getParsedJsonFromBody(Request $request): array
     {
         try {
+            /** @var array<mixed> $json */
             $json = json_decode((string)$request->getBody(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             return [];
         }
-        
+
         return $json;
     }
 }

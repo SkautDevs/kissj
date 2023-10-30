@@ -449,7 +449,7 @@ class ParticipantService
     {
         $participant->entryDate = DateTimeUtils::getDateTime();
         $this->participantRepository->persist($participant);
-        
+
         return $participant;
     }
 }

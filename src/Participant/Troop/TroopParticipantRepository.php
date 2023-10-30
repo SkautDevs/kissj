@@ -71,7 +71,7 @@ class TroopParticipantRepository extends Repository
             'role' => ParticipantRole::TroopParticipant,
             'patrol_leader_id' => new Relation(null, 'IS'),
         ]);
-        
+
         $troopParticipants = array_filter($troopParticipants, function (TroopParticipant $tp): bool {
             return $tp->troopLeader === null;
         });

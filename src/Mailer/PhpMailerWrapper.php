@@ -254,7 +254,7 @@ class PhpMailerWrapper
                 new EmbedDTO('qr_info', $qrCode, 'image/png'),
             ];
         }
-        
+
         return $embeds;
     }
 }

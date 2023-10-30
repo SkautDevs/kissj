@@ -47,14 +47,14 @@ class EntryController extends AbstractController
                 403,
             );
         }
-        
+
         $participantInfo = [
             'eventName' => $event->readableName,
             'fullName' => $participant->getFullName(),
             'email' => $participant->email,
             'ageAtEventStart' => $participant->getAgeAtStartOfEvent(),
         ];
-        
+
         if ($participant->entryDate !== null) {
             return $this->getResponseWithJson(
                 $response,
@@ -64,9 +64,9 @@ class EntryController extends AbstractController
                 ],
             );
         }
-        
+
         $this->participantService->setAsEntered($participant);
-        
+
         return $this->getResponseWithJson(
             $response,
             $participantInfo + [

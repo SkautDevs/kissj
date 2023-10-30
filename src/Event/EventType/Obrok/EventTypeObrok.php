@@ -37,10 +37,10 @@ class EventTypeObrok extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->tshirt = true;
-        
+
         return $ca;
     }
-    
+
     /**
      * @inheritDoc
      */

@@ -535,8 +535,8 @@ class AdminController extends AbstractController
             'admin-show-stats',
         );
     }
-    
-    public function showTroopManagement(Request $request, Response $response, $event): Response
+
+    public function showTroopManagement(Request $request, Response $response, Event $event): Response
     {
         return $this->view->render($response, 'admin/troopManagement.twig', [
             'troopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
