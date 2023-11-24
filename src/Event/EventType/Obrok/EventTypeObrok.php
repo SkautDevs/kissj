@@ -15,21 +15,10 @@ class EventTypeObrok extends EventType
 {
     public function getPrice(Participant $participant): int
     {
-        $now = DateTimeUtils::getDateTime();
         return match (true) {
-            $participant instanceof Ist => 300,
-            $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * $this->getTroopPrice($now),
+            $participant instanceof Ist => 1000,
+            $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 1600,
             default => throw new \Exception('Unknown participant class'),
-        };
-    }
-
-    private function getTroopPrice(\DateTimeImmutable $now): int
-    {
-        return match (true) {
-            $now < DateTimeUtils::getDateTime('2023-03-31 23:59:59') => 600,
-            $now < DateTimeUtils::getDateTime('2023-05-01 23:59:59') => 700,
-            $now < DateTimeUtils::getDateTime('2023-07-31 23:59:59') => 800,
-            default => 900,
         };
     }
 

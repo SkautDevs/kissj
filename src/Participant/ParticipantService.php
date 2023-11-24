@@ -174,7 +174,7 @@ class ParticipantService
             $validityFlag = false;
         }
 
-        if (!$event->canRegistrationBeLocked()) {
+        if (!$participant instanceof TroopParticipant && !$event->canRegistrationBeLocked()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed', [
                 '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%h:%i:%s'),
             ]));
