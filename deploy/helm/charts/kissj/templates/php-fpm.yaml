@@ -59,11 +59,11 @@ spec:
           protocol: TCP
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "400m"
+            memory: "1Gi"
+            cpu: "500m"
           limits:
-            memory: "512Mi"
-            cpu: "600m"
+            memory: "2Gi"
+            cpu: "1000m"
         
         env:    
           - name: DB_TYPE
