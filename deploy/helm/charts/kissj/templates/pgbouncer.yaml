@@ -43,15 +43,23 @@ spec:
           - name: POSTGRESQL_DATABASE
             value: {{ .Values.postgres.dbname }}
 
+          - name: PGBOUNCER_DATABASE
+            value: {{ .Values.postgres.dbname }}
 
           - name: PGBOUNCER_PORT
             value: "5432"
+          # pg bouncer config
           - name: PGBOUNCER_MAX_CLIENT_CONN
             value: "1500"
+
           - name: PGBOUNCER_MAX_DB_CONNECTIONS
-            value: "50" 
-          - name: PGBOUNCER_DATABASE
-            value: {{ .Values.postgres.dbname }}
+            value: "50"
+
+          - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
+            value: "extra_float_digits"
+
+          - name: PGBOUNCER_SERVER_TLS_SSLMODE
+            value: "prefer"
                  
         resources:
           requests:
@@ -62,11 +70,3 @@ spec:
             cpu: "600m"
         ports:
         - containerPort: 5432
-
-        volumeMounts:
-        - mountPath: /etc/pgbouncer/ca
-          name: {{ .Release.Name}}-pgbouncer-ca
-      volumes:
-      - name: {{ .Release.Name}}-pgbouncer-ca
-        secret:
-          secretName: {{ .Release.Name}}-pgbouncer-ca
