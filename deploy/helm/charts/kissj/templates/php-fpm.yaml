@@ -195,3 +195,12 @@ spec:
                 name: {{ .Release.Name }}-sentry-dsn
                 key: profiling_rate
 
+          - name: SKAUTIS_USE_TEST
+            value: {{ .Values.app.skautis.useTest | quote }}
+
+          - name: SKAUTIS_APP_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-skautis
+                key: appId
+

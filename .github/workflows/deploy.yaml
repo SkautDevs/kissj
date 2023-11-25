@@ -111,6 +111,10 @@ jobs:
             
             sentry:
               dsn: ${{ secrets.SENTRY_DSN }}
+            
+            skautis:
+              appId: ${{ secrets.SKAUTIS_APP_ID }}
+              useTest: ${{ secrets.SKAUTIS_USE_TEST }}
 
       env:
         KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}

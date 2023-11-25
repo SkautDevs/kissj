@@ -67,6 +67,10 @@ app:
   sentry:
     dsn: SentryDSN
     profiling_rate: "0.5"
+
+  skautis:
+    appId: SkautisAppId
+    useTest: false
     
       
 
