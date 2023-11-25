@@ -1,2 +1,17 @@
 closed:
     welcome: "Ahoj!"
+closeRegistration:
+    lockRegistration: "Skutečně chceš uzamknout registraci a poslat nám ji ke schválení?"
+    protectionAgree: "Přečetl/a jsem si a souhlasím s <a href='https://obrok24.cz/podminky-a-pravidla-akce-obrok-2024/'>podmínkami registrace</a> a <a href='https://obrok24.cz/zasady-o-nakladani-s-osobnimi-udaji-na-akci-obrok-24/'>zásadami o nákládání s osobními údaji</a>"
+userCustomHelp:
+    statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek za skupinu."
+    statusApprovedTp: "Tvá přihláška byla schválena. Nyní už musí jen tvůj vedoucí skupiny zaplatit registrační poplatek."
+flash:
+    warning:
+        fullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Zkus to později, třeba někdo nezaplatí registrační poplatek v termínu."
+        plTooFewParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš málo účastníků. Pro funkční skupinu jich je potřeba nejméně %minimalTroopParticipantsCount%"
+        plTooManyParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš účastníků. Může jich být nejvíce %maximalTroopParticipantsCount%, nějaké odstraň prosím"
+        notLogged: "Omlouváme se, ale nejsi přihlášen/a. Přihlaš se prosím přes SkautIS"
+        troopLeaderNotOpen: "Skupina byla již zamknuta, proto nelze připojit účastníka ke skupině"
+        troopParticipantAlreadyTied: "Účastník již byl do skupiny přidán"
+        alreadyTied: "Nemůžeš se přidat do skupiny, protože již ve skupině jsi. Jestli chceš k jiné skupině, popros vedoucího o odepnutí"
