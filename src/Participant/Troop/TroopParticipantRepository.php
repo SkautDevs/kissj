@@ -65,15 +65,16 @@ class TroopParticipantRepository extends Repository
     /**
      * @return TroopParticipant[]
      */
-    public function getAllWithoutTroop(): array
+    public function getAllWithoutTroop(Event $event): array
     {
         $troopParticipants = $this->findBy([
             'role' => ParticipantRole::TroopParticipant,
             'patrol_leader_id' => new Relation(null, 'IS'),
         ]);
 
-        $troopParticipants = array_filter($troopParticipants, function (TroopParticipant $tp): bool {
-            return $tp->troopLeader === null;
+        $troopParticipants = array_filter($troopParticipants, function (TroopParticipant $tp) use ($event): bool {
+            // TODO optimalize event filter
+            return $tp->troopLeader === null && $tp->getUserButNotNull()->event->id === $event->id;
         });
 
         return $troopParticipants;

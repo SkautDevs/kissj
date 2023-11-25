@@ -544,7 +544,9 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
             ),
-            'troopParticipants' => $this->troopParticipantRepository->getAllWithoutTroop(),
+            'troopParticipants' => $this->troopParticipantRepository->getAllWithoutTroop(
+                $event,
+            ),
             'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
             'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
         ]);
