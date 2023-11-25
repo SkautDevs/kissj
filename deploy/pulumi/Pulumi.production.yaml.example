@@ -1,0 +1,9 @@
+encryptionsalt: v1:SomeGneratedSalt
+config:
+  azure-native:location: germanywestcentral
+  kissj:kubernetesVersion: 1.27.7
+  kissj:nodeVmSize: Standard_B8pls_v2
+  kissj:numWorkerNodes: "2"
+  kissj:dbVmSize: Standard_B1ms
+  kissj:dbTier: Burstable
+
