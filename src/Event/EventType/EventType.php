@@ -169,4 +169,14 @@ abstract class EventType
     {
         return false;
     }
+
+    public function isLoginEmailAllowed(): bool
+    {
+        return true;
+    }
+
+    public function isLoginSkautisAllowed(): bool
+    {
+        return false;
+    }
 }

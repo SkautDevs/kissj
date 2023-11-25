@@ -86,6 +86,6 @@ Backlog is in project GitHub issues
 
 #### User cannot log in - after click it stays on "insert mail" page
 
- - try what function `session_start()` returs
+ - try what function `session_start()` returns
  - if false, it probably cannot write session into filesystem
  - make path from `session_save_path()` writable

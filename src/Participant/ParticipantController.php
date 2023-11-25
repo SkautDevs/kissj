@@ -57,7 +57,7 @@ class ParticipantController extends AbstractController
         $this->participantRepository->persist($participant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
 
-        return $this->redirect($request, $response, 'getDashboard'); // TODO change to common dashboard when possible
+        return $this->redirect($request, $response, 'getDashboard');
     }
 
     public function showCloseRegistration(Request $request, Response $response, User $user): Response

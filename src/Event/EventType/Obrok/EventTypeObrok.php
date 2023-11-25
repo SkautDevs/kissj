@@ -64,4 +64,14 @@ class EventTypeObrok extends EventType
     {
         return true;
     }
+
+    public function isLoginEmailAllowed(): bool
+    {
+        return true; // TODO change to false in production
+    }
+
+    public function isLoginSkautisAllowed(): bool
+    {
+        return true;
+    }
 }

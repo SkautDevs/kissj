@@ -206,6 +206,7 @@ login:
     waitForApproval: "Wait for approval and payment info"
     pay: "Pay and you are good to go!"
     more: "More information about registration system"
+    skautis: "Skautis login"
 email:
     layout:
         welcome: "Hello!"
@@ -398,6 +399,7 @@ troopManagement-admin:
     openTroopLeaders: "unlocked troops"
     noTroopParticipants: "there are no participants without troop"
     troopParticipantsWithoutLeader: "participants without troop"
+    tieTogether: "Tie participant into troop"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -414,6 +416,7 @@ flash:
         differentScarfs: "Participants have differently selected scarf option - it will be changed at the buyer's registration form to correspond the payment."
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Generated payments and emails sent"
+        redirectedFromSkautis: "Redirected from Skautis"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         confirmPayment: "Participant payment is confirmed, email about confirmation is sent"

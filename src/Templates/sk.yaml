@@ -188,6 +188,7 @@ login:
     waitForApproval: "Počkaj na schválenie a platobné údaje"
     pay: "Zaplať a prídi na akciu!"
     more: "Viac informácií o registračnom systéme"
+    skautis: "Přihlásit se přes Skautis"
 email:
     layout:
         welcome: "Ahoy!"
@@ -368,6 +369,7 @@ transferPayment-admin:
     participantNotFound: "Účastník nebyl nalezen :( Mail:"
     transfer: "Přesuň platbu"
     notPossible: "Přesun nelze uskutečnit"
+    tieTogether: "Připojit účastníka do skupiny"
 flash:
     info:
         participantDeleted: "Účastník bol vymazaný"
@@ -383,6 +385,7 @@ flash:
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
+        redirectedFromSkautis: "Přesměrováno ze Skautisu"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
         confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"

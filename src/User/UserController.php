@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace kissj\User;
 
 use kissj\AbstractController;
+use kissj\Event\Event;
+use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -14,6 +16,7 @@ class UserController extends AbstractController
         protected UserRepository $userRepository,
         protected UserService $userService,
         protected UserRegeneration $userRegeneration,
+        protected SkautisService $skautisService,
     ) {
     }
 
@@ -30,9 +33,21 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'getDashboard');
     }
 
-    public function login(Response $response): Response
+    public function login(Request $request, Response $response, Event $event): Response
     {
-        return $this->view->render($response, 'kissj/login.twig');
+        return $this->view->render(
+            $response,
+            'kissj/login.twig',
+            [
+                'skautisLoginUri' => $this->skautisService->getLoginUri(
+                    ltrim($this->getRouter($request)->urlFor(
+                        'getDashboard',
+                        ['eventSlug' => $event->slug],
+                    ),
+                    '/'),
+                ),
+            ],
+        );
     }
 
     public function sendLoginEmail(Request $request, Response $response): Response

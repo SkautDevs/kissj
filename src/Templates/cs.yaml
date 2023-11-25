@@ -206,6 +206,7 @@ login:
     waitForApproval: "Počkej na schválení a informace k platbě"
     pay: "Zaplať a jeď!"
     more: "Více informací o registraci"
+    skautis: "Přihlásit se přes Skautis"
 email:
     layout:
         welcome: "Ahoj!"
@@ -398,6 +399,7 @@ troopManagement-admin:
     openTroopLeaders: "odemčené skupiny"
     noTroopParticipants: "žádní účastníci bez skupiny nejsou k dispozici"
     troopParticipantsWithoutLeader: "účastníci bez skupiny"
+    tieTogether: "Připojit účastníka do skupiny"
 flash:
     info:
         participantDeleted: "Účastník byl smazán"
@@ -414,6 +416,7 @@ flash:
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Kvůli nezaplacení emaily odemknuto účastníků"
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
+        redirectedFromSkautis: "Přesměrováno ze Skautisu"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"

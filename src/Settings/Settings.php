@@ -17,6 +17,7 @@ use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
+use kissj\Skautis\SkautisFactory;
 use kissj\User\UserRegeneration;
 use LeanMapper\Connection;
 use LeanMapper\DefaultEntityFactory;
@@ -148,6 +149,12 @@ class Settings
                 'secret' => $_ENV['S3_SECRET'],
             ],
         ]);
+        $container[SkautisFactory::class] = function (): SkautisFactory {
+            return new SkautisFactory(
+                $_ENV['SKAUTIS_APP_ID'],
+                (bool)$_ENV['SKAUTIS_USE_TEST'],
+            );
+        };
         $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);
@@ -230,5 +237,7 @@ class Settings
         $dotenv->required('POSTGRES_DB');
         $dotenv->required('SENTRY_DSN');
         $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
+        $dotenv->required('SKAUTIS_APP_ID')->notEmpty();
+        $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
     }
 }

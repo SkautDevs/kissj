@@ -4,19 +4,24 @@
     <div class="two-cards">
         <div class="card registration-theme">
             <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
-            <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="post">
-                <div class="form-group">
-                    <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
-                    <input
-                        class="form-control form-wide"
-                        type="email"
-                        name="email"
-                        id="form-email"
-                        required
-                    />
-                </div>
-                <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
-            </form>
+            {% if event.eventType.isLoginSkautisAllowed %}
+                <a href="{{ skautisLoginUri }}" class="btn">{% trans %}login.skautis{% endtrans %}</a><br>
+            {% endif %}
+            {% if event.eventType.isLoginEmailAllowed %}
+                <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="post">
+                    <div class="form-group">
+                        <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
+                        <input
+                            class="form-control form-wide"
+                            type="email"
+                            name="email"
+                            id="form-email"
+                            required
+                        />
+                    </div>
+                    <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
+                </form>
+            {% endif %}
         </div>
         <div class="card approved-theme text-muted">
             <h2>{% trans %}login.howItWorks{% endtrans %}</h2>

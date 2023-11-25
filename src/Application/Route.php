@@ -21,6 +21,7 @@ use kissj\Participant\Admin\AdminController;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Troop\TroopController;
+use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -31,7 +32,8 @@ class Route
 {
     public function addRoutesInto(App $app): App
     {
-        $app->redirect($app->getBasePath() ?: '/', $app->getBasePath() . '/v2/kissj/events', 301);
+        $app->get($app->getBasePath() . '/', SkautisController::class . '::redirectFromSkautis')
+            ->setName('index');
 
         $app->group($app->getBasePath() . '/v2', function (RouteCollectorProxy $app) {
             $app->redirect('', $app->getBasePath() . '/v2/kissj', 301);
