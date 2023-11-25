@@ -31,7 +31,7 @@ jobs:
       
     - name: Install Dependencies
       id: composer-deps
-      run: composer install --no-interaction --ignore-platform-req=ext-gd --ignore-platform-req=sqlite3
+      run: composer install --no-interaction --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
       env:
         COMPOSER_ALLOW_SUPERUSER: 1
 

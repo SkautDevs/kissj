@@ -71,6 +71,9 @@ jobs:
           
           caddy:
             replicas: 3
+            hpa:
+              enabled: true
+            
             image:
               name: quay.io/kissj/caddy-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}
@@ -78,9 +81,11 @@ jobs:
               enabled: true
               issuer: ${{ secrets.CERT_ISSUER}}
 
-          
           php:
-            replicas: 5 
+            replicas: 3
+            hpa:
+              enabled: true
+              
             volume:
               storageclass: ${{ secrets.STORAGE_CLASS }}
             image:
