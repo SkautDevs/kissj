@@ -27,6 +27,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install qemu dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
       - uses: actions/checkout@v3
       
       - name: Build Container Image
@@ -57,6 +62,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install qemu dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
       - uses: actions/checkout@v3
       
       - name: Build Container Image
