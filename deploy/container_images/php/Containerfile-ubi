@@ -5,9 +5,13 @@ WORKDIR /var/www/html
 
 #enable needed epel & remi repos
 RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.2 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap vim -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-opcache unzip vim -y
+
+#cleanup dnf cache
+RUN dnf clean all
 
 #copy app
 COPY ./composer.json /var/www/html/composer.json
@@ -15,50 +19,21 @@ COPY ./composer.lock /var/www/html/composer.lock
 COPY ./src /var/www/html/src
 COPY ./public /var/www/html/public
 
-#configure php-fpm
-RUN sed -i 's\listen = /run/php-fpm/www.sock\listen = '9000'\g' /etc/php-fpm.d/www.conf
-RUN sed -i '/pid/d' /etc/php-fpm.conf 
-RUN sed -i '/listen.allowed_clients/d' /etc/php-fpm.d/www.conf
-RUN sed -i '/upload_max_filesize/ s/2M/16M/' /etc/php.ini
+#copy php config
+COPY ./deploy/container_images/php/php.ini /etc/php.ini
+COPY ./deploy/container_images/php/php-fpm.conf /etc/php-fpm.conf
+COPY ./deploy/container_images/php/www.conf /etc/php-fpm.d/www.conf
 
-#PHP logging sed magic
-RUN sed -i '/;error_log = syslog/a error_log= /proc/self/fd/2' /etc/php.ini
-RUN sed -i 's\error_log = /var/log/php-fpm/error.log\error_log= /proc/self/fd/2\g' /etc/php-fpm.conf
-RUN sed -i '/;access.log/a access.log = /proc/self/fd/2' /etc/php-fpm.d/www.conf
-RUN sed -i 's\slowlog = /var/log/php-fpm/www-slow.log\slowlog = /proc/self/fd/2\g' /etc/php-fpm.d/www.conf
-RUN sed -i '/php_admin_value\[error_log\]/d' /etc/php-fpm.d/www.conf
-
-RUN groupadd -r -g 1001 www-data
-RUN useradd -r -u 1001 -g 1001 www-data -s /sbin/nologin -d /var/www/html
-
-RUN sed -i 's\user = apache\user = www-data\g' /etc/php-fpm.d/www.conf
-RUN sed -i 's\group = apache\group = www-data\g' /etc/php-fpm.d/www.conf
+#add user
+RUN groupadd -g 1001 www-data
+RUN useradd -u 1001 -g 1001 www-data -s /sbin/nologin -d /var/www/html -M
 RUN chown -R www-data:www-data /var/lib/php 
-
-
 
 #Create dummy .env
 RUN touch /var/www/html/.env
 
-
-#increse memory limit
-RUN sed -i '/memory_limit/ s/128/512/' /etc/php.ini
-
-#change variable ordeiring at startup
-RUN sed -i '/variables_order/ s/"GPCS"/"EGPCS"/' /etc/php.ini
-
-#allow env variable access
-RUN sed -i 's\;clear_env = no\clear_env = no\' /etc/php-fpm.d/www.conf
-
-#export metrics
-RUN sed -i 's\;pm.status_path = /status\pm.status_path = /status\' /etc/php-fpm.d/www.conf
-
-# increse max pool max_children
-RUN sed -i '/pm.max_children/ s/5/20/' /etc/php-fpm.d/www.conf
-
 #install deps
 RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3
-
 
 RUN chown -R www-data:www-data /var/www/html 
 
