@@ -1,5 +1,5 @@
 {{- if .Values.caddy.hpa.enabled }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-caddy
@@ -10,11 +10,38 @@ spec:
     name: {{ .Release.Name }}-caddy
   minReplicas: {{ .Values.caddy.hpa.minReplicas }}
   maxReplicas: {{ .Values.caddy.hpa.maxReplicas }}
-  targetCPUUtilizationPercentage: 80
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageValue: 400Mi
+  behavior:
+    scaleUp:
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+      selectPolicy: Max
+      stabilizationWindowSeconds: 10
+    scaleDown:
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 10
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
 {{- end }}
 ---
 {{- if .Values.php.hpa.enabled }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Release.Name }}-php-fpm
@@ -25,5 +52,38 @@ spec:
     name: {{ .Release.Name }}-php-fpm
   minReplicas: {{ .Values.php.hpa.minReplicas }}
   maxReplicas: {{ .Values.php.hpa.maxReplicas }}
-  targetCPUUtilizationPercentage: 80
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageValue: 800Mi
+  behavior:
+    scaleUp:
+      policies:
+        - type: Pods
+          value: 3
+          periodSeconds: 10
+        - type: Percent
+          value: 30
+          periodSeconds: 10
+      selectPolicy: Max
+      stabilizationWindowSeconds: 10
+    scaleDown:
+      policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 10
+        - type: Percent
+          value: 15
+          periodSeconds: 10
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
 {{- end }}
