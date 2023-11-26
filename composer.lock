@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fe0ae923b7eab946da55946ab7e59fa",
+    "content-hash": "1987cacb1791b14594e9c492f62338f6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -677,16 +677,16 @@
         },
         {
             "name": "dibi/dibi",
-            "version": "v5.0.0",
+            "version": "v5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dg/dibi.git",
-                "reference": "82c45c30763d1f3932907fea46ff27a594d7ba7e"
+                "reference": "86a71dde28fd1c1b55e4c66a6f7ebfd4efb13e1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dg/dibi/zipball/82c45c30763d1f3932907fea46ff27a594d7ba7e",
-                "reference": "82c45c30763d1f3932907fea46ff27a594d7ba7e",
+                "url": "https://api.github.com/repos/dg/dibi/zipball/86a71dde28fd1c1b55e4c66a6f7ebfd4efb13e1d",
+                "reference": "86a71dde28fd1c1b55e4c66a6f7ebfd4efb13e1d",
                 "shasum": ""
             },
             "require": {
@@ -696,6 +696,7 @@
                 "dg/dibi": "*"
             },
             "require-dev": {
+                "jetbrains/phpstorm-attributes": "^1.0",
                 "nette/di": "^3.1",
                 "nette/tester": "^2.5",
                 "phpstan/phpstan": "^1.0",
@@ -741,9 +742,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dg/dibi/issues",
-                "source": "https://github.com/dg/dibi/tree/v5.0.0"
+                "source": "https://github.com/dg/dibi/tree/v5.0.1"
             },
-            "time": "2023-08-09T14:38:02+00:00"
+            "time": "2023-11-25T13:08:47+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -2972,16 +2973,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.8.1",
+            "version": "v6.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "e88da8d679acc3824ff231fdc553565b802ac016"
+                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/e88da8d679acc3824ff231fdc553565b802ac016",
-                "reference": "e88da8d679acc3824ff231fdc553565b802ac016",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/039de174cd9c17a8389754d3b877a2ed22743e18",
+                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18",
                 "shasum": ""
             },
             "require": {
@@ -3001,6 +3002,7 @@
                 "yoast/phpunit-polyfills": "^1.0.4"
             },
             "suggest": {
+                "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
                 "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
                 "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
                 "greew/oauth2-azure-provider": "Needed for Microsoft Azure XOAUTH2 authentication",
@@ -3040,7 +3042,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.8.1"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.1"
             },
             "funding": [
                 {
@@ -3048,7 +3050,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-29T08:26:30+00:00"
+            "time": "2023-11-25T22:23:28+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -4170,16 +4172,16 @@
         },
         {
             "name": "skautis/skautis",
-            "version": "v2.1.0",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/skaut/Skautis.git",
-                "reference": "090fddb9d7d6da2467f52be9f6ff4db16724c1c5"
+                "reference": "a676c628c8f6bd074eb0650b47688b9fd1dce905"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/skaut/Skautis/zipball/090fddb9d7d6da2467f52be9f6ff4db16724c1c5",
-                "reference": "090fddb9d7d6da2467f52be9f6ff4db16724c1c5",
+                "url": "https://api.github.com/repos/skaut/Skautis/zipball/a676c628c8f6bd074eb0650b47688b9fd1dce905",
+                "reference": "a676c628c8f6bd074eb0650b47688b9fd1dce905",
                 "shasum": ""
             },
             "require": {
@@ -4187,9 +4189,9 @@
                 "php": ">=5.6"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "@stable",
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "4.5.*"
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^5.7"
             },
             "suggest": {
                 "skautis/nette": "Integrace Skautis do Nette",
@@ -4229,7 +4231,7 @@
                 "source": "https://github.com/skaut/Skautis",
                 "wiki": "http://is.skaut.cz/napoveda/"
             },
-            "time": "2017-03-07T09:02:13+00:00"
+            "time": "2023-04-02T19:19:57+00:00"
         },
         {
             "name": "slim/psr7",
@@ -7148,20 +7150,20 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.39.0",
+            "version": "v3.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "04bf7b28fc847185b247d112cab617da941e3cca"
+                "reference": "27d2b3265b5d550ec411b4319967ae7cfddfb2e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/04bf7b28fc847185b247d112cab617da941e3cca",
-                "reference": "04bf7b28fc847185b247d112cab617da941e3cca",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/27d2b3265b5d550ec411b4319967ae7cfddfb2e0",
+                "reference": "27d2b3265b5d550ec411b4319967ae7cfddfb2e0",
                 "shasum": ""
             },
             "require": {
-                "composer/semver": "^3.3",
+                "composer/semver": "^3.4",
                 "composer/xdebug-handler": "^3.0.3",
                 "ext-json": "*",
                 "ext-tokenizer": "*",
@@ -7172,25 +7174,25 @@
                 "symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
                 "symfony/finder": "^5.4 || ^6.0 || ^7.0",
                 "symfony/options-resolver": "^5.4 || ^6.0 || ^7.0",
-                "symfony/polyfill-mbstring": "^1.27",
-                "symfony/polyfill-php80": "^1.27",
-                "symfony/polyfill-php81": "^1.27",
+                "symfony/polyfill-mbstring": "^1.28",
+                "symfony/polyfill-php80": "^1.28",
+                "symfony/polyfill-php81": "^1.28",
                 "symfony/process": "^5.4 || ^6.0 || ^7.0",
                 "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "facile-it/paraunit": "^1.3 || ^2.0",
                 "justinrainbow/json-schema": "^5.2",
-                "keradus/cli-executor": "^2.0",
+                "keradus/cli-executor": "^2.1",
                 "mikey179/vfsstream": "^1.6.11",
-                "php-coveralls/php-coveralls": "^2.5.3",
+                "php-coveralls/php-coveralls": "^2.7",
                 "php-cs-fixer/accessible-object": "^1.1",
-                "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.2",
-                "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.2.1",
-                "phpspec/prophecy": "^1.16",
+                "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.4",
+                "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.4",
+                "phpspec/prophecy": "^1.17",
                 "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5",
-                "symfony/phpunit-bridge": "^6.2.3 || ^7.0",
+                "phpunit/phpunit": "^9.6",
+                "symfony/phpunit-bridge": "^6.3.8 || ^7.0",
                 "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
             },
             "suggest": {
@@ -7229,7 +7231,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.39.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.40.0"
             },
             "funding": [
                 {
@@ -7237,7 +7239,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-22T11:20:09+00:00"
+            "time": "2023-11-26T09:25:53+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -10094,5 +10096,5 @@
     "platform-dev": {
         "ext-pdo": "*"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

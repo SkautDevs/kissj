@@ -26,7 +26,7 @@ class PatrolLeaderTest extends AppTestCase
         $patrolService = $container->get(PatrolService::class);
 
         $email = 'test@example.com';
-        $user = $userService->registerUser($email, $testEvent);
+        $user = $userService->registerEmailUser($email, $testEvent);
         $patrolLeader = $patrolService->getPatrolLeader($user);
 
         $this->assertEquals($patrolLeader->getUserButNotNull()->id, $user->id);

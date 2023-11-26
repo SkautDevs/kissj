@@ -386,6 +386,7 @@ flash:
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
         redirectedFromSkautis: "Přesměrováno ze Skautisu"
+        skautisDataPrefilled: "Data ze Skautisu byla předvyplněna - je stále potřeba doplnit zbytek údajů"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
         confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -428,3 +429,5 @@ flash:
         mailError: "Pardon, odoslanie e-mailu zlyhalo. Skús to o pár minút."
         confirmNotAllowed: "Tato platba nepřísluší tvé akce, potvrzení nelze provést"
         fioConnectionFailed: "Spojení do Fio banky selhalo, nejspíše kvůli špatně zadanému API klíči"
+        skautisUserNotLoggedIn: "Skautis hlásí, že účastník není přihlášený. Zkus se prosím odhlásit a znovu přihlásit"
+        skautisUserError: "Selhalo stažení dat ze Skautisu. Zkus se prosím odhlásit a znovu přihlásit"

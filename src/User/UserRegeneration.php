@@ -22,7 +22,6 @@ class UserRegeneration
 
     /**
      * @param string[] $userSession
-     * @return User|null
      */
     private function recreateUserFromSession(array $userSession): ?User
     {
@@ -30,10 +29,7 @@ class UserRegeneration
             return null;
         }
 
-        /** @var User|null $user */
-        $user = $this->userRepository->findOneBy(['id' => $userSession['id']]);
-
-        return $user;
+        return $this->userRepository->findOneBy(['id' => $userSession['id']]);
     }
 
     public function saveUserIdIntoSession(User $user): void

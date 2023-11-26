@@ -15,6 +15,7 @@ use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
+use kissj\Skautis\SkautisUserData;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;

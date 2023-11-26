@@ -23,9 +23,23 @@ class UserService
     ) {
     }
 
-    public function registerUser(string $email, Event $event): User
+    public function registerEmailUser(string $email, Event $event): User
     {
         $user = new User();
+        $user->loginType = UserLoginType::Email;
+        $user->email = $email;
+        $user->event = $event;
+        $this->userRepository->persist($user);
+
+        return $user;
+    }
+
+    public function registerSkautisUser(int $skautisId, bool $hasMembership, string $email, Event $event): User
+    {
+        $user = new User();
+        $user->loginType = UserLoginType::Skautis;
+        $user->skautisId = $skautisId;
+        $user->skautisHasMembership = $hasMembership;
         $user->email = $email;
         $user->event = $event;
         $this->userRepository->persist($user);
@@ -35,7 +49,7 @@ class UserService
 
     public function sendLoginTokenByMail(string $email, Request $request, Event $event): string
     {
-        $user = $this->userRepository->getUserFromEmailEvent($email, $event);
+        $user = $this->userRepository->getUserFromEmail($email, $event);
         $this->invalidateAllLoginTokens($user);
 
         // generate new token
@@ -76,16 +90,13 @@ class UserService
 
     public function getLoginTokenFromStringToken(string $token): LoginToken
     {
-        /** @var LoginToken $loginToken */
-        $loginToken = $this->loginTokenRepository->findOneBy(['token' => $token]);
-
-        return $loginToken;
+        return $this->loginTokenRepository->getOneBy(['token' => $token]);
     }
 
     public function getTokenForEmail(string $email, Event $event): string
     {
         return $this->loginTokenRepository->getTokenForUser(
-            $this->userRepository->getUserFromEmailEvent($email, $event)
+            $this->userRepository->getUserFromEmail($email, $event),
         );
     }
 
@@ -102,7 +113,7 @@ class UserService
         }
     }
 
-    public function setRole(User $user, string $role): void
+    public function createParticipantSetRole(User $user, string $role): Participant
     {
         $participantRole = ParticipantRole::from($role);
 
@@ -114,6 +125,8 @@ class UserService
         $user->role = UserRole::Participant;
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
+        
+        return $participant;
     }
 
     public function setUserOpen(User $user): User

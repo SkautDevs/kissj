@@ -22,7 +22,7 @@ class RegisterTest extends AppTestCase
         $testEvent = $eventRepository->get(1);
 
         $email = 'test@example.com';
-        $user = $userService->registerUser($email, $testEvent);
+        $user = $userService->registerEmailUser($email, $testEvent);
 
         $this->markTestSkipped('TODO fix generation of link used in email');
         $token = $userService->sendLoginTokenByMail($email, $this->createRequest(''), $testEvent);

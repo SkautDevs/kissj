@@ -417,6 +417,7 @@ flash:
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Generated payments and emails sent"
         redirectedFromSkautis: "Redirected from Skautis"
+        skautisDataPrefilled: "Data from Skautis were prefilled - you still need to fill in the rest of the details"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         confirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -475,3 +476,5 @@ flash:
         confirmNotAllowed: "This payment is belong to different event, confirmation not allowed"
         fioConnectionFailed: "Connection to Fio bank failed, probably due to wrong API key"
         tieParticipantToLeaderError: "Failed to tie participant to the group :("
+        skautisUserNotLoggedIn: "Skautis reports that the participant is not logged in. Please try to log out and log in again"
+        skautisUserError: "Failed to download data from Skautis. Please try to log out and log in again"

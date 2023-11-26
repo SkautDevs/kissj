@@ -423,8 +423,8 @@ class AdminController extends AbstractController
         $emailFrom = $request->getQueryParams()['emailFrom'];
         $emailTo = $request->getQueryParams()['emailTo'];
 
-        $userFrom = $this->userRepository->findUserFromEmailEvent($emailFrom, $event);
-        $userTo = $this->userRepository->findUserFromEmailEvent($emailTo, $event);
+        $userFrom = $this->userRepository->findUserFromEmail($emailFrom, $event);
+        $userTo = $this->userRepository->findUserFromEmail($emailTo, $event);
 
         $participantFrom = $this->participantRepository->findParticipantFromUser($userFrom);
         $participantTo = $this->participantRepository->findParticipantFromUser($userTo);
@@ -447,8 +447,8 @@ class AdminController extends AbstractController
         $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
         $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
-        $userFrom = $this->userRepository->getUserFromEmailEvent($emailFrom, $event);
-        $userTo = $this->userRepository->getUserFromEmailEvent($emailTo, $event);
+        $userFrom = $this->userRepository->getUserFromEmail($emailFrom, $event);
+        $userTo = $this->userRepository->getUserFromEmail($emailTo, $event);
 
         $participantFrom = $this->participantRepository->getParticipantFromUser($userFrom);
         $participantTo = $this->participantRepository->getParticipantFromUser($userTo);

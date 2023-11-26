@@ -50,7 +50,9 @@ abstract class AbstractController
         $event = $this->tryGetEvent($request);
         if ($event instanceof Event) {
             $arguments = array_merge($arguments, ['eventSlug' => $event->slug]);
+        }
 
+        if (array_key_exists('eventSlug', $arguments)) {
             return $response
                 ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments))
                 ->withStatus(302);

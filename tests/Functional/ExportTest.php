@@ -34,7 +34,7 @@ class ExportTest extends AppTestCase
 
         for ($i = 0; $i < 10; $i++) {
             $email = 'test-' . $i . '@example.com';
-            $user = $userService->registerUser($email, $testEvent);
+            $user = $userService->registerEmailUser($email, $testEvent);
             $patrolLeader = $patrolService->getPatrolLeader($user);
             $participantService->addParamsIntoParticipant($patrolLeader, [
                     'patrolName' => 'my great patrol no.' . $i,

@@ -36,7 +36,12 @@
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
     {% endfor %}
     {% if user is not null %}
-        | {{ user.email }}
+        | {% if user.loginType.value == 'skautis' %}
+            <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
+        {% else %}
+            📧
+        {% endif %}
+        {{ user.email }}
         | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{% trans %}_layout.logOut{% endtrans %}</a>
         {% set userStatus = user.status.value %}
     {% else %}

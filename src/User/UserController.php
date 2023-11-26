@@ -6,6 +6,8 @@ namespace kissj\User;
 
 use kissj\AbstractController;
 use kissj\Event\Event;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,6 +19,8 @@ class UserController extends AbstractController
         protected UserService $userService,
         protected UserRegeneration $userRegeneration,
         protected SkautisService $skautisService,
+        protected ParticipantService $participantService,
+        protected ParticipantRepository $participantRepository,
     ) {
     }
 
@@ -39,13 +43,7 @@ class UserController extends AbstractController
             $response,
             'kissj/login.twig',
             [
-                'skautisLoginUri' => $this->skautisService->getLoginUri(
-                    ltrim($this->getRouter($request)->urlFor(
-                        'getDashboard',
-                        ['eventSlug' => $event->slug],
-                    ),
-                    '/'),
-                ),
+                'skautisLoginUri' => $this->skautisService->getLoginUri($event->slug),
             ],
         );
     }
@@ -54,8 +52,8 @@ class UserController extends AbstractController
     {
         $email = $this->getParameterFromBody($request, 'email', true);
         $event = $this->getEvent($request);
-        if (!$this->userRepository->isUserExisting($email, $event)) {
-            $this->userService->registerUser($email, $event);
+        if (!$this->userRepository->isEmailUserExisting($email, $event)) {
+            $this->userService->registerEmailUser($email, $event);
         }
 
         try {
@@ -114,7 +112,20 @@ class UserController extends AbstractController
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
-        $this->userService->setRole($user, $this->getParameterFromBody($request, 'role'));
+        $participant = $this->userService->createParticipantSetRole(
+            $user,
+            $this->getParameterFromBody($request, 'role'),
+        );
+
+        if ($participant->getUserButNotNull()->loginType === UserLoginType::Skautis) {
+            if (!$this->skautisService->isUserLoggedIn()) {
+                $this->flashMessages->error($this->translator->trans('flash.error.skautisUserNotLoggedIn'));
+
+                return $this->redirect($request, $response, 'landing');
+            }
+
+            $this->skautisService->prefillDataFromSkautis($participant);
+        }
 
         return $this->redirect($request, $response, 'getDashboard');
     }

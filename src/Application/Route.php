@@ -32,8 +32,7 @@ class Route
 {
     public function addRoutesInto(App $app): App
     {
-        $app->get($app->getBasePath() . '/', SkautisController::class . '::redirectFromSkautis')
-            ->setName('index');
+        $app->redirect($app->getBasePath() ?: '/', $app->getBasePath() . '/v2/kissj/events', 301);
 
         $app->group($app->getBasePath() . '/v2', function (RouteCollectorProxy $app) {
             $app->redirect('', $app->getBasePath() . '/v2/kissj', 301);
@@ -50,6 +49,9 @@ class Route
                 */
                 $app->get('/events', EventController::class . '::list')
                     ->setName('eventList');
+
+                $app->post('/skautisRedirect', SkautisController::class . '::redirectFromSkautis')
+                    ->setName('skautisRedirect');
             });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {

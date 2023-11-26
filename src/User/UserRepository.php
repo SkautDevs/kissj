@@ -8,24 +8,44 @@ use kissj\Event\Event;
 use kissj\Orm\Repository;
 
 /**
- * @method User[] findBy(mixed[] $criteria)
  * @method User|null findOneBy(mixed[] $criteria)
  * @method User getOneBy(mixed[] $criteria)
  */
 class UserRepository extends Repository
 {
-    public function getUserFromEmailEvent(string $email, Event $event): User
+    public function getUserFromEmail(string $email, Event $event): User
     {
-        return $this->getOneBy(['email' => $email, 'event' => $event]);
+        return $this->getOneBy([
+            'login_type' => UserLoginType::Email->value,
+            'email' => $email,
+            'event' => $event,
+        ]);
     }
 
-    public function findUserFromEmailEvent(string $email, Event $event): ?User
+    public function findUserFromEmail(string $email, Event $event): ?User
     {
-        return $this->findOneBy(['email' => $email, 'event' => $event]);
+        return $this->findOneBy([
+            'login_type' => UserLoginType::Email->value,
+            'email' => $email,
+            'event' => $event,
+        ]);
     }
 
-    public function isUserExisting(string $email, Event $event): bool
+    public function isEmailUserExisting(string $email, Event $event): bool
     {
-        return $this->isExisting(['email' => $email, 'event' => $event]);
+        return $this->isExisting([
+            'login_type' => UserLoginType::Email->value,
+            'email' => $email,
+            'event' => $event,
+        ]);
+    }
+
+    public function findSkautisUser(int $skautisId, Event $event): ?User
+    {
+        return $this->findOneBy([
+            'login_type' => UserLoginType::Skautis->value,
+            'skautis_id' => $skautisId,
+            'event' => $event,
+        ]);
     }
 }
