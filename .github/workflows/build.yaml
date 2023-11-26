@@ -36,6 +36,7 @@ jobs:
           layers: true
           oci: true
           image: php-ubi
+          archs: amd64, arm64
           tags: ${{ inputs.envName}}-${{ github.sha }} latest
           containerfiles: |
             ./deploy/container_images/php/Containerfile-ubi
@@ -65,6 +66,7 @@ jobs:
           layers: true
           oci: true
           image: caddy-ubi
+          archs: amd64, arm64
           tags: ${{ inputs.envName}}-${{ github.sha }} latest
           containerfiles: |
             ./deploy/container_images/caddy/Containerfile-ubi
