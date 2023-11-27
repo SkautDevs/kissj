@@ -30,7 +30,7 @@ class EventInfoMiddleware extends BaseMiddleware
         $route = $routeContext->getRoute();
 
         $eventSlug = $route?->getArgument('eventSlug') ?? '';
-        $event = $this->eventRepository->findOneBy(['slug' => $eventSlug]);
+        $event = $this->eventRepository->findBySlug($eventSlug);
         if ($event instanceof Event) {
             $request = $request->withAttribute('event', $event);
             $this->view->getEnvironment()->addGlobal('event', $event); // used in templates

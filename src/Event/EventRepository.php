@@ -40,4 +40,9 @@ class EventRepository extends Repository
             'end_day' => new Relation(DateTimeUtils::getDateTime('-3 month')->format(DATE_ATOM), '>'),
         ]);
     }
+
+	public function findBySlug(string $eventSlug): ?Event
+	{
+		return $this->findOneBy(['slug' => $eventSlug]);
+	}
 }
