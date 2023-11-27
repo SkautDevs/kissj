@@ -38,6 +38,8 @@ class EventTypeObrok extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->unit = true;
+        $ca->medicaments = true;
+        $ca->psychicalHealth = true;
 
         return $ca;
     }
@@ -49,6 +51,8 @@ class EventTypeObrok extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->unit = true;
+        $ca->medicaments = true;
+        $ca->psychicalHealth = true;
 
         return $ca;
     }

@@ -55,6 +55,8 @@ class ExportService
             'surname', // 5
             'gender',
             'health informations',
+            'medicaments',
+            'psychical health',
             'swimming',
             'note',
         ];
@@ -69,6 +71,8 @@ class ExportService
                 $participant->lastName ?? '', // 5
                 $participant->gender ?? '',
                 $participant->healthProblems ?? '',
+                $participant->medicaments ?? '',
+                $participant->psychicalHealthProblems ?? '',
                 $participant->swimming ?? '',
                 $participant->notes ?? '',
             ];
@@ -176,6 +180,8 @@ class ExportService
             'birthDate',
             'birthPlace',
             'healthProblems',
+            'medicaments',
+            'psychicalHealthProblems',
             'foodPreferences',
             'foodPreferencesRaw', // 20
             'idNumber',
@@ -254,6 +260,8 @@ class ExportService
                     $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
+                    $participant->medicaments ?? '',
+                    $participant->psychicalHealthProblems ?? '',
                     $this->translator->trans($participant->foodPreferences ?? ''),
                     $participant->foodPreferences ?? '', // 20
                     $participant->idNumber ?? '',

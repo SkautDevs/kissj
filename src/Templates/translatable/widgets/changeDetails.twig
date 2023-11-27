@@ -292,7 +292,31 @@
             value="{{ personDetails.getHealthProblems }}"
         >
     </div>
-{% endif %}{% if ca.languages %}
+{% endif %}{% if ca.medicaments %}
+     <div class="form-group">
+         <label for="medicaments">{% trans %}detail.medicaments{% endtrans %}:</label>
+         <input
+                 id="medicaments"
+                 class="form-control form-wide"
+                 type="text"
+                 name="medicaments"
+                 placeholder="{% trans %}detail.medicaments-placeholder{% endtrans %}"
+                 value="{{ personDetails.getMedicaments }}"
+         >
+     </div>
+ {% endif %}{% if ca.psychicalHealth %}
+     <div class="form-group">
+         <label for="psychicalHealthProblems">{% trans %}detail.psychicalIssues{% endtrans %}:</label>
+         <input
+                 id="psychicalHealthProblems"
+                 class="form-control form-wide"
+                 type="text"
+                 name="PsychicalHealthProblems"
+                 placeholder="{% trans %}detail.psychicalIssues-placeholder{% endtrans %}"
+                 value="{{ personDetails.getPsychicalHealthProblems }}"
+         >
+     </div>
+ {% endif %}{% if ca.languages %}
     <div class="form-group">
         <label for="languages">{% trans %}detail.language{% endtrans %}:</label>
         <input

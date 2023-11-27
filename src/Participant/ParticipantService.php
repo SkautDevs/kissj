@@ -73,6 +73,8 @@ class ParticipantService
         }
         $p->birthPlace = $params['birthPlace'] ?? null;
         $p->healthProblems = $params['healthProblems'] ?? null;
+        $p->medicaments = $params['medicaments'] ?? null;
+        $p->psychicalHealthProblems = $params['psychicalHealthProblems'] ?? null;
         $p->foodPreferences = $params['foodPreferences'] ?? null;
         $p->idNumber = $params['idNumber'] ?? null;
         $p->scarf = $params['scarf'] ?? null;
