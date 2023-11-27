@@ -21,6 +21,17 @@ class EventController extends AbstractController
             ['events' => $this->eventRepository->findActiveNontestEvents()],
         );
     }
+
+	public function redirectEvent(string $eventSlug, Request $request, Response $response): Response
+	{
+		$event = $this->eventRepository->findBySlug($eventSlug);
+		if ($event === null) {
+			return $this->redirect($request, $response, 'eventList');
+		}
+
+		return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $event->slug]);
+	}
+
     /*
     public function createEvent(Request $request, Response $response, array $args) {
         $params = $request->getParams();
@@ -67,6 +78,5 @@ class EventController extends AbstractController
         $this->flashMessages->warning('Některé údaje nebyly validní - prosím zkus zadání údajů znovu.');
 
         return $response->withRedirect($this->router->urlFor('createEvent'));
-        // TODO add event-admins (roles table?)
     }*/
 }

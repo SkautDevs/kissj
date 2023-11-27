@@ -283,6 +283,9 @@ class Route
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });
+		
+		$app->get($app->getBasePath() . '/{eventSlug}', EventController::class . '::redirectEvent')
+			->setName('redirectEvent');
 
         return $app;
     }
