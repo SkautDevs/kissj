@@ -98,6 +98,8 @@ create table participant
 	email                      TEXT,
 	legal_representative       TEXT,
 	health_problems            TEXT,
+	medicaments 			   TEXT,
+	psychical_health_problems  TEXT,
 	food_preferences           TEXT,
 	scout_unit                 TEXT,
 	tshirt                     TEXT,

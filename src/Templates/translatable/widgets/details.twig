@@ -49,6 +49,10 @@
     {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences|trans }}</b><br/>
 {% endif %}{% if ca.health %}
     {% trans %}detail.issues{% endtrans %}: <b>{{ person.getHealthProblems }}</b><br/>
+{% endif %}{% if ca.medicaments %}
+    {% trans %}detail.medicaments{% endtrans %}: <b>{{ person.getMedicaments }}</b><br/>
+{% endif %}{% if ca.psychicalHealth %}
+    {% trans %}detail.psychicalIssues{% endtrans %}: <b>{{ person.getPsychicalHealthProblems }}</b><br/>
 {% endif %}{% if ca.languages %}
     {% trans %}detail.language{% endtrans %}: <b>{{ person.getLanguages }}</b><br/>
 {% endif %}{% if ca.swimming %}

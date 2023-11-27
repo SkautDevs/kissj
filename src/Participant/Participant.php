@@ -35,6 +35,8 @@ use Ramsey\Uuid\Uuid;
  * @property DateTimeInterface|null $birthDate m:passThru(dateFromString|dateToString)
  * @property string|null            $birthPlace
  * @property string|null            $healthProblems
+ * @property string|null            $medicaments
+ * @property string|null            $psychicalHealthProblems
  * @property string|null            $foodPreferences
  * @property string|null            $idNumber
  * @property string|null            $scarf
