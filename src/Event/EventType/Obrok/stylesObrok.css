@@ -21,11 +21,11 @@
         --color-accent: #d74b33;
         --color-fading: #c83817;
         --color-light: #274b80;
-        --color-dark: #ede9e6;
+        --color-dark: #101010;
         --color-grey: #4c4c4c;
     }
     .alert-info {
-        --color: #C83817;
+        --color: #d74b33;
         color: var(--color-dark);
     }
 }
