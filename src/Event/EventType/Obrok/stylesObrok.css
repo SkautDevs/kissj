@@ -14,15 +14,19 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-background: #212121;
-        --color-card-background: #252525;
-        --color-input-background: #2f2f2f;
+        --color-background: #ede9e6;
+        --color-card-background: #d0d0d0;
+        --color-input-background: #ede9e6;
         --color-main: #486e9b;
         --color-accent: #d74b33;
         --color-fading: #c83817;
         --color-light: #274b80;
-        --color-dark: #56a3c9;
-        --color-grey: #6e6e6e;
+        --color-dark: #ede9e6;
+        --color-grey: #4c4c4c;
+    }
+    .alert-info {
+        --color: #C83817;
+        color: var(--color-dark);
     }
 }
 
