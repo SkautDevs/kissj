@@ -63,25 +63,31 @@ class SkautisService
         try {
             $skautisUserDetail = $this->skautis->UserManagement->UserDetail();
             $skautisUserDetailExternal = $this->skautis->UserManagement->UserDetailExternal();
-            $skautisUnitDetail = $this->skautis->OrganizationUnit->UnitDetail();
+            if ($skautisUserDetail->HasMembership === true) {
+                $skautisUnitName = $this->skautis->OrganizationUnit->UnitDetail()->NewDisplayName;
+            } else {
+                // suppress call to skautis if user has no membership, because it will throw exception
+                $skautisUnitName = '';
+            }
 
             return new SkautisUserData(
                 $skautisUserDetailExternal->ID,
                 $skautisUserDetailExternal->UserName,
                 $skautisUserDetailExternal->ID_Person,
-                $skautisUserDetailExternal->FirstName,
-                $skautisUserDetailExternal->LastName,
-                $skautisUserDetailExternal->NickName,
+                $skautisUserDetailExternal->FirstName ?? '',
+                $skautisUserDetailExternal->LastName ?? '',
+                $skautisUserDetailExternal->NickName ?? '',
                 DateTimeUtils::getDateTime($skautisUserDetailExternal->Birthday),
                 $skautisUserDetailExternal->Email,
-                $skautisUserDetailExternal->Phone,
-                $skautisUserDetailExternal->Street,
-                $skautisUserDetailExternal->City,
-                $skautisUserDetailExternal->PostCode,
+                $skautisUserDetailExternal->Phone ?? '',
+                $skautisUserDetailExternal->Street ?? '',
+                $skautisUserDetailExternal->City ?? '',
+                $skautisUserDetailExternal->PostCode ?? '',
                 $skautisUserDetail->HasMembership,
-                $skautisUnitDetail->NewDisplayName,
+                $skautisUnitName,
             );
         } catch (Exception $e) {
+            // TODO log into Sentry
             $this->logger->error('Error while getting user details from skautis: ' . $e->getMessage(), [
                 'exception' => $e,
             ]);

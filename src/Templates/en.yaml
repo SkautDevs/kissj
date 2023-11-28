@@ -416,7 +416,6 @@ flash:
         differentScarfs: "Participants have differently selected scarf option - it will be changed at the buyer's registration form to correspond the payment."
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Generated payments and emails sent"
-        redirectedFromSkautis: "Redirected from Skautis"
         skautisDataPrefilled: "Data from Skautis were prefilled - you still need to fill in the rest of the details"
     success:
         linkSent: "Email sent! Follow the link in it to log in."

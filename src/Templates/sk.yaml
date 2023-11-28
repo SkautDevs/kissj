@@ -385,7 +385,6 @@ flash:
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
-        redirectedFromSkautis: "Přesměrováno ze Skautisu"
         skautisDataPrefilled: "Data ze Skautisu byla předvyplněna - je stále potřeba doplnit zbytek údajů"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."

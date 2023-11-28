@@ -23,7 +23,6 @@ class SkautisController extends AbstractController
     public function redirectFromSkautis(Request $request, Response $response): Response
     {
         $this->skautisService->saveDataFromPost((array)$request->getParsedBody());
-        $this->flashMessages->info($this->translator->trans('flash.info.redirectedFromSkautis'));
 
         $eventSlug = $this->getParameterFromQuery($request, 'ReturnUrl');
         $event = $this->eventRepository->getOneBy(['slug' => $eventSlug]);
@@ -31,14 +30,14 @@ class SkautisController extends AbstractController
         if (!$this->skautisService->isUserLoggedIn()) {
             $this->flashMessages->error($this->translator->trans('flash.error.skautisUserNotLoggedIn'));
             
-            return $this->redirect($request, $response, 'landing');
+            return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);
         }
 
         $skautisUserData = $this->skautisService->getUserDetailsFromLoggedSkautisUser();
         if ($skautisUserData === null) {
             $this->flashMessages->error($this->translator->trans('flash.error.skautisUserError'));
 
-            return $this->redirect($request, $response, 'landing');
+            return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);
         }
 
         $this->skautisService->getOrCreateAndLogInSkautisUser($skautisUserData, $event);
