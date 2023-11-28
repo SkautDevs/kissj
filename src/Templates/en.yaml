@@ -145,6 +145,7 @@ detail:
     driver-dont: "I don't have it or I don't want to drive on the event"
     driver-less10k: "I have it, but have not driven more than 10 000 km"
     driver-more10k: "I have it and have driven more than 10 000 km"
+    loginMethod: "Login method"
     closed-at: "Locked"
     adminNotice: "Note from admin"
 detail-guest:
@@ -153,6 +154,8 @@ detail-guest:
 _layout:
     title: "Registration"
     titleBar: "Registration"
+    skautisAccountNotConnected: "not paired with real person"
+    skautisAccountConnected: "approved"
     logOut: "Log out"
     editingBar: "Editing"
     lockedBar: "Locked"

@@ -127,6 +127,7 @@ detail:
     driver-dont: "Nemám alebo na akcii nechcem šoférovať"
     driver-less10k: "Mám, ale mám najazdených menej ako 10 000 km"
     driver-more10k: "Mám a mám najazdených viac ako 10 000 km"
+    loginMethod: "Přihlášení"
     closed-at: "Uzamknut"
     adminNotice: "Poznámka od admina"
 detail-guest:
@@ -135,6 +136,8 @@ detail-guest:
 _layout:
     title: "Registrácia"
     titleBar: "Registrácia"
+    skautisAccountNotConnected: "nepropojeno s reálnou osobou"
+    skautisAccountConnected: "ověřeno"
     logOut: "Odhlásiť"
     editingBar: "Otvorené"
     lockedBar: "Uzamknuté"

@@ -38,6 +38,9 @@
     {% if user is not null %}
         | {% if user.loginType.value == 'skautis' %}
             <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
+            {%  if not user.skautisHasMembership %}    
+                {% trans %}_layout.skautisAccountNotConnected{% endtrans %} ❌
+            {% endif %}
         {% else %}
             📧
         {% endif %}

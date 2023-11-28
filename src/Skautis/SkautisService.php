@@ -136,4 +136,12 @@ class SkautisService
         
         return $participant;
     }
+
+    public function updateSkautisUserMembership(User $user, SkautisUserData $skautisUserData): User
+    {
+        $user->skautisHasMembership = $skautisUserData->hasMembership;
+        $this->userRepository->persist($user);
+        
+        return $user;
+    }
 }

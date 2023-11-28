@@ -1,4 +1,16 @@
 {% include 'widgets/details.twig' with {'person': person, 'ca': ca} %}
+<i>{% trans %}detail.loginMethod{% endtrans %}: <b>
+{% if person.user.loginType.value == 'skautis' %}
+    skautis <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
+    {%  if not person.user.skautisHasMembership %}
+        {% trans %}_layout.skautisAccountNotConnected{% endtrans %} ❌
+    {% else %}
+        {% trans %}_layout.skautisAccountConnected{% endtrans %} ✔
+    {% endif %}
+{% else %}
+    mail 📧
+{% endif %}
+</b></i><br/>
 {% if person.getRegistrationCloseDate %}
     <i>{% trans %}detail.closed-at{% endtrans %}: <b>{{ person.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b></i><br/>
 {% endif %}
