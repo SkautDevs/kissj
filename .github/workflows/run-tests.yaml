@@ -1,0 +1,11 @@
+name: Staging
+
+on:
+  pull_request:
+    branches: [ staging, master ]
+
+  workflow_dispatch:
+jobs:
+
+  test:
+    uses: ./.github/workflows/tests.yaml
