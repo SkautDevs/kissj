@@ -136,6 +136,8 @@ detail:
     printedHandbook: "Paper Handbook"
     printedHandbook-detail: "I want to obtain paper printed event handbook"
     notice: "Notice"
+    handbook-yes: "yes"
+    handbook-no: "no"
     notice-placeholder: "anything else?"
     skills: "Skills"
     skills-placeholder: "sailing; food handling certificate; advanced first aid; ..."
