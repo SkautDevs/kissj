@@ -133,6 +133,8 @@ detail:
     uploadedFileSuccessful: "file successfully uploaded!"
     uploadedFileNote: "PDF with consent can be found at our website"
     uploadFileMissing: "file not uploaded yet :("
+    printedHandbook: "Paper Handbook"
+    printedHandbook-detail: "I want to obtain paper printed event handbook"
     notice: "Notice"
     notice-placeholder: "anything else?"
     skills: "Skills"

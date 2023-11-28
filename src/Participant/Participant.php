@@ -50,6 +50,7 @@ use Ramsey\Uuid\Uuid;
  * @property string|null            $skills
  * @property array|null             $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
  * @property string|null            $driversLicense
+ * @property string|null            $printedHandbook
  * @property string|null            $notes
  * @property DateTimeInterface|null $registrationCloseDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $registrationApproveDate m:passThru(dateFromString|dateToString)
