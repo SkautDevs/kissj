@@ -57,7 +57,7 @@ class ExportService
             'health informations',
             'medicaments',
             'psychical health',
-            'swimming',
+            'swimming', // 10
             'note',
         ];
 
@@ -73,7 +73,7 @@ class ExportService
                 $participant->healthProblems ?? '',
                 $participant->medicaments ?? '',
                 $participant->psychicalHealthProblems ?? '',
-                $participant->swimming ?? '',
+                $participant->swimming ?? '', // 10
                 $participant->notes ?? '',
             ];
         }
@@ -181,26 +181,27 @@ class ExportService
             'birthPlace',
             'healthProblems',
             'medicaments',
-            'psychicalHealthProblems',
+            'psychicalHealthProblems', // 20
             'foodPreferences',
-            'foodPreferencesRaw', // 20
+            'foodPreferencesRaw',
             'idNumber',
             'scarf',
-            'swimming',
+            'swimming', // 25
             'tshirt',
-            'arrivalDate', // 25
+            'arrivalDate',
             'departureDate',
             'uploadedOriginalFilename',
+            'printedHandbook', // 30
             'notes',
             'updatedAt',
-            'registrationCloseDate', // 30
+            'registrationCloseDate',
             'registrationApproveDate',
-            'registrationPayDate',
+            'registrationPayDate', // 35
             'patrolLeaderId_patrolParticipantId',
             'patrolName',
-            'patrolParticipantCount', // 35
+            'patrolParticipantCount',
             'istSkills',
-            'istPreferredPosition',
+            'istPreferredPosition', // 40
             'driverLicense',
         ];
 
@@ -261,21 +262,22 @@ class ExportService
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
                     $participant->medicaments ?? '',
-                    $participant->psychicalHealthProblems ?? '',
+                    $participant->psychicalHealthProblems ?? '', // 20
                     $this->translator->trans($participant->foodPreferences ?? ''),
-                    $participant->foodPreferences ?? '', // 20
+                    $participant->foodPreferences ?? '',
                     $participant->idNumber ?? '',
                     $participant->scarf ?? '',
-                    $this->translator->trans($participant->swimming ?? ''),
+                    $this->translator->trans($participant->swimming ?? ''), //25
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                         . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
-                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '', // 25
+                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
-                    $participant->uploadedOriginalFilename ?? '',
+                    $participant->uploadedOriginalFilename ?? '', // 30
+                    $participant->printedHandbook ?? '',
                     $participant->notes ?? '',
                     $participant->updatedAt ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
-                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '', // 30
-                    $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
                     $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                 ],
                 $pPart,

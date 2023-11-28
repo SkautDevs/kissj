@@ -106,6 +106,7 @@ create table "participant"
 	patrol_leader_id int,
 	patrol_name TEXT,
 	drivers_license TEXT,
+	printed_handbook TEXT,
 	languages TEXT,
 	skills TEXT,
 	preferred_position TEXT,

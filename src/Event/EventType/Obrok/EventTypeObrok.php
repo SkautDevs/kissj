@@ -40,6 +40,7 @@ class EventTypeObrok extends EventType
         $ca->unit = true;
         $ca->medicaments = true;
         $ca->psychicalHealth = true;
+        $ca->printedHandbook = true;
 
         return $ca;
     }
@@ -53,6 +54,7 @@ class EventTypeObrok extends EventType
         $ca->unit = true;
         $ca->medicaments = true;
         $ca->psychicalHealth = true;
+        $ca->printedHandbook = true;
 
         return $ca;
     }

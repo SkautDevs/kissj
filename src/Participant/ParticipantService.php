@@ -91,6 +91,7 @@ class ParticipantService
         $preferredPosition = $params['preferredPosition'] ?? [];
         $p->preferredPosition = $preferredPosition;
         $p->driversLicense = $params['driversLicense'] ?? null;
+        $p->printedHandbook = $params['printedHandbook'] ?? null;
         $p->notes = $params['notes'] ?? null;
 
         return $p;

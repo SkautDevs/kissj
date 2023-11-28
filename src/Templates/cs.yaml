@@ -133,6 +133,8 @@ detail:
     uploadedFileSuccessful: "soubor úspěšně nahraný!"
     uploadedFileNote: "PDF s potvrzením najdeš na našem webu"
     uploadFileMissing: "soubor zatím není nahraný :("
+    printedHandbook: "Tištěný handbook"
+    printedHandbook-detail: "Chci na akci dostat vytištěný handbook"
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"
     skills: "Dovednosti"

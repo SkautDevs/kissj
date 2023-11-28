@@ -454,7 +454,19 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.notes %}
+{% endif %}{% if ca.printedhandbook %}
+     <div class="form-group">
+         <label for="printedHandbook">{% trans %}detail.printedHandbook-detail{% endtrans %}:</label>
+         <input
+                 id="printedHandbook"
+                 class="form-control form-wide"
+                 type="checkbox"
+                 name="printedHandbook"
+                 value="yes"
+                 {% if personDetails.getPrintedHandbook == 'yes' %} checked{% endif %}
+         />
+     </div>
+ {% endif %}{% if ca.notes %}
     <div class="form-group">
         <label for="notes">{% trans %}detail.notice{% endtrans %}:</label>
         <textarea
