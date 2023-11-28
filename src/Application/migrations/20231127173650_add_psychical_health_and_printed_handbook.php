@@ -10,6 +10,7 @@ final class AddPsychicalHealthAndMedications extends AbstractMigration
         $tableUser = $this->table('participant');
         $tableUser->addColumn('medications', 'string', ['null' => true]);
         $tableUser->addColumn('psychical_health_problems', 'string', ['null' => true]);
+        $tableUser->addColumn('printed_handbook', 'boolean', ['null' => true]);
         $tableUser->save();
     }
 
@@ -18,6 +19,7 @@ final class AddPsychicalHealthAndMedications extends AbstractMigration
         $tableUser = $this->table('participant');
         $tableUser->removeColumn('medications');
         $tableUser->removeColumn('psychical_health_problems');
+        $tableUser->removeColumn('printed_handbook');
         $tableUser->save();
     }
 }

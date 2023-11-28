@@ -463,7 +463,7 @@
                  type="checkbox"
                  name="printedHandbook"
                  value="yes"
-                 {% if personDetails.getPrintedHandbook == 'yes' %} checked{% endif %}
+                 {% if personDetails.getPrintedHandbook %} checked{% endif %}
          />
      </div>
  {% endif %}{% if ca.notes %}

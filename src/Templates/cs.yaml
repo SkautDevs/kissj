@@ -135,6 +135,8 @@ detail:
     uploadFileMissing: "soubor zatím není nahraný :("
     printedHandbook: "Tištěný handbook"
     printedHandbook-detail: "Chci na akci dostat vytištěný handbook"
+    handbook-yes: "ano"
+    handbook-no: "ne"
     notice: "Poznámky"
     notice-placeholder: "cokoli dalšího?"
     skills: "Dovednosti"
