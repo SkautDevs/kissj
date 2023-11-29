@@ -456,14 +456,14 @@
     </div>
 {% endif %}{% if ca.printedHandbook %}
      <div class="form-group">
-         <label for="printedHandbook">{% trans %}detail.printedHandbook-detail{% endtrans %}:</label>
+         <label for="printedHandbook">{% trans %}detail.printedHandbook-detail{% endtrans %}: </label>
          <input
                  id="printedHandbook"
                  type="checkbox"
                  name="printedHandbook"
                  value="yes"
                  {% if personDetails.getPrintedHandbook %} checked{% endif %}
-         />
+         >
      </div>
  {% endif %}{% if ca.notes %}
     <div class="form-group">

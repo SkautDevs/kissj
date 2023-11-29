@@ -19,7 +19,7 @@ abstract class AbstractContentArbiter
     public bool $birthDate = true;
     public bool $birthPlace = false;
     public bool $health = true;
-    public bool $medicaments = true;
+    public bool $medicaments = false;
     public bool $psychicalHealth = true;
     public bool $food = false;
     public bool $idNumber = false;
@@ -32,6 +32,6 @@ abstract class AbstractContentArbiter
     public bool $skills = false;
     public bool $preferredPosition = false;
     public bool $driver = false;
-    public bool $printedHandbook = true;
+    public bool $printedHandbook = false;
     public bool $notes = true;
 }
