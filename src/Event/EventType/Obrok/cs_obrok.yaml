@@ -2,7 +2,7 @@ closed:
     welcome: "Ahoj!"
 closeRegistration:
     lockRegistration: "Skutečně chceš uzamknout registraci a poslat nám ji ke schválení?"
-    protectionAgree: "Přečetl/a jsem si a souhlasím s <a href='https://obrok24.cz/podminky-a-pravidla-akce-obrok-2024/'>podmínkami registrace</a> a <a href='https://obrok24.cz/zasady-o-nakladani-s-osobnimi-udaji-na-akci-obrok-24/'>zásadami o nákládání s osobními údaji</a>"
+    protectionAgree: "Přečetl/a jsem si a souhlasím s <a href='https://obrok24.cz/zasady-o-nakladani-s-osobnimi-udaji-na-akci-obrok-24/'>zásadami o nákládání s osobními údaji</a> a podmínkami registrace dostupnými na:"
 userCustomHelp:
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek za skupinu."
     statusApprovedTp: "Tvá přihláška byla schválena. Nyní už musí jen tvůj vedoucí skupiny zaplatit registrační poplatek."
