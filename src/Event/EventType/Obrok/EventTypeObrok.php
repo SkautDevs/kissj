@@ -27,6 +27,7 @@ class EventTypeObrok extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->tshirt = true;
+        $ca->medicaments = true;
         $ca->printedHandbook = true;
         return $ca;
     }
@@ -38,6 +39,7 @@ class EventTypeObrok extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->unit = true;
+        $ca->medicaments = true;
         $ca->printedHandbook = true;
 
         return $ca;
@@ -50,6 +52,7 @@ class EventTypeObrok extends EventType
         $ca->phone = true;
         $ca->email = true;
         $ca->unit = true;
+        $ca->medicaments = true;
         $ca->printedHandbook = true;
 
         return $ca;
