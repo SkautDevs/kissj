@@ -32,6 +32,6 @@ abstract class AbstractContentArbiter
     public bool $skills = false;
     public bool $preferredPosition = false;
     public bool $driver = false;
-    public bool $printedHandbook = false;
+    public bool $printedHandbook = true;
     public bool $notes = true;
 }

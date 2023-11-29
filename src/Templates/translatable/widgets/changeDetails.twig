@@ -311,7 +311,7 @@
                  id="psychicalHealthProblems"
                  class="form-control form-wide"
                  type="text"
-                 name="PsychicalHealthProblems"
+                 name="psychicalHealthProblems"
                  placeholder="{% trans %}detail.psychicalIssues-placeholder{% endtrans %}"
                  value="{{ personDetails.getPsychicalHealthProblems }}"
          >
@@ -454,12 +454,11 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.printedhandbook %}
+{% endif %}{% if ca.printedHandbook %}
      <div class="form-group">
          <label for="printedHandbook">{% trans %}detail.printedHandbook-detail{% endtrans %}:</label>
          <input
                  id="printedHandbook"
-                 class="form-control form-wide"
                  type="checkbox"
                  name="printedHandbook"
                  value="yes"

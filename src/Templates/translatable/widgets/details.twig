@@ -89,7 +89,8 @@
         {{ detail.uploadFileMissing|trans }}
     {% endif %}<br/>
 {% endif %}{% if ca.printedHandbook %}
-    {% trans %}detail.printedHandbook{% endtrans %}:<b>{{ (person.getPrintedHandbook ? detail.handbook-yes : detail.handbook-no)|trans }}</b><br/>
+    {% trans %}detail.printedHandbook{% endtrans %}:<b>
+        {% if person.getPrintedHandbook %} {% trans %}detail.handbook-yes{% endtrans %} {% else %}{% trans %}detail.handbook-no{% endtrans %} {% endif %}</b><br/>
 {% endif %}{% if ca.notes %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
