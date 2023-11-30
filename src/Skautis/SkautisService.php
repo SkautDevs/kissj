@@ -65,8 +65,9 @@ class SkautisService
         try {
             $skautisUserDetail = $this->skautis->UserManagement->UserDetail();
             $skautisUserDetailExternal = $this->skautis->UserManagement->UserDetailExternal();
-            if ($skautisUserDetail->HasMembership === true) {
-                $skautisUnitName = $this->skautis->OrganizationUnit->UnitDetail()->NewDisplayName;
+            $idPersonFromSkautis = $skautisUserDetail->ID_Person;
+            if ($skautisUserDetail->HasMembership === true && is_numeric($idPersonFromSkautis)) {
+                $skautisUnitName = $this->requestForUnitNameFromActiveMembership($idPersonFromSkautis);
             } else {
                 // suppress call to skautis if user has no membership, because it will throw exception
                 $skautisUnitName = '';
@@ -75,7 +76,7 @@ class SkautisService
             return new SkautisUserData(
                 $skautisUserDetailExternal->ID,
                 $skautisUserDetailExternal->UserName,
-                $skautisUserDetailExternal->ID_Person,
+                $idPersonFromSkautis,
                 $skautisUserDetailExternal->FirstName ?? '',
                 $skautisUserDetailExternal->LastName ?? '',
                 $skautisUserDetailExternal->NickName ?? '',
@@ -145,5 +146,22 @@ class SkautisService
         $this->userRepository->persist($user);
         
         return $user;
+    }
+
+    private function requestForUnitNameFromActiveMembership(int $idPersonFromSkautis): string
+    {
+        $skautisMemberships = $this->skautis->OrganizationUnit->MembershipAllPerson([
+            'ID_Person' => $idPersonFromSkautis,
+            'ID_MembershipType' => 'radne',
+            'IsValid' => true,
+        ])->MembershipAllOutput;
+
+        $skautisUnitName = sprintf(
+            '%s - %s',
+            $skautisMemberships->RegistrationNumber,
+            $skautisMemberships->Unit
+        );
+
+        return $skautisUnitName;
     }
 }
