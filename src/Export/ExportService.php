@@ -273,7 +273,7 @@ class ExportService
                     $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
                     $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '', // 30
-                    $participant->printedHandbook ?? '',
+                    $participant->printedHandbook ? (string)$participant->printedHandbook : '',
                     $participant->notes ?? '',
                     $participant->updatedAt ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
                     $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',

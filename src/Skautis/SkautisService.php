@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace kissj\Skautis;
 
-use Exception;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Logging\Sentry\SentryCollector;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 use Skautis\Exception as SkautisException;
 use Skautis\Skautis;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Throwable;
 
 class SkautisService
 {
@@ -32,6 +33,7 @@ class SkautisService
         private readonly FlashMessagesInterface $flashMessages,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
+        private readonly SentryCollector $sentryCollector,
     ) {
         $this->skautis = $skautisFactory->getSkautis();
     }
@@ -86,10 +88,10 @@ class SkautisService
                 $skautisUserDetail->HasMembership,
                 $skautisUnitName,
             );
-        } catch (Exception $e) {
-            // TODO log into Sentry
-            $this->logger->error('Error while getting user details from skautis: ' . $e->getMessage(), [
-                'exception' => $e,
+        } catch (Throwable $t) {
+            $this->sentryCollector->collect($t);            
+            $this->logger->error('Error while getting user details from skautis: ' . $t->getMessage(), [
+                'throwable' => $t,
             ]);
 
             return null;
