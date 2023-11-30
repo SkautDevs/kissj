@@ -15,7 +15,6 @@ use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
-use kissj\Skautis\SkautisUserData;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -180,7 +179,7 @@ class ParticipantService
 
         if (!$participant instanceof TroopParticipant && !$event->canRegistrationBeLocked()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed', [
-                '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%h:%i:%s'),
+                '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%H:%I:%S'),
             ]));
 
             $validityFlag = false;
