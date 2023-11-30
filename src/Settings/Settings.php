@@ -152,7 +152,7 @@ class Settings
         $container[SkautisFactory::class] = function (): SkautisFactory {
             return new SkautisFactory(
                 $_ENV['SKAUTIS_APP_ID'],
-                (bool)$_ENV['SKAUTIS_USE_TEST'],
+                $_ENV['SKAUTIS_USE_TEST'] !== 'false',
             );
         };
         $container[Translator::class] = function () {
