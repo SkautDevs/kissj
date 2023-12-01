@@ -36,3 +36,8 @@
     margin: 20px;
     width: 200px;
  }
+
+ .email-body {
+    background: unset;
+    padding: 10px;
+ }
