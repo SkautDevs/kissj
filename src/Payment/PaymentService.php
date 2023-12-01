@@ -11,13 +11,14 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\User\UserService;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService
@@ -31,7 +32,8 @@ class PaymentService
         private readonly FlashMessagesBySession $flashMessages,
         private readonly PhpMailerWrapper $mailer,
         private readonly TranslatorInterface $translator,
-        private readonly Logger $logger,
+        private readonly LoggerInterface $logger,
+        private readonly SentryCollector $sentryCollector,
     ) {
     }
 
@@ -153,6 +155,7 @@ class PaymentService
                     $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
                 }
             } catch (ServiceUnavailable $e) {
+                $this->sentryCollector->collect($e);
                 $this->flashMessages->error($this->translator->trans('flash.error.fioConnectionFailed'));
                 $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
             }

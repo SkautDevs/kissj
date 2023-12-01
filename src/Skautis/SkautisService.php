@@ -67,7 +67,7 @@ class SkautisService
             $skautisUserDetailExternal = $this->skautis->UserManagement->UserDetailExternal();
             $idPersonFromSkautis = $skautisUserDetail->ID_Person;
             if ($skautisUserDetail->HasMembership === true && is_numeric($idPersonFromSkautis)) {
-                $skautisUnitName = $this->requestForUnitNameFromActiveMembership($idPersonFromSkautis);
+                $skautisUnitName = $this->requestForUnitNameFromActiveMembership((int)$idPersonFromSkautis);
             } else {
                 // suppress call to skautis if user has no membership, because it will throw exception
                 $skautisUnitName = '';

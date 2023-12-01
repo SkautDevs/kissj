@@ -7,6 +7,7 @@ namespace kissj\BankPayment;
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use h4kuna\Fio\Response\Read\Transaction;
 use kissj\Event\Event;
+use kissj\Logging\Sentry\SentryCollector;
 use Psr\Log\LoggerInterface;
 
 class FioBankPaymentService implements IBankPaymentService
@@ -15,6 +16,7 @@ class FioBankPaymentService implements IBankPaymentService
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly FioBankReaderFactory $fioBankReaderFactory,
         private readonly LoggerInterface $logger,
+        private readonly SentryCollector $sentryCollector,
     ) {
     }
 
@@ -23,11 +25,12 @@ class FioBankPaymentService implements IBankPaymentService
         try {
             $this->fioBankReaderFactory->getFioRead($event)->setLastDate($dateTime);
         } catch (ServiceUnavailable $e) {
-            $this->logger->error('Setting breakpoint for Fio Bank failed: '.$e->getMessage());
+            $this->sentryCollector->collect($e);
+            $this->logger->error('Setting breakpoint for Fio Bank failed: ' . $e->getMessage());
 
             return false;
         }
-        $this->logger->info('Set breakpoint for Fio Bank on time '.$dateTime->format('Y-d-m'));
+        $this->logger->info('Set breakpoint for Fio Bank on time ' . $dateTime->format('Y-d-m'));
 
         return true;
     }

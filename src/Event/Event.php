@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event;
 
 use DateTimeInterface;
+use Exception;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventType\Aqua\EventTypeAqua;
 use kissj\Event\EventType\EventType;
@@ -91,23 +92,5 @@ class Event extends EntityDatetime
     public function canRegistrationBeLocked(): bool
     {
         return $this->startRegistration <= DateTimeUtils::getDateTime();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getLogoInBase64(): string
-    {
-        try {
-            $logo = file_get_contents(__DIR__ . '/../../public' . $this->logoUrl);
-        } catch (\Exception $e) {
-            $logo = false;
-        }
-
-        if ($logo === false) {
-            return '';
-        }
-
-        return base64_encode($logo);
     }
 }
