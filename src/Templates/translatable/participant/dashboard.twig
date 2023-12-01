@@ -5,6 +5,7 @@
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
         {% if person is Leader %}{{ person.getPatrolName }}{% endif %}
+        -
         {% trans %}dashboard.details{% endtrans %}
     </h2>
     {% include('widgets/userCustomHelp.twig') %}
