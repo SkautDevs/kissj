@@ -113,6 +113,11 @@ footer {
 	align-self: center;
 }
 
+.footer-logo {
+    margin: 20px;
+    width: 200px;
+}
+
 input, textarea, select, button {
 	font-family: 'themix', sans-serif;
 	background: var(--color-input-background);
