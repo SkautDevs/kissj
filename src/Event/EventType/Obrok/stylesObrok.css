@@ -8,6 +8,8 @@
      --color-light: #56a3c9;
      --color-dark: #486e9b;
      --color-grey: #818181;
+  		 --color-link: #274b80;
+		   --color-link-visited: #5281ab;
  }
  .alert-info {
      --color: white;
