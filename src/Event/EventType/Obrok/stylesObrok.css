@@ -8,23 +8,31 @@
      --color-light: #56a3c9;
      --color-dark: #486e9b;
      --color-grey: #818181;
-  		 --color-link: #274b80;
-		   --color-link-visited: #5281ab;
+     --color-link: #274b80;
+     --color-link-visited: #5281ab;
  }
+
  .alert-info {
      --color: white;
      color: var(--color-dark);
  }
+
  .alert-success {
      --color: #486e9b;
      color: white;
  }
+
  .alert-warning {
      --color: #e58a0b;
      color: white;
  }
+
  .alert-error {
      --color: #a21f16;
      color: white;
  }
 
+ .footer-logo {
+    margin: 20px;
+    width: 200px;
+ }
