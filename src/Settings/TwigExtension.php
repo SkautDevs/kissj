@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Settings;
 
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\UserStatus;
@@ -33,6 +34,9 @@ class TwigExtension extends AbstractExtension
             }),
             new TwigTest('Troop', function ($participant): bool {
                 return $participant instanceof TroopLeader || $participant instanceof TroopParticipant;
+            }),
+            new TwigTest('hasUser', function ($participant): bool {
+                return !$participant instanceof PatrolParticipant;
             }),
             new TwigTest('eligibleForShowTieCode', function ($participant): bool {
                 return (
