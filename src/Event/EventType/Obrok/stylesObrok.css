@@ -10,16 +10,16 @@
      --color-grey: #818181;
  }
  .alert-info {
-     --color: #b17e4d;
+     --color: white;
      color: var(--color-dark);
  }
  .alert-success {
-     --color: #c1b4ab;
-     color: var(--color-dark)
+     --color: #486e9b;
+     color: white;
  }
  .alert-warning {
-     --color: #f3d046;
-     color: var(--color-dark)
+     --color: #e58a0b;
+     color: white;
  }
  .alert-error {
      --color: #a21f16;
