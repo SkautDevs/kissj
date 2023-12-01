@@ -11,6 +11,7 @@ use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\MailerSettings;
 use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\SentryContextMiddleware;
@@ -137,8 +138,14 @@ class Settings
                 $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
             );
         };
-        $container[S3bucketFileHandler::class]
-            = fn (S3Client $s3Client) => new S3bucketFileHandler($s3Client, $_ENV['S3_BUCKET']);
+        $container[S3bucketFileHandler::class] = fn (
+            S3Client $s3Client,
+            SentryCollector $sentryCollector
+        ) => new S3bucketFileHandler(
+            $s3Client,
+            $_ENV['S3_BUCKET'],
+            $sentryCollector,
+        );
         $container[S3Client::class] = fn () => new S3Client([
             'version' => 'latest',
             'region' => $_ENV['S3_REGION'],

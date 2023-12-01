@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
+use Exception;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
@@ -58,11 +59,11 @@ class UserController extends AbstractController
 
         try {
             $this->userService->sendLoginTokenByMail($email, $request, $event);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($_ENV['DEBUG'] === 'true') {
-                throw new \Exception($e->getMessage(), $e->getCode(), $e);
+                throw new Exception($e->getMessage(), $e->getCode(), $e);
             }
-            // TODO add Sentry log
+            $this->sentryCollector->collect($e);
             $this->logger->addError('Error sending login email to ' . $email . ' with token ' .
                 $this->userService->getTokenForEmail($email, $event), [$e]);
             $this->flashMessages->error($this->translator->trans('flash.error.mailError'));
