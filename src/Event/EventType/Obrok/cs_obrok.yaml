@@ -6,6 +6,8 @@ closeRegistration:
 userCustomHelp:
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek za skupinu."
     statusApprovedTp: "Tvá přihláška byla schválena. Nyní už musí jen tvůj vedoucí skupiny zaplatit registrační poplatek."
+    statusOpenTl: "Chceš připnout účastníka*účastnici do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí účastníkovi*účastnici a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
+    statusOpenTp: "Chceš se připnout do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí vedoucí*mu skupiny a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
 flash:
     warning:
         fullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Zkus to později, třeba někdo nezaplatí registrační poplatek v termínu."
@@ -34,9 +36,6 @@ login-help:
 detail:
     patrolName: "Název skupiny"
     patrolNamePlaceholder: "Jméno vaší skupiny"
-userCustomHelp:
-    statusOpenTl: "Chceš připnout účastníka*účastnici do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí účastníkovi*účastnici a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
-    statusOpenTp: "Chceš se připnout do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí vedoucí*mu skupiny a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
 dashboard:
     youWantDelete: "Opravdu chceš smazat účastníka*účastnici "
     youWantUntie: "Opravdu chceš odepnout účastníka*účastnici "
