@@ -82,9 +82,11 @@ jobs:
               issuer: ${{ secrets.CERT_ISSUER}}
 
           php:
-            replicas: 3
+            replicas: 20
             hpa:
               enabled: true
+              maxReplicas: 30
+              minReplicas: 10
               
             volume:
               storageclass: ${{ secrets.STORAGE_CLASS }}
