@@ -125,7 +125,7 @@ class UserService
         $user->role = UserRole::Participant;
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
-        
+
         return $participant;
     }
 

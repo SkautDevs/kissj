@@ -23,7 +23,7 @@ class SentryCollector
 
             $this->sentryHub->captureException($e);
         });
-        
+
         return $e;
     }
 }

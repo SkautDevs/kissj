@@ -90,7 +90,7 @@ class ParticipantService
         $preferredPosition = $params['preferredPosition'] ?? [];
         $p->preferredPosition = $preferredPosition;
         $p->driversLicense = $params['driversLicense'] ?? null;
-        $p->printedHandbook = array_key_exists('printedHandbook', $params) ? true : NULL;
+        $p->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
         $p->notes = $params['notes'] ?? null;
 
         return $p;

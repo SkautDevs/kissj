@@ -29,7 +29,7 @@ class SkautisController extends AbstractController
 
         if (!$this->skautisService->isUserLoggedIn()) {
             $this->flashMessages->error($this->translator->trans('flash.error.skautisUserNotLoggedIn'));
-            
+
             return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);
         }
 

@@ -37,7 +37,7 @@ class SkautisService
     ) {
         $this->skautis = $skautisFactory->getSkautis();
     }
-    
+
     public function getLoginUri(string $backlink): string
     {
         return $this->skautis->getLoginUrl($backlink);
@@ -90,7 +90,7 @@ class SkautisService
                 $skautisUnitName,
             );
         } catch (Throwable $t) {
-            $this->sentryCollector->collect($t);            
+            $this->sentryCollector->collect($t);
             $this->logger->error('Error while getting user details from skautis: ' . $t->getMessage(), [
                 'throwable' => $t,
             ]);
@@ -136,7 +136,7 @@ class SkautisService
         $this->participantRepository->persist($participant);
 
         $this->flashMessages->info($this->translator->trans('flash.info.skautisDataPrefilled'));
-        
+
         return $participant;
     }
 
@@ -144,7 +144,7 @@ class SkautisService
     {
         $user->skautisHasMembership = $skautisUserData->hasMembership;
         $this->userRepository->persist($user);
-        
+
         return $user;
     }
 

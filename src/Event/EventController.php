@@ -22,15 +22,15 @@ class EventController extends AbstractController
         );
     }
 
-	public function redirectEvent(string $eventSlug, Request $request, Response $response): Response
-	{
-		$event = $this->eventRepository->findBySlug($eventSlug);
-		if ($event === null) {
-			return $this->redirect($request, $response, 'eventList');
-		}
+    public function redirectEvent(string $eventSlug, Request $request, Response $response): Response
+    {
+        $event = $this->eventRepository->findBySlug($eventSlug);
+        if ($event === null) {
+            return $this->redirect($request, $response, 'eventList');
+        }
 
-		return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $event->slug]);
-	}
+        return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $event->slug]);
+    }
 
     /*
     public function createEvent(Request $request, Response $response, array $args) {

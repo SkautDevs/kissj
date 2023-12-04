@@ -41,8 +41,8 @@ class EventRepository extends Repository
         ]);
     }
 
-	public function findBySlug(string $eventSlug): ?Event
-	{
-		return $this->findOneBy(['slug' => $eventSlug]);
-	}
+    public function findBySlug(string $eventSlug): ?Event
+    {
+        return $this->findOneBy(['slug' => $eventSlug]);
+    }
 }

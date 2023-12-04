@@ -18,7 +18,7 @@ class SkautisFactory
         private readonly bool $isTestMode,
     ) {
     }
-    
+
     public function getSkautis(): Skautis
     {
         $config = new Config($this->appId, $this->isTestMode, true, true);
