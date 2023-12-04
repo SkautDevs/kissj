@@ -1,5 +1,7 @@
 <?php
 
+// deprecated script - TODO delete
+
 $dbName = 'db_dev.sqlite';
 
 if (is_file(__DIR__.'/../.env')) {

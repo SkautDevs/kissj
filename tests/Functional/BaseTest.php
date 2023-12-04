@@ -19,6 +19,6 @@ class BaseTest extends AppTestCase
 
         $app = $this->getTestApp();
         $this->expectException(HttpNotFoundException::class);
-        $app->handle($this->createRequest('/nonexistentRoute'));
+        $app->handle($this->createRequest('/nonexistentRoute/whichIsNotEventSlug'));
     }
 }
