@@ -283,7 +283,7 @@ class ParticipantService
         }
 
         // numbers and plus sight up front only
-        if ($ca->phone && !empty($p->telephoneNumber) && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
+        if ($ca->phone && (empty($p->telephoneNumber) || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
             return false;
         }
 
