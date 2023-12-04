@@ -25,9 +25,13 @@ class SkautisUserData
         public readonly string $unitName,
     ) {
     }
-    
+
     public function getPermanentResidence(): string
     {
+        if ($this->street === '' && $this->city === '' &&  $this->postCode === '') {
+            return '';
+        }
+
         return $this->street . ', ' . $this->city . ', ' . $this->postCode;
     }
 }
