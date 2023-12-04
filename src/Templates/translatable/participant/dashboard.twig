@@ -52,8 +52,11 @@
                             {% elseif person is TroopLeader %}
                                 {% set participantUserStatus = p.user.status.value %}
                                 <span class="{% if participantUserStatus == 'open' %}hightlight{% endif %}">
-                                    {% trans %}role.tp{% endtrans %}
-                                    {% if p.getFullName != " " %}
+                                    {% if p.user.loginType.value == 'skautis' and p.user.skautisHasMembership == true %}
+                                        <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
+                                        {% trans %}_layout.skautisAccountNotConnected{% endtrans %} ❌
+                                    {% endif %}
+                                    {% if p.isFullNameNotEmpty %}
                                         <b>{{ p.getFullName }}</b>
                                     {% else %}
                                         <i>{% trans %}dashboard.withoutFullName{% endtrans %}</i>

@@ -146,7 +146,7 @@ class ParticipantRepository extends Repository
     private function filterEmptyParticipants(array $participants): array
     {
         return array_filter($participants, function (Participant $participant): bool {
-            return $participant->getFullName() !== ' ';
+            return $participant->isFullNameNotEmpty();
         });
     }
 
