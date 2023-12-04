@@ -2,6 +2,9 @@
 
 namespace kissj\Event;
 
+use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\Event\ContentArbiter\ContentArbiterItemType;
+
 abstract class AbstractContentArbiter
 {
     public bool $contingent = false;
@@ -10,7 +13,7 @@ abstract class AbstractContentArbiter
     public bool $lastName = true;
     public bool $nickname = true;
     public bool $address = true;
-    public bool $phone = false;
+    public ContentArbiterItem $phone;
     public bool $gender = true;
     public bool $country = false;
     public bool $email = false;
@@ -34,4 +37,19 @@ abstract class AbstractContentArbiter
     public bool $driver = false;
     public bool $printedHandbook = false;
     public bool $notes = true;
+    
+    public function __construct(
+    ) {
+        $this->phone = new ContentArbiterItem(
+            id: 'phone',
+            allowed: false,
+            type: ContentArbiterItemType::Text,
+            order: 100,
+            label: 'detail.phone',
+            placeholder: 'detail.phonePlaceholder',
+            extraClasses: [],
+            required: true,
+            pattern: '^\+?[0-9 ]+$',
+        );
+    }
 }

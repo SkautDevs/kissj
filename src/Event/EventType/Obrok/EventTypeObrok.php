@@ -36,7 +36,8 @@ class EventTypeObrok extends EventType
     {
         $ca = parent::getContentArbiterTroopLeader();
         $ca->gender = false;
-        $ca->phone = true;
+        $ca->phone->allowed = true;
+        $ca->phone->required = true;
         $ca->email = true;
         $ca->unit = true;
         $ca->medicaments = true;
@@ -49,7 +50,7 @@ class EventTypeObrok extends EventType
     {
         $ca = parent::getContentArbiterTroopParticipant();
         $ca->gender = false;
-        $ca->phone = true;
+        $ca->phone->allowed = true;
         $ca->email = true;
         $ca->unit = true;
         $ca->medicaments = true;
