@@ -405,8 +405,9 @@ flash:
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
         guestApproved: "Host schválen a e-mail odeslán (bez platby)"
         tpApproved: "Účastník akce schválen a e-mail odeslán (bez platby)"
-        adminPairedPayments: "Paired bank transactions: "
-        transfer: "Payment transfer was successful!"
+        adminPairedPayments: "Párované bankovní transakce: "
+        transfer: "Přesun platby proběhl úspěšně!"
+        troopTied: "Účastník úspešne pridaný do skupiny!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -431,6 +432,11 @@ flash:
         nonexistentEvent: "Tato akce nejspíš neexistuje. Asi špatný odkaz?"
         testingSite: "Tato stránka je určena pouze pro testovací účely - nezadávej žádné reálné osobní či citlivé údaje!"
         multiplePaymentsNotAllowed: "Pardon, ale generování více plateb pro účastníka není pro tuto akci povoleno."
+        troopLeaderNotFoundTieNotPossible: "Vedúci skupiny nebol nájdený, pridanie do skupiny nie je možné"
+        troopLeaderPaidTieNotPossible: "Vedúci skupiny má zaplatenú registráciu, pridanie do skupiny nie je možné"
+        troopParticipantNotFoundTieNotPossible: "Účastník nebol nájdený, pridanie do skupiny nie je možné"
+        troopParticipantPaidTieNotPossible: "Účastník má zaplatenú registráciu, pridanie do skupiny nie je možné"
+        troopParticipantHasTroopTieNotPossible: "Účastník už skupinu má, pridanie do skupiny nie je možné"        
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"

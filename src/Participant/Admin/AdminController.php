@@ -551,4 +551,22 @@ class AdminController extends AbstractController
             'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
         ]);
     }
+
+    public function tieTogether(Request $request, Response $response, Event $event): Response
+    {
+        $troopLeaderCode = $this->getParameterFromBody($request, 'tieCodeLeader');
+        $troopParticipantCode = $this->getParameterFromBody($request, 'tieCodeParticipant');
+
+        $this->troopService->tryTieTogetherWithMessages(
+            $troopLeaderCode,
+            $troopParticipantCode,
+            $event,
+        );
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-troop-management',
+        );
+    }
 }

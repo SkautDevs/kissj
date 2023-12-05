@@ -10,7 +10,7 @@
         <h2>{% trans %}troopManagement-admin.tieTogether{% endtrans %}</h2>
         <form
                 method="POST"
-                action="{{ url_for('tie-tp-by-tp', {'eventSlug': event.slug}) }}"{# TODO use new correct address #}
+                action="{{ url_for('admin-troop-tie-together', {'eventSlug': event.slug}) }}"
                 class="form-group form-group-middle"
         >
             <label for="tieCodeLeader">{% trans %}dashboard.codeForTieToTroop{% endtrans %}:</label>

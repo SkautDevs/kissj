@@ -439,6 +439,7 @@ flash:
         adminPairedPayments: "Spárováno bankovních transakcí: "
         transfer: "Platba úspěšně přesunuta!"
         troopParticipantTiedToTroopLeader: "Účastník úspěšně připojen do skupiny!"
+        troopTied: "Účastník úspěšně připojen do skupiny!"
     warning:
         noLock: "Registraci nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
         plWrongData: "Nemůžeme uzamknout registraci - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -473,6 +474,11 @@ flash:
         troopLeaderNotOpen: "Vedoucí skupiny není odemčený, proto nelze připojit účastníka ke skupině"
         troopParticipantAlreadyTied: "Účastník již byl do skupiny přidán"
         alreadyTied: "Nemůžeš se přidat do skupiny, protože již ve skupině jsi. Jestli chceš k jiné skupině, popros vedoucího o odepnutí"
+        troopLeaderNotFoundTieNotPossible: "Vedoucí skupiny nebyl nalezen, připojení do skupiny není možné"
+        troopLeaderPaidTieNotPossible: "Vedoucí skupiny má zaplacenou registraci, připojení do skupiny není možné"
+        troopParticipantNotFoundTieNotPossible: "Účastník nebyl nalezen, připojení do skupiny není možné"
+        troopParticipantPaidTieNotPossible: "Účastník má zaplacenou registraci, připojení do skupiny není možné"
+        troopParticipantHasTroopTieNotPossible: "Účastník již skupinu má, připojení do skupiny není možné"
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"

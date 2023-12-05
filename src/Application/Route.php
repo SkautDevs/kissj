@@ -254,8 +254,12 @@ class Route
                             ->setName('admin-generate-more-payments');
                     });
 
-                    $app->get('/troopManagement', AdminController::class . '::showTroopManagement')
-                        ->setName('admin-troop-management');
+                    $app->group('/troopManagement', function (RouteCollectorProxy $app) {
+                        $app->get('', AdminController::class . '::showTroopManagement')
+                            ->setName('admin-troop-management');
+                        $app->post('/tieTogether', AdminController::class . '::tieTogether')
+                            ->setName('admin-troop-tie-together');
+                    });
 
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')
@@ -274,6 +278,7 @@ class Route
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
             $app->post('/entry/{entryCode}', EntryController::class . '::entry')
                 ->setName('entry');
+
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {

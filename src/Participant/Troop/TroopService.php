@@ -16,6 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TroopService
 {
     public function __construct(
+        private readonly TroopLeaderRepository $troopLeaderRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly FlashMessagesInterface $flashMessages,
@@ -86,5 +87,47 @@ class TroopService
         $this->troopParticipantRepository->persist($troopParticipant);
 
         return $troopParticipant;
+    }
+
+    public function tryTieTogetherWithMessages(
+        string $troopLeaderCode,
+        string $troopParticipantCode,
+        Event $event,
+    ): bool {
+        $valid = true;
+        $tl = $this->troopLeaderRepository->findTroopLeaderFromTieCode($troopLeaderCode, $event);
+        if ($tl === null) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderNotFoundTieNotPossible'));
+            $valid = false;
+        }
+
+        if ($tl !== null && $tl->getUserButNotNull()->status === UserStatus::Paid) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderPaidTieNotPossible'));
+            $valid = false;
+        }
+
+        $tp = $this->troopParticipantRepository->findTroopParticipantFromTieCode($troopParticipantCode, $event);
+        if ($tp === null) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantNotFoundTieNotPossible'));
+            $valid = false;
+        }
+
+        if ($tp !== null && $tp->getUserButNotNull()->status === UserStatus::Paid) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidTieNotPossible'));
+            $valid = false;
+        }
+
+        if ($tp !== null && $tp->troopLeader !== null) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantHasTroopTieNotPossible'));
+            $valid = false;
+        }
+
+        if ($valid && $tp !== null && $tl !== null) {
+            $tp->troopLeader = $tl;
+            $this->troopParticipantRepository->persist($tp);
+            $this->flashMessages->success($this->translator->trans('flash.success.troopTied'));
+        }
+
+        return $valid;
     }
 }

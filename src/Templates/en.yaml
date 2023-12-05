@@ -439,6 +439,7 @@ flash:
         adminPairedPayments: "Paired bank transactions: "
         transfer: "Payment transfer was successful!"
         troopParticipantTiedToTroopLeader: "Troop participant is successfully tied to troop leader"
+        troopTied: "Participant successfully added to the group!"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -473,6 +474,11 @@ flash:
         troopLeaderNotOpen: "Troop leader is not open yet, please wait for it to open"
         troopParticipantAlreadyTied: "Troop participant is already tied to another group"
         alreadyTied: "You cannot join the group because you are already in it. If you want to join a different group, please ask the leader to remove you."
+        troopLeaderNotFoundTieNotPossible: "Troop leader not found, tie is not possible"
+        troopLeaderPaidTieNotPossible: "Troop leader has paid registration, tie is not possible"
+        troopParticipantNotFoundTieNotPossible: "Troop participant not found, tie is not possible"
+        troopParticipantPaidTieNotPossible: "Troop participant has paid registration, tie is not possible"
+        troopParticipantHasTroopTieNotPossible: "Troop participant is already tied to a group, tie is not possible"
     error:
         adminOnly: "Sorry bro, admins only"
         plOnly: "Sorry, you are not logged as Patrol Leader"
