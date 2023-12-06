@@ -64,7 +64,7 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageValue: 800Mi
+          averageValue: 1.8Gi
   behavior:
     scaleUp:
       policies:
