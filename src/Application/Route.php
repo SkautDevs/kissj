@@ -257,8 +257,12 @@ class Route
                     $app->group('/troopManagement', function (RouteCollectorProxy $app) {
                         $app->get('', AdminController::class . '::showTroopManagement')
                             ->setName('admin-troop-management');
+
                         $app->post('/tieTogether', AdminController::class . '::tieTogether')
                             ->setName('admin-troop-tie-together');
+
+                        $app->post('/untie', AdminController::class . '::untie')
+                            ->setName('admin-troop-untie');
                     });
 
                     $app->group('/export', function (RouteCollectorProxy $app) {

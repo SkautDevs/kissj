@@ -59,11 +59,16 @@
     
                     <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
                     {% for tp in tl.troopParticipants %}
+                        <hr/>
                         {% include 'widgets/detailsForAdmin.twig' with {
                             'person': tp,
-                            'ca': caTl,
+                            'ca': caTp,
                             'useShortNaming': true
-                        } %}
+                        } %}<br/>
+                        <form method="POST" action="{{ url_for('admin-troop-untie', {eventSlug: event.slug}) }}">
+                            <input type="hidden" name="tieCodeParticipant" value="{{ tp.tieCode }}">
+                            <input type="submit" class="btn btn-small btn-mini" value="{% trans %}troopManagement-admin.untie{% endtrans %}">
+                        </form>
                         <br/>
                     {% endfor %}
                 </div>

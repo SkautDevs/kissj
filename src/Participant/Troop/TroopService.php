@@ -130,4 +130,27 @@ class TroopService
 
         return $valid;
     }
+
+    public function tryUntieWithMessages(string $troopParticipantCode, Event $event): bool
+    {
+        $valid = true;
+        $tp = $this->troopParticipantRepository->findTroopParticipantFromTieCode($troopParticipantCode, $event);
+        if ($tp === null) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantNotFoundUntieNotPossible'));
+            $valid = false;
+        }
+
+        if ($tp !== null && $tp->getUserButNotNull()->status === UserStatus::Paid) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidUntieNotPossible'));
+            $valid = false;
+        }
+
+        if ($valid && $tp !== null) {
+            $tp->troopLeader = null;
+            $this->troopParticipantRepository->persist($tp);
+            $this->flashMessages->success($this->translator->trans('flash.success.participantUntied'));
+        }
+
+        return $valid;
+    }
 }

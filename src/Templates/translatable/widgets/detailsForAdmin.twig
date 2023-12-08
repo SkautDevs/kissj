@@ -13,7 +13,10 @@
     {% endif %}
     </b></i><br/>
 {% endif %}
-{% if person.getRegistrationCloseDate %}
+{% if person.user.status.value != 'open' and person.getRegistrationCloseDate %}
     <i>{% trans %}detail.closed-at{% endtrans %}: <b>{{ person.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b></i><br/>
+{% endif %}
+{% if person.user.status.value == 'paid' and person.getRegistrationPayDate %}
+    <i>{% trans %}detail.paid-at{% endtrans %}: <b>{{ person.getRegistrationPayDate.format('d. m. Y, H:i:s') }}</b></i><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}

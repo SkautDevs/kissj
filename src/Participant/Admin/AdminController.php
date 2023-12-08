@@ -569,4 +569,20 @@ class AdminController extends AbstractController
             'admin-troop-management',
         );
     }
+
+    public function untie(Request $request, Response $response, Event $event): Response
+    {
+        $troopParticipantCode = $this->getParameterFromBody($request, 'tieCodeParticipant');
+
+        $this->troopService->tryUntieWithMessages(
+            $troopParticipantCode,
+            $event,
+        );
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-troop-management',
+        );
+    }
 }

@@ -137,7 +137,8 @@ detail:
     driver-more10k: "Mám a mám najazdených viac ako 10 000 km"
     loginMethod: "Přihlášení"
     closed-at: "Uzamknut"
-    adminNotice: "Poznámka od admina"
+    paid-at: "Zaplaceno"
+    adminNotice: "Org poznámka"
 detail-guest:
     notice: "Zvoucí a účel"
     notice-placeholder: "Od koho máš pozvánku a jaký je tvůj záměr na akci?"
@@ -408,6 +409,7 @@ flash:
         adminPairedPayments: "Párované bankovní transakce: "
         transfer: "Přesun platby proběhl úspěšně!"
         troopTied: "Účastník úspešne pridaný do skupiny!"
+        participantUntied: "Účastník úspěšně odepnut od skupiny!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -436,7 +438,9 @@ flash:
         troopLeaderPaidTieNotPossible: "Vedúci skupiny má zaplatenú registráciu, pridanie do skupiny nie je možné"
         troopParticipantNotFoundTieNotPossible: "Účastník nebol nájdený, pridanie do skupiny nie je možné"
         troopParticipantPaidTieNotPossible: "Účastník má zaplatenú registráciu, pridanie do skupiny nie je možné"
-        troopParticipantHasTroopTieNotPossible: "Účastník už skupinu má, pridanie do skupiny nie je možné"        
+        troopParticipantHasTroopTieNotPossible: "Účastník už skupinu má, pridanie do skupiny nie je možné"
+        troopParticipantNotFoundUntieNotPossible: "Účastník nebyl nalezen, odpojení od skupiny není možné"
+        troopParticipantPaidUntieNotPossible: "Účastník má zaplacenou registraci, odpojení od skupiny není možné"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"

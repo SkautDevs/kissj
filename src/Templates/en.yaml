@@ -155,7 +155,8 @@ detail:
     driver-more10k: "I have it and have driven more than 10 000 km"
     loginMethod: "Login method"
     closed-at: "Locked"
-    adminNotice: "Note from admin"
+    paid-at: "Paid"
+    adminNotice: "Admin note"
 detail-guest:
     notice: "Inviter and purpose"
     notice-placeholder: "Who invited you and what is your intentions at event?"
@@ -411,6 +412,7 @@ troopManagement-admin:
     noTroopParticipants: "there are no participants without troop"
     troopParticipantsWithoutLeader: "participants without troop"
     tieTogether: "Tie participant into troop"
+    untie: "Untie participant from troop"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -440,6 +442,7 @@ flash:
         transfer: "Payment transfer was successful!"
         troopParticipantTiedToTroopLeader: "Troop participant is successfully tied to troop leader"
         troopTied: "Participant successfully added to the group!"
+        participantUntied: "Participant successfully untied from the group!"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -479,6 +482,8 @@ flash:
         troopParticipantNotFoundTieNotPossible: "Troop participant not found, tie is not possible"
         troopParticipantPaidTieNotPossible: "Troop participant has paid registration, tie is not possible"
         troopParticipantHasTroopTieNotPossible: "Troop participant is already tied to a group, tie is not possible"
+        troopParticipantNotFoundUntieNotPossible: "Participant not found, untie is not possible"
+        troopParticipantPaidUntieNotPossible: "Participant has paid registration, untie is not possible"
     error:
         adminOnly: "Sorry bro, admins only"
         plOnly: "Sorry, you are not logged as Patrol Leader"
