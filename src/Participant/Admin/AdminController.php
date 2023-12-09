@@ -66,7 +66,7 @@ class AdminController extends AbstractController
         Event $event,
         User $user,
     ): Response {
-        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+        $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
 
         return $this->view->render($response, 'admin/stats-admin.twig', [
             'paidPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -74,35 +74,35 @@ class AdminController extends AbstractController
                 [UserStatus::Paid],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'paidTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::TroopLeader],
                 [UserStatus::Paid],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'paidTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::TroopParticipant],
                 [UserStatus::Paid],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'paidIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::Ist],
                 [UserStatus::Paid],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'paidGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::Guest],
                 [UserStatus::Paid],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
@@ -118,7 +118,7 @@ class AdminController extends AbstractController
         Event $event,
         User $user,
     ): Response {
-        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+        $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
 
         return $this->view->render($response, 'admin/open-admin.twig', [
             'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -126,7 +126,7 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
                 true,
             ),
             'openTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -134,7 +134,7 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
                 true,
             ),
             'openTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -142,7 +142,7 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
                 true,
             ),
             'openIsts' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -150,7 +150,7 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
                 true,
             ),
             'openGuests' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -158,7 +158,7 @@ class AdminController extends AbstractController
                 [UserStatus::Open],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
                 true,
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
@@ -175,7 +175,7 @@ class AdminController extends AbstractController
         Event $event,
         User $user,
     ): Response {
-        $orderByUpdatedAtDesc = new Order(Order::FILED_UPDATED_AT, Order::DIRECTION_DESC);
+        $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
 
         return $this->view->render($response, 'admin/approve-admin.twig', [
             'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -183,35 +183,35 @@ class AdminController extends AbstractController
                 [UserStatus::Closed],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'closedTroopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::TroopLeader],
                 [UserStatus::Closed],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'closedTroopParticipants' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::TroopParticipant],
                 [UserStatus::Closed],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'closedIsts' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::Ist],
                 [UserStatus::Closed],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'closedGuests' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::Guest],
                 [UserStatus::Closed],
                 $event,
                 $user,
-                $orderByUpdatedAtDesc,
+                [$orderByUpdatedAtDesc],
             ),
             'caIst' => $event->getEventType()->getContentArbiterIst(),
             'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),

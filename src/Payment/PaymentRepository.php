@@ -8,7 +8,6 @@ use kissj\Event\Event;
 use kissj\Orm\Repository;
 
 /**
- * @method Payment[] findAll()
  * @method Payment[] findBy(mixed[] $criteria)
  * @method Payment|null findOneBy(mixed[] $criteria)
  * @method Payment get(int $paymentId)
@@ -27,8 +26,7 @@ class PaymentRepository extends Repository
      */
     public function getWaitingPaymentsKeydByVariableSymbols(Event $event): array
     {
-        $waitingPayments = $this->findBy(['status' => PaymentStatus::Waiting]);
-        $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
+        $waitingEventPayments = $this->getEventPayments($event);
 
         $finalPayments = [];
         foreach ($waitingEventPayments as $payment) {
@@ -48,8 +46,7 @@ class PaymentRepository extends Repository
      */
     public function getDuePayments(Event $event): array
     {
-        $waitingPayments = $this->findBy(['status' => PaymentStatus::Waiting]);
-        $waitingEventPayments = $this->filterOnlyEventPayments($waitingPayments, $event);
+        $waitingEventPayments = $this->getEventPayments($event);
 
         return array_filter(
             $waitingEventPayments,
@@ -58,15 +55,19 @@ class PaymentRepository extends Repository
     }
 
     /**
-     * @param Payment[] $waitingPayments
-     * @param Event $event
      * @return Payment[]
      */
-    private function filterOnlyEventPayments(array $waitingPayments, Event $event): array
+    private function getEventPayments(Event $event): array
     {
-        return array_filter(
-            $waitingPayments,
-            fn (Payment $payment) => $payment->participant->getUserButNotNull()->event->id === $event->id
-        );
+        $qb = $this->createFluent();
+        $qb->join('participant')->as('participant')->on('participant.id = payment.participant_id');
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('payment.status = %s', PaymentStatus::Waiting);
+
+        /** @var Payment[] $waitingEventPayments */
+        $waitingEventPayments = $this->createEntities($qb->fetchAll());
+
+        return $waitingEventPayments;
     }
 }

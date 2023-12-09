@@ -100,7 +100,7 @@ class ExportService
             [UserStatus::Paid],
             $event,
             $adminUser,
-            new Order(Order::FILED_UPDATED_AT),
+            [new Order(Order::COLUMN_UPDATED_AT)],
         );
 
         $rows = [];

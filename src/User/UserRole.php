@@ -8,6 +8,7 @@ enum UserRole: string
 {
     case Participant = 'participant';
     case Admin = 'admin';
+    case IstAdmin = 'istAdmin';
     case ContingentAdminCs = 'contingentAdminCs';
     case ContingentAdminSk = 'contingentAdminSk';
     case ContingentAdminPl = 'contingentAdminPl';

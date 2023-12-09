@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace kissj\BankPayment;
 
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
- * @method BankPayment[] findAll()
- * @method BankPayment[] findBy(mixed[] $criteria, mixed[] $orderBy = [])
+ * @method BankPayment[] findBy(mixed[] $criteria, Order[] $orders = [])
  * @method BankPayment|null findOneBy(mixed[] $criteria, mixed[] $orderBy = [])
  * @method BankPayment getOneBy(mixed[] $criteria)
  */
@@ -23,7 +23,7 @@ class BankPaymentRepository extends Repository
     {
         return $this->findBy(
             ['event' => $event],
-            ['id' => false],
+            [new Order('id', Order::DIRECTION_DESC)],
         );
     }
 
@@ -39,7 +39,7 @@ class BankPaymentRepository extends Repository
                 'event' => $event,
                 'status' => $status,
             ],
-            ['id' => false],
+            [new Order('id', Order::DIRECTION_DESC)],
         );
     }
 

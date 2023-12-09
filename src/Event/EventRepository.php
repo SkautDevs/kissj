@@ -9,7 +9,6 @@ use kissj\Orm\Relation;
 use kissj\Orm\Repository;
 
 /**
- * @method Event[] findAll()
  * @method Event[] findBy(mixed[] $criteria)
  * @method Event|null findOneBy(mixed[] $criteria)
  * @method Event get(int $id)

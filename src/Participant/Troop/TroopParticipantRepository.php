@@ -20,22 +20,6 @@ use kissj\User\User;
  */
 class TroopParticipantRepository extends Repository
 {
-    /**
-     * @param Event $event
-     * @return TroopParticipant[]
-     */
-    public function findAllWithEvent(Event $event): array
-    {
-        $troopParticipants = [];
-        foreach ($this->findAll() as $participant) {
-            if ($participant instanceof TroopParticipant && $participant->getUserButNotNull()->event->id === $event->id) {
-                $troopParticipants[] = $participant;
-            }
-        }
-
-        return $troopParticipants;
-    }
-
     public function findTroopParticipantFromTieCode(string $tieCode, Event $event): ?TroopParticipant
     {
         $troopParticipant = $this->findOneBy([
@@ -67,15 +51,14 @@ class TroopParticipantRepository extends Repository
      */
     public function getAllWithoutTroop(Event $event): array
     {
-        $troopParticipants = $this->findBy([
-            'role' => ParticipantRole::TroopParticipant,
-            'patrol_leader_id' => new Relation(null, 'IS'),
-        ]);
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('participant.role = %s', ParticipantRole::TroopParticipant);
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.patrol_leader_id IS NULL');
 
-        $troopParticipants = array_filter($troopParticipants, function (TroopParticipant $tp) use ($event): bool {
-            // TODO optimalize event filter
-            return $tp->troopLeader === null && $tp->getUserButNotNull()->event->id === $event->id;
-        });
+        /** @var TroopParticipant[] $troopParticipants */
+        $troopParticipants = $this->createEntities($qb->fetchAll());
 
         return $troopParticipants;
     }

@@ -11,9 +11,10 @@ use kissj\Orm\Repository;
 use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
+use LeanMapper\Fluent;
+use RuntimeException;
 
 /**
- * @method Participant[] findAll()
  * @method Participant get(int $participantId)
  * @method Participant[] findBy(mixed[] $criteria)
  * @method Participant|null findOneBy(mixed[] $criteria)
@@ -22,10 +23,9 @@ use kissj\User\UserStatus;
 class ParticipantRepository extends Repository
 {
     /**
-     * TODO optimize
-     *
      * @param ParticipantRole[] $roles
      * @param UserStatus[] $statuses
+     * @param Order[] $orders
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(
@@ -33,82 +33,75 @@ class ParticipantRepository extends Repository
         array $statuses,
         Event $event,
         ?User $adminUser = null,
-        ?Order $order = null,
+        array $orders = [],
         bool $filterEmptyParticipants = false,
+        ?int $limit = null,
     ): array {
-        $participants = $this->findAll();
+        $qb = $this->createFluent();
+
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('participant.role IN %in', $roles);
+        $qb->where('u.status IN %in', $statuses);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $this->addOrdersBy($qb, $orders);
 
         if ($adminUser instanceof User) {
-            $participants = $this->filterContingentAdminParticipants($participants, $adminUser);
+            $this->addFilterAdminParticipants($qb, $adminUser);
         }
 
-        $validParticipants = [];
-        foreach ($participants as $participant) {
-            $user = $participant->getUserButNotNull();
-            if (
-                $user->event->id === $event->id
-                && in_array($user->status, $statuses, true)
-                && in_array($participant->role, $roles, true)
-            ) {
-                $validParticipants[$participant->id] = $participant;
-            }
+        if ($limit !== null) {
+            $qb->limit($limit);
         }
 
-        if ($order instanceof Order) {
-            uasort(
-                $validParticipants,
-                function (Participant $firstParticipant, Participant $secondParticipant) use ($order): int {
-                    $fieldName = $order->getField();
-
-                    $result = $firstParticipant->$fieldName <=> $secondParticipant->$fieldName;
-
-                    return $order->isOrderAsc() ? $result : -$result;
-                }
-            );
-        }
+        $rows = $qb->fetchAll();
+        /** @var Participant[] $participants */
+        $participants = $this->createEntities($rows);
 
         if ($filterEmptyParticipants) {
-            $validParticipants = $this->filterEmptyParticipants($validParticipants);
+            $participants = $this->filterEmptyParticipants($participants);
         }
 
-        return $validParticipants;
+        return $participants;
     }
 
-    /**
-     * @param Participant[] $participants
-     * @param User $adminUser
-     * @return Participant[]
-     */
-    private function filterContingentAdminParticipants(array $participants, User $adminUser): array
+    private function addFilterAdminParticipants(Fluent $qb, User $adminUser): void
     {
-        return match ($adminUser->role) {
-            UserRole::Admin => $participants,
-            UserRole::ContingentAdminCs => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_CZECHIA;
-            }),
-            UserRole::ContingentAdminSk => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_SLOVAKIA;
-            }),
-            UserRole::ContingentAdminPl => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_POLAND;
-            }),
-            UserRole::ContingentAdminHu => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_HUNGARY;
-            }),
-            UserRole::ContingentAdminEu => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_EUROPEAN;
-            }),
-            UserRole::ContingentAdminRo => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_ROMANIA;
-            }),
-            UserRole::ContingentAdminGb => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_BRITAIN;
-            }),
-            UserRole::ContingentAdminSw => array_filter($participants, function (Participant $p): bool {
-                return $p->contingent === EventTypeCej::CONTINGENT_SWEDEN;
-            }),
-            default => [],
-        };
+        switch ($adminUser->role) {
+            case UserRole::Admin:
+                // allow all
+                break;
+            case UserRole::IstAdmin:
+                // TODO
+                break;
+            case UserRole::ContingentAdminCs:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_CZECHIA);
+                break;
+            case UserRole::ContingentAdminSk:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_SLOVAKIA);
+                break;
+            case UserRole::ContingentAdminPl:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_POLAND);
+                break;
+            case UserRole::ContingentAdminHu:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_HUNGARY);
+                break;
+            case UserRole::ContingentAdminEu:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_EUROPEAN);
+                break;
+            case UserRole::ContingentAdminRo:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_ROMANIA);
+                break;
+            case UserRole::ContingentAdminGb:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_BRITAIN);
+                break;
+            case UserRole::ContingentAdminSw:
+                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_SWEDEN);
+                break;
+            case UserRole::Participant:
+                throw new RuntimeException('UserRole Participant is used as administrator');
+        }
     }
 
     /**
@@ -126,12 +119,11 @@ class ParticipantRepository extends Repository
                 UserStatus::Paid,
             ],
             $event,
-            null,
-            new Order('id'),
+            orders: [new Order('id')],
+            limit: $limit,
         );
 
-        $participants = array_slice($participants, 0, $limit);
-
+        # TODO optimize - non urgent, it is used only for events with multiple payments
         $participants = array_filter($participants, function (Participant $participant) use ($countPayments): bool {
             return count($participant->getNoncanceledPayments()) === $countPayments;
         });

@@ -19,22 +19,6 @@ use kissj\User\User;
  */
 class TroopLeaderRepository extends Repository
 {
-    /**
-     * @param Event $event
-     * @return TroopLeader[]
-     */
-    public function findAllWithEvent(Event $event): array
-    {
-        $troopLeaders = [];
-        foreach ($this->findAll() as $participant) {
-            if ($participant instanceof TroopLeader && $participant->getUserButNotNull()->event->id === $event->id) {
-                $troopLeaders[] = $participant;
-            }
-        }
-
-        return $troopLeaders;
-    }
-
     public function findTroopLeaderFromTieCode(string $tieCode, Event $event): ?TroopLeader
     {
         $troopLeader = $this->findOneBy([

@@ -9,7 +9,7 @@ class Order
     public const DIRECTION_ASC = 'ASC';
     public const DIRECTION_DESC = 'DESC';
 
-    public const FILED_UPDATED_AT = 'updatedAt';
+    public const COLUMN_UPDATED_AT = 'updated_at';
 
     public function __construct(
         private readonly string $field,

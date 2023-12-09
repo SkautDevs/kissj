@@ -17,19 +17,4 @@ use kissj\Orm\Repository;
  */
 class PatrolLeaderRepository extends Repository
 {
-    /**
-     * @param Event $event
-     * @return PatrolLeader[]
-     */
-    public function findAllWithEvent(Event $event): array
-    {
-        $patrolLeaders = [];
-        foreach ($this->findAll() as $participant) {
-            if ($participant instanceof PatrolLeader && $participant->getUserButNotNull()->event->id === $event->id) {
-                $patrolLeaders[] = $participant;
-            }
-        }
-
-        return $patrolLeaders;
-    }
 }
