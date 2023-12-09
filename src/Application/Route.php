@@ -184,6 +184,14 @@ class Route
                         $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
                             ->setName('admin-change-participant-details');
                     });
+                    
+                    $app->group('/changeRole/{participantId}', function (RouteCollectorProxy $app) {
+                        $app->get('/show', AdminController::class . '::showRole')
+                            ->setName('admin-show-role');
+
+                        $app->post('/change', AdminController::class . '::changeRole')
+                            ->setName('admin-change-role');
+                    });
 
                     $app->get('/showStats', AdminController::class . '::showStats')
                         ->setName('admin-show-stats');

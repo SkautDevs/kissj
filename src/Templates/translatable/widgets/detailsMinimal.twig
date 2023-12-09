@@ -16,4 +16,10 @@
 {% endif %}{% if ca.notes %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
-{% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}
+{% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
+<a 
+    href="{{ url_for('admin-show-role', {'participantId' : person.id, 'eventSlug': event.slug}) }}"
+    class="btn btn-small btn-mini"
+>
+    {% trans %}stats-admin.changeRole{% endtrans %}
+</a>

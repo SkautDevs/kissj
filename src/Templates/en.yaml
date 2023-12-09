@@ -360,6 +360,8 @@ stats-admin:
     numberPatrolParticipantsTotal: "participants in total"
     paid: "Paid participants for event"
     generate-more-payments: "Generate more payments"
+    changeRole: "Change role"
+    role: "Role"
 open-admin:
     open: "Unlocked participants on event"
     none: "No participants with role"
@@ -443,6 +445,7 @@ flash:
         troopParticipantTiedToTroopLeader: "Troop participant is successfully tied to troop leader"
         troopTied: "Participant successfully added to the group!"
         participantUntied: "Participant successfully untied from the group!"
+        roleChanged: "Role successfully changed!"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -484,6 +487,10 @@ flash:
         troopParticipantHasTroopTieNotPossible: "Troop participant is already tied to a group, tie is not possible"
         troopParticipantNotFoundUntieNotPossible: "Participant not found, untie is not possible"
         troopParticipantPaidUntieNotPossible: "Participant has paid registration, untie is not possible"
+        patrolHasParticipantsCannotChangeRole: "Patrol has participants, role cannot be changed"
+        troopHasParticipantsCannotChangeRole: "Troop has participants, role cannot be changed"
+        sameRoleCannotChangeRole: "Cannot change role to the same role"
+        notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
     error:
         adminOnly: "Sorry bro, admins only"
         plOnly: "Sorry, you are not logged as Patrol Leader"
@@ -499,3 +506,4 @@ flash:
         tieParticipantToLeaderError: "Failed to tie participant to the group :("
         skautisUserNotLoggedIn: "Skautis reports that the participant is not logged in. Please try to log out and log in again"
         skautisUserError: "Failed to download data from Skautis. Please try to log out and log in again"
+        roleNotValid: "Role is not valid"

@@ -1,0 +1,39 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+<div class="card card-half paid-theme">
+    <h2>{% trans %}stats-admin.changeRole{% endtrans %}</h2>
+    <div>
+        <h4>{{ person.getFullName }}</h4>
+        {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
+        {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+        {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
+    </div>
+    <form 
+        method="POST"
+        action="{{ url_for('admin-change-role', {'eventSlug': event.slug, 'participantId': person.id}) }}"
+        class="form-group"
+    >
+        <div class="form-group">
+            <label for="country">{% trans %}stats-admin.role{% endtrans %}:</label>
+            <select
+                    id="role"
+                    class="form-control form-wide"
+                    name="role"
+            >
+                {% for role in roles %}
+                    <option
+                            value="{{ role.value }}"
+                            {% if person.role == role %} selected="selected"{% endif %}
+                    >{{ dump }}
+                        {{ ('role.' ~ role.value)|trans }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <input class="btn" type="submit" value="{% trans %}stats-admin.changeRole{% endtrans %}">
+    </form>
+    <a href="{{ url_for('admin-show-open', {'eventSlug': event.slug}) }}"
+       class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+</div>
+{% endblock %}

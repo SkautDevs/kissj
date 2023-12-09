@@ -18,6 +18,7 @@ use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Orm\EntityDatetime;
+use kissj\Participant\ParticipantRole;
 
 /**
  * @property int               $id
@@ -92,5 +93,29 @@ class Event extends EntityDatetime
     public function canRegistrationBeLocked(): bool
     {
         return $this->startRegistration <= DateTimeUtils::getDateTime();
+    }
+
+    /**
+     * @return ParticipantRole[]
+     */
+    public function getAvailableRoles(): array
+    {
+        $roles = [];
+        if ($this->allowPatrols) {
+            $roles[] = ParticipantRole::PatrolLeader;
+            $roles[] = ParticipantRole::PatrolParticipant;
+        }
+        if ($this->allowTroops) {
+            $roles[] = ParticipantRole::TroopLeader;
+            $roles[] = ParticipantRole::TroopParticipant;
+        }
+        if ($this->allowIsts) {
+            $roles[] = ParticipantRole::Ist;
+        }
+        if ($this->allowGuests) {
+            $roles[] = ParticipantRole::Guest;
+        }
+
+        return $roles;
     }
 }

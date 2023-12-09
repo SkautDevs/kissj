@@ -336,6 +336,8 @@ stats-admin:
     numberPatrolParticipantsTotal: "v patrole celkem"
     paid: "Zaplacení účastníci akce"
     generate-more-payments: "Vygenerovat více plateb"
+    changeRole: "Změnit roli"
+    role: "Role"
 open-admin:
     open: "Neuzamčení účastníci na akci"
     none: "Žádní účastníci s rolí"
@@ -410,6 +412,7 @@ flash:
         transfer: "Přesun platby proběhl úspěšně!"
         troopTied: "Účastník úspešne pridaný do skupiny!"
         participantUntied: "Účastník úspěšně odepnut od skupiny!"
+        roleChanged: "Rola účastníka úspěšně změněna!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -441,6 +444,10 @@ flash:
         troopParticipantHasTroopTieNotPossible: "Účastník už skupinu má, pridanie do skupiny nie je možné"
         troopParticipantNotFoundUntieNotPossible: "Účastník nebyl nalezen, odpojení od skupiny není možné"
         troopParticipantPaidUntieNotPossible: "Účastník má zaplacenou registraci, odpojení od skupiny není možné"
+        patrolHasParticipantsCannotChangeRole: "Patrola má účastníky, změna role není možná"
+        troopHasParticipantsCannotChangeRole: "Skupina má účastníky, změna role není možná"
+        sameRoleCannotChangeRole: "Účastník už tuto roli má, změna role není možná"
+        notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"
@@ -451,3 +458,4 @@ flash:
         fioConnectionFailed: "Spojení do Fio banky selhalo, nejspíše kvůli špatně zadanému API klíči"
         skautisUserNotLoggedIn: "Skautis hlásí, že účastník není přihlášený. Zkus se prosím odhlásit a znovu přihlásit"
         skautisUserError: "Selhalo stažení dat ze Skautisu. Zkus se prosím odhlásit a znovu přihlásit"
+        roleNotValid: "Tato role není pro tuto akci platná"

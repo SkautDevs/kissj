@@ -517,6 +517,39 @@ class AdminController extends AbstractController
             'admin-show-stats',
         );
     }
+    
+    public function showRole(Response $response, int $participantId, Event $event): Response
+    {
+        $participant = $this->participantRepository->get($participantId);
+
+        return $this->view->render($response, 'admin/changeRole.twig', [
+            'person' => $participant,
+            'roles' => $event->getAvailableRoles(),
+        ]);
+    }
+    
+    public function changeRole(Request $request, Response $response, int $participantId, Event $event): Response
+    {
+        $participant = $this->participantRepository->get($participantId);
+        $roleFromBody = $this->getParameterFromBody($request, 'role');
+        
+        $success = $this->participantService->tryChangeRoleWithMessages($roleFromBody, $participant, $event);
+        
+        if ($success) {
+            return $this->redirect(
+                $request,
+                $response,
+                'admin-show-open',
+            );
+        }
+        
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-role',
+            ['participantId' => (string)$participantId],
+        );
+    }
 
     public function generateMorePayments(Request $request, Response $response, Event $event): Response
     {

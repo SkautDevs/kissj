@@ -360,6 +360,8 @@ stats-admin:
     numberPatrolParticipantsTotal: "v patrole celkem"
     paid: "Zaplacení účastníci akce"
     generate-more-payments: "Vygenerovat více plateb"
+    changeRole: "Změnit roli"
+    role: "Role"
 open-admin:
     open: "Neuzamčení účastníci na akci"
     none: "Žádní účastníci s rolí"
@@ -443,6 +445,7 @@ flash:
         troopParticipantTiedToTroopLeader: "Účastník úspěšně připojen do skupiny!"
         troopTied: "Účastník úspěšně připojen do skupiny!"
         participantUntied: "Účastník úspěšně odepnut od skupiny!"
+        roleChanged: "Role účastníka úspěšně změněna!"
     warning:
         noLock: "Registraci nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
         plWrongData: "Nemůžeme uzamknout registraci - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -484,6 +487,10 @@ flash:
         troopParticipantHasTroopTieNotPossible: "Účastník již skupinu má, připojení do skupiny není možné"
         troopParticipantNotFoundUntieNotPossible: "Účastník nebyl nalezen, odpojení od skupiny není možné"
         troopParticipantPaidUntieNotPossible: "Účastník má zaplacenou registraci, odpojení od skupiny není možné"
+        patrolHasParticipantsCannotChangeRole: "Patrola má účastníky, změna role není možná"
+        troopHasParticipantsCannotChangeRole: "Skupina má účastníky, změna role není možná"
+        sameRoleCannotChangeRole: "Účastník už tuto roli má, změna role není možná"
+        notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"
@@ -499,3 +506,4 @@ flash:
         tieParticipantToLeaderError: "Připojení účastníka do skupiny se nepovedlo :("
         skautisUserNotLoggedIn: "SkautIS hlásí, že účastník není přihlášený. Zkus se prosím odhlásit a znovu přihlásit"
         skautisUserError: "Selhalo stažení dat ze skautISu. Zkus se prosím odhlásit a znovu přihlásit"
+        roleNotValid: "Tato role není pro tuto akci platná"

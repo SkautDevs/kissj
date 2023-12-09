@@ -11,6 +11,7 @@ use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
+use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
@@ -454,5 +455,50 @@ class ParticipantService
         $this->participantRepository->persist($participant);
 
         return $participant;
+    }
+
+    public function tryChangeRoleWithMessages(string $roleFromBody, Participant $participant, Event $event): bool
+    {
+        $role = ParticipantRole::tryFrom($roleFromBody);
+        if ($role === null || !in_array($role, $event->getAvailableRoles(), true)) {
+            $this->flashMessages->error($this->translator->trans('flash.error.roleNotValid'));
+            
+            return false;
+        }
+        
+        if ($participant instanceof PatrolLeader) {
+            if ($participant->getPatrolParticipantsCount() > 0) {
+                $this->flashMessages->warning($this->translator->trans('flash.warning.patrolHasParticipantsCannotChangeRole'));
+
+                return false;
+            }
+        }
+
+        if ($participant instanceof TroopLeader) {
+            if ($participant->getTroopParticipantsCount() > 0) {
+                $this->flashMessages->warning($this->translator->trans('flash.warning.troopHasParticipantsCannotChangeRole'));
+
+                return false;
+            }
+        }
+
+        if ($role === $participant->role) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.sameRoleCannotChangeRole'));
+
+            return false;
+        }
+
+        if ($participant->getUserButNotNull()->status !== UserStatus::Open) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.notOpenCannotChangeRole'));
+
+            return false;
+        }
+
+        $participant->role = $role;
+        $this->participantRepository->persist($participant);
+
+        $this->flashMessages->success($this->translator->trans('flash.success.roleChanged'));
+
+        return true;
     }
 }
