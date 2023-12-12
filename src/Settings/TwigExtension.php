@@ -23,6 +23,9 @@ class TwigExtension extends AbstractExtension
             new TwigTest('PatrolLeader', function ($participant): bool {
                 return $participant instanceof PatrolLeader;
             }),
+            new TwigTest('PatrolParticipant', function ($participant): bool {
+                return $participant instanceof PatrolParticipant;
+            }),
             new TwigTest('TroopLeader', function ($participant): bool {
                 return $participant instanceof TroopLeader;
             }),
