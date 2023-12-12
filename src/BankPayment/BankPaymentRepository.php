@@ -9,9 +9,10 @@ use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
- * @method BankPayment[] findBy(mixed[] $criteria, Order[] $orders = [])
- * @method BankPayment|null findOneBy(mixed[] $criteria, mixed[] $orderBy = [])
+ * @method BankPayment get(int $bankPaymentId)
  * @method BankPayment getOneBy(mixed[] $criteria)
+ * @method BankPayment[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method BankPayment|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class BankPaymentRepository extends Repository
 {

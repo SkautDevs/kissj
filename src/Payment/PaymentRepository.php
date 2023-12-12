@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace kissj\Payment;
 
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
- * @method Payment[] findBy(mixed[] $criteria)
- * @method Payment|null findOneBy(mixed[] $criteria)
  * @method Payment get(int $paymentId)
  * @method Payment getOneBy(mixed[] $criteria)
+ * @method Payment[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method Payment|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class PaymentRepository extends Repository
 {

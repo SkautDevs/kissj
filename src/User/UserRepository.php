@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace kissj\User;
 
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
- * @method User|null findOneBy(mixed[] $criteria)
+ * @method User get(int $userId)
  * @method User getOneBy(mixed[] $criteria)
+ * @method User[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method User|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class UserRepository extends Repository
 {

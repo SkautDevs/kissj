@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace kissj\Event;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Orm\Order;
 use kissj\Orm\Relation;
 use kissj\Orm\Repository;
 
 /**
- * @method Event[] findBy(mixed[] $criteria)
- * @method Event|null findOneBy(mixed[] $criteria)
  * @method Event get(int $id)
  * @method Event getOneBy(mixed[] $criteria)
+ * @method Event[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method Event|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class EventRepository extends Repository
 {

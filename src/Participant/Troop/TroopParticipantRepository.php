@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Troop;
 
 use kissj\Event\Event;
-use kissj\Orm\Relation;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\ParticipantRole;
 use kissj\User\User;
@@ -14,9 +14,9 @@ use kissj\User\User;
  * @table participant
  *
  * @method TroopParticipant get(int $istId)
- * @method TroopParticipant[] findBy(mixed[] $criteria)
- * @method TroopParticipant|null findOneBy(mixed[] $criteria)
  * @method TroopParticipant getOneBy(mixed[] $criteria)
+ * @method TroopParticipant[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method TroopParticipant|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class TroopParticipantRepository extends Repository
 {

@@ -16,9 +16,9 @@ use RuntimeException;
 
 /**
  * @method Participant get(int $participantId)
- * @method Participant[] findBy(mixed[] $criteria)
- * @method Participant|null findOneBy(mixed[] $criteria)
  * @method Participant getOneBy(mixed[] $criteria)
+ * @method Participant[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method Participant|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class ParticipantRepository extends Repository
 {

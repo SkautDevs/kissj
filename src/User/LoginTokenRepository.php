@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
- * @method LoginToken[] findBy(mixed[] $criteria)
- * @method LoginToken|null findOneBy(mixed[] $criteria)
+ * @method LoginToken get(int $loginTokenId)
  * @method LoginToken getOneBy(mixed[] $criteria)
+ * @method LoginToken[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method LoginToken|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class LoginTokenRepository extends Repository
 {

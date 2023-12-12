@@ -62,7 +62,6 @@ class FioBankPaymentService implements IBankPaymentService
 
     public function setBankPaymentPaired(int $paymentId): BankPayment
     {
-        /** @var BankPayment $bankPayment */
         $bankPayment = $this->bankPaymentRepository->get($paymentId);
         $bankPayment->status = BankPayment::STATUS_PAIRED;
         $this->bankPaymentRepository->persist($bankPayment);
@@ -72,7 +71,6 @@ class FioBankPaymentService implements IBankPaymentService
 
     public function setBankPaymentUnrelated(int $paymentId): BankPayment
     {
-        /** @var BankPayment $bankPayment */
         $bankPayment = $this->bankPaymentRepository->get($paymentId);
         $bankPayment->status = BankPayment::STATUS_UNRELATED;
         $this->bankPaymentRepository->persist($bankPayment);

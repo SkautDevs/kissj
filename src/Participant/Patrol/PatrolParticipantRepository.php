@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Patrol;
 
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 
 /**
  * @table participant
  *
- * @method PatrolParticipant[] findBy(mixed[] $criteria)
- * @method PatrolParticipant|null findOneBy(mixed[] $criteria)
+ * @method PatrolParticipant get(int $patrolParticipantId)
  * @method PatrolParticipant getOneBy(mixed[] $criteria)
+ * @method PatrolParticipant[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method PatrolParticipant|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class PatrolParticipantRepository extends Repository
 {
