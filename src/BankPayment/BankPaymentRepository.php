@@ -47,7 +47,7 @@ class BankPaymentRepository extends Repository
     {
         $bankPayment = $this->findOneBy(
             ['event' => $event],
-            ['bank_id' => false],
+            [new Order('bank_id', Order::DIRECTION_DESC)],
         );
 
         return $bankPayment?->bankId;
