@@ -78,11 +78,13 @@ class Repository extends BaseRepository
 
     /**
      * @param array<string,Entity|Relation|bool|int|float|string> $criteria
+     * @param Order[] $orders
      */
-    public function findOneBy(array $criteria): ?Entity
+    public function findOneBy(array $criteria, array $orders = []): ?Entity
     {
         $qb = $this->createFluent();
         $this->addConditions($qb, $criteria);
+        $this->addOrdersBy($qb, $orders);
 
         /** @var ?Row $row */
         $row = $qb->fetch();
