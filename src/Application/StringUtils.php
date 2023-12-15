@@ -19,4 +19,9 @@ class StringUtils
 
         return str_replace($diacritic, $without, $text);
     }
+
+    public static function padWithZeroes(string $text, int $length): string
+    {
+        return str_pad($text, $length, '0', STR_PAD_LEFT);
+    }
 }

@@ -462,10 +462,10 @@ class ParticipantService
         $role = ParticipantRole::tryFrom($roleFromBody);
         if ($role === null || !in_array($role, $event->getAvailableRoles(), true)) {
             $this->flashMessages->error($this->translator->trans('flash.error.roleNotValid'));
-            
+
             return false;
         }
-        
+
         if ($participant instanceof PatrolLeader) {
             if ($participant->getPatrolParticipantsCount() > 0) {
                 $this->flashMessages->warning($this->translator->trans('flash.warning.patrolHasParticipantsCannotChangeRole'));

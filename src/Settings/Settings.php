@@ -18,6 +18,8 @@ use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
+use kissj\PdfGenerator\PdfGenerator;
+use kissj\PdfGenerator\mPdfGenerator;
 use kissj\Skautis\SkautisFactory;
 use kissj\User\UserRegeneration;
 use LeanMapper\Connection;
@@ -125,7 +127,7 @@ class Settings
 
             if ($_ENV['DEBUG'] === 'true') {
                 $logger->pushHandler(
-                    new StreamHandler(__DIR__ . '/../logs/debug.log', Logger::DEBUG)
+                    new StreamHandler(__DIR__ . '/../../logs/debug.log', Logger::DEBUG),
                 );
             }
 
@@ -162,6 +164,7 @@ class Settings
                 $_ENV['SKAUTIS_USE_TEST'] !== 'false',
             );
         };
+        $container[PdfGenerator::class] = get(mPdfGenerator::class);
         $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html
             $translator = new Translator($_ENV['DEFAULT_LOCALE']);

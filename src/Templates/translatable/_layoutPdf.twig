@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ locale|default('cs') }}">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>{% trans %}_layout.title{% endtrans %} - {{ event.readableName }} - kissj</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ base_path() }}/styles.css">
+    <link rel="stylesheet" href="{{ base_path() }}/stylesPdf.css">
+    <style>
+        {{ event.getEventType.getEventSpecificStyles }}
+    </style>
+</head>
+
+<body class="wrapper">
+    {% block content %}{% endblock %}
+</body>
+</html>

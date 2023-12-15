@@ -6,6 +6,7 @@ namespace kissj\Event\EventType;
 
 use DateInterval;
 use DateTimeImmutable;
+use kissj\Application\StringUtils;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
@@ -178,5 +179,20 @@ abstract class EventType
     public function isLoginSkautisAllowed(): bool
     {
         return false;
+    }
+
+    public function isReceiptAllowed(): bool
+    {
+        return false;
+    }
+
+    public function getReceiptNumber(string $eventPrefix, Participant $participant, string $paymentId): string
+    {
+        return sprintf(
+            '%s-%s-%s',
+            $eventPrefix,
+            StringUtils::padWithZeroes((string)$participant->id, 4),
+            StringUtils::padWithZeroes($paymentId, 4),
+        );
     }
 }

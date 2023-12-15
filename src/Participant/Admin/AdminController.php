@@ -517,7 +517,7 @@ class AdminController extends AbstractController
             'admin-show-stats',
         );
     }
-    
+
     public function showRole(Response $response, int $participantId, Event $event): Response
     {
         $participant = $this->participantRepository->get($participantId);
@@ -527,14 +527,14 @@ class AdminController extends AbstractController
             'roles' => $event->getAvailableRoles(),
         ]);
     }
-    
+
     public function changeRole(Request $request, Response $response, int $participantId, Event $event): Response
     {
         $participant = $this->participantRepository->get($participantId);
         $roleFromBody = $this->getParameterFromBody($request, 'role');
-        
+
         $success = $this->participantService->tryChangeRoleWithMessages($roleFromBody, $participant, $event);
-        
+
         if ($success) {
             return $this->redirect(
                 $request,
@@ -542,7 +542,7 @@ class AdminController extends AbstractController
                 'admin-show-open',
             );
         }
-        
+
         return $this->redirect(
             $request,
             $response,

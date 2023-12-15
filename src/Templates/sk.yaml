@@ -42,6 +42,7 @@ dashboard:
         paid: "zaplacená (:"
         canceled: "zrušená"
     lockRegistration: "Uzamknúť registráciu"
+    downloadReceipt: "Stáhnout potvrzení o zaplacení v PDF"
 changeDetails:
     editDetails: "Upraviť údaje"
     back: "Späť"
@@ -384,6 +385,24 @@ transferPayment-admin:
     transfer: "Přesuň platbu"
     notPossible: "Přesun nelze uskutečnit"
     tieTogether: "Připojit účastníka do skupiny"
+receipt:
+    headline: "Potvrzení o přijetí platby"
+    number: "Číslo dokladu"
+    accepter: "
+        Junák – český skaut, z. s.<br/>
+        Senovážné nám. 24<br/>
+        110 00 Praha 1<br/>
+        IČO: 00409430
+    "
+    acceptPaymentEvent: "Potvrzujeme přijetí platby na akci %eventReadableName% s datem konání %eventDates%."
+    acceptPaymentParticipant: "Přijato za osobu účastnící se akce %participantFullName% bydlištěm %participantFullAddress%."
+    acceptPaymentMoreParticipant: "Další osoby účastnící se akce, za které bylo zaplaceno: %allOtherParticipants%"
+    acceptPaymentPayment: "
+        Platba byla přijata ve výši %paymentAmount% %paymentCurrency%
+        pod variabilním symbolem %paymentVariableSymbol%
+        na účet %paymentAccountTo%.
+        "
+    acceptedSígn: "Vystaveno: účetní KÚJ dne %acceptedDate%"
 flash:
     info:
         participantDeleted: "Účastník bol vymazaný"
@@ -459,3 +478,5 @@ flash:
         skautisUserNotLoggedIn: "Skautis hlásí, že účastník není přihlášený. Zkus se prosím odhlásit a znovu přihlásit"
         skautisUserError: "Selhalo stažení dat ze Skautisu. Zkus se prosím odhlásit a znovu přihlásit"
         roleNotValid: "Tato role není pro tuto akci platná"
+        receiptNotAllowed: "Potvrzení o přijetí platby není pro tuto akci povoleno"
+        cannotAccessTemp: "Problém přístupu k temporary složce. Zkus to znovu prosím za pár minut"

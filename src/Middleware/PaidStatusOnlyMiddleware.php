@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Psr\Log\LoggerInterface;
 
-class OpenStatusOnlyMiddleware extends BaseMiddleware
+class PaidStatusOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -20,11 +20,11 @@ class OpenStatusOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->status !== UserStatus::Open) {
+        if ($user instanceof User && $user->status !== UserStatus::Paid) {
             $this->logger->warning(
-                'User ' . $user->email . ' is trying to change data, even he has status "' . $user->status->value . '"'
+                'User ' . $user->email . ' is trying to access "paid only" route, even he has status "' . $user->status->value . '"'
             );
-            throw new \RuntimeException('You cannot change your data when you are not in editing status');
+            throw new \RuntimeException('You cannot change your data when you are not in paid status');
         }
 
         return $handler->handle($request);

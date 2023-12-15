@@ -15,6 +15,10 @@
             {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
         </h2>
     {% endif %}
+    
+    {% if event.eventtype.isReceiptAllowed and userStatus == 'paid' %}
+        <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{% trans %}dashboard.downloadReceipt{% endtrans %}</a><br/>
+    {% endif %}
 
     {% if person is Leader %}
         <div class="card-divide">

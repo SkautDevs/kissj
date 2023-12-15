@@ -60,6 +60,7 @@ dashboard:
         approved: "approved ✔"
         paid: "paid (:"
     lockRegistration: "Lock registration"
+    downloadReceipt: "Download receipt in PDF"
 changeDetails:
     editDetails: "Edit details"
     back: "Back"
@@ -415,6 +416,24 @@ troopManagement-admin:
     troopParticipantsWithoutLeader: "participants without troop"
     tieTogether: "Tie participant into troop"
     untie: "Untie participant from troop"
+receipt:
+    headline: "Confirmation of payment acceptance"
+    numberEN: "Receipt number"
+    accepter: "
+        Junák – český skaut, z. s.<br/>
+        Senovážné nám. 24<br/>
+        110 00 Praha 1<br/>
+        IČO: 00409430
+    "
+    acceptPaymentEvent: "We confirm the acceptance of payment for the event %eventReadableName% with date %eventDates%."
+    acceptPaymentParticipant: "Accepted for participant %participantFullName% with address %participantFullAddress%."
+    acceptPaymentMoreParticipant: "Other participants of the event for which the payment was made: %allOtherParticipants%"
+    acceptPaymentPayment: "
+        Payment was accepted in the amount of %paymentAmount% %paymentCurrency%
+        with variable symbol %paymentVariableSymbol%
+        to the account %paymentAccountTo%.
+        "
+    acceptedSígn: "Issued: accounting KÚJ on %acceptedDate%"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -507,3 +526,5 @@ flash:
         skautisUserNotLoggedIn: "Skautis reports that the participant is not logged in. Please try to log out and log in again"
         skautisUserError: "Failed to download data from Skautis. Please try to log out and log in again"
         roleNotValid: "Role is not valid"
+        receiptNotAllowed: "Receipt cannot be generated, because it is not allowed for this evet"
+        cannotAccessTemp: "Cannot access temporary file. Try it again later please."

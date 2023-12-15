@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use Exception;
 use kissj\AbstractController;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -12,10 +13,12 @@ use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
+use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Psr7\Stream;
 
 class ParticipantController extends AbstractController
 {
@@ -24,6 +27,7 @@ class ParticipantController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
+        private readonly PdfGenerator $pdfGenerator,
     ) {
     }
 
@@ -89,6 +93,31 @@ class ParticipantController extends AbstractController
         }
 
         return $this->redirect($request, $response, 'dashboard');
+    }
+
+    public function downloadReceipt(Request $request, Response $response, User $user): Response
+    {
+        if ($user->event->eventType->isReceiptAllowed() === false) {
+            $this->flashMessages->error($this->translator->trans('flash.error.receiptNotAllowed'));
+            $this->sentryCollector->collect(new Exception('Receipt not allowed'));
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        $stream = fopen('php://temp', 'rb+');
+        if ($stream === false) {
+            $this->flashMessages->error($this->translator->trans('flash.error.cannotAccessTemp'));
+            $this->sentryCollector->collect(new Exception('Cannot access temp file'));
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+
+        fwrite($stream, $this->pdfGenerator->generatePdfReceipt($participant));
+        rewind($stream);
+
+        return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
 
     /**

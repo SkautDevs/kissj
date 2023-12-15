@@ -14,6 +14,7 @@ use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
+use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
@@ -154,6 +155,10 @@ class Route
                         $app->get('/dashboard', ParticipantController::class . '::showDashboard')
                             ->setName('dashboard');
 
+                        $app->get('/download/receipt', ParticipantController::class . '::downloadReceipt')
+                            ->setName('downloadReceipt')
+							->add(PaidStatusOnlyMiddleware::class);
+
                         $app->group('', function (RouteCollectorProxy $app) {
                             $app->get('/showChangeDetails', ParticipantController::class . '::showDetailsChangeable')
                                 ->setName('showDetailsChangeable');
@@ -184,7 +189,7 @@ class Route
                         $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
                             ->setName('admin-change-participant-details');
                     });
-                    
+
                     $app->group('/changeRole/{participantId}', function (RouteCollectorProxy $app) {
                         $app->get('/show', AdminController::class . '::showRole')
                             ->setName('admin-show-role');

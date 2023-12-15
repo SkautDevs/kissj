@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace kissj\Event;
 
 use DateTimeInterface;
-use Exception;
 use kissj\Application\DateTimeUtils;
+use kissj\Application\ImageUtils;
 use kissj\Event\EventType\Aqua\EventTypeAqua;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\Cej\EventTypeCej;
@@ -117,5 +117,10 @@ class Event extends EntityDatetime
         }
 
         return $roles;
+    }
+
+    public function getLogoInBase64(): string
+    {
+        return ImageUtils::getLocalImageInBase64($this->logoUrl);
     }
 }

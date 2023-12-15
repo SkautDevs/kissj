@@ -38,6 +38,7 @@
         "middlewares/negotiation": "^2.0",
         "middlewares/trailing-slash": "^2.0",
         "monolog/monolog": "^1.25",
+        "mpdf/mpdf": "^8.2",
         "php-di/slim-bridge": "^3",
         "phpmailer/phpmailer": "^6.0",
         "ramsey/uuid": "^4.7",
