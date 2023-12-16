@@ -11,7 +11,7 @@ use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use kissj\Mailer\MailerSettings;
 use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\SentryContextMiddleware;
@@ -32,7 +32,6 @@ use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
-use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
 use Sentry\Event as SentryEvent;
 use Sentry\Monolog\Handler as SentryHandler;
@@ -53,22 +52,25 @@ class Settings
 {
     private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function getContainerDefinition(string $envPath, string $envFilename): array
-    {
+    public function __construct(
+        string $envPath,
+        string $envFilename,
+    ) {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not want to be changed soon (:
 
         $dotenv = Dotenv::createImmutable($envPath, $envFilename);
         $dotenv->load();
         $this->validateAllSettings($dotenv);
+    }
 
+    public function initSentry(): SentryHub
+    {
         // init every time for capturing performance
         $sentryClient = ClientBuilder::create([
             'dsn' => $_ENV['SENTRY_DSN'],
             'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
             'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
+            'profiles_sample_rate' => 1.0,
             'before_send' => function (SentryEvent $event): ?SentryEvent {
                 // Check if error is from middleware exception capturer
                 // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
@@ -85,6 +87,15 @@ class Settings
         $sentryHub = new SentryHub($sentryClient);
         SentrySdk::setCurrentHub($sentryHub);
 
+        return $sentryHub;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getContainerDefinition(
+        SentryHub $sentryHub,
+    ): array {
         $container = [];
         $container[Connection::class] = function (): Connection {
             return new Connection([
@@ -105,7 +116,6 @@ class Settings
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
 
-        $container[SentryClient::class] = $sentryClient;
         $container[SentryHub::class] = $sentryHub;
 
         $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
@@ -142,11 +152,11 @@ class Settings
         };
         $container[S3bucketFileHandler::class] = fn (
             S3Client $s3Client,
-            SentryCollector $sentryCollector
+            SentryService $sentryService
         ) => new S3bucketFileHandler(
             $s3Client,
             $_ENV['S3_BUCKET'],
-            $sentryCollector,
+            $sentryService,
         );
         $container[S3Client::class] = fn () => new S3Client([
             'version' => 'latest',

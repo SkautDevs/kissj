@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj;
 
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -17,7 +17,7 @@ class ErrorHandlerGetter
 {
     private readonly LoggerInterface $logger;
     private readonly Twig $twig;
-    private readonly SentryCollector $sentryCollector;
+    private readonly SentryService $sentryService;
 
     public function __construct(
         ContainerInterface $container
@@ -30,9 +30,9 @@ class ErrorHandlerGetter
         $twig = $container->get(Twig::class);
         $this->twig = $twig;
 
-        /** @var SentryCollector $sentryCollector */
-        $sentryCollector = $container->get(SentryCollector::class);
-        $this->sentryCollector = $sentryCollector;
+        /** @var SentryService $sentryService */
+        $sentryService = $container->get(SentryService::class);
+        $this->sentryService = $sentryService;
     }
 
     public function getErrorHandler(): callable
@@ -44,7 +44,7 @@ class ErrorHandlerGetter
                 die;
             }
 
-            $this->sentryCollector->collect($throwable);
+            $this->sentryService->collect($throwable);
 
             $title = $inspector->getExceptionName();
             $code = $throwable->getCode();

@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace kissj\Orm;
 
+use DI\Attribute\Inject;
 use Dibi\Row;
+use kissj\Logging\Sentry\SentryService;
+use LeanMapper\Connection;
 use LeanMapper\Entity;
 use LeanMapper\Fluent;
+use LeanMapper\IEntityFactory;
+use LeanMapper\IMapper;
 use LeanMapper\Repository as BaseRepository;
+use Sentry\Tracing\Transaction;
 
 /**
  * @property string[] $onBeforeCreate
@@ -15,10 +21,28 @@ use LeanMapper\Repository as BaseRepository;
  */
 class Repository extends BaseRepository
 {
+    private Transaction $transaction;
+
+    public function __construct(
+        Connection $connection,
+        IMapper $mapper,
+        IEntityFactory $entityFactory,
+        protected readonly SentryService $sentryService,
+    ) {
+        $this->transaction = $this->sentryService->startTransaction(static::class);
+        
+        parent::__construct($connection, $mapper, $entityFactory);
+    }
+
     public function initEvents(): void
     {
         $this->onBeforeCreate[] = EntityDatetime::class . '::setCreatedAtBeforeCreate';
         $this->onBeforePersist[] = EntityDatetime::class . '::setUpdatedAtBeforePersist';
+    }
+    
+    public function __destruct()
+    {
+        $this->sentryService->endTransaction($this->transaction);
     }
 
     /**

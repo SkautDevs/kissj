@@ -5,7 +5,7 @@ namespace kissj\FileHandler;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use Slim\Psr7\UploadedFile;
 
 class S3bucketFileHandler extends FileHandler
@@ -13,7 +13,7 @@ class S3bucketFileHandler extends FileHandler
     public function __construct(
         private readonly S3Client $s3client,
         private readonly string $s3bucket,
-        private readonly SentryCollector $sentryCollector,
+        private readonly SentryService $sentryService,
     ) {
     }
 
@@ -42,7 +42,7 @@ class S3bucketFileHandler extends FileHandler
                 'ContentType' => $uploadedFile->getClientMediaType(),
             ]);
         } catch (S3Exception $e) {
-            $this->sentryCollector->collect($e);
+            $this->sentryService->collect($e);
 
             throw $e;
         }

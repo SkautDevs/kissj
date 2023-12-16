@@ -7,7 +7,7 @@ namespace kissj\Skautis;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -33,7 +33,7 @@ class SkautisService
         private readonly FlashMessagesInterface $flashMessages,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
-        private readonly SentryCollector $sentryCollector,
+        private readonly SentryService $sentryService,
     ) {
         $this->skautis = $skautisFactory->getSkautis();
     }
@@ -90,7 +90,7 @@ class SkautisService
                 $skautisUnitName,
             );
         } catch (Throwable $t) {
-            $this->sentryCollector->collect($t);
+            $this->sentryService->collect($t);
             $this->logger->error('Error while getting user details from skautis: ' . $t->getMessage(), [
                 'throwable' => $t,
             ]);

@@ -8,7 +8,7 @@ use DI\Attribute\Inject;
 use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -36,7 +36,7 @@ abstract class AbstractController
     protected FileHandler $fileHandler;
 
     #[Inject]
-    protected SentryCollector $sentryCollector;
+    protected SentryService $sentryService;
 
     /**
      * @param Request $request
@@ -148,7 +148,7 @@ abstract class AbstractController
             /** @var array<mixed> $json */
             $json = json_decode((string)$request->getBody(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            $this->sentryCollector->collect($e);
+            $this->sentryService->collect($e);
 
             return [];
         }

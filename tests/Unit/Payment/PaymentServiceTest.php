@@ -5,7 +5,7 @@ namespace Tests\Unit\Payment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Logging\Sentry\SentryService;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
@@ -28,7 +28,7 @@ class PaymentServiceTest extends TestCase
             \Mockery::mock(PhpMailerWrapper::class),
             \Mockery::mock(TranslatorInterface::class),
             \Mockery::mock(Logger::class),
-            \Mockery::mock(SentryCollector::class),
+            \Mockery::mock(SentryService::class),
         );
 
         for ($i = 0; $i < 100; $i++) {
