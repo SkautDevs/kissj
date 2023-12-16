@@ -6,6 +6,21 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
+use kissj\BankPayment\BankPaymentRepository;
+use kissj\BankPayment\FioBankPaymentService;
+use kissj\BankPayment\FioBankReaderFactory;
+use kissj\Entry\EntryController;
+use kissj\Event\ContentArbiterGuest;
+use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiterTroopLeader;
+use kissj\Event\ContentArbiterTroopParticipant;
+use kissj\Event\EventController;
+use kissj\Event\EventRepository;
+use kissj\Event\EventService;
+use kissj\Export\ExportController;
+use kissj\Export\ExportService;
 use kissj\FileHandler\FileHandler;
 use kissj\FileHandler\LocalFileHandler;
 use kissj\FileHandler\S3bucketFileHandler;
@@ -13,14 +28,52 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\MailerSettings;
+use kissj\Mailer\PhpMailerWrapper;
+use kissj\Middleware\AdminsOnlyMiddleware;
+use kissj\Middleware\CheckLeaderParticipants;
+use kissj\Middleware\ChoosedRoleOnlyMiddleware;
+use kissj\Middleware\EventInfoMiddleware;
+use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\LoggedOnlyMiddleware;
+use kissj\Middleware\MonologAdditionalContextMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
+use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
+use kissj\Middleware\NonLoggedOnlyMiddleware;
+use kissj\Middleware\OpenStatusOnlyMiddleware;
+use kissj\Middleware\PaidStatusOnlyMiddleware;
+use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
+use kissj\Middleware\TroopLeadersOnlyMiddleware;
+use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
+use kissj\Participant\Admin\AdminController;
+use kissj\Participant\Admin\AdminRepository;
+use kissj\Participant\Admin\AdminService;
+use kissj\Participant\Guest\GuestRepository;
+use kissj\Participant\Guest\GuestService;
+use kissj\Participant\Ist\IstRepository;
+use kissj\Participant\Ist\IstService;
+use kissj\Participant\ParticipantController;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
+use kissj\Participant\Patrol\PatrolController;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
+use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\Troop\TroopController;
+use kissj\Participant\Troop\TroopLeaderRepository;
+use kissj\Participant\Troop\TroopParticipantRepository;
+use kissj\Participant\Troop\TroopService;
+use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
+use kissj\Payment\QrCodeService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\PdfGenerator\mPdfGenerator;
+use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
+use kissj\Skautis\SkautisService;
 use kissj\User\UserRegeneration;
 use LeanMapper\Connection;
 use LeanMapper\DefaultEntityFactory;
@@ -85,7 +138,68 @@ class Settings
         $sentryHub = new SentryHub($sentryClient);
         SentrySdk::setCurrentHub($sentryHub);
 
-        $container = [];
+        // autowired classes are not compiled automatically, hence here we about to tell them to DI 
+        // https://php-di.org/doc/performances.html#optimizing-for-compilation
+        $container = [
+            AdminController::class => autowire(),
+            AdminRepository::class => autowire(),
+            AdminService::class => autowire(),
+            AdminsOnlyMiddleware::class => autowire(),
+            BankPaymentRepository::class => autowire(),
+            CheckLeaderParticipants::class => autowire(),
+            ChoosedRoleOnlyMiddleware::class => autowire(),
+            ContentArbiterGuest::class => autowire(),
+            ContentArbiterIst::class => autowire(),
+            ContentArbiterPatrolLeader::class => autowire(),
+            ContentArbiterPatrolParticipant::class => autowire(),
+            ContentArbiterTroopLeader::class => autowire(),
+            ContentArbiterTroopParticipant::class => autowire(),
+            EntryController::class => autowire(),
+            EventController::class => autowire(),
+            EventInfoMiddleware::class => autowire(),
+            EventRepository::class => autowire(),
+            EventService::class => autowire(),
+            ExportController::class => autowire(),
+            ExportService::class => autowire(),
+            FioBankPaymentService::class => autowire(),
+            FioBankReaderFactory::class => autowire(),
+            GuestRepository::class => autowire(),
+            GuestService::class => autowire(),
+            IstRepository::class => autowire(),
+            IstService::class => autowire(),
+            LocalizationResolverMiddleware::class => autowire(),
+            LoggedOnlyMiddleware::class => autowire(),
+            MonologAdditionalContextMiddleware::class => autowire(),
+            MonologContextMiddleware::class => autowire(),
+            NonChoosedRoleOnlyMiddleware::class => autowire(),
+            NonLoggedOnlyMiddleware::class => autowire(),
+            OpenStatusOnlyMiddleware::class => autowire(),
+            PaidStatusOnlyMiddleware::class => autowire(),
+            ParticipantController::class => autowire(),
+            ParticipantRepository::class => autowire(),
+            ParticipantService::class => autowire(),
+            PatrolController::class => autowire(),
+            PatrolLeaderRepository::class => autowire(),
+            PatrolLeadersOnlyMiddleware::class => autowire(),
+            PatrolParticipantRepository::class => autowire(),
+            PatrolService::class => autowire(),
+            PaymentRepository::class => autowire(),
+            PaymentService::class => autowire(),
+            PhpMailerWrapper::class => autowire(),
+            QrCodeService::class => autowire(),
+            SentryContextMiddleware::class => autowire(),
+            SentryHttpContextMiddleware::class => autowire(),
+            SkautisController::class => autowire(),
+            SkautisService::class => autowire(),
+            TroopController::class => autowire(),
+            TroopLeaderRepository::class => autowire(),
+            TroopLeadersOnlyMiddleware::class => autowire(),
+            TroopParticipantRepository::class => autowire(),
+            TroopParticipantsOnlyMiddleware::class => autowire(),
+            TroopService::class => autowire(),
+            UserAuthenticationMiddleware::class => autowire(),
+        ];
+
         $container[Connection::class] = function (): Connection {
             return new Connection([
                     'driver' => 'postgre',
@@ -207,18 +321,6 @@ class Settings
 
             return $view;
         };
-
-        $container[UserAuthenticationMiddleware::class]
-            = fn (UserRegeneration $userRegeneration) => new UserAuthenticationMiddleware($userRegeneration);
-
-        $container[SentryHttpContextMiddleware::class]
-            = fn (SentryHub $sentryHub): SentryHttpContextMiddleware => new SentryHttpContextMiddleware($sentryHub);
-
-        $container[SentryContextMiddleware::class]
-            = fn (SentryHub $sentryHub): SentryContextMiddleware => new SentryContextMiddleware($sentryHub);
-
-        $container[MonologContextMiddleware::class]
-            = fn (Logger $logger): MonologContextMiddleware => new MonologContextMiddleware($logger);
 
         return $container;
     }

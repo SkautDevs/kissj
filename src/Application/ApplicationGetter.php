@@ -2,26 +2,29 @@
 
 namespace kissj\Application;
 
+use DI\Bridge\Slim\Bridge;
+use kissj\Settings\Settings;
+use Slim\App;
+
 class ApplicationGetter
 {
     public function getApp(
         string $envPath = __DIR__.'/../../',
         string $envFilename = '.env',
         string $tempPath = __DIR__.'/../../temp'
-    ): \Slim\App {
+    ): App {
         $containerBuilder = new \DI\ContainerBuilder();
-        $containerBuilder->addDefinitions((new \kissj\Settings\Settings())->getContainerDefinition(
+        $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
             $envPath,
             $envFilename,
         ));
         $containerBuilder->useAttributes(true); // used in AbstractController
         if ($_ENV['DEBUG'] === 'false') {
-            // TODO add autowired definitions into container to get more performace
-            // https://php-di.org/doc/performances.html#optimizing-for-compilation
             $containerBuilder->enableCompilation($tempPath);
         }
+
         $container = $containerBuilder->build();
-        $app = \DI\Bridge\Slim\Bridge::create($container);
+        $app = Bridge::create($container);
         $app->setBasePath($_ENV['BASEPATH']);
 
         $app = (new Middleware())->addMiddlewaresInto($app);

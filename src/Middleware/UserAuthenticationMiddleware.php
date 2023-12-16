@@ -9,8 +9,9 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 
 class UserAuthenticationMiddleware extends BaseMiddleware
 {
-    public function __construct(private readonly UserRegeneration $userRegeneration)
-    {
+    public function __construct(
+        private readonly UserRegeneration $userRegeneration,
+    ) {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response
