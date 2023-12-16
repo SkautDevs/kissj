@@ -17,7 +17,7 @@ class UpdatePaymentsCommand extends Command
     ) {
         parent::__construct();
     }
-    
+
     public function handle(): void
     {
         foreach ($this->eventRepository->findActiveNontestAutopaymentsOnEvents() as $event) {

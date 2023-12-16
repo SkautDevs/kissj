@@ -138,7 +138,7 @@ class Settings
         $sentryHub = new SentryHub($sentryClient);
         SentrySdk::setCurrentHub($sentryHub);
 
-        // autowired classes are not compiled automatically, hence here we about to tell them to DI 
+        // autowired classes are not compiled automatically, hence here we about to tell them to DI
         // https://php-di.org/doc/performances.html#optimizing-for-compilation
         $container = [
             AdminController::class => autowire(),

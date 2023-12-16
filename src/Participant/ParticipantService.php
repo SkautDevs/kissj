@@ -199,7 +199,7 @@ class ParticipantService
         if ($participantsCount < $event->minimalTroopParticipantsCount) {
             $this->flashMessages->warning(
                 $this->translator->trans(
-                    'flash.warning.plTooFewParticipantsTroop',
+                    'flash.warning.tlTooFewParticipantsTroop',
                     ['%minimalTroopParticipantsCount%' => $event->minimalTroopParticipantsCount],
                 )
             );
@@ -209,7 +209,7 @@ class ParticipantService
         if ($participantsCount > $event->maximalTroopParticipantsCount) {
             $this->flashMessages->warning(
                 $this->translator->trans(
-                    'flash.warning.plTooManyParticipantsTroop',
+                    'flash.warning.tlTooManyParticipantsTroop',
                     ['%maximalTroopParticipantsCount%' => $event->maximalTroopParticipantsCount],
                 )
             );

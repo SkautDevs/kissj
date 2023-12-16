@@ -12,8 +12,8 @@ flash:
     warning:
         fullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Zkus to později, třeba někdo nezaplatí registrační poplatek v termínu."
         noLock: "Registraci nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (možná chybí jméno skupiny?)"
-        plTooFewParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš málo účastníků*účastnic. Pro funkční skupinu jich je potřeba nejméně %minimalTroopParticipantsCount%"
-        plTooManyParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš účastníků*účastnic. Může jich být nejvíce %maximalTroopParticipantsCount%, nějaké odstraň prosím"
+        tlTooFewParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš málo účastníků*účastnic. Pro funkční skupinu jich je potřeba nejméně %minimalTroopParticipantsCount%"
+        tlTooManyParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš účastníků*účastnic. Může jich být nejvíce %maximalTroopParticipantsCount%, nějaké odstraň prosím"
         notLogged: "Omlouváme se, ale nejsi přihlášen*a. Přihlaš se prosím přes skautIS"
         troopLeaderNotOpen: "Skupina byla již zamknuta, proto nelze připojit účastníka*účastnici ke skupině"
         troopParticipantAlreadyTied: "Účastník*účastnice již byl*a do skupiny přidán*a"
