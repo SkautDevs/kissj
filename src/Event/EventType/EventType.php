@@ -84,9 +84,9 @@ abstract class EventType
         return [];
     }
 
-    public function getEventSpecificStyles(): string
+    public function getStylesheetNameWithoutLeadingSlash(): ?string
     {
-        return '';
+        return null;
     }
 
     /**

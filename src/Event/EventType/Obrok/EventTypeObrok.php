@@ -68,14 +68,9 @@ class EventTypeObrok extends EventType
         ];
     }
 
-    public function getEventSpecificStyles(): string
+    public function getStylesheetNameWithoutLeadingSlash(): ?string
     {
-        $styles = file_get_contents(__DIR__ . '/stylesObrok.css');
-        if ($styles === false) {
-            return '';
-        }
-
-        return $styles;
+        return 'eventSpecificCss/stylesObrok.css';
     }
 
     /**

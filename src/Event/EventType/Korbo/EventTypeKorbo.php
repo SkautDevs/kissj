@@ -48,14 +48,9 @@ class EventTypeKorbo extends EventType
         return ["cs" => __DIR__ . "/cs.yaml"];
     }
 
-    public function getEventSpecificStyles(): string
+    public function getStylesheetNameWithoutLeadingSlash(): string
     {
-        $styles = file_get_contents(__DIR__ . '/stylesKorbo.css');
-        if ($styles === false) {
-            return '';
-        }
-
-        return $styles;
+        return 'eventSpecificCss/stylesKorbo.css';
     }
 
     public function getLanguages(): array
@@ -68,11 +63,5 @@ class EventTypeKorbo extends EventType
     public function isSellingIstTicketsAllowed(): bool
     {
         return true;
-    }
-
-    public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
-    {
-        // TODO remove for 2024, hotfix only
-        return new DateTimeImmutable('2023-09-18');
     }
 }

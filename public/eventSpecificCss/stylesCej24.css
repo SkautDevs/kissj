@@ -1,10 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Georama&display=swap');
 
-html {
-    font-family: 'georama', 'themix', sans-serif;
-}
-
-input, textarea, select, button {
+:root {
     font-family: 'georama', 'themix', sans-serif;
 }
 
