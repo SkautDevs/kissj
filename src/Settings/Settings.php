@@ -122,6 +122,7 @@ class Settings
             'dsn' => $_ENV['SENTRY_DSN'],
             'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
             'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
+            'release' => 'kissj@' . $_ENV['GIT_HASH'],
             'before_send' => function (SentryEvent $event): ?SentryEvent {
                 // Check if error is from middleware exception capturer
                 // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
@@ -351,5 +352,6 @@ class Settings
         $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
         $dotenv->required('SKAUTIS_APP_ID')->notEmpty();
         $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
+        $dotenv->required('GIT_HASH');
     }
 }
