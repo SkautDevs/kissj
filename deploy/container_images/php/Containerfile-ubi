@@ -1,14 +1,20 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 LABEL maintainers "Kissj devs <https://github.com/SkautDevs>"
+ARG GIT_HASH
+ENV GIT_HASH=${GIT_HASH}
+LABEL GIT_HASH=${GIT_HASH}
 
 WORKDIR /var/www/html
 
 #enable needed epel & remi repos
 RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
 
+#enable blackfire repo
+RUN dnf config-manager --add-repo "http://packages.blackfire.io/fedora/blackfire.repo"
+
 #enable php81 module and install php
 RUN dnf module enable php:remi-8.2 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-opcache unzip vim -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-opcache  unzip vim blackfire-php -y
 
 #cleanup dnf cache
 RUN dnf clean all
