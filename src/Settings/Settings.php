@@ -84,6 +84,7 @@ use Monolog\Logger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
+use PDO;
 use Psr\Log\LoggerInterface;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
@@ -203,11 +204,13 @@ class Settings
 
         $container[Connection::class] = function (): Connection {
             return new Connection([
-                    'driver' => 'postgre',
-                    'host' => $_ENV['DATABASE_HOST'],
+                    'driver' => 'pdo',
+                    'dsn'   => 'pgsql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['POSTGRES_DB'],
                     'username' => $_ENV['POSTGRES_USER'],
                     'password' => $_ENV['POSTGRES_PASSWORD'],
-                    'database' => $_ENV['POSTGRES_DB'],
+                    'options'  => [
+                        PDO::ATTR_PERSISTENT => true
+                    ],
                 ]);
         };
         $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
