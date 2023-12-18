@@ -164,7 +164,7 @@ class EventTypeCej extends EventType
             self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_BRITAIN,
             self::CONTINGENT_SWEDEN,
-            self::CONTINGENT_TEAM,
+            # self::CONTINGENT_TEAM,# temporary disable
         ];
     }
 
