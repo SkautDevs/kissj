@@ -70,7 +70,7 @@ jobs:
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
-            replicas: 3
+            replicas: 2
             hpa:
               enabled: true
             
@@ -82,11 +82,11 @@ jobs:
               issuer: ${{ secrets.CERT_ISSUER}}
 
           php:
-            replicas: 3
+            replicas: 2
             hpa:
               enabled: true
-              maxReplicas: 25
-              minReplicas: 3
+              maxReplicas: 20
+              minReplicas: 2
               
             volume:
               storageclass: ${{ secrets.STORAGE_CLASS }}
@@ -117,6 +117,13 @@ jobs:
             skautis:
               appId: ${{ secrets.SKAUTIS_APP_ID }}
               useTest: ${{ secrets.SKAUTIS_USE_TEST }}
+            
+            blackfire:
+              enabled: true
+              serverId: ${{ secrets.BLACKFIRE_SERVER_ID }}
+              serverToken: ${{ secrets.BLACKFIRE_SERVER_TOKEN }}
+              clientId: ${{ secrets.BLACKFIRE_CLIENT_ID }}
+              clientToken: ${{ secrets.BLACKFIRE_CLIENT_TOKEN }}
 
       env:
         KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
