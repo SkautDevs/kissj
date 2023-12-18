@@ -29,6 +29,8 @@ COPY ./public /var/www/html/public
 COPY ./deploy/container_images/php/php.ini /etc/php.ini
 COPY ./deploy/container_images/php/php-fpm.conf /etc/php-fpm.conf
 COPY ./deploy/container_images/php/www.conf /etc/php-fpm.d/www.conf
+COPY ./deploy/container_images/php/10-opcache.ini /etc/php.d/10-opcache.ini
+
 
 #add user
 RUN groupadd -g 1001 www-data
