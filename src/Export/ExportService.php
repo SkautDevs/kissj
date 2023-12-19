@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -197,7 +198,7 @@ class ExportService
             'registrationCloseDate',
             'registrationApproveDate',
             'registrationPayDate', // 35
-            'patrolLeaderId_patrolParticipantId',
+            'patrolOrTroopLeaderId',
             'patrolName',
             'patrolParticipantCount',
             'istSkills',
@@ -206,20 +207,26 @@ class ExportService
         ];
 
         foreach ($participants as $participant) {
-            if ($participant instanceof PatrolLeader) {
-                $pPart = [
+            if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
+                $ptPart = [
                     (string)$participant->id,
                     $participant->patrolName ?? '',
                     (string)$participant->getPatrolParticipantsCount(),
                 ];
             } elseif ($participant instanceof PatrolParticipant) {
-                $pPart = [
+                $ptPart = [
                     (string)$participant->patrolLeader->id,
                     $participant->patrolLeader->patrolName ?? '',
                     '',
                 ];
+            } elseif ($participant instanceof TroopParticipant) {
+                $ptPart = [
+                    (string)$participant->troopLeader->id,
+                    $participant->troopLeader->patrolName ?? '',
+                    '',
+                ];
             } else {
-                $pPart = [
+                $ptPart = [
                     '',
                     '',
                     '',
@@ -280,7 +287,7 @@ class ExportService
                     $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
                     $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                 ],
-                $pPart,
+                $ptPart,
                 $istPart
             );
         }
