@@ -71,10 +71,7 @@ app:
   skautis:
     appId: SkautisAppId
     useTest: false
+    
+      
 
-  blackfire:
-    enabled: false
-    clientId: BlackfireClientId
-    clientToken: BlackfireClientToken
-    serverId: BlackfireServerId
-    serverToken: BlackfireServerToken
+
