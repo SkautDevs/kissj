@@ -204,12 +204,3 @@ spec:
                 name: {{ .Release.Name }}-skautis
                 key: appId
 
-          - name: BLACKFIRE_CLIENT_ID
-            value: {{ .Values.app.blackfire.clientId }}
-
-          - name: BLACKFIRE_CLIENT_TOKEN
-            value: {{ .Values.app.blackfire.clientToken }}
-
-          - name: BLACKFIRE_AGENT_SOCKET
-            value: tcp://{{ .Release.Name}}-blackfire:8707
-
