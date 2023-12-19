@@ -1,5 +1,8 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 LABEL maintainers "Kissj devs <https://github.com/SkautDevs>"
+ARG GIT_HASH
+ENV GIT_HASH=${GIT_HASH}
+LABEL GIT_HASH=${GIT_HASH}
 
 WORKDIR /var/www/html
 

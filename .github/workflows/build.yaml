@@ -42,6 +42,8 @@ jobs:
           oci: true
           image: php-ubi
           archs: amd64, arm64
+          build-args: |
+            GIT_HASH=${{ github.sha }}
           tags: ${{ inputs.envName}}-${{ github.sha }} latest
           containerfiles: |
             ./deploy/container_images/php/Containerfile-ubi
