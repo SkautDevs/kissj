@@ -433,7 +433,7 @@ receipt:
         pod variabilním symbolem %paymentVariableSymbol%
         na účet %paymentAccountTo%.
         "
-    acceptedSígn: "Vystaveno: účetní KÚJ dne %acceptedDate%"
+    acceptedSígn: "vystaveno automaticky dne %acceptedDate%"
 flash:
     info:
         participantDeleted: "Účastník byl smazán"

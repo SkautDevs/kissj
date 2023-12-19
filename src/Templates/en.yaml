@@ -433,7 +433,7 @@ receipt:
         with variable symbol %paymentVariableSymbol%
         to the account %paymentAccountTo%.
         "
-    acceptedSígn: "Issued: accounting KÚJ on %acceptedDate%"
+    acceptedSígn: "issued automatically on %acceptedDate%"
 flash:
     info:
         participantDeleted: "Participant was deleted"
