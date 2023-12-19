@@ -114,7 +114,10 @@ class Settings
         $_ENV['APP_NAME'] = 'KISSJ'; // do not want to be changed soon (:
 
         $dotenv = Dotenv::createImmutable($envPath, $envFilename);
-        $dotenv->load();
+        if (!isset($_ENV['DEBUG']) || $_ENV['DEBUG'] === 'true') {
+            // expensive call, do not want to call this in production
+            $dotenv->safeLoad();
+        }
         $this->validateAllSettings($dotenv);
 
         // init every time for capturing performance
