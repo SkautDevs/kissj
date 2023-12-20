@@ -219,12 +219,12 @@ class ExportService
                     (string)$participant->getTroopParticipantsCount(),
                 ],
                 $participant instanceof PatrolParticipant => [
-                    (string)$participant->patrolLeader->id ?? '',
+                    (string)$participant->patrolLeader?->id ?? '',
                     $participant->patrolLeader->patrolName ?? '',
                     '',
                 ],
                 $participant instanceof TroopParticipant => [
-                    (string)$participant->troopLeader->id ?? '',
+                    (string)$participant->troopLeader?->id ?? '',
                     $participant->troopLeader->patrolName ?? '',
                     '',
                 ],
