@@ -207,31 +207,33 @@ class ExportService
         ];
 
         foreach ($participants as $participant) {
-            if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
-                $ptPart = [
+            $ptPart = match (true) {
+                $participant instanceof PatrolLeader => [
                     (string)$participant->id,
                     $participant->patrolName ?? '',
                     (string)$participant->getPatrolParticipantsCount(),
-                ];
-            } elseif ($participant instanceof PatrolParticipant) {
-                $ptPart = [
-                    (string)$participant->patrolLeader->id,
+                ],
+                $participant instanceof TroopLeader => [
+                    (string)$participant->id,
+                    $participant->patrolName ?? '',
+                    (string)$participant->getTroopParticipantsCount(),
+                ],
+                $participant instanceof PatrolParticipant => [
+                    (string)$participant->patrolLeader->id ?? '',
                     $participant->patrolLeader->patrolName ?? '',
                     '',
-                ];
-            } elseif ($participant instanceof TroopParticipant) {
-                $ptPart = [
-                    (string)$participant->troopLeader->id,
+                ],
+                $participant instanceof TroopParticipant => [
+                    (string)$participant->troopLeader->id ?? '',
                     $participant->troopLeader->patrolName ?? '',
                     '',
-                ];
-            } else {
-                $ptPart = [
+                ],
+                default => [
                     '',
                     '',
                     '',
-                ];
-            }
+                ],
+            };
 
             if ($participant instanceof Ist) {
                 $istPart = [
