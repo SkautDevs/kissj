@@ -224,7 +224,7 @@ class ExportService
                     '',
                 ],
                 $participant instanceof TroopParticipant => [
-                    (string)$participant->troopLeader?->id ?? '',
+                    (string)$participant->troopLeader?->id,
                     $participant->troopLeader->patrolName ?? '',
                     '',
                 ],
