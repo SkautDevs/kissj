@@ -187,11 +187,8 @@ class Participant extends EntityDatetime
 
     public function isInSpecialPaymentContingent(): bool
     {
-        return $this->contingent !== null
-            && $this->contingent !== ''
-            && $this->contingent !== EventTypeCej::CONTINGENT_CZECHIA
-            && $this->contingent !== EventTypeCej::CONTINGENT_TEAM
-            && in_array($this->contingent, $this->getUserButNotNull()->event->getEventType()->getContingents(), true);
+        return $this->contingent === EventTypeCej::CONTINGENT_CZECHIA
+            || $this->contingent === EventTypeCej::CONTINGENT_HUNGARY;
     }
 
     public function getQrParticipantInfoString(): string
