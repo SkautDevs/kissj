@@ -180,6 +180,7 @@ class Participant extends EntityDatetime
      */
     public function getNoncanceledPayments(): array
     {
+        // TODO optimalize
         return array_filter($this->payment, function (Payment $payment): bool {
             return $payment->status !== PaymentStatus::Canceled;
         });

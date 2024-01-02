@@ -66,6 +66,29 @@ class ParticipantRepository extends Repository
         return $participants;
     }
 
+    /**
+     * @param ParticipantRole[] $roles
+     * @param UserStatus[] $statuses
+     */
+    public function getParticipantsCount(
+        array $roles,
+        array $statuses,
+        Event $event,
+    ): int {
+        $qb = $this->connection->select('count(*)')->from($this->getTable());
+
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('participant.role IN %in', $roles);
+        $qb->where('u.status IN %in', $statuses);
+        $qb->where('u.event_id = %i', $event->id);
+
+        /** @var int $row */
+        $row = $qb->fetchSingle();
+
+        return $row;
+    }
+
     private function addFilterAdminParticipants(Fluent $qb, User $adminUser): void
     {
         switch ($adminUser->role) {

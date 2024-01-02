@@ -14,6 +14,7 @@ use kissj\Participant\Guest\Guest;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
+use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\User\UserService;
@@ -26,6 +27,7 @@ class ParticipantService
 {
     public function __construct(
         private readonly ParticipantRepository $participantRepository,
+        private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly PaymentService $paymentService,
         private readonly UserService $userService,
         private readonly FlashMessagesBySession $flashMessages,
@@ -154,7 +156,7 @@ class ParticipantService
             $validityFlag = $this->isCloseRegistrationValidForTroopLeader($participant, $event);
         }
 
-        if (!$this->isParticipantValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
+        if (!$this->isParticipantDataValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.noLock'));
 
             $validityFlag = false;
@@ -171,7 +173,7 @@ class ParticipantService
 
         if (
             $event->maximalClosedParticipantsCount !== null
-            && $this->getClosedParticipantsCount($participant) >= $event->maximalClosedParticipantsCount
+            && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount
         ) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
 
@@ -218,7 +220,7 @@ class ParticipantService
         }
 
         foreach ($troopParticipants as $participant) {
-            if (!$this->isParticipantValidForClose(
+            if (!$this->isParticipantDataValidForClose(
                 $participant,
                 $event->getEventType()->getContentArbiterTroopParticipant(),
             )) {
@@ -247,7 +249,7 @@ class ParticipantService
         return $validityFlag;
     }
 
-    public function isParticipantValidForClose(Participant $p, AbstractContentArbiter $ca): bool
+    public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
         if (
             ($ca->patrolName && $p->patrolName === null)
@@ -306,9 +308,9 @@ class ParticipantService
         return count($this->filterSameContingent($participants, $participant->contingent));
     }
 
-    public function getClosedParticipantsCount(Participant $participant): int
+    public function getParticipantsComingToEventCount(Event $event): int
     {
-        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+        $allParticipants = $this->participantRepository->getParticipantsCount(
             [
                 ParticipantRole::PatrolLeader,
                 ParticipantRole::PatrolParticipant,
@@ -322,10 +324,12 @@ class ParticipantService
                 UserStatus::Approved,
                 UserStatus::Paid,
             ],
-            $participant->getUserButNotNull()->event,
+            $event,
         );
 
-        return count($participants);
+        $untiedParticipants = $this->troopParticipantRepository->getUnopenedUntiedCount($event);
+
+        return $allParticipants - $untiedParticipants;
     }
 
     /**

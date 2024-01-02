@@ -18,7 +18,7 @@ class ApplicationGetter
             $envPath,
             $envFilename,
         ));
-        $containerBuilder->useAttributes(true); // used in AbstractController
+        $containerBuilder->useAttributes(true);
         if ($_ENV['DEBUG'] === 'false') {
             $containerBuilder->enableCompilation($tempPath);
         }

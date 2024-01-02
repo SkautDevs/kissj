@@ -9,6 +9,7 @@ use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\ParticipantRole;
 use kissj\User\User;
+use kissj\User\UserStatus;
 
 /**
  * @table participant
@@ -61,5 +62,26 @@ class TroopParticipantRepository extends Repository
         $troopParticipants = $this->createEntities($qb->fetchAll());
 
         return $troopParticipants;
+    }
+
+    public function getUnopenedUntiedCount(Event $event): int
+    {
+        $qb = $this->connection->select('count(*)')->from($this->getTable());
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $statuses = [
+            UserStatus::Closed,
+            UserStatus::Approved,
+            UserStatus::Paid,
+        ];
+        $qb->where('participant.role = %s', ParticipantRole::TroopParticipant);
+        $qb->where('u.status IN %in', $statuses);
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.patrol_leader_id IS NULL');
+
+        /** @var int $row */
+        $row = $qb->fetchSingle();
+
+        return $row;
     }
 }

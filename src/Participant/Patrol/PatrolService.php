@@ -104,7 +104,7 @@ class PatrolService
 
         $contentArbiterPatrolParticipant = $event->getEventType()->getContentArbiterPatrolParticipant();
         foreach ($participants as $participant) {
-            if (!$this->participantService->isParticipantValidForClose(
+            if (!$this->participantService->isParticipantDataValidForClose(
                 $participant,
                 $contentArbiterPatrolParticipant,
             )) {

@@ -5,6 +5,7 @@ namespace Tests;
 use kissj\Application\ApplicationGetter;
 use kissj\Event\EventRepository;
 use kissj\User\User;
+use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
 use kissj\User\UserRole;
 use Phinx\Console\PhinxApplication;
@@ -103,6 +104,7 @@ class AppTestCase extends TestCase
         $user->event = $testEvent;
         $user->role = UserRole::Admin;
         $user->email = 'admin@example.com';
+        $user->loginType = UserLoginType::Email;
         $userRepository->persist($user);
         
         return $user;
