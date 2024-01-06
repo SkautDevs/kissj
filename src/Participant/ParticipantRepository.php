@@ -99,28 +99,28 @@ class ParticipantRepository extends Repository
                 // TODO
                 break;
             case UserRole::ContingentAdminCs:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_CZECHIA);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_CZECHIA);
                 break;
             case UserRole::ContingentAdminSk:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_SLOVAKIA);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_SLOVAKIA);
                 break;
             case UserRole::ContingentAdminPl:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_POLAND);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_POLAND);
                 break;
             case UserRole::ContingentAdminHu:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_HUNGARY);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_HUNGARY);
                 break;
             case UserRole::ContingentAdminEu:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_EUROPEAN);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_EUROPEAN);
                 break;
             case UserRole::ContingentAdminRo:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_ROMANIA);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_ROMANIA);
                 break;
             case UserRole::ContingentAdminGb:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_BRITAIN);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_BRITAIN);
                 break;
             case UserRole::ContingentAdminSw:
-                $qb->where('participant.contingent = %i', EventTypeCej::CONTINGENT_SWEDEN);
+                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_SWEDEN);
                 break;
             case UserRole::Participant:
                 throw new RuntimeException('UserRole Participant is used as administrator');
