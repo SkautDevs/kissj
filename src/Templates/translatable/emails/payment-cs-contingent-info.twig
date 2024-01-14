@@ -1,0 +1,32 @@
+{% extends "emails/_mail-layout-no-text.twig" %}
+
+{% block content %}
+    <p>
+        Ahoj!
+    </p>
+    <p>
+        Gratulujeme, právě ti byla schválená registrace na <b>{{ event.readableName }}</b>. Pro úplné dokončení registrace, je potřeba ještě jeden krok a to zaplatit účastnický poplatek do 14 dnů ({{ payment.due|date('d. m. Y') }}). 
+        Zaplacením poplatku zároveň souhlasíš s <a href="https://cej24.skauting.cz/wp-content/uploads/2024/01/CEJ-podminky-a-GDPR.pdf">Podmínkami účasti a GDPR</a>. 
+    </p>
+
+    <h3><u>Platební informace:</u></h3>
+    <h4>Číslo účtu: 2302084720/2010</h4>
+    {% if participant is PatrolLeader %}
+        <h4>Suma: {{ (participant.getPatrolParticipantsCount() + 1) * 6600 }},- Kč</h4>
+    {% else %}
+        <h4>Suma: 4100,- Kč</h4>
+    {% endif %}
+    <h4>Variabilní symbol: 42438{{ payment.getVariableSymbol[5:] }}</h4>
+    <h4>Poznámka: {{ payment.note }}</h4>
+
+    <p>
+        Svou registraci najdeš na adrese
+        <a href="{{ baseHostScheme }}{{ fullRegistrationLink }}">{{ baseHostScheme }}{{ fullRegistrationLink }}</a><span class="noselect">.</span> 
+        Pokud máš jakýkoli dotaz, podívej se na naši stránku <a href="https://cej24.skauting.cz/" target="_blank">https://cej24.skauting.cz/</a>
+        nebo nám neváhej napsat email na <a href="mailto:cej2024cz@skaut.cz">cej2024cz@skaut.cz</a>
+    </p>
+    <p>
+        All the best from the team of<br/>
+        Czech Contingent - CEJ24
+    </p>
+{% endblock %}

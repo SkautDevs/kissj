@@ -411,7 +411,9 @@ class ParticipantService
 
         $payment = $this->paymentService->createAndPersistNewPayment($participant);
 
-        if ($participant->isInSpecialPaymentContingent()) {
+        if ($participant->isInCzechContingent()) {
+            $this->mailer->sendRegistrationApprovedForSpecialPayment($participant, $payment);
+        } elseif ($participant->isInSpecialPaymentContingent()) {
             $this->mailer->sendRegistrationApprovedWithoutPayment($participant);
         } else {
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
