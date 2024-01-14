@@ -23,6 +23,10 @@ parameters:
 		     # 3rd party library
 		     message: '#Access to an undefined property Skautis\\Skautis::\$OrganizationUnit\.#'
 		     path: src\Skautis\SkautisService.php
+		 -
+		     # database manipulation
+		     message: '#kissj\\Participant\\Patrol\\PatrolParticipant::\$patrolLeader \(kissj\\Participant\\Patrol\\PatrolLeader\) does not accept null\.#'
+		     path: src\Participant\ParticipantService.php
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'
