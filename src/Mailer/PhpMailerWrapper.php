@@ -48,7 +48,6 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.closed.subject'),
             'closed',
-            [],
         );
     }
 
@@ -69,18 +68,28 @@ class PhpMailerWrapper
         Participant $participant,
         Payment $payment,
     ): void {
-        $this->sendMailWithPayment($participant, $payment, true);
+        $this->sendMailWithPayment($participant, $payment, 'payment-info');
     }
 
     public function sendRegistrationApprovedWithNonFirstPayment(
         Participant $participant,
         Payment $payment,
     ): void {
-        $this->sendMailWithPayment($participant, $payment, false);
+        $this->sendMailWithPayment($participant, $payment, 'payment-nonfirst-info');
     }
 
-    private function sendMailWithPayment(Participant $participant, Payment $payment, bool $isFirstPayment): void
-    {
+    public function sendRegistrationApprovedForSpecialPayment(
+        Participant $participant,
+        Payment $payment,
+    ): void {
+        $this->sendMailWithPayment($participant, $payment, 'payment-cs-contingent-info');
+    }
+
+    private function sendMailWithPayment(
+        Participant $participant,
+        Payment $payment,
+        string $templateName,
+    ): void {
         $qrCode = fopen(
             $this->qrCodeService->generateQrBase64FromString($payment->getQrPaymentString()),
             'rb',
@@ -93,7 +102,6 @@ class PhpMailerWrapper
         }
         $user = $participant->getUserButNotNull();
 
-        $templateName = $isFirstPayment ? 'payment-info' : 'payment-nonfirst-info';
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
@@ -113,7 +121,6 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
             'payment-info-contingents',
-            [],
         );
     }
 
@@ -138,8 +145,7 @@ class PhpMailerWrapper
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
-            [],
-            $this->getEmbeddedQr($participant),
+            embeds: $this->getEmbeddedQr($participant),
         );
     }
 
@@ -176,7 +182,6 @@ class PhpMailerWrapper
             $participant->getUserButNotNull()->email,
             $this->translator->trans('email.payment-transfered-from-you.subject'),
             'payment-transfered-from-you',
-            [],
         );
     }
 
@@ -194,15 +199,15 @@ class PhpMailerWrapper
     }
 
     /**
-     * @param array<string, mixed>    $parameters
+     * @param array<string, mixed> $parameters
      * @param array<EmbedDTO> $embeds
-     * @param array<string, string>   $attachments
+     * @param array<string, string> $attachments
      */
     private function sendMailFromTemplate(
         string $recipientEmail,
         string $subject,
         string $templateName,
-        array $parameters,
+        array $parameters = [],
         array $embeds = [],
         array $attachments = [],
     ): void {

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% trans %}email.layout.registration{% endtrans %} {{ event.getReadableName }}</title>
+    <style>
+        :root {
+            --border-radius: 6px;
+            font-family: 'themix', sans-serif;
+            color: var(--color-main);
+            color-scheme: light dark;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                background: var(--color-background);
+                --color-card-background: #f9f9f9;
+                --color-main: #0D71B9;
+                --color-link: #0000ee;
+                --color-link-visited: #551a8b;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                background: var(--color-background);
+                --color-card-background: #252525;
+                --color-main: #85A2D5;
+                --color-link: lightskyblue;
+                --color-link-visited: #ad76de;
+            }
+        }
+
+        .btn {
+            background: var(--color-main);
+            color: var(--color-card-background);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 25px;
+            display: block;
+            text-align: center;
+            padding: 15px;
+            border: none;
+        }
+
+        .btn-small {
+            display: inline-block;
+
+        }
+
+        .noselect {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        }
+
+        {{ event.getEventType.getEventSpecificStyles }}
+    </style>
+</head>
+<body class="email-body">
+<main role="main" class="container">
+    {% block content %}{% endblock %}
+</main>
+<footer>
+    {% if eventImageExists %}
+        <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
+            <img class="footer-logo" src="{{ email.image( event.logoUrl ) }}" alt="logo of {{ event.readableName }}">
+        </a>
+    {% endif %}
+</footer>
+</body>
+</html>

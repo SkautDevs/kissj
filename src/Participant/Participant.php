@@ -186,6 +186,11 @@ class Participant extends EntityDatetime
         });
     }
 
+    public function isInCzechContingent(): bool
+    {
+        return $this->contingent === EventTypeCej::CONTINGENT_CZECHIA;
+    }
+
     public function isInSpecialPaymentContingent(): bool
     {
         return $this->contingent === EventTypeCej::CONTINGENT_CZECHIA
