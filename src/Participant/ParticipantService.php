@@ -12,6 +12,7 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -498,6 +499,14 @@ class ParticipantService
             $this->flashMessages->warning($this->translator->trans('flash.warning.notOpenCannotChangeRole'));
 
             return false;
+        }
+        
+        if ($participant instanceof PatrolParticipant) {
+            $participant->patrolLeader = null;
+        }
+        
+        if ($participant instanceof TroopParticipant) {
+            $participant->troopLeader = null;
         }
 
         $participant->role = $role;
