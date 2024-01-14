@@ -49,8 +49,6 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_POLAND => 6,
                 self::CONTINGENT_HUNGARY => 10,
                 self::CONTINGENT_EUROPEAN => 6,
-                self::CONTINGENT_ROMANIA => 0,
-                self::CONTINGENT_ISRAEL => 0,
                 self::CONTINGENT_BRITAIN => 6,
                 self::CONTINGENT_SWEDEN => 10,
                 default => 0,
@@ -158,13 +156,13 @@ class EventTypeCej extends EventType
     {
         return [
             self::CONTINGENT_SLOVAKIA,
-            # self::CONTINGENT_CZECHIA,# temporary disable
-            # self::CONTINGENT_HUNGARY,# temporary disable
+            self::CONTINGENT_CZECHIA,
+            self::CONTINGENT_HUNGARY,
             self::CONTINGENT_POLAND,
             self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_BRITAIN,
             self::CONTINGENT_SWEDEN,
-            # self::CONTINGENT_TEAM,# temporary disable
+            self::CONTINGENT_TEAM,
         ];
     }
 
