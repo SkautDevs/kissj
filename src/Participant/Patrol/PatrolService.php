@@ -81,21 +81,21 @@ class PatrolService
         $participants = $patrolLeader->patrolParticipants;
 
         $participantsCount = count($participants);
-        if ($participantsCount < $event->minimalPatrolParticipantsCount) {
+        if ($participantsCount < $event->getMinimalPpCount($patrolLeader)) {
             $this->flashMessages->warning(
                 $this->translator->trans(
                     'flash.warning.plTooFewParticipants',
-                    ['%minimalPatrolParticipantsCount%' => $event->minimalPatrolParticipantsCount],
+                    ['%minimalPatrolParticipantsCount%' => $event->getMinimalPpCount($patrolLeader)],
                 )
             );
 
             $validityFlag = false;
         }
-        if ($participantsCount > $event->maximalPatrolParticipantsCount) {
+        if ($participantsCount > $event->getMaximalPpCount($patrolLeader)) {
             $this->flashMessages->warning(
                 $this->translator->trans(
                     'flash.warning.plTooManyParticipants',
-                    ['%maximalPatrolParticipantsCount%' => $event->maximalPatrolParticipantsCount],
+                    ['%maximalPatrolParticipantsCount%' => $event->getMaximalPpCount($patrolLeader)],
                 )
             );
 

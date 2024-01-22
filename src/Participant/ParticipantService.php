@@ -500,11 +500,11 @@ class ParticipantService
 
             return false;
         }
-        
+
         if ($participant instanceof PatrolParticipant) {
             $participant->patrolLeader = null;
         }
-        
+
         if ($participant instanceof TroopParticipant) {
             $participant->troopLeader = null;
         }

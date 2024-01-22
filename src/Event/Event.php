@@ -18,6 +18,7 @@ use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Orm\EntityDatetime;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 
 /**
@@ -122,5 +123,15 @@ class Event extends EntityDatetime
     public function getLogoInBase64(): string
     {
         return ImageUtils::getLocalImageInBase64($this->logoUrl);
+    }
+
+    public function getMinimalPpCount(Participant $participant): int
+    {
+        return $this->eventType->getMinimalPpCount($this, $participant);
+    }
+
+    public function getMaximalPpCount(Participant $participant): int
+    {
+        return $this->eventType->getMaximalPpCount($this, $participant);
     }
 }

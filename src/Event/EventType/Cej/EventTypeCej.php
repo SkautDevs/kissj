@@ -7,6 +7,7 @@ namespace kissj\Event\EventType\Cej;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\Event;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -179,5 +180,41 @@ class EventTypeCej extends EventType
         return [
             'en' => '🇬🇧 English',
         ];
+    }
+
+    public function getMinimalPpCount(Event $event, Participant $participant): int
+    {
+        if (in_array(
+            $participant->contingent,
+            [
+                self::CONTINGENT_CZECHIA,
+                self::CONTINGENT_SLOVAKIA,
+                self::CONTINGENT_POLAND,
+                self::CONTINGENT_HUNGARY,
+            ],
+            true
+        )) {
+            return 9;
+        }
+
+        return $event->minimalPatrolParticipantsCount ?? 0;
+    }
+
+    public function getMaximalPpCount(Event $param, Participant $participant): int
+    {
+        if (in_array(
+            $participant->contingent,
+            [
+                self::CONTINGENT_CZECHIA,
+                self::CONTINGENT_SLOVAKIA,
+                self::CONTINGENT_POLAND,
+                self::CONTINGENT_HUNGARY,
+            ],
+            true
+        )) {
+            return 9;
+        }
+
+        return $param->maximalPatrolParticipantsCount ?? 0;
     }
 }

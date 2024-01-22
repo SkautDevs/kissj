@@ -13,6 +13,7 @@ use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
+use kissj\Event\Event;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -194,5 +195,15 @@ abstract class EventType
             StringUtils::padWithZeroes((string)$participant->id, 4),
             StringUtils::padWithZeroes($paymentId, 4),
         );
+    }
+
+    public function getMinimalPpCount(Event $event, Participant $participant): int
+    {
+        return $event->minimalPatrolParticipantsCount ?? 0;
+    }
+
+    public function getMaximalPpCount(Event $param, Participant $participant): int
+    {
+        return $param->maximalPatrolParticipantsCount ?? 0;
     }
 }
