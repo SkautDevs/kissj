@@ -6,6 +6,9 @@
         {% trans %}email.payment-info.finish{% endtrans %} <b>{{ payment.getRemainingDays }} {% trans %}email.payment-info.days{% endtrans %} </b> ({{ payment.due|date('d. m. Y') }}).
     </p>
     <h3><u>{% trans %}email.payment-info.paymentDetails{% endtrans %}</u></h3>
+    {% if showIban %}
+        <h4>{% trans %}email.payment-info.iban{% endtrans %}: {{ payment.iban }}</h4>
+    {% endif %}
     <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
     <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
     <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>

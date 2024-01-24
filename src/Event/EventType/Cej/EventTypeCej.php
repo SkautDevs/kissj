@@ -217,4 +217,9 @@ class EventTypeCej extends EventType
 
         return $param->maximalPatrolParticipantsCount ?? 0;
     }
+
+    public function showIban(): bool
+    {
+        return true;
+    }
 }

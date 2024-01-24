@@ -39,6 +39,9 @@
                 {% trans %}dashboard.paymentStatusTitle{% endtrans %}: <b>
                     {{ ('dashboard.paymentStatus.' ~ payment.status.value)|trans }}
                 </b><br/>
+                {% if event.eventtype.showIban %}
+                    {% trans %}dashboard.iban{% endtrans %}: <b>{{ payment.getIban }}</b><br/>
+                {% endif %}
                 {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
                 {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
                 <br/>

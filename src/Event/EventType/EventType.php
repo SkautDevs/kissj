@@ -206,4 +206,9 @@ abstract class EventType
     {
         return $param->maximalPatrolParticipantsCount ?? 0;
     }
+
+    public function showIban(): bool
+    {
+        return false;
+    }
 }

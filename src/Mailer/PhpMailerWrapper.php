@@ -109,6 +109,7 @@ class PhpMailerWrapper
             [
                 'participant' => $participant,
                 'payment' => $payment,
+                'showIban' => $user->event->getEventType()->showIban(),
             ],
             $embeds,
         );
