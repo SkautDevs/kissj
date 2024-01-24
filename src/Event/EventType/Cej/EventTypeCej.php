@@ -222,4 +222,14 @@ class EventTypeCej extends EventType
     {
         return true;
     }
+
+    public function getSwift(): ?string
+    {
+        return 'TATRSKBX'; // TODO move into DB like IBAN
+    }
+
+    public function getConstantSymbol(): ?string
+    {
+        return '0558'; // TODO move into DB like IBAN
+    }
 }

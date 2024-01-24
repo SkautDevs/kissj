@@ -72,7 +72,7 @@ class Payment extends EntityDatetime
             . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
             . 'X-VS:' . $this->variableSymbol;
     }
-    
+
     private function mapDbCurrencyToIban(string $currency): string
     {
         return match ($currency) {

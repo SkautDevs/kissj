@@ -45,11 +45,13 @@ dashboard:
     andMaximally: "and at most"
     pForValidReg: "participants for a valid registration"
     paymentInfo: "Payment information"
-    paymentStatusTitle: "Status platby"
+    paymentStatusTitle: "Payment status"
     iban: "IBAN"
+    swift: "SWIFT"
     accountNumber: "Account number"
     amount: "Amount"
     variableSymbol: "Variable symbol"
+    constantSymbol: "Constant symbol"
     paymentNote: "Note for the receiver"
     paymentStatus:
         waiting: "waiting for payment"
@@ -82,7 +84,7 @@ detail:
     genderWoman: "Woman"
     genderOther: "Other"
     email: "Email"
-    emailPlaceholder: "your prefered contact mail"
+    emailPlaceholder: "your preferred contact mail"
     phone: "Phone number"
     phonePlaceholder: "digits including country dial-in code"
     address: "Permanent Address"
@@ -205,7 +207,7 @@ chooseRole:
     rolesAdvice: "Advice on roles"
     advicePlText: "is a leader of a group of participants. S/he is responsible for the patrol throughout whole event and also registers participants and pays the registration fee for the whole patrol"
     adviceTlText: "is a leader of a group of participants"
-    adviceTpText: "is a participant of a group. S/he pays registracion fee regardless of the patrol."
+    adviceTpText: "is a participant of a group. S/he pays registration fee regardless of the patrol."
     adviceIstText: "or IST stands for International Service Team. It is a bunch of adult volunteers without whom the event wouldn't take place - they attend the event to help the organizers"
     adviceGuestText: "is guest on the event with special rules. If you don't know if you are guest, you probably aren't (:"
 login:
@@ -249,14 +251,16 @@ email:
         finish: "To finish your registration properly, there is only one more step - to pay the registration fee till"
         days: "days"
         nonfirst:
-            approved: "těší nás tvůj přetrvávající zájem o"
-            finish: "Přišel čas na zaplacení druhé splátky. Splatnost je"
-            days: "dní"
+            approved: "we are pleased by your longing interest about"
+            finish: "It is time to pay your second payment. Pay-due is"
+            days: "days"
         paymentDetails: "Payment details"
         iban: "IBAN"
+        swift: "SWIFT"
         accountNumber: "Account number"
         amount: "Amount"
         variableSymbol: "Variable symbol"
+        constantSymbol: "Constant symbol"
         paymentNote: "Note"
         qrCode: "QR payment"
     cancel-payment:
@@ -273,10 +277,10 @@ email:
         qrInfo: "Here is QR code, which organisers shall need during your event access:"
         enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
     finished:
-        subject: "schváleno"
-        approved: "Schválili jsme tvou přihlášku pro"
-        thanks: ". Děkujeme!"
-        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+        subject: "approved"
+        approved: "We approved your registration for"
+        thanks: ". Thank you!"
+        enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
     finished-tp:
         subject: "approved"
         approved: "We approved your registration for"
@@ -435,7 +439,7 @@ receipt:
         with variable symbol %paymentVariableSymbol%
         to the account %paymentAccountTo%.
         "
-    acceptedSígn: "issued automatically on %acceptedDate%"
+    acceptedSign: "issued automatically on %acceptedDate%"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -444,7 +448,7 @@ flash:
         chooseRoleNeeded: "At first you need to choose your role on event"
         denied: "participant denied, email was successfully sent"
         logout: "Logout was successful"
-        adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
+        adminPaymentsUnrecognized: "Unrecognized bank transactions: "
         newPayments: "From bank got new messages: "
         noNewPayments: "No new payments found."
         markedAsPaired: "Payment has been marked as paired"

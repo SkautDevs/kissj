@@ -47,9 +47,11 @@ dashboard:
     paymentInfo: "Platobné údaje"
     paymentStatusTitle: "Status platby"
     iban: "IBAN"
+    swift: "SWIFT"
     accountNumber: "Číslo účtu"
     amount: "Suma"
     variableSymbol: "Variabilný symbol"
+    constantSymbol: "Konštantný symbol"
     paymentNote: "Poznámka pre príjemcu"
     paymentStatus:
         waiting: "čekáme na zaplacení"
@@ -254,9 +256,11 @@ email:
             days: "dní"
         paymentDetails: "Platobné údaje"
         iban: "IBAN"
+        swift: "SWIFT"
         accountNumber: "Číslo účtu"
         amount: "Suma"
         variableSymbol: "Variabilný symbol"
+        constantSymbol: "Konštantný symbol"
         paymentNote: "Poznámka"
         qrCode: "QR platba"
     cancel-payment:
@@ -435,7 +439,7 @@ receipt:
         pod variabilním symbolem %paymentVariableSymbol%
         na účet %paymentAccountTo%.
         "
-    acceptedSígn: "vystaveno automaticky dne %acceptedDate%"
+    acceptedSign: "vystaveno automaticky dne %acceptedDate%"
 flash:
     info:
         participantDeleted: "Účastník bol vymazaný"
