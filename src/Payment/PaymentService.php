@@ -40,6 +40,7 @@ class PaymentService
     public function createAndPersistNewPayment(Participant $participant): Payment
     {
         $event = $participant->getUserButNotNull()->event;
+        $eventType = $event->getEventType();
         do {
             $variableNumber = $this->getVariableNumber($event->prefixVariableSymbol);
         } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
@@ -47,13 +48,15 @@ class PaymentService
         $payment = new Payment();
         $payment->participant = $participant;
         $payment->variableSymbol = $variableNumber;
-        $payment->price = (string)$event->getEventType()->getPrice($participant);
+        $payment->constantSymbol = $eventType->getConstantSymbol();
+        $payment->price = (string)$eventType->getPrice($participant);
         $payment->currency = $event->currency;
         $payment->status = PaymentStatus::Waiting;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         $payment->iban = $event->iban;
-        $payment->due = $event->getEventType()->calculatePaymentDueDate(DateTimeUtils::getDateTime());
+        $payment->swift = $eventType->getSwift();
+        $payment->due = $eventType->calculatePaymentDueDate(DateTimeUtils::getDateTime());
         if ($participant instanceof PatrolLeader) {
             $payment->note = $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
         } else {

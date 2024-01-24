@@ -42,15 +42,15 @@
                 {% if event.eventtype.showIban %}
                     {% trans %}dashboard.iban{% endtrans %}: <b>{{ payment.getIban }}</b><br/>
                 {% endif %}
-                {% if event.eventtype.getSwift %}
-                    {% trans %}dashboard.swift{% endtrans %}: <b>{{ event.eventtype.getSwift }}</b><br/>
+                {% if payment.swift %}
+                    {% trans %}dashboard.swift{% endtrans %}: <b>{{ payment.swift }}</b><br/>
                 {% endif %}
                 {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
                 {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
                 <br/>
                 {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
-                {% if event.eventtype.getConstantSymbol %}
-                    {% trans %}dashboard.constantSymbol{% endtrans %}: <b>{{ event.eventtype.getConstantSymbol }}</b><br/>
+                {% if payment.constantSymbol %}
+                    {% trans %}dashboard.constantSymbol{% endtrans %}: <b>{{ payment.constantSymbol }}</b><br/>
                 {% endif %}
                 {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
                 <br/>

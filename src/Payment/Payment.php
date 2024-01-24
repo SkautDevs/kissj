@@ -19,6 +19,8 @@ use kissj\Participant\Participant;
  * @property string            $purpose
  * @property string            $accountNumber
  * @property string            $iban
+ * @property string            $swift
+ * @property string            $constantSymbol
  * @property DateTimeInterface $due m:passThru(dateFromString|dateToString)
  * @property string            $note
  * @property Participant       $participant m:hasOne
@@ -70,6 +72,7 @@ class Payment extends EntityDatetime
             . 'CC:' . $this->mapDbCurrencyToIban($this->currency) . '*'
             . 'DT:' . $this->due->format('Ymd') . '*'
             . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
+            . ($this->constantSymbol === '' ? '' : ('X-KS:' . $this->constantSymbol . '*'))
             . 'X-VS:' . $this->variableSymbol;
     }
 

@@ -212,13 +212,13 @@ abstract class EventType
         return false;
     }
 
-    public function getSwift(): ?string
+    public function getSwift(): string
     {
-        return null;
+        return '';
     }
 
-    public function getConstantSymbol(): ?string
+    public function getConstantSymbol(): string
     {
-        return null;
+        return '';
     }
 }

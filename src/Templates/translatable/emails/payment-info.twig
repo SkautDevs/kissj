@@ -9,14 +9,14 @@
     {% if showIban %}
         <h4>{% trans %}email.payment-info.iban{% endtrans %}: {{ payment.iban }}</h4>
     {% endif %}
-    {% if event.eventtype.getSwift %}
-        <h4>{% trans %}email.payment-info.swift{% endtrans %}: {{ event.eventtype.getSwift }}</h4>
+    {% if payment.swift %}
+        <h4>{% trans %}email.payment-info.swift{% endtrans %}: {{ payment.swift }}</h4>
     {% endif %}
     <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
     <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
     <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
-    {% if event.eventtype.getConstantSymbol %}
-        <h4>{% trans %}email.payment-info.constantSymbol{% endtrans %}: {{ event.eventtype.getConstantSymbol }}</h4>
+    {% if payment.constantSymbol %}
+        <h4>{% trans %}email.payment-info.constantSymbol{% endtrans %}: {{ payment.constantSymbol }}</h4>
     {% endif %}
     <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
     <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
