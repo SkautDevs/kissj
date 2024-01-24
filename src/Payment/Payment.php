@@ -67,13 +67,17 @@ class Payment extends EntityDatetime
         return
             'SPD*1.0*ACC:' . $this->iban . '*'
             . 'AM:' . $this->price . '*'
-            . 'CC:' . 'CZK' . '*' // TODO change into $payment->currency
+            . 'CC:' . $this->mapDbCurrencyToIban($this->currency) . '*'
             . 'DT:' . $this->due->format('Ymd') . '*'
             . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
             . 'X-VS:' . $this->variableSymbol;
     }
+    
+    private function mapDbCurrencyToIban(string $currency): string
+    {
+        return match ($currency) {
+            'EUR', '€', 'euro' => 'EUR',
+            default => 'CZK',
+        };
+    }
 }
-
-/**
- * TODO do not forget add note and rename conventions into new DB
- */
