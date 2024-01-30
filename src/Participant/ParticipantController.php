@@ -116,7 +116,7 @@ class ParticipantController extends AbstractController
 
         fwrite($stream, $this->pdfGenerator->generatePdfReceipt(
             $participant,
-            $user->event->eventType->getReceiptTemplateName(),
+            $user->event->eventType->getReceiptTemplateName($participant),
         ));
         rewind($stream);
 

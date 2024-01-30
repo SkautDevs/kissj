@@ -36,3 +36,39 @@ email:
     payment-info-contingents:
         approved: "Congratulations, you are approved to participate at"
         wait: "Please wait for payment details to be received from your contingent."
+receipt:
+    headline: "Confirmation of payment acceptance"
+    number: "Receipt number"
+    accepter: "
+        Slovenský skauting, o. z.<br/>
+        Mokrohájska cesta 6<br/>
+        841 04 Bratislava<br/>
+        IČO: 00598721
+    "
+    acceptPaymentEvent: "We confirm the acceptance of payment for the event %eventReadableName% with date %eventDates%."
+    acceptPaymentParticipant: "Accepted for participant %participantFullName% with address %participantFullAddress%."
+    acceptPaymentMoreParticipant: "Other participants of the event for which the payment was made: %allOtherParticipants%"
+    acceptPaymentPayment: "
+        Payment was accepted in the amount of %paymentAmount% %paymentCurrency%
+        with variable symbol %paymentVariableSymbol%
+        to the account %paymentAccountTo%.
+        "
+    acceptedSign: "issued automatically on %acceptedDate%"
+receiptCs:
+    headline: "Potvrzení o přijetí platby"
+    number: "Číslo dokladu"
+    accepter: "
+        Junák – český skaut, z. s.<br/>
+        Senovážné nám. 24<br/>
+        110 00 Praha 1<br/>
+        IČO: 00409430
+    "
+    acceptPaymentEvent: "Potvrzujeme přijetí platby na akci %eventReadableName% s datem konání %eventDates%."
+    acceptPaymentParticipant: "Přijato za osobu účastnící se akce %participantFullName% bydlištěm %participantFullAddress%."
+    acceptPaymentMoreParticipant: "Další osoby účastnící se akce, za které bylo zaplaceno: %allOtherParticipants%"
+    acceptPaymentPayment: "
+        Platba byla přijata ve výši %paymentAmount% %paymentCurrency%
+        pod variabilním symbolem %paymentVariableSymbol%
+        na účet %paymentAccountTo%.
+        "
+    acceptedSign: "vystaveno automaticky dne %acceptedDate%"

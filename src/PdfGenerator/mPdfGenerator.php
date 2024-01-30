@@ -25,14 +25,13 @@ class mPdfGenerator extends PdfGenerator
         $payment = $participant->getFirstPaidPayment();
         $templateData = [
         	'event' => $event,
-        	'skautLogo' => ImageUtils::getLocalImageInBase64('/SKAUT_horizontalni_logo_250.png'),
+        	'skautLogo' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautLogoPath($participant)),
         	'receiptNumber' => $event->eventType->getReceiptNumber($event->slug, $participant, (string)$payment?->id),
         	'eventDates' => $event->startDay->format('j. n. Y') . ' až ' . $event->endDay->format('j. n. Y'),
         	'participant' => $participant,
         	'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
         	'payment' => $payment,
         	'acceptedDate' => $participant->registrationPayDate?->format('j. n. Y'),
-        	'signAndStamp' => ImageUtils::getLocalImageInBase64('/SkautJunakSignStamp.png'),
         ];
 
         $html = $this->twig->fetch($templateName, $templateData);

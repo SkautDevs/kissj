@@ -424,7 +424,7 @@ troopManagement-admin:
     untie: "Untie participant from troop"
 receipt:
     headline: "Confirmation of payment acceptance"
-    numberEN: "Receipt number"
+    number: "Receipt number"
     accepter: "
         Junák – český skaut, z. s.<br/>
         Senovážné nám. 24<br/>

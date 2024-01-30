@@ -1,0 +1,39 @@
+{% extends "_layoutPdf.twig" %}
+
+{% block content %}
+<div class="header">
+    <img class="header-logo" src="data:image/png;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
+    <img class="header-logo content-right" src="data:image/png;base64,{{ skautLogo }}" alt="logo of Scout organization">
+</div>
+<h1 class="content-center">{{ 'receiptCs.headline' |trans }}</h1>
+<p class="content-left">{{ 'receiptCs.accepter'|trans|raw }}</p>
+<p class="content-right">{{ 'receiptCs.number'|trans }}: {{ receiptNumber }}</p>
+<p>{{ 'receiptCs.acceptPaymentEvent'|trans({
+        '%eventReadableName%': event.readableName,
+        '%eventDates%': eventDates,
+    }) }}</p>
+<p>{{ 'receiptCs.acceptPaymentParticipant'|trans({
+        '%participantFullName%': participant.getFullName,
+        '%participantFullAddress%': participant.permanentResidence,
+    }) }}</p>
+{% if allOtherParticipants %}
+    <p>{{ 'receiptCs.acceptPaymentMoreParticipant'|trans({
+            '%allOtherParticipants%': allOtherParticipants,
+        }) }}</p>
+{% endif %}
+
+{% if participant is PatrolLeader %}
+    {% set price = ((participant.getPatrolParticipantsCount() + 1) * 6600) %}
+{% else %}
+    {% set price = 4100 %}
+{% endif %}
+<p>{{ 'receiptCs.acceptPaymentPayment'|trans({
+        '%paymentAmount%': price,
+        '%paymentCurrency%': 'Kč',
+        '%paymentVariableSymbol%': '42438' ~ payment.variableSymbol[5:],
+        '%paymentAccountTo%': '2302084720/2010',
+    }) }}</p>
+<p class="content-right">{{ 'receiptCs.acceptedSign'|trans({
+        '%acceptedDate%': participant.registrationPayDate.format('j. n. Y'),
+    }) }}</p>
+{% endblock %}

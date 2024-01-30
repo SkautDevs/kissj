@@ -187,9 +187,9 @@ abstract class EventType
         return false;
     }
 
-    public function getReceiptTemplateName(): string
+    public function getReceiptTemplateName(Participant $participant): string
     {
-        return '';
+        return 'receipt/receiptVrj.twig';
     }
 
     public function getReceiptNumber(string $eventPrefix, Participant $participant, string $paymentId): string
@@ -225,5 +225,10 @@ abstract class EventType
     public function getConstantSymbol(): string
     {
         return '';
+    }
+
+    public function getSkautLogoPath(Participant $participant): string
+    {
+        return '/SKAUT_horizontalni_logo_250.png';
     }
 }

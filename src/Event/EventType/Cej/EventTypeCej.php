@@ -182,6 +182,19 @@ class EventTypeCej extends EventType
         ];
     }
 
+    public function isReceiptAllowed(): bool
+    {
+        return true;
+    }
+
+    public function getReceiptTemplateName(Participant $participant): string
+    {
+        return match ($participant->contingent) {
+            self::CONTINGENT_CZECHIA => 'receipt/receiptCejCs.twig',
+            default => 'receipt/receiptCejSk.twig',
+        };
+    }
+
     public function getMinimalPpCount(Event $event, Participant $participant): int
     {
         if (in_array(
@@ -231,5 +244,13 @@ class EventTypeCej extends EventType
     public function getConstantSymbol(): string
     {
         return '0558'; // TODO move into DB like IBAN
+    }
+
+    public function getSkautLogoPath(Participant $participant): string
+    {
+        return match ($participant->contingent) {
+            self::CONTINGENT_CZECHIA => parent::getSkautLogoPath($participant),
+            default => '/ZNAK_Scouting_Slovakia_250.png',
+        };
     }
 }
