@@ -19,7 +19,7 @@ class mPdfGenerator extends PdfGenerator
     ) {
     }
 
-    public function generatePdfReceipt(Participant $participant): string
+    public function generatePdfReceipt(Participant $participant, string $templateName): string
     {
         $event = $participant->getUserButNotNull()->event;
         $payment = $participant->getFirstPaidPayment();
@@ -35,7 +35,7 @@ class mPdfGenerator extends PdfGenerator
         	'signAndStamp' => ImageUtils::getLocalImageInBase64('/SkautJunakSignStamp.png'),
         ];
 
-        $html = $this->twig->fetch('participant/receipt.twig', $templateData);
+        $html = $this->twig->fetch($templateName, $templateData);
         $this->mpdf->WriteHtml($html);
 
         return $this->mpdf->Output(dest: 'S');
@@ -44,11 +44,11 @@ class mPdfGenerator extends PdfGenerator
     private function getOtherParticipantsIfNeeded(Participant $participant): ?string
     {
         if ($participant instanceof PatrolLeader) {
-            return implode(', ', $this->getParticipantAddresses($participant->patrolParticipants));
+            return implode(', ', $this->getParticipantNames($participant->patrolParticipants));
         }
 
         if ($participant instanceof TroopLeader) {
-            return implode(', ', $this->getParticipantAddresses($participant->troopParticipants));
+            return implode(', ', $this->getParticipantNames($participant->troopParticipants));
         }
 
         return null;
@@ -58,7 +58,7 @@ class mPdfGenerator extends PdfGenerator
      * @param Participant[] $patrolParticipants
      * @return string[]
      */
-    private function getParticipantAddresses(array $patrolParticipants): array
+    private function getParticipantNames(array $patrolParticipants): array
     {
         return array_map(fn (Participant $participant) => $participant->getFullName(), $patrolParticipants);
     }

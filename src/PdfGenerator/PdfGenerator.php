@@ -8,5 +8,8 @@ use kissj\Participant\Participant;
 
 abstract class PdfGenerator
 {
-    abstract public function generatePdfReceipt(Participant $participant): string;
+    abstract public function generatePdfReceipt(
+        Participant $participant,
+        string $templateName,
+    ): string;
 }

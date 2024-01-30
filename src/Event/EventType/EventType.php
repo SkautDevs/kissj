@@ -187,6 +187,11 @@ abstract class EventType
         return false;
     }
 
+    public function getReceiptTemplateName(): string
+    {
+        return '';
+    }
+
     public function getReceiptNumber(string $eventPrefix, Participant $participant, string $paymentId): string
     {
         return sprintf(

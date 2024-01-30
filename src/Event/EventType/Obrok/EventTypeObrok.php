@@ -102,4 +102,9 @@ class EventTypeObrok extends EventType
     {
         return true;
     }
+
+    public function getReceiptTemplateName(): string
+    {
+        return 'receipt/receiptVrj.twig';
+    }
 }
