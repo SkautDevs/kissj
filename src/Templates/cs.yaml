@@ -320,6 +320,7 @@ dashboard-admin:
     admin: "Administrátor"
     stats: "Statistiky"
     count: " počty"
+    contingentPatrolStats: "Statistiky kontingentů"
     limitIst: "limit servisáků"
     limitPatrol: "limit patrol"
     limitTroop: "limit skupin"

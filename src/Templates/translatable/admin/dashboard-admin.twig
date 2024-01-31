@@ -64,6 +64,33 @@
                 {% endif %}
             </div>
         </div>
+        {% if event.eventType.getContingents %}
+            <h3>{% trans %}dashboard-admin.contingentPatrolStats{% endtrans %}</h3>
+            <div class="card-divide">
+                <div>
+                    {% for contingent in event.eventType.getContingents %}
+                        {% if loop.index is odd %}
+                            <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
+                            <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
+                            <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
+                            <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
+                            <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div>
+                    {% for contingent in event.eventType.getContingents %}
+                        {% if loop.index is even %}
+                            <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
+                            <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
+                            <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
+                            <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
+                            <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
     <br>
     <div class="card paid-theme">

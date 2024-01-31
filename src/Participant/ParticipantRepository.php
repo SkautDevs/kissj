@@ -8,6 +8,7 @@ use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
+use kissj\Participant\Admin\StatisticUserValueObject;
 use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
@@ -75,7 +76,7 @@ class ParticipantRepository extends Repository
         array $statuses,
         Event $event,
     ): int {
-        $qb = $this->connection->select('count(*)')->from($this->getTable());
+        $qb = $this->connection->select('COUNT(*)')->from($this->getTable());
 
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
@@ -163,6 +164,40 @@ class ParticipantRepository extends Repository
         return array_filter($participants, function (Participant $participant): bool {
             return $participant->isFullNameNotEmpty();
         });
+    }
+
+    /**
+     * @param string[] $contingents
+     * @param ParticipantRole[] $roles
+     * @return StatisticUserValueObject[]
+     */
+    public function getContingentStatistic(
+        Event $event,
+        array $roles,
+        array $contingents,
+    ): array {
+        $statistics = [];
+        foreach ($contingents as $contingent) {
+            $qb = $this->connection->select('u.status, COUNT(*)')->from($this->getTable());
+            $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+            $qb->where('u.event_id = %i', $event->id);
+            $qb->where('participant.role IN %in', $roles);
+            $qb->where('participant.contingent = %s', $contingent);
+
+            $qb->groupBy('u.status');
+
+            $rows = $qb->fetchPairs('status', 'count');
+
+            $statistics[$contingent] = new StatisticUserValueObject(
+                $rows[UserStatus::Open->value] ?? 0,
+                $rows[UserStatus::Closed->value] ?? 0,
+                $rows[UserStatus::Approved->value] ?? 0,
+                $rows[UserStatus::Paid->value] ?? 0,
+            );
+        }
+
+        return $statistics;
     }
 
     public function getParticipantFromUser(User $user): Participant

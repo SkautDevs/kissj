@@ -319,6 +319,7 @@ dashboard-admin:
     dashboard: "Administrator dashboard of event"
     admin: "Administrator"
     stats: "Statistics"
+    contingentPatrolStats: "Contingent patrol statistics"
     count: "counts"
     limitIst: "Limit for IST"
     limitPatrol: "Limit for Patrols"

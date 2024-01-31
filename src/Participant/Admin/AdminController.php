@@ -48,6 +48,8 @@ class AdminController extends AbstractController
 
     public function showDashboard(Response $response, Event $event, User $user): Response
     {
+        $contingents = $event->getEventType()->getContingents();
+
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
@@ -57,6 +59,11 @@ class AdminController extends AbstractController
                 'troopLeaders' => $this->troopService->getAllTroopLeaderStatistics($event, $user),
                 'troopParticipants' => $this->troopService->getAllTroopParticipantStatistics($event, $user),
                 'guests' => $this->guestService->getAllGuestsStatistics($event, $user),
+                'contingentsPatrolStatistic' => $this->participantRepository->getContingentStatistic(
+                    $event,
+                    [ParticipantRole::PatrolLeader],
+                    $contingents,
+                ),
             ],
         );
     }
