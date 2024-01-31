@@ -20,6 +20,7 @@ class EntryController extends AbstractController
 
     public function entry(string $entryCode, Request $request, Response $response): Response
     {
+        // TODO solve code ABCDEFGH - default code for DB - block or generate better data in DB
         $participant = $this->participantRepository->findOneByEntryCode($entryCode);
         if ($participant === null) {
             return $this->getResponseWithJson(

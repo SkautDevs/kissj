@@ -432,7 +432,7 @@ receipt:
         IČO: 00409430
     "
     acceptPaymentEvent: "Potvrzujeme přijetí platby na akci %eventReadableName% s datem konání %eventDates%."
-    acceptPaymentParticipant: "Přijato za osobu účastnící se akce %participantFullName% bydlištěm %participantFullAddress%."
+    acceptPaymentParticipant: "Přijato za osobu účastnící se akce: %participantFullName%, bydlištěm %participantFullAddress%."
     acceptPaymentMoreParticipant: "Další osoby účastnící se akce, za které bylo zaplaceno: %allOtherParticipants%"
     acceptPaymentPayment: "
         Platba byla přijata ve výši %paymentAmount% %paymentCurrency%
