@@ -6,10 +6,6 @@ namespace kissj\Participant\Troop;
 
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantRole;
-use kissj\User\User;
 use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,34 +14,9 @@ class TroopService
     public function __construct(
         private readonly TroopLeaderRepository $troopLeaderRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
-        private readonly ParticipantRepository $participantRepository,
         private readonly FlashMessagesInterface $flashMessages,
         private readonly TranslatorInterface $translator,
     ) {
-    }
-
-    public function getAllTroopLeaderStatistics(Event $event, User $admin): StatisticValueObject
-    {
-        $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [ParticipantRole::TroopLeader],
-            UserStatus::cases(),
-            $event,
-            $admin,
-        );
-
-        return new StatisticValueObject($troopLeaders);
-    }
-
-    public function getAllTroopParticipantStatistics(Event $event, User $admin): StatisticValueObject
-    {
-        $troopLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [ParticipantRole::TroopParticipant],
-            UserStatus::cases(),
-            $event,
-            $admin,
-        );
-
-        return new StatisticValueObject($troopLeaders);
     }
 
     public function tieTroopParticipantToTroopLeader(

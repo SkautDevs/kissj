@@ -11,12 +11,9 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\Event\Event;
 use kissj\Orm\Order;
-use kissj\Participant\Guest\GuestService;
-use kissj\Participant\Ist\IstService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
-use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
@@ -36,9 +33,6 @@ class AdminController extends AbstractController
         private readonly PaymentRepository $paymentRepository,
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly FioBankPaymentService $bankPaymentService,
-        private readonly PatrolService $patrolService,
-        private readonly IstService $istService,
-        private readonly GuestService $guestService,
         private readonly TroopService $troopService,
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly AdminService $adminService,
@@ -54,20 +48,21 @@ class AdminController extends AbstractController
             $response,
             'admin/dashboard-admin.twig',
             [
-                'patrols' => $this->patrolService->getAllPatrolsStatistics($event, $user),
-                'ists' => $this->istService->getAllIstsStatistics($event, $user),
-                'troopLeaders' => $this->troopService->getAllTroopLeaderStatistics($event, $user),
-                'troopParticipants' => $this->troopService->getAllTroopParticipantStatistics($event, $user),
-                'guests' => $this->guestService->getAllGuestsStatistics($event, $user),
+                'patrols' => $this->participantRepository->getStatistic($event, ParticipantRole::PatrolLeader),
+                'ists' => $this->participantRepository->getStatistic($event, ParticipantRole::Ist),
+                'troopLeaders' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopLeader),
+                'troopParticipants' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopParticipant),
+                'guests' => $this->participantRepository->getStatistic($event, ParticipantRole::Guest),
                 'contingentsPatrolStatistic' => $this->participantRepository->getContingentStatistic(
                     $event,
-                    [ParticipantRole::PatrolLeader],
+                    ParticipantRole::PatrolLeader,
                     $contingents,
                 ),
             ],
         );
     }
 
+    // TODO rename to showPaid
     public function showStats(
         Response $response,
         Event $event,

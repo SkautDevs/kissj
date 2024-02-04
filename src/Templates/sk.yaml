@@ -341,7 +341,6 @@ dashboard-admin:
     approvedTroop: "schválené skupiny"
     approvedTp: "schválení účastníci"
     approvedGuest: "schválení hosté"
-    afterPayment: "po splatnosti"
     paidIst: "zaplacení servisáci"
     paidPatrol: "zaplacené patroly"
     paidTroop: "zaplacené skupiny"

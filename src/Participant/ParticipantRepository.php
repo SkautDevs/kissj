@@ -168,36 +168,49 @@ class ParticipantRepository extends Repository
 
     /**
      * @param string[] $contingents
-     * @param ParticipantRole[] $roles
      * @return StatisticUserValueObject[]
      */
     public function getContingentStatistic(
         Event $event,
-        array $roles,
+        ParticipantRole $role,
         array $contingents,
     ): array {
         $statistics = [];
         foreach ($contingents as $contingent) {
-            $qb = $this->connection->select('u.status, COUNT(*)')->from($this->getTable());
-            $qb->join('user')->as('u')->on('u.id = participant.user_id');
-
-            $qb->where('u.event_id = %i', $event->id);
-            $qb->where('participant.role IN %in', $roles);
-            $qb->where('participant.contingent = %s', $contingent);
-
-            $qb->groupBy('u.status');
-
-            $rows = $qb->fetchPairs('status', 'count');
-
-            $statistics[$contingent] = new StatisticUserValueObject(
-                $rows[UserStatus::Open->value] ?? 0,
-                $rows[UserStatus::Closed->value] ?? 0,
-                $rows[UserStatus::Approved->value] ?? 0,
-                $rows[UserStatus::Paid->value] ?? 0,
+            $statistics[$contingent] = $this->getStatistic(
+                $event,
+                $role,
+                $contingent,
             );
         }
 
         return $statistics;
+    }
+
+    public function getStatistic(
+        Event $event,
+        ParticipantRole $role,
+        ?string $contingent = null,
+    ): StatisticUserValueObject {
+        $qb = $this->connection->select('u.status, COUNT(*)')->from($this->getTable());
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.role = %s', $role);
+        if ($contingent !== null) {
+            $qb->where('participant.contingent = %s', $contingent);
+        }
+
+        $qb->groupBy('u.status');
+
+        $rows = $qb->fetchPairs('status', 'count');
+
+        return new StatisticUserValueObject(
+            $rows[UserStatus::Open->value] ?? 0,
+            $rows[UserStatus::Closed->value] ?? 0,
+            $rows[UserStatus::Approved->value] ?? 0,
+            $rows[UserStatus::Paid->value] ?? 0,
+        );
     }
 
     public function getParticipantFromUser(User $user): Participant

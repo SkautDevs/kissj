@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace kissj\Participant\Patrol;
 
 use kissj\Application\DateTimeUtils;
-use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\PhpMailerWrapper;
-use kissj\Participant\Admin\StatisticValueObject;
-use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
 use kissj\User\UserService;
-use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PatrolService
@@ -24,7 +20,6 @@ class PatrolService
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
         private readonly UserService $userService,
         private readonly ParticipantService $participantService,
-        private readonly ParticipantRepository $participantRepository,
         private readonly FlashMessagesBySession $flashMessages,
         private readonly TranslatorInterface $translator,
         private readonly PhpMailerWrapper $mailer,
@@ -134,17 +129,5 @@ class PatrolService
         }
 
         return $patrolLeader;
-    }
-
-    public function getAllPatrolsStatistics(Event $event, User $admin): StatisticValueObject
-    {
-        $patrolLeaders = $this->participantRepository->getAllParticipantsWithStatus(
-            [ParticipantRole::PatrolLeader],
-            UserStatus::cases(),
-            $event,
-            $admin,
-        );
-
-        return new StatisticValueObject($patrolLeaders);
     }
 }

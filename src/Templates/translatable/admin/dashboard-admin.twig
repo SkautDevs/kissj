@@ -17,50 +17,46 @@
                 {% if event.allowPatrols %}
                     <h3>{% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                     <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.maximalClosedPatrolsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ patrols.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ patrols.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ patrols.getApprovedCount }}
-                        ({{ patrols.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
-                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ patrols.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ patrols.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ patrols.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ patrols.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ patrols.paidCount }}</p>
                 {% endif %}
                 {% if event.allowTroops %}
                     <h3>{% trans %}role.tl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                     <p>{% trans %}dashboard-admin.limitTroop{% endtrans %}: {{ event.getMaximalClosedTroopLeadersCount }}</p>
-                    <p>{% trans %}dashboard-admin.openTroop{% endtrans %}: {{ troopLeaders.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedTroop{% endtrans %}: {{ troopLeaders.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedTroop{% endtrans %}: {{ troopLeaders.getApprovedCount }}
-                        ({{ troopLeaders.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
-                    <p>{% trans %}dashboard-admin.paidTroop{% endtrans %}: {{ troopLeaders.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.openTroop{% endtrans %}: {{ troopLeaders.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedTroop{% endtrans %}: {{ troopLeaders.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedTroop{% endtrans %}: {{ troopLeaders.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidTroop{% endtrans %}: {{ troopLeaders.paidCount }}</p>
                     <br>
 
                     <h3>{% trans %}role.tp{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                     <p>{% trans %}dashboard-admin.limitTp{% endtrans %}: {{ event.getMaximalClosedTroopParticipantsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openTp{% endtrans %}: {{ troopParticipants.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedTp{% endtrans %}: {{ troopParticipants.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedTp{% endtrans %}: {{ troopParticipants.getApprovedCount }}
-                        ({{ troopParticipants.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
-                    <p>{% trans %}dashboard-admin.paidTp{% endtrans %}: {{ troopParticipants.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.openTp{% endtrans %}: {{ troopParticipants.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedTp{% endtrans %}: {{ troopParticipants.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedTp{% endtrans %}: {{ troopParticipants.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidTp{% endtrans %}: {{ troopParticipants.paidCount }}</p>
                 {% endif %}
             </div>
             <div>
                 {% if event.allowIsts %}
                     <h3>{% trans %}role.ist{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                     <p>{% trans %}dashboard-admin.limitIst{% endtrans %}: {{ event.maximalClosedIstsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openIst{% endtrans %}: {{ ists.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}: {{ ists.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}: {{ ists.getApprovedCount }}
-                        ({{ ists.getAfterPayment }} {% trans %}dashboard-admin.afterPayment{% endtrans %})</p>
-                    <p>{% trans %}dashboard-admin.paidIst{% endtrans %}: {{ ists.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.openIst{% endtrans %}: {{ ists.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}: {{ ists.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}: {{ ists.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidIst{% endtrans %}: {{ ists.paidCount }}</p>
                     <br>
                 {% endif %}
                 {% if event.allowGuests %}
                     <h3>{% trans %}role.guest{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                     <p>{% trans %}dashboard-admin.limitGuest{% endtrans %}
                         : {{ event.getMaximalClosedGuestsCount() }}</p>
-                    <p>{% trans %}dashboard-admin.openGuest{% endtrans %}: {{ guests.getOpenCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedGuest{% endtrans %}: {{ guests.getClosedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.getApprovedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidGuest{% endtrans %}: {{ guests.getPaidCount }}</p>
+                    <p>{% trans %}dashboard-admin.openGuest{% endtrans %}: {{ guests.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedGuest{% endtrans %}: {{ guests.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidGuest{% endtrans %}: {{ guests.paidCount }}</p>
                 {% endif %}
             </div>
         </div>

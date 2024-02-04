@@ -341,7 +341,6 @@ dashboard-admin:
     approvedTroop: "Approved Troops"
     approvedTp: "Approved Participants"
     approvedGuest: "Approved Guests"
-    afterPayment: "after payment due"
     paidIst: "Paid IST"
     paidPatrol: "Paid Patrols"
     paidTroop: "Paid Troops"
