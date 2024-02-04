@@ -54,7 +54,6 @@ use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstRepository;
-use kissj\Participant\Ist\IstService;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
@@ -170,7 +169,6 @@ class Settings
             GuestRepository::class => autowire(),
             GuestService::class => autowire(),
             IstRepository::class => autowire(),
-            IstService::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
             MonologAdditionalContextMiddleware::class => autowire(),
