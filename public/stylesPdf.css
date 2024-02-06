@@ -4,6 +4,10 @@
     max-width: 250px;
 }
 
+.signStamp {
+    max-width: 200px;
+}
+
 .content-left {
     float: left;
     text-align: left;

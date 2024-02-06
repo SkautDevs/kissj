@@ -231,4 +231,9 @@ abstract class EventType
     {
         return '/SKAUT_horizontalni_logo_250.png';
     }
+
+    public function getSkautStampSignPath(Participant $participant): string
+    {
+        return '/SkautJunakSignStamp.png';
+    }
 }

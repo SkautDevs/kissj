@@ -32,6 +32,7 @@ class mPdfGenerator extends PdfGenerator
         	'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
         	'payment' => $payment,
         	'acceptedDate' => $participant->registrationPayDate?->format('j. n. Y'),
+            'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
         ];
 
         $html = $this->twig->fetch($templateName, $templateData);

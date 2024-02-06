@@ -253,4 +253,12 @@ class EventTypeCej extends EventType
             default => '/ZNAK_Scouting_Slovakia_250.png',
         };
     }
+
+    public function getSkautStampSignPath(Participant $participant): string
+    {
+        return match ($participant->contingent) {
+            self::CONTINGENT_CZECHIA => parent::getSkautStampSignPath($participant),
+            default => '/SkSkautingSignStamp.png',
+        };
+    }
 }
