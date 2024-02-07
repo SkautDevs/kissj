@@ -15,24 +15,7 @@ class FioBankPaymentService implements IBankPaymentService
     public function __construct(
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly FioBankReaderFactory $fioBankReaderFactory,
-        private readonly LoggerInterface $logger,
-        private readonly SentryCollector $sentryCollector,
     ) {
-    }
-
-    public function setBreakpoint(\DateTimeImmutable $dateTime, Event $event): bool
-    {
-        try {
-            $this->fioBankReaderFactory->getFioRead($event)->setLastDate($dateTime);
-        } catch (ServiceUnavailable $e) {
-            $this->sentryCollector->collect($e);
-            $this->logger->error('Setting breakpoint for Fio Bank failed: ' . $e->getMessage());
-
-            return false;
-        }
-        $this->logger->info('Set breakpoint for Fio Bank on time ' . $dateTime->format('Y-d-m'));
-
-        return true;
     }
 
     public function getAndSafeFreshPaymentsFromBank(Event $event): int

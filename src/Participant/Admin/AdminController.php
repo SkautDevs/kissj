@@ -364,23 +364,6 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/paymentsAuto-admin.twig', $arguments);
     }
 
-    public function setBreakpointFromRoute(Request $request, Response $response, Event $event): Response
-    {
-        $result = $this->bankPaymentService->setBreakpoint(DateTimeUtils::getDateTime('2022-01-01'), $event);
-
-        if ($result) {
-            $this->flashMessages->success('Set breakpoint successfully');
-        } else {
-            $this->flashMessages->error('Something gone wrong, probably unvalid token :(');
-        }
-
-        return $this->redirect(
-            $request,
-            $response,
-            'admin-show-auto-payments',
-        );
-    }
-
     public function updatePayments(Request $request, Response $response, Event $event): Response
     {
         $this->paymentService->updatePayments($event);

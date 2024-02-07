@@ -238,9 +238,6 @@ class Route
                             $app->get('', AdminController::class . '::showAutoPayments')
                                 ->setName('admin-show-auto-payments');
 
-                            $app->post('/setBreakpointFromRoute', AdminController::class . '::setBreakpointFromRoute')
-                                ->setName('admin-set-breakpoint-payments');
-
                             $app->post('/updatePayments', AdminController::class . '::updatePayments')
                                 ->setName('admin-update-payments');
 
