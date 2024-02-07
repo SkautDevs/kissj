@@ -250,7 +250,7 @@ class EventTypeCej extends EventType
     {
         return match ($participant->contingent) {
             self::CONTINGENT_CZECHIA => parent::getSkautLogoPath($participant),
-            default => '/ZNAK_Scouting_Slovakia_250.png',
+            default => '/ZNAK_EN_Scouting_Slovakia_500.png',
         };
     }
 

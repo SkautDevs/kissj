@@ -9,10 +9,10 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ base_path() }}/styles.css">
+    {% if event.eventType.getStylesheetNameWithoutLeadingSlash is not null %}
+        <link rel="stylesheet" href="{{ base_path() }}/{{ event.eventType.getStylesheetNameWithoutLeadingSlash }}">
+    {% endif %}
     <link rel="stylesheet" href="{{ base_path() }}/stylesPdf.css">
-    <style>
-        {{ event.getEventType.getEventSpecificStyles }}
-    </style>
 </head>
 
 <body class="wrapper">
