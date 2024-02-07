@@ -8,7 +8,7 @@ use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\BankPayment\FioBankPaymentService;
+use kissj\BankPayment\IBankPaymentService;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
@@ -24,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PaymentService
 {
     public function __construct(
-        private readonly FioBankPaymentService $bankPaymentService,
+        private readonly IBankPaymentService $bankPaymentService,
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly PaymentRepository $paymentRepository,
         private readonly ParticipantRepository $participantRepository,
@@ -225,6 +225,21 @@ class PaymentService
         return $variableNumber;
     }
 
-    # Jak vygenerovat hezci CSV z Money S3
-    /* cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;0" | head -n1 > test.csv; cat Seznam\ bankovních\ dokladů_04122017_pok.csv | grep "^Detail 1;1" >> test.csv */
+    public function setBankPaymentPaired(int $paymentId): BankPayment
+    {
+        $bankPayment = $this->bankPaymentRepository->get($paymentId);
+        $bankPayment->status = BankPayment::STATUS_PAIRED;
+        $this->bankPaymentRepository->persist($bankPayment);
+
+        return $bankPayment;
+    }
+
+    public function setBankPaymentUnrelated(int $paymentId): BankPayment
+    {
+        $bankPayment = $this->bankPaymentRepository->get($paymentId);
+        $bankPayment->status = BankPayment::STATUS_UNRELATED;
+        $this->bankPaymentRepository->persist($bankPayment);
+
+        return $bankPayment;
+    }
 }

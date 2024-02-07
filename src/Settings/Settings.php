@@ -9,6 +9,7 @@ use Dotenv\Dotenv;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
+use kissj\BankPayment\IBankPaymentService;
 use kissj\Entry\EntryController;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
@@ -164,7 +165,6 @@ class Settings
             EventService::class => autowire(),
             ExportController::class => autowire(),
             ExportService::class => autowire(),
-            FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),
             GuestService::class => autowire(),
@@ -220,7 +220,7 @@ class Settings
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-
+        $container[IBankPaymentService::class] = autowire(FioBankPaymentService::class);
         $container[SentryClient::class] = $sentryClient;
         $container[SentryHub::class] = $sentryHub;
 

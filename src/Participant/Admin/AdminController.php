@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
-use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\BankPayment\FioBankPaymentService;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Participant\ParticipantRepository;
@@ -32,7 +30,6 @@ class AdminController extends AbstractController
         private readonly PaymentService $paymentService,
         private readonly PaymentRepository $paymentRepository,
         private readonly BankPaymentRepository $bankPaymentRepository,
-        private readonly FioBankPaymentService $bankPaymentService,
         private readonly TroopService $troopService,
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly AdminService $adminService,
@@ -379,7 +376,7 @@ class AdminController extends AbstractController
     {
         // TODO check if correct event
         $notice = $this->getParameterFromBody($request, 'notice', true);
-        $this->bankPaymentService->setBankPaymentPaired($paymentId);
+        $this->paymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
         $this->flashMessages->info($this->translator->trans('flash.info.markedAsPaired'));
 
@@ -392,7 +389,7 @@ class AdminController extends AbstractController
 
     public function markBankPaymentUnrelated(Request $request, Response $response, int $paymentId): Response
     {
-        $this->bankPaymentService->setBankPaymentUnrelated($paymentId);
+        $this->paymentService->setBankPaymentUnrelated($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
         $this->flashMessages->info($this->translator->trans('flash.info.markedAsUnrelated'));
 
