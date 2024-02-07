@@ -10,6 +10,7 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
 use kissj\BankPayment\IBankPaymentService;
+use kissj\BankPayment\TatraBankPaymentService;
 use kissj\Entry\EntryController;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
@@ -165,6 +166,7 @@ class Settings
             EventService::class => autowire(),
             ExportController::class => autowire(),
             ExportService::class => autowire(),
+            FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),
             GuestService::class => autowire(),
@@ -193,6 +195,7 @@ class Settings
             SentryHttpContextMiddleware::class => autowire(),
             SkautisController::class => autowire(),
             SkautisService::class => autowire(),
+            TatraBankPaymentService::class => autowire(),
             TroopController::class => autowire(),
             TroopLeaderRepository::class => autowire(),
             TroopLeadersOnlyMiddleware::class => autowire(),

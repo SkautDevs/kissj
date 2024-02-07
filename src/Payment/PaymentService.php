@@ -8,7 +8,7 @@ use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\BankPayment\IBankPaymentService;
+use kissj\BankPayment\BankServiceProvider;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
@@ -24,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PaymentService
 {
     public function __construct(
-        private readonly IBankPaymentService $bankPaymentService,
+        private readonly BankServiceProvider $bankServiceProvider,
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly PaymentRepository $paymentRepository,
         private readonly ParticipantRepository $participantRepository,
@@ -150,7 +150,8 @@ class PaymentService
 
         if (count($freshBankPayments) === 0) {
             try {
-                $newPaymentsCount = $this->bankPaymentService->getAndSafeFreshPaymentsFromBank($event);
+                $newPaymentsCount = $this->bankServiceProvider->provideBankService($event->bankSlug)
+                    ->getAndSafeFreshPaymentsFromBank($event);
 
                 if ($newPaymentsCount > 0) {
                     $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);

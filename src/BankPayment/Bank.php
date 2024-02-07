@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kissj\Payment;
+namespace kissj\BankPayment;
 
 class Bank
 {

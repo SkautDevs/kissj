@@ -1,22 +1,22 @@
 <?php
 
-declare(strict_types=1);
-/**
- * Created by PhpStorm.
- * User: Martin Pecka
- * Date: 8.5.2018
- * Time: 22:41
- */
-
 namespace kissj\BankPayment;
 
 class Banks
 {
-    /** @var string[][] */
-    protected array $banks = [
+    /**
+     * @var array<string,array<string,string>>
+     */
+    private array $banks = [
         'fio' => [
             'bankCode' => '2010',
             'name' => 'Fio Banka',
+            'serviceClass' => FioBankPaymentService::class,
+        ],
+        'tatra' => [
+            'bankCode' => '2010',
+            'name' => 'Tatra Banka',
+            'serviceClass' => TatraBankPaymentService::class,
         ],
         'air' => [
             'bankCode' => '3030',
@@ -225,6 +225,22 @@ class Banks
         'wuest' => [
             'bankCode' => '7980',
             'name' => 'Wüstenrot hypoteční banka a.s.',
-        ]
+        ],
     ];
+
+    public function getBankBySlug(string $slug): Bank
+    {
+        if (!array_key_exists($slug, $this->banks)) {
+            throw new \InvalidArgumentException('Bank with slug ' . $slug . ' does not exist');
+        }
+
+        $bank = $this->banks[$slug];
+
+        return new Bank(
+            $slug,
+            $bank['bankCode'],
+            $bank['name'],
+            $bank['serviceClass'],
+        );
+    }
 }

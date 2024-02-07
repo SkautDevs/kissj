@@ -36,7 +36,7 @@ use kissj\Participant\ParticipantRole;
  * @property string            $iban
  * @property int               $prefixVariableSymbol // TODO add null
  * @property bool              $automaticPaymentPairing
- * @property int|null          $bankId currently not in use
+ * @property string            $bankSlug
  * @property string|null       $bankApiKey
  * @property int               $defaultPrice
  * @property string            $currency

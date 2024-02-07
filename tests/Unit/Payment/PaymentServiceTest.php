@@ -3,7 +3,7 @@
 namespace Tests\Unit\Payment;
 
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\BankPayment\FioBankPaymentService;
+use kissj\BankPayment\BankServiceProvider;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\PhpMailerWrapper;
@@ -19,7 +19,7 @@ class PaymentServiceTest extends TestCase
     public function testGetVariableNumber(): void
     {
         $paymentService = new PaymentServiceExposed(
-            \Mockery::mock(FioBankPaymentService::class),
+            \Mockery::mock(BankServiceProvider::class),
             \Mockery::mock(BankPaymentRepository::class),
             \Mockery::mock(PaymentRepository::class),
             \Mockery::mock(ParticipantRepository::class),
