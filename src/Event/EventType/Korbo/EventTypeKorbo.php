@@ -59,9 +59,4 @@ class EventTypeKorbo extends EventType
             'cs' => '🇨🇿 Česky',
         ];
     }
-
-    public function isSellingIstTicketsAllowed(): bool
-    {
-        return true;
-    }
 }

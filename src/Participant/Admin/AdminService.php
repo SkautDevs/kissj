@@ -8,6 +8,9 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\PhpMailerWrapper;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
@@ -39,11 +42,16 @@ class AdminService
         if ($participantFrom === null || $participantTo === null) {
             $flash->warning($this->translator->trans('flash.warning.nullParticipants'));
 
-            return false; // no point to compare further
+            return false;
         }
 
-        if (!$participantFrom instanceof $participantTo) {
+        if ($participantFrom->id === $participantTo->id) {
             $flash->warning($this->translator->trans('flash.warning.differentParticipants'));
+            return false;
+        }
+
+        if ($participantFrom->role !== $participantTo->role) {
+            $flash->warning($this->translator->trans('flash.warning.sameRole'));
             $isPossible = false;
         }
 
@@ -57,6 +65,17 @@ class AdminService
             $isPossible = false;
         }
 
+        if ($participantTo instanceof TroopLeader && $participantTo->getTroopParticipantsCount() > 0) {
+            $flash->warning($this->translator->trans('flash.warning.troopLeaderHasParticipants'));
+            $isPossible = false;
+        }
+
+        if ($participantFrom instanceof PatrolLeader || $participantTo instanceof PatrolLeader) {
+            $flash->warning($this->translator->trans('flash.warning.patrolLeaderNotSupported'));
+            $isPossible = false;
+        }
+
+        // KORBO specific check
         if ($participantFrom->scarf !== $participantTo->scarf) {
             $flash->info($this->translator->trans('flash.info.differentScarfs'));
         }
@@ -74,14 +93,14 @@ class AdminService
     public function transferPayment(Participant $participantFrom, Participant $participantTo): void
     {
         $correctPayment = null;
-        foreach ($participantFrom->payment as $payment) {
-            if ($payment->status === PaymentStatus::Paid) {
-                $correctPayment = $payment;
-            }
-        }
+        if ($participantFrom instanceof TroopParticipant) {
+            $correctPayment = $participantFrom->getFirstPaidPayment();
 
-        if ($correctPayment === null) {
-            throw new \RuntimeException('Payment marked as paid was not found with participant marked as paid');
+            if ($correctPayment === null) {
+                throw new \RuntimeException('Payment marked as paid was not found with participant marked as paid');
+            }
+
+            $correctPayment->participant = $participantTo;
         }
 
         foreach ($participantTo->payment as $payment) {
@@ -99,12 +118,31 @@ class AdminService
             }
         }
 
-        // handle scarf correction
         if ($participantFrom->scarf !== $participantTo->scarf) {
             $participantTo->scarf = $participantFrom->scarf;
         }
 
-        $correctPayment->participant = $participantTo;
+        if (
+            $participantFrom instanceof TroopParticipant
+            && $participantTo instanceof TroopParticipant
+        ) {
+            $participantTo->troopLeader = $participantFrom->troopLeader;
+            $participantFrom->troopLeader = null;
+        }
+
+        if (
+            $participantFrom instanceof TroopLeader
+            && $participantTo instanceof TroopLeader
+        ) {
+            if ($participantTo->getTroopParticipantsCount() > 0) {
+                throw new \RuntimeException('Troop leader has participants');
+            }
+
+            foreach ($participantFrom->troopParticipants as $troopParticipant) {
+                $troopParticipant->troopLeader = $participantTo;
+                $this->participantRepository->persist($troopParticipant);
+            }
+        }
 
         $userFrom = $participantFrom->getUserButNotNull();
         $userFrom->status = UserStatus::Open;
@@ -112,7 +150,10 @@ class AdminService
         $userTo = $participantTo->getUserButNotNull();
         $userTo->status = UserStatus::Paid;
 
-        $this->paymentRepository->persist($correctPayment);
+        if ($participantFrom instanceof TroopParticipant) {
+            $this->paymentRepository->persist($correctPayment);
+        }
+        $this->participantRepository->persist($participantFrom);
         $this->participantRepository->persist($participantTo);
         $this->userRepository->persist($userFrom);
         $this->userRepository->persist($userTo);
@@ -120,7 +161,11 @@ class AdminService
         $this->mailer->sendRegistrationPaid($participantTo);
         $this->mailer->sendPaymentTransferedFromYou($participantFrom);
 
-        $this->logger->info('Tranfered payment ID ' . $correctPayment->id
-            . ' from participant ID ' . $userFrom->id . ' to participant ID ' . $userTo->id);
+        $this->logger->info(sprintf(
+            'Transferred payment ID %s from participant ID %s to participant ID %s',
+            $correctPayment?->id ?? 'N/A',
+            $userFrom->id,
+            $userTo->id,
+        ));
     }
 }

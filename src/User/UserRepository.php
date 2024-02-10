@@ -19,7 +19,6 @@ class UserRepository extends Repository
     public function getUserFromEmail(string $email, Event $event): User
     {
         return $this->getOneBy([
-            'login_type' => UserLoginType::Email->value,
             'email' => $email,
             'event' => $event,
         ]);
@@ -28,7 +27,6 @@ class UserRepository extends Repository
     public function findUserFromEmail(string $email, Event $event): ?User
     {
         return $this->findOneBy([
-            'login_type' => UserLoginType::Email->value,
             'email' => $email,
             'event' => $event,
         ]);
@@ -37,7 +35,6 @@ class UserRepository extends Repository
     public function isEmailUserExisting(string $email, Event $event): bool
     {
         return $this->isExisting([
-            'login_type' => UserLoginType::Email->value,
             'email' => $email,
             'event' => $event,
         ]);

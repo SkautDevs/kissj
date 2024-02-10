@@ -72,11 +72,6 @@ abstract class EventType
         return new ContentArbiterTroopParticipant();
     }
 
-    public function isSellingIstTicketsAllowed(): bool
-    {
-        return false;
-    }
-
     /**
      * @return array<string, string>
      */

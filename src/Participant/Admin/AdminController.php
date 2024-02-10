@@ -402,8 +402,8 @@ class AdminController extends AbstractController
 
     public function showTransferPayment(Request $request, Response $response, Event $event): Response
     {
-        $emailFrom = $request->getQueryParams()['emailFrom'];
-        $emailTo = $request->getQueryParams()['emailTo'];
+        $emailFrom = $this->getParameterFromQuery($request, 'emailFrom');
+        $emailTo = $this->getParameterFromQuery($request, 'emailTo');
 
         $userFrom = $this->userRepository->findUserFromEmail($emailFrom, $event);
         $userTo = $this->userRepository->findUserFromEmail($emailTo, $event);
@@ -419,7 +419,7 @@ class AdminController extends AbstractController
             'transferPossible' => $this->adminService->isPaymentTransferPossible(
                 $participantFrom,
                 $participantTo,
-                $this->flashMessages
+                $this->flashMessages,
             ),
         ]);
     }
@@ -440,11 +440,16 @@ class AdminController extends AbstractController
             $participantTo,
             $this->flashMessages,
         )) {
-            throw new \RuntimeException('Cannot do transfer');
+            $this->flashMessages->error($this->translator->trans('flash.error.transferFailed'));
+            $this->sentryCollector->collect(new \RuntimeException(sprintf(
+                'Cannot do transfer from user ID: %s to user ID: %s',
+                $userFrom->id,
+                $userTo->id,
+            )));
+        } else {
+            $this->adminService->transferPayment($participantFrom, $participantTo);
+            $this->flashMessages->success($this->translator->trans('flash.success.transfer'));
         }
-
-        $this->adminService->transferPayment($participantFrom, $participantTo);
-        $this->flashMessages->success($this->translator->trans('flash.success.transfer'));
 
         return $this->redirect(
             $request,

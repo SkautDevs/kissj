@@ -18,7 +18,7 @@ final class RefactorBanks extends AbstractMigration
     {
         $table = $this->table('event');
         $table->renameColumn('bank_slug', 'bank_id');
-        $table->changeColumn('bank_id', 'string', ['null' => false]); // change to string 4ever, int was just a terrible mistake, let's forget about it 
+        $table->changeColumn('bank_id', 'string', ['null' => false]); // change to string 4ever, int was just a terrible mistake, let's forget about it
         $table->save();
     }
 }

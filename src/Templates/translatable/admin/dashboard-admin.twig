@@ -122,19 +122,17 @@
             </div>
         </div>
     </div>
-    {% if event.eventType.isSellingIstTicketsAllowed %}
-        <div class="card card-half paid-theme">
-            <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
-                <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
-                    <input class="form-control form-wide" name="emailFrom" type="email" required></label>
-                <br/>
-                <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
-                    <input class="form-control form-wide" name="emailTo" type="email" required></label>
-                <br/>
-                <input class="btn btn-small"
-                       type="submit"
-                       value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
-            </form>
-        </div>
-    {% endif %}
+    <div class="card card-half paid-theme">
+        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
+            <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
+                <input class="form-control form-wide" name="emailFrom" type="email" required></label>
+            <br/>
+            <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
+                <input class="form-control form-wide" name="emailTo" type="email" required></label>
+            <br/>
+            <input class="btn btn-small"
+                   type="submit"
+                   value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
+        </form>
+    </div>
 {% endblock %}

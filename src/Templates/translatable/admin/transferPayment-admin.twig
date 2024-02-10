@@ -9,8 +9,12 @@
                 <p>{% trans %}transferPayment-admin.sellerInfo{% endtrans %}</p>
                 {% if from %}
                     {{ include('widgets/details.twig', {person: from, ca: event.eventType.getContentArbiterIst}) }}
-                    Mail: <b>{{ emailFrom }}</b><br/>
-                    Status: <b>{{ from.user.status.value }}</b>
+                    {% trans %}detail.email{% endtrans %}: <b>{{ emailFrom }}</b><br/>
+                    {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ from.user.status.value)|trans }}</b><br/>
+                    {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  from.role.value)|trans }}</b>
+                    {% if to is TroopLeader %}
+                        ({{ from.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+                    {% endif %}
                 {% else %}
                     <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailFrom }}</h4>
                 {% endif %}
@@ -20,8 +24,12 @@
                 <p>{% trans %}transferPayment-admin.buyerInfo{% endtrans %}</p>
                 {% if to %}
                     {{ include('widgets/details.twig', {person: to, ca: event.eventType.getContentArbiterIst}) }}
-                    Mail: <b>{{ emailTo }}</b><br/>
-                    Status: <b>{{ to.user.status.value }}</b>
+                    {% trans %}detail.email{% endtrans %}: <b>{{ emailTo }}</b><br/>
+                    {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ to.user.status.value)|trans }}</b><br/>
+                    {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  to.role.value)|trans }}</b>
+                    {% if to is TroopLeader %}
+                        ({{ to.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+                    {% endif %}
                 {% else %}
                     <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailTo }}</h4>
                 {% endif %}
