@@ -11,6 +11,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
+use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
@@ -92,16 +93,7 @@ class AdminService
      */
     public function transferPayment(Participant $participantFrom, Participant $participantTo): void
     {
-        $correctPayment = null;
-        if ($participantFrom instanceof TroopParticipant) {
-            $correctPayment = $participantFrom->getFirstPaidPayment();
-
-            if ($correctPayment === null) {
-                throw new \RuntimeException('Payment marked as paid was not found with participant marked as paid');
-            }
-
-            $correctPayment->participant = $participantTo;
-        }
+        $transferredPayment = $this->handlePayments($participantFrom, $participantTo);
 
         foreach ($participantTo->payment as $payment) {
             if ($payment->status === PaymentStatus::Waiting) {
@@ -150,9 +142,6 @@ class AdminService
         $userTo = $participantTo->getUserButNotNull();
         $userTo->status = UserStatus::Paid;
 
-        if ($participantFrom instanceof TroopParticipant) {
-            $this->paymentRepository->persist($correctPayment);
-        }
         $this->participantRepository->persist($participantFrom);
         $this->participantRepository->persist($participantTo);
         $this->userRepository->persist($userFrom);
@@ -163,9 +152,29 @@ class AdminService
 
         $this->logger->info(sprintf(
             'Transferred payment ID %s from participant ID %s to participant ID %s',
-            $correctPayment?->id ?? 'N/A',
+            $transferredPayment?->id ?? 'N/A',
             $userFrom->id,
             $userTo->id,
         ));
+    }
+
+    private function handlePayments(
+        Participant $participantFrom,
+        Participant $participantTo,
+    ): ?Payment {
+        if ($participantFrom instanceof TroopParticipant) {
+            // Troop Participant has no payments by itself, it is handled by Troop Leader
+            return null;
+        }
+
+        $correctPayment = $participantFrom->getFirstPaidPayment();
+        if ($correctPayment === null) {
+            throw new \RuntimeException('Payment marked as paid was not found with participant marked as paid');
+        }
+
+        $correctPayment->participant = $participantTo;
+        $this->paymentRepository->persist($correctPayment);
+
+        return $correctPayment;
     }
 }
