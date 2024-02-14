@@ -20,6 +20,7 @@ use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
+use kissj\Deal\EventDeal;
 
 abstract class EventType
 {
@@ -230,5 +231,13 @@ abstract class EventType
     public function getSkautStampSignPath(Participant $participant): string
     {
         return '/SkautJunakSignStamp.png';
+    }
+
+    /**
+     * @return array<EventDeal>
+     */
+    public function getEventDeals(Participant $participant): array
+    {
+        return [];
     }
 }

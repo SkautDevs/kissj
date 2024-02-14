@@ -8,6 +8,7 @@ use DateTimeInterface;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
@@ -61,6 +62,7 @@ use Ramsey\Uuid\Uuid;
  * @property DateTimeInterface|null $entryDate m:passThru(dateFromString|dateToString)
  *
  * @property Payment[]              $payment m:belongsToMany
+ * @property Deal[]      $deals m:belongsToMany
  */
 class Participant extends EntityDatetime
 {
@@ -237,5 +239,16 @@ class Participant extends EntityDatetime
     private function generateTieCode(int $length): string
     {
         return substr(str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', $length * 9)), 0, $length);
+    }
+
+    public function findDeal(string $slug): ?Deal
+    {
+        foreach ($this->deals as $deal) {
+            if ($deal->slug === $slug) {
+                return $deal;
+            }
+        }
+
+        return null;
     }
 }
