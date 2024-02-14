@@ -46,4 +46,12 @@ dashboard:
     tieTroopParticipant: "Připni účastníka*účastnici"
     tieCodeLabel: "Kód pro připnutí účastníka*účastnice"
     pForValidReg: "účastníků*účastnic pro validní registraci"
- 
+deal:
+    sfh: "Safe From Harm"
+    sfh-missing: "Chybí Safe From Harm, prosím vyplň ho"
+    sfh-button: "Vyplnit dotazník Safe From Harm"
+    sfh-done: "Safe From Harm je vyplněn, děkujeme!"
+    programme: "Vybírání programů"
+    programme-missing: "Ještě nemáš vybraný program, prosím vyber ho"
+    programme-button: "Vybrat program na akci"
+    programme-done: "Program je vybrán, děkujeme!"

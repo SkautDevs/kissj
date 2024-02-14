@@ -1,0 +1,14 @@
+{% if deals %}
+    {% for deal in deals %}
+        <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
+        {% if deal.isDone %}
+            {{ ('deal.'~deal.slug~'-done')|trans }}
+        {% else %}
+            {{ ('deal.'~deal.slug~'-missing')|trans }}:<br/>
+            <br/>
+            <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
+        {% endif %}
+        <br/>
+        <br/>
+    {% endfor %}
+{% endif %}

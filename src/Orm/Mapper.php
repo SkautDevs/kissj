@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Orm;
 
 use kissj\BankPayment\BankPayment;
+use kissj\Deal\Deal;
 use kissj\Event\Event;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
@@ -82,6 +83,9 @@ class Mapper implements IMapper
                     default => throw new \UnexpectedValueException('Got unknown Participant role: '
                         . $row->getData()['role'] . ' for Participant with ID: ' . $row->getData()['id']),
                 };
+
+            case 'deal':
+                return Deal::class;
 
             default:
                 throw new \UnexpectedValueException('Got unknown table name: ' . $table);

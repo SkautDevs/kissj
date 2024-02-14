@@ -11,9 +11,13 @@ use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Deal\EventDeal;
 
 class EventTypeObrok extends EventType
 {
+    public const SLUG_SFH = 'sfh';
+    public const SLUG_PROGRAMME = 'programme';
+
     public function getPrice(Participant $participant): int
     {
         return match (true) {
@@ -101,5 +105,19 @@ class EventTypeObrok extends EventType
     public function isReceiptAllowed(): bool
     {
         return true;
+    }
+
+    public function getEventDeals(Participant $participant): array
+    {
+        return [
+            new EventDeal(
+                self::SLUG_SFH,
+                'https://example.com/sfh',
+            ),
+            new EventDeal(
+                self::SLUG_PROGRAMME,
+                'https://example.com/programme',
+            ),
+        ];
     }
 }

@@ -6,6 +6,7 @@ namespace kissj\Participant;
 
 use Exception;
 use kissj\AbstractController;
+use kissj\Deal\Deal;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -13,6 +14,7 @@ use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
+use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use kissj\User\UserStatus;
@@ -27,6 +29,7 @@ class ParticipantController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
+        private readonly DealRepository $dealRepository,
         private readonly PdfGenerator $pdfGenerator,
     ) {
     }
@@ -124,7 +127,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]>
+     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]>
      */
     private function getTemplateData(Participant $participant): array
     {
@@ -141,6 +144,7 @@ class ParticipantController extends AbstractController
             'person' => $participant,
             'participants' => $participants,
             'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+            'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
         ];
     }
 }
