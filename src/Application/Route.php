@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
@@ -24,8 +25,6 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -290,6 +289,9 @@ class Route
         });
 
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
+            $app->post('/deal', DealController::class . '::catchDataFromGoogleForm')
+                ->setName('deal-catch-data-from-google-form');
+
             $app->post('/entry/{entryCode}', EntryController::class . '::entry')
                 ->setName('entry');
 
