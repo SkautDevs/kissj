@@ -1,0 +1,21 @@
+POST http://kissj.local/v3/deal/
+Content-Type: application/json
+
+{
+	"TIE code": "YTCWVS",
+	"jaká je to otázka?": "Možnost 1",
+	"slug": "sfh"
+}
+
+###
+
+POST http://kissj.local/v3/deal/
+Content-Type: application/json
+
+{
+	"TIE LOL code": "YTCWVS",
+	"jaká je to otázka?": "Možnost 1",
+	"slug": "sfh"
+}
+
+###

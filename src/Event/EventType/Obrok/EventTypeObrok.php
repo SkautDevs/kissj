@@ -112,7 +112,10 @@ class EventTypeObrok extends EventType
         return [
             new EventDeal(
                 self::SLUG_SFH,
-                'https://example.com/sfh',
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLSed6rvnmKgtooyr1Dk6CCLhftCYiYap-nXPcLTVYKIlHQwbUg/viewform?entry.221441438=%s',
+                    $participant->tieCode,
+                ),
             ),
             new EventDeal(
                 self::SLUG_PROGRAMME,
