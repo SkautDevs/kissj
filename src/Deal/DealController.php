@@ -22,12 +22,15 @@ class DealController extends AbstractController
         if ($jsonFromBody === []) {
             $this->sentryCollector->collect(new \Exception('No data in request body'));
 
-            return $response->withStatus(422);
+            return $response->withStatus(400);
         }
 
         $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody);
         if ($deal === null) {
-            $this->sentryCollector->collect(new \Exception('Missing data in request body'));
+            $this->sentryCollector->collect(new \Exception(sprintf(
+                'Missing data in request body. Body: %s',
+                serialize($jsonFromBody),
+            )));
 
             return $response->withStatus(422);
         }

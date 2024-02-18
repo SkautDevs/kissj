@@ -12,6 +12,7 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Deal\EventDeal;
+use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeObrok extends EventType
 {
@@ -109,18 +110,27 @@ class EventTypeObrok extends EventType
 
     public function getEventDeals(Participant $participant): array
     {
-        return [
+        $eventDeals = [
             new EventDeal(
                 self::SLUG_SFH,
                 sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSed6rvnmKgtooyr1Dk6CCLhftCYiYap-nXPcLTVYKIlHQwbUg/viewform?entry.221441438=%s',
+                    'https://docs.google.com/forms/d/e/1FAIpQLSezG__WHx4N8Jdq3Lj626bbYHgPMovwcFT_97DS4WdCPQBQgA/viewform?usp=pp_url&entry.68270341=%s',
                     $participant->tieCode,
                 ),
             ),
-            new EventDeal(
-                self::SLUG_PROGRAMME,
-                'https://example.com/programme',
-            ),
         ];
+
+        if ($participant instanceof TroopLeader || $participant instanceof TroopParticipant) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_PROGRAMME,
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLScHeou_NyNKNmUOjpGaBLMlhMy0gB6xoal6xcMTyc84EpJcNw/viewform?usp=pp_url&entry.2082059253=%s&entry.797747193=%s',
+                    $participant->tieCode,
+                    $participant->getFullName(),
+                ),
+            );
+        }
+
+        return $eventDeals;
     }
 }

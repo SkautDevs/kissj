@@ -90,3 +90,64 @@ Backlog is in project GitHub issues
  - try what function `session_start()` returns
  - if false, it probably cannot write session into filesystem
  - make path from `session_save_path()` writable
+
+
+## External deals usage
+
+Kissj can be used to collect data from external deals, momentarily from Google Forms.
+From paid user you can click to "Fill up some form" and it will redirect you to Google Form with your TIE code used as user handle.
+After filling up the form, the data is sent back to Kissj.
+Data is sent by script, which is triggered by Google Forms on submit event.
+
+Example of the script is below - dont forget to change `POST_URL` and `DEAL_SLUG` to correct values.
+
+```js
+//var POST_URL = "https://yess.requestcatcher.com/";
+var POST_URL = "https://staging.kissj.net/v3/deal/";
+var DEAL_SLUG = "sfh";
+var MAX_POINTS = 2;
+
+function onSubmit(e) {
+  var form = FormApp.getActiveForm();
+  var allResponses = form.getResponses();
+  var latestResponse = allResponses[allResponses.length - 1];
+  var response = latestResponse.getItemResponses();
+  var payload = {};
+  for (var i = 0; i < response.length; i++) {
+    var question = response[i].getItem().getTitle();
+    var answer = response[i].getResponse();
+    payload[question] = answer;
+  }
+  payload['slug'] = DEAL_SLUG;
+
+  var grade = e?.response.getGradableItemResponses().reduce((p, e) => p += e.getScore(), 0);
+
+  if (grade < MAX_POINTS) {
+    payload['enoughPoints'] = false;
+  } else {
+    payload['enoughPoints'] = true;
+  }
+
+  var options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload)
+  };
+
+  UrlFetchApp.fetch(POST_URL, options);
+};
+
+
+```
+
+### How to use the script
+
+ - Go to your chosen form and from three-dot menu click "<> Script editor"
+ - Paste the script into the editor (overwrite pre-filled code)
+ - In the same window, choose newly created test and click "Run" - if not working, check permissions on popup window
+ - If it works (kissj should return http 4xx code), you are on the good way!
+ - Next, click "Triggers" from the left menu
+ - Click "Create a new trigger"
+ - Make sure that on "Select event source" is Form, select on "Select event type" item "On form submit" and click "Save"
+ - Try to fill up the form and check if the data is sent to kissj in "Executions" from the left menu
+ - if not working, check permissions by clicking "Run" button again and allow needed permissions

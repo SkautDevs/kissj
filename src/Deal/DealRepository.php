@@ -65,9 +65,14 @@ class DealRepository extends Repository
             return null;
         }
 
+        $isDone = true;
+        if (isset($jsonFromBody['enoughPoints'])) {
+            $isDone = (bool)$jsonFromBody['enoughPoints'];
+        }
+
         $deal->data = json_encode($jsonFromBody, JSON_THROW_ON_ERROR);
         $deal->doneAt = DateTimeUtils::getDateTime();
-        $deal->isDone = true;
+        $deal->isDone = $isDone;
         $this->persist($deal);
 
         return $deal;
