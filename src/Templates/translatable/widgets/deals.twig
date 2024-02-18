@@ -4,7 +4,13 @@
         {% if deal.isDone %}
             {{ ('deal.'~deal.slug~'-done')|trans }}
         {% else %}
-            {{ ('deal.'~deal.slug~'-missing')|trans }}:<br/>
+            {% if deal.getDoneAt() %}
+                {{ ('deal.'~deal.slug~'-doneBadly')|trans({
+                    '%date%': deal.doneAt.format('d. m. Y, H:i:s')
+                }) }}:<br/>
+            {% else %}
+                {{ ('deal.'~deal.slug~'-missing')|trans }}:<br/>
+            {% endif %}
             <br/>
             <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
         {% endif %}

@@ -50,6 +50,7 @@ deal:
     sfh: "Safe From Harm"
     sfh-missing: "Chybí Safe From Harm, prosím vyplň ho"
     sfh-button: "Vyplnit dotazník Safe From Harm"
+    sfh-doneBadly: "Safe From Harm je vyplněn, ale bohužel nebyl vyplněn správně (%date%). Prosím zkus ho vyplnit znovu"
     sfh-done: "Safe From Harm je vyplněn, děkujeme!"
     programme: "Vybírání programů"
     programme-missing: "Ještě nemáš vybraný program, prosím vyber ho"
