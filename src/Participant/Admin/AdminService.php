@@ -136,6 +136,10 @@ class AdminService
             }
         }
 
+        $registrationPayDateFrom = $participantFrom->registrationPayDate;
+        $participantFrom->registrationPayDate = $participantTo->registrationPayDate;
+        $participantTo->registrationPayDate = $registrationPayDateFrom;
+
         $userFrom = $participantFrom->getUserButNotNull();
         $userFrom->status = UserStatus::Open;
 
