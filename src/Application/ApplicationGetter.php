@@ -3,7 +3,9 @@
 namespace kissj\Application;
 
 use DI\Bridge\Slim\Bridge;
+use DI\ContainerBuilder;
 use kissj\Settings\Settings;
+use SessionHandlerInterface;
 use Slim\App;
 
 class ApplicationGetter
@@ -13,7 +15,7 @@ class ApplicationGetter
         string $envFilename = '.env',
         string $tempPath = __DIR__.'/../../temp'
     ): App {
-        $containerBuilder = new \DI\ContainerBuilder();
+        $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
             $envPath,
             $envFilename,
@@ -26,6 +28,13 @@ class ApplicationGetter
         $container = $containerBuilder->build();
         $app = Bridge::create($container);
         $app->setBasePath($_ENV['BASEPATH']);
+
+        if (headers_sent() === false) { // because of PhpUnit handling sessions poorly
+            /** @var SessionHandlerInterface $sessionHandler */
+            $sessionHandler = $container->get(SessionHandlerInterface::class);
+            session_set_save_handler($sessionHandler, true);
+            session_start();
+        }
 
         $app = (new Middleware())->addMiddlewaresInto($app);
         $app = (new Route())->addRoutesInto($app);

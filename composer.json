@@ -27,6 +27,7 @@
 		"ext-gd": "*",
 		"ext-mbstring": "*",
 		"ext-soap": "*",
+		"ext-redis": "*",
 		"composer": "^2",
 		"aws/aws-sdk-php": "^3.158",
 		"dflydev/fig-cookies": "^3.0",

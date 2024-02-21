@@ -70,8 +70,9 @@ use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
-use kissj\PdfGenerator\PdfGenerator;
 use kissj\PdfGenerator\mPdfGenerator;
+use kissj\PdfGenerator\PdfGenerator;
+use kissj\Session\RedisSessionHandler;
 use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
 use kissj\Skautis\SkautisService;
@@ -86,12 +87,14 @@ use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
 use Psr\Log\LoggerInterface;
+use Redis;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
 use Sentry\Event as SentryEvent;
 use Sentry\Monolog\Handler as SentryHandler;
 use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
+use SessionHandlerInterface;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -207,12 +210,12 @@ class Settings
 
         $container[Connection::class] = function (): Connection {
             return new Connection([
-                    'driver' => 'postgre',
-                    'host' => $_ENV['DATABASE_HOST'],
-                    'username' => $_ENV['POSTGRES_USER'],
-                    'password' => $_ENV['POSTGRES_PASSWORD'],
-                    'database' => $_ENV['POSTGRES_DB'],
-                ]);
+                'driver' => 'postgre',
+                'host' => $_ENV['DATABASE_HOST'],
+                'username' => $_ENV['POSTGRES_USER'],
+                'password' => $_ENV['POSTGRES_PASSWORD'],
+                'database' => $_ENV['POSTGRES_DB'],
+            ]);
         };
         $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
             'local' => new LocalFileHandler(),
@@ -233,12 +236,12 @@ class Settings
             $logger->pushProcessor(new GitProcessor());
             $logger->pushProcessor(new WebProcessor());
             $logger->pushHandler(
-                new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL'])
+                new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL']),
             );
 
             $sentryHandler = new SentryHandler(
                 $sentryHub,
-                Logger::WARNING
+                Logger::WARNING,
             );
 
             // Log only warnings or higher severity events/errors to Sentry
@@ -259,9 +262,16 @@ class Settings
                 $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
             );
         };
+        $container[SessionHandlerInterface::class] = new RedisSessionHandler(
+            new Redis(),
+            $_ENV['REDIS_ADDRESS'],
+            (int)$_ENV['REDIS_PORT'],
+            $_ENV['REDIS_HOST'],
+            $_ENV['REDIS_PASSWORD'],
+        );
         $container[S3bucketFileHandler::class] = fn (
             S3Client $s3Client,
-            SentryCollector $sentryCollector
+            SentryCollector $sentryCollector,
         ) => new S3bucketFileHandler(
             $s3Client,
             $_ENV['S3_BUCKET'],
@@ -300,7 +310,7 @@ class Settings
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
             Translator $translator,
-            FlashMessagesBySession $flashMessages
+            FlashMessagesBySession $flashMessages,
         ) {
             $view = Twig::create(
                 [
@@ -311,7 +321,7 @@ class Settings
                     // env. variables are parsed into strings
                     'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/twig' : false,
                     'debug' => $_ENV['DEBUG'] === 'true',
-                ]
+                ],
             );
 
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
@@ -357,5 +367,9 @@ class Settings
         $dotenv->required('SKAUTIS_APP_ID')->notEmpty();
         $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
         $dotenv->required('GIT_HASH');
+        $dotenv->required('REDIS_ADDRESS')->notEmpty();
+        $dotenv->required('REDIS_PORT')->notEmpty()->isInteger();
+        $dotenv->required('REDIS_HOST')->notEmpty();
+        $dotenv->required('REDIS_PASSWORD');
     }
 }
