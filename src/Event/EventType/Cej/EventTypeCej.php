@@ -205,7 +205,7 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_POLAND,
                 self::CONTINGENT_HUNGARY,
             ],
-            true
+            true,
         )) {
             return 9;
         }
@@ -222,7 +222,7 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_SLOVAKIA,
                 self::CONTINGENT_POLAND,
             ],
-            true
+            true,
         )) {
             return 9;
         }

@@ -14,7 +14,7 @@
     }) }}</p>
 <p>{{ 'receipt.acceptPaymentParticipant'|trans({
         '%participantFullName%': participant.getFullName,
-        '%participantFullAddress%': participant.permanentResidence,
+        '%participantFullAddress%': participant.getPermanentResidence,
     }) }}</p>
 {% if allOtherParticipants %}
     <p>{{ 'receipt.acceptPaymentMoreParticipant'|trans({

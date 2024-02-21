@@ -16,14 +16,12 @@
         </h2>
     {% endif %}
     
-    {% if event.eventtype.isReceiptAllowed and userStatus == 'paid' %}
+    {% if event.eventtype.isReceiptAllowed and userStatus == 'paid' and person.role.value != 'guest' %}
         <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{% trans %}dashboard.downloadReceipt{% endtrans %}</a><br/>
     {% endif %}
 </div>
 
-<div class="card {{ userStatus }}-theme">
-    {% include('widgets/deals.twig') with { person: person } %}
-</div>
+{% include('widgets/deals.twig') with { person: person } %}
 
 <div class="card {{ userStatus }}-theme">
     {% if person is Leader %}

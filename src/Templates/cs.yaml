@@ -524,6 +524,7 @@ flash:
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"
         tlOnly: "Pardon, nejsi přihlášený jako vedoucí skupiny"
         tpOnly: "Pardon, nejsi přihlášený jako účastník skupiny"
+        notGuest: "Pardon, jsi přihlášený jako host"
         wrongPatrol: "Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou patrolu"
         wrongTroop: "Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou skupinu"
         notLeader: "Pardon, ale na tuto adresu mohou jen vedoucí patrol či vedoucí skupin"

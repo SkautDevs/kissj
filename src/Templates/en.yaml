@@ -524,6 +524,7 @@ flash:
         plOnly: "Sorry, you are not logged as Patrol Leader"
         tlOnly: "Sorry, you are not logged as Troop Leader"
         tpOnly: "Sorry, you are not logged as Troop Participant"
+        notGuest: "Sorry, you are logged as guest"
         wrongPatrol: "Sorry, but you cannot edit or view participants outside your patrol"
         wrongTroop: "Sorry, but you cannot modify or view information of participants outside of your group"
         notLeader: "Sorry, but only patrol leaders or group leaders are allowed to access this address"
