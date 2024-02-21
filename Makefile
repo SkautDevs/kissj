@@ -7,7 +7,3 @@ local-dev-postgresql:
 .PHONY: down-local-dev-postgresql
 down-local-dev-postgresql:
 	docker-compose --file deploy/dev-postgres/docker-compose.yml down
-
-.PHONY: local-dev-sqlite
-local-dev-sqlite:
-	@echo "TODO @vojtechmares"

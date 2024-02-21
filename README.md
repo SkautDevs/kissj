@@ -1,37 +1,35 @@
-# KISSJ - Keep It Simple Stupid for Jamborees!
+# kissj - Keep It Simple Stupid for Jamborees!
 
 kissj is scouts **registration system for national and international Scout Jamborees** with simple idea - it has to be stupidly simple!
 
-
-# Core features: 
+### Core features: 
 
 - get information from participants as easy as possible
 - administrator one-click approving with automatic payment generation
 - one-click exporting health, logistic and full information for later usage
 - currently supporting roles: 
    - IST (International Service Team)
-   - Patrol (Patrol Leader + number of Participants, registered by Patrol Leader)
+   - Patrol - Patrol Leader + number of Participants, registered all by Patrol Leader
+   - Troops - Troop Leader + number of Troop Participants, all registering separately and joingin into one Troop after
    - guests
-- backend full administration for event registration team - access to participants data with edit possibility
-- no use of unsafe or forgettable passwords in process of registration - you need just an email!
+- full administration for event registration team - access to participants data with edit possibility
+- no use of unsafe or forgettable passwords in process of registration - you need just an email or Skautis account!
 
 
-# KISSJ is not: 
+### KISSJ is not: 
 
 - User Event Management system
 - System for food distribution, health information or safety incidents repository
-- system for program choosing or different event talk lines chooser
 - accountancy software
 - bloatware
 
-# Useful links
+### Useful links
 
  - main page: https://kissj.net/
- - analytics: ~https://plausible.io/kissj.net~ - TODO fix
  - sentry: https://skautdevs.sentry.io/discover/homepage/
- - monitoring and logs: ~https://monitoring.kissj.net/~ - TODO fix
 
-## Local setup with PostgreSQL
+
+# Local development
 
 ### Prerequisites
 
@@ -43,12 +41,11 @@ kissj is scouts **registration system for national and international Scout Jambo
 
 1. Clone this repository: `git clone https://github.com/SkautDevs/kissj.git`
 2. Setup environment (dotenv) `cp .env.example .env`
-3. Run the make target, so you don't have to do everything manually: `make local-dev-postgresql`
+3. Run the make target, so you don't have to do install manually: `make local-dev-postgresql`
 4. add line `127.0.0.1 kissj.local` to your `/etc/hosts` file
-5. Open `http://kissj.local/v2/event/test-event-slug/` in your browser
+5. Open `http://kissj.local/v2/event/test-event-slug/` in your browser and you are good to go!
 
-
-# Devstack
+### Devstack
 
 - [Slim framework 4](https://www.slimframework.com/) - handles routing and middleware
 - [LeanMapper](http://leanmapper.com/) as ORM
@@ -59,40 +56,31 @@ kissj is scouts **registration system for national and international Scout Jambo
 - [PHPStan](https://phpstan.org/) for static typechecking
 - & more in `composer.json`
 
+### Backlog & roadmap
 
-# Backlog
-
-Backlog is in project GitHub issues
-
-
-# Standards
-
-- PSR-3 for logging
-- PSR-4 for autoloading
-- PSR-7 for HTTP requests/responses
-- PSR-15 for middlewares
-- directories honoring Separation of Concerns
-- KISS + YAGNI
+Backlog is in project GitHub issues, roadmap is in project GitHub milestones
 
 
 # Possible problems & fixes
 
-#### STMP connection error
+### STMP connection error
 
  - if TLS is not working correctly (for gmail especially), try set `'SMTPAuth' => false` and/or `'disable_tls' => true`
 
-#### Local mail service
+### Local mail service
 
  - use Mailhog at `http://localhost:8025/`
 
-#### User cannot log in - after click it stays on "insert mail" page
 
- - try what function `session_start()` returns
- - if false, it probably cannot write session into filesystem
- - make path from `session_save_path()` writable
+# HOWTOs
 
+### How to change docker image
 
-## External deals usage
+ - for PHP edit file `deploy/container_images/php/Containerfile-ubi`
+ - run build `docker build . -f deploy/container_images/php/Containerfile-ubi -t quay.io/kissj/php-ubi`
+ - pull new images from server `docker-compose pull`
+
+### External deals usage
 
 Kissj can be used to collect data from external deals, momentarily from Google Forms.
 From paid user you can click to "Fill up some form" and it will redirect you to Google Form with your TIE code used as user handle.
@@ -136,11 +124,9 @@ function onSubmit(e) {
 
   UrlFetchApp.fetch(POST_URL, options);
 };
-
-
 ```
 
-### How to use the script
+#### How to use the script
 
  - Go to your chosen form and from three-dot menu click "<> Script editor"
  - Paste the script into the editor (overwrite pre-filled code)
