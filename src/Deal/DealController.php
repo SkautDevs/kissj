@@ -19,6 +19,7 @@ class DealController extends AbstractController
     public function catchDataFromGoogleForm(Request $request, Response $response, Event $authorizedEvent): Response
     {
         $jsonFromBody = $this->getParsedJsonFromBody($request);
+        $eventsWithAccess = $request->getAttribute('eventsWithAccess');
 
         if ($jsonFromBody === []) {
             $this->sentryCollector->collect(new \Exception('No data in request body'));
