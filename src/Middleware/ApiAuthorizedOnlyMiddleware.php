@@ -14,8 +14,7 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly EventRepository        $eventRepository
-    )
-    {
+    ) {
     }
 
     public function process(Request $request, ResponseHandler $handler): Response
