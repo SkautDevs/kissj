@@ -13,7 +13,7 @@
 {% endif %}
 {% if person.deals %}
     - {% for participantDeal in person.deals %}
-    {{participantDeal.slug}}{%if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? '; ' }}
+    {{ participantDeal.slug }}{% if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? '| ' }}
     {% endfor %}
 {% endif %}
 
