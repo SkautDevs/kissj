@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
-        private readonly EventRepository        $eventRepository
+        private readonly EventRepository $eventRepository
     ) {
     }
 
@@ -24,11 +24,12 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
         if (!$secret) {
             return (new \Slim\Psr7\Response())->withStatus(401);
         }
-        $eventsWithAccess = $this->eventRepository->findByApiSecret(explode(" ", $secret)[1]);
-        if (!$eventsWithAccess) {
+
+        $authorizedEvent = $this->eventRepository->findByApiSecret(explode(" ", $secret)[1]);
+        if ($authorizedEvent == null) {
             return (new \Slim\Psr7\Response())->withStatus(401);
         }
-        $request = $request->withAttribute('eventsWithAccess', $eventsWithAccess);
+        $request = $request->withAttribute('authorizedEvent', $authorizedEvent);
 
         return $handler->handle($request);
     }
