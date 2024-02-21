@@ -47,10 +47,11 @@ class EventRepository extends Repository
     }
 
     /**
-     * @return Event[]
+     * @param string $apiSecret
+     * @return Event|Null
      */
-    public function findByApiSecret(string $apiSecret): array
+    public function findByApiSecret(string $apiSecret): ?Event
     {
-        return $this->findBy(['api_secret' => $apiSecret]);
+        return $this->FindOneBy(['api_secret' => $apiSecret]);
     }
 }

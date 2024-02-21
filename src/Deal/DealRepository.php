@@ -51,11 +51,11 @@ class DealRepository extends Repository
 
     /**
      * @param array<mixed> $jsonFromBody
-     * @param array<Event> $eventsWithAccess
+     * @param Event $authorizedEvent
      */
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
-        array $eventsWithAccess
+        Event $authorizedEvent
     ): ?Deal {
         $tieCode = $jsonFromBody['TIE code'] ?? null;
         $dealSlug = $jsonFromBody['slug'] ?? null;
@@ -68,10 +68,7 @@ class DealRepository extends Repository
             return null;
         }
 
-        if (!array_filter(
-            $eventsWithAccess,
-            function ($v) use ($deal) {return $v->id === $deal->participant->getUserButNotNull()->event->id; }
-        )) {
+        if ($authorizedEvent->id !== $deal->participant->getUserButNotNull()->event->id) {
             return null;
         };
 

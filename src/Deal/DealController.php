@@ -16,12 +16,9 @@ class DealController extends AbstractController
     ) {
     }
 
-    public function catchDataFromGoogleForm(Request $request, Response $response): Response
+    public function catchDataFromGoogleForm(Request $request, Response $response, Event $authorizedEvent): Response
     {
         $jsonFromBody = $this->getParsedJsonFromBody($request);
-
-        /** @var Event[] $eventsWithAccess */
-        $eventsWithAccess = $request->getAttribute('eventsWithAccess');
 
         if ($jsonFromBody === []) {
             $this->sentryCollector->collect(new \Exception('No data in request body'));
@@ -29,7 +26,7 @@ class DealController extends AbstractController
             return $response->withStatus(400);
         }
 
-        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody, $eventsWithAccess);
+        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody, $authorizedEvent);
         if ($deal === null) {
             $this->sentryCollector->collect(new \Exception(sprintf(
                 'Missing data or invalid auth in request. Body: %s',
