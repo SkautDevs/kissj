@@ -9,6 +9,7 @@ use kissj\Entry\EntryController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AdminsOnlyMiddleware;
+use kissj\Middleware\ApiAuthorizedOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
@@ -292,6 +293,7 @@ class Route
 
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
             $app->post('/deal', DealController::class . '::catchDataFromGoogleForm')
+                ->add(ApiAuthorizedOnlyMiddleware::class)
                 ->setName('deal-catch-data-from-google-form');
 
             $app->post('/entry/{entryCode}', EntryController::class . '::entry')

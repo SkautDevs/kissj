@@ -94,6 +94,7 @@ Example of the script is below - dont forget to change `POST_URL` and `DEAL_SLUG
 var POST_URL = "https://staging.kissj.net/v3/deal/";
 var DEAL_SLUG = "sfh";
 var MAX_POINTS = 2;
+var AUTH_KEY = PropertiesService.getScriptProperties().getProperty('kissjAuthToken');
 
 function onSubmit(e) {
   var form = FormApp.getActiveForm();
@@ -101,6 +102,12 @@ function onSubmit(e) {
   var latestResponse = allResponses[allResponses.length - 1];
   var response = latestResponse.getItemResponses();
   var payload = {};
+
+  if (!AUTH_KEY) {
+    Logger.log("Error: Authentication key not set. Please set the authentication key using setAuthKey function.");
+    return;
+  }
+
   for (var i = 0; i < response.length; i++) {
     var question = response[i].getItem().getTitle();
     var answer = response[i].getResponse();
@@ -118,6 +125,9 @@ function onSubmit(e) {
 
   var options = {
     "method": "post",
+    "headers": {
+      "Authorization": "Bearer " + AUTH_KEY,
+    },
     "contentType": "application/json",
     "payload": JSON.stringify(payload)
   };

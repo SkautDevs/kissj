@@ -45,4 +45,12 @@ class EventRepository extends Repository
     {
         return $this->findOneBy(['slug' => $eventSlug]);
     }
+
+    /**
+     * @return Event[]
+     */
+    public function findByApiSecret(string $apiSecret): array
+    {
+        return $this->findBy(['api_secret' => $apiSecret]);
+    }
 }

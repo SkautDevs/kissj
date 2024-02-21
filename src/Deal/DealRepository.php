@@ -6,6 +6,7 @@ namespace kissj\Deal;
 
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
+use kissj\Event\Event;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 
@@ -50,9 +51,11 @@ class DealRepository extends Repository
 
     /**
      * @param array<mixed> $jsonFromBody
+     * @param array<Event> $eventsWithAccess
      */
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
+        array $eventsWithAccess
     ): ?Deal {
         $tieCode = $jsonFromBody['TIE code'] ?? null;
         $dealSlug = $jsonFromBody['slug'] ?? null;
@@ -64,6 +67,13 @@ class DealRepository extends Repository
         if ($deal === null) {
             return null;
         }
+
+        if (!array_filter(
+            $eventsWithAccess,
+            function ($v) use ($deal) {return $v->id === $deal->participant->user->event->id; }
+        )) {
+            return null;
+        };
 
         $isDone = true;
         if (isset($jsonFromBody['enoughPoints'])) {
