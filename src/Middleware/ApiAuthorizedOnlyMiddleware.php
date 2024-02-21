@@ -21,7 +21,7 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
     {
         $secret = $request->getHeader('Authorization')[0];
 
-        if ($secret === null) {
+        if (!$secret) {
             return (new \Slim\Psr7\Response())->withStatus(401);
         }
 
