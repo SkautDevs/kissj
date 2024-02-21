@@ -22,7 +22,7 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
     {
         $secret = $request->getHeader('Authorization')[0];
 
-        if ($secret === null) {
+        if (!$secret) {
             return (new \Slim\Psr7\Response())->withStatus(401);
         }
         $eventsWithAccess = $this->eventRepository->findByApiSecret(explode(" ", $secret)[1]);
@@ -31,7 +31,7 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
         }
         $request = $request->withAttribute('eventsWithAccess', $eventsWithAccess);
 
-    return $handler->handle($request);
+        return $handler->handle($request);
     }
 
 }

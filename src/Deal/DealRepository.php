@@ -70,7 +70,7 @@ class DealRepository extends Repository
 
         if (!array_filter(
             $eventsWithAccess,
-            function ($v) use ($deal) {return $v->id === $deal->participant->user->event->id; }
+            function ($v) use ($deal) {return $v->id === $deal->participant->getUserButNotNull()->event->id; }
         )) {
             return null;
         };
