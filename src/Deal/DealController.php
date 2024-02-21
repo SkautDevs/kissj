@@ -7,6 +7,7 @@ namespace kissj\Deal;
 use kissj\AbstractController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use kissj\Event\Event;
 
 class DealController extends AbstractController
 {
@@ -18,6 +19,8 @@ class DealController extends AbstractController
     public function catchDataFromGoogleForm(Request $request, Response $response): Response
     {
         $jsonFromBody = $this->getParsedJsonFromBody($request);
+
+        /** @var Event[] $eventsWithAccess */
         $eventsWithAccess = $request->getAttribute('eventsWithAccess');
 
         if ($jsonFromBody === []) {
@@ -26,7 +29,7 @@ class DealController extends AbstractController
             return $response->withStatus(400);
         }
 
-        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody, $eventsWithAccess);
+        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody,  $eventsWithAccess);
         if ($deal === null) {
             $this->sentryCollector->collect(new \Exception(sprintf(
                 'Missing data or invalid auth in request. Body: %s',
