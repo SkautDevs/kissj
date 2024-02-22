@@ -1,4 +1,3 @@
-
 postgres:
   username: PostgresUser
   password: PostgresPassword
@@ -71,7 +70,3 @@ app:
   skautis:
     appId: SkautisAppId
     useTest: false
-    
-      
-
-
