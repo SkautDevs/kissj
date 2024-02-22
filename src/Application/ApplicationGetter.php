@@ -4,6 +4,7 @@ namespace kissj\Application;
 
 use DI\Bridge\Slim\Bridge;
 use DI\ContainerBuilder;
+use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
 use SessionHandlerInterface;
 use Slim\App;
@@ -30,9 +31,13 @@ class ApplicationGetter
         $app->setBasePath($_ENV['BASEPATH']);
 
         if (headers_sent() === false) { // because of PhpUnit handling sessions poorly
-            /** @var SessionHandlerInterface $sessionHandler */
+            /** @var SessionHandlerInterface|null $sessionHandler */
             $sessionHandler = $container->get(SessionHandlerInterface::class);
-            session_set_save_handler($sessionHandler, true);
+            if ($sessionHandler instanceof RedisSessionHandler) {
+                // temporary fix for not deployed Redis in infrastructure, remove if when deployed
+                session_set_save_handler($sessionHandler, true);
+            }
+
             session_start();
         }
 
