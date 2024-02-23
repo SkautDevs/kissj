@@ -1,5 +1,6 @@
 POST http://kissj.local/v3/deal/
 Content-Type: application/json
+Authorization: Bearer authtoken
 
 {
 	"TIE code": "YTCWVS",
@@ -11,6 +12,7 @@ Content-Type: application/json
 
 POST http://kissj.local/v3/deal/
 Content-Type: application/json
+Authorization: Bearer authtoken
 
 {
 	"TIE code wrongly named, thus effectively missing": "YTCWVS",
@@ -22,7 +24,7 @@ Content-Type: application/json
 
 POST http://kissj.local/v3/deal/
 Content-Type: application/json
+Authorization: Bearer authtoken
 
-{"TIE code":"YTCWVS","Jak se chovat?":"Jinak","Jak se nechovat?":"Nezodpovědně","slug":"sfh","enoughPoints":true}
-
+{"TIE code":"YTCWVS","Jak se chovat?":"Zodpovědně","Jak se nechovat?":"Nezodpovědně","slug":"sfh","enoughPoints":true}
 ###
