@@ -16,6 +16,10 @@
     {% for participantDeal in person.deals %}
         {{ participantDeal.slug }}{% if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
     {% endfor %}
+{% else %}
+    {% for eventDeal in event.eventType.getEventDeals(person) %}
+        {{ eventDeal.slug }} ❌{{ not loop.last ? ' | ' }}
+    {% endfor %}
 {% endif %}
 
 <a
