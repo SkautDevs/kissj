@@ -221,11 +221,14 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_CZECHIA,
                 self::CONTINGENT_SLOVAKIA,
                 self::CONTINGENT_POLAND,
-                self::CONTINGENT_HUNGARY,
             ],
             true
         )) {
             return 9;
+        }
+
+        if ($participant->contingent === self::CONTINGENT_HUNGARY) {
+            return 10;
         }
 
         return $param->maximalPatrolParticipantsCount ?? 0;
