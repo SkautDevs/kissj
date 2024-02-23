@@ -276,9 +276,14 @@ class Settings
                     (int)$_ENV['REDIS_PORT'],
                     $_ENV['REDIS_PASSWORD'],
                 );
-                $container[SessionHandlerInterface::class] = $sessionHandler;
-            } catch (\Exception) {}
+
+            } catch (\Exception) {
+                $sessionHandler = null;
+            }
+        }else{
+            $sessionHandler = null;
         }
+        $container[SessionHandlerInterface::class] = $sessionHandler;
         $container[S3bucketFileHandler::class] = fn (
             S3Client $s3Client,
             SentryCollector $sentryCollector,
