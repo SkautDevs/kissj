@@ -280,7 +280,7 @@ class Settings
             } catch (\Exception) {
                 $sessionHandler = null;
             }
-        }else{
+        } else {
             $sessionHandler = null;
         }
         $container[SessionHandlerInterface::class] = $sessionHandler;
