@@ -3,12 +3,10 @@
 namespace kissj\Middleware;
 
 use kissj\Event\EventRepository;
-use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Slim\Psr7\Response as ResponsePsr7;
 
 class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
 {
@@ -19,19 +17,31 @@ class ApiAuthorizedOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $secret = $request->getHeader('Authorization')[0];
-
-        if (!$secret) {
-            return (new \Slim\Psr7\Response())->withStatus(401);
+        $authorizationHeader = $request->getHeader('Authorization');
+        if ($authorizationHeader === []) {
+            return $this->getUnauthorizedResponse('missing Authorization header');
         }
 
-        $authorizedEvent = $this->eventRepository->findByApiSecret(explode(" ", $secret)[1]);
-        if ($authorizedEvent == null) {
-            return (new \Slim\Psr7\Response())->withStatus(401);
+        $secret = $authorizationHeader[0];
+        if (str_starts_with($secret, 'Bearer ') === false) {
+            return $this->getUnauthorizedResponse('missing "Bearer " in Authorization header');
         }
-        $request = $request->withAttribute('authorizedEvent', $authorizedEvent);
 
-        return $handler->handle($request);
+        $authorizedEvent = $this->eventRepository->findByApiSecret(substr($secret, 7));
+        if ($authorizedEvent === null) {
+            return $this->getUnauthorizedResponse('no event exists with this authorization');
+        }
+
+        return $handler->handle(
+            $request->withAttribute('authorizedEvent', $authorizedEvent),
+        );
     }
 
+    private function getUnauthorizedResponse(string $reason): ResponsePsr7
+    {
+        $response = (new ResponsePsr7())->withStatus(401);
+        $response->getBody()->write('Unauthorized - ' . $reason);
+
+        return $response;
+    }
 }

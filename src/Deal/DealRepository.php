@@ -51,7 +51,6 @@ class DealRepository extends Repository
 
     /**
      * @param array<mixed> $jsonFromBody
-     * @param Event $authorizedEvent
      */
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
@@ -70,7 +69,7 @@ class DealRepository extends Repository
 
         if ($authorizedEvent->id !== $deal->participant->getUserButNotNull()->event->id) {
             return null;
-        };
+        }
 
         $isDone = true;
         if (isset($jsonFromBody['enoughPoints'])) {

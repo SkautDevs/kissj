@@ -46,10 +46,6 @@ class EventRepository extends Repository
         return $this->findOneBy(['slug' => $eventSlug]);
     }
 
-    /**
-     * @param string $apiSecret
-     * @return Event|Null
-     */
     public function findByApiSecret(string $apiSecret): ?Event
     {
         return $this->FindOneBy(['api_secret' => $apiSecret]);
