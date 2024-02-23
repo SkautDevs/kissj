@@ -33,7 +33,8 @@ php:
     maxReplicas: 20
 
   # Must support RWX
-  volume: 
+  volume:
+    enabled: false
     size: 5Gi
     storageclass: ""
 
@@ -70,3 +71,8 @@ app:
   skautis:
     appId: SkautisAppId
     useTest: false
+
+  redis:
+    host: redis
+    port: 6379
+    password: redis

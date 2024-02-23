@@ -1,3 +1,4 @@
+{{- if .Values.php.volume.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -18,3 +19,4 @@ spec:
       storage: {{ .Values.php.volume.size | quote }}
   volumeMode: Filesystem
   storageClassName: {{ .Values.php.volume.storageclass | quote }}
+{{- end }}
