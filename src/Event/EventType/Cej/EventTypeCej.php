@@ -215,23 +215,7 @@ class EventTypeCej extends EventType
 
     public function getMaximalPpCount(Event $param, Participant $participant): int
     {
-        if (in_array(
-            $participant->contingent,
-            [
-                self::CONTINGENT_CZECHIA,
-                self::CONTINGENT_SLOVAKIA,
-                self::CONTINGENT_POLAND,
-            ],
-            true,
-        )) {
-            return 9;
-        }
-
-        if ($participant->contingent === self::CONTINGENT_HUNGARY) {
-            return 10;
-        }
-
-        return $param->maximalPatrolParticipantsCount ?? 0;
+        return 10;
     }
 
     public function showIban(): bool
