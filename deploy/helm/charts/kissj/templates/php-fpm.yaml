@@ -216,5 +216,5 @@ spec:
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Release.Name }}-redis
+                name: {{ .Release.Name }}-redis-creds
                 key: password
