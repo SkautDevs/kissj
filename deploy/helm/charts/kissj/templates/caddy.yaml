@@ -46,11 +46,11 @@ spec:
 
         resources:
           requests:
+            memory: "200Mi"
+            cpu: "200m"
+          limits:
             memory: "500Mi"
             cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
         volumeMounts:
         - mountPath: /etc/caddy
           name: {{ .Release.Name}}-caddy-config
