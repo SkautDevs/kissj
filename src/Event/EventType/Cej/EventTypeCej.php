@@ -49,7 +49,7 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_SLOVAKIA => 24,
                 self::CONTINGENT_POLAND => 6,
                 self::CONTINGENT_HUNGARY => 10,
-                self::CONTINGENT_EUROPEAN => 6,
+                self::CONTINGENT_EUROPEAN => 13,
                 self::CONTINGENT_BRITAIN => 6,
                 self::CONTINGENT_SWEDEN => 10,
                 default => 0,
@@ -197,25 +197,23 @@ class EventTypeCej extends EventType
 
     public function getMinimalPpCount(Event $event, Participant $participant): int
     {
-        if (in_array(
-            $participant->contingent,
-            [
-                self::CONTINGENT_CZECHIA,
-                self::CONTINGENT_SLOVAKIA,
-                self::CONTINGENT_POLAND,
-                self::CONTINGENT_HUNGARY,
-            ],
-            true,
-        )) {
-            return 9;
-        }
+        return match ($participant->contingent) {
+            self::CONTINGENT_CZECHIA,
+            self::CONTINGENT_SLOVAKIA,
+            self::CONTINGENT_POLAND,
+            self::CONTINGENT_HUNGARY
+                => 9,
 
-        return $event->minimalPatrolParticipantsCount ?? 0;
+            default => $event->minimalPatrolParticipantsCount ?? 0,
+        };
     }
 
     public function getMaximalPpCount(Event $param, Participant $participant): int
     {
-        return 10;
+        return match ($participant->contingent) {
+            self::CONTINGENT_HUNGARY => 11,
+            default => 10,
+        };
     }
 
     public function showIban(): bool
