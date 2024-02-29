@@ -51,10 +51,10 @@
 		"slim/slim": "^4",
 		"slim/twig-view": "^3.1",
 		"symfony/console": "^6.3",
-		"symfony/mailer": "^6.2.1",
-		"symfony/translation": "^6.0",
-		"symfony/twig-bridge": "^6.0",
-		"symfony/yaml": "^6.0",
+		"symfony/mailer": "^7.0",
+		"symfony/translation": "^7.0",
+		"symfony/twig-bridge": "^7.0",
+		"symfony/yaml": "^7.0",
 		"tharos/leanmapper": "^4.0",
 		"vlucas/phpdotenv": "^5.0",
 		"zeuxisoo/slim-whoops": "^0.7"
@@ -66,7 +66,7 @@
 		"phpstan/phpstan": "^1.0",
 		"phpunit/phpunit": "^9",
 		"roave/security-advisories": "dev-latest",
-		"symfony/var-dumper": "^6.0"
+		"symfony/var-dumper": "^7.0"
 	},
 	"autoload": {
 		"psr-4": {
@@ -83,9 +83,6 @@
 		"sort-packages": true,
 		"allow-plugins": {
 			"php-http/discovery": false
-		},
-		"platform": {
-			"php": "8.1"
 		}
 	},
 	"scripts": {
