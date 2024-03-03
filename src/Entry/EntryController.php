@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Entry;
 
 use kissj\AbstractController;
+use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -16,6 +17,16 @@ class EntryController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly ParticipantService $participantService,
     ) {
+    }
+
+    public function list(Response $response, Event $authorizedEvent): Response
+    {
+        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent);
+
+        return $this->getResponseWithJson(
+            $response,
+            $participants,
+        );
     }
 
     public function entry(string $entryCode, Request $request, Response $response): Response

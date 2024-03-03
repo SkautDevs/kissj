@@ -297,8 +297,14 @@ class Route
                 ->add(ApiAuthorizedOnlyMiddleware::class)
                 ->setName('deal-catch-data-from-google-form');
 
-            $app->post('/entry/{entryCode}', EntryController::class . '::entry')
-                ->setName('entry');
+            $app->group('/entry', function (RouteCollectorProxy $app) {
+                $app->get('/list', EntryController::class . '::list')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->setName('entry-list');
+
+                $app->post('/{entryCode}', EntryController::class . '::entry')
+                    ->setName('entry');
+            });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {

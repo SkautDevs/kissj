@@ -70,7 +70,7 @@ abstract class AbstractController
     }
 
     /**
-     * @param array<string,int|string|null> $json
+     * @param array<string,int|string|null|array<mixed>> $json
      */
     protected function getResponseWithJson(Response $response, array $json, int $statusCode = 200): Response
     {

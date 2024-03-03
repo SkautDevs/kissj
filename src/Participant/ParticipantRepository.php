@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use kissj\Application\DateTimeUtils;
+use kissj\Entry\EntryParticipant;
 use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
@@ -184,6 +186,62 @@ class ParticipantRepository extends Repository
         return array_filter($participants, function (Participant $participant): bool {
             return $participant->isFullNameNotEmpty();
         });
+    }
+
+    /**
+     * @return array<string, array<EntryParticipant>>
+     */
+    public function getParticipantsForEntry(Event $event): array
+    {
+        $qb = $this->connection->select('
+            participant.id,
+            participant.first_name,
+            participant.last_name,
+            participant.nickname,
+            participant.patrol_name,
+            participant.tie_code,
+            participant.birth_date,
+            participant.role,
+            d.is_done AS sfh_done
+        ')->from($this->getTable());
+
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
+
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $this->addOrdersBy($qb, [new Order('id')]);
+
+        $rows = $qb->fetchAll();
+
+        $participants = [];
+        /** @var array{
+         *     id: int,
+         *     first_name: string|null,
+         *     last_name: string|null,
+         *     nickname: string|null,
+         *     patrol_name: string|null,
+         *     tie_code: string,
+         *     birth_date: \DateTimeInterface|null,
+         *     sfh_done: bool|null,
+         *     role: string|null
+         * } $row
+         */
+        foreach($rows as $row) {
+            $participants[$row['role']][] = new EntryParticipant(
+                $row['id'],
+                $row['first_name'] ?? '',
+                $row['last_name'] ?? '',
+                $row['nickname'] ?? '',
+                $row['patrol_name'] ?? '',
+                $row['tie_code'],
+                $row['birth_date'] ?? DateTimeUtils::getDateTime(),
+                $row['sfh_done'] ?? false,
+            );
+        }
+
+        return $participants;
     }
 
     /**
