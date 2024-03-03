@@ -46,7 +46,7 @@ class EventTypeCej extends EventType
         if ($participant instanceof PatrolLeader) {
             return match ($participant->contingent) {
                 self::CONTINGENT_CZECHIA => 25,
-                self::CONTINGENT_SLOVAKIA => 24,
+                self::CONTINGENT_SLOVAKIA => 25,
                 self::CONTINGENT_POLAND => 6,
                 self::CONTINGENT_HUNGARY => 10,
                 self::CONTINGENT_EUROPEAN => 13,
