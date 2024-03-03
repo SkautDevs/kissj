@@ -15,7 +15,7 @@ use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeWsj extends EventType
 {
-    public function getPrice(Participant $participant): int
+    protected function getPrice(Participant $participant): int
     {
         $paymentsCount = count($participant->getNoncanceledPayments());
 

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace kissj\Payment;
 
+use DateInterval;
+use DateTimeImmutable;
+use DateTimeInterface;
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
@@ -40,28 +43,22 @@ class PaymentService
     public function createAndPersistNewPayment(Participant $participant): Payment
     {
         $event = $participant->getUserButNotNull()->event;
-        $eventType = $event->getEventType();
-        do {
-            $variableNumber = $this->getVariableNumber($event->prefixVariableSymbol);
-        } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
 
         $payment = new Payment();
         $payment->participant = $participant;
-        $payment->variableSymbol = $variableNumber;
-        $payment->constantSymbol = $eventType->getConstantSymbol();
-        $payment->price = (string)$eventType->getPrice($participant);
+        $payment->variableSymbol = $this->getVariableNumber($event);
+        $payment->constantSymbol = $event->constantSymbol;
+        $payment->price = (string)$event->defaultPrice;
         $payment->currency = $event->currency;
         $payment->status = PaymentStatus::Waiting;
         $payment->purpose = 'event fee';
         $payment->accountNumber = $event->accountNumber;
         $payment->iban = $event->iban;
-        $payment->swift = $eventType->getSwift();
-        $payment->due = $eventType->calculatePaymentDueDate(DateTimeUtils::getDateTime());
-        if ($participant instanceof PatrolLeader) {
-            $payment->note = $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
-        } else {
-            $payment->note = $event->slug . ' ' . $participant->getFullName();
-        }
+        $payment->swift = $event->swift;
+        $payment->due = $this->calculatePaymentDueDate(DateTimeUtils::getDateTime(), $event->startDay);
+        $payment->note = $this->composeNote($participant, $event);
+
+        $payment = $event->getEventType()->transformPayment($payment, $participant);
 
         $this->paymentRepository->persist($payment);
 
@@ -207,7 +204,16 @@ class PaymentService
         }
     }
 
-    protected function getVariableNumber(?int $prefix): string
+    private function getVariableNumber(Event $event): string
+    {
+        do {
+            $variableNumber = $this->generateVariableNumber($event->prefixVariableSymbol);
+        } while ($this->paymentRepository->isVariableNumberExisting($variableNumber));
+
+        return $variableNumber;
+    }
+
+    protected function generateVariableNumber(?int $prefix): string
     {
         if ($prefix === null) {
             return str_pad((string)random_int(0, 9_999_999_999), 10, '0', STR_PAD_LEFT);
@@ -224,6 +230,26 @@ class PaymentService
         }
 
         return $variableNumber;
+    }
+
+    public function calculatePaymentDueDate(
+        DateTimeImmutable $dateFrom,
+        DateTimeInterface $eventStartDate,
+    ): DateTimeImmutable {
+        $datePlus14days = $dateFrom->add(DateInterval::createFromDateString('14 days'));
+
+        return $datePlus14days < $eventStartDate
+            ? $datePlus14days
+            : DateTimeImmutable::createFromInterface($eventStartDate);
+    }
+
+    private function composeNote(Participant $participant, Event $event): string
+    {
+        if ($participant instanceof PatrolLeader) {
+            return $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
+        }
+
+        return $event->slug . ' ' . $participant->getFullName();
     }
 
     public function setBankPaymentPaired(int $paymentId): BankPayment

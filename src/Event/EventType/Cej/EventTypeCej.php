@@ -12,6 +12,7 @@ use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Payment\Payment;
 
 class EventTypeCej extends EventType
 {
@@ -26,7 +27,28 @@ class EventTypeCej extends EventType
     final public const CONTINGENT_SWEDEN = 'detail.contingent.sweden';
     final public const CONTINGENT_TEAM = 'detail.contingent.team';
 
-    public function getPrice(Participant $participant): int
+    public function transformPayment(Payment $payment, Participant $participant): Payment
+    {
+        if ($participant->contingent === self::CONTINGENT_CZECHIA) {
+            $payment->accountNumber = '2302084720/2010';
+            $payment->iban = 'CZ**2010000000**********';
+            $payment->swift = 'FIOBCZPPXXX';
+            $payment->price = (string)$this->getPriceForCzechia($participant);
+            $payment->currency = 'Kč';
+            $payment->variableSymbol = 42438 . substr($payment->variableSymbol, 5);
+            $payment->constantSymbol = '';
+            
+            return $payment;
+        }
+
+        $payment->price = (string)$this->getPrice($participant);
+        $payment->swift = 'TATRSKBX';
+        $payment->constantSymbol = '0558';
+
+        return $payment;
+    }
+
+    protected function getPrice(Participant $participant): int
     {
         if ($participant->contingent === self::CONTINGENT_TEAM) {
             return 150;
@@ -39,6 +61,15 @@ class EventTypeCej extends EventType
         };
 
         return $price;
+    }
+
+    private function getPriceForCzechia(Participant $participant): int
+    {
+        return match (true) {
+            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) + 1) * 6600,
+            $participant instanceof Ist => 4100,
+            default => throw new \Exception('Unknown participant class'),
+        };
     }
 
     public function getMaximumClosedParticipants(Participant $participant): int
@@ -219,16 +250,6 @@ class EventTypeCej extends EventType
     public function showIban(): bool
     {
         return true;
-    }
-
-    public function getSwift(): string
-    {
-        return 'TATRSKBX'; // TODO move into DB like IBAN
-    }
-
-    public function getConstantSymbol(): string
-    {
-        return '0558'; // TODO move into DB like IBAN
     }
 
     public function getSkautLogoPath(Participant $participant): string

@@ -13,7 +13,7 @@ class EventTypeKorbo extends EventType
 {
     private const SCARF_PRICE = 100;
 
-    public function getPrice(Participant $participant): int
+    protected function getPrice(Participant $participant): int
     {
         $price = 600;
         if ($participant->scarf === Participant::SCARF_YES) {

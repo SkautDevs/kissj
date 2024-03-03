@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentServiceTest extends TestCase
 {
-    public function testGetVariableNumber(): void
+    public function testGenerateVariableNumber(): void
     {
         $paymentService = new PaymentServiceExposed(
             \Mockery::mock(BankServiceProvider::class),
@@ -33,13 +33,13 @@ class PaymentServiceTest extends TestCase
 
         for ($i = 0; $i < 100; $i++) {
             $prefix = random_int(1, 9999);
-            $variableNumber = $paymentService->getVariableNumber($prefix);
+            $variableNumber = $paymentService->generateVariableNumber($prefix);
             $this->assertEquals(10, strlen($variableNumber));
             $this->assertEquals($prefix, substr($variableNumber, 0, strlen((string)$prefix)));
         }
 
         for ($i = 0; $i < 10; $i++) {
-            $variableNumber = $paymentService->getVariableNumber(null);
+            $variableNumber = $paymentService->generateVariableNumber(null);
             $this->assertEquals(10, strlen($variableNumber));
         }
     }

@@ -10,13 +10,9 @@
     </p>
 
     <h3><u>Platební informace:</u></h3>
-    <h4>Číslo účtu: 2302084720/2010</h4>
-    {% if participant is PatrolLeader %}
-        <h4>Suma: {{ (participant.getPatrolParticipantsCount() + 1) * 6600 }},- Kč</h4>
-    {% else %}
-        <h4>Suma: 4100,- Kč</h4>
-    {% endif %}
-    <h4>Variabilní symbol: 42438{{ payment.getVariableSymbol[5:] }}</h4>
+    <h4>Číslo účtu: {{ payment.accountNumber }}</h4>
+    <h4>Suma: {{ payment.price }},- {{ payment.currency }}</h4>
+    <h4>Variabilní symbol: {{ payment.getVariableSymbol }}</h4>
     <h4>Poznámka: {{ payment.note }}</h4>
 
     <p>

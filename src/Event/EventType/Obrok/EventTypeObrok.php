@@ -19,7 +19,7 @@ class EventTypeObrok extends EventType
     public const SLUG_SFH = 'sfh';
     public const SLUG_PROGRAMME = 'programme';
 
-    public function getPrice(Participant $participant): int
+    protected function getPrice(Participant $participant): int
     {
         return match (true) {
             $participant instanceof Ist => 1000,

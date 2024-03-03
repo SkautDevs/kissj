@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType;
 
-use DateInterval;
-use DateTimeImmutable;
 use kissj\Application\StringUtils;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
@@ -21,10 +19,18 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Deal\EventDeal;
+use kissj\Payment\Payment;
 
 abstract class EventType
 {
-    public function getPrice(Participant $participant): int
+    public function transformPayment(Payment $payment, Participant $participant): Payment
+    {
+        $payment->price = (string)$this->getPrice($participant);
+
+        return $payment;
+    }
+
+    protected function getPrice(Participant $participant): int
     {
         return $participant->getUserButNotNull()->event->defaultPrice;
     }
@@ -157,12 +163,6 @@ abstract class EventType
         return true;
     }
 
-    public function calculatePaymentDueDate(DateTimeImmutable $dateFrom): DateTimeImmutable
-    {
-        // TODO edit to take 14 days or day before event start date, whatever comes sooner
-        return $dateFrom->add(DateInterval::createFromDateString('14 days'));
-    }
-
     public function isMultiplePaymentsAllowed(): bool
     {
         return false;
@@ -211,16 +211,6 @@ abstract class EventType
     public function showIban(): bool
     {
         return false;
-    }
-
-    public function getSwift(): string
-    {
-        return '';
-    }
-
-    public function getConstantSymbol(): string
-    {
-        return '';
     }
 
     public function getSkautLogoPath(Participant $participant): string
