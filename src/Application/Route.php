@@ -302,7 +302,7 @@ class Route
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->setName('entry-list');
 
-                $app->post('/{entryCode}', EntryController::class . '::entry')
+                $app->post('/code/{entryCode}', EntryController::class . '::entry')
                     ->setName('entry');
             });
 
