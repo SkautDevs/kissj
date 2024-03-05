@@ -81,7 +81,7 @@ class EventTypeCej extends EventType
                 self::CONTINGENT_POLAND => 6,
                 self::CONTINGENT_HUNGARY => 10,
                 self::CONTINGENT_EUROPEAN => 13,
-                self::CONTINGENT_BRITAIN => 6,
+                self::CONTINGENT_BRITAIN => 9,
                 self::CONTINGENT_SWEDEN => 10,
                 default => 0,
             };
