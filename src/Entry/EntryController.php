@@ -25,7 +25,11 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            $participants,
+            [
+                'eventName' => $authorizedEvent->readableName,
+                'eventSlug' => $authorizedEvent->slug,
+                'roles' => $participants,
+            ],
         );
     }
 
