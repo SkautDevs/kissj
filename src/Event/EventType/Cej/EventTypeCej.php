@@ -31,7 +31,7 @@ class EventTypeCej extends EventType
     {
         if ($participant->contingent === self::CONTINGENT_CZECHIA) {
             $payment->accountNumber = '2302084720/2010';
-            $payment->iban = 'CZ**2010000000**********';
+            $payment->iban = 'CZ3120100000002302084720';
             $payment->swift = 'FIOBCZPPXXX';
             $payment->price = (string)$this->getPriceForCzechia($participant);
             $payment->currency = 'Kč';
