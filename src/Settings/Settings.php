@@ -238,14 +238,9 @@ class Settings
             $logger->pushHandler(
                 new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL']),
             );
-
-            $sentryHandler = new SentryHandler(
-                $sentryHub,
-                Logger::WARNING,
+            $logger->pushHandler(
+                new SentryHandler($sentryHub, Logger::INFO),
             );
-
-            // Log only warnings or higher severity events/errors to Sentry
-            $logger->pushHandler($sentryHandler);
 
             if ($_ENV['DEBUG'] === 'true') {
                 $logger->pushHandler(

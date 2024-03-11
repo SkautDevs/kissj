@@ -39,12 +39,8 @@ enum UserRole: string
     public function isEligibleToConfirmPayments(): bool
     {
         return match ($this) {
-            self::Admin,
-            self::ContingentAdminCs,
-            self::ContingentAdminSk,
-                => true,
-            default
-                => false,
+            self::Admin, self::ContingentAdminCs, self::ContingentAdminSk => true,
+            default => false,
         };
     }
 }

@@ -227,7 +227,7 @@ class PhpMailerWrapper
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
             'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->logoUrl),
-            ]));
+        ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {
             $email->embed($embed->resource, $embed->name, $embed->contentType);
@@ -242,6 +242,13 @@ class PhpMailerWrapper
         $mailer = new Mailer($transport, dispatcher: $eventDispatcher);
 
         $mailer->send($email);
+
+        $this->logger->info(sprintf(
+            'Sent email to %s with subject %s from template name %s',
+            $recipientEmail,
+            $subject,
+            $templateName,
+        ));
     }
 
     /**

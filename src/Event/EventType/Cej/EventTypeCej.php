@@ -37,7 +37,7 @@ class EventTypeCej extends EventType
             $payment->currency = 'Kč';
             $payment->variableSymbol = 42438 . substr($payment->variableSymbol, 5);
             $payment->constantSymbol = '';
-            
+
             return $payment;
         }
 
