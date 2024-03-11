@@ -108,7 +108,8 @@ use function DI\get;
 
 class Settings
 {
-    private const LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
+    /** @var string[] */
+    private const array LOCALES_AVAILABLE = ['en', 'cs', 'sk'];
 
     /**
      * @return array<string, mixed>
@@ -208,15 +209,13 @@ class Settings
             UserAuthenticationMiddleware::class => autowire(),
         ];
 
-        $container[Connection::class] = function (): Connection {
-            return new Connection([
-                'driver' => 'postgre',
-                'host' => $_ENV['DATABASE_HOST'],
-                'username' => $_ENV['POSTGRES_USER'],
-                'password' => $_ENV['POSTGRES_PASSWORD'],
-                'database' => $_ENV['POSTGRES_DB'],
-            ]);
-        };
+        $container[Connection::class] = fn () => new Connection([
+            'driver' => 'postgre',
+            'host' => $_ENV['DATABASE_HOST'],
+            'username' => $_ENV['POSTGRES_USER'],
+            'password' => $_ENV['POSTGRES_PASSWORD'],
+            'database' => $_ENV['POSTGRES_DB'],
+        ]);
         $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
             'local' => new LocalFileHandler(),
             's3bucket' => get(S3bucketFileHandler::class),
@@ -251,12 +250,10 @@ class Settings
             return $logger;
         };
         $container[LoggerInterface::class] = get(Logger::class);
-        $container[MailerSettings::class] = function (): MailerSettings {
-            return new MailerSettings(
-                $_ENV['MAIL_DSN'],
-                $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
-            );
-        };
+        $container[MailerSettings::class] = fn () => new MailerSettings(
+            $_ENV['MAIL_DSN'],
+            $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
+        );
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),
             $_ENV['REDIS_HOST'],
@@ -281,12 +278,10 @@ class Settings
                 'secret' => $_ENV['S3_SECRET'],
             ],
         ]);
-        $container[SkautisFactory::class] = function (): SkautisFactory {
-            return new SkautisFactory(
-                $_ENV['SKAUTIS_APP_ID'],
-                $_ENV['SKAUTIS_USE_TEST'] !== 'false',
-            );
-        };
+        $container[SkautisFactory::class] = fn () => new SkautisFactory(
+            $_ENV['SKAUTIS_APP_ID'],
+            $_ENV['SKAUTIS_USE_TEST'] !== 'false',
+        );
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
         $container[Translator::class] = function () {
             // https://symfony.com/doc/current/components/translation.html

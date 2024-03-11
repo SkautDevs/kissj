@@ -19,7 +19,7 @@ use Symfony\Component\Translation\Translator;
 
 class LocalizationResolverMiddleware extends BaseMiddleware
 {
-    private const LOCALE_COOKIE_NAME = 'locale';
+    private const string LOCALE_COOKIE_NAME = 'locale';
 
     public function __construct(
         private readonly Twig $view,

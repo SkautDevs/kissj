@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Korbo;
 
-use DateTimeImmutable;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType
 {
-    private const SCARF_PRICE = 100;
+    private const int SCARF_PRICE = 100;
 
     protected function getPrice(Participant $participant): int
     {

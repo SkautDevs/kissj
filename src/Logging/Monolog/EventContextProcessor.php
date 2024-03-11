@@ -7,10 +7,10 @@ namespace kissj\Logging\Monolog;
 use kissj\Event\Event;
 use Monolog\Processor\ProcessorInterface;
 
-final class EventContextProcessor implements ProcessorInterface
+readonly class EventContextProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly ?Event $event,
+        private ?Event $event,
     ) {
     }
 

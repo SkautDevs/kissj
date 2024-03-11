@@ -283,7 +283,7 @@ class ParticipantService
         }
 
         // numbers and plus sight up front only
-        if ($ca->phone && (empty($p->telephoneNumber) || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
+        if ($ca->phone && (empty($p->telephoneNumber) || preg_match('/^\+?[0-9 ]+$/', (string)$p->telephoneNumber) === 0)) {
             return false;
         }
 
@@ -336,9 +336,10 @@ class ParticipantService
      */
     private function filterSameContingent(array $participants, ?string $contingent): array
     {
-        return array_filter($participants, function (Participant $participant) use ($contingent): bool {
-            return $participant->contingent === $contingent;
-        });
+        return array_filter(
+            $participants,
+            fn (Participant $participant): bool => $participant->contingent === $contingent,
+        );
     }
 
     public function closeRegistration(Participant $participant): Participant

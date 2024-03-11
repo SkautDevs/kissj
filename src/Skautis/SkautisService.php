@@ -22,7 +22,7 @@ use Throwable;
 
 class SkautisService
 {
-    private Skautis $skautis;
+    private readonly Skautis $skautis;
 
     public function __construct(
         readonly SkautisFactory $skautisFactory,

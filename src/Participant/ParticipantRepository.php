@@ -183,9 +183,10 @@ class ParticipantRepository extends Repository
      */
     private function filterEmptyParticipants(array $participants): array
     {
-        return array_filter($participants, function (Participant $participant): bool {
-            return $participant->isFullNameNotEmpty();
-        });
+        return array_filter(
+            $participants,
+            fn (Participant $participant): bool => $participant->isFullNameNotEmpty(),
+        );
     }
 
     /**

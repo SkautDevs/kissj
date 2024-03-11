@@ -7,10 +7,10 @@ namespace kissj\Logging\Monolog;
 use kissj\User\User;
 use Monolog\Processor\ProcessorInterface;
 
-final class UserContextProcessor implements ProcessorInterface
+readonly class UserContextProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly ?User $user,
+        private ?User $user,
     ) {
     }
 

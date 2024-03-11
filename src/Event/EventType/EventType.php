@@ -39,13 +39,13 @@ abstract class EventType
     {
         $event = $participant->getUserButNotNull()->event;
 
-        return match (get_class($participant)) {
+        return match ($participant::class) {
             PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
             TroopLeader::class => $event->maximalClosedTroopLeadersCount ?? 0,
             TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
             Ist::class => $event->maximalClosedIstsCount ?? 0,
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
-            default => throw new \RuntimeException('Unexpected participant class: ' . get_class($participant)),
+            default => throw new \RuntimeException('Unexpected participant class: ' . $participant::class),
         };
     }
 

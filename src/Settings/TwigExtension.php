@@ -20,34 +20,42 @@ class TwigExtension extends AbstractExtension
     public function getTests(): array
     {
         return [
-            new TwigTest('PatrolLeader', function ($participant): bool {
-                return $participant instanceof PatrolLeader;
-            }),
-            new TwigTest('PatrolParticipant', function ($participant): bool {
-                return $participant instanceof PatrolParticipant;
-            }),
-            new TwigTest('TroopLeader', function ($participant): bool {
-                return $participant instanceof TroopLeader;
-            }),
-            new TwigTest('TroopParticipant', function ($participant): bool {
-                return $participant instanceof TroopParticipant;
-            }),
-            new TwigTest('Leader', function ($participant): bool {
-                return $participant instanceof PatrolLeader || $participant instanceof TroopLeader;
-            }),
-            new TwigTest('Troop', function ($participant): bool {
-                return $participant instanceof TroopLeader || $participant instanceof TroopParticipant;
-            }),
-            new TwigTest('hasUser', function ($participant): bool {
-                return !$participant instanceof PatrolParticipant;
-            }),
-            new TwigTest('eligibleForShowTieCode', function ($participant): bool {
-                return (
+            new TwigTest(
+                'PatrolLeader',
+                fn ($participant): bool => $participant instanceof PatrolLeader
+            ),
+            new TwigTest(
+                'PatrolParticipant',
+                fn ($participant): bool => $participant instanceof PatrolParticipant
+            ),
+            new TwigTest(
+                'TroopLeader',
+                fn ($participant): bool => $participant instanceof TroopLeader
+            ),
+            new TwigTest(
+                'TroopParticipant',
+                fn ($participant): bool => $participant instanceof TroopParticipant
+            ),
+            new TwigTest(
+                'Leader',
+                fn ($participant): bool => $participant instanceof PatrolLeader || $participant instanceof TroopLeader
+            ),
+            new TwigTest(
+                'Troop',
+                fn ($participant): bool => $participant instanceof TroopLeader || $participant instanceof TroopParticipant
+            ),
+            new TwigTest(
+                'hasUser',
+                fn ($participant): bool => !$participant instanceof PatrolParticipant
+            ),
+            new TwigTest(
+                'eligibleForShowTieCode',
+                fn ($participant): bool => (
                     $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Open
                 ) || (
                     $participant instanceof TroopParticipant && $participant->troopLeader === null
-                );
-            }),
+                )
+            ),
         ];
     }
 }

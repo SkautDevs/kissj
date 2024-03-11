@@ -16,16 +16,16 @@ use kissj\Payment\Payment;
 
 class EventTypeCej extends EventType
 {
-    final public const CONTINGENT_CZECHIA = 'detail.contingent.czechia';
-    final public const CONTINGENT_SLOVAKIA = 'detail.contingent.slovakia';
-    final public const CONTINGENT_POLAND = 'detail.contingent.poland';
-    final public const CONTINGENT_HUNGARY = 'detail.contingent.hungary';
-    final public const CONTINGENT_EUROPEAN = 'detail.contingent.european';
-    final public const CONTINGENT_ROMANIA = 'detail.contingent.romania';
-    final public const CONTINGENT_ISRAEL = 'detail.contingent.israel';
-    final public const CONTINGENT_BRITAIN = 'detail.contingent.britain';
-    final public const CONTINGENT_SWEDEN = 'detail.contingent.sweden';
-    final public const CONTINGENT_TEAM = 'detail.contingent.team';
+    public const string CONTINGENT_CZECHIA = 'detail.contingent.czechia';
+    public const string CONTINGENT_SLOVAKIA = 'detail.contingent.slovakia';
+    public const string CONTINGENT_POLAND = 'detail.contingent.poland';
+    public const string CONTINGENT_HUNGARY = 'detail.contingent.hungary';
+    public const string CONTINGENT_EUROPEAN = 'detail.contingent.european';
+    public const string CONTINGENT_ROMANIA = 'detail.contingent.romania';
+    public const string CONTINGENT_ISRAEL = 'detail.contingent.israel';
+    public const string CONTINGENT_BRITAIN = 'detail.contingent.britain';
+    public const string CONTINGENT_SWEDEN = 'detail.contingent.sweden';
+    public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
     public function transformPayment(Payment $payment, Participant $participant): Payment
     {
@@ -233,7 +233,7 @@ class EventTypeCej extends EventType
             self::CONTINGENT_SLOVAKIA,
             self::CONTINGENT_POLAND,
             self::CONTINGENT_HUNGARY
-                => 9,
+            => 9,
 
             default => $event->minimalPatrolParticipantsCount ?? 0,
         };
