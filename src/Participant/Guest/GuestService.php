@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Guest;
 
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\User\UserService;
 
 class GuestService
 {
     public function __construct(
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
         private readonly UserService $userService,
     ) {
     }

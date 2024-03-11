@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Admin;
 
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -27,7 +27,7 @@ class AdminService
         private readonly ParticipantRepository $participantRepository,
         private readonly PaymentRepository $paymentRepository,
         private readonly PaymentService $paymentService,
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
     ) {

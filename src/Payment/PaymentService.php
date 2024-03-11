@@ -15,7 +15,7 @@ use kissj\BankPayment\BankServiceProvider;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -33,7 +33,7 @@ class PaymentService
         private readonly ParticipantRepository $participantRepository,
         private readonly UserService $userService,
         private readonly FlashMessagesBySession $flashMessages,
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
         private readonly SentryCollector $sentryCollector,

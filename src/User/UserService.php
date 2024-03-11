@@ -6,7 +6,7 @@ namespace kissj\User;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -19,7 +19,7 @@ class UserService
         private readonly LoginTokenRepository $loginTokenRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly UserRepository $userRepository,
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
     ) {
     }
 

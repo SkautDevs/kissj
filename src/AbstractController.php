@@ -18,6 +18,8 @@ use Slim\Views\Twig;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 
+use function GuzzleHttp\json_encode as guzzleJsonEncode;
+
 abstract class AbstractController
 {
     #[Inject]
@@ -74,7 +76,7 @@ abstract class AbstractController
      */
     protected function getResponseWithJson(Response $response, array $json, int $statusCode = 200): Response
     {
-        $encodedJson = \GuzzleHttp\json_encode($json);
+        $encodedJson = guzzleJsonEncode($json);
         $response->getBody()->write($encodedJson);
 
         return $response

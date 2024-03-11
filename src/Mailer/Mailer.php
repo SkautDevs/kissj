@@ -14,12 +14,12 @@ use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Mailer\EventListener\MessageListener;
-use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Mailer as SymfonyMailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PhpMailerWrapper
+class Mailer
 {
     public function __construct(
         private readonly Twig $renderer,
@@ -239,7 +239,7 @@ class PhpMailerWrapper
         );
 
         $transport = Transport::fromDsn($this->settings->mailDsn, $eventDispatcher, logger: $this->logger);
-        $mailer = new Mailer($transport, dispatcher: $eventDispatcher);
+        $mailer = new SymfonyMailer($transport, dispatcher: $eventDispatcher);
 
         $mailer->send($email);
 

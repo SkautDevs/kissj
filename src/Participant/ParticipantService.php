@@ -9,7 +9,7 @@ use kissj\Event\AbstractContentArbiter;
 use kissj\Event\Event;
 use kissj\FileHandler\FileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -33,7 +33,7 @@ class ParticipantService
         private readonly UserService $userService,
         private readonly FlashMessagesBySession $flashMessages,
         private readonly TranslatorInterface $translator,
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
         private readonly FileHandler $fileHandler,
     ) {
     }

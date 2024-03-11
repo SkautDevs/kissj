@@ -30,7 +30,7 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\MailerSettings;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
@@ -192,7 +192,7 @@ class Settings
             PatrolService::class => autowire(),
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
-            PhpMailerWrapper::class => autowire(),
+            Mailer::class => autowire(),
             QrCodeService::class => autowire(),
             SentryContextMiddleware::class => autowire(),
             SentryHttpContextMiddleware::class => autowire(),

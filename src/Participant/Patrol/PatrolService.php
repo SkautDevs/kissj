@@ -6,7 +6,7 @@ namespace kissj\Participant\Patrol;
 
 use kissj\Application\DateTimeUtils;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
@@ -22,7 +22,7 @@ class PatrolService
         private readonly ParticipantService $participantService,
         private readonly FlashMessagesBySession $flashMessages,
         private readonly TranslatorInterface $translator,
-        private readonly PhpMailerWrapper $mailer,
+        private readonly Mailer $mailer,
     ) {
     }
 

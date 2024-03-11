@@ -6,7 +6,7 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\BankServiceProvider;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
-use kissj\Mailer\PhpMailerWrapper;
+use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\User\UserService;
@@ -25,7 +25,7 @@ class PaymentServiceTest extends TestCase
             \Mockery::mock(ParticipantRepository::class),
             \Mockery::mock(UserService::class),
             \Mockery::mock(FlashMessagesBySession::class),
-            \Mockery::mock(PhpMailerWrapper::class),
+            \Mockery::mock(Mailer::class),
             \Mockery::mock(TranslatorInterface::class),
             \Mockery::mock(Logger::class),
             \Mockery::mock(SentryCollector::class),
