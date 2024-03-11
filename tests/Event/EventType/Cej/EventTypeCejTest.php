@@ -7,6 +7,8 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Payment\Payment;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EventTypeCejTest extends TestCase
@@ -18,23 +20,21 @@ class EventTypeCejTest extends TestCase
         $this->eventTypeCej = new EventTypeCej();
     }
 
-    /**
-     * @param int $expectedPrice
-     * @param Participant $participant
-     * @return void
-     * @dataProvider provideGetPrice
-     */
-    public function testGetPrice(int $expectedPrice, Participant $participant,): void
-    {
-        $this->assertSame($expectedPrice, $this->eventTypeCej->getPrice($participant));
+    #[DataProvider('provideGetPrice')]
+    public function testTransformPayment(
+        int $expectedPrice,
+        Participant $participant,
+        Payment $payment,
+    ): void {
+        $this->assertSame($expectedPrice, $this->eventTypeCej->transformPayment($payment, $participant));
     }
 
     /**
      * @return array<string, array<mixed>>
      */
-    public function provideGetPrice(): array
+    public static function provideGetPrice(): array
     {
-        $this->markTestSkipped('TODO make adding participants work');
+        self::markTestSkipped('TODO make adding participants work');
 
         $teamMember = new Participant();
         $teamMember->contingent = EventTypeCej::CONTINGENT_TEAM;

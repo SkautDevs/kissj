@@ -5,17 +5,12 @@ namespace Tests\Unit\Payment;
 use kissj\Application\DateTimeUtils;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PaymentTest extends TestCase
 {
-    /**
-     * @param Payment $payment
-     * @param string $expectedQrCode
-     * @return void
-     * 
-     * @dataProvider provideGetQrCode
-     */
+    #[DataProvider('provideGetQrCode')]
     public function testGetQrCode(
         Payment $payment,
         string $expectedQrCode,
@@ -26,7 +21,7 @@ class PaymentTest extends TestCase
     /**
      * @return array<string, array<Payment|string>>
      */
-    public function provideGetQrCode(): array
+    public static function provideGetQrCode(): array
     {
         $examplePayment0 = new Payment();
         $examplePayment0->variableSymbol = '1212';

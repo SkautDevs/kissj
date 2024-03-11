@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\AppTestCase;
 
 class ApiTest extends AppTestCase
 {
-    private const TEST_EVENT_PREFIX_URL = '/v3/event/test-event-slug';
-    private const TEST_PREFIX_URL = '/v3';
+    private const string TEST_EVENT_PREFIX_URL = '/v3/event/test-event-slug';
+    private const string TEST_PREFIX_URL = '/v3';
 
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[DataProvider('provideRoutes')]
     public function testRoutesWithoutAuth(
         string $method,
         string $route,
@@ -38,7 +37,7 @@ class ApiTest extends AppTestCase
     /**
      * @return array<string, array<int, int|string>>
      */
-    public function provideRoutes(): array
+    public static function provideRoutes(): array
     {
         $validEntryCode = 'validEntryCode';
         $eventSecret = 'validSecret';

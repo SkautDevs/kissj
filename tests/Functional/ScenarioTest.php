@@ -6,7 +6,7 @@ use Tests\AppTestCase;
 
 class ScenarioTest extends AppTestCase
 {
-    private const TEST_EVENT_PREFIX_URL = '/v2/event/test-event-slug/';
+    private const string TEST_EVENT_PREFIX_URL = '/v2/event/test-event-slug/';
 
     public function testRunApp(): void
     {
