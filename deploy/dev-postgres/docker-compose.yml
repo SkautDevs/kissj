@@ -57,6 +57,7 @@ services:
             - REDIS_HOST="redis"
             - REDIS_HOST_PASSWORD="redis"
 
+    # debug mail server
     mailhog:
         image: mailhog/mailhog
         ports:

@@ -257,28 +257,12 @@ class Settings
                 $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
             );
         };
-        // gracefully fallback if redis is not available
-        $redisEnvVarsSet = isset(
+        $container[SessionHandlerInterface::class] = new RedisSessionHandler(
+            new Redis(),
             $_ENV['REDIS_HOST'],
-            $_ENV['REDIS_PORT'],
-            $_ENV['REDIS_HOST'],
-            $_ENV['REDIS_PASSWORD']);
-        if ($redisEnvVarsSet) {
-            try {
-                $sessionHandler = new RedisSessionHandler(
-                    new Redis(),
-                    $_ENV['REDIS_HOST'],
-                    (int)$_ENV['REDIS_PORT'],
-                    $_ENV['REDIS_PASSWORD'],
-                );
-
-            } catch (\Exception) {
-                $sessionHandler = null;
-            }
-        } else {
-            $sessionHandler = null;
-        }
-        $container[SessionHandlerInterface::class] = $sessionHandler;
+            (int)$_ENV['REDIS_PORT'],
+            $_ENV['REDIS_PASSWORD'],
+        );
         $container[S3bucketFileHandler::class] = fn (
             S3Client $s3Client,
             SentryCollector $sentryCollector,
@@ -377,8 +361,8 @@ class Settings
         $dotenv->required('SKAUTIS_APP_ID')->notEmpty();
         $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
         $dotenv->required('GIT_HASH');
-        //$dotenv->required('REDIS_HOST')->notEmpty();
-        //$dotenv->required('REDIS_PORT')->notEmpty()->isInteger();
-        //$dotenv->required('REDIS_PASSWORD');
+        $dotenv->required('REDIS_HOST')->notEmpty();
+        $dotenv->required('REDIS_PORT')->notEmpty()->isInteger();
+        $dotenv->required('REDIS_PASSWORD');
     }
 }

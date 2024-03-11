@@ -14,10 +14,12 @@ class RedisSessionHandler implements SessionHandlerInterface
         readonly string $host,
         readonly int $port,
         readonly string $password,
-        readonly private int $ttl = 60 * 60 * 24 * 7, // one week in seconds
+        readonly private int $ttl = 60 * 60 * 24 * 7,// one week in seconds
     ) {
         $this->redis->connect($host, $port);
-        $this->redis->auth(['pass' => $password]);
+        if ($this->password !== '') {
+            $this->redis->auth(['pass' => $password]);
+        }
     }
 
     public function open(string $path, string $name): bool
