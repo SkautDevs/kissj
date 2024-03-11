@@ -8,6 +8,7 @@ use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
+use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\ApiAuthorizedOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
@@ -264,7 +265,7 @@ class Route
 
                         $app->post('/generateMorePayments', AdminController::class . '::generateMorePayments')
                             ->setName('admin-generate-more-payments');
-                    });
+                    })->add(AdminPaymentsOnlyMiddleware::class);
 
                     $app->group('/troopManagement', function (RouteCollectorProxy $app) {
                         $app->get('', AdminController::class . '::showTroopManagement')

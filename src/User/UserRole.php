@@ -35,4 +35,16 @@ enum UserRole: string
             self::ContingentAdminSw,
         ];
     }
+
+    public function isEligibleToConfirmPayments(): bool
+    {
+        return match ($this) {
+            self::Admin,
+            self::ContingentAdminCs,
+            self::ContingentAdminSk,
+                => true,
+            default
+                => false,
+        };
+    }
 }

@@ -521,6 +521,7 @@ flash:
         notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
+        adminPaymentsOnly: "Sorry bro, pouze pro administrátory s pravomocí plateb"
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"
         tlOnly: "Pardon, nejsi přihlášený jako vedoucí skupiny"
         tpOnly: "Pardon, nejsi přihlášený jako účastník skupiny"

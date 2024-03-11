@@ -521,6 +521,7 @@ flash:
         notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
     error:
         adminOnly: "Sorry bro, admins only"
+        adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"
         plOnly: "Sorry, you are not logged as Patrol Leader"
         tlOnly: "Sorry, you are not logged as Troop Leader"
         tpOnly: "Sorry, you are not logged as Troop Participant"

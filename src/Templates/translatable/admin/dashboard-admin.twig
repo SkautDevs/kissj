@@ -97,11 +97,11 @@
                    class="btn">{% trans %}dashboard-admin.open{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                {% if (user.role.value == 'admin' or user.role.value == 'contingentAdminCs') and event.automaticPaymentPairing %}
+                {% if user.role.isEligibleToConfirmPayments and event.automaticPaymentPairing %}
                     <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 {% endif %}
-                {% if user.role.value == 'admin' or user.role.value == 'contingentAdminCs' %}
+                {% if user.role.isEligibleToConfirmPayments %}
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
                 {% endif %}
