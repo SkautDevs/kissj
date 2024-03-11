@@ -22,7 +22,6 @@ class PaymentRepository extends Repository
     }
 
     /**
-     * @param Event $event
      * @return Payment[]
      */
     public function getWaitingPaymentsKeydByVariableSymbols(Event $event): array

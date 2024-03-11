@@ -11,7 +11,7 @@ class MailerSettings
 
     public function __construct(
         public string $mailDsn,
-        public string $sendMailToMainRecipient,
+        public string $sendMailToMainRecipient,// TODO remove as option
     ) {
     }
 

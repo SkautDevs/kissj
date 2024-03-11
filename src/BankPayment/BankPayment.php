@@ -35,8 +35,6 @@ class BankPayment extends EntityDatetime
     public const STATUS_RETURNED = 'returned';
 
     /**
-     * @param Transaction $t
-     * @param Event $event
      * @return $this
      */
     public function mapTransactionInto(Transaction $t, Event $event): self

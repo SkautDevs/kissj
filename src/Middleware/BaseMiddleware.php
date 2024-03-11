@@ -26,7 +26,8 @@ abstract class BaseMiddleware implements MiddlewareInterface
     protected function createRedirectResponse(Request $request, string $routeName): Response
     {
         $parameters = [];
-        if ($event = $this->tryGetEvent($request)) {
+        $event = $this->tryGetEvent($request);
+        if ($event instanceof Event) {
             $parameters['eventSlug'] = $event->slug;
         }
         $url = $this->getRouter($request)->urlFor($routeName, $parameters);

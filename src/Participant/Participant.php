@@ -219,7 +219,6 @@ class Participant extends EntityDatetime
 
     /**
      * @param string[] $positions
-     * @return void
      */
     public function setPreferredPosition(array $positions): void
     {

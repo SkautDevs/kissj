@@ -17,7 +17,6 @@ use kissj\Orm\Repository;
 class BankPaymentRepository extends Repository
 {
     /**
-     * @param Event $event
      * @return BankPayment[]
      */
     public function getAllBankPaymentsOrdered(Event $event): array
@@ -29,8 +28,6 @@ class BankPaymentRepository extends Repository
     }
 
     /**
-     * @param Event $event
-     * @param string $status
      * @return BankPayment[]
      */
     public function getBankPaymentsOrderedWithStatus(Event $event, string $status): array

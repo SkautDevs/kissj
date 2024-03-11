@@ -125,7 +125,6 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param string $entityClass
      * @param ?Caller $caller
      * @return string[]
      */
@@ -162,7 +161,6 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param string $table
      * @param mixed[] $values
      * @return mixed[]
      */
@@ -172,7 +170,6 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param string $table
      * @param mixed[] $data
      * @return mixed[]
      */

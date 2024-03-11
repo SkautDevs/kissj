@@ -52,11 +52,7 @@ class ExportController extends AbstractController
     }
 
     /**
-     * @param Response             $response
      * @param array<array<string>> $csvRows
-     * @param string               $fileName
-     * @param bool                 $addTimestamp
-     * @return Response
      */
     private function outputCSVresponse(
         Response $response,

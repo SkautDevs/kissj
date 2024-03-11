@@ -67,7 +67,6 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     }
 
     /**
-     * @param Request $request
      * @return string[]
      */
     private function getAvailableLanguages(Request $request): array
@@ -84,9 +83,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     }
 
     /**
-     * @param Request $request
      * @param string[] $availableLanguages
-     * @return string
      */
     private function negotiateBestLanguage(Request $request, array $availableLanguages): string
     {

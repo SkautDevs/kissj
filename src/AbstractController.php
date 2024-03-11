@@ -41,11 +41,7 @@ abstract class AbstractController
     protected SentryCollector $sentryCollector;
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param string $routeName
      * @param string[] $arguments
-     * @return Response
      */
     protected function redirect(
         Request $request,

@@ -39,9 +39,7 @@ class ParticipantService
     }
 
     /**
-     * @param Participant $participant
      * @param string[] $params
-     * @return Participant
      */
     public function addParamsIntoParticipant(Participant $participant, array $params): Participant
     {
@@ -53,8 +51,6 @@ class ParticipantService
 
     /**
      * @param array<string, string> $params
-     * @param Participant $p
-     * @return Participant
      * @throws \Exception
      */
     private function addParamsIntoPerson(array $params, Participant $p): Participant

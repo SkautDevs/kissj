@@ -216,9 +216,7 @@ class Mailer
 
         $email = new TemplatedEmail();
         $email->from(new Address($event->emailFrom, $event->emailFromName));
-        if ($this->settings->sendMailToMainRecipient) {
-            $email->to(new Address($recipientEmail));
-        }
+        $email->to(new Address($recipientEmail));
         if ($event->emailBccFrom !== null) {
             $email->bcc(new Address($event->emailBccFrom, $event->emailFromName));
         }

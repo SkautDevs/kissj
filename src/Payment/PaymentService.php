@@ -145,7 +145,7 @@ class PaymentService
             BankPayment::STATUS_FRESH,
         );
 
-        if (count($freshBankPayments) === 0) {
+        if ($freshBankPayments === []) {
             try {
                 $newPaymentsCount = $this->bankServiceProvider->provideBankService($event->bankSlug)
                     ->getAndSafeFreshPaymentsFromBank($event);
@@ -195,11 +195,11 @@ class PaymentService
             $this->bankPaymentRepository->persist($bankPayment);
         }
 
-        if ($counterNewPaid) {
+        if ($counterNewPaid > 0) {
             $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
         }
 
-        if ($counterUnknownPayment) {
+        if ($counterUnknownPayment > 0) {
             $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
         }
     }

@@ -26,8 +26,6 @@ class ExportService
     }
 
     /**
-     * @param Event $event
-     * @param User $adminUser
      * @return array<int, array<int, string>>
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
@@ -83,8 +81,6 @@ class ExportService
     }
 
     /**
-     * @param Event $event
-     * @param User $adminUser
      * @return array<int, array<int, string>>
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
@@ -141,8 +137,6 @@ class ExportService
     }
 
     /**
-     * @param Event $event
-     * @param User $adminUser
      * @return array<int, array<int, string>>
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
