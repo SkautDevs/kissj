@@ -71,6 +71,7 @@ changeDetails:
 detail:
     patrolName: "Patrol name"
     patrolNamePlaceholder: "Name of your patrol"
+    contingentTitle: "Contingent"
     firstName: "First Name"
     firstNamePlaceholder: "your first name"
     surname: "Surname"

@@ -71,6 +71,7 @@ changeDetails:
 detail:
     patrolName: "Název patroly"
     patrolNamePlaceholder: "Jméno vaší patroly"
+    contingentTitle: "Kontingent"
     firstName: "Křestní jméno"
     firstNamePlaceholder: "Tvoje křestní jméno"
     surname: "Příjmení"

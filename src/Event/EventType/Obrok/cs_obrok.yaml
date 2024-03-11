@@ -37,6 +37,10 @@ login-help:
 detail:
     patrolName: "Název skupiny"
     patrolNamePlaceholder: "Jméno vaší skupiny"
+    contingentTitle: "Pozice"
+    contingent:
+        volunteer: "💪 Dobrovolkyně nebo dobrovolník"
+        org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
 dashboard:
     youWantDelete: "Opravdu chceš smazat účastníka*účastnici "
     youWantUntie: "Opravdu chceš odepnout účastníka*účastnici "

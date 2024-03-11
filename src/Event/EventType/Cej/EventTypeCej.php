@@ -198,6 +198,11 @@ class EventTypeCej extends EventType
         ];
     }
 
+    public function showContingentPatrolStats(): bool
+    {
+        return true;
+    }
+
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/stylesCej24.css';

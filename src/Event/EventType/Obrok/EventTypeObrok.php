@@ -19,24 +19,32 @@ class EventTypeObrok extends EventType
     public const string SLUG_SFH = 'sfh';
     public const string SLUG_PROGRAMME = 'programme';
 
+    public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
+    public const string CONTINGENT_ORG = 'detail.contingent.org';
+
+    #[\Override]
     protected function getPrice(Participant $participant): int
     {
         return match (true) {
-            $participant instanceof Ist => 1000,
+            $participant instanceof Ist => 500,
             $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 1600,
             default => throw new \Exception('Unknown participant class'),
         };
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
-        $ca->tshirt = true;
+        $ca->gender = false;
+        $ca->contingent = true;
         $ca->medicaments = true;
         $ca->printedHandbook = true;
+
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterTroopLeader(): ContentArbiterTroopLeader
     {
         $ca = parent::getContentArbiterTroopLeader();
@@ -50,6 +58,7 @@ class EventTypeObrok extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
     {
         $ca = parent::getContentArbiterTroopParticipant();
@@ -66,6 +75,19 @@ class EventTypeObrok extends EventType
     /**
      * @inheritDoc
      */
+    #[\Override]
+    public function getContingents(): array
+    {
+        return [
+            self::CONTINGENT_VOLUNTEER,
+            self::CONTINGENT_ORG,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
     public function getTranslationFilePaths(): array
     {
         return [
@@ -73,6 +95,7 @@ class EventTypeObrok extends EventType
         ];
     }
 
+    #[\Override]
     public function getStylesheetNameWithoutLeadingSlash(): ?string
     {
         return 'eventSpecificCss/stylesObrok.css';
@@ -81,6 +104,7 @@ class EventTypeObrok extends EventType
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getLanguages(): array
     {
         return [
@@ -88,26 +112,31 @@ class EventTypeObrok extends EventType
         ];
     }
 
+    #[\Override]
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return true;
     }
 
+    #[\Override]
     public function isLoginEmailAllowed(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function isLoginSkautisAllowed(): bool
     {
         return true;
     }
 
+    #[\Override]
     public function isReceiptAllowed(): bool
     {
         return true;
     }
 
+    #[\Override]
     public function getEventDeals(Participant $participant): array
     {
         $eventDeals = [

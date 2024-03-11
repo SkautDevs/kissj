@@ -204,7 +204,7 @@ class PaymentService
         }
     }
 
-    private function getVariableNumber(Event $event): string
+    public function getVariableNumber(Event $event): string
     {
         do {
             $variableNumber = $this->generateVariableNumber($event->prefixVariableSymbol);

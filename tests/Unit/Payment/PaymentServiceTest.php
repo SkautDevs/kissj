@@ -15,6 +15,7 @@ use kissj\Payment\QrCodeService;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
+use Mockery;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -27,32 +28,33 @@ class PaymentServiceTest extends TestCase
     public function testGenerateVariableNumber(): void
     {
         $mailerMock = new Mailer(
-            \Mockery::mock(Twig::class),
-            \Mockery::mock(MailerSettings::class),
-            \Mockery::mock(QrCodeService::class),
-            \Mockery::mock(TranslatorInterface::class),
-            \Mockery::mock(Logger::class),
+            Mockery::mock(Twig::class),
+            Mockery::mock(MailerSettings::class),
+            Mockery::mock(QrCodeService::class),
+            Mockery::mock(TranslatorInterface::class),
+            Mockery::mock(Logger::class),
         );
         $paymentService = new PaymentServiceExposed(
             new BankServiceProvider(
                 new Banks(),
-                \Mockery::mock(ContainerInterface::class),
+                Mockery::mock(ContainerInterface::class),
             ),
-            \Mockery::mock(BankPaymentRepository::class),
-            \Mockery::mock(PaymentRepository::class),
-            \Mockery::mock(ParticipantRepository::class),
+            Mockery::mock(BankPaymentRepository::class),
+            Mockery::mock(PaymentRepository::class),
+            Mockery::mock(ParticipantRepository::class),
             new UserService(
-                \Mockery::mock(LoginTokenRepository::class),
-                \Mockery::mock(ParticipantRepository::class),
-                \Mockery::mock(UserRepository::class),
+                Mockery::mock(LoginTokenRepository::class),
+                Mockery::mock(ParticipantRepository::class),
+                Mockery::mock(UserRepository::class),
+                Mockery::mock(PaymentRepository::class),
                 $mailerMock,
             ),
-            \Mockery::mock(FlashMessagesBySession::class),
+            Mockery::mock(FlashMessagesBySession::class),
             $mailerMock,
-            \Mockery::mock(TranslatorInterface::class),
-            \Mockery::mock(Logger::class),
+            Mockery::mock(TranslatorInterface::class),
+            Mockery::mock(Logger::class),
             new SentryCollector(
-                \Mockery::mock(Hub::class),
+                Mockery::mock(Hub::class),
             ),
         );
 

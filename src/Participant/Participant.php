@@ -82,6 +82,7 @@ class Participant extends EntityDatetime
         parent::initDefaults();
         $this->tieCode = $this->generateTieCode(); // TODO check if another code exists in DB
         $this->entryCode = Uuid::uuid4()->toString();
+        $this->adminNote = '';
     }
 
     public function setUser(User $user): void

@@ -153,6 +153,11 @@ abstract class EventType
         return [];
     }
 
+    public function showContingentPatrolStats(): bool
+    {
+        return false;
+    }
+
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return false;
