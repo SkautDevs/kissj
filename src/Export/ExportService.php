@@ -119,8 +119,8 @@ readonly class ExportService
                     (string)$participant->id, // 0
                     $participant->role?->value ?? '',
                     match (true) {
-                        $participant instanceof PatrolLeader => (string)count($participant->patrolParticipants),
-                        $participant instanceof TroopLeader => (string)count($participant->troopParticipants),
+                        $participant instanceof PatrolLeader => (string)$participant->getPatrolParticipantsCount(),
+                        $participant instanceof TroopLeader => (string)$participant->getTroopParticipantsCount(),
                         default => '',
                     },
                     $this->translator->trans($participant->contingent ?? ''),

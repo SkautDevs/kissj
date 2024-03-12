@@ -25,7 +25,7 @@ class EventTypeNavigamus extends EventType
 
         return match (true) {
             $participant instanceof Ist => 900,
-            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) + 1) * $patrolPrice,
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * $patrolPrice,
             default => throw new \Exception('Unknown participant class'),
         };
     }

@@ -11,6 +11,12 @@ class ApiTest extends AppTestCase
 {
     private const string TEST_EVENT_PREFIX_URL = '/v3/event/test-event-slug';
     private const string TEST_PREFIX_URL = '/v3';
+    
+    public function tearDown(): void
+    {
+        restore_error_handler();
+        restore_exception_handler();
+    }
 
     #[DataProvider('provideRoutes')]
     public function testRoutesWithoutAuth(
@@ -45,28 +51,28 @@ class ApiTest extends AppTestCase
         return [
             'invalid entry code' => [
                 'POST',
-                self::TEST_PREFIX_URL . '/entry/randomEntryCode',
+                self::TEST_PREFIX_URL . '/entry/code/randomEntryCode',
                 sprintf('{"eventSecret": "%s"}', $eventSecret),
                 403,
                 '{"status":"unvalid","reason":"participant not found"}'
             ],
             'invalid event secret' => [
                 'POST',
-                self::TEST_PREFIX_URL . '/entry/randomEntryCode',
+                self::TEST_PREFIX_URL . '/entry/code/randomEntryCode',
                 '{"eventSecret": "randomSecret"}',
                 403,
                 '{"status":"unvalid","reason":"unvalid event secret"}'
             ],
             'first enter' => [
                 'POST',
-                self::TEST_PREFIX_URL . '/entry/' . $validEntryCode,
+                self::TEST_PREFIX_URL . '/entry/code/' . $validEntryCode,
                 sprintf('{"eventSecret": "%s"}', $eventSecret),
                 200,
                 '{}'
             ],
             'second enter' => [
                 'POST',
-                self::TEST_PREFIX_URL . '/entry/' . $validEntryCode,
+                self::TEST_PREFIX_URL . '/entry/code/' . $validEntryCode,
                 sprintf('{"eventSecret": "%s"}', $eventSecret),
                 200,
                 '{}'

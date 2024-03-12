@@ -55,7 +55,7 @@ class EventTypeCej extends EventType
         }
 
         $price = match (true) {
-            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) * 250) + 250,
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() * 250) + 250,
             $participant instanceof Ist => 150,
             default => throw new \Exception('Unknown participant class'),
         };
@@ -66,7 +66,7 @@ class EventTypeCej extends EventType
     private function getPriceForCzechia(Participant $participant): int
     {
         return match (true) {
-            $participant instanceof PatrolLeader => (count($participant->patrolParticipants) + 1) * 6600,
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 6600,
             $participant instanceof Ist => 4100,
             default => throw new \Exception('Unknown participant class'),
         };
