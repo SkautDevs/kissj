@@ -58,11 +58,8 @@ class ExportController extends AbstractController
         Response $response,
         array $csvRows,
         string $fileName,
-        bool $addTimestamp = true
     ): Response {
-        if ($addTimestamp) {
-            $fileName .= '_' . date(DATE_ATOM);
-        }
+        $fileName .= '_' . date(DATE_ATOM);
 
         $response = $response->withAddedHeader('Content-Type', 'text/csv');
         $response = $response->withAddedHeader('Content-Disposition', 'attachment; filename="' . $fileName . '.csv";');

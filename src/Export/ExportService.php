@@ -17,11 +17,11 @@ use kissj\User\User;
 use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExportService
+readonly class ExportService
 {
     public function __construct(
-        private readonly ParticipantRepository $participantRepository,
-        private readonly TranslatorInterface $translator,
+        private ParticipantRepository $participantRepository,
+        private TranslatorInterface $translator,
     ) {
     }
 

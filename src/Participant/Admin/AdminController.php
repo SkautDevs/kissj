@@ -37,7 +37,7 @@ class AdminController extends AbstractController
     ) {
     }
 
-    public function showDashboard(Response $response, Event $event, User $user): Response
+    public function showDashboard(Response $response, Event $event): Response
     {
         $contingents = $event->getEventType()->getContingents();
 
@@ -556,7 +556,7 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showTroopManagement(Request $request, Response $response, Event $event): Response
+    public function showTroopManagement(Response $response, Event $event): Response
     {
         return $this->view->render($response, 'admin/troopManagement.twig', [
             'troopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(

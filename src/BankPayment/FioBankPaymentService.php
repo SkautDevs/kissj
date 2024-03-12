@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
-use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use h4kuna\Fio\Response\Read\Transaction;
 use kissj\Event\Event;
-use kissj\Logging\Sentry\SentryCollector;
-use Psr\Log\LoggerInterface;
 
-class FioBankPaymentService implements IBankPaymentService
+readonly class FioBankPaymentService implements IBankPaymentService
 {
     public function __construct(
-        private readonly BankPaymentRepository $bankPaymentRepository,
-        private readonly FioBankReaderFactory $fioBankReaderFactory,
+        private BankPaymentRepository $bankPaymentRepository,
+        private FioBankReaderFactory $fioBankReaderFactory,
     ) {
     }
 

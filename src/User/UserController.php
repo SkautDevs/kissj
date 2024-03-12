@@ -38,7 +38,7 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'getDashboard');
     }
 
-    public function login(Request $request, Response $response, Event $event): Response
+    public function login(Response $response, Event $event): Response
     {
         return $this->view->render(
             $response,

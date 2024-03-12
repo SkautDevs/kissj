@@ -20,20 +20,20 @@ use Skautis\Skautis;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
-class SkautisService
+readonly class SkautisService
 {
-    private readonly Skautis $skautis;
+    private Skautis $skautis;
 
     public function __construct(
-        readonly SkautisFactory $skautisFactory,
-        private readonly ParticipantRepository $participantRepository,
-        private readonly UserService $userService,
-        private readonly UserRegeneration $userRegeneration,
-        private readonly UserRepository $userRepository,
-        private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger,
-        private readonly SentryCollector $sentryCollector,
+        SkautisFactory $skautisFactory,
+        private ParticipantRepository $participantRepository,
+        private UserService $userService,
+        private UserRegeneration $userRegeneration,
+        private UserRepository $userRepository,
+        private FlashMessagesInterface $flashMessages,
+        private TranslatorInterface $translator,
+        private LoggerInterface $logger,
+        private SentryCollector $sentryCollector,
     ) {
         $this->skautis = $skautisFactory->getSkautis();
     }

@@ -69,17 +69,18 @@ class Participant extends EntityDatetime
     protected ?string $tshirtSize = null;
     protected ?string $tshirtShape = null;
 
-    protected const TSHIRT_DELIMITER = '-';
-    protected const PREFERRED_POSITION_DELIMITER = ' & ';
+    protected const int TIE_CODE_LENGTH = 6;
+    protected const string TSHIRT_DELIMITER = '-';
+    protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
-    public const FOOD_OTHER = 'other';
-    public const SCARF_NO = 'no';
-    public const SCARF_YES = 'yes';
+    public const string FOOD_OTHER = 'other';
+    public const string SCARF_NO = 'no';
+    public const string SCARF_YES = 'yes';
 
     protected function initDefaults(): void
     {
         parent::initDefaults();
-        $this->tieCode = $this->generateTieCode(6); // TODO check if another code exists in DB
+        $this->tieCode = $this->generateTieCode(); // TODO check if another code exists in DB
         $this->entryCode = Uuid::uuid4()->toString();
     }
 
@@ -235,9 +236,9 @@ class Participant extends EntityDatetime
         return $role->value;
     }
 
-    private function generateTieCode(int $length): string
+    private function generateTieCode(): string
     {
-        return substr(str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', $length * 9)), 0, $length);
+        return substr(str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', self::TIE_CODE_LENGTH * 9)), 0, self::TIE_CODE_LENGTH);
     }
 
     public function findDeal(string $slug): ?Deal

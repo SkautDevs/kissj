@@ -15,19 +15,19 @@ readonly class EventContextProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array<array<mixed>> $records
+     * @param array<array<mixed>> $record
      * @return array<mixed>
      */
-    public function __invoke(array $records): array
+    public function __invoke(array $record): array
     {
         $event = $this->event;
 
-        $records['context']['event'] = [
+        $record['context']['event'] = [
             'id' => $event?->id,
             'slug' => $event?->slug,
             'readableName' => $event?->readableName,
         ];
 
-        return $records;
+        return $record;
     }
 }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
-class UserRegeneration
+readonly class UserRegeneration
 {
-    private readonly ?User $currentUser;
+    private ?User $currentUser;
 
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(private UserRepository $userRepository)
     {
         $userSession = $_SESSION['user'] ?? [];
 

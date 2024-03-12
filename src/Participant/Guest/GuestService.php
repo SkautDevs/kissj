@@ -7,11 +7,11 @@ namespace kissj\Participant\Guest;
 use kissj\Mailer\Mailer;
 use kissj\User\UserService;
 
-class GuestService
+readonly class GuestService
 {
     public function __construct(
-        private readonly Mailer $mailer,
-        private readonly UserService $userService,
+        private Mailer $mailer,
+        private UserService $userService,
     ) {
     }
 

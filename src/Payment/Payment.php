@@ -46,7 +46,7 @@ class Payment extends EntityDatetime
     public function getRemainingDays(): int
     {
         $now = DateTimeUtils::getDateTime();
-        $daysDiff = ($now)->diff($this->due, false)->days;
+        $daysDiff = ($now)->diff($this->due)->days;
 
         if ($daysDiff === false) {
             throw new \RuntimeException('DateTime diff returns false');

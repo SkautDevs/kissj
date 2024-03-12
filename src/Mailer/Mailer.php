@@ -19,14 +19,14 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class Mailer
+readonly class Mailer
 {
     public function __construct(
-        private readonly Twig $renderer,
-        private readonly MailerSettings $settings,
-        private readonly QrCodeService $qrCodeService,
-        private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger,
+        private Twig $renderer,
+        private MailerSettings $settings,
+        private QrCodeService $qrCodeService,
+        private TranslatorInterface $translator,
+        private LoggerInterface $logger,
     ) {
     }
 

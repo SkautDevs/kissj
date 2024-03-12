@@ -13,13 +13,13 @@ use kissj\Participant\ParticipantRole;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
-class UserService
+readonly class UserService
 {
     public function __construct(
-        private readonly LoginTokenRepository $loginTokenRepository,
-        private readonly ParticipantRepository $participantRepository,
-        private readonly UserRepository $userRepository,
-        private readonly Mailer $mailer,
+        private LoginTokenRepository $loginTokenRepository,
+        private ParticipantRepository $participantRepository,
+        private UserRepository $userRepository,
+        private Mailer $mailer,
     ) {
     }
 

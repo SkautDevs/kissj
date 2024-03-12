@@ -20,16 +20,16 @@ use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AdminService
+readonly class AdminService
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly ParticipantRepository $participantRepository,
-        private readonly PaymentRepository $paymentRepository,
-        private readonly PaymentService $paymentService,
-        private readonly Mailer $mailer,
-        private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger,
+        private UserRepository $userRepository,
+        private ParticipantRepository $participantRepository,
+        private PaymentRepository $paymentRepository,
+        private PaymentService $paymentService,
+        private Mailer $mailer,
+        private TranslatorInterface $translator,
+        private LoggerInterface $logger,
     ) {
     }
 

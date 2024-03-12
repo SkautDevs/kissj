@@ -16,8 +16,8 @@ use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeObrok extends EventType
 {
-    public const SLUG_SFH = 'sfh';
-    public const SLUG_PROGRAMME = 'programme';
+    public const string SLUG_SFH = 'sfh';
+    public const string SLUG_PROGRAMME = 'programme';
 
     protected function getPrice(Participant $participant): int
     {

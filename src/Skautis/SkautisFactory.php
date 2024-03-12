@@ -11,11 +11,11 @@ use Skautis\User;
 use Skautis\Wsdl\WebServiceFactory;
 use Skautis\Wsdl\WsdlManager;
 
-class SkautisFactory
+readonly class SkautisFactory
 {
     public function __construct(
-        private readonly string $appId,
-        private readonly bool $isTestMode,
+        private string $appId,
+        private bool $isTestMode,
     ) {
     }
 

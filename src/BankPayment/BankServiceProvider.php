@@ -6,11 +6,11 @@ namespace kissj\BankPayment;
 
 use Psr\Container\ContainerInterface;
 
-class BankServiceProvider
+readonly class BankServiceProvider
 {
     public function __construct(
-        private readonly Banks $banks,
-        private readonly ContainerInterface $container,
+        private Banks $banks,
+        private ContainerInterface $container,
     ) {
     }
 

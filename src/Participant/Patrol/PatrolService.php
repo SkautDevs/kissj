@@ -13,16 +13,16 @@ use kissj\User\User;
 use kissj\User\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PatrolService
+readonly class PatrolService
 {
     public function __construct(
-        private readonly PatrolLeaderRepository $patrolLeaderRepository,
-        private readonly PatrolParticipantRepository $patrolParticipantRepository,
-        private readonly UserService $userService,
-        private readonly ParticipantService $participantService,
-        private readonly FlashMessagesBySession $flashMessages,
-        private readonly TranslatorInterface $translator,
-        private readonly Mailer $mailer,
+        private PatrolLeaderRepository $patrolLeaderRepository,
+        private PatrolParticipantRepository $patrolParticipantRepository,
+        private UserService $userService,
+        private ParticipantService $participantService,
+        private FlashMessagesBySession $flashMessages,
+        private TranslatorInterface $translator,
+        private Mailer $mailer,
     ) {
     }
 

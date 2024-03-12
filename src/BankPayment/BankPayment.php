@@ -28,11 +28,11 @@ use kissj\Orm\EntityDatetime;
  */
 class BankPayment extends EntityDatetime
 {
-    public const STATUS_FRESH = 'fresh';
-    public const STATUS_PAIRED = 'paired';
-    public const STATUS_UNKNOWN = 'unknown';
-    public const STATUS_UNRELATED = 'unrelated';
-    public const STATUS_RETURNED = 'returned';
+    public const string STATUS_FRESH = 'fresh';
+    public const string STATUS_PAIRED = 'paired';
+    public const string STATUS_UNKNOWN = 'unknown';
+    public const string STATUS_UNRELATED = 'unrelated';
+    public const string STATUS_RETURNED = 'returned';
 
     /**
      * @return $this

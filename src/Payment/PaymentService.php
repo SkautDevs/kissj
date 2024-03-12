@@ -125,7 +125,7 @@ class PaymentService
         return $payment;
     }
 
-    private function setParticipantPaidWithTime(Participant $participant, \DateTimeImmutable $now): void
+    private function setParticipantPaidWithTime(Participant $participant, DateTimeImmutable $now): void
     {
         $this->userService->setUserPaid($participant->getUserButNotNull());
 

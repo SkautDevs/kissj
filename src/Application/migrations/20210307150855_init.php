@@ -122,7 +122,7 @@ final class Init extends AbstractMigration
 			->addColumn('created_at', 'datetime')
 			->addColumn('updated_at', 'datetime')
 			->addColumn('participant_id', 'integer')
-			->addForeignKey('participant_id', 'participant', ['id'])
+			->addForeignKey('participant_id', 'participant')
 			->addColumn('note', 'text')
 			->create();
         #initialise data

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
-class Bank
+readonly class Bank
 {
     public function __construct(
-        public readonly string $slug,
-        public readonly string $code,
-        public readonly string $name,
-        public readonly string $serviceClass,
+        public string $slug,
+        public string $code,
+        public string $name,
+        public string $serviceClass,
     ) {
     }
 }

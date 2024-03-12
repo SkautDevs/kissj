@@ -6,10 +6,10 @@ namespace kissj\Orm;
 
 class Order
 {
-    public const DIRECTION_ASC = 'ASC';
-    public const DIRECTION_DESC = 'DESC';
+    public const string DIRECTION_ASC = 'ASC';
+    public const string DIRECTION_DESC = 'DESC';
 
-    public const COLUMN_UPDATED_AT = 'updated_at';
+    public const string COLUMN_UPDATED_AT = 'updated_at';
 
     public function __construct(
         private readonly string $field,

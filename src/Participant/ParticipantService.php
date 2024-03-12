@@ -24,17 +24,17 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ParticipantService
+readonly class ParticipantService
 {
     public function __construct(
-        private readonly ParticipantRepository $participantRepository,
-        private readonly TroopParticipantRepository $troopParticipantRepository,
-        private readonly PaymentService $paymentService,
-        private readonly UserService $userService,
-        private readonly FlashMessagesBySession $flashMessages,
-        private readonly TranslatorInterface $translator,
-        private readonly Mailer $mailer,
-        private readonly FileHandler $fileHandler,
+        private ParticipantRepository $participantRepository,
+        private TroopParticipantRepository $troopParticipantRepository,
+        private PaymentService $paymentService,
+        private UserService $userService,
+        private FlashMessagesBySession $flashMessages,
+        private TranslatorInterface $translator,
+        private Mailer $mailer,
+        private FileHandler $fileHandler,
     ) {
     }
 

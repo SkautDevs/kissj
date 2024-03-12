@@ -7,14 +7,14 @@ namespace kissj\Session;
 use Redis;
 use SessionHandlerInterface;
 
-class RedisSessionHandler implements SessionHandlerInterface
+readonly class RedisSessionHandler implements SessionHandlerInterface
 {
     public function __construct(
-        readonly private Redis $redis,
-        readonly string $host,
-        readonly int $port,
-        readonly string $password,
-        readonly private int $ttl = 60 * 60 * 24 * 7,// one week in seconds
+        private Redis $redis,
+        public string $host,
+        public int $port,
+        public string $password,
+        private int $ttl = 60 * 60 * 24 * 7,// one week in seconds
     ) {
         $this->redis->connect($host, $port);
         if ($this->password !== '') {

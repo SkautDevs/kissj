@@ -6,23 +6,23 @@ namespace kissj\Skautis;
 
 use DateTimeImmutable;
 
-class SkautisUserData
+readonly class SkautisUserData
 {
     public function __construct(
-        public readonly int $skautisId,
-        public readonly string $skautisUserName,
-        public readonly int $skautisIdPerson,
-        public readonly string $firstName,
-        public readonly string $lastName,
-        public readonly string $nickName,
-        public readonly DateTimeImmutable $birthday,
-        public readonly string $email,
-        public readonly string $phone,
-        public readonly string $street,
-        public readonly string $city,
-        public readonly string $postCode,
-        public readonly bool $hasMembership,
-        public readonly string $unitName,
+        public int $skautisId,
+        public string $skautisUserName,
+        public int $skautisIdPerson,
+        public string $firstName,
+        public string $lastName,
+        public string $nickName,
+        public DateTimeImmutable $birthday,
+        public string $email,
+        public string $phone,
+        public string $street,
+        public string $city,
+        public string $postCode,
+        public bool $hasMembership,
+        public string $unitName,
     ) {
     }
 

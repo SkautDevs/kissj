@@ -13,11 +13,11 @@ use Slim\Views\Twig;
 use Throwable;
 use Whoops\Exception\Inspector;
 
-class ErrorHandlerGetter
+readonly class ErrorHandlerGetter
 {
-    private readonly LoggerInterface $logger;
-    private readonly Twig $twig;
-    private readonly SentryCollector $sentryCollector;
+    private LoggerInterface $logger;
+    private Twig $twig;
+    private SentryCollector $sentryCollector;
 
     public function __construct(
         ContainerInterface $container

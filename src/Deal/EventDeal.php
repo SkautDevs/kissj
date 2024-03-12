@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace kissj\Deal;
 
-class EventDeal
+readonly class EventDeal
 {
     public function __construct(
-        public readonly string $slug,
-        public readonly string $address,
+        public string $slug,
+        public string $address,
     ) {
     }
 }

@@ -8,10 +8,10 @@ use Throwable;
 use Sentry\State\Hub;
 use Sentry\State\Scope;
 
-class SentryCollector
+readonly class SentryCollector
 {
     public function __construct(
-        private readonly Hub $sentryHub,
+        private Hub $sentryHub,
     ) {
     }
 

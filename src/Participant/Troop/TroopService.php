@@ -9,13 +9,13 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TroopService
+readonly class TroopService
 {
     public function __construct(
-        private readonly TroopLeaderRepository $troopLeaderRepository,
-        private readonly TroopParticipantRepository $troopParticipantRepository,
-        private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
+        private TroopLeaderRepository $troopLeaderRepository,
+        private TroopParticipantRepository $troopParticipantRepository,
+        private FlashMessagesInterface $flashMessages,
+        private TranslatorInterface $translator,
     ) {
     }
 
