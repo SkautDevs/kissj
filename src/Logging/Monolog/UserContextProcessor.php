@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Logging\Monolog;
 
 use kissj\User\User;
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 readonly class UserContextProcessor implements ProcessorInterface
@@ -14,19 +15,17 @@ readonly class UserContextProcessor implements ProcessorInterface
     ) {
     }
 
-    /**
-     * @param array<array<mixed>> $record
-     * @return array<mixed>
-     */
-    public function __invoke(array $record): array
+    public function __invoke(LogRecord $record): LogRecord
     {
         $user = $this->user;
 
-        $record['context']['user'] = [
-            'authenticated' => ($user instanceof User),
-            'id' => $user?->id,
-            'email' => $user?->email,
-        ];
+        $record = $record->with(context: [
+            'user' => [
+                'authenticated' => $user instanceof User,
+                'id' => $user?->id,
+                'email' => $user?->email,
+            ],
+        ]);
 
         return $record;
     }

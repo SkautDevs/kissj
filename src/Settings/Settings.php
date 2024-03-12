@@ -37,7 +37,6 @@ use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
-use kissj\Middleware\MonologAdditionalContextMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
@@ -82,6 +81,7 @@ use LeanMapper\DefaultEntityFactory;
 use LeanMapper\IEntityFactory;
 use LeanMapper\IMapper;
 use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
@@ -177,7 +177,6 @@ class Settings
             IstRepository::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
-            MonologAdditionalContextMiddleware::class => autowire(),
             MonologContextMiddleware::class => autowire(),
             NonChoosedRoleOnlyMiddleware::class => autowire(),
             NonLoggedOnlyMiddleware::class => autowire(),
@@ -335,7 +334,7 @@ class Settings
         $dotenv->required('TEMPLATE_CACHE')->notEmpty()->isBoolean();
         $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
-        $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(array_flip(Logger::getLevels()));
+        $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(Level::NAMES);
         $dotenv->required('MAIL_DSN');
         $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
         $dotenv->required('FILE_HANDLER_TYPE')->allowedValues([
