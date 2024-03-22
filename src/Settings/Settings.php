@@ -23,9 +23,9 @@ use kissj\Event\EventRepository;
 use kissj\Event\EventService;
 use kissj\Export\ExportController;
 use kissj\Export\ExportService;
-use kissj\FileHandler\FileHandler;
-use kissj\FileHandler\LocalFileHandler;
-use kissj\FileHandler\S3bucketFileHandler;
+use kissj\FileHandler\SaveFileHandler;
+use kissj\FileHandler\LocalSaveFileHandler;
+use kissj\FileHandler\S3BucketSaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Logging\Sentry\SentryCollector;
@@ -215,9 +215,9 @@ class Settings
             'password' => $_ENV['POSTGRES_PASSWORD'],
             'database' => $_ENV['POSTGRES_DB'],
         ]);
-        $container[FileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
-            'local' => new LocalFileHandler(),
-            's3bucket' => get(S3bucketFileHandler::class),
+        $container[SaveFileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
+            'local' => new LocalSaveFileHandler(),
+            's3bucket' => get(S3BucketSaveFileHandler::class),
             default => throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
                 . $_ENV['FILE_HANDLER_TYPE']),
         };
@@ -259,10 +259,10 @@ class Settings
             (int)$_ENV['REDIS_PORT'],
             $_ENV['REDIS_PASSWORD'],
         );
-        $container[S3bucketFileHandler::class] = fn (
+        $container[S3BucketSaveFileHandler::class] = fn (
             S3Client $s3Client,
             SentryCollector $sentryCollector,
-        ) => new S3bucketFileHandler(
+        ) => new S3BucketSaveFileHandler(
             $s3Client,
             $_ENV['S3_BUCKET'],
             $sentryCollector,

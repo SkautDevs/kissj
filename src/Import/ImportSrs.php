@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Import;
 
+use DateTimeImmutable;
+use kissj\Application\CsvParser;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
@@ -16,6 +18,8 @@ use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use League\Csv\Exception as LeagueCsvException;
+use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class ImportSrs
@@ -24,22 +28,35 @@ readonly class ImportSrs
         private IstRepository $istRepository,
         private UserService $userService,
         private PaymentService $paymentService,
+        private CsvParser $csvParser,
         private FlashMessagesInterface $flashMessages,
         private TranslatorInterface $translator,
     ) {
     }
 
-    /**
-     * @param array<array<string,string>> $istsData
-     */
-    public function importIst(array $istsData, Event $event): void
+    public function importIst(UploadedFile $istsDataFile, Event $event): void
     {
+        $istsData = [];
+        try {
+            $istsData = $this->csvParser->parseCsv($istsDataFile);
+        } catch (\UnexpectedValueException | LeagueCsvException) {
+            $this->flashMessages->error($this->translator->trans('flash.error.importSrs.invalidCsv'));
+        }
+
         $existingCount = 0;
         $importedCount = 0;
         $errorCount = 0;
 
         foreach ($istsData as $istData) {
-            $dbIst = $this->istRepository->findOneBy(['email' => $istData['email']]);
+            if (in_array($istData['E-mail'], ['""', '', null, 'NULL'], true)) {
+                continue;
+            }
+
+            $istData = array_map(
+                fn (string $value): string => substr($value, 1, -1),
+                $istData,
+            );
+            $dbIst = $this->istRepository->findOneBy(['email' => $istData['E-mail']]);
             if ($dbIst instanceof Ist) {
                 $existingCount++;
                 continue;
@@ -54,11 +71,11 @@ readonly class ImportSrs
         }
 
         $this->flashMessages->info($this->translator->trans(
-            'flash.info.importSrs.istsImported',
+            'flash.info.istsImported',
             [
-                'existingCount' => $existingCount,
-                'importedCount' => $importedCount,
-                'errorCount' => $errorCount,
+                '%existingCount%' => $existingCount,
+                '%importedCount%' => $importedCount,
+                '%errorCount%' => $errorCount,
             ],
         ));
     }
@@ -74,24 +91,26 @@ readonly class ImportSrs
         foreach ([
             $data['Jména a věk dětí, které bereš s sebou, ve formátu „Jan Novák – 5 let“ (více dětí odděl čárkou)'],
             $data['Chci pro své děti využít Obrok školku (do 5 let, více info na webu).'],
-            $data['Chci pro své dítě/děti akcí zajištěné jídlo (budeš kontaktován v rámci doplacení poplatku za jídlo 130 Kč/dítě/den).Děti do 1,5 roku neplatí, předpokládáme zajištěné jídlo vlastní (ve školce bude k dispozici mikrovlnka a rychlovarná konvice).'],
+            $data['Chci pro své dítě/děti akcí zajištěné jídlo (budeš kontaktován v rámci doplacení poplatku za jídlo 130 Kč/dítě/den). Děti do 1,5 roku neplatí, předpokládáme zajištěné jídlo vlastní (ve školce bude k dispozici mikrovlnka a rychlovarná konvice).'],
             $data['Jsem zákonným zástupcem výše vypsaných dětí.'],
             $data['Potvrzuji, že věk výše vypsaných dětí v době konání akce nepřesáhne 10 let.'],
         ] as $key => $value) {
-            $notes['deti.' . $key] = $value;
+            if ($value !== '') {
+                $notes['deti.' . $key] = $value;
+            }
         }
 
         $userStatus = UserStatus::Approved;
         $paymentStatus = PaymentStatus::Waiting;
         $registrationPayDate = null;
-        if (in_array($data['last_payment_date'], ['0', '', null], true) === false) {
+        if (in_array($data['last_payment_date'], ['0', '', null, 'NULL'], true) === false) {
             $registrationPayDate = DateTimeUtils::getDateTime($data['last_payment_date']);
             $paymentStatus = PaymentStatus::Paid;
             $userStatus = UserStatus::Paid;
         }
 
         $continget = EventTypeObrok::CONTINGENT_VOLUNTEER;
-        if ($data['Role'] === 'Organizační tým - registruj se, pokud jsi v týmu Obroku 24') {
+        if ($data['role'] === 'Organizační tým - registruj se, pokud jsi v týmu Obroku 24') {
             $continget = EventTypeObrok::CONTINGENT_ORG;
         }
 
@@ -103,7 +122,7 @@ readonly class ImportSrs
             return null;
         }
 
-        $email = $data['email'];
+        $email = $data['E-mail'];
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $this->flashMessages->warning('flash.warning.importSrs.emailInvalid');
 
@@ -127,14 +146,14 @@ readonly class ImportSrs
             $data['last_name'],
             $data['nick_name'],
             $address,
-            $data['phone'],
-            $data['unit'],
+            $data['phone'] === 'NULL' ? '' : $data['phone'],
+            $data['unit'] === 'NULL' ? '' : $data['unit'],
             DateTimeUtils::getDateTime($data['birthdate']),
             $data['Alergie (konkrétní jídlo, hmyz, pyly apod.)'],
             $data['Léky, které užíváš'],
             $data['Jiné dlouhodobé zdravotní problémy a psychická onemocnění'],
             $data['Stravovací omezení'],
-            DateTimeUtils::getDateTime($data['Datum příjezdu na akci']),
+            $this->getArrivalDate($data['Datum příjezdu na akci']),
             $data['sekce, ve které trávíš nejvíce času'],
             [$data['podsekce, konkrétní pozice']],
             $handbook,
@@ -142,7 +161,7 @@ readonly class ImportSrs
             DateTimeUtils::getDateTime(),
             DateTimeUtils::getDateTime(),
             $registrationPayDate,
-            $this->getVariableSymbol($data['Variabilní symbol'], $event),
+            $this->getVariableSymbol($data['variable_symbol'], $event),
             500,
             $paymentStatus,
             $event->accountNumber,
@@ -152,6 +171,16 @@ readonly class ImportSrs
         );
 
         return $user;
+    }
+
+    private function getArrivalDate(string $arrivaaDate): DateTimeImmutable
+    {
+        return DateTimeUtils::getDateTime(match ($arrivaaDate) {
+            'sobota 25. května' => '2024-05-25',
+            'neděle 26. května' => '2024-05-26',
+            'úterý 28. května do 16:00' => '2024-05-28',
+            default => 'now',
+        });
     }
 
     private function getVariableSymbol(string $variableSymbolRaw, Event $event): string

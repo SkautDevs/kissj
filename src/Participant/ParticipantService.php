@@ -7,7 +7,8 @@ namespace kissj\Participant;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\Event;
-use kissj\FileHandler\FileHandler;
+use kissj\FileHandler\SaveFileHandler;
+use kissj\FileHandler\UploadFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Guest\Guest;
@@ -34,7 +35,8 @@ readonly class ParticipantService
         private FlashMessagesBySession $flashMessages,
         private TranslatorInterface $translator,
         private Mailer $mailer,
-        private FileHandler $fileHandler,
+        private SaveFileHandler $saveFileHandler,
+        private UploadFileHandler $uploadFileHandler,
     ) {
     }
 
@@ -101,43 +103,10 @@ readonly class ParticipantService
         $contentArbiter = $this->getContentArbiterForParticipant($participant);
 
         if ($contentArbiter->uploadFile) {
-            $uploadedFile = $this->resolveUploadedFiles($request);
+            $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
             if ($uploadedFile instanceof UploadedFile) {
-                $this->fileHandler->saveFileTo($participant, $uploadedFile);
+                $this->saveFileHandler->saveFileTo($participant, $uploadedFile);
             }
-        }
-    }
-
-    protected function resolveUploadedFiles(Request $request): ?UploadedFile
-    {
-        $uploadedFiles = $request->getUploadedFiles();
-        if (!array_key_exists('uploadFile', $uploadedFiles) || !$uploadedFiles['uploadFile'] instanceof UploadedFile) {
-            // problem - too big file -> not save anything, because always got nulls in request fields
-            $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
-
-            return null;
-        }
-
-        $errorNum = $uploadedFiles['uploadFile']->getError();
-
-        switch ($errorNum) {
-            case UPLOAD_ERR_OK:
-                $uploadedFile = $uploadedFiles['uploadFile'];
-
-                // check for too-big files
-                if ($uploadedFile->getSize() > 10_000_000) { // 10MB
-                    $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
-
-                    return null;
-                }
-
-                return $uploadedFile;
-            case UPLOAD_ERR_INI_SIZE:
-                $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
-
-                return null;
-            default:
-                return null;
         }
     }
 

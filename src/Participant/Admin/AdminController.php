@@ -8,6 +8,8 @@ use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
+use kissj\FileHandler\UploadFileHandler;
+use kissj\Import\ImportSrs;
 use kissj\Orm\Order;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -34,6 +36,8 @@ class AdminController extends AbstractController
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly AdminService $adminService,
         private readonly UserRepository $userRepository,
+        private readonly ImportSrs $importSrs,
+        private readonly UploadFileHandler $uploadFileHandler,
     ) {
     }
 
@@ -603,6 +607,28 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-troop-management',
+        );
+    }
+
+    public function importIstFromSrs(Request $request, Response $response, Event $event): Response
+    {
+        $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
+        if ($uploadedFile === null) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.importCantStart'));
+
+            return $this->redirect(
+                $request,
+                $response,
+                'admin-dashboard',
+            );
+        }
+
+        $this->importSrs->importIst($uploadedFile, $event);
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-dashboard',
         );
     }
 }

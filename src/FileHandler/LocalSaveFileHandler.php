@@ -7,7 +7,7 @@ namespace kissj\FileHandler;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use Slim\Psr7\UploadedFile;
 
-class LocalFileHandler extends FileHandler
+class LocalSaveFileHandler extends SaveFileHandler
 {
     public function __construct(private readonly string $uploadFolder = __DIR__ . '/../../uploads/')
     {

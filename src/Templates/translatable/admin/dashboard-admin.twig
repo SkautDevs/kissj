@@ -123,7 +123,7 @@
         </div>
     </div>
     <div class="card card-half paid-theme">
-        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}">
+        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}" class="form-group">
             <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
                 <input class="form-control form-wide" name="emailFrom" type="email" required></label>
             <br/>
@@ -135,4 +135,22 @@
                    value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
         </form>
     </div>
+    {% if event.eventType.showIstImport %}
+        <div class="card card-half paid-theme">
+            <form
+                    id="uploadFileForm"
+                    class="form-group"
+                    method="POST"
+                    action="{{ url_for('admin-import-ist', {'eventSlug': event.slug}) }}"
+                    enctype="multipart/form-data"
+            >
+                <label class="form-group">{% trans %}dashboard-admin.import-file{% endtrans %}:<br/>
+                    <input id="uploadFile" class="form-control form-wide" type="file" name="uploadFile" required="required">
+                </label><br/>
+                <input class="btn btn-small"
+                       type="submit"
+                       value="{% trans %}dashboard-admin.import-submit{% endtrans %}">
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -6,7 +6,7 @@ namespace kissj;
 
 use DI\Attribute\Inject;
 use kissj\Event\Event;
-use kissj\FileHandler\FileHandler;
+use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
 use Monolog\Logger;
@@ -35,7 +35,7 @@ abstract class AbstractController
     protected TranslatorInterface $translator;
 
     #[Inject]
-    protected FileHandler $fileHandler;
+    protected SaveFileHandler $fileHandler;
 
     #[Inject]
     protected SentryCollector $sentryCollector;

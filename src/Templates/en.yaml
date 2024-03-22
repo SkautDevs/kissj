@@ -362,6 +362,8 @@ dashboard-admin:
     emailTo: "Buying participant email"
     editParticipant: "Edit details"
     changeNotice: "Edit"
+    import-file: "Import SRS for IST file"
+    import-submit: "Start import"
 stats-admin:
     stats: "Statistics for event"
     numberPatrolParticipants: "Patrol participants in total"
@@ -458,6 +460,7 @@ flash:
         duePaymentDenied: "Participants denied which missed due payment deadline by mail"
         generatedPayments: "Generated payments and emails sent"
         skautisDataPrefilled: "Data from Skautis were prefilled - you still need to fill in the rest of the details"
+        istsImported: "%importedCount% ISTs were imported, %existingCount% ISTs were existing and %errorCount% not imported because error in their data"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         confirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -490,6 +493,7 @@ flash:
         fileTooBig: "Uploaded file is too big, please try upload smaller"
         fileGeneral: "There is something wrong with uploaded file, please try it again."
         fileNotUploaded: "File was not uploaded."
+        importCantStart: "Import file cannot be started"
         notApproved: "Participant is not approved, because it already has approved status"
         registrationNotAllowed: "Lock your registration is not yet allowed. We're opening after %difference%"
         nullParticipants: "One or both participants was not found in system"

@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Utils;
 use kissj\Logging\Sentry\SentryCollector;
 use Slim\Psr7\UploadedFile;
 
-class S3bucketFileHandler extends FileHandler
+class S3BucketSaveFileHandler extends SaveFileHandler
 {
     public function __construct(
         private readonly S3Client $s3client,

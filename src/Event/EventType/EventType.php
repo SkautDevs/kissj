@@ -158,6 +158,11 @@ abstract class EventType
         return false;
     }
 
+    public function showIstImport(): bool
+    {
+        return false;
+    }
+
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return false;

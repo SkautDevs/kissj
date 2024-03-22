@@ -111,15 +111,13 @@ class Route
                             $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
                                 $app->get(
                                     '/showChangeDetails',
-                                    PatrolController::class . '::showChangeDetailsPatrolParticipant'
-                                )
-                                    ->setName('p-showChangeDetails');
+                                    PatrolController::class . '::showChangeDetailsPatrolParticipant',
+                                )->setName('p-showChangeDetails');
 
                                 $app->post(
                                     '/changeDetails',
-                                    PatrolController::class . '::changeDetailsPatrolParticipant'
-                                )
-                                    ->setName('p-changeDetails');
+                                    PatrolController::class . '::changeDetailsPatrolParticipant',
+                                )->setName('p-changeDetails');
 
                                 $app->get('/showDelete', PatrolController::class . '::showDeleteParticipant')
                                     ->setName('p-showDelete');
@@ -159,7 +157,7 @@ class Route
 
                         $app->get('/download/receipt', ParticipantController::class . '::downloadReceipt')
                             ->setName('downloadReceipt')
-							->add(PaidStatusOnlyMiddleware::class)
+                            ->add(PaidStatusOnlyMiddleware::class)
                             ->add(NotGuestMiddleware::class);
 
                         $app->group('', function (RouteCollectorProxy $app) {
@@ -246,15 +244,13 @@ class Route
 
                             $app->post(
                                 '/setPaymentPaired/{paymentId}',
-                                AdminController::class . '::markBankPaymentPaired'
-                            )
-                                ->setName('admin-set-payment-paired');
+                                AdminController::class . '::markBankPaymentPaired',
+                            )->setName('admin-set-payment-paired');
 
                             $app->post(
                                 '/setPaymentUnrelated/{paymentId}',
-                                AdminController::class . '::markBankPaymentUnrelated'
-                            )
-                                ->setName('admin-set-payment-unrelated');
+                                AdminController::class . '::markBankPaymentUnrelated',
+                            )->setName('admin-set-payment-unrelated');
                         });
 
                         $app->get('/showTransferPayment', AdminController::class . '::showTransferPayment')
@@ -288,6 +284,9 @@ class Route
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
                     });
+
+                    $app->post('/import/ist', AdminController::class . '::importIstFromSrs')
+                        ->setName('admin-import-ist');
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });
@@ -317,7 +316,7 @@ class Route
         });
 
         $app->get($app->getBasePath() . '/{eventSlug}', EventController::class . '::redirectEvent')
-        	->setName('redirectEvent');
+            ->setName('redirectEvent');
 
         return $app;
     }

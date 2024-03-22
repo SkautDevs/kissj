@@ -14,7 +14,7 @@ parameters:
 		 - 
 		     # 3rd party library
 		     message: '#Call to an undefined method Aws\\S3\\S3Client::HeadObject\(\)\.#'
-		     path: src\FileHandler\S3bucketFileHandler.php
+		     path: src\FileHandler\S3BucketSaveFileHandler.php
 		 - 
 		     # 3rd party library
 		     message: '#Access to an undefined property Skautis\\Skautis::\$UserManagement\.#'

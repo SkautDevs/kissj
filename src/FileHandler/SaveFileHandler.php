@@ -5,7 +5,7 @@ namespace kissj\FileHandler;
 use kissj\Participant\Participant;
 use Slim\Psr7\UploadedFile;
 
-abstract class FileHandler
+abstract class SaveFileHandler
 {
     abstract public function getFile(string $filename): File;
 

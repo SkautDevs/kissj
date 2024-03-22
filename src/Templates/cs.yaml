@@ -362,6 +362,8 @@ dashboard-admin:
     emailTo: "Email kupujícího účastníka"
     editParticipant: "Editovat údaje"
     changeNotice: "Upravit"
+    import-file: "Import SRS souboru pro IST"
+    import-submit: "Start importu"
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"
@@ -458,6 +460,7 @@ flash:
         duePaymentDenied: "Kvůli nezaplacení emaily odemknuto účastníků"
         generatedPayments: "Vygenerováno plateb a rozposláno emailů"
         skautisDataPrefilled: "Data ze skautISu byla předvyplněna - je stále potřeba doplnit zbytek údajů"
+        istsImported: "%importedCount% ISTs bylo importováno, %existingCount% ISTs bylo již v databázi a %errorCount% nebylo importováno kvůli chybě v datech"
     success:
         linkSent: "E-mail poslán! Přihlaš se pomocí odkazu v něm"
         confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -490,6 +493,7 @@ flash:
         fileTooBig: "Nahraný soubor je příliš velký, nahraj prosím menší"
         fileGeneral: "S nahraným souborem je něco v nepořádku, prosím, zkus to znovu."
         fileNotUploaded: "Soubor nebyl nahrán."
+        importCantStart: "Soubor importu se nepodařilo načíst"
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"

@@ -219,7 +219,7 @@ readonly class UserService
         $payment->iban = $iban;
         $payment->swift = $swift;
         $payment->due = $due;
-        $payment->note = 'generated in import';
+        $payment->note = $event->slug . ' ' . $participant->getFullName();
         $payment->participant = $participant;
 
         $this->paymentRepository->persist($payment);

@@ -84,6 +84,12 @@ class EventTypeObrok extends EventType
         ];
     }
 
+    #[\Override]
+    public function showIstImport(): bool
+    {
+        return true;
+    }
+
     /**
      * @inheritDoc
      */
