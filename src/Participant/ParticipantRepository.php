@@ -60,6 +60,26 @@ class ParticipantRepository extends Repository
         /** @var Participant[] $participants */
         $participants = $this->createEntities($rows);
 
+        if (in_array(ParticipantRole::PatrolParticipant, $roles, true)) {
+            $qb = $this->createFluent();
+
+            $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+            $qb->join('user')->as('u')->on('u.id = pl.user_id');
+
+            $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+            $qb->where('u.status IN %in', $statuses);
+            $qb->where('u.event_id = %i', $event->id);
+
+            $this->addOrdersBy($qb, $orders);
+
+            if ($adminUser instanceof User) {
+                $this->addFilterAdminParticipants($qb, $adminUser);
+            }
+            $rows = $qb->fetchAll();
+            /** @var Participant[] $participants */
+            $participants = [...$participants, ...$this->createEntities($rows)];
+        }
+
         if ($filterEmptyParticipants) {
             $participants = $this->filterEmptyParticipants($participants);
         }

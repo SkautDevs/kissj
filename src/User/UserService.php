@@ -122,7 +122,7 @@ class UserService
         $participant->role = $participantRole;
         $this->participantRepository->persist($participant);
 
-        $user->role = UserRole::Participant;
+        $user->role = UserRole::Participant; // TODO move into entity creation (simple)
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
 
