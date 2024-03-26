@@ -266,6 +266,28 @@ class ParticipantRepository extends Repository
         return $statistics;
     }
 
+    /**
+     * @return array<string,int>
+     */
+    public function getIstArrivalStatistic(
+        Event $event,
+    ): array {
+        $qb = $this->connection->select('participant.arrival_date, COUNT(*)')->from($this->getTable());
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.role = %s', ParticipantRole::Ist);
+        $qb->where('u.status = %s', UserStatus::Paid);
+
+        $qb->groupBy('participant.arrival_date');
+        $qb->orderBy('participant.arrival_date');
+
+        /** @var array<string,int> $rows */
+        $rows = $qb->fetchPairs('arrival_date', 'count');
+
+        return $rows;
+    }
+
     public function getStatistic(
         Event $event,
         ParticipantRole $role,

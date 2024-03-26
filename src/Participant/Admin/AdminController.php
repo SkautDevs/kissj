@@ -43,7 +43,20 @@ class AdminController extends AbstractController
 
     public function showDashboard(Response $response, Event $event): Response
     {
-        $contingents = $event->getEventType()->getContingents();
+        $eventType = $event->getEventType();
+        $contingentStatistic = [];
+        if ($eventType->showContingentPatrolStats()) {
+            $contingentStatistic = $this->participantRepository->getContingentStatistic(
+                $event,
+                ParticipantRole::PatrolLeader,
+                $eventType->getContingents(),
+            );
+        }
+
+        $istArrivalStatistic = [];
+        if ($eventType->getContentArbiterIst()->arrivalDate) {
+            $istArrivalStatistic = $this->participantRepository->getIstArrivalStatistic($event);
+        }
 
         return $this->view->render(
             $response,
@@ -54,11 +67,8 @@ class AdminController extends AbstractController
                 'troopLeaders' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopLeader),
                 'troopParticipants' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopParticipant),
                 'guests' => $this->participantRepository->getStatistic($event, ParticipantRole::Guest),
-                'contingentsPatrolStatistic' => $this->participantRepository->getContingentStatistic(
-                    $event,
-                    ParticipantRole::PatrolLeader,
-                    $contingents,
-                ),
+                'contingentsPatrolStatistic' => $contingentStatistic,
+                'istArrivalStatistic' => $istArrivalStatistic,
             ],
         );
     }
