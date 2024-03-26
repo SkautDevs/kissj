@@ -38,6 +38,7 @@ readonly class ImportSrs
     {
         $istsData = [];
         try {
+            /** @var array<array<string,string>> $istsData */
             $istsData = $this->csvParser->parseCsv($istsDataFile);
         } catch (\UnexpectedValueException | LeagueCsvException) {
             $this->flashMessages->error($this->translator->trans('flash.error.importSrs.invalidCsv'));

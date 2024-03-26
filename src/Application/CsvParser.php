@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use Iterator;
 use League\Csv\Exception as LeagueCsvException;
 use League\Csv\Reader;
 use Psr\Http\Message\StreamInterface;
@@ -15,9 +16,8 @@ class CsvParser
     /**
      * @throws UnexpectedValueException
      * @throws LeagueCsvException
-     * @return array<array<string,string>>
      */
-    public function parseCsv(UploadedFile $file): array
+    public function parseCsv(UploadedFile $file): Iterator
     {
         /** @var StreamInterface|null $stream */
         $stream = $file->getStream();
@@ -28,9 +28,6 @@ class CsvParser
         $csv = Reader::createFromString($stream->getContents());
         $csv->setHeaderOffset(0);
 
-        /** @var array<array<string,string>> $records */
-        $records = $csv->getRecords();
-
-        return $records;
+        return $csv->getRecords();
     }
 }
