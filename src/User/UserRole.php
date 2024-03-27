@@ -25,6 +25,7 @@ enum UserRole: string
     {
         return [
             self::Admin,
+            self::IstAdmin,
             self::ContingentAdminCs,
             self::ContingentAdminSk,
             self::ContingentAdminPl,
@@ -36,10 +37,26 @@ enum UserRole: string
         ];
     }
 
-    public function isEligibleToConfirmPayments(): bool
+    public function isEligibleToHandlePayments(): bool
     {
         return match ($this) {
             self::Admin, self::ContingentAdminCs, self::ContingentAdminSk => true,
+            default => false,
+        };
+    }
+
+    public function isEligibleToManageTroops(): bool
+    {
+        return match ($this) {
+            self::Admin, self::ContingentAdminCs, self::ContingentAdminSk => true,
+            default => false,
+        };
+    }
+
+    public function isEligibleToImportIst(): bool
+    {
+        return match ($this) {
+            self::Admin => true,
             default => false,
         };
     }

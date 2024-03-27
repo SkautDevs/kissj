@@ -119,7 +119,7 @@ class ParticipantRepository extends Repository
                 // allow all
                 break;
             case UserRole::IstAdmin:
-                // TODO
+                $qb->where('participant.role = %s', ParticipantRole::Ist);
                 break;
             case UserRole::ContingentAdminCs:
                 $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_CZECHIA);

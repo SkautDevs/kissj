@@ -21,7 +21,7 @@ class AdminPaymentsOnlyMiddleware extends BaseMiddleware
     {
         $user = $request->getAttribute('user');
 
-        if ($user instanceof User && $user->role->isEligibleToConfirmPayments() === false) {
+        if ($user instanceof User && $user->role->isEligibleToHandlePayments() === false) {
             $this->flashMessages->error($this->translator->trans('flash.error.adminPaymentsOnly'));
 
             return $this->createRedirectResponse($request, 'getDashboard');

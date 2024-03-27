@@ -103,11 +103,11 @@
                    class="btn">{% trans %}dashboard-admin.open{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
-                {% if user.role.isEligibleToConfirmPayments and event.automaticPaymentPairing %}
+                {% if user.role.isEligibleToHandlePayments and event.automaticPaymentPairing %}
                     <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
                 {% endif %}
-                {% if user.role.isEligibleToConfirmPayments %}
+                {% if user.role.isEligibleToHandlePayments %}
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
                 {% endif %}
@@ -115,7 +115,7 @@
                    class="btn">{% trans %}dashboard-admin.showStats{% endtrans %}</a><br/>
             </div>
             <div>
-                {% if event.allowTroops %}
+                {% if event.allowTroops and user.role.isEligibleToManageTroops %}
                     <a href="{{ url_for('admin-troop-management', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.troopManagement{% endtrans %}</a><br/>    
                 {% endif %}
@@ -128,20 +128,22 @@
             </div>
         </div>
     </div>
-    <div class="card card-half paid-theme">
-        <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}" class="form-group">
-            <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
-                <input class="form-control form-wide" name="emailFrom" type="email" required></label>
-            <br/>
-            <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
-                <input class="form-control form-wide" name="emailTo" type="email" required></label>
-            <br/>
-            <input class="btn btn-small"
-                   type="submit"
-                   value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
-        </form>
-    </div>
-    {% if event.eventType.showIstImport %}
+    {% if user.role.isEligibleToHandlePayments %}
+        <div class="card card-half paid-theme">
+            <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}" class="form-group">
+                <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
+                    <input class="form-control form-wide" name="emailFrom" type="email" required></label>
+                <br/>
+                <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
+                    <input class="form-control form-wide" name="emailTo" type="email" required></label>
+                <br/>
+                <input class="btn btn-small"
+                       type="submit"
+                       value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
+            </form>
+        </div>
+    {% endif %}
+    {% if event.eventType.showIstImport and user.role.isEligibleToImportIst  %}
         <div class="card card-half paid-theme">
             <form
                     id="uploadFileForm"
