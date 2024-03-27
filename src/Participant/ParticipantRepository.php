@@ -272,18 +272,18 @@ class ParticipantRepository extends Repository
     public function getIstArrivalStatistic(
         Event $event,
     ): array {
-        $qb = $this->connection->select('participant.arrival_date, COUNT(*)')->from($this->getTable());
+        $qb = $this->connection->select('date(participant.arrival_date) as ad, COUNT(*)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('participant.role = %s', ParticipantRole::Ist);
         $qb->where('u.status = %s', UserStatus::Paid);
 
-        $qb->groupBy('participant.arrival_date');
-        $qb->orderBy('participant.arrival_date');
+        $qb->groupBy('date(participant.arrival_date)');
+        $qb->orderBy('date(participant.arrival_date)');
 
         /** @var array<string,int> $rows */
-        $rows = $qb->fetchPairs('arrival_date', 'count');
+        $rows = $qb->fetchPairs('ad', 'count');
 
         return $rows;
     }
