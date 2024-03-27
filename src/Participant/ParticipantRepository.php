@@ -288,6 +288,27 @@ class ParticipantRepository extends Repository
         return $rows;
     }
 
+    /**
+     * @return array<string,int>
+     */
+    public function getFoodStatistic(
+        Event $event,
+    ): array {
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('u.status = %s', UserStatus::Paid);
+
+        $qb->groupBy('participant.food_preferences');
+        $qb->orderBy('participant.food_preferences');
+
+        /** @var array<string,int> $rows */
+        $rows = $qb->fetchPairs('f', 'count');
+
+        return $rows;
+    }
+
     public function getStatistic(
         Event $event,
         ParticipantRole $role,

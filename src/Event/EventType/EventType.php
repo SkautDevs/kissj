@@ -158,6 +158,11 @@ abstract class EventType
         return false;
     }
 
+    public function showFoodStats(): bool
+    {
+        return true;
+    }
+
     public function showIstImport(): bool
     {
         return false;

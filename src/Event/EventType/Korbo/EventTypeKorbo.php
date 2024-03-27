@@ -12,6 +12,7 @@ class EventTypeKorbo extends EventType
 {
     private const int SCARF_PRICE = 100;
 
+    #[\Override]
     protected function getPrice(Participant $participant): int
     {
         $price = 600;
@@ -22,11 +23,13 @@ class EventTypeKorbo extends EventType
         return $price;
     }
 
+    #[\Override]
     public function isUnlockExpiredButtonAllowed(): bool
     {
         return true;
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
@@ -42,20 +45,29 @@ class EventTypeKorbo extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getTranslationFilePaths(): array
     {
         return ["cs" => __DIR__ . "/cs.yaml"];
     }
 
+    #[\Override]
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/stylesKorbo.css';
     }
 
+    #[\Override]
     public function getLanguages(): array
     {
         return [
             'cs' => '🇨🇿 Česky',
         ];
+    }
+
+    #[\Override]
+    public function showFoodStats(): bool
+    {
+        return false;
     }
 }

@@ -323,6 +323,7 @@ dashboard-admin:
     count: "counts"
     contingentPatrolStats: "Contingent patrol statistics"
     istArrivalStats: "Arrivals of"
+    foodCount: "Food count"
     limitIst: "Limit for IST"
     limitPatrol: "Limit for Patrols"
     limitTroop: "Limit for Troops"

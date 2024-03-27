@@ -58,6 +58,11 @@ class AdminController extends AbstractController
             $istArrivalStatistic = $this->participantRepository->getIstArrivalStatistic($event);
         }
 
+        $foodStatistic = [];
+        if ($eventType->showFoodStats()) {
+            $foodStatistic = $this->participantRepository->getFoodStatistic($event);
+        }
+
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
@@ -69,6 +74,7 @@ class AdminController extends AbstractController
                 'guests' => $this->participantRepository->getStatistic($event, ParticipantRole::Guest),
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
+                'foodStatistic' => $foodStatistic,
             ],
         );
     }

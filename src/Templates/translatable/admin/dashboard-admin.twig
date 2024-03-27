@@ -93,6 +93,12 @@
                 <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
             {% endfor %}
         {% endif %}
+        {% if event.eventType.showFoodStats() %}
+            <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
+            {% for food, count in foodStatistic %}
+                <p>{{ food|trans }}: <b>{{ count }}</b></p>
+            {% endfor %}
+        {% endif %}
     </div>
     <br>
     <div class="card paid-theme">
