@@ -88,8 +88,8 @@
             </div>
         {% endif %}
         {% if event.eventType.getContentArbiterIst().arrivalDate %}
-            <h3>{% trans %}dashboard-admin.istArrivalStats{% endtrans %}</h3>
-            {% for date, count  in istArrivalStatistic %}
+            <h3>{% trans %}dashboard-admin.istArrivalStats{% endtrans %} {% trans %}role.ist{% endtrans %}</h3>
+            {% for date, count in istArrivalStatistic %}
                 <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
             {% endfor %}
         {% endif %}

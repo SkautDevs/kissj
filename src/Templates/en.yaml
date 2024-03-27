@@ -322,7 +322,7 @@ dashboard-admin:
     stats: "Statistics"
     count: "counts"
     contingentPatrolStats: "Contingent patrol statistics"
-    istArrivalStats: "Příjezdy IST"
+    istArrivalStats: "Arrivals of"
     limitIst: "Limit for IST"
     limitPatrol: "Limit for Patrols"
     limitTroop: "Limit for Troops"
