@@ -177,7 +177,7 @@ readonly class AdminService
         }
 
         $correctPayment->participant = $participantTo;
-        $this->paymentRepository->persist($correctPayment);
+        $this->paymentRepository-> persist($correctPayment);
 
         return $correctPayment;
     }

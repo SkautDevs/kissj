@@ -12,22 +12,34 @@ use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
+use kissj\Participant\Ist\IstService;
+use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
+use kissj\User\UserRepository;
+use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use League\Csv\Exception as LeagueCsvException;
+use LeanMapper\Exception\InvalidStateException;
+use setasign\Fpdi\PdfParser\Type\PdfNull;
 use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class ImportSrs
 {
+
+
     public function __construct(
+        private IstService $istService,
         private IstRepository $istRepository,
         private UserService $userService,
+        private UserRepository $userRepository,
         private PaymentService $paymentService,
+        private ParticipantRepository $participantRepository,
         private CsvParser $csvParser,
         private FlashMessagesInterface $flashMessages,
         private TranslatorInterface $translator,
@@ -62,8 +74,16 @@ readonly class ImportSrs
                 $existingCount++;
                 continue;
             }
-
-            $newIst = $this->mapDataIntoNewIst($istData, $event);
+            $dbUser = $this->userRepository->findUserFromEmail($istData['E-mail'], $event);
+            if ($dbUser instanceof User) {
+                if ($dbUser->status === UserStatus::Approved || $dbUser->status === UserStatus::Paid) {
+                    $errorCount++;
+                    continue;
+                }
+                $newIst = $this->mapDataIntoNewIst($istData, $event, $dbUser);
+            } else {
+                $newIst = $this->mapDataIntoNewIst($istData, $event);
+            }
             if ($newIst === null) {
                 $errorCount++;
             } else {
@@ -80,11 +100,11 @@ readonly class ImportSrs
             ],
         ));
     }
-
     /**
      * @param array<string,string> $data
+     * @throws InvalidStateException
      */
-    private function mapDataIntoNewIst(array $data, Event $event): ?User
+    private function mapDataIntoNewIst(array $data, Event $event, ?User $existingUser = null): ?Participant
     {
         $notes = [];
         $notes['id'] = $data['id'];
@@ -110,9 +130,9 @@ readonly class ImportSrs
             $userStatus = UserStatus::Paid;
         }
 
-        $continget = EventTypeObrok::CONTINGENT_VOLUNTEER;
+        $contingent = EventTypeObrok::CONTINGENT_VOLUNTEER;
         if ($data['role'] === 'Organizační tým - registruj se, pokud jsi v týmu Obroku 24') {
-            $continget = EventTypeObrok::CONTINGENT_ORG;
+            $contingent = EventTypeObrok::CONTINGENT_ORG;
         }
 
 
@@ -135,19 +155,29 @@ readonly class ImportSrs
             'Ano' => true,
             default => false,
         };
-
-        $user = $this->userService->createSkautisUserParticipantPayment(
+        if (!$existingUser) {
+            $existingUser = $this->userService->createSkautisUser(
+                $event,
+                (int)$skautisUserId,
+                $email,
+                $userStatus,
+            );
+        } else {
+            $participant  = $this->participantRepository->findParticipantFromUser($existingUser);
+            if ($participant !== null) {
+                $this->participantRepository->delete($participant);
+            }
+        }
+        return $this->istService->createIstPayment(
+            $existingUser,
             $event,
-            (int)$skautisUserId,
-            $email,
-            $userStatus,
-            ParticipantRole::Ist,
-            $continget,
+            $contingent,
             $data['first_name'],
             $data['last_name'],
             $data['nick_name'],
             $address,
             $data['phone'] === 'NULL' ? '' : $data['phone'],
+            $email,
             $data['unit'] === 'NULL' ? '' : $data['unit'],
             DateTimeUtils::getDateTime($data['birthdate']),
             $data['Alergie (konkrétní jídlo, hmyz, pyly apod.)'],
@@ -170,8 +200,6 @@ readonly class ImportSrs
             $event->swift,
             DateTimeUtils::getDateTime('now + 14 days'),
         );
-
-        return $user;
     }
 
     private function getArrivalDate(string $arrivaaDate): DateTimeImmutable
