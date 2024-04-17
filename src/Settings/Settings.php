@@ -41,7 +41,7 @@ use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
-use kissj\Middleware\PaidStatusOnlyMiddleware;
+use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
@@ -181,7 +181,7 @@ class Settings
             NonChoosedRoleOnlyMiddleware::class => autowire(),
             NonLoggedOnlyMiddleware::class => autowire(),
             OpenStatusOnlyMiddleware::class => autowire(),
-            PaidStatusOnlyMiddleware::class => autowire(),
+            PaidCancelledStatusOnlyMiddleware::class => autowire(),
             ParticipantController::class => autowire(),
             ParticipantRepository::class => autowire(),
             ParticipantService::class => autowire(),

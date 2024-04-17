@@ -363,6 +363,7 @@ dashboard-admin:
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
     editParticipant: "Editovat údaje"
+    cancelParticipant: "Účastník nedorazí :("
     changeNotice: "Upravit"
     import-file: "Import SRS souboru pro IST"
     import-submit: "Start importu"
@@ -477,6 +478,7 @@ flash:
         troopTied: "Účastník úspešne pridaný do skupiny!"
         participantUntied: "Účastník úspěšně odepnut od skupiny!"
         roleChanged: "Rola účastníka úspěšně změněna!"
+        participantCancelled: "Účastník úspěšně označen že nejede!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -526,6 +528,7 @@ flash:
         troopHasParticipantsCannotChangeRole: "Skupina má účastníky, změna role není možná"
         sameRoleCannotChangeRole: "Účastník už tuto roli má, změna role není možná"
         notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
+        cancelPatrolLeaderNotSupported: "Označení patroly že nepřijede není zatím podporováno"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"
@@ -547,3 +550,4 @@ flash:
         receiptNotAllowed: "Potvrzení o přijetí platby není pro tuto akci povoleno"
         cannotAccessTemp: "Problém přístupu k temporary složce. Zkus to znovu prosím za pár minut"
         transferFailed: "Přesun platby se nepovedl"
+        participantNotCancelled: "Účastník nemůže být označen, že nejede, pravděpodobně protože nebyl nalezen"
