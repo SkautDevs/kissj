@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Obrok;
 
+use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
@@ -71,6 +72,23 @@ class EventTypeObrok extends EventType
         $ca->printedHandbook = true;
 
         return $ca;
+    }
+
+    #[\Override]
+    public function getContentArbiterGuest(): ContentArbiterGuest
+    {
+        $ca = parent::getContentArbiterGuest();
+        $ca->gender = false;
+        $ca->address = false;
+        $ca->contingent = false;
+        $ca->medicaments = true;
+        $ca->printedHandbook = false;
+        $ca->arrivalDate = true;
+        $ca->departureDate = true;
+        $ca->languages = true;
+
+        return $ca;
+
     }
 
     /**
