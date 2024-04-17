@@ -34,13 +34,20 @@ login:
 login-help:
     text: "<h2>Přihlašovací systém kissj</h2><h3>Jak to vlastně funguje?</h3><p>Přihlašování do registračního systému kissj na Obroku probíhá přes skautIS účet.</p><p>Po přihlášení se s účtem skautIS tě kissj přesměruje na stránku, kde budeš moci vyplnit svou registraci.</p><p>Zůstávaš přihlášen/a dokud se ručně neodhlásíš.</p><p>Po odhlášení nemá nikdo přístup k tvým informacím, dokonce ani ze stejného zařízení.</p><h3>Jak se propojit se skupinou?</h3><p>Při přihlašování je ti předán kód pro připnutí, ten pošleš své/mu vedoucímu skupiny, dovyplníš všechny potřebné informace a poté se uzamkneš.</p><p>Vedoucí tě při svém přihlašování připne ke své skupině. Ve chvíli, kdy budete ve skupině připnutí všichni, vedoucí skupiny uzamkne i svoji registraci</p><h3>Stále si nevíš rady?</h3><p>Podívej se na <a href='https://obrok24.cz'>web obroku</a>, kde jsme pro tebe připravili podrobný <a href='https://obrok24.cz/nav'>návod na registraci</a> </p><h3>Otázky?</h3><p>Pokud by se měl vyskytnout problém s přihlašováním, napiš e-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou.</p>"
     backToLogin: "Zpět k přihlášení"
+
+role:
+    guest: "jedu se speciální jednotkou"
+
 detail:
     patrolName: "Název skupiny"
     patrolNamePlaceholder: "Jméno vaší skupiny"
+    language: "jednotka, se kterou na Obrok jedeš"
+    language-placeholder: "možnosti: SOS, SZT, Uši pro duši, Radio Tým "
     contingentTitle: "Pozice"
     contingent:
         volunteer: "💪 Dobrovolkyně nebo dobrovolník"
         org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
+
 dashboard:
     youWantDelete: "Opravdu chceš smazat účastníka*účastnici "
     youWantUntie: "Opravdu chceš odepnout účastníka*účastnici "
