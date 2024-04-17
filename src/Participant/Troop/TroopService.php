@@ -72,7 +72,7 @@ readonly class TroopService
             $valid = false;
         }
 
-        if ($tl !== null && $tl->getUserButNotNull()->status === UserStatus::Paid) {
+        if ($tl !== null && $tl->getUserButNotNull()->status->isPaidOrCancelled()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderPaidTieNotPossible'));
             $valid = false;
         }
@@ -83,7 +83,7 @@ readonly class TroopService
             $valid = false;
         }
 
-        if ($tp !== null && $tp->getUserButNotNull()->status === UserStatus::Paid) {
+        if ($tp !== null && $tp->getUserButNotNull()->status->isPaidOrCancelled()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidTieNotPossible'));
             $valid = false;
         }
@@ -111,7 +111,7 @@ readonly class TroopService
             $valid = false;
         }
 
-        if ($tp !== null && $tp->getUserButNotNull()->status === UserStatus::Paid) {
+        if ($tp !== null && $tp->getUserButNotNull()->status->isPaidOrCancelled()) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidUntieNotPossible'));
             $valid = false;
         }

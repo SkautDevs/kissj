@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
 use kissj\Event\Event;
@@ -352,5 +353,26 @@ class ParticipantRepository extends Repository
     public function findOneByEntryCode(string $entryCode): ?Participant
     {
         return $this->findOneBy(['entry_code' => $entryCode]);
+    }
+    
+    public function findParticipantFromId(int $participantId, Event $event): ?Participant
+    {
+        $qb = $this->connection->select('participant.*')->from($this->getTable());
+
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('participant.id = %i', $participantId);
+        $qb->where('u.event_id = %i', $event->id);
+
+        /** @var ?Row $row */
+        $row = $qb->fetch();
+        if ($row === null) {
+            return null;
+        }
+
+        /** @var Participant $participant */
+        $participant = $this->createEntity($row);
+
+        return $participant;
     }
 }

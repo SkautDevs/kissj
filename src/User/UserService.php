@@ -258,4 +258,12 @@ readonly class UserService
 
         return $user;
     }
+
+    public function setUserCancelled(User $user): User
+    {
+        $user->status = UserStatus::Cancelled;
+        $this->userRepository->persist($user);
+
+        return $user;
+    }
 }

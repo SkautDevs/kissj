@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
+use kissj\Participant\Patrol\PatrolLeader;
+use RuntimeException;
 use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
@@ -11,6 +13,7 @@ use kissj\Event\Event;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\Import\ImportSrs;
 use kissj\Orm\Order;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
@@ -555,6 +558,29 @@ class AdminController extends AbstractController
             $response,
             'admin-show-role',
             ['participantId' => (string)$participantId],
+        );
+    }
+
+    public function cancel(Request $request, Response $response, int $participantId, Event $event): Response
+    {
+        $participant = $this->participantRepository->findParticipantFromId($participantId, $event);
+
+        if ($participant instanceof PatrolLeader) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.cancelPatrolLeaderNotSupported'));
+        } elseif ($participant instanceof Participant) {
+            $this->participantService->cancelParticipant($participant);
+            $this->flashMessages->success($this->translator->trans('flash.success.participantCancelled'));
+        } else {
+            $this->flashMessages->error($this->translator->trans('flash.error.participantNotCancelled'));
+            $this->sentryCollector->collect(
+                new RuntimeException('Participant with ID ' . $participantId . ' during cancellation not found'),
+            );
+        }
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-show-stats',
         );
     }
 
