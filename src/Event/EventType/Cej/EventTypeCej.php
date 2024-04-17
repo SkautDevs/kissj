@@ -237,8 +237,9 @@ class EventTypeCej extends EventType
             self::CONTINGENT_CZECHIA,
             self::CONTINGENT_SLOVAKIA,
             self::CONTINGENT_POLAND,
-            self::CONTINGENT_HUNGARY
             => 9,
+            self::CONTINGENT_HUNGARY,
+            => 6,
 
             default => $event->minimalPatrolParticipantsCount ?? 0,
         };
