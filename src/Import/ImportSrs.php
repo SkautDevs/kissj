@@ -69,8 +69,7 @@ readonly class ImportSrs
                 fn (string $value): string => substr($value, 1, -1),
                 $istData,
             );
-            $dbIst = $this->istRepository->findIst($istData['E-mail'], $event);
-            if ($dbIst instanceof Ist) {
+			if ($this->istRepository->isIstExisting($istData['E-mail'], $event)) {
                 $existingCount++;
                 continue;
             }

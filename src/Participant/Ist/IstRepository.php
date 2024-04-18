@@ -24,7 +24,7 @@ use kissj\Payment\PaymentStatus;
  */
 class IstRepository extends Repository
 {
-    public function findIst(string $email, Event $event): ?Ist
+    public function isIstExisting(string $email, Event $event): bool
     {
         $qb = $this->createFluent();
 
@@ -33,12 +33,9 @@ class IstRepository extends Repository
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
         $qb->where('u.event_id = %i', $event->id);
 
-
-        /** @var Row $row */
+        /** @var ?Row $row */
         $row = $qb->fetch();
-        /** @var ?Ist $ist */
-        $ist = $this->createEntity($row);
 
-        return $ist;
-    }
+		return $row instanceof Row;
+	}
 }

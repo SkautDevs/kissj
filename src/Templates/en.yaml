@@ -363,6 +363,7 @@ dashboard-admin:
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
     editParticipant: "Edit details"
+    cancelParticipant: "Participant is not going :("
     changeNotice: "Edit"
     import-file: "Import SRS for IST file"
     import-submit: "Start import"
@@ -477,6 +478,7 @@ flash:
         troopTied: "Participant successfully added to the group!"
         participantUntied: "Participant successfully untied from the group!"
         roleChanged: "Role successfully changed!"
+        participantCancelled: "Participant was successfully cancelled"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -526,6 +528,7 @@ flash:
         troopHasParticipantsCannotChangeRole: "Troop has participants, role cannot be changed"
         sameRoleCannotChangeRole: "Cannot change role to the same role"
         notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
+        cancelPatrolLeaderNotSupported: "Canceling patrol leader is not supported"
     error:
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"
@@ -547,3 +550,4 @@ flash:
         receiptNotAllowed: "Receipt cannot be generated, because it is not allowed for this evet"
         cannotAccessTemp: "Cannot access temporary file. Try it again later please."
         transferFailed: "Payment transfer failed"
+        participantNotCancelled: "Participant was not cancelled, probably not found"

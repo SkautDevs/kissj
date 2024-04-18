@@ -390,6 +390,13 @@ readonly class ParticipantService
         return $participant;
     }
 
+    public function cancelParticipant(Participant $participant): Participant
+    {
+        $this->userService->setUserCancelled($participant->getUserButNotNull());
+
+        return $participant;
+    }
+
     /**
      * @param Participant[] $participants
      */

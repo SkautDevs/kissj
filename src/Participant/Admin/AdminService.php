@@ -36,7 +36,7 @@ readonly class AdminService
     public function isPaymentTransferPossible(
         ?Participant $participantFrom,
         ?Participant $participantTo,
-        FlashMessagesInterface $flash // use for outputting friendly user messages what is wrong
+        FlashMessagesInterface $flash,// use for outputting friendly user messages what is wrong
     ): bool {
         $isPossible = true;
 

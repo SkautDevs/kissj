@@ -18,7 +18,7 @@ use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\NotGuestMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
-use kissj\Middleware\PaidStatusOnlyMiddleware;
+use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
@@ -157,7 +157,7 @@ class Route
 
                         $app->get('/download/receipt', ParticipantController::class . '::downloadReceipt')
                             ->setName('downloadReceipt')
-                            ->add(PaidStatusOnlyMiddleware::class)
+                            ->add(PaidCancelledStatusOnlyMiddleware::class)
                             ->add(NotGuestMiddleware::class);
 
                         $app->group('', function (RouteCollectorProxy $app) {
@@ -197,6 +197,9 @@ class Route
 
                         $app->post('/change', AdminController::class . '::changeRole')
                             ->setName('admin-change-role');
+
+                        $app->post('/cancel', AdminController::class . '::cancel')
+                            ->setName('admin-cancel-participant');
                     });
 
                     $app->get('/showStats', AdminController::class . '::showStats')

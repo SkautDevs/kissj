@@ -22,6 +22,17 @@
     {% endfor %}
 {% endif %}
 
+{% if person is not PatrolParticipant %}
+    <form
+        method="POST"
+        action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': person.id}) }}"
+        style="display: inline-block;"
+    >
+        <input type="submit" class="btn btn-mini" value="{% trans %}dashboard-admin.cancelParticipant{% endtrans %}">
+    </form>
+{% endif %}
+{# TODO add placeholder for PL "not supported yet" #}
+
 <a
     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': person.id}) }}"
     class="btn btn-mini">
