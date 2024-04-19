@@ -354,7 +354,7 @@ class ParticipantRepository extends Repository
     {
         return $this->findOneBy(['entry_code' => $entryCode]);
     }
-    
+
     public function findParticipantFromId(int $participantId, Event $event): ?Participant
     {
         $qb = $this->connection->select('participant.*')->from($this->getTable());
