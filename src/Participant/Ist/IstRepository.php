@@ -30,6 +30,6 @@ class IstRepository extends Repository
         /** @var ?Row $row */
         $row = $qb->fetch();
 
-		return $row instanceof Row;
-	}
+        return $row instanceof Row;
+    }
 }
