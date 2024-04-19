@@ -126,9 +126,6 @@ abstract class AbstractController
     protected function getParameterFromQuery(Request $request, string $parameterName): string
     {
         $queryParams = $request->getQueryParams();
-        if (!is_array($queryParams)) {
-            throw new \RuntimeException('getQueryParams() did not returned array');
-        }
 
         if (!array_key_exists($parameterName, $queryParams)) {
             throw new \RuntimeException('query parameter does not contain key ' . $parameterName);

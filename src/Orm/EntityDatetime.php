@@ -19,7 +19,7 @@ class EntityDatetime extends Entity
 
     public function dateFromString(DateTimeInterface|string|null $value): ?DateTimeInterface
     {
-        if (empty($value)) {
+        if ($value === null) {
             return null;
         }
 

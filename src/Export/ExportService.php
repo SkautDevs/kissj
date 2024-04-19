@@ -155,7 +155,7 @@ readonly class ExportService
             $adminUser,
         );
 
-        $rows[] = [
+        $rows = [[
             'id', // 0
             'eventName',
             'role',
@@ -198,7 +198,7 @@ readonly class ExportService
             'istSkills',
             'istPreferredPosition', // 40
             'driverLicense',
-        ];
+        ]];
 
         foreach ($participants as $participant) {
             $ptPart = match (true) {
@@ -261,7 +261,7 @@ readonly class ExportService
                     $participant->email ?? '',
                     $participant->scoutUnit ?? '',
                     $participant->languages ?? '', // 15
-                    $participant->birthDate ? $participant->birthDate->format('d. m. Y') : '',
+                    $participant->birthDate !== null ? $participant->birthDate->format('d. m. Y') : '',
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
                     $participant->medicaments ?? '',
@@ -273,15 +273,15 @@ readonly class ExportService
                     $this->translator->trans($participant->swimming ?? ''), //25
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                         . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
-                    $participant->arrivalDate ? $participant->arrivalDate->format('d. m. Y') : '',
-                    $participant->departureDate ? $participant->departureDate->format('d. m. Y') : '',
+                    $participant->arrivalDate !== null ? $participant->arrivalDate->format('d. m. Y') : '',
+                    $participant->departureDate !== null ? $participant->departureDate->format('d. m. Y') : '',
                     $participant->uploadedOriginalFilename ?? '', // 30
-                    $participant->printedHandbook ? (string)$participant->printedHandbook : '',
+                    $participant->printedHandbook !== null ? (string)$participant->printedHandbook : '',
                     $participant->notes ?? '',
-                    $participant->updatedAt ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
-                    $participant->registrationCloseDate ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
-                    $participant->registrationApproveDate ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
-                    $participant->registrationPayDate ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
+                    $participant->updatedAt !== null ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
+                    $participant->registrationCloseDate !== null ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
+                    $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
+                    $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                 ],
                 $ptPart,
                 $istPart

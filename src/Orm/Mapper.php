@@ -118,10 +118,12 @@ class Mapper implements IMapper
     public function getTableByRepositoryClass(string $repositoryClass): string
     {
         $matches = [];
-        if (preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches)) {
-            return strtolower((string) $matches[1]);
+        $match = preg_match('#([a-z0-9]+)repository$#i', $repositoryClass, $matches);
+        if ($match === false) {
+            throw new InvalidStateException('Cannot determine table name.');
         }
-        throw new InvalidStateException('Cannot determine table name.');
+
+        return strtolower($matches[1]);
     }
 
     /**
@@ -161,8 +163,7 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param mixed[] $values
-     * @return mixed[]
+     * @inheritDoc
      */
     public function convertToRowData(string $table, array $values): array
     {
@@ -170,8 +171,7 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param mixed[] $data
-     * @return mixed[]
+     * @inheritDoc
      */
     public function convertFromRowData(string $table, array $data): array
     {
