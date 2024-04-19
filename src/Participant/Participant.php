@@ -145,7 +145,9 @@ class Participant extends EntityDatetime
 
     public function getFullName(): string
     {
-        return ($this->firstName ?? '') . ' ' . ($this->lastName ?? '') . ($this->nickname ? ' - ' . $this->nickname : '');
+        return ($this->firstName ?? '') 
+            . ' ' . ($this->lastName ?? '') 
+            . ($this->nickname !== null ? ' - ' . $this->nickname : '');
     }
 
     public function isFullNameNotEmpty(): bool

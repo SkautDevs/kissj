@@ -36,7 +36,7 @@ class mPdfGenerator extends PdfGenerator
         ];
 
         $html = $this->twig->fetch($templateName, $templateData);
-        $this->mpdf->WriteHtml($html);
+        $this->mpdf->WriteHTML($html);
 
         return $this->mpdf->Output(dest: 'S');
     }

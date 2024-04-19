@@ -48,6 +48,6 @@ class EventRepository extends Repository
 
     public function findByApiSecret(string $apiSecret): ?Event
     {
-        return $this->FindOneBy(['api_secret' => $apiSecret]);
+        return $this->findOneBy(['api_secret' => $apiSecret]);
     }
 }

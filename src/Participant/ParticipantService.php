@@ -52,7 +52,7 @@ readonly class ParticipantService
     }
 
     /**
-     * @param array<string, string> $params
+     * @param array<string, string|null> $params
      * @throws \Exception
      */
     private function addParamsIntoPerson(array $params, Participant $p): Participant
@@ -247,12 +247,12 @@ readonly class ParticipantService
             return false;
         }
 
-        if ($ca->email && !empty($p->email) && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
+        if ($ca->email && $p->email !== null && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
             return false;
         }
 
         // numbers and plus sight up front only
-        if ($ca->phone && (empty($p->telephoneNumber) || preg_match('/^\+?[0-9 ]+$/', (string)$p->telephoneNumber) === 0)) {
+        if ($ca->phone && ($p->telephoneNumber === null || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
             return false;
         }
 

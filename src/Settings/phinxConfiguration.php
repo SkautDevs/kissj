@@ -3,7 +3,7 @@
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable('/../../');
-$dotenv->safeload();
+$dotenv->safeLoad();
 
 return [
     'paths' => [

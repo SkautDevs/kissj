@@ -35,7 +35,14 @@ readonly class RedisSessionHandler implements SessionHandlerInterface
 
     public function read(string $id): string|false
     {
-        return $this->redis->get($id) ?: '';
+        /** @var string|false $valueFromRedis */
+        $valueFromRedis = $this->redis->get($id);
+
+        if ($valueFromRedis === false) {
+            return '';
+        }
+
+        return $valueFromRedis;
     }
 
     public function write(string $id, string $data): bool
