@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace kissj\Participant\Ist;
+
 use DateTimeImmutable;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
@@ -13,10 +14,8 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 
-
 readonly class IstService
 {
-
     public function __construct(
         private ParticipantRepository $participantRepository,
         private PaymentRepository $paymentRepository,
@@ -26,7 +25,7 @@ readonly class IstService
     /**
      * @param array<string> $preferredPosition
      */
-    public function  createIstPayment (
+    public function createIstPayment(
         User $user,
         Event $event,
         string $contingent,

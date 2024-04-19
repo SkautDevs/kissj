@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
-use DateTimeImmutable;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
-use kissj\Payment\Payment;
-use kissj\Payment\PaymentRepository;
-use kissj\Payment\PaymentStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
@@ -133,7 +129,6 @@ readonly class UserService
         return $participant;
     }
 
-
     public function createSkautisUser(
         Event $event,
         int $skautisId,
@@ -150,7 +145,6 @@ readonly class UserService
         $user->loginType = UserLoginType::Skautis;
 
         $this->userRepository->persist($user);
-
 
         return $user;
     }

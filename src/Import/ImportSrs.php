@@ -10,29 +10,23 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Ist\IstService;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use kissj\User\UserRepository;
-use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use League\Csv\Exception as LeagueCsvException;
 use LeanMapper\Exception\InvalidStateException;
-use setasign\Fpdi\PdfParser\Type\PdfNull;
 use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class ImportSrs
 {
-
-
     public function __construct(
         private IstService $istService,
         private IstRepository $istRepository,
@@ -69,7 +63,7 @@ readonly class ImportSrs
                 fn (string $value): string => substr($value, 1, -1),
                 $istData,
             );
-			if ($this->istRepository->isIstExisting($istData['E-mail'], $event)) {
+            if ($this->istRepository->isIstExisting($istData['E-mail'], $event)) {
                 $existingCount++;
                 continue;
             }
