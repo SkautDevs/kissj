@@ -19,9 +19,7 @@ use LeanMapper\Fluent;
 use RuntimeException;
 
 /**
- * @method Participant get(int $participantId)
  * @method Participant getOneBy(mixed[] $criteria)
- * @method Participant[] findBy(mixed[] $criteria, Order[] $orders = [])
  * @method Participant|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class ParticipantRepository extends Repository
@@ -355,7 +353,7 @@ class ParticipantRepository extends Repository
         return $this->findOneBy(['entry_code' => $entryCode]);
     }
 
-    public function findParticipantFromId(int $participantId, Event $event): ?Participant
+    public function findParticipantById(int $participantId, Event $event): ?Participant
     {
         $qb = $this->connection->select('participant.*')->from($this->getTable());
 
@@ -372,6 +370,16 @@ class ParticipantRepository extends Repository
 
         /** @var Participant $participant */
         $participant = $this->createEntity($row);
+
+        return $participant;
+    }
+
+    public function getParticipantById(int $participantId, Event $event): Participant
+    {
+        $participant = $this->findParticipantById($participantId, $event);
+        if ($participant === null) {
+            throw new RuntimeException(sprintf('Participant with ID %s not found', $participantId));
+        }
 
         return $participant;
     }

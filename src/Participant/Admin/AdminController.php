@@ -44,8 +44,10 @@ class AdminController extends AbstractController
     ) {
     }
 
-    public function showDashboard(Response $response, Event $event): Response
-    {
+    public function showDashboard(
+        Response $response,
+        Event $event,
+    ): Response {
         $eventType = $event->getEventType();
         $contingentStatistic = [];
         if ($eventType->showContingentPatrolStats()) {
@@ -82,13 +84,13 @@ class AdminController extends AbstractController
         );
     }
 
-    // TODO rename to showPaid
-    public function showStats(
+    public function showPaid(
         Response $response,
         Event $event,
         User $user,
     ): Response {
         $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
+        $eventType = $event->getEventType();
 
         return $this->view->render($response, 'admin/stats-admin.twig', [
             'paidPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -126,12 +128,12 @@ class AdminController extends AbstractController
                 $user,
                 [$orderByUpdatedAtDesc],
             ),
-            'caIst' => $event->getEventType()->getContentArbiterIst(),
-            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
-            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
-            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
-            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
-            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
+            'caIst' => $eventType->getContentArbiterIst(),
+            'caPl' => $eventType->getContentArbiterPatrolLeader(),
+            'caPp' => $eventType->getContentArbiterPatrolParticipant(),
+            'caTl' => $eventType->getContentArbiterTroopLeader(),
+            'caTp' => $eventType->getContentArbiterTroopParticipant(),
+            'caGuest' => $eventType->getContentArbiterGuest(),
         ]);
     }
 
@@ -141,6 +143,7 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
+        $eventType = $event->getEventType();
 
         return $this->view->render($response, 'admin/open-admin.twig', [
             'openPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -183,12 +186,12 @@ class AdminController extends AbstractController
                 [$orderByUpdatedAtDesc],
                 true,
             ),
-            'caIst' => $event->getEventType()->getContentArbiterIst(),
-            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
-            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
-            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
-            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
-            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
+            'caIst' => $eventType->getContentArbiterIst(),
+            'caPl' => $eventType->getContentArbiterPatrolLeader(),
+            'caPp' => $eventType->getContentArbiterPatrolParticipant(),
+            'caTl' => $eventType->getContentArbiterTroopLeader(),
+            'caTp' => $eventType->getContentArbiterTroopParticipant(),
+            'caGuest' => $eventType->getContentArbiterGuest(),
         ]);
     }
 
@@ -198,6 +201,7 @@ class AdminController extends AbstractController
         User $user,
     ): Response {
         $orderByUpdatedAtDesc = new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC);
+        $eventType = $event->getEventType();
 
         return $this->view->render($response, 'admin/approve-admin.twig', [
             'closedPatrolLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
@@ -235,18 +239,22 @@ class AdminController extends AbstractController
                 $user,
                 [$orderByUpdatedAtDesc],
             ),
-            'caIst' => $event->getEventType()->getContentArbiterIst(),
-            'caPl' => $event->getEventType()->getContentArbiterPatrolLeader(),
-            'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
-            'caTl' => $event->getEventType()->getContentArbiterTroopLeader(),
-            'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
-            'caGuest' => $event->getEventType()->getContentArbiterGuest(),
+            'caIst' => $eventType->getContentArbiterIst(),
+            'caPl' => $eventType->getContentArbiterPatrolLeader(),
+            'caPp' => $eventType->getContentArbiterPatrolParticipant(),
+            'caTl' => $eventType->getContentArbiterTroopLeader(),
+            'caTp' => $eventType->getContentArbiterTroopParticipant(),
+            'caGuest' => $eventType->getContentArbiterGuest(),
         ]);
     }
 
-    public function approveParticipant(int $participantId, Request $request, Response $response): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
+    public function approveParticipant(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         $this->participantService->approveRegistration($participant);
         $this->logger->info('Approved registration for participant with ID ' . $participant->id);
@@ -254,19 +262,27 @@ class AdminController extends AbstractController
         return $this->redirect($request, $response, 'admin-show-approving');
     }
 
-    public function showDenyParticipant(int $participantId, Response $response): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
+    public function showDenyParticipant(
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         return $this->view->render($response, 'admin/deny-admin.twig', ['participant' => $participant]);
     }
 
-    public function denyParticipant(int $participantId, Request $request, Response $response): Response
-    {
-        // TODO check if correct event
+    public function denyParticipant(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
         $reason = $this->getParameterFromBody($request, 'reason', true);
-        $participant = $this->participantRepository->get($participantId);
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
         $this->participantService->denyRegistration($participant, $reason);
+
         $this->flashMessages->info($this->translator->trans('flash.info.denied'));
         $this->logger->info('Denied registration for participant with ID '
             . $participantId . ' and role ' . $participant->role?->value . ' with reason: ' . $reason);
@@ -301,15 +317,23 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function showCancelPayment(int $paymentId, Response $response): Response
-    {
+    public function showCancelPayment(
+        Response $response,
+        Event $event,
+        int $paymentId,
+    ): Response {
         $payment = $this->paymentRepository->get($paymentId);
 
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
 
-    public function cancelPayment(int $paymentId, User $user, Request $request, Response $response): Response
-    {
+    public function cancelPayment(
+        Request $request,
+        Response $response,
+        Event $event,
+        User $user,
+        int $paymentId,
+    ): Response {
         $reason = $this->getParameterFromBody($request, 'reason', true);
         $payment = $this->paymentRepository->get($paymentId);
         if ($payment->participant->getUserButNotNull()->event->id !== $user->event->id) {
@@ -329,8 +353,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function cancelAllDuePayments(Request $request, Response $response, User $user): Response
-    {
+    public function cancelAllDuePayments(
+        Request $request,
+        Response $response,
+        User $user,
+    ): Response {
         $this->paymentService->cancelDuePayments($user->event);
 
         return $this->redirect(
@@ -340,8 +367,13 @@ class AdminController extends AbstractController
         );
     }
 
-    public function confirmPayment(int $paymentId, User $user, Request $request, Response $response): Response
-    {
+    public function confirmPayment(
+        Request $request,
+        Response $response,
+        Event $event,
+        User $user,
+        int $paymentId,
+    ): Response {
         $payment = $this->paymentRepository->get($paymentId);
         $participant = $payment->participant;
         if ($participant->getUserButNotNull()->event->id !== $user->event->id) {
@@ -361,8 +393,9 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showFile(string $filename): Response
-    {
+    public function showFile(
+        string $filename,
+    ): Response {
         // TODO check if correct event
         $file = $this->fileHandler->getFile($filename);
         $response = new \Slim\Psr7\Response(200, null, $file->stream);
@@ -371,8 +404,10 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    public function showAutoPayments(Response $response, Event $event): Response
-    {
+    public function showAutoPayments(
+        Response $response,
+        Event $event,
+    ): Response {
         $arguments = [
             'bankPayments' => $this->bankPaymentRepository->getAllBankPaymentsOrdered($event),
             'bankPaymentsTodo' => $this->bankPaymentRepository->getBankPaymentsOrderedWithStatus(
@@ -384,8 +419,11 @@ class AdminController extends AbstractController
         return $this->view->render($response, 'admin/paymentsAuto-admin.twig', $arguments);
     }
 
-    public function updatePayments(Request $request, Response $response, Event $event): Response
-    {
+    public function updatePayments(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $this->paymentService->updatePayments($event);
 
         return $this->redirect(
@@ -395,8 +433,12 @@ class AdminController extends AbstractController
         );
     }
 
-    public function markBankPaymentPaired(Request $request, Response $response, int $paymentId): Response
-    {
+    public function markBankPaymentPaired(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $paymentId,
+    ): Response {
         // TODO check if correct event
         $notice = $this->getParameterFromBody($request, 'notice', true);
         $this->paymentService->setBankPaymentPaired($paymentId);
@@ -410,8 +452,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function markBankPaymentUnrelated(Request $request, Response $response, int $paymentId): Response
-    {
+    public function markBankPaymentUnrelated(
+        Request $request,
+        Response $response,
+        int $paymentId,
+    ): Response {
         $this->paymentService->setBankPaymentUnrelated($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
         $this->flashMessages->info($this->translator->trans('flash.info.markedAsUnrelated'));
@@ -423,8 +468,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showTransferPayment(Request $request, Response $response, Event $event): Response
-    {
+    public function showTransferPayment(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $emailFrom = $this->getParameterFromQuery($request, 'emailFrom');
         $emailTo = $this->getParameterFromQuery($request, 'emailTo');
 
@@ -447,8 +495,11 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function transferPayment(Request $request, Response $response, Event $event): Response
-    {
+    public function transferPayment(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $emailFrom = $this->getParameterFromBody($request, 'emailFrom');
         $emailTo = $this->getParameterFromBody($request, 'emailTo');
 
@@ -481,20 +532,29 @@ class AdminController extends AbstractController
         );
     }
 
-    public function changeAdminNote(Request $request, Response $response, int $participantId): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
-        // TODO check if participant is from correct event
-        $participant->adminNote = $this->getParameterFromBody($request, 'adminNote');
-        $this->participantRepository->persist($participant);
+    public function changeAdminNote(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        $this->participantService->setAdminNote(
+            $participant,
+            $this->getParameterFromBody($request, 'adminNote'),
+        );
 
         return $this->getResponseWithJson($response, ['adminNote' => $participant->adminNote]);
     }
 
-    public function showParticipantDetails(Response $response, int $participantId, Event $event): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
-        // TODO check if correct event
+    public function showParticipantDetails(
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        $eventType = $event->getEventType();
 
         return $this->view->render(
             $response,
@@ -502,15 +562,20 @@ class AdminController extends AbstractController
             [
                 'person' => $participant,
                 'ca' => $this->participantService->getContentArbiterForParticipant($participant),
-                'caPp' => $event->getEventType()->getContentArbiterPatrolParticipant(),
-                'caTp' => $event->getEventType()->getContentArbiterTroopParticipant(),
+                'caPp' => $eventType->getContentArbiterPatrolParticipant(),
+                'caTp' => $eventType->getContentArbiterTroopParticipant(),
             ],
         );
     }
 
-    public function changeParticipantDetails(Request $request, Response $response, int $participantId): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
+    public function changeParticipantDetails(
+        Request $request,
+        Response $response,
+        Event $event,
+        User $user,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         /** @var string[] $parsed */
         $parsed = $request->getParsedBody();
@@ -519,7 +584,7 @@ class AdminController extends AbstractController
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
-        // TODO log participant edit
+        $this->logger->info('Participant with ID ' . $participantId . ' details changed by user with ID ' . $user->id);
 
         return $this->redirect(
             $request,
@@ -528,9 +593,12 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showRole(Response $response, int $participantId, Event $event): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
+    public function showRole(
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         return $this->view->render($response, 'admin/changeRole.twig', [
             'person' => $participant,
@@ -538,9 +606,13 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function changeRole(Request $request, Response $response, int $participantId, Event $event): Response
-    {
-        $participant = $this->participantRepository->get($participantId);
+    public function changeRole(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $roleFromBody = $this->getParameterFromBody($request, 'role');
 
         $success = $this->participantService->tryChangeRoleWithMessages($roleFromBody, $participant, $event);
@@ -561,9 +633,13 @@ class AdminController extends AbstractController
         );
     }
 
-    public function cancel(Request $request, Response $response, int $participantId, Event $event): Response
-    {
-        $participant = $this->participantRepository->findParticipantFromId($participantId, $event);
+    public function cancel(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->findParticipantById($participantId, $event);
 
         if ($participant instanceof PatrolLeader) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.cancelPatrolLeaderNotSupported'));
@@ -584,8 +660,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function generateMorePayments(Request $request, Response $response, Event $event): Response
-    {
+    public function generateMorePayments(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         if ($event->getEventType()->isMultiplePaymentsAllowed() === false) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.multiplePaymentsNotAllowed'));
         } else {
@@ -602,8 +681,10 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showTroopManagement(Response $response, Event $event): Response
-    {
+    public function showTroopManagement(
+        Response $response,
+        Event $event,
+    ): Response {
         return $this->view->render($response, 'admin/troopManagement.twig', [
             'troopLeaders' => $this->participantRepository->getAllParticipantsWithStatus(
                 [ParticipantRole::TroopLeader],
@@ -618,8 +699,11 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function tieTogether(Request $request, Response $response, Event $event): Response
-    {
+    public function tieTogether(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $troopLeaderCode = $this->getParameterFromBody($request, 'tieCodeLeader');
         $troopParticipantCode = $this->getParameterFromBody($request, 'tieCodeParticipant');
 
@@ -636,8 +720,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function untie(Request $request, Response $response, Event $event): Response
-    {
+    public function untie(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $troopParticipantCode = $this->getParameterFromBody($request, 'tieCodeParticipant');
 
         $this->troopService->tryUntieWithMessages(
@@ -652,8 +739,11 @@ class AdminController extends AbstractController
         );
     }
 
-    public function importIstFromSrs(Request $request, Response $response, Event $event): Response
-    {
+    public function importIstFromSrs(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
         $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
         if ($uploadedFile === null) {
             $this->flashMessages->warning($this->translator->trans('flash.warning.importCantStart'));

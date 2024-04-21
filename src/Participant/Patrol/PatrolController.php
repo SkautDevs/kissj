@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Patrol;
 
 use kissj\AbstractController;
+use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
@@ -70,9 +71,10 @@ class PatrolController extends AbstractController
         Response $response,
         ParticipantRepository $participantRepository,
         User $user,
+        Event $event,
     ): Response {
         /** @var PatrolParticipant $participant */
-        $participant = $participantRepository->get($participantId);
+        $participant = $participantRepository->getParticipantById($participantId, $event);
 
         return $this->view->render(
             $response,

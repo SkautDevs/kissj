@@ -202,7 +202,7 @@ class Route
                             ->setName('admin-cancel-participant');
                     });
 
-                    $app->get('/showStats', AdminController::class . '::showStats')
+                    $app->get('/showPaid', AdminController::class . '::showPaid')
                         ->setName('admin-show-stats');
 
                     $app->get('/showOpen', AdminController::class . '::showOpen')
