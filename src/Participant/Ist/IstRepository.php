@@ -8,6 +8,7 @@ use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
+use kissj\Participant\ParticipantRole;
 
 /**
  * @table participant
@@ -24,6 +25,7 @@ class IstRepository extends Repository
         $qb = $this->createFluent();
 
         $qb->where('participant.email = %s', $email);
+        $qb->where('participant.role = %s', ParticipantRole::Ist);
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
         $qb->where('u.event_id = %i', $event->id);
 
