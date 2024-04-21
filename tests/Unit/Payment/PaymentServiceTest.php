@@ -46,7 +46,6 @@ class PaymentServiceTest extends TestCase
                 Mockery::mock(LoginTokenRepository::class),
                 Mockery::mock(ParticipantRepository::class),
                 Mockery::mock(UserRepository::class),
-                Mockery::mock(PaymentRepository::class),
                 $mailerMock,
             ),
             Mockery::mock(FlashMessagesBySession::class),
