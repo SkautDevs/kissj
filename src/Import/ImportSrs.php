@@ -148,7 +148,7 @@ readonly class ImportSrs
             'Ano' => true,
             default => false,
         };
-        if (!$existingUser) {
+        if ($existingUser == null) {
             $existingUser = $this->userService->createSkautisUser(
                 $event,
                 (int)$skautisUserId,
