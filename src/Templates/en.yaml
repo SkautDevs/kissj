@@ -541,7 +541,6 @@ flash:
         notLeader: "Sorry, but only patrol leaders or group leaders are allowed to access this address"
         wrongData: "Registration cannot be locked, data is not valid"
         mailError: "Pardon, email sending failed. Please try it in a couple of minutes."
-        confirmNotAllowed: "This payment is belong to different event, confirmation not allowed"
         fioConnectionFailed: "Connection to Fio bank failed, probably due to wrong API key"
         tieParticipantToLeaderError: "Failed to tie participant to the group :("
         skautisUserNotLoggedIn: "Skautis reports that the participant is not logged in. Please try to log out and log in again"
