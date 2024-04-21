@@ -164,21 +164,21 @@ readonly class ParticipantService
         $troopParticipants = $troopLeader->troopParticipants;
 
         $participantsCount = count($troopParticipants);
-        if ($participantsCount < $event->minimalTroopParticipantsCount) {
+        if ($participantsCount < $event->getMinimalPpCount($troopLeader)) {
             $this->flashMessages->warning(
                 $this->translator->trans(
                     'flash.warning.tlTooFewParticipantsTroop',
-                    ['%minimalTroopParticipantsCount%' => $event->minimalTroopParticipantsCount],
+                    ['%minimalTroopParticipantsCount%' => $event->getMinimalPpCount($troopLeader)],
                 )
             );
 
             $validityFlag = false;
         }
-        if ($participantsCount > $event->maximalTroopParticipantsCount) {
+        if ($participantsCount > $event->getMaximalPpCount($troopLeader)) {
             $this->flashMessages->warning(
                 $this->translator->trans(
                     'flash.warning.tlTooManyParticipantsTroop',
-                    ['%maximalTroopParticipantsCount%' => $event->maximalTroopParticipantsCount],
+                    ['%maximalTroopParticipantsCount%' => $event->getMaximalPpCount($troopLeader)],
                 )
             );
 
@@ -300,7 +300,6 @@ readonly class ParticipantService
 
     /**
      * @param Participant[] $participants
-     * @param string|null $contingent
      * @return Participant[]
      */
     private function filterSameContingent(array $participants, ?string $contingent): array
@@ -488,5 +487,13 @@ readonly class ParticipantService
         $this->flashMessages->success($this->translator->trans('flash.success.roleChanged'));
 
         return true;
+    }
+
+    public function setAdminNote(Participant $participant, string $adminNote): Participant
+    {
+        $participant->adminNote = $adminNote;
+        $this->participantRepository->persist($participant);
+
+        return $participant;
     }
 }

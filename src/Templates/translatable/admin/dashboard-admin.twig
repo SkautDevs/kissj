@@ -118,7 +118,7 @@
                        class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
                 {% endif %}
                 <a href="{{ url_for('admin-show-stats', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.showStats{% endtrans %}</a><br/>
+                   class="btn">{% trans %}dashboard-admin.showPaid{% endtrans %}</a><br/>
             </div>
             <div>
                 {% if event.allowTroops and user.role.isEligibleToManageTroops %}
