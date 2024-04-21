@@ -541,7 +541,6 @@ flash:
         notLeader: "Pardon, ale na tuto adresu mohou jen vedoucí patrol či vedoucí skupin"
         wrongData: "Registrácia nemôže byť uzavretá, údaje sú neplatné."
         mailError: "Pardon, odoslanie e-mailu zlyhalo. Skús to o pár minút."
-        confirmNotAllowed: "Tato platba nepřísluší tvé akce, potvrzení nelze provést"
         fioConnectionFailed: "Spojení do Fio banky selhalo, nejspíše kvůli špatně zadanému API klíči"
         tieParticipantToLeaderError: "Připojení účastníka do skupiny se nepovedlo :("
         skautisUserNotLoggedIn: "Skautis hlásí, že účastník není přihlášený. Zkus se prosím odhlásit a znovu přihlásit"

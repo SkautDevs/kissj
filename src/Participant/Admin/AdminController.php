@@ -322,7 +322,7 @@ class AdminController extends AbstractController
         Event $event,
         int $paymentId,
     ): Response {
-        $payment = $this->paymentRepository->get($paymentId);
+        $payment = $this->paymentRepository->getById($paymentId, $event);
 
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
@@ -331,20 +331,14 @@ class AdminController extends AbstractController
         Request $request,
         Response $response,
         Event $event,
-        User $user,
         int $paymentId,
     ): Response {
         $reason = $this->getParameterFromBody($request, 'reason', true);
-        $payment = $this->paymentRepository->get($paymentId);
-        if ($payment->participant->getUserButNotNull()->event->id !== $user->event->id) {
-            $this->flashMessages->warning($this->translator->trans('flash.error.confirmNotAllowed'));
-            $this->logger->info('Payment ID ' . $paymentId
-                . ' cannot be confirmed from admin with event id ' . $user->event->id);
-        } else {
-            $this->participantService->cancelPayment($payment, $reason);
-            $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
-            $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
-        }
+        $payment = $this->paymentRepository->getById($paymentId, $event);
+
+        $this->participantService->cancelPayment($payment, $reason);
+        $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
+        $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
 
         return $this->redirect(
             $request,
@@ -371,20 +365,14 @@ class AdminController extends AbstractController
         Request $request,
         Response $response,
         Event $event,
-        User $user,
         int $paymentId,
     ): Response {
-        $payment = $this->paymentRepository->get($paymentId);
+        $payment = $this->paymentRepository->getById($paymentId, $event);
         $participant = $payment->participant;
-        if ($participant->getUserButNotNull()->event->id !== $user->event->id) {
-            $this->flashMessages->warning($this->translator->trans('flash.error.confirmNotAllowed'));
-            $this->logger->info('Payment ID ' . $paymentId
-                . ' cannot be confirmed from admin with event id ' . $user->event->id);
-        } else {
-            $this->paymentService->confirmPayment($payment);
-            $this->flashMessages->success($this->translator->trans('flash.success.confirmPayment'));
-            $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
-        }
+
+        $this->paymentService->confirmPayment($payment);
+        $this->flashMessages->success($this->translator->trans('flash.success.confirmPayment'));
+        $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
 
         return $this->redirect(
             $request,
