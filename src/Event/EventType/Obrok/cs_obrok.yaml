@@ -43,6 +43,7 @@ detail:
     patrolNamePlaceholder: "Jméno vaší skupiny"
     language: "jednotka, se kterou na Obrok jedeš"
     language-placeholder: "možnosti: SOS, SZT, Uši pro duši, Radio Tým "
+    foodHeader: "dietní omezení"
     contingentTitle: "Pozice"
     contingent:
         volunteer: "💪 Dobrovolkyně nebo dobrovolník"
