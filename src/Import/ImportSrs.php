@@ -148,6 +148,7 @@ readonly class ImportSrs
             'Ano' => true,
             default => false,
         };
+        $participant = null;
         if ($existingUser == null) {
             $existingUser = $this->userService->createSkautisUser(
                 $event,
@@ -155,15 +156,15 @@ readonly class ImportSrs
                 $email,
                 $userStatus,
             );
+
         } else {
-            $participant  = $this->participantRepository->findParticipantFromUser($existingUser);
-            if ($participant !== null) {
-                $this->participantRepository->delete($participant);
-            }
+            $participant = $this->participantRepository->findParticipantFromUser($existingUser);
+
         }
         return $this->istService->createIstPayment(
             $existingUser,
             $event,
+            $participant,
             $contingent,
             $data['first_name'],
             $data['last_name'],
