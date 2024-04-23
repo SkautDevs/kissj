@@ -1,22 +1,21 @@
-{% if false %}
-    <div class="card registration-theme">
-        {% for deal in deals %}
-            <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
-            {% if deal.isDone %}
-                {{ ('deal.'~deal.slug~'-done')|trans }}
+<div class="card registration-theme">
+    {% for deal in deals %}
+        <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
+        {% if deal.isDone %}
+            {{ ('deal.'~deal.slug~'-done')|trans }}
+        {% else %}
+            {% if deal.getDoneAt() %}
+                {{ ('deal.'~deal.slug~'-doneBadly')|trans({
+                    '%date%': deal.doneAt.format('d. m. Y, H:i:s')
+                }) }}:<br/>
             {% else %}
-                {% if deal.getDoneAt() %}
-                    {{ ('deal.'~deal.slug~'-doneBadly')|trans({
-                        '%date%': deal.doneAt.format('d. m. Y, H:i:s')
-                    }) }}:<br/>
-                {% else %}
-                    {{ ('deal.'~deal.slug~'-missing')|trans }}:<br/>
-                {% endif %}
-                <br/>
-                <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
+                {{ ('deal.'~deal.slug~'-missing')|trans }}:<br/>
             {% endif %}
             <br/>
-            <br/>
-        {% endfor %}
-    </div>
-{% endif %}
+            <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
+        {% endif %}
+        <br/>
+        <br/>
+    {% endfor %}
+</div>
+
