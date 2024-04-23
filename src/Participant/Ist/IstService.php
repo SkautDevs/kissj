@@ -28,6 +28,7 @@ readonly class IstService
     public function createIstPayment(
         User $user,
         Event $event,
+        ?Participant $participant,
         string $contingent,
         string $firstName,
         string $lastName,
@@ -57,7 +58,9 @@ readonly class IstService
         string $swift,
         DateTimeImmutable $due,
     ): Participant {
-        $participant = new Participant();
+        if ($participant == null) {
+            $participant = new Participant();
+        }
         $participant->user = $user;
         $participant->role = ParticipantRole::Ist;
         $participant->contingent = $contingent;
