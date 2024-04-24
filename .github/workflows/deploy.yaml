@@ -70,7 +70,7 @@ jobs:
             dbname: ${{ secrets.POSTGRES_DBNAME }}
           
           caddy:
-            replicas: 1
+            replicas: 2
             hpa:
               enabled: false
             
@@ -82,7 +82,7 @@ jobs:
               issuer: ${{ secrets.CERT_ISSUER}}
 
           php:
-            replicas: 1
+            replicas: 2
             hpa:
               enabled: false
               maxReplicas: 3
