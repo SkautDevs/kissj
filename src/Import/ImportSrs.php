@@ -149,7 +149,7 @@ readonly class ImportSrs
             default => false,
         };
         $participant = null;
-        if ($existingUser == null) {
+        if ($existingUser === null) {
             $existingUser = $this->userService->createSkautisUser(
                 $event,
                 (int)$skautisUserId,

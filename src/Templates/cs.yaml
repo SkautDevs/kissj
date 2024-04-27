@@ -363,7 +363,7 @@ dashboard-admin:
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
     editParticipant: "Editovat údaje"
-    cancelParticipant: "Účastník nedorazí :("
+    cancelParticipant: "Označit účastníka že nedorazí"
     changeNotice: "Upravit"
     import-file: "Import SRS souboru pro IST"
     import-submit: "Start importu"

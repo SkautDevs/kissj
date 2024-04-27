@@ -89,7 +89,6 @@ class EventTypeObrok extends EventType
         $ca->languages = true;
 
         return $ca;
-
     }
 
     /**
