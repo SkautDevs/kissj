@@ -58,11 +58,11 @@ readonly class IstService
         string $swift,
         DateTimeImmutable $due,
     ): Participant {
-        if ($participant == null) {
+        if ($participant === null) {
             $participant = new Participant();
         }
         $participant->user = $user;
-        $participant->role = ParticipantRole::Ist;
+        $participant->role = ParticipantRole::Ist; // TODO fix case with TL/PL having troop participants/patrol patrol participants
         $participant->contingent = $contingent;
         $participant->firstName = $firstName;
         $participant->lastName = $lastName;

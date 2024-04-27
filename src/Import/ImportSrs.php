@@ -128,7 +128,6 @@ readonly class ImportSrs
             $contingent = EventTypeObrok::CONTINGENT_ORG;
         }
 
-
         $skautisUserId = $data['skautis_user_id'];
         if (is_numeric($skautisUserId) === false) {
             $this->flashMessages->warning('flash.warning.importSrs.skautisUserIdNotNumeric');
@@ -148,6 +147,7 @@ readonly class ImportSrs
             'Ano' => true,
             default => false,
         };
+
         $participant = null;
         if ($existingUser === null) {
             $existingUser = $this->userService->createSkautisUser(
@@ -156,11 +156,10 @@ readonly class ImportSrs
                 $email,
                 $userStatus,
             );
-
         } else {
             $participant = $this->participantRepository->findParticipantFromUser($existingUser);
-
         }
+
         return $this->istService->createIstPayment(
             $existingUser,
             $event,

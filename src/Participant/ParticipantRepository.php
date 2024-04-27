@@ -44,6 +44,7 @@ class ParticipantRepository extends Repository
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('participant.role IN %in', $roles);
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
 
@@ -102,6 +103,7 @@ class ParticipantRepository extends Repository
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('participant.role IN %in', $roles);
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
 
@@ -208,6 +210,7 @@ class ParticipantRepository extends Repository
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
         $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
 
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
 
@@ -274,9 +277,10 @@ class ParticipantRepository extends Repository
         $qb = $this->connection->select('date(participant.arrival_date) as ad, COUNT(*)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
-        $qb->where('u.event_id = %i', $event->id);
         $qb->where('participant.role = %s', ParticipantRole::Ist);
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
 
         $qb->groupBy('date(participant.arrival_date)');
         $qb->orderBy('date(participant.arrival_date)');
@@ -296,8 +300,9 @@ class ParticipantRepository extends Repository
         $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
-        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
 
         $qb->groupBy('participant.food_preferences');
         $qb->orderBy('participant.food_preferences');
@@ -322,6 +327,7 @@ class ParticipantRepository extends Repository
             $qb->where('participant.contingent = %s', $contingent);
         }
 
+        $qb->where('u.role = %s', UserRole::Participant);
         $qb->groupBy('u.status');
 
         $rows = $qb->fetchPairs('status', 'count');
