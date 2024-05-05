@@ -12,7 +12,11 @@
     
     {% if person is eligibleForShowTieCode %}
         <h2>
-            {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
+            {% if userStatus == 'paid' and  person.role.value == 'tl'%}
+                {% trans %}dashboard.pairCode{% endtrans %} - {{ person.tieCode }}
+            {% else %}
+                {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
+            {% endif %}
         </h2>
     {% endif %}
     

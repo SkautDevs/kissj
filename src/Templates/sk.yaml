@@ -30,6 +30,7 @@ dashboard:
     youHaveTroop: "Jsi ve skupině %troopName% s vedoucím skupiny %troopLeaderFullName%"
     details: "podrobnosti"
     tieCode: "Kód pro připnutí"
+    pairCode: "kód skupiny"
     listOfParticipants: "Zoznam účastníkov"
     addParticipant: "Pridať účastníka"
     tie: "Připni"

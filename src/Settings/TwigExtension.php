@@ -51,8 +51,11 @@ class TwigExtension extends AbstractExtension
             new TwigTest(
                 'eligibleForShowTieCode',
                 fn ($participant): bool => (
+                    // TroopLeader TieCode is also used for pairing with some external services, so they have to be able to access it in paid status
                     $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Open
                 ) || (
+                    $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Paid
+                    ) || (
                     $participant instanceof TroopParticipant && $participant->troopLeader === null
                 )
             ),
