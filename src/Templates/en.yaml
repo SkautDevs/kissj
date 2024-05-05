@@ -30,6 +30,7 @@ dashboard:
     youHaveTroop: "You are in troop %troopName% with troop leader %troopLeaderFullName%"
     details: "details"
     tieCode: "Code for join"
+    pairCode: "Troop Code"
     listOfParticipants: "List of participants"
     addParticipant: "Add participant"
     tie: "tie"
