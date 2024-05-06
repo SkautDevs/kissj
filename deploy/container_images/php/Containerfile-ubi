@@ -11,7 +11,7 @@ RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noar
 
 #enable php83 module and install php
 RUN dnf module enable php:remi-8.3 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis unzip vim -y --nobest
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis unzip vim git -y --nobest
 
 #cleanup dnf cache
 RUN dnf clean all
@@ -36,7 +36,7 @@ RUN chown -R www-data:www-data /var/lib/php
 RUN touch /var/www/html/.env
 
 #install deps
-RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3
+RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3 --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html 
 
