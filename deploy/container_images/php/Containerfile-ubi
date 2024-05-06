@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM quay.io/centos/centos:stream9
 LABEL maintainers="Kissj devs <https://github.com/SkautDevs>"
 ARG GIT_HASH
 ENV GIT_HASH=${GIT_HASH}
@@ -11,7 +11,7 @@ RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noar
 RUN /usr/bin/crb enable
 #enable php83 module and install php
 RUN dnf module enable php:remi-8.3 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y --nobest
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y
 
 #cleanup dnf cache
 RUN dnf clean all

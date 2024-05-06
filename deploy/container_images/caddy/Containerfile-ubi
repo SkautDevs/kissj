@@ -1,19 +1,19 @@
-FROM registry.access.redhat.com/ubi9/ubi:latest
-
-LABEL maintainer "Michael Kaplan <michael@kaplan.sh>"
+FROM quay.io/centos/centos:stream9
+LABEL maintainers="Kissj devs <https://github.com/SkautDevs>"
 
 WORKDIR /var/www/html
+RUN dnf install 'dnf-command(copr)' -y
 RUN dnf copr enable @caddy/caddy epel-9-$(arch) -y
 RUN dnf install caddy -y 
+
+#cleanup dnf cache
+RUN dnf clean all
 
 #Caddy Config
 COPY ./deploy/container_images/caddy/Caddyfile /etc/caddy/Caddyfile
 
 # Copy public folder which is needed for routing and static files
 COPY ./public /var/www/html/public
-
-#Create dummy .env
-RUN touch /var/www/html/.env
 
 RUN chown -R caddy:caddy /var/www/html 
 
