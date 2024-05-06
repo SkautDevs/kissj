@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
-LABEL maintainers "Kissj devs <https://github.com/SkautDevs>"
+LABEL maintainers="Kissj devs <https://github.com/SkautDevs>"
 ARG GIT_HASH
 ENV GIT_HASH=${GIT_HASH}
 LABEL GIT_HASH=${GIT_HASH}
@@ -11,7 +11,7 @@ RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noar
 
 #enable php83 module and install php
 RUN dnf module enable php:remi-8.3 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis unzip vim git -y --nobest
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y
 
 #cleanup dnf cache
 RUN dnf clean all
@@ -26,17 +26,15 @@ COPY ./public /var/www/html/public
 COPY ./deploy/container_images/php/php.ini /etc/php.ini
 COPY ./deploy/container_images/php/php-fpm.conf /etc/php-fpm.conf
 COPY ./deploy/container_images/php/www.conf /etc/php-fpm.d/www.conf
+COPY ./deploy/container_images/php/10-opcache.ini /etc/php.d/10-opcache.ini
 
 #add user
 RUN groupadd -g 1001 www-data
 RUN useradd -u 1001 -g 1001 www-data -s /sbin/nologin -d /var/www/html -M
 RUN chown -R www-data:www-data /var/lib/php 
 
-#Create dummy .env
-RUN touch /var/www/html/.env
-
 #install deps
-RUN composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3 --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3 --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html 
 
