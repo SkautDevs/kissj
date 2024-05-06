@@ -8,10 +8,10 @@ WORKDIR /var/www/html
 
 #enable needed epel & remi repos
 RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
-
+RUN /usr/bin/crb enable
 #enable php83 module and install php
 RUN dnf module enable php:remi-8.3 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y --nobest
 
 #cleanup dnf cache
 RUN dnf clean all
