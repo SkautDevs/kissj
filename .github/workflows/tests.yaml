@@ -12,7 +12,7 @@ jobs:
     container: docker.io/composer/composer:2
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       id: composer-validation
@@ -22,7 +22,7 @@ jobs:
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -39,7 +39,7 @@ jobs:
       run: tar -czpf /tmp/workdir.tgz . 
     
     - name: Upload workdir tarball
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: workdir
         path: /tmp/workdir.tgz
@@ -53,7 +53,7 @@ jobs:
     steps:
 
       - name: Download workdir tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: workdir
           path: .
@@ -76,7 +76,7 @@ jobs:
     steps:
 
       - name: Download workdir tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: workdir
           path: .
@@ -112,7 +112,7 @@ jobs:
 #    steps:
 #
 #      - name: Download workdir tarball
-#        uses: actions/download-artifact@v3
+#        uses: actions/download-artifact@v4
 #        with:
 #          name: workdir
 #          path: .

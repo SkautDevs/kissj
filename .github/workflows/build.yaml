@@ -27,12 +27,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install qemu dependency
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static
+      #- name: Install qemu dependency
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y qemu-user-static
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Build Container Image
         id: build-image
@@ -41,7 +41,7 @@ jobs:
           layers: true
           oci: true
           image: php-ubi
-          archs: amd64, arm64
+          archs: amd64
           build-args: |
             GIT_HASH=${{ github.sha }}
           tags: ${{ inputs.envName}}-${{ github.sha }} latest
@@ -64,12 +64,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install qemu dependency
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static
+      #- name: Install qemu dependency
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y qemu-user-static
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Build Container Image
         id: build-image
@@ -78,7 +78,7 @@ jobs:
           layers: true
           oci: true
           image: caddy-ubi
-          archs: amd64, arm64
+          archs: amd64
           tags: ${{ inputs.envName}}-${{ github.sha }} latest
           containerfiles: |
             ./deploy/container_images/caddy/Containerfile-ubi
