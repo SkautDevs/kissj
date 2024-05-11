@@ -138,6 +138,20 @@ class EventTypeObrok extends EventType
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getFoodOptions(): array
+    {
+        return [
+            'detail.foodWithout',
+            'detail.foodVegetarian',
+            'detail.foodVegan',
+            'detail.foodLactoseFree',
+            'detail.foodGlutenFree',
+        ];
+    }
+
     #[\Override]
     public function isUnlockExpiredButtonAllowed(): bool
     {
