@@ -48,6 +48,9 @@ detail:
     contingent:
         volunteer: "💪 Dobrovolkyně nebo dobrovolník"
         org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
+    foodLactoseFree: "bez laktózy (může obsahovat stopové množství)"
+    foodGlutenFree: "bez lepku (může obsahovat stopové množství)"
+    foodOther: "mám jiné požadavky - jídlo si zajistím sám*sama"
 
 dashboard:
     youWantDelete: "Opravdu chceš smazat účastníka*účastnici "
