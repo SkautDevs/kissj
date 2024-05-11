@@ -19,6 +19,7 @@ class EventTypeObrok extends EventType
 {
     public const string SLUG_SFH = 'sfh';
     public const string SLUG_PROGRAMME = 'programme';
+    public const string SLUG_BUS = "bus";
 
     public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
     public const string CONTINGENT_ORG = 'detail.contingent.org';
@@ -197,6 +198,15 @@ class EventTypeObrok extends EventType
                     'https://docs.google.com/forms/d/e/1FAIpQLScHeou_NyNKNmUOjpGaBLMlhMy0gB6xoal6xcMTyc84EpJcNw/viewform?usp=pp_url&entry.2082059253=%s&entry.797747193=%s',
                     $participant->tieCode,
                     $participant->getFullName(),
+                ),
+            );
+        }
+        if ($participant instanceof TroopLeader) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_BUS,
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLSdSgVsc1jvgBJBhTKnxRTvCV3R33lEM9OnE4PXCElFEKi8ykA/viewform?usp=pp_url&entry.18549217=%s',
+                    $participant->tieCode
                 ),
             );
         }
