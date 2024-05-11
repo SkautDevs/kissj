@@ -71,3 +71,7 @@ deal:
     programme-missing: "Ještě nemáš vybraný program, prosím vyber ho"
     programme-button: "Vybrat program na akci"
     programme-done: "Program je vybrán, děkujeme!"
+    bus: "Obbjednávka Obrokové autobusové dopravy z Prahy"
+    bus-missing: "Pokud máš zájem o dopravu až k areálu, vyplň prosím tento formulář"
+    bus-button: "Objednat autobusovou dopravu pro skupinu"
+    bus-done: "Doprava je objednána, díky!"
