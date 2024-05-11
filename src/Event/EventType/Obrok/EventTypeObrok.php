@@ -149,6 +149,7 @@ class EventTypeObrok extends EventType
             'detail.foodVegan',
             'detail.foodLactoseFree',
             'detail.foodGlutenFree',
+            'detail.foodOther',
         ];
     }
 
