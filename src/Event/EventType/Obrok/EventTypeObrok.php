@@ -40,6 +40,8 @@ class EventTypeObrok extends EventType
         $ca = parent::getContentArbiterIst();
         $ca->gender = false;
         $ca->contingent = true;
+        $ca->phone = true;
+        $ca->email = true;
         $ca->medicaments = true;
         $ca->printedHandbook = true;
         $ca->food = true;
