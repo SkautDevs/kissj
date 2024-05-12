@@ -42,6 +42,7 @@ class EventTypeObrok extends EventType
         $ca->contingent = true;
         $ca->phone = true;
         $ca->email = true;
+        $ca->unit = true;
         $ca->medicaments = true;
         $ca->printedHandbook = true;
         $ca->food = true;
