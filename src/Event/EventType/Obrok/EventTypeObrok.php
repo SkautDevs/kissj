@@ -19,7 +19,7 @@ class EventTypeObrok extends EventType
 {
     public const string SLUG_SFH = 'sfh';
     public const string SLUG_PROGRAMME = 'programme';
-    public const string SLUG_BUS = "bus";
+    public const string SLUG_BUS = 'bus';
 
     public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
     public const string CONTINGENT_ORG = 'detail.contingent.org';
@@ -205,13 +205,16 @@ class EventTypeObrok extends EventType
             );
         }
         if ($participant instanceof TroopLeader) {
-            $eventDeals[] = new EventDeal(
-                self::SLUG_BUS,
-                sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSdSgVsc1jvgBJBhTKnxRTvCV3R33lEM9OnE4PXCElFEKi8ykA/viewform?usp=pp_url&entry.18549217=%s',
-                    $participant->tieCode
-                ),
-            );
+            /** @phpstan-ignore-next-line */
+            if (false) { # TODO remove when allowing bus deal to be shown
+                $eventDeals[] = new EventDeal(
+                    self::SLUG_BUS,
+                    sprintf(
+                        'https://docs.google.com/forms/d/e/1FAIpQLSdSgVsc1jvgBJBhTKnxRTvCV3R33lEM9OnE4PXCElFEKi8ykA/viewform?usp=pp_url&entry.18549217=%s',
+                        $participant->tieCode
+                    ),
+                );
+            }
         }
 
         return $eventDeals;

@@ -73,6 +73,7 @@ readonly class ImportSrs
                     $errorCount++;
                     continue;
                 }
+                // TODO check if not moving from troop & handle
                 $newIst = $this->mapDataIntoNewIst($istData, $event, $dbUser);
             } else {
                 $newIst = $this->mapDataIntoNewIst($istData, $event);
