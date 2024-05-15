@@ -191,63 +191,6 @@ class ParticipantRepository extends Repository
     }
 
     /**
-     * @return array<string, array<EntryParticipant>>
-     */
-    public function getParticipantsForEntry(Event $event): array
-    {
-        $qb = $this->connection->select('
-            participant.id,
-            participant.first_name,
-            participant.last_name,
-            participant.nickname,
-            participant.patrol_name,
-            participant.tie_code,
-            participant.birth_date,
-            participant.role,
-            d.is_done AS sfh_done
-        ')->from($this->getTable());
-
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
-        $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
-
-        $qb->where('u.role = %s', UserRole::Participant);
-        $qb->where('u.status = %s', UserStatus::Paid);
-        $qb->where('u.event_id = %i', $event->id);
-
-        $this->addOrdersBy($qb, [new Order('id')]);
-
-        $rows = $qb->fetchAll();
-
-        $participants = [];
-        /** @var array{
-         *     id: int,
-         *     first_name: string|null,
-         *     last_name: string|null,
-         *     nickname: string|null,
-         *     patrol_name: string|null,
-         *     tie_code: string,
-         *     birth_date: \DateTimeInterface|null,
-         *     sfh_done: bool|null,
-         *     role: string|null
-         * } $row
-         */
-        foreach($rows as $row) {
-            $participants[$row['role']][] = new EntryParticipant(
-                $row['id'],
-                $row['first_name'] ?? '',
-                $row['last_name'] ?? '',
-                $row['nickname'] ?? '',
-                $row['patrol_name'] ?? '',
-                $row['tie_code'],
-                $row['birth_date'] ?? DateTimeUtils::getDateTime(),
-                $row['sfh_done'] ?? false,
-            );
-        }
-
-        return $participants;
-    }
-
-    /**
      * @param string[] $contingents
      * @return StatisticUserValueObject[]
      */
@@ -381,5 +324,109 @@ class ParticipantRepository extends Repository
         }
 
         return $participant;
+    }
+
+    /**
+     * @return array<string, array<EntryParticipant>>
+     */
+    public function getParticipantsForEntry(Event $event): array
+    {
+        $rows = $this->getRowsForEntryParticipant($event, [
+            ParticipantRole::PatrolLeader,
+            ParticipantRole::TroopLeader,
+            ParticipantRole::Ist,
+            ParticipantRole::Guest,
+        ]);
+
+        $participants = [];
+        foreach($rows as $row) {
+            /** @var string $role */
+            $role = $row['role'];
+            $participants[$role][$row['id']] = $this->mapDataToEntryParticipant($row);
+        }
+
+        $rowsDependableParticipants = $this->getRowsForEntryParticipant($event, [
+            ParticipantRole::PatrolParticipant,
+            ParticipantRole::TroopParticipant,
+        ]);
+
+        foreach ($rowsDependableParticipants as $rowDependableParticipant) {
+            $role = match ($rowDependableParticipant['role']) {
+                ParticipantRole::TroopParticipant->value => ParticipantRole::TroopLeader->value,
+                ParticipantRole::PatrolParticipant->value => ParticipantRole::PatrolLeader->value,
+                default => 'unknown',
+            };
+
+            $leader = $participants[$role][$rowDependableParticipant['patrol_leader_id']] ?? null;
+            if ($leader instanceof EntryParticipant) {
+                $leader->participants[$rowDependableParticipant['id']]
+                    = $this->mapDataToEntryParticipant($rowDependableParticipant);
+            }
+        }
+
+        return $participants;
+    }
+
+    /**
+     * @param Event $event
+     * @param array<ParticipantRole> $participantRoles
+     * @return array<Row>
+     * /
+     */
+    private function getRowsForEntryParticipant(Event $event, array $participantRoles): array
+    {
+        $qb = $this->connection->select('
+            participant.id,
+            participant.first_name,
+            participant.last_name,
+            participant.nickname,
+            participant.patrol_name,
+            participant.tie_code,
+            participant.birth_date,
+            participant.role,
+            participant.patrol_leader_id,
+            d.is_done AS sfh_done
+        ')->from($this->getTable());
+
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
+
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $qb->where('participant.role IN %in', $participantRoles);
+
+        $this->addOrdersBy($qb, [new Order('id')]);
+
+        return $qb->fetchAll();
+    }
+
+    private function mapDataToEntryParticipant(Row $row): EntryParticipant
+    {
+        /** @var array{
+         *     id: int,
+         *     first_name: string|null,
+         *     last_name: string|null,
+         *     nickname: string|null,
+         *     patrol_name: string|null,
+         *     tie_code: string,
+         *     birth_date: \DateTimeInterface|null,
+         *     patrol_leader_id: int|null,
+         *     sfh_done: bool|null,
+         *     role: string|null
+         * } $array */
+        $array = $row->toArray();
+
+        return new EntryParticipant(
+            $array['id'],
+            $array['first_name'] ?? '',
+            $array['last_name'] ?? '',
+            $array['nickname'] ?? '',
+            $array['patrol_name'] ?? '',
+            $array['tie_code'],
+            $array['birth_date'] ?? DateTimeUtils::getDateTime(),
+            $array['sfh_done'] ?? false,
+        );
     }
 }

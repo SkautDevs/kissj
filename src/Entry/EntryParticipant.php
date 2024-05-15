@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace kissj\Entry;
 
-readonly class EntryParticipant
+class EntryParticipant
 {
+    /** @var EntryParticipant[] */
+    public array $participants = [];
+
     public function __construct(
-        public int $id,
-        public string $firstname,
-        public string $lastname,
-        public string $nickname,
-        public ?string $patrolName,
-        public string $tieCode,
-        public \DateTimeInterface $birthDate,
-        public bool $sfh,
+        readonly public int $id,
+        readonly public string $firstname,
+        readonly public string $lastname,
+        readonly public string $nickname,
+        readonly public ?string $patrolName,
+        readonly public string $tieCode,
+        readonly public \DateTimeInterface $birthDate,
+        readonly public bool $sfh,
     ) {
     }
 }
