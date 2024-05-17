@@ -19,8 +19,10 @@ class EntryController extends AbstractController
     ) {
     }
 
-    public function list(Response $response, Event $authorizedEvent): Response
-    {
+    public function list(
+        Response $response,
+        Event $authorizedEvent,
+    ): Response {
         $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent);
 
         return $this->getResponseWithJson(
@@ -33,14 +35,20 @@ class EntryController extends AbstractController
         );
     }
 
-    public function entry(string $entryCode, Request $request, Response $response): Response
-    {
+    public function entry(
+        Request $request,
+        Response $response,
+        string $entryCode,
+    ): Response {
         // TODO solve code ABCDEFGH - default code for DB - block or generate better data in DB
         $participant = $this->participantRepository->findOneByEntryCode($entryCode);
         if ($participant === null) {
             return $this->getResponseWithJson(
                 $response,
-                ['status' => 'invalid', 'reason' => 'participant not found'],
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
+                    'reason' => 'participant not found',
+                ],
                 403,
             );
         }
@@ -49,7 +57,10 @@ class EntryController extends AbstractController
         if (!array_key_exists('eventSecret', $bodyJson)) {
             return $this->getResponseWithJson(
                 $response,
-                ['status' => 'invalid', 'reason' => 'in JSON request key eventSecret is missing'],
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
+                    'reason' => 'in JSON request key eventSecret is missing',
+                ],
                 422,
             );
         }
@@ -59,7 +70,10 @@ class EntryController extends AbstractController
         if ($event->apiSecret !== $eventSecret) {
             return $this->getResponseWithJson(
                 $response,
-                ['status' => 'invalid', 'reason' => 'invalid event secret'],
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
+                    'reason' => 'invalid event secret',
+                ],
                 403,
             );
         }
@@ -75,7 +89,7 @@ class EntryController extends AbstractController
             return $this->getResponseWithJson(
                 $response,
                 $participantInfo + [
-                    'status' => 'used',
+                    'status' => EntryStatus::ENTRY_STATUS_USED,
                     'entryDateTime' => $participant->entryDate->format(DATE_ATOM),
                 ],
             );
@@ -86,7 +100,44 @@ class EntryController extends AbstractController
         return $this->getResponseWithJson(
             $response,
             $participantInfo + [
-                'status' => 'valid',
+                'status' => EntryStatus::ENTRY_STATUS_VALID,
+            ],
+        );
+    }
+
+    public function entryFromWebApp(
+        Response $response,
+        Event $authorizedEvent,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
+        if ($participant === null) {
+            return $this->getResponseWithJson(
+                $response,
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
+                    'reason' => 'participant not found',
+                ],
+                403,
+            );
+        }
+
+        if ($participant->entryDate !== null) {
+            return $this->getResponseWithJson(
+                $response,
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_USED,
+                    'entryDateTime' => $participant->entryDate->format(DATE_ATOM),
+                ],
+            );
+        }
+
+        $this->participantService->setAsEntered($participant);
+
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'status' => EntryStatus::ENTRY_STATUS_VALID,
             ],
         );
     }

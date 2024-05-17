@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj;
 
 use DI\Attribute\Inject;
+use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -68,7 +69,7 @@ abstract class AbstractController
     }
 
     /**
-     * @param array<string,int|string|null|array<mixed>> $json
+     * @param array<string,int|string|EntryStatus|null|array<mixed>> $json
      */
     protected function getResponseWithJson(Response $response, array $json, int $statusCode = 200): Response
     {

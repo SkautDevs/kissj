@@ -396,6 +396,7 @@ class ParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
 
         $qb->where('participant.role IN %in', $participantRoles);
+        $qb->where('participant.entry_date IS NULL');
 
         $this->addOrdersBy($qb, [new Order('id')]);
 

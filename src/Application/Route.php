@@ -318,6 +318,10 @@ class Route
 
                 $app->post('/code/{entryCode}', EntryController::class . '::entry')
                     ->setName('entry');
+
+                $app->post('/participant/{participantId}', EntryController::class . '::entryFromWebApp')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->setName('entry-from-web-app');
             });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
