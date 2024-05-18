@@ -17,6 +17,7 @@ class EntryParticipant
         readonly public ?string $patrolName,
         readonly public string $tieCode,
         readonly public \DateTimeInterface $birthDate,
+        readonly public EntryStatus $entryStatus,
         readonly public bool $sfh,
     ) {
     }

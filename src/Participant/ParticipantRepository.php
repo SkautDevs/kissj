@@ -7,6 +7,7 @@ namespace kissj\Participant;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
+use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
@@ -385,6 +386,7 @@ class ParticipantRepository extends Repository
             participant.birth_date,
             participant.role,
             participant.patrol_leader_id,
+            participant.entry_date,
             d.is_done AS sfh_done
         ')->from($this->getTable());
 
@@ -396,7 +398,6 @@ class ParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
 
         $qb->where('participant.role IN %in', $participantRoles);
-        $qb->where('participant.entry_date IS NULL');
 
         $this->addOrdersBy($qb, [new Order('id')]);
 
@@ -415,6 +416,7 @@ class ParticipantRepository extends Repository
          *     birth_date: \DateTimeInterface|null,
          *     patrol_leader_id: int|null,
          *     sfh_done: bool|null,
+         *     entry_date: \DateTimeInterface|null,
          *     role: string|null
          * } $array */
         $array = $row->toArray();
@@ -427,6 +429,7 @@ class ParticipantRepository extends Repository
             $array['patrol_name'] ?? '',
             $array['tie_code'],
             $array['birth_date'] ?? DateTimeUtils::getDateTime(),
+            EntryStatus::fromDatetime($array['entry_date']),
             $array['sfh_done'] ?? false,
         );
     }
