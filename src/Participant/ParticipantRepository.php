@@ -361,21 +361,14 @@ class ParticipantRepository extends Repository
 
     public function findParticipantById(int $participantId, Event $event): ?Participant
     {
-        $qb = $this->connection->select('participant.*')->from($this->getTable());
-
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
-
-        $qb->where('participant.id = %i', $participantId);
-        $qb->where('u.event_id = %i', $event->id);
-
-        /** @var ?Row $row */
-        $row = $qb->fetch();
-        if ($row === null) {
+        $participant = $this->findOneBy(['id' => $participantId]);
+        if ($participant === null) {
             return null;
         }
 
-        /** @var Participant $participant */
-        $participant = $this->createEntity($row);
+        if ($participant->getUserButNotNull()->event->id !== $event->id) {
+            return null;
+        }
 
         return $participant;
     }
