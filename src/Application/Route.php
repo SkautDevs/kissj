@@ -8,6 +8,7 @@ use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
+use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\ApiAuthorizedOnlyMiddleware;
@@ -321,10 +322,12 @@ class Route
 
                 $app->post('/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
                 $app->post('/troop/{participantId}', EntryController::class . '::entryTroopFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
             });
 
