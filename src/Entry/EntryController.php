@@ -8,6 +8,7 @@ use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\Troop\TroopLeader;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -43,39 +44,18 @@ class EntryController extends AbstractController
         // TODO solve code ABCDEFGH - default code for DB - block or generate better data in DB
         $participant = $this->participantRepository->findOneByEntryCode($entryCode);
         if ($participant === null) {
-            return $this->getResponseWithJson(
-                $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
-                    'reason' => 'participant not found',
-                ],
-                403,
-            );
+            return $this->createErrorEntryResponse($response, 'participant not found');
         }
 
         $bodyJson = $this->getParsedJsonFromBody($request);
         if (!array_key_exists('eventSecret', $bodyJson)) {
-            return $this->getResponseWithJson(
-                $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
-                    'reason' => 'in JSON request key eventSecret is missing',
-                ],
-                422,
-            );
+            return $this->createErrorEntryResponse($response, 'in JSON request key eventSecret is missing');
         }
         $eventSecret = $bodyJson['eventSecret'];
         $event = $participant->getUserButNotNull()->event;
 
         if ($event->apiSecret !== $eventSecret) {
-            return $this->getResponseWithJson(
-                $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
-                    'reason' => 'invalid event secret',
-                ],
-                403,
-            );
+            return $this->createErrorEntryResponse($response, 'invalid event secret');
         }
 
         $participantInfo = [
@@ -105,21 +85,14 @@ class EntryController extends AbstractController
         );
     }
 
-    public function entryFromWebApp(
+    public function entryParticipantFromWebApp(
         Response $response,
         Event $authorizedEvent,
         int $participantId,
     ): Response {
         $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
         if ($participant === null) {
-            return $this->getResponseWithJson(
-                $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_INVALID,
-                    'reason' => 'participant not found',
-                ],
-                403,
-            );
+            return $this->createErrorEntryResponse($response, 'participant not found');
         }
 
         if ($participant->entryDate !== null) {
@@ -171,6 +144,44 @@ class EntryController extends AbstractController
             [
 				'participantId' => (string)$participantId,
 			],
+		);
+	}
+
+    public function entryTroopFromWebApp(
+        Response $response,
+        Event $authorizedEvent,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
+        if ($participant instanceof TroopLeader === false) {
+            return $this->createErrorEntryResponse($response, 'troop not found');
+        }
+
+        foreach (array_merge([$participant], $participant->troopParticipants) as $troopParticipant) {
+            if ($troopParticipant->entryDate === null) {
+                $this->participantService->setAsEntered($troopParticipant);
+            }
+        }
+
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'status' => EntryStatus::ENTRY_STATUS_VALID,
+            ],
+        );
+    }
+
+    private function createErrorEntryResponse(
+        Response $response,
+        string $reason,
+    ): Response {
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'status' => EntryStatus::ENTRY_STATUS_INVALID,
+                'reason' => $reason,
+            ],
+            403,
         );
     }
 }

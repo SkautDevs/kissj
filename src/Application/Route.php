@@ -319,9 +319,13 @@ class Route
                 $app->post('/code/{entryCode}', EntryController::class . '::entry')
                     ->setName('entry');
 
-                $app->post('/participant/{participantId}', EntryController::class . '::entryFromWebApp')
+                $app->post('/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
-                    ->setName('entry-from-web-app');
+                    ->setName('entry-participant-from-web-app');
+
+                $app->post('/troop/{participantId}', EntryController::class . '::entryTroopFromWebApp')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->setName('entry-troop-from-web-app');
             });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
