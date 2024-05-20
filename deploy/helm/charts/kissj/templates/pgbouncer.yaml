@@ -53,7 +53,7 @@ spec:
             value: "2500"
 
           - name: PGBOUNCER_MAX_DB_CONNECTIONS
-            value: "300"
+            value: "100"
 
           - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
             value: "extra_float_digits"
@@ -62,22 +62,13 @@ spec:
             value: "prefer"
 
           - name: PGBOUNCER_POOL_MODE
-            value: "session"
+            value: "transaction"
 
           - name: PGBOUNCER_DEFAULT_POOL_SIZE
-            value: "300"
+            value: "290"
 
-          - name: PGBOUNCER_RESERVE_POOL_SIZE
-            value: "50"
-
-          - name: PGBOUNCER_RESERVE_POOL_TIMEOUT
-            value: "5"
-
-          - name: PGBOUNCER_LOG_CONNECTIONS
-            value: "1"
-
-          - name: PGBOUNCER_LOG_DISCONNECTIONS
-            value: "1"
+          - name: PGBOUNCER_MIN_POOL_SIZE
+            value: "10"
         resources:
           requests:
             memory: "500Mi"
