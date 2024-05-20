@@ -23,12 +23,6 @@ spec:
       securityContext:
         runAsUser: 1001
         runAsGroup: 1001
-      {{ if .Values.php.volume.enabled }}
-      volumes:
-      - name: {{ .Release.Name}}-sessions
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name}}-sessions
-      {{- end }}
       containers:
       - name: php-fpm-metrics
         image: hipages/php-fpm_exporter:latest
@@ -51,11 +45,6 @@ spec:
       - name: php-fpm
         image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
         imagePullPolicy: Always
-        {{- if .Values.php.volume.enabled }}
-        volumeMounts:
-        - mountPath: /var/lib/php/session/
-          name: {{ .Release.Name}}-sessions
-        {{- end }}
         ports:
         - containerPort: 9000
           name: php-fpm

@@ -32,13 +32,6 @@ php:
     minReplicas: 2
     maxReplicas: 20
 
-  # Must support RWX
-  volume:
-    enabled: false
-    size: 5Gi
-    storageclass: ""
-
-
 app:
 
   url: example.net

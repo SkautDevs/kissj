@@ -88,8 +88,6 @@ jobs:
               maxReplicas: 3
               minReplicas: 3
               
-            volume:
-              storageclass: ${{ secrets.STORAGE_CLASS }}
             image:
               name: quay.io/kissj/php-ubi
               tag: ${{ inputs.envName}}-${{ github.sha }}
