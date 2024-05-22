@@ -31,6 +31,7 @@ use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
+use function DI\add;
 
 class Route
 {
@@ -313,6 +314,11 @@ class Route
                 ->setName('deal-catch-data-from-google-form');
 
             $app->group('/entry', function (RouteCollectorProxy $app) {
+                $app->options('*', function ($request, $response){
+                    return $response->withStatus(200);})
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
+                    ->setName('entry-preflight');
+
                 $app->get('/list', EntryController::class . '::list')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->setName('entry-list');

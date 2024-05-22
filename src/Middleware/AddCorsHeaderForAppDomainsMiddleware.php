@@ -14,8 +14,8 @@ class AddCorsHeaderForAppDomainsMiddleware extends BaseMiddleware
     public function process(Request $request, ResponseHandler $handler): Response
     {
         $response = $handler->handle($request);
-        $response = $response->withAddedHeader('Access-Control-Allow-Origin', 'https://kissj.skauting.net');
-        
-        return $response;
+        return $response
+            ->withAddedHeader('Access-Control-Allow-Origin', 'https://kissj.skauting.net')
+            ->withAddedHeader('Access-Control-Request-Headers', 'content-type,authorization');
     }
 }
