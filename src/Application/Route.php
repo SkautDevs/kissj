@@ -314,10 +314,6 @@ class Route
                 ->setName('deal-catch-data-from-google-form');
 
             $app->group('/entry', function (RouteCollectorProxy $app) {
-                $app->options('*', function ($request, $response){
-                    return $response->withStatus(200);})
-                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
-                    ->setName('entry-preflight');
 
                 $app->get('/list', EntryController::class . '::list')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
@@ -326,12 +322,12 @@ class Route
                 $app->post('/code/{entryCode}', EntryController::class . '::entry')
                     ->setName('entry');
 
-                $app->post('/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
+                $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->post('/troop/{participantId}', EntryController::class . '::entryTroopFromWebApp')
+                $app->map(['POST', 'OPTIONS'],'/troop/{participantId}', EntryController::class . '::entryTroopFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
