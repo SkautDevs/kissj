@@ -204,18 +204,6 @@ class EventTypeObrok extends EventType
                 ),
             );
         }
-        if ($participant instanceof TroopLeader) {
-            /** @phpstan-ignore-next-line */
-            if (false) { # TODO remove when allowing bus deal to be shown
-                $eventDeals[] = new EventDeal(
-                    self::SLUG_BUS,
-                    sprintf(
-                        'https://docs.google.com/forms/d/e/1FAIpQLSdSgVsc1jvgBJBhTKnxRTvCV3R33lEM9OnE4PXCElFEKi8ykA/viewform?usp=pp_url&entry.18549217=%s',
-                        $participant->tieCode
-                    ),
-                );
-            }
-        }
 
         return $eventDeals;
     }

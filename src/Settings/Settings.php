@@ -100,9 +100,6 @@ use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\NullAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 use Twig\Extension\DebugExtension;
 
 use function DI\autowire;
@@ -288,8 +285,7 @@ class Settings
         $container[Translator::class] = function () {
             $defLocale = $_ENV['DEFAULT_LOCALE'];
             // https://symfony.com/doc/current/components/translation.html
-            $cacheDir = $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/translations' : null;
-            $translator = new Translator($defLocale, null, $cacheDir);
+            $translator = new Translator($defLocale);
             $translator->setFallbackLocales([$defLocale]);
 
             $translator->addLoader('yaml', new YamlFileLoader());
