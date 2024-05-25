@@ -340,7 +340,7 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->map(['GET', 'OPTIONS'],'/participant/{TieCode}', EntryController::class . '::RetrieveParticipantByTieCode')
+                $app->map(['GET', 'OPTIONS'],'/participant/{TieCode}', ParticipantVendorController::class . '::RetrieveParticipantByTieCode')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
