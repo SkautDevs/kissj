@@ -1,37 +1,17 @@
 <b>{{ person.getFullName }}</b>
 {% if person is PatrolLeader %}
     - {{ person.getPatrolParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
-{% endif %}{% if person is TroopLeader %}
+{% elseif person is TroopLeader %}
     - {{ person.getTroopParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
 {% endif %}
 {% if ca.contingent %}
     - <b>{{ person.getContingent|trans }}</b>
-{% endif %}{% if ca.email %}
+{% endif %}
+{% if ca.email %}
     - {{ person.getEmail }}
-{% elseif person.getUser %}
+{% elseif person.user %}
     - {{ person.user.email }}
 {% endif %}
-{% if person.deals %}
-    -
-    {% for participantDeal in person.deals %}
-        {{ participantDeal.slug }}{% if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
-    {% endfor %}
-{% else %}
-    {% for eventDeal in event.eventType.getEventDeals(person) %}
-        {{ eventDeal.slug }} ❌{{ not loop.last ? ' | ' }}
-    {% endfor %}
-{% endif %}
-
-{% if person is not PatrolParticipant %}
-    <form
-        method="POST"
-        action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': person.id}) }}"
-        style="display: inline-block;"
-    >
-        <input type="submit" class="btn btn-mini" value="{% trans %}dashboard-admin.cancelParticipant{% endtrans %}">
-    </form>
-{% endif %}
-{# TODO add placeholder for PL "not supported yet" #}
 
 <a
     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': person.id}) }}"
@@ -45,7 +25,7 @@
         <br/>{% include 'widgets/participantRow.twig' with {'person': patrolParticipant, 'ca': caPp} %}
     {% endfor %}
     <br/>
-{% endif %}{% if person is TroopLeader %}
+{% elseif person is TroopLeader %}
     {% for troopParticipant in person.troopParticipants %}
         <br/>{% include 'widgets/participantRow.twig' with {'person': troopParticipant, 'ca': caTp} %}
     {% endfor %}
