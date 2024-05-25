@@ -48,4 +48,5 @@ class UserRepository extends Repository
             'event' => $event,
         ]);
     }
+
 }

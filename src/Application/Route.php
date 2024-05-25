@@ -6,6 +6,7 @@ namespace kissj\Application;
 
 use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
+use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
@@ -30,6 +31,7 @@ use kissj\Participant\Troop\TroopController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
 use Slim\App;
+use Slim\Psr7\Response;
 use Slim\Routing\RouteCollectorProxy;
 
 class Route
@@ -331,10 +333,22 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
             });
+            $app->group("/vendor", function (RouteCollectorProxy $app) {
+
+                $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) { return $response->withStatus(200); })
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
+                    ->setName('entry-participant-from-web-app');
+
+                $app->map(['GET', 'OPTIONS'],'/participant/{TieCode}', EntryController::class . '::RetrieveParticipantByTieCode')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
+                    ->setName('entry-troop-from-web-app');
+            });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {
-                    $app->group('/{participantId}', function (RouteCollectorProxy $app) {
+                    $app->group('/{participantId}', function (RouteCollectorProxy $app) { 
                         $app->post('/adminNote', AdminController::class . '::changeAdminNote')
                             ->setName('admin-change-note');
                     });

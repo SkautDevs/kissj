@@ -12,6 +12,7 @@ use kissj\BankPayment\FioBankReaderFactory;
 use kissj\BankPayment\IBankPaymentService;
 use kissj\BankPayment\TatraBankPaymentService;
 use kissj\Entry\EntryController;
+use kissj\Entry\ParticipantVendorController;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
