@@ -51,7 +51,7 @@ class ParticipantVendorController extends AbstractController
             $vendoredParticipant->medicaments = $participant->medicaments;
         }
 
-        $body = json_encode($participant);
+        $body = json_encode($vendoredParticipant);
 
         if ($body === false) { return $response->withStatus(500); }
 
