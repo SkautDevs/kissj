@@ -184,6 +184,18 @@ class Route
                         ->setName('admin-show-file');
 
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
+                        $app->get('/mend', AdminController::class . '::mendParticipant')
+                            ->setName('admin-mend-participant');
+
+                        $app->post('/uncancel', AdminController::class . '::uncancel')
+                            ->setName('admin-uncancel-participant');
+
+                        $app->post('/entry', EntryController::class . '::entryFromAdmin')
+                            ->setName('admin-entry-participant');
+
+                        $app->post('/unentry', EntryController::class . '::unentryFromAdmin')
+                            ->setName('admin-unentry-participant');
+
                         $app->get('/showDetails', AdminController::class . '::showParticipantDetails')
                             ->setName('admin-show-participant-details-changeable');
 

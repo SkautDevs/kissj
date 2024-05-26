@@ -396,6 +396,13 @@ readonly class ParticipantService
         return $participant;
     }
 
+    public function uncancelParticipant(Participant $participant): Participant
+    {
+        $this->userService->setUserPaid($participant->getUserButNotNull());
+
+        return $participant;
+    }
+
     /**
      * @param Participant[] $participants
      */
@@ -431,6 +438,14 @@ readonly class ParticipantService
     public function setAsEntered(Participant $participant): Participant
     {
         $participant->entryDate = DateTimeUtils::getDateTime();
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
+
+    public function setAsUnentered(Participant $participant): Participant
+    {
+        $participant->entryDate = null;
         $this->participantRepository->persist($participant);
 
         return $participant;

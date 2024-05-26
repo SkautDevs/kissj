@@ -536,6 +536,23 @@ class AdminController extends AbstractController
         return $this->getResponseWithJson($response, ['adminNote' => $participant->adminNote]);
     }
 
+    public function mendParticipant(
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        return $this->view->render(
+            $response,
+            'admin/mendParticipant.twig',
+            [
+				'participant' => $participant,
+				'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+			],
+        );
+    }
+
     public function showParticipantDetails(
         Response $response,
         Event $event,
@@ -577,7 +594,10 @@ class AdminController extends AbstractController
         return $this->redirect(
             $request,
             $response,
-            'admin-show-stats',
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
         );
     }
 
@@ -644,7 +664,37 @@ class AdminController extends AbstractController
         return $this->redirect(
             $request,
             $response,
-            'admin-show-stats',
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
+        );
+    }
+
+    public function uncancel(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        if ($participant->getUserButNotNull()->status !== UserStatus::Cancelled) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.participantNotInCancelledStatus'));
+        } elseif ($participant instanceof PatrolLeader) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.cancelPatrolLeaderNotSupported'));
+        } else {
+            $this->participantService->uncancelParticipant($participant);
+            $this->flashMessages->success($this->translator->trans('flash.success.participantUncancelled'));
+        }
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
         );
     }
 

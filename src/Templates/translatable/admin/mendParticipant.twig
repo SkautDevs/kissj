@@ -1,0 +1,86 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card paid-theme">
+        <h2>{% trans %}mend-admin.headline{% endtrans %}</h2>
+        <div>
+            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ participant.user.status.value)|trans }}</b><br/>
+            {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  participant.role.value)|trans }}</b>
+            {% if participant is TroopLeader %}
+                ({{ participant.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+            {% elseif participant is PatrolLeader %}
+                ({{ participant.getPatrolParticipantsCount() }}x {% trans %}role.pp{% endtrans %})
+            {% endif %}
+            <br/>
+            <br/>
+            {{ include('widgets/details.twig', {person: participant, ca: ca}) }}
+            <br/>
+            {% trans %}mend-admin.enter{% endtrans %}:
+            {% set entryDate = participant.getEntryDate() %}
+            {% if entryDate %}
+                <b>🎪 {{ entryDate|date('d. m. Y - H:i:s') }}</b>
+            {% else %}
+                ⌛ <i>{% trans %}mend-admin.didNotEnterYet{% endtrans %}</i>
+            {% endif %}
+            <br/>
+            <br/>
+            {% if participant.deals %}
+                -
+                {% for participantDeal in participant.deals %}
+                    {{ participantDeal.slug }}{% if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
+                {% endfor %}
+            {% else %}
+                {% for eventDeal in event.eventType.getEventDeals(participant) %}
+                    {{ eventDeal.slug }} ❌{{ not loop.last ? ' | ' }}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <br/>
+        {% if participant.user.status.value == 'cancelled' %}
+            <form
+                    method="POST"
+                    action="{{ url_for('admin-uncancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+            >
+                <input type="submit" class="btn" value="{% trans %}mend-admin.uncancelParticipant{% endtrans %}">
+            </form>
+        {% endif %}
+
+        {% if participant.user.status.value == 'paid' %}
+            <a
+                    href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                    class="btn">
+                {% trans %}mend-admin.editParticipant{% endtrans %}
+            </a>
+            <br/>
+            {% if person is not PatrolParticipant %}
+                {# TODO add placeholder for PL "not supported yet" #}
+                <form
+                        method="POST"
+                        action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                >
+                    <input type="submit" class="btn" value="{% trans %}mend-admin.cancelParticipant{% endtrans %}">
+                </form>
+                <br/>
+            {% endif %}
+            {% if entryDate == null %}
+                <form
+                        method="POST"
+                        action="{{ url_for('admin-entry-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                >
+                    <input type="submit" class="btn" value="{% trans %}mend-admin.entryParticipant{% endtrans %}">
+                </form>
+                <br/>
+            {% else %}
+                <form
+                        method="POST"
+                        action="{{ url_for('admin-unentry-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                >
+                    <input type="submit" class="btn" value="{% trans %}mend-admin.unentryParticipant{% endtrans %}">
+                </form>
+                <br/>
+            {% endif %}
+        {% endif %}
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+    </div>
+{% endblock %}

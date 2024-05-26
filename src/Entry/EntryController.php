@@ -90,4 +90,36 @@ class EntryController extends AbstractController
             ],
         );
     }
+
+    public function entryFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
+    {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        $this->participantService->setAsEntered($participant);
+        $this->logger->info('Participant with ID ' . $participantId . ' set as entered from admin');
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
+        );
+    }
+
+    public function unentryFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
+    {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        $this->participantService->setAsUnentered($participant);
+        $this->logger->info('Participant with ID ' . $participantId . ' set as NOT entered from admin');
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
+        );
+    }
 }

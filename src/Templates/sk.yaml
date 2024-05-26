@@ -363,7 +363,7 @@ dashboard-admin:
     checkMovePayments: "Zkontrolovat přesun platby"
     emailFrom: "Email prodávajícího zaplaceného účastníka"
     emailTo: "Email kupujícího účastníka"
-    editParticipant: "Editovat údaje"
+    mendParticipant: "Zobrazit účastníka"
     cancelParticipant: "Označit účastníka že nedorazí"
     changeNotice: "Upravit"
     import-file: "Import SRS souboru pro IST"

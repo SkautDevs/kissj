@@ -14,9 +14,9 @@
 {% endif %}
 
 <a
-    href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': person.id}) }}"
+    href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': person.id}) }}"
     class="btn btn-mini">
-    {% trans %}dashboard-admin.editParticipant{% endtrans %}
+    {% trans %}dashboard-admin.mendParticipant{% endtrans %}
 </a>
 
 {# draw all patrol or troop participants on their separate rows #}

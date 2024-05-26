@@ -363,7 +363,7 @@ dashboard-admin:
     checkMovePayments: "Check payment move"
     emailFrom: "Selling paid participant email"
     emailTo: "Buying participant email"
-    editParticipant: "Edit details"
+    mendParticipant: "Show particpant"
     cancelParticipant: "Mark participant as not going"
     changeNotice: "Edit"
     import-file: "Import SRS for IST file"

@@ -36,12 +36,12 @@
             </div>
         </div>
         {% if transferPossible %}
-        <form method="POST" action="{{ url_for('admin-transfer-payment', {'eventSlug': event.slug}) }}">
-            <input name="emailFrom" type="hidden" value="{{ emailFrom }}" required>
-            <input name="emailTo" type="hidden" value="{{ emailTo }}" required>
-            <input class="btn btn-small" type="submit"
-                   value="{% trans %}transferPayment-admin.transfer{% endtrans %}">
-        </form><br/>
+            <form method="POST" action="{{ url_for('admin-transfer-payment', {'eventSlug': event.slug}) }}">
+                <input name="emailFrom" type="hidden" value="{{ emailFrom }}" required>
+                <input name="emailTo" type="hidden" value="{{ emailTo }}" required>
+                <input class="btn btn-small" type="submit"
+                       value="{% trans %}transferPayment-admin.transfer{% endtrans %}">
+            </form><br/>
         {% else %}
             <h2>{% trans %}transferPayment-admin.notPossible{% endtrans %}</h2>
         {% endif %}

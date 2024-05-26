@@ -12,7 +12,7 @@
                 <br/>
                 <br/>
                 <a class="btn btn-small btn-grey"
-                   href="{{ url_for('admin-show-stats', {'eventSlug': event.slug}) }}">{% trans %}changeDetails.back{% endtrans %}</a>
+                   href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': person.id}) }}">{% trans %}changeDetails.back{% endtrans %}</a>
             </div>
         </form>
     </div>
