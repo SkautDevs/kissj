@@ -126,8 +126,8 @@ class EntryController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
+                'participantId' => (string) $participantId,
+            ],
         );
     }
 
@@ -142,10 +142,10 @@ class EntryController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
-		);
-	}
+                'participantId' => (string) $participantId,
+            ],
+        );
+    }
 
     public function entryTroopFromWebApp(
         Response $response,
