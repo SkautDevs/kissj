@@ -63,6 +63,7 @@ dashboard:
         closed: "locked ✔"
         approved: "approved ✔"
         paid: "paid (:"
+        cancelled: "not going ):"
     lockRegistration: "Lock registration"
     downloadReceipt: "Download receipt in PDF"
 changeDetails:
@@ -365,6 +366,7 @@ dashboard-admin:
     emailTo: "Buying participant email"
     mendParticipant: "Show particpant"
     cancelParticipant: "Mark participant as not going"
+    uncancelParticipant: "Mark participant as going, from state when he is not going"
     changeNotice: "Edit"
     import-file: "Import SRS for IST file"
     import-submit: "Start import"
@@ -429,6 +431,15 @@ troopManagement-admin:
     troopParticipantsWithoutLeader: "participants without troop"
     tieTogether: "Tie participant into troop"
     untie: "Untie participant from troop"
+mend-admin:
+    headline: "Participant detail"
+    enter: "Enter into event"
+    didNotEnterYet: "did not enter yet"
+    editParticipant: "Edit participant"
+    cancelParticipant: "Mark participant as not going"
+    uncancelParticipant: "Mark participant as going, from state when he is not going"
+    entryParticipant: "Mark participant as entered into event"
+    unentryParticipant: "Mark participant as not entered into event"
 receipt:
     headline: "Confirmation of payment acceptance"
     number: "Receipt number"
@@ -480,6 +491,7 @@ flash:
         participantUntied: "Participant successfully untied from the group!"
         roleChanged: "Role successfully changed!"
         participantCancelled: "Participant was successfully cancelled"
+        participantUncancelled: "Participant was successfully marked as going again!"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -530,6 +542,7 @@ flash:
         sameRoleCannotChangeRole: "Cannot change role to the same role"
         notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
         cancelPatrolLeaderNotSupported: "Canceling patrol leader is not supported"
+        participantNotInCancelledStatus: "Participant cannot be marked as going, because he is not in 'not going' status"
     error:
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"

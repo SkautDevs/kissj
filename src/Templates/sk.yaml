@@ -63,6 +63,7 @@ dashboard:
         closed: "uzamčený ✔"
         approved: "schválený ✔"
         paid: "zaplacený (:"
+        cancelled: "nejede ):"
     lockRegistration: "Uzamknúť registráciu"
     downloadReceipt: "Stáhnout potvrzení o zaplacení v PDF"
 changeDetails:
@@ -365,6 +366,7 @@ dashboard-admin:
     emailTo: "Email kupujícího účastníka"
     mendParticipant: "Zobrazit účastníka"
     cancelParticipant: "Označit účastníka že nedorazí"
+    uncancelParticipant: "Označit účastníka že opět dorazí, ze stavu, kdy nedorazí"
     changeNotice: "Upravit"
     import-file: "Import SRS souboru pro IST"
     import-submit: "Start importu"
@@ -429,6 +431,15 @@ troopManagement-admin:
     troopParticipantsWithoutLeader: "účastníci bez skupiny"
     tieTogether: "Připojit účastníka do skupiny"
     untie: "Odepnout účastníka od skupiny"
+mend-admin:
+    headline: "Detail účastníka"
+    enter: "Vstup na akci"
+    didNotEnterYet: "ještě na akci nevstoupil"
+    editParticipant: "Upravit účastníka"
+    cancelParticipant: "Označit účastníka že nejede"
+    uncancelParticipant: "Označit účastníka že opět přijede"
+    entryParticipant: "Označit účastníka, že vstoupil na akci"
+    unentryParticipant: "Označit účastníka, že na akci nevstoupil"
 receipt:
     headline: "Potvrzení o přijetí platby"
     number: "Číslo dokladu"
@@ -480,6 +491,7 @@ flash:
         participantUntied: "Účastník úspěšně odepnut od skupiny!"
         roleChanged: "Rola účastníka úspěšně změněna!"
         participantCancelled: "Účastník úspěšně označen že nejede!"
+        participantUncancelled: "Účastník úspěšně označen že opět přijede!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -530,6 +542,7 @@ flash:
         sameRoleCannotChangeRole: "Účastník už tuto roli má, změna role není možná"
         notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
         cancelPatrolLeaderNotSupported: "Označení patroly že nepřijede není zatím podporováno"
+        participantNotInCancelledStatus: "Účastník nemůže být označen že přijede, protože není ve stavu 'nepřijede'"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"
