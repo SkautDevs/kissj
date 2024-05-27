@@ -12,7 +12,6 @@ use kissj\BankPayment\FioBankReaderFactory;
 use kissj\BankPayment\IBankPaymentService;
 use kissj\BankPayment\TatraBankPaymentService;
 use kissj\Entry\EntryController;
-use kissj\Entry\ParticipantVendorController;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
@@ -67,6 +66,7 @@ use kissj\Participant\Troop\TroopController;
 use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
+use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
@@ -186,6 +186,7 @@ class Settings
             ParticipantController::class => autowire(),
             ParticipantRepository::class => autowire(),
             ParticipantService::class => autowire(),
+            ParticipantVendorController::class => autowire(),
             PatrolController::class => autowire(),
             PatrolLeaderRepository::class => autowire(),
             PatrolLeadersOnlyMiddleware::class => autowire(),

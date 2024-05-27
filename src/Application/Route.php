@@ -333,14 +333,14 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
             });
-            $app->group("/vendor", function (RouteCollectorProxy $app) {
+            $app->group('/vendor', function (RouteCollectorProxy $app) {
 
                 $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) { return $response->withStatus(200); })
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->map(['GET', 'OPTIONS'],'/participant/{TieCode}', ParticipantVendorController::class . '::RetrieveParticipantByTieCode')
+                $app->map(['GET', 'OPTIONS'],'/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
@@ -348,7 +348,7 @@ class Route
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {
-                    $app->group('/{participantId}', function (RouteCollectorProxy $app) { 
+                    $app->group('/{participantId}', function (RouteCollectorProxy $app) {
                         $app->post('/adminNote', AdminController::class . '::changeAdminNote')
                             ->setName('admin-change-note');
                     });

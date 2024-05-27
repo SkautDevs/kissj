@@ -306,12 +306,17 @@ class ParticipantRepository extends Repository
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
     {
         $participant = $this->findOneBy(['tie_code' => $tieCode]);
-        if ($participant === null) {return null;}
-        if ($participant->user->event == $authorizedEvent) {
+        if ($participant === null) {
+            return null;
+        }
+        
+        if ($participant->user->event->id === $authorizedEvent->id) {
             return $participant;
         }
+
         return null;
     }
+
     public function findParticipantById(int $participantId, Event $event): ?Participant
     {
         $participant = $this->findOneBy(['id' => $participantId]);

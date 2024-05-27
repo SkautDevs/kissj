@@ -18,25 +18,25 @@ class ParticipantVendorController extends AbstractController
     ) {
     }
 
-    public function RetrieveParticipantByTieCode(
+    public function retrieveParticipantByTieCode(
         Request $request,
         Response $response,
         Event $authorizedEvent,
-        string $TieCode,
-
+        string $tieCode,
     ): Response {
-        $participant = $this->participantRepository->findOneByTieCodeAndEvent($TieCode, $authorizedEvent);
+        $participant = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $authorizedEvent);
 
-        if ($participant == null) {
+        if ($participant === null) {
             return $response->withStatus(404);
         }
+
         $allowHealthData = (bool)$request->getHeader('Allow-Health')[0];
 
         $vendoredParticipant = new VendoredParticipantType(
-            $participant->role -> value ?? "norole",
+            $participant->role -> value ?? 'norole',
             $participant->firstName,
             $participant->lastName,
-            $participant->birthDate == null ? null : $participant->birthDate->format('Y-m-d'),
+            $participant->birthDate?->format('Y-m-d'),
             $participant->nickname,
         );
 
@@ -53,7 +53,9 @@ class ParticipantVendorController extends AbstractController
 
         $body = json_encode($vendoredParticipant);
 
-        if ($body === false) { return $response->withStatus(500); }
+        if ($body === false) {
+            return $response->withStatus(500);
+        }
 
         return $this->getResponseWithJson(
             $response,
@@ -62,5 +64,4 @@ class ParticipantVendorController extends AbstractController
             ],
         );
     }
-
 }
