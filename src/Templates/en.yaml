@@ -433,6 +433,7 @@ troopManagement-admin:
     untie: "Untie participant from troop"
 mend-admin:
     headline: "Participant detail"
+    tieCode: "TIE code"
     enter: "Enter into event"
     didNotEnterYet: "did not enter yet"
     editParticipant: "Edit participant"

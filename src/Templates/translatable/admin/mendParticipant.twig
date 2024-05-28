@@ -10,7 +10,8 @@
                 ({{ participant.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
             {% elseif participant is PatrolLeader %}
                 ({{ participant.getPatrolParticipantsCount() }}x {% trans %}role.pp{% endtrans %})
-            {% endif %}
+            {% endif %}<br/>
+            {% trans %}mend-admin.tieCode{% endtrans %}: <b>{{ participant.tieCode }}</b>
             <br/>
             <br/>
             {{ include('widgets/details.twig', {person: participant, ca: ca}) }}

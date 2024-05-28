@@ -433,6 +433,7 @@ troopManagement-admin:
     untie: "Odepnout účastníka od skupiny"
 mend-admin:
     headline: "Detail účastníka"
+    tieCode: "TIE code"
     enter: "Vstup na akci"
     didNotEnterYet: "ještě na akci nevstoupil"
     editParticipant: "Upravit účastníka"
