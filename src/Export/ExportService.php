@@ -192,11 +192,12 @@ readonly class ExportService
             'registrationCloseDate',
             'registrationApproveDate',
             'registrationPayDate', // 35
+            'entryDate',
             'patrolOrTroopLeaderId',
             'patrolName',
             'patrolParticipantCount',
-            'istSkills',
-            'istPreferredPosition', // 40
+            'istSkills', // 40
+            'istPreferredPosition',
             'driverLicense',
         ]];
 
@@ -282,6 +283,7 @@ readonly class ExportService
                     $participant->registrationCloseDate !== null ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
                     $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
+                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '',
                 ],
                 $ptPart,
                 $istPart
