@@ -115,6 +115,36 @@ class EntryController extends AbstractController
         );
     }
 
+    public function leaveParticipantFromWebApp(
+        Response $response,
+        Event $authorizedEvent,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
+        if ($participant === null) {
+            return $this->createErrorEntryResponse($response, 'participant not found');
+        }
+
+        if ($participant->leaveDate !== null) {
+            return $this->getResponseWithJson(
+                $response,
+                [
+                    'status' => EntryStatus::ENTRY_STATUS_VALID,
+                    'entryDateTime' => null,
+                ],
+            );
+        }
+
+        $this->participantService->setAsLeaved($participant);
+
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'status' => EntryStatus::ENTRY_STATUS_LEAVED,
+            ],
+        );
+    }
+
     public function entryFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);

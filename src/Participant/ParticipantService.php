@@ -450,6 +450,21 @@ readonly class ParticipantService
 
         return $participant;
     }
+    public function setAsLeaved(Participant $participant): Participant
+    {
+        $participant->leaveDate = DateTimeUtils::getDateTime();
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
+
+    public function setAsUnleaved(Participant $participant): Participant
+    {
+        $participant->leaveDate = null;
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
 
     public function tryChangeRoleWithMessages(string $roleFromBody, Participant $participant, Event $event): bool
     {

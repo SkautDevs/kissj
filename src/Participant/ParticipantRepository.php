@@ -309,8 +309,8 @@ class ParticipantRepository extends Repository
         if ($participant === null) {
             return null;
         }
-        
-        if ($participant->user->event->id === $authorizedEvent->id) {
+
+        if ($participant->user?->event->id === $authorizedEvent->id) {
             return $participant;
         }
 
@@ -443,7 +443,7 @@ class ParticipantRepository extends Repository
             $array['patrol_name'] ?? '',
             $array['tie_code'],
             $array['birth_date'] ?? DateTimeUtils::getDateTime(),
-            EntryStatus::fromDatetime($array['entry_date']),
+            EntryStatus::entryFromDatetime($array['entry_date']),
             $array['sfh_done'] ?? false,
         );
     }

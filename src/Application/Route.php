@@ -315,7 +315,6 @@ class Route
                 ->setName('deal-catch-data-from-google-form');
 
             $app->group('/entry', function (RouteCollectorProxy $app) {
-
                 $app->get('/list', EntryController::class . '::list')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->setName('entry-list');
@@ -333,14 +332,26 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
             });
-            $app->group('/vendor', function (RouteCollectorProxy $app) {
 
+            $app->group('/leave', function (RouteCollectorProxy $app) {
+                $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::leaveParticipantFromWebApp')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
+                    ->setName('leave-participant-from-web-app');
+
+                $app->map(['POST', 'OPTIONS'], '/troop/{participantId}', EntryController::class . '::leaveTroopFromWebApp')
+                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
+                    ->setName('leave-troop-from-web-app');
+            });
+
+            $app->group('/vendor', function (RouteCollectorProxy $app) {
                 $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) { return $response->withStatus(200); })
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->map(['GET', 'OPTIONS'],'/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
+                $app->map(['GET', 'OPTIONS'], '/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
