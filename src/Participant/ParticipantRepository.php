@@ -401,6 +401,7 @@ class ParticipantRepository extends Repository
             participant.role,
             participant.patrol_leader_id,
             participant.entry_date,
+            participant.leave_date,
             d.is_done AS sfh_done
         ')->from($this->getTable());
 
