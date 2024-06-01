@@ -201,6 +201,30 @@ class EntryController extends AbstractController
         );
     }
 
+    public function leaveTroopFromWebApp(
+        Response $response,
+        Event $authorizedEvent,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
+        if ($participant instanceof TroopLeader === false) {
+            return $this->createErrorEntryResponse($response, 'troop not found');
+        }
+
+        foreach (array_merge([$participant], $participant->troopParticipants) as $troopParticipant) {
+            if ($participant->leaveDate === null) {
+                $this->participantService->setAsLeaved($troopParticipant);
+            }
+        }
+
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'status' => EntryStatus::ENTRY_STATUS_LEAVED,
+            ],
+        );
+    }
+
     private function createErrorEntryResponse(
         Response $response,
         string $reason,
