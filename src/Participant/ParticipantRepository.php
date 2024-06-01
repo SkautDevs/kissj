@@ -431,6 +431,7 @@ class ParticipantRepository extends Repository
          *     patrol_leader_id: int|null,
          *     sfh_done: bool|null,
          *     entry_date: \DateTimeInterface|null,
+         *     leave_date: \DateTimeInterface|null,
          *     role: string|null
          * } $array */
         $array = $row->toArray();
@@ -443,7 +444,10 @@ class ParticipantRepository extends Repository
             $array['patrol_name'] ?? '',
             $array['tie_code'],
             $array['birth_date'] ?? DateTimeUtils::getDateTime(),
-            EntryStatus::entryFromDatetime($array['entry_date']),
+            EntryStatus::entryFromDatetime(
+                $array['entry_date'],
+                $array['leave_date'],
+            ),
             $array['sfh_done'] ?? false,
         );
     }
