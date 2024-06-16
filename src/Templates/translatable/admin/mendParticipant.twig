@@ -4,7 +4,8 @@
     <div class="card paid-theme">
         <h2>{% trans %}mend-admin.headline{% endtrans %}</h2>
         <div>
-            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ participant.user.status.value)|trans }}</b><br/>
+            {# TODO add UserStatus as variable #}
+            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ participant.getUserButNotNull().status.value)|trans }}</b><br/>
             {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  participant.role.value)|trans }}</b>
             {% if participant is TroopLeader %}
                 ({{ participant.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
@@ -37,7 +38,7 @@
             {% endif %}
         </div>
         <br/>
-        {% if participant.user.status.value == 'cancelled' %}
+        {% if participant.getUserButNotNull().status.value == 'cancelled' %}
             <form
                     method="POST"
                     action="{{ url_for('admin-uncancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
@@ -47,7 +48,7 @@
             <br/>
         {% endif %}
 
-        {% if participant.user.status.value == 'paid' %}
+        {% if participant.getUserButNotNull().status.value == 'paid' %}
             <a
                     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                     class="btn">
