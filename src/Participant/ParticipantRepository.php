@@ -43,6 +43,7 @@ class ParticipantRepository extends Repository
         array $orders = [],
         bool $filterEmptyParticipants = false,
         ?int $limit = null,
+        bool $sortedByTroopOrPatrol = false,
     ): array {
         $qb = $this->createFluent();
 
@@ -89,6 +90,10 @@ class ParticipantRepository extends Repository
 
         if ($filterEmptyParticipants) {
             $participants = $this->filterEmptyParticipants($participants);
+        }
+
+        if ($sortedByTroopOrPatrol) {
+            $participants = $this->sortParticipantsBasedOnTroopOrPatrol($participants);
         }
 
         return $participants;
@@ -193,6 +198,16 @@ class ParticipantRepository extends Repository
             $participants,
             fn (Participant $participant): bool => $participant->isFullNameNotEmpty(),
         );
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @return Participant[]
+     */
+    private function sortParticipantsBasedOnTroopOrPatrol(array $participants): array{
+        usort($participants,
+            function ($a, $b) { return ($a->troopLeader ?? $a->patrolLeader ?? $a->id) - ($b->troopLeader ?? $b->patrolLeader ?? $b->id); });
+        return $participants;
     }
 
     /**

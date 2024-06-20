@@ -42,6 +42,7 @@ readonly class ExportService
             [UserStatus::Paid],
             $event,
             $adminUser,
+            sortedByTroopOrPatrol: true,
         );
 
         $rows = [];
@@ -153,6 +154,7 @@ readonly class ExportService
             [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
             $event,
             $adminUser,
+            sortedByTroopOrPatrol: true,
         );
 
         $rows = [[
