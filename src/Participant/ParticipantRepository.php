@@ -254,6 +254,30 @@ class ParticipantRepository extends Repository
         /** @var array<string,int> $rows */
         $rows = $qb->fetchPairs('f', 'count');
 
+        // count patrol participants and merge
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
+
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $qb->groupBy('participant.food_preferences');
+        $qb->orderBy('participant.food_preferences');
+
+        /** @var array<string,int> $rows */
+        $rowsPp = $qb->fetchPairs('f', 'count');
+
+        // merge patrol participants into rest
+        foreach($rowsPp as $foodKey => $count) {
+            if (array_key_exists($foodKey, $rows) === false) {
+                $rows[$foodKey] = 0;
+            }
+
+            $rows[$foodKey] += $count;
+        }
+
         return $rows;
     }
 
