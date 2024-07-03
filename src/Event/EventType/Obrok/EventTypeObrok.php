@@ -17,7 +17,6 @@ use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeObrok extends EventType
 {
-    public const string SLUG_SFH = 'sfh';
     public const string SLUG_PROGRAMME = 'programme';
     public const string SLUG_BUS = 'bus';
 

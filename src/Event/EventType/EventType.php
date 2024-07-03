@@ -23,6 +23,8 @@ use kissj\Payment\Payment;
 
 abstract class EventType
 {
+    public const string SLUG_SFH = 'sfh';
+
     public function transformPayment(Payment $payment, Participant $participant): Payment
     {
         $payment->price = (string)$this->getPrice($participant);
