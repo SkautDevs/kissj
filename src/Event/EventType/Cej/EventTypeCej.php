@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Cej;
 
+use kissj\Deal\EventDeal;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
@@ -272,5 +273,23 @@ class EventTypeCej extends EventType
             self::CONTINGENT_CZECHIA => parent::getSkautStampSignPath($participant),
             default => '/SkSkautingSignStamp.png',
         };
+    }
+
+    #[\Override]
+    public function getEventDeals(Participant $participant): array
+    {
+        $eventDeals = [];
+
+        if ($participant instanceof Ist) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_SFH,
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLSe3FPRiN7o9nupa-sLs0w6xf6IFFEW5kJVMJSPSExfHn0qCtw/viewform?usp=pp_url&entry.499691302=%s',
+                    $participant->tieCode,
+                ),
+            );
+        }
+
+        return $eventDeals;
     }
 }
