@@ -72,3 +72,9 @@ receiptCs:
         na účet %paymentAccountTo%.
         "
     acceptedSign: "vystaveno automaticky dne %acceptedDate%"
+deal:
+    sfh: "Safe From Harm Quiz"
+    sfh-missing: "Missing Safe From Harm Quiz, please fill it in"
+    sfh-button: "Fill Safe From Harm Quiz questionnaire"
+    sfh-doneBadly: "Safe From Harm Quiz is filled in, but unfortunately it was not filled on maximum points (%date%). Please try to fill it in again"
+    sfh-done: "Safe From Harm Quiz is filled in, thank you!"
