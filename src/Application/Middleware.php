@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use DI\Container;
 use kissj\ErrorHandlerGetter;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
@@ -21,6 +22,10 @@ use Zeuxisoo\Whoops\Slim\WhoopsMiddleware;
 
 class Middleware
 {
+    /**
+     * @param App<Container> $app
+     * @return App<Container>
+     */
     public function addMiddlewaresInto(App $app): App
     {
         // CONTENT LENGTH

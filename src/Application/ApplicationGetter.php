@@ -3,6 +3,7 @@
 namespace kissj\Application;
 
 use DI\Bridge\Slim\Bridge;
+use DI\Container;
 use DI\ContainerBuilder;
 use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
@@ -11,6 +12,9 @@ use Slim\App;
 
 class ApplicationGetter
 {
+    /**
+     * @return App<Container>
+     */
     public function getApp(
         string $envPath = __DIR__.'/../../',
         string $envFilename = '.env',

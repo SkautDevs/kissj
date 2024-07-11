@@ -30,3 +30,4 @@ parameters:
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'
+	treatPhpDocTypesAsCertain: false

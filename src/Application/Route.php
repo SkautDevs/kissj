@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
+use DI\Container;
 use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
 use kissj\ParticipantVendor\ParticipantVendorController;
@@ -36,6 +37,10 @@ use Slim\Routing\RouteCollectorProxy;
 
 class Route
 {
+    /**
+     * @param App<Container> $app
+     * @return App<Container>
+     */
     public function addRoutesInto(App $app): App
     {
         $app->redirect($this->getBasePathSlashPrefixed($app), $app->getBasePath() . '/v2/kissj/events', 301);
@@ -373,6 +378,9 @@ class Route
         return $app;
     }
 
+    /**
+     * @param App<Container> $app
+     */
     private function getBasePathSlashPrefixed(App $app): string
     {
         $basePath = $app->getBasePath();
