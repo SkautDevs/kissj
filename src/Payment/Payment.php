@@ -70,7 +70,6 @@ class Payment extends EntityDatetime
             'SPD*1.0*ACC:' . $this->iban . '*'
             . 'AM:' . $this->price . '*'
             . 'CC:' . $this->mapDbCurrencyToIban($this->currency) . '*'
-            . 'DT:' . $this->due->format('Ymd') . '*'
             . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
             . ($this->constantSymbol === '' ? '' : ('X-KS:' . $this->constantSymbol . '*'))
             . 'X-VS:' . $this->variableSymbol;

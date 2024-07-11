@@ -52,11 +52,11 @@ class PaymentTest extends TestCase
         return [
             'examplePayment with diacritic' => [
                 $examplePayment0,
-                'SPD*1.0*ACC:CZ5608000000000002171532*AM:999*CC:CZK*DT:20150518*MSG:Zprava escRZYAie*X-VS:1212'
+                'SPD*1.0*ACC:CZ5608000000000002171532*AM:999*CC:CZK*MSG:Zprava escRZYAie*X-VS:1212'
             ],
             'examplePayment' => [
                 $examplePayment1,
-                'SPD*1.0*ACC:CZ2806000000000168540115*AM:450*CC:CZK*DT:20220521*MSG:PLATBA ZA ZBOZI*X-KS:0558*X-VS:1234567890'
+                'SPD*1.0*ACC:CZ2806000000000168540115*AM:450*CC:CZK*MSG:PLATBA ZA ZBOZI*X-KS:0558*X-VS:1234567890'
             ],
         ];
     }
