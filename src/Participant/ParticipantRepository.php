@@ -381,7 +381,9 @@ class ParticipantRepository extends Repository
         foreach($rows as $row) {
             /** @var string $role */
             $role = $row['role'];
-            $participants[$role][$row['id']] = $this->mapDataToEntryParticipant($row);
+            /** @var string $id */
+            $id = $row['id'];
+            $participants[$role][$id] = $this->mapDataToEntryParticipant($row);
         }
 
         $rowsDependableParticipants = $this->getRowsForEntryParticipant($event, [
@@ -390,15 +392,22 @@ class ParticipantRepository extends Repository
         ]);
 
         foreach ($rowsDependableParticipants as $rowDependableParticipant) {
-            $role = match ($rowDependableParticipant['role']) {
+            /** @var string $dpId */
+            $dpId = $rowDependableParticipant['id'];
+            /** @var string $dpRole */
+            $dpRole = $rowDependableParticipant['role'];
+            /** @var string $dpPatrolLeaderId */
+            $dpPatrolLeaderId = $rowDependableParticipant['patrol_leader_id'];
+
+            $role = match ($dpRole) {
                 ParticipantRole::TroopParticipant->value => ParticipantRole::TroopLeader->value,
                 ParticipantRole::PatrolParticipant->value => ParticipantRole::PatrolLeader->value,
                 default => 'unknown',
             };
 
-            $leader = $participants[$role][$rowDependableParticipant['patrol_leader_id']] ?? null;
+            $leader = $participants[$role][$dpPatrolLeaderId] ?? null;
             if ($leader instanceof EntryParticipant) {
-                $leader->participants[$rowDependableParticipant['id']]
+                $leader->participants[$dpId]
                     = $this->mapDataToEntryParticipant($rowDependableParticipant);
             }
         }

@@ -85,7 +85,10 @@ readonly class UserService
             return false;
         }
 
-        return $lastToken->createdAt > DateTimeUtils::getDateTime('now - 24 hours');
+        /** @var \DateTimeInterface $createdAt */
+        $createdAt = $lastToken->createdAt;
+
+        return $createdAt > DateTimeUtils::getDateTime('now - 24 hours');
     }
 
     public function getLoginTokenFromStringToken(string $token): LoginToken

@@ -22,6 +22,8 @@ class SkautisController extends AbstractController
      */
     public function redirectFromSkautis(Request $request, Response $response): Response
     {
+        // TODO fix into method $this->getParsedBody();
+        /** @phpstan-ignore shipmonk.forbiddenCast */
         $this->skautisService->saveDataFromPost((array)$request->getParsedBody());
 
         $eventSlug = $this->getParameterFromQuery($request, 'ReturnUrl');

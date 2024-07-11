@@ -30,4 +30,7 @@ parameters:
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'
-	treatPhpDocTypesAsCertain: false
+	treatPhpDocTypesAsCertain: false	
+	shipmonkRules:
+		enforceReadonlyPublicProperty:
+			enabled: false

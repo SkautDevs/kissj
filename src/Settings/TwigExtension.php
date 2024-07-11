@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Settings;
 
+use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
@@ -22,35 +23,35 @@ class TwigExtension extends AbstractExtension
         return [
             new TwigTest(
                 'PatrolLeader',
-                fn ($participant): bool => $participant instanceof PatrolLeader
+                fn (Participant $participant): bool => $participant instanceof PatrolLeader
             ),
             new TwigTest(
                 'PatrolParticipant',
-                fn ($participant): bool => $participant instanceof PatrolParticipant
+                fn (Participant $participant): bool => $participant instanceof PatrolParticipant
             ),
             new TwigTest(
                 'TroopLeader',
-                fn ($participant): bool => $participant instanceof TroopLeader
+                fn (Participant $participant): bool => $participant instanceof TroopLeader
             ),
             new TwigTest(
                 'TroopParticipant',
-                fn ($participant): bool => $participant instanceof TroopParticipant
+                fn (Participant $participant): bool => $participant instanceof TroopParticipant
             ),
             new TwigTest(
                 'Leader',
-                fn ($participant): bool => $participant instanceof PatrolLeader || $participant instanceof TroopLeader
+                fn (Participant $participant): bool => $participant instanceof PatrolLeader || $participant instanceof TroopLeader
             ),
             new TwigTest(
                 'Troop',
-                fn ($participant): bool => $participant instanceof TroopLeader || $participant instanceof TroopParticipant
+                fn (Participant $participant): bool => $participant instanceof TroopLeader || $participant instanceof TroopParticipant
             ),
             new TwigTest(
                 'hasUser',
-                fn ($participant): bool => !$participant instanceof PatrolParticipant
+                fn (Participant $participant): bool => !$participant instanceof PatrolParticipant
             ),
             new TwigTest(
                 'eligibleForShowTieCode',
-                fn ($participant): bool => (
+                fn (Participant $participant): bool => (
                     $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Open
                 ) || (
                     // TroopLeader TieCode is also used for pairing with some external services, so they have to be able to access it in paid status

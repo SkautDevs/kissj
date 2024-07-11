@@ -40,24 +40,57 @@ enum UserRole: string
     public function isEligibleToHandlePayments(): bool
     {
         return match ($this) {
-            self::Admin, self::ContingentAdminCs, self::ContingentAdminSk => true,
-            default => false,
+            self::Admin,
+            self::ContingentAdminCs,
+            self::ContingentAdminSk
+                => true,
+            self::Participant,
+            self::IstAdmin,
+            self::ContingentAdminPl,
+            self::ContingentAdminHu,
+            self::ContingentAdminEu,
+            self::ContingentAdminRo,
+            self::ContingentAdminGb,
+            self::ContingentAdminSw,
+            => false,
         };
     }
 
     public function isEligibleToManageTroops(): bool
     {
         return match ($this) {
-            self::Admin, self::ContingentAdminCs, self::ContingentAdminSk => true,
-            default => false,
+            self::Admin,
+            self::ContingentAdminCs,
+            self::ContingentAdminSk
+                => true,
+            self::Participant,
+            self::IstAdmin,
+            self::ContingentAdminPl,
+            self::ContingentAdminHu,
+            self::ContingentAdminEu,
+            self::ContingentAdminRo,
+            self::ContingentAdminGb,
+            self::ContingentAdminSw,
+            => false,
         };
     }
 
     public function isEligibleToImportIst(): bool
     {
         return match ($this) {
-            self::Admin => true,
-            default => false,
+            self::Admin
+                => true,
+            self::Participant,
+            self::IstAdmin,
+            self::ContingentAdminCs,
+            self::ContingentAdminSk,
+            self::ContingentAdminPl,
+            self::ContingentAdminHu,
+            self::ContingentAdminEu,
+            self::ContingentAdminRo,
+            self::ContingentAdminGb,
+            self::ContingentAdminSw,
+            => false,
         };
     }
 }

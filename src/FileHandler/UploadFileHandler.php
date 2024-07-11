@@ -34,7 +34,11 @@ readonly class UploadFileHandler
                 $uploadedFile = $uploadedFiles['uploadFile'];
 
                 // check for too-big files
-                if ($uploadedFile->getSize() > 10_000_000) { // 10MB
+                $fileSize = $uploadedFile->getSize();
+                if ($fileSize === null) {
+                    throw new \RuntimeException('Uploaded file size is null.');
+                }
+                if ($fileSize > 10_000_000) { // 10MB
                     $this->flashMessages->warning($this->translator->trans('flash.warning.fileTooBig'));
 
                     return null;

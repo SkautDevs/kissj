@@ -125,7 +125,7 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
-    public function getStylesheetNameWithoutLeadingSlash(): ?string
+    public function getStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/stylesObrok.css';
     }

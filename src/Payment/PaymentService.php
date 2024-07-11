@@ -172,7 +172,7 @@ class PaymentService
         /** @var BankPayment $bankPayment */
         foreach (array_slice($freshBankPayments, 0, $limit) as $bankPayment) {
             if (array_key_exists($bankPayment->variableSymbol ?? '', $participantKeydPayments)) {
-                $payment = $participantKeydPayments[$bankPayment->variableSymbol];
+                $payment = $participantKeydPayments[$bankPayment->variableSymbol ?? ''];
                 if ($payment->price === $bankPayment->price) {
                     // match!
                     $this->confirmPayment($payment);
@@ -246,7 +246,7 @@ class PaymentService
     private function composeNote(Participant $participant, Event $event): string
     {
         if ($participant instanceof PatrolLeader) {
-            return $event->slug . ' ' . $participant->patrolName . ' ' . $participant->getFullName();
+            return $event->slug . ' ' . ($participant->patrolName ?? '') . ' ' . $participant->getFullName();
         }
 
         return $event->slug . ' ' . $participant->getFullName();
