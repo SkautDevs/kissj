@@ -370,6 +370,7 @@ dashboard-admin:
     changeNotice: "Edit"
     import-file: "Import SRS for IST file"
     import-submit: "Start import"
+    exportPatrolsRoster: "Export patrols roster"
 stats-admin:
     stats: "Statistics for event"
     numberPatrolParticipants: "Patrol participants in total"

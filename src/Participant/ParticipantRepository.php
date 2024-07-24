@@ -493,7 +493,7 @@ class ParticipantRepository extends Repository
     public function getPatrolsRoster(Event $event): PatrolsRoster
     {
         $singlePatrolsRoster = [];
-        
+
         $patrolLeaders = $this->getAllPaidPatrolLeaders($event);
 
         foreach ($patrolLeaders as $pl) {
@@ -502,7 +502,7 @@ class ParticipantRepository extends Repository
                 $pl->patrolName ?? '',
                 $pl->getFullName(),
                 array_map(
-                    fn(PatrolParticipant $pp): string => $pp->getFullName(),
+                    fn (PatrolParticipant $pp): string => $pp->getFullName(),
                     $pl->patrolParticipants,
                 ),
             );

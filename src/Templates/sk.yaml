@@ -370,6 +370,7 @@ dashboard-admin:
     changeNotice: "Upravit"
     import-file: "Import SRS souboru pro IST"
     import-submit: "Start importu"
+    exportPatrolsRoster: "Export průvodek patrol"
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"
