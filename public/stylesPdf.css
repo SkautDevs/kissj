@@ -21,3 +21,41 @@
 .content-center {
     text-align: center;
 }
+
+.roster {
+    display: flex;
+    margin-bottom: 4rem;
+    page-break-inside: avoid;
+}
+
+.roster-header {
+}
+
+.roster-header-headline {
+    font: bold 1.6rem inherit;
+}
+
+.roster-header-image {
+    float: right;
+    max-height: 100px;
+    max-width: 250px;
+}
+
+.roster-table {
+    width: 100%;
+}
+
+table, tr, td {
+    border: 1px solid #888888;
+    border-collapse: collapse;
+}
+
+td.header {
+    background-color: #888888;
+    font-weight: bold;
+}
+
+td {
+    height: 2rem;
+    padding: 0 0.4rem;
+}

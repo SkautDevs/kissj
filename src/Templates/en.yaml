@@ -459,6 +459,10 @@ receipt:
         to the account %paymentAccountTo%.
         "
     acceptedSign: "issued automatically on %acceptedDate%"
+roster:
+    perex: "By singing this document you hereby agree with the presented rules of the event."
+    name: "Name of the participant"
+    signature: "Signature of the participant"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -565,3 +569,4 @@ flash:
         cannotAccessTemp: "Cannot access temporary file. Try it again later please."
         transferFailed: "Payment transfer failed"
         participantNotCancelled: "Participant was not cancelled, probably not found"
+        patrolsNotAllowed: "Patrols are not allowed for this event"

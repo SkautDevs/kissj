@@ -131,6 +131,11 @@
                    class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
+                {% if event.allowPatrols %}
+                    <a href="{{ url_for('admin-export-patrols-roster', {'eventSlug': event.slug}) }}"
+                       target="_blank"
+                       class="btn">{% trans %}dashboard-admin.exportPatrolsRoster{% endtrans %}</a><br/>
+                {% endif %}
             </div>
         </div>
     </div>

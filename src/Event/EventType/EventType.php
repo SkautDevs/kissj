@@ -247,4 +247,9 @@ abstract class EventType
     {
         return [];
     }
+
+    public function getRosterTemplateName(): string
+    {
+        return 'roster/roster.twig';
+    }
 }

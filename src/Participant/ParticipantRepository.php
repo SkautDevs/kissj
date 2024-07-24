@@ -13,6 +13,10 @@ use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\Admin\StatisticUserValueObject;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Patrol\PatrolsRoster;
+use kissj\Participant\Patrol\SinglePatrolRoster;
 use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
@@ -484,5 +488,41 @@ class ParticipantRepository extends Repository
             ),
             $array['sfh_done'] ?? false,
         );
+    }
+
+    public function getPatrolsRoster(Event $event): PatrolsRoster
+    {
+        $singlePatrolsRoster = [];
+        
+        $patrolLeaders = $this->getAllPaidPatrolLeaders($event);
+
+        foreach ($patrolLeaders as $pl) {
+            $singlePatrolsRoster[] = new SinglePatrolRoster(
+                (string)$pl->id,
+                $pl->patrolName ?? '',
+                $pl->getFullName(),
+                array_map(
+                    fn(PatrolParticipant $pp): string => $pp->getFullName(),
+                    $pl->patrolParticipants,
+                ),
+            );
+        }
+
+        return new PatrolsRoster($singlePatrolsRoster);
+    }
+
+    /**
+     * @return array<PatrolLeader>
+     */
+    private function getAllPaidPatrolLeaders(Event $event): array
+    {
+        /** @var array<PatrolLeader> $patrolLeaders */
+        $patrolLeaders = $this->getAllParticipantsWithStatus(
+            [ParticipantRole::PatrolLeader],
+            [UserStatus::Paid],
+            $event,
+        );
+
+        return $patrolLeaders;
     }
 }

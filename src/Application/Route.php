@@ -306,6 +306,9 @@ class Route
 
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
+
+                        $app->get('patrolsRoster', ExportController::class . '::exportPatrolsRoster')
+                            ->setName('admin-export-patrols-roster');
                     });
 
                     $app->post('/import/ist', AdminController::class . '::importIstFromSrs')

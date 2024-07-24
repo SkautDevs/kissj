@@ -1,0 +1,38 @@
+{% extends "_layoutPdf.twig" %}
+
+{% block content %}
+    {% for patrol in patrolsRoster.patrolsRoster %}
+        <div class="roster">
+            <div class="roster-header">
+                <span class="roster-header-headline ">{{ patrol.patrolName }} ({{ patrol.patrolId }})</span>
+                <img class="roster-header-image" src="data:image/png;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
+                <p>{{ 'roster.perex'|trans }}</p>
+            </div>
+            <table class="roster-table">
+                <thead>
+                    <tr>
+                        <td class="header">{{ 'roster.name'|trans }}</td>
+                        <td class="header">{{ 'roster.signature'|trans }}</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ patrol.patrolLeaderName }}</td>
+                        <td></td>
+                    </tr>
+                    {% for participantName in patrol.patrolParticipantNames %}
+                        <tr>
+                            <td>{{ participantName }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    <!-- empty row for extras -->
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+{% endblock %}

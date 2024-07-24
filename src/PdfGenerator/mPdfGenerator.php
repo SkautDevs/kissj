@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace kissj\PdfGenerator;
 
 use kissj\Application\ImageUtils;
+use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
 use Mpdf\Mpdf;
 use Slim\Views\Twig;
@@ -17,6 +19,7 @@ class mPdfGenerator extends PdfGenerator
         private readonly Mpdf $mpdf,
         private readonly Twig $twig,
     ) {
+        $this->mpdf->shrink_tables_to_fit = 1;
     }
 
     public function generatePdfReceipt(Participant $participant, string $templateName): string
@@ -61,5 +64,21 @@ class mPdfGenerator extends PdfGenerator
     private function getParticipantNames(array $patrolParticipants): array
     {
         return array_map(fn (Participant $participant) => $participant->getFullName(), $patrolParticipants);
+    }
+
+    public function generatePatrolRoster(
+        Event $event,
+        PatrolsRoster $patrolsRoster,
+        string $templateName
+    ): string {
+        $templateData = [
+            'event' => $event,
+            'patrolsRoster' => $patrolsRoster,
+        ];
+
+        $html = $this->twig->fetch($templateName, $templateData);
+        $this->mpdf->WriteHTML($html);
+
+        return $this->mpdf->Output(dest: 'S');
     }
 }

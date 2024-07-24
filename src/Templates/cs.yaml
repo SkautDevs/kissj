@@ -459,6 +459,10 @@ receipt:
         na účet %paymentAccountTo%.
         "
     acceptedSign: "vystaveno automaticky dne %acceptedDate%"
+roster:
+    perex: "Tímto dokumentem potvrzuji, že souhlasím s pravidly akce."
+    name: "Jméno účastníka"
+    signature: "Podpis účastníka"
 flash:
     info:
         participantDeleted: "Účastník byl smazán"
@@ -565,3 +569,4 @@ flash:
         cannotAccessTemp: "Problém přístupu k temporary složce. Zkus to znovu prosím za pár minut"
         transferFailed: "Přesun platby se nepovedl"
         participantNotCancelled: "Účastník nemůže být označen, že nejede, pravděpodobně protože nebyl nalezen"
+        patrolsNotAllowed: "Patroly nejsou pro tuto akci povoleny"
