@@ -77,7 +77,9 @@ class mPdfGenerator extends PdfGenerator
         ];
 
         $html = $this->twig->fetch($templateName, $templateData);
-        $this->mpdf->WriteHTML($html);
+        foreach (str_split($html, 999_999) as $htmlChunk) {
+            $this->mpdf->WriteHTML($htmlChunk);
+        }
 
         return $this->mpdf->Output(dest: 'S');
     }
