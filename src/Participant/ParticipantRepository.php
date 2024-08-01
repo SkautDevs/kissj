@@ -390,10 +390,10 @@ class ParticipantRepository extends Repository
             $participants[$role][$id] = $this->mapDataToEntryParticipant($row);
         }
 
-        $rowsDependableParticipants = $this->getRowsForEntryParticipant($event, [
-            ParticipantRole::PatrolParticipant,
-            ParticipantRole::TroopParticipant,
-        ]);
+        $rowsDependableParticipants = array_merge(
+            $this->getRowsForEntryParticipant($event, [ParticipantRole::TroopParticipant]),
+            $this->getRowsForEntryPatrolParticipant($event),
+        );
 
         foreach ($rowsDependableParticipants as $rowDependableParticipant) {
             /** @var string $dpId */
@@ -450,6 +450,43 @@ class ParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
 
         $qb->where('participant.role IN %in', $participantRoles);
+
+        $this->addOrdersBy($qb, [new Order('id')]);
+
+        return $qb->fetchAll();
+    }
+
+    /**
+     * @param Event $event
+     * @return array<Row>
+     * /
+     */
+    private function getRowsForEntryPatrolParticipant(Event $event): array
+    {
+        $qb = $this->connection->select('
+            participant.id,
+            participant.first_name,
+            participant.last_name,
+            participant.nickname,
+            participant.patrol_name,
+            participant.tie_code,
+            participant.birth_date,
+            participant.role,
+            participant.patrol_leader_id,
+            participant.entry_date,
+            participant.leave_date,
+            d.is_done AS sfh_done
+        ')->from($this->getTable());
+
+        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
+        $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
+
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
 
         $this->addOrdersBy($qb, [new Order('id')]);
 
