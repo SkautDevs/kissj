@@ -13,6 +13,7 @@ use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
 
 class EventTypeCej extends EventType
@@ -287,6 +288,11 @@ class EventTypeCej extends EventType
                     'https://docs.google.com/forms/d/e/1FAIpQLSe3FPRiN7o9nupa-sLs0w6xf6IFFEW5kJVMJSPSExfHn0qCtw/viewform?usp=pp_url&entry.499691302=%s',
                     $participant->tieCode,
                 ),
+            );
+        } elseif ($participant instanceof PatrolLeader || $participant instanceof PatrolParticipant) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_SFH,
+                'https://docs.google.com/forms/d/18TEPrRNzeS9JLxEf3SLuJte8do99_aM-ATOxccHTBpE/edit'
             );
         }
 
