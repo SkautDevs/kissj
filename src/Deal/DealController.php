@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Deal;
 
 use kissj\AbstractController;
+use kissj\Participant\ParticipantRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use kissj\Event\Event;
@@ -13,6 +14,7 @@ class DealController extends AbstractController
 {
     public function __construct(
         private readonly DealRepository $dealRepository,
+        private readonly ParticipantRepository $participantRepository,
     ) {
     }
 
@@ -40,5 +42,25 @@ class DealController extends AbstractController
         }
 
         return $response->withStatus(201);
+    }
+
+    public function setDealAsDone(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+        string $dealSlug,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        $this->dealRepository->setDealAsDone($participant, $dealSlug);
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+                'participantId' => (string)$participantId,
+            ],
+        );
     }
 }

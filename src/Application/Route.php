@@ -204,6 +204,9 @@ class Route
                         $app->post('/unentry', EntryController::class . '::unentryFromAdmin')
                             ->setName('admin-unentry-participant');
 
+                        $app->post('/setDealAsDone/{dealSlug}', DealController::class . '::setDealAsDone')
+                            ->setName('admin-set-deal-as-done');
+
                         $app->get('/showDetails', AdminController::class . '::showParticipantDetails')
                             ->setName('admin-show-participant-details-changeable');
 

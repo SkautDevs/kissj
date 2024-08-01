@@ -442,6 +442,7 @@ mend-admin:
     uncancelParticipant: "Označit účastníka že opět přijede"
     entryParticipant: "Označit účastníka, že vstoupil na akci"
     unentryParticipant: "Označit účastníka, že na akci nevstoupil"
+    setDealAsDone: "Označit deal jako splněný"
 receipt:
     headline: "Potvrzení o přijetí platby"
     number: "Číslo dokladu"

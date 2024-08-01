@@ -84,6 +84,26 @@ class DealRepository extends Repository
         return $deal;
     }
 
+    public function setDealAsDone(
+        Participant $participant,
+        string $dealSlug,
+    ): Deal {
+        $deal = $participant->findDeal($dealSlug);
+        if ($deal === null) {
+            $deal = new Deal();
+            $deal->participant = $participant;
+            $deal->slug = $dealSlug;
+            $deal->data = 'by admin';
+            $deal->urlAddress = '';
+        }
+
+        $deal->isDone = true;
+        $deal->doneAt = DateTimeUtils::getDateTime();
+        $this->persist($deal);
+
+        return $deal;
+    }
+
     private function findDeal(string $slug, string $tieCode): ?Deal
     {
         $qb = $this->createFluent();

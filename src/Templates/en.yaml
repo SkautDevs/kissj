@@ -442,6 +442,7 @@ mend-admin:
     uncancelParticipant: "Mark participant as going, from state when he is not going"
     entryParticipant: "Mark participant as entered into event"
     unentryParticipant: "Mark participant as not entered into event"
+    setDealAsDone: "Set deal as completed"
 receipt:
     headline: "Confirmation of payment acceptance"
     number: "Receipt number"

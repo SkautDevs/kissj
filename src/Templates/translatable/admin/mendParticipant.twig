@@ -29,11 +29,27 @@
             {% if participant.deals %}
                 -
                 {% for participantDeal in participant.deals %}
-                    {{ participantDeal.slug }}{% if not participantDeal.isDone %} ❌{% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
+                    {{ participantDeal.slug }}{% if not participantDeal.isDone %}
+                    ❌
+                    <form
+                            method="POST"
+                            action="{{ url_for('admin-set-deal-as-done', {'eventSlug': event.slug, 'participantId': participant.id, 'dealSlug': participantDeal.slug}) }}"
+                    >
+                        <input type="submit" class="btn btn-mini" value="{% trans %}mend-admin.setDealAsDone{% endtrans %}">
+                    </form>
+                {% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
                 {% endfor %}
             {% else %}
+                {# TODO fix for combination of participant deals with event deals #}
                 {% for eventDeal in event.eventType.getEventDeals(participant) %}
-                    {{ eventDeal.slug }} ❌{{ not loop.last ? ' | ' }}
+                    {{ eventDeal.slug }} ❌
+                    <form
+                            method="POST"
+                            action="{{ url_for('admin-set-deal-as-done', {'eventSlug': event.slug, 'participantId': participant.id, 'dealSlug': eventDeal.slug}) }}"
+                    >
+                        <input type="submit" class="btn btn-mini" value="{% trans %}mend-admin.setDealAsDone{% endtrans %}">
+                    </form>
+                    {{ not loop.last ? ' | ' }}
                 {% endfor %}
             {% endif %}
         </div>
