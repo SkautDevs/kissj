@@ -8,6 +8,7 @@ use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -177,17 +178,21 @@ class EntryController extends AbstractController
         );
     }
 
-    public function entryTroopFromWebApp(
+    public function entryGroupFromWebApp(
         Response $response,
         Event $authorizedEvent,
         int $participantId,
     ): Response {
         $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
-        if ($participant instanceof TroopLeader === false) {
+        if ($participant instanceof TroopLeader) {
+            $groupParticipants = $participant->troopParticipants;
+        } elseif ($participant instanceof PatrolLeader) {
+            $groupParticipants = $participant->patrolParticipants;
+        } else {
             return $this->createErrorEntryResponse($response, 'troop not found');
         }
 
-        foreach (array_merge([$participant], $participant->troopParticipants) as $troopParticipant) {
+        foreach (array_merge([$participant], $groupParticipants) as $troopParticipant) {
             if ($troopParticipant->entryDate === null) {
                 $this->participantService->setAsEntered($troopParticipant);
             }

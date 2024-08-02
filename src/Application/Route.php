@@ -338,7 +338,8 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->map(['POST', 'OPTIONS'], '/troop/{participantId}', EntryController::class . '::entryTroopFromWebApp')
+                // TODO change route name here and in entry app
+                $app->map(['POST', 'OPTIONS'], '/troop/{participantId}', EntryController::class . '::entryGroupFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
