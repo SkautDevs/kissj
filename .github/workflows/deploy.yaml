@@ -82,7 +82,7 @@ jobs:
               issuer: ${{ secrets.CERT_ISSUER}}
 
           php:
-            replicas: 2
+            replicas: 3
             hpa:
               enabled: false
               maxReplicas: 3
