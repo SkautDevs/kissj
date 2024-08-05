@@ -76,8 +76,11 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'loginAfterLinkSent');
     }
 
-    public function showAfterLinkSent(Response $response): Response
+    public function showAfterLinkSent(Request $request, Response $response): Response
     {
+        if ($request->getAttribute('user') !== null) {
+            return $this->redirect($request, $response, 'getDashboard');
+        }
         return $this->view->render($response, 'kissj/login-link-sent.twig');
     }
 
