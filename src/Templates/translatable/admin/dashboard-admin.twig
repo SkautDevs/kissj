@@ -38,6 +38,13 @@
                     <p>{% trans %}dashboard-admin.approvedTp{% endtrans %}: {{ troopParticipants.approvedCount }}</p>
                     <p>{% trans %}dashboard-admin.paidTp{% endtrans %}: {{ troopParticipants.paidCount }}</p>
                 {% endif %}
+                <br>
+                {% if event.eventType.showFoodStats() %}
+                    <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
+                    {% for food, count in foodStatistic %}
+                        <p>{{ food|trans }}: <b>{{ count }}</b></p>
+                    {% endfor %}
+                {% endif %}
             </div>
             <div>
                 {% if event.allowIsts %}
@@ -58,6 +65,11 @@
                     <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.approvedCount }}</p>
                     <p>{% trans %}dashboard-admin.paidGuest{% endtrans %}: {{ guests.paidCount }}</p>
                 {% endif %}
+                <br>
+                <h3>{% trans %}dashboard-admin.entryCount{% endtrans %}</h3>
+                <p>{% trans %}dashboard-admin.entryComing{% endtrans %}: {{ entryStatistic.coming }}</p>
+                <p>{% trans %}dashboard-admin.entryArrived{% endtrans %}: {{ entryStatistic.arrived }}</p>
+                <p>{% trans %}dashboard-admin.entryLeave{% endtrans %}: {{ entryStatistic.leave }}</p>
             </div>
         </div>
         {% if event.eventType.showContingentPatrolStats %}
@@ -91,12 +103,6 @@
             <h3>{% trans %}dashboard-admin.istArrivalStats{% endtrans %} {% trans %}role.ist{% endtrans %}</h3>
             {% for date, count in istArrivalStatistic %}
                 <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
-            {% endfor %}
-        {% endif %}
-        {% if event.eventType.showFoodStats() %}
-            <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
-            {% for food, count in foodStatistic %}
-                <p>{{ food|trans }}: <b>{{ count }}</b></p>
             {% endfor %}
         {% endif %}
     </div>
