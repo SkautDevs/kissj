@@ -80,6 +80,7 @@ class AdminController extends AbstractController
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
                 'foodStatistic' => $foodStatistic,
+                'entryStatistic' => $this->participantRepository->getEntryStatistic($event),
             ],
         );
     }
