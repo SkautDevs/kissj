@@ -17,6 +17,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Patrol\SinglePatrolRoster;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
@@ -204,9 +205,23 @@ class ParticipantRepository extends Repository
      * @param Participant[] $participants
      * @return Participant[]
      */
-    private function sortParticipantsBasedOnTroopOrPatrol(array $participants): array{
-        usort($participants,
-            function ($a, $b) { return ($a->troopLeader ?? $a->patrolLeader ?? $a->id) - ($b->troopLeader ?? $b->patrolLeader ?? $b->id); });
+    private function sortParticipantsBasedOnTroopOrPatrol(array $participants): array
+    {
+        usort(
+            $participants,
+            function (Participant $a, Participant $b) {
+                if ($a instanceof PatrolParticipant && $b instanceof PatrolParticipant) {
+                    return $a->patrolLeader->id <=> $b->patrolLeader->id;
+                }
+
+                if ($a instanceof TroopParticipant && $b instanceof TroopParticipant) {
+                    return ($a->troopLeader->id ?? $a->id) <=> ($b->troopLeader->id ?? $a->id);
+                }
+
+                return $a->id <=> $b->id;
+            },
+        );
+
         return $participants;
     }
 
