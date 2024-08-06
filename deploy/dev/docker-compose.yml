@@ -1,14 +1,12 @@
-version: "3.3"
+name: kissj-app
 services:
-
     #database
     postgresql:
-        image: postgres:14-alpine
+        image: postgres:16-alpine
         volumes:
             - db-data:/var/lib/postgresql/data
         ports:
             - "5432:5432"
-
         environment:
             - POSTGRES_USER=user
             - POSTGRES_PASSWORD=password
@@ -28,6 +26,10 @@ services:
             - POSTGRES_DB=kissj
             - DATABASE_HOST=postgresql
             - DB_TYPE=postgresql
+            - REDIS_HOST=dragonfly
+            - REDIS_PASSWORD=dragonfly
+            - REDIS_PORT=6379
+        env_file: "compose.env"
         volumes:
             - ../../:/var/www/html
 
@@ -35,7 +37,7 @@ services:
     caddy:
         image: quay.io/kissj/caddy-ubi
         ports:
-            - 80:80
+            - 8080:8080
         depends_on:
             - php-fpm
         links:
@@ -44,18 +46,18 @@ services:
         environment:
             - PHPFPM_HOST=php-fpm
             - WEB_HOST=localhost
+        env_file: "compose.env"
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
             - ../../:/var/www/html
 
     #session storage
-    redis:
-        image: redis/redis-stack-server
+    dragonfly:
+        image: docker.dragonflydb.io/dragonflydb/dragonfly
         ports:
             - "6379:6379"
         environment:
-            - REDIS_HOST="redis"
-            - REDIS_HOST_PASSWORD="redis"
+            - DFLY_requirepass=dragonfly
 
     # debug mail server
     mailhog:

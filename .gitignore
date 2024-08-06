@@ -1,4 +1,3 @@
-/.idea/*
 /.composer/cache/*
 /attachments/*
 /backups/*
@@ -18,3 +17,10 @@
 !db_init.sqlite
 /backup/*
 /uploads/*
+
+# editor and IDE paraphernalia
+.idea
+.vscode
+*.swp
+*.swo
+*~
