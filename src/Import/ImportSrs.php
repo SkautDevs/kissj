@@ -48,7 +48,7 @@ readonly class ImportSrs
             /** @phpstan-ignore shipmonk.variableTypeOverwritten */
             $istsData = $this->csvParser->parseCsv($istsDataFile);
         } catch (\UnexpectedValueException | LeagueCsvException) {
-            $this->flashMessages->error($this->translator->trans('flash.error.importSrs.invalidCsv'));
+            $this->flashMessages->error('flash.error.importSrs.invalidCsv');
         }
 
         $existingCount = 0;

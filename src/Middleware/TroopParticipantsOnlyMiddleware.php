@@ -9,13 +9,11 @@ use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TroopParticipantsOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
         private readonly ParticipantRepository $participantRepository,
     ) {
     }
@@ -28,7 +26,7 @@ class TroopParticipantsOnlyMiddleware extends BaseMiddleware
             $user instanceof User
             && $this->participantRepository->getParticipantFromUser($user)->role !== ParticipantRole::TroopParticipant
         ) {
-            $this->flashMessages->error($this->translator->trans('flash.error.tpOnly'));
+            $this->flashMessages->error('flash.error.tpOnly');
 
             return $this->createRedirectResponse($request, 'landing');
         }

@@ -15,7 +15,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Routing\RouteContext;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * participants actions are allowed only for their Patrol Leader or for their Troop Leader
@@ -28,7 +27,6 @@ class CheckLeaderParticipants extends BaseMiddleware
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -47,7 +45,7 @@ class CheckLeaderParticipants extends BaseMiddleware
                 $this->patrolService->getPatrolParticipant($participantId),
                 $leader,
             )) {
-                $this->flashMessages->error($this->translator->trans('flash.error.wrongPatrol'));
+                $this->flashMessages->error('flash.error.wrongPatrol');
 
                 return $this->createRedirectResponse($request, 'dashboard');
             }
@@ -56,12 +54,12 @@ class CheckLeaderParticipants extends BaseMiddleware
                 $this->troopParticipantRepository->get($participantId),
                 $leader,
             )) {
-                $this->flashMessages->error($this->translator->trans('flash.error.wrongTroop'));
+                $this->flashMessages->error('flash.error.wrongTroop');
 
                 return $this->createRedirectResponse($request, 'dashboard');
             }
         } else {
-            $this->flashMessages->error($this->translator->trans('flash.error.notLeader'));
+            $this->flashMessages->error('flash.error.notLeader');
 
             return $this->createRedirectResponse($request, 'dashboard');
         }

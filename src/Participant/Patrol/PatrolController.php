@@ -44,11 +44,11 @@ class PatrolController extends AbstractController
 
         $patrolLeaderUser = $patrolLeader->getUserButNotNull();
         if ($patrolLeaderUser->status === UserStatus::Closed) {
-            $this->flashMessages->success($this->translator->trans('flash.success.locked'));
+            $this->flashMessages->success('flash.success.locked');
             $this->logger->info('Locked registration for Patrol Leader with ID '
                 . $patrolLeader->id . ', user ID ' . $patrolLeaderUser->id);
         } else {
-            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
+            $this->flashMessages->error('flash.error.wrongData');
         }
 
         return $this->redirect($request, $response, 'dashboard');
@@ -102,7 +102,7 @@ class PatrolController extends AbstractController
         $this->participantService->handleUploadedFiles($patrolParticipant, $request);
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
-        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
+        $this->flashMessages->success('flash.success.detailsSaved');
 
         return $this->redirect(
             $request,
@@ -121,7 +121,7 @@ class PatrolController extends AbstractController
     public function deleteParticipant(int $participantId, Request $request, Response $response): Response
     {
         $this->patrolService->deletePatrolParticipant($this->patrolService->getPatrolParticipant($participantId));
-        $this->flashMessages->info($this->translator->trans('flash.info.participantDeleted'));
+        $this->flashMessages->info('flash.info.participantDeleted');
 
         return $this->redirect(
             $request,

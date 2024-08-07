@@ -123,7 +123,7 @@ readonly class ParticipantService
         }
 
         if (!$this->isParticipantDataValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.noLock'));
+            $this->flashMessages->warning('flash.warning.noLock');
 
             $validityFlag = false;
         }
@@ -132,7 +132,7 @@ readonly class ParticipantService
             $this->getClosedSameRoleParticipantsCount($participant)
             >= $event->eventType->getMaximumClosedParticipants($participant)
         ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
+            $this->flashMessages->warning('flash.warning.fullRegistration');
 
             $validityFlag = false;
         }
@@ -141,7 +141,7 @@ readonly class ParticipantService
             $event->maximalClosedParticipantsCount !== null
             && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount
         ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.fullRegistration'));
+            $this->flashMessages->warning('flash.warning.fullRegistration');
 
             $validityFlag = false;
         }
@@ -350,7 +350,7 @@ readonly class ParticipantService
     public function approveRegistration(Participant $participant): Participant
     {
         if ($participant->getUserButNotNull()->status === UserStatus::Approved) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.notApproved'));
+            $this->flashMessages->warning('flash.warning.notApproved');
 
             return $participant;
         }
@@ -363,14 +363,14 @@ readonly class ParticipantService
         if ($participant instanceof Guest) {
             $this->userService->setUserPaid($participant->getUserButNotNull());
             $this->mailer->sendGuestRegistrationFinished($participant);
-            $this->flashMessages->success($this->translator->trans('flash.success.guestApproved'));
+            $this->flashMessages->success('flash.success.guestApproved');
 
             return $participant;
         }
 
         if ($participant instanceof TroopParticipant) {
             $this->mailer->sendTroopParticipantRegistrationFinished($participant);
-            $this->flashMessages->success($this->translator->trans('flash.success.tpApproved'));
+            $this->flashMessages->success('flash.success.tpApproved');
 
             return $participant;
         }
@@ -384,7 +384,7 @@ readonly class ParticipantService
         } else {
             $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
         }
-        $this->flashMessages->success($this->translator->trans('flash.success.approved'));
+        $this->flashMessages->success('flash.success.approved');
 
         return $participant;
     }
@@ -470,14 +470,14 @@ readonly class ParticipantService
     {
         $role = ParticipantRole::tryFrom($roleFromBody);
         if ($role === null || !in_array($role, $event->getAvailableRoles(), true)) {
-            $this->flashMessages->error($this->translator->trans('flash.error.roleNotValid'));
+            $this->flashMessages->error('flash.error.roleNotValid');
 
             return false;
         }
 
         if ($participant instanceof PatrolLeader) {
             if ($participant->getPatrolParticipantsCount() > 0) {
-                $this->flashMessages->warning($this->translator->trans('flash.warning.patrolHasParticipantsCannotChangeRole'));
+                $this->flashMessages->warning('flash.warning.patrolHasParticipantsCannotChangeRole');
 
                 return false;
             }
@@ -485,20 +485,20 @@ readonly class ParticipantService
 
         if ($participant instanceof TroopLeader) {
             if ($participant->getTroopParticipantsCount() > 0) {
-                $this->flashMessages->warning($this->translator->trans('flash.warning.troopHasParticipantsCannotChangeRole'));
+                $this->flashMessages->warning('flash.warning.troopHasParticipantsCannotChangeRole');
 
                 return false;
             }
         }
 
         if ($role === $participant->role) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.sameRoleCannotChangeRole'));
+            $this->flashMessages->warning('flash.warning.sameRoleCannotChangeRole');
 
             return false;
         }
 
         if ($participant->getUserButNotNull()->status !== UserStatus::Open) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.notOpenCannotChangeRole'));
+            $this->flashMessages->warning('flash.warning.notOpenCannotChangeRole');
 
             return false;
         }
@@ -514,7 +514,7 @@ readonly class ParticipantService
         $participant->role = $role;
         $this->participantRepository->persist($participant);
 
-        $this->flashMessages->success($this->translator->trans('flash.success.roleChanged'));
+        $this->flashMessages->success('flash.success.roleChanged');
 
         return true;
     }

@@ -4,27 +4,45 @@ declare(strict_types=1);
 
 namespace kissj\FlashMessages;
 
-// TODO add translator to this class and make all messages translatable
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 class FlashMessagesBySession implements FlashMessagesInterface
 {
+    public function __construct(
+        protected TranslatorInterface $translator,
+    ) {
+    }
+
     public function info(string $message): void
     {
-        $_SESSION['flashMessages'][] = ['type' => 'info', 'message' => $message];
+        $_SESSION['flashMessages'][] = [
+            'type' => 'info',
+            'message' => $this->translator->trans($message),
+        ];
     }
 
     public function success(string $message): void
     {
-        $_SESSION['flashMessages'][] = ['type' => 'success', 'message' => $message];
+        $_SESSION['flashMessages'][] = [
+            'type' => 'success',
+            'message' => $this->translator->trans($message),
+        ];
     }
 
     public function warning(string $message): void
     {
-        $_SESSION['flashMessages'][] = ['type' => 'warning', 'message' => $message];
+        $_SESSION['flashMessages'][] = [
+            'type' => 'warning',
+            'message' => $this->translator->trans($message),
+        ];
     }
 
     public function error(string $message): void
     {
-        $_SESSION['flashMessages'][] = ['type' => 'error', 'message' => $message];
+        $_SESSION['flashMessages'][] = [
+            'type' => 'error',
+            'message' => $this->translator->trans($message),
+        ];
     }
 
     /**

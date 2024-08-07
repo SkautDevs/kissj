@@ -66,12 +66,12 @@ class UserController extends AbstractController
             $this->sentryCollector->collect($e);
             $this->logger->error('Error sending login email to ' . $email . ' with token ' .
                 $this->userService->getTokenForEmail($email, $event), [$e]);
-            $this->flashMessages->error($this->translator->trans('flash.error.mailError'));
+            $this->flashMessages->error('flash.error.mailError');
 
             return $this->redirect($request, $response, 'loginAskEmail');
         }
 
-        $this->flashMessages->success($this->translator->trans('flash.success.linkSent'));
+        $this->flashMessages->success('flash.success.linkSent');
 
         return $this->redirect($request, $response, 'loginAfterLinkSent');
     }
@@ -92,7 +92,7 @@ class UserController extends AbstractController
             return $this->redirect($request, $response, 'getDashboard');
         }
 
-        $this->flashMessages->warning($this->translator->trans('flash.warning.invalidLogin'));
+        $this->flashMessages->warning('flash.warning.invalidLogin');
 
         return $this->redirect($request, $response, 'loginAskEmail');
     }
@@ -100,7 +100,7 @@ class UserController extends AbstractController
     public function logout(Request $request, Response $response): Response
     {
         $this->userService->logoutUser();
-        $this->flashMessages->info($this->translator->trans('flash.info.logout'));
+        $this->flashMessages->info('flash.info.logout');
 
         return $this->redirect($request, $response, 'landing');
     }
@@ -120,7 +120,7 @@ class UserController extends AbstractController
 
         if ($participant->getUserButNotNull()->loginType === UserLoginType::Skautis) {
             if (!$this->skautisService->isUserLoggedIn()) {
-                $this->flashMessages->error($this->translator->trans('flash.error.skautisUserNotLoggedIn'));
+                $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
 
                 return $this->redirect($request, $response, 'landing');
             }

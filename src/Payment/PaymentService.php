@@ -153,11 +153,11 @@ class PaymentService
                 if ($newPaymentsCount > 0) {
                     $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);
                 } else {
-                    $this->flashMessages->info($this->translator->trans('flash.info.noNewPayments'));
+                    $this->flashMessages->info('flash.info.noNewPayments');
                 }
             } catch (ServiceUnavailable $e) {
                 $this->sentryCollector->collect($e);
-                $this->flashMessages->error($this->translator->trans('flash.error.fioConnectionFailed'));
+                $this->flashMessages->error('flash.error.fioConnectionFailed');
                 $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
             }
 

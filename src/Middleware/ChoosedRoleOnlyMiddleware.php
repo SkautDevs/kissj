@@ -8,13 +8,11 @@ use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChoosedRoleOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -23,7 +21,7 @@ class ChoosedRoleOnlyMiddleware extends BaseMiddleware
         $user = $request->getAttribute('user');
 
         if ($user instanceof User && $user->status === UserStatus::WithoutRole) {
-            $this->flashMessages->info($this->translator->trans('flash.info.chooseRoleNeeded'));
+            $this->flashMessages->info('flash.info.chooseRoleNeeded');
 
             return $this->createRedirectResponse($request, 'landing');
         }

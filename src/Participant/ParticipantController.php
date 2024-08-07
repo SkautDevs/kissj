@@ -62,7 +62,7 @@ class ParticipantController extends AbstractController
         $this->participantService->handleUploadedFiles($participant, $request);
 
         $this->participantRepository->persist($participant);
-        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
+        $this->flashMessages->success('flash.success.detailsSaved');
 
         return $this->redirect($request, $response, 'getDashboard');
     }
@@ -88,11 +88,11 @@ class ParticipantController extends AbstractController
         $participant = $this->participantService->closeRegistration($participant);
 
         if ($participant->getUserButNotNull()->status === UserStatus::Closed) {
-            $this->flashMessages->success($this->translator->trans('flash.success.locked'));
+            $this->flashMessages->success('flash.success.locked');
             $this->logger->info('Locked registration for IST with ID ' . $participant->id
                 . ', user ID ' . $participant->id);
         } else {
-            $this->flashMessages->error($this->translator->trans('flash.error.wrongData'));
+            $this->flashMessages->error('flash.error.wrongData');
         }
 
         return $this->redirect($request, $response, 'dashboard');
@@ -101,7 +101,7 @@ class ParticipantController extends AbstractController
     public function downloadReceipt(Request $request, Response $response, User $user): Response
     {
         if ($user->event->eventType->isReceiptAllowed() === false) {
-            $this->flashMessages->error($this->translator->trans('flash.error.receiptNotAllowed'));
+            $this->flashMessages->error('flash.error.receiptNotAllowed');
             $this->sentryCollector->collect(new Exception('Receipt not allowed'));
 
             return $this->redirect($request, $response, 'dashboard');
@@ -109,7 +109,7 @@ class ParticipantController extends AbstractController
 
         $stream = fopen('php://temp', 'rb+');
         if ($stream === false) {
-            $this->flashMessages->error($this->translator->trans('flash.error.cannotAccessTemp'));
+            $this->flashMessages->error('flash.error.cannotAccessTemp');
             $this->sentryCollector->collect(new Exception('Cannot access temp file'));
 
             return $this->redirect($request, $response, 'dashboard');

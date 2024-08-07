@@ -7,13 +7,11 @@ use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminsOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -22,7 +20,7 @@ class AdminsOnlyMiddleware extends BaseMiddleware
         $user = $request->getAttribute('user');
 
         if ($user instanceof User && !$user->isAdmin()) {
-            $this->flashMessages->error($this->translator->trans('flash.error.adminOnly'));
+            $this->flashMessages->error('flash.error.adminOnly');
 
             return $this->createRedirectResponse($request, 'loginAskEmail');
         }

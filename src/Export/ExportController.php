@@ -92,7 +92,7 @@ class ExportController extends AbstractController
         Event $event,
     ): Response {
         if ($event->allowPatrols === false) {
-            $this->flashMessages->error($this->translator->trans('flash.error.patrolsNotAllowed'));
+            $this->flashMessages->error('flash.error.patrolsNotAllowed');
             $this->sentryCollector->collect(new Exception('Patrols are not allowed, but user tried to export roster'));
 
             return $this->redirect($request, $response, 'dashboard');
@@ -100,7 +100,7 @@ class ExportController extends AbstractController
 
         $stream = fopen('php://temp', 'rb+');
         if ($stream === false) {
-            $this->flashMessages->error($this->translator->trans('flash.error.cannotAccessTemp'));
+            $this->flashMessages->error('flash.error.cannotAccessTemp');
             $this->sentryCollector->collect(new Exception('Cannot access temp file'));
 
             return $this->redirect($request, $response, 'dashboard');

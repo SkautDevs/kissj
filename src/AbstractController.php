@@ -61,7 +61,7 @@ abstract class AbstractController
                 ->withStatus(302);
         }
 
-        $this->flashMessages->warning($this->translator->trans('flash.warning.nonexistentEvent'));
+        $this->flashMessages->warning('flash.warning.nonexistentEvent');
 
         return $response
             ->withHeader('Location', $this->getRouter($request)->urlFor('eventList', $arguments))

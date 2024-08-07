@@ -29,14 +29,14 @@ class TroopController extends AbstractController
 
         $troopLeader = $this->troopLeaderRepository->getFromUser($user);
         if ($tieCode === $troopLeader->tieCode) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.cannotTieYourself'));
+            $this->flashMessages->warning('flash.warning.cannotTieYourself');
 
             return $this->redirect($request, $response, 'getDashboard');
         }
 
         $troopParticipant = $this->troopParticipantRepository->findTroopParticipantFromTieCode($tieCode, $event);
         if ($troopParticipant === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.wrongTieCodeForTroopParticipant'));
+            $this->flashMessages->warning('flash.warning.wrongTieCodeForTroopParticipant');
 
             return $this->redirect($request, $response, 'getDashboard');
         }
@@ -60,7 +60,7 @@ class TroopController extends AbstractController
     ): Response {
         $troopParticipant = $this->troopParticipantRepository->getFromUser($user);
         if ($troopParticipant->troopLeader !== null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.alreadyTied'));
+            $this->flashMessages->warning('flash.warning.alreadyTied');
 
             return $this->redirect($request, $response, 'getDashboard');
         }
@@ -69,7 +69,7 @@ class TroopController extends AbstractController
         $troopLeader = $this->troopLeaderRepository->findTroopLeaderFromTieCode($tieCode, $event);
 
         if ($troopLeader === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.wrongTieCodeForTroopLeader'));
+            $this->flashMessages->warning('flash.warning.wrongTieCodeForTroopLeader');
 
             return $this->redirect($request, $response, 'getDashboard');
         }
@@ -107,7 +107,7 @@ class TroopController extends AbstractController
     public function untieParticipant(int $participantId, Request $request, Response $response): Response
     {
         $this->troopService->untieTroopParticipant($participantId);
-        $this->flashMessages->info($this->translator->trans('flash.info.participantUntied'));
+        $this->flashMessages->info('flash.info.participantUntied');
 
         return $this->redirect(
             $request,

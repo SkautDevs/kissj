@@ -17,7 +17,6 @@ use kissj\User\UserService;
 use Psr\Log\LoggerInterface;
 use Skautis\Exception as SkautisException;
 use Skautis\Skautis;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
 readonly class SkautisService
@@ -31,7 +30,6 @@ readonly class SkautisService
         private UserRegeneration $userRegeneration,
         private UserRepository $userRepository,
         private FlashMessagesInterface $flashMessages,
-        private TranslatorInterface $translator,
         private LoggerInterface $logger,
         private SentryCollector $sentryCollector,
     ) {
@@ -120,7 +118,7 @@ readonly class SkautisService
     {
         $skautisUserData = $this->getUserDetailsFromLoggedSkautisUser();
         if ($skautisUserData === null) {
-            $this->flashMessages->error($this->translator->trans('flash.error.skautisUserError'));
+            $this->flashMessages->error('flash.error.skautisUserError');
 
             return $participant;
         }
@@ -135,7 +133,7 @@ readonly class SkautisService
         $participant->scoutUnit = $skautisUserData->unitName;
         $this->participantRepository->persist($participant);
 
-        $this->flashMessages->info($this->translator->trans('flash.info.skautisDataPrefilled'));
+        $this->flashMessages->info('flash.info.skautisDataPrefilled');
 
         return $participant;
     }

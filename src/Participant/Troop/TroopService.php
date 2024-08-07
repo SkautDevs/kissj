@@ -7,7 +7,6 @@ namespace kissj\Participant\Troop;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\User\UserStatus;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class TroopService
 {
@@ -15,7 +14,6 @@ readonly class TroopService
         private TroopLeaderRepository $troopLeaderRepository,
         private TroopParticipantRepository $troopParticipantRepository,
         private FlashMessagesInterface $flashMessages,
-        private TranslatorInterface $translator,
     ) {
     }
 
@@ -26,20 +24,20 @@ readonly class TroopService
         if (
             $troopLeader->getUserButNotNull()->status !== UserStatus::Open
         ) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderNotOpen'));
+            $this->flashMessages->warning('flash.warning.troopLeaderNotOpen');
 
             return $troopParticipant;
         }
 
         if ($troopParticipant->troopLeader?->id === $troopLeader->id) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantAlreadyTied'));
+            $this->flashMessages->warning('flash.warning.troopParticipantAlreadyTied');
 
             return $troopParticipant;
         }
 
         $troopParticipant->troopLeader = $troopLeader;
         $this->troopParticipantRepository->persist($troopParticipant);
-        $this->flashMessages->success($this->translator->trans('flash.success.troopParticipantTiedToTroopLeader'));
+        $this->flashMessages->success('flash.success.troopParticipantTiedToTroopLeader');
 
         return $troopParticipant;
     }
@@ -68,35 +66,35 @@ readonly class TroopService
         $valid = true;
         $tl = $this->troopLeaderRepository->findTroopLeaderFromTieCode($troopLeaderCode, $event);
         if ($tl === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderNotFoundTieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopLeaderNotFoundTieNotPossible');
             $valid = false;
         }
 
         if ($tl !== null && $tl->getUserButNotNull()->status->isPaidOrCancelled()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopLeaderPaidTieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopLeaderPaidTieNotPossible');
             $valid = false;
         }
 
         $tp = $this->troopParticipantRepository->findTroopParticipantFromTieCode($troopParticipantCode, $event);
         if ($tp === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantNotFoundTieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopParticipantNotFoundTieNotPossible');
             $valid = false;
         }
 
         if ($tp !== null && $tp->getUserButNotNull()->status->isPaidOrCancelled()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidTieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopParticipantPaidTieNotPossible');
             $valid = false;
         }
 
         if ($tp !== null && $tp->troopLeader !== null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantHasTroopTieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopParticipantHasTroopTieNotPossible');
             $valid = false;
         }
 
         if ($valid && $tp !== null && $tl !== null) {
             $tp->troopLeader = $tl;
             $this->troopParticipantRepository->persist($tp);
-            $this->flashMessages->success($this->translator->trans('flash.success.troopTied'));
+            $this->flashMessages->success('flash.success.troopTied');
         }
 
         return $valid;
@@ -107,19 +105,19 @@ readonly class TroopService
         $valid = true;
         $tp = $this->troopParticipantRepository->findTroopParticipantFromTieCode($troopParticipantCode, $event);
         if ($tp === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantNotFoundUntieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopParticipantNotFoundUntieNotPossible');
             $valid = false;
         }
 
         if ($tp !== null && $tp->getUserButNotNull()->status->isPaidOrCancelled()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.troopParticipantPaidUntieNotPossible'));
+            $this->flashMessages->warning('flash.warning.troopParticipantPaidUntieNotPossible');
             $valid = false;
         }
 
         if ($valid && $tp !== null) {
             $tp->troopLeader = null;
             $this->troopParticipantRepository->persist($tp);
-            $this->flashMessages->success($this->translator->trans('flash.success.participantUntied'));
+            $this->flashMessages->success('flash.success.participantUntied');
         }
 
         return $valid;

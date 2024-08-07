@@ -7,13 +7,11 @@ use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminPaymentsOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -22,7 +20,7 @@ class AdminPaymentsOnlyMiddleware extends BaseMiddleware
         $user = $request->getAttribute('user');
 
         if ($user instanceof User && $user->role->isEligibleToHandlePayments() === false) {
-            $this->flashMessages->error($this->translator->trans('flash.error.adminPaymentsOnly'));
+            $this->flashMessages->error('flash.error.adminPaymentsOnly');
 
             return $this->createRedirectResponse($request, 'getDashboard');
         }

@@ -284,7 +284,7 @@ class AdminController extends AbstractController
 
         $this->participantService->denyRegistration($participant, $reason);
 
-        $this->flashMessages->info($this->translator->trans('flash.info.denied'));
+        $this->flashMessages->info('flash.info.denied');
         $this->logger->info('Denied registration for participant with ID '
             . $participantId . ' and role ' . ($participant->role?->value ?? 'missing') . ' with reason: ' . $reason);
 
@@ -338,7 +338,7 @@ class AdminController extends AbstractController
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
         $this->participantService->cancelPayment($payment, $reason);
-        $this->flashMessages->info($this->translator->trans('flash.info.paymentCanceled'));
+        $this->flashMessages->info('flash.info.paymentCanceled');
         $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
 
         return $this->redirect(
@@ -372,7 +372,7 @@ class AdminController extends AbstractController
         $participant = $payment->participant;
 
         $this->paymentService->confirmPayment($payment);
-        $this->flashMessages->success($this->translator->trans('flash.success.confirmPayment'));
+        $this->flashMessages->success('flash.success.confirmPayment');
         $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
 
         return $this->redirect(
@@ -432,7 +432,7 @@ class AdminController extends AbstractController
         $notice = $this->getParameterFromBody($request, 'notice', true);
         $this->paymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
-        $this->flashMessages->info($this->translator->trans('flash.info.markedAsPaired'));
+        $this->flashMessages->info('flash.info.markedAsPaired');
 
         return $this->redirect(
             $request,
@@ -448,7 +448,7 @@ class AdminController extends AbstractController
     ): Response {
         $this->paymentService->setBankPaymentUnrelated($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
-        $this->flashMessages->info($this->translator->trans('flash.info.markedAsUnrelated'));
+        $this->flashMessages->info('flash.info.markedAsUnrelated');
 
         return $this->redirect(
             $request,
@@ -503,7 +503,7 @@ class AdminController extends AbstractController
             $participantTo,
             $this->flashMessages,
         )) {
-            $this->flashMessages->error($this->translator->trans('flash.error.transferFailed'));
+            $this->flashMessages->error('flash.error.transferFailed');
             $this->sentryCollector->collect(new \RuntimeException(sprintf(
                 'Cannot do transfer from user ID: %s to user ID: %s',
                 $userFrom->id,
@@ -511,7 +511,7 @@ class AdminController extends AbstractController
             )));
         } else {
             $this->adminService->transferPayment($participantFrom, $participantTo);
-            $this->flashMessages->success($this->translator->trans('flash.success.transfer'));
+            $this->flashMessages->success('flash.success.transfer');
         }
 
         return $this->redirect(
@@ -589,7 +589,7 @@ class AdminController extends AbstractController
         $this->participantService->handleUploadedFiles($participant, $request);
 
         $this->participantRepository->persist($participant);
-        $this->flashMessages->success($this->translator->trans('flash.success.detailsSaved'));
+        $this->flashMessages->success('flash.success.detailsSaved');
         $this->logger->info('Participant with ID ' . $participantId . ' details changed by user with ID ' . $user->id);
 
         return $this->redirect(
@@ -651,12 +651,12 @@ class AdminController extends AbstractController
         $participant = $this->participantRepository->findParticipantById($participantId, $event);
 
         if ($participant instanceof PatrolLeader) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.cancelPatrolLeaderNotSupported'));
+            $this->flashMessages->warning('flash.warning.cancelPatrolLeaderNotSupported');
         } elseif ($participant instanceof Participant) {
             $this->participantService->cancelParticipant($participant);
-            $this->flashMessages->success($this->translator->trans('flash.success.participantCancelled'));
+            $this->flashMessages->success('flash.success.participantCancelled');
         } else {
-            $this->flashMessages->error($this->translator->trans('flash.error.participantNotCancelled'));
+            $this->flashMessages->error('flash.error.participantNotCancelled');
             $this->sentryCollector->collect(
                 new RuntimeException('Participant with ID ' . $participantId . ' during cancellation not found'),
             );
@@ -681,12 +681,12 @@ class AdminController extends AbstractController
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         if ($participant->getUserButNotNull()->status !== UserStatus::Cancelled) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.participantNotInCancelledStatus'));
+            $this->flashMessages->warning('flash.warning.participantNotInCancelledStatus');
         } elseif ($participant instanceof PatrolLeader) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.cancelPatrolLeaderNotSupported'));
+            $this->flashMessages->warning('flash.warning.cancelPatrolLeaderNotSupported');
         } else {
             $this->participantService->uncancelParticipant($participant);
-            $this->flashMessages->success($this->translator->trans('flash.success.participantUncancelled'));
+            $this->flashMessages->success('flash.success.participantUncancelled');
         }
 
         return $this->redirect(
@@ -705,7 +705,7 @@ class AdminController extends AbstractController
         Event $event,
     ): Response {
         if ($event->getEventType()->isMultiplePaymentsAllowed() === false) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.multiplePaymentsNotAllowed'));
+            $this->flashMessages->warning('flash.warning.multiplePaymentsNotAllowed');
         } else {
             $participants = $this->participantRepository->getPaidParticipantsWithExactPayments($event, 1, 10);
             $count = $this->participantService->generatePaymentsFor($participants);
@@ -785,7 +785,7 @@ class AdminController extends AbstractController
     ): Response {
         $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
         if ($uploadedFile === null) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.importCantStart'));
+            $this->flashMessages->warning('flash.warning.importCantStart');
 
             return $this->redirect(
                 $request,
