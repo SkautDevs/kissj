@@ -352,6 +352,7 @@ dashboard-admin:
     paidTp: "zaplacení účastníci"
     paidGuest: "potvrzení hosté (nemuseli platit)"
     entryCount: "Počty příjezdů"
+    entryCountPerRole: "Počty příjezdů podle rolí"
     entryComing: "Na cestě"
     entryArrived: "Dorazili"
     entryLeave: "Odjeli"

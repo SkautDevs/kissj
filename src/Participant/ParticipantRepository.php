@@ -318,13 +318,51 @@ class ParticipantRepository extends Repository
     /**
      * @return array<string,int>
      */
-    public function getEntryStatistic(
+    public function getEntryStatisticGlobal(
         Event $event
     ): array {
         return [
             'coming' => $this->countEntryComing($event),
             'arrived' => $this->countEntryArrived($event),
             'leave' => $this->countEntryLeave($event),
+        ];
+    }
+
+    /**
+     * @return array<string,array<string,int>>
+     */
+    public function getEntryStatisticForAllowedRoles(Event $event): array
+    {
+        $entries = [];
+        if ($event->allowPatrols) {
+            $entries[ParticipantRole::PatrolLeader->value]
+                = $this->getEntryStatisticForRole($event, ParticipantRole::PatrolLeader);
+        }
+
+        if ($event->allowTroops) {
+            $entries[ParticipantRole::TroopLeader->value]
+                = $this->getEntryStatisticForRole($event, ParticipantRole::TroopLeader);
+        }
+
+        if  ($event->allowIsts) {
+            $entries[ParticipantRole::Ist->value]
+                = $this->getEntryStatisticForRole($event, ParticipantRole::Ist);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * @return array<string,int>
+     */
+    public function getEntryStatisticForRole(
+        Event $event,
+        ParticipantRole $participantRole,
+    ): array {
+        return [
+            'coming' => $this->countEntryComing($event, $participantRole),
+            'arrived' => $this->countEntryArrived($event, $participantRole),
+            'leave' => $this->countEntryLeave($event, $participantRole),
         ];
     }
 
@@ -606,19 +644,21 @@ class ParticipantRepository extends Repository
         return $patrolLeaders;
     }
 
-    private function countEntryComing(Event $event): int
-    {
-        $qb = $this->getQueryBuilderCountForPaidParticipants($event);
-        $qb = $qb->where('participant.entry_date IS NULL');
-        $qb = $qb->where('participant.leave_date IS NULL');
+    private function countEntryComing(
+        Event $event,
+        ?ParticipantRole $participantRole = null,
+    ): int {
+        $qb = $this->getQueryBuilderCountForPaidParticipants($event, $participantRole);
+        $qb->where('participant.entry_date IS NULL');
+        $qb->where('participant.leave_date IS NULL');
 
         /** @var string $countParticipants */
         $countParticipants = $qb->fetchSingle();
 
         // count patrol participants and merge
-        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event);
-        $qb = $qb->where('participant.entry_date IS NULL');
-        $qb = $qb->where('participant.leave_date IS NULL');
+        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event, $participantRole);
+        $qb->where('participant.entry_date IS NULL');
+        $qb->where('participant.leave_date IS NULL');
 
         /** @var string $countPatrolParticipants */
         $countPatrolParticipants = $qb->fetchSingle();
@@ -626,9 +666,11 @@ class ParticipantRepository extends Repository
         return (int)$countParticipants + (int)$countPatrolParticipants;
     }
 
-    private function countEntryArrived(Event $event): int
-    {
-        $qb = $this->getQueryBuilderCountForPaidParticipants($event);
+    private function countEntryArrived(
+        Event $event,
+        ?ParticipantRole $participantRole = null,
+    ): int {
+        $qb = $this->getQueryBuilderCountForPaidParticipants($event, $participantRole);
         $qb = $qb->where('participant.entry_date IS NOT NULL');
         $qb = $qb->where('participant.leave_date IS NULL');
 
@@ -636,9 +678,9 @@ class ParticipantRepository extends Repository
         $countParticipants = $qb->fetchSingle();
 
         // count patrol participants and merge
-        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event);
-        $qb = $qb->where('participant.entry_date IS NOT NULL');
-        $qb = $qb->where('participant.leave_date IS NULL');
+        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event, $participantRole);
+        $qb->where('participant.entry_date IS NOT NULL');
+        $qb->where('participant.leave_date IS NULL');
 
         /** @var string $countPatrolParticipants */
         $countPatrolParticipants = $qb->fetchSingle();
@@ -646,17 +688,19 @@ class ParticipantRepository extends Repository
         return (int)$countParticipants + (int)$countPatrolParticipants;
     }
 
-    private function countEntryLeave(Event $event): int
-    {
-        $qb = $this->getQueryBuilderCountForPaidParticipants($event);
-        $qb = $qb->where('participant.leave_date IS NOT NULL');
+    private function countEntryLeave(
+        Event $event,
+        ?ParticipantRole $participantRole = null,
+    ): int {
+        $qb = $this->getQueryBuilderCountForPaidParticipants($event, $participantRole);
+        $qb->where('participant.leave_date IS NOT NULL');
 
         /** @var string $countParticipants */
         $countParticipants = $qb->fetchSingle();
 
         // count patrol participants and merge
-        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event);
-        $qb = $qb->where('participant.leave_date IS NOT NULL');
+        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event, $participantRole);
+        $qb->where('participant.leave_date IS NOT NULL');
 
         /** @var string $countPatrolParticipants */
         $countPatrolParticipants = $qb->fetchSingle();
@@ -664,25 +708,37 @@ class ParticipantRepository extends Repository
         return (int)$countParticipants + (int)$countPatrolParticipants;
     }
 
-    private function getQueryBuilderCountForPaidParticipants(Event $event): Fluent
-    {
+    private function getQueryBuilderCountForPaidParticipants(
+        Event $event,
+        ?ParticipantRole $participantRole = null
+    ): Fluent {
         $qb = $this->connection->select('COUNT(participant.id)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
 
+        if ($participantRole !== null) {
+            $qb->where('participant.role = %s', $participantRole);
+        }
+
         return $qb;
     }
 
-    private function getQueryBuilderCountForPaidPatrolParticipants(Event $event): Fluent
-    {
+    private function getQueryBuilderCountForPaidPatrolParticipants(
+        Event $event,
+        ?ParticipantRole $participantRole = null,
+    ): Fluent {
         $qb = $this->connection->select('COUNT(participant.id)')->from($this->getTable());
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
 
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
+        if ($participantRole !== null) {
+            $qb->where('participant.role = %s', $participantRole);
+        }
 
         return $qb;
     }

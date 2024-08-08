@@ -66,6 +66,16 @@
                 <p>{% trans %}dashboard-admin.entryComing{% endtrans %}: {{ entryStatistic.coming }}</p>
                 <p>{% trans %}dashboard-admin.entryArrived{% endtrans %}: {{ entryStatistic.arrived }}</p>
                 <p>{% trans %}dashboard-admin.entryLeave{% endtrans %}: {{ entryStatistic.leave }}</p>
+                
+                <h3>{% trans %}dashboard-admin.entryCountPerRole{% endtrans %}</h3>
+                {% for role, entryData in entryStatisticRoles %}
+                    <p>
+                        <b>{{ ('role.'~role)|trans }}</b>:
+                        {% trans %}dashboard-admin.entryComing{% endtrans %}: {{ entryData.coming }}, 
+                        {% trans %}dashboard-admin.entryArrived{% endtrans %}: {{ entryData.arrived }}, 
+                        {% trans %}dashboard-admin.entryLeave{% endtrans %}: {{ entryData.leave }}
+                    </p>
+                {% endfor %}
             </div>
             <div>
                 {% if event.eventType.showFoodStats() %}
