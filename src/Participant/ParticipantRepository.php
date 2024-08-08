@@ -671,22 +671,19 @@ class ParticipantRepository extends Repository
 
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
         return $qb;
     }
 
-    /**
-     * @param Event $event
-     * @return Fluent
-     * @throws \LeanMapper\Exception\InvalidStateException
-     */
     private function getQueryBuilderCountForPaidPatrolParticipants(Event $event): Fluent
     {
         $qb = $this->connection->select('COUNT(participant.id)')->from($this->getTable());
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
 
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
         return $qb;
     }
 }
