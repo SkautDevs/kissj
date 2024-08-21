@@ -123,7 +123,12 @@ class Event extends EntityDatetime
 
     public function getLogoInBase64(): string
     {
-        return ImageUtils::getLocalImageInBase64($this->logoUrl);
+        return ImageUtils::getLocalImageInBase64($this->getFullLogoUrl($this->logoUrl));
+    }
+
+    public static function getFullLogoUrl(string $logoUrl): string
+    {
+        return "/assets" . $logoUrl;
     }
 
     public function getMinimalPpCount(Participant $participant): int

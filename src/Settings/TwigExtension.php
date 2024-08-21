@@ -10,11 +10,23 @@ use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\UserStatus;
+use kissj\Event\Event;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
+use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
 {
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions() :array
+    {
+        return [
+            new TwigFunction('eventLogo', [Event::class, 'getFullLogoUrl']),
+        ];
+    }
+
     /**
      * @return TwigTest[]
      */
