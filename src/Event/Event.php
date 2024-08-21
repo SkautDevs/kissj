@@ -123,7 +123,7 @@ class Event extends EntityDatetime
 
     public function getLogoInBase64(): string
     {
-        return ImageUtils::getLocalImageInBase64($this->getFullLogoUrl($this->logoUrl));
+        return ImageUtils::getLocalImageInBase64(self::getFullLogoUrl($this->logoUrl));
     }
 
     public static function getFullLogoUrl(string $logoUrl): string

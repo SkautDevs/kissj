@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Mailer;
 
+use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Payment\QrCodeService;
@@ -224,7 +225,7 @@ readonly class Mailer
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
-            'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->getFullLogoUrl($event->logoUrl)),
+            'eventImageExists' => is_file(__DIR__ . '/../../public/' . Event::getFullLogoUrl($event->logoUrl)),
         ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {
