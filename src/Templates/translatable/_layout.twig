@@ -102,9 +102,11 @@
         | <a href="https://devs.skauting.cz/" target="_blank">{% trans %}_layout.creator{% endtrans %}</a>
         | <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a>
     </span>
+    {% if event is not null %}
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-        <img class="footer-logo" src="{{ eventLogo() }}" alt="logo of {{ event.readableName }}">
+        <img class="footer-logo" src="{{ eventLogo(event.logoUrl) }}" alt="logo of {{ event.readableName }}">
     </a>
+    {% endif %}
 </footer>
 </body>
 </html>

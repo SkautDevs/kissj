@@ -126,8 +126,9 @@ class Event extends EntityDatetime
         return ImageUtils::getLocalImageInBase64(self::getFullLogoUrl($this->logoUrl));
     }
 
-    public static function getFullLogoUrl(string $logoUrl): string
+    public static function getFullLogoUrl(?string $logoUrl): string
     {
+        if ($logoUrl === null) { return "";}
         return "/assets" . $logoUrl;
     }
 
