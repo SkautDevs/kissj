@@ -224,7 +224,7 @@ readonly class Mailer
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
-            'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->logoUrl),
+            'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->getFullLogoUrl($event->logoUrl)),
         ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {

@@ -232,7 +232,7 @@ abstract class EventType
 
     public function getSkautLogoPath(Participant $participant): string
     {
-        return '/SKAUT_horizontalni_logo_250.png';
+        return '/assets/SKAUT_horizontalni_logo_250.png';
     }
 
     public function getSkautStampSignPath(Participant $participant): string

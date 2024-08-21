@@ -8,10 +8,16 @@
     <meta name="theme-color" content="#872e4e" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{% trans %}_layout.title{% endtrans %} - {{ event.readableName }} - kissj</title>
+    <title>{% if event is not null %}
+            {% trans %}_layout.title{% endtrans %} - {{ event.readableName }}
+        {% else %}
+            Kissj
+        {% endif %}
+    </title>
 
-    <link rel="shortcut icon" href="/favicon-16x16.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../../public/assets/favicon-16x16.png" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ base_path() }}/theme.css">
     <link rel="stylesheet" href="{{ base_path() }}/styles.css">
     {% if event.eventType.getStylesheetNameWithoutLeadingSlash is not null %}
         <link rel="stylesheet" href="{{ base_path() }}/{{ event.eventType.getStylesheetNameWithoutLeadingSlash }}">
@@ -31,7 +37,14 @@
 </head>
 
 <body class="wrapper">
-<h1 class="text-center">{% trans %}_layout.title{% endtrans %} - {{ event.readableName }}</h1>
+<h1 class="text-center">
+    {% if event is not null %}
+        {% trans %}_layout.title{% endtrans %} - {{ event.readableName }}
+    {% else %}
+        Kissj
+    {% endif %}
+
+</h1>
 <div class="user text-right">
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
@@ -90,7 +103,7 @@
         | <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a>
     </span>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-        <img class="footer-logo" src="{{ event.logoUrl }}" alt="logo of {{ event.readableName }}">
+        <img class="footer-logo" src="{{ eventLogo() }}" alt="logo of {{ event.readableName }}">
     </a>
 </footer>
 </body>
