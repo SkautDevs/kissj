@@ -288,7 +288,6 @@ readonly class ExportService
                     $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
                     $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '',
                     $participant->leaveDate !== null ? $participant->leaveDate->format('d. m. Y H:i:s') : '',
-
                 ],
                 $ptPart,
                 $istPart
