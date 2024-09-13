@@ -76,6 +76,7 @@ class Route
                     ->setName('sendLoginEmail');
 
                 $app->get('/loginAfterLinkSent', UserController::class . '::showAfterLinkSent')
+                    ->add(NonLoggedOnlyMiddleware::class)
                     ->setName('loginAfterLinkSent');
 
                 $app->get('/tryLogin/{token}', UserController::class . '::tryLoginWithToken')
