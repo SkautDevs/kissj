@@ -38,9 +38,16 @@ h1 {
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 	background-color: var(--color-card-background);
 	border-radius: var(--border-radius);
-	padding: 35px 44px;
-	margin-bottom: 11px;
+	padding: 25px;
 	text-align: center;
+	margin: 10px;
+}
+
+@media (min-width: 768px) {
+	.card {
+		padding: 35px 44px;
+		margin: 0 0 11px;
+	}
 }
 
 .card-half {
@@ -65,6 +72,15 @@ h1 {
 
 h2, h3 {
 	margin-top: 0;
+}
+h2 {
+	font-size: 1.25rem; /* Smaller font for mobile */
+}
+
+@media (min-width: 768px) {
+	h2 {
+		font-size: 1.75rem;
+	}
 }
 
 a {
@@ -109,9 +125,16 @@ a:visited {
 
 .two-cards {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: 1fr;
 	grid-gap: 13px;
 }
+
+@media (min-width: 768px) {
+	.two-cards {
+		grid-template-columns: repeat(2, 1fr)
+	}
+}
+
 
 .login-card {
 	margin: 0 auto;
@@ -130,15 +153,21 @@ ul.steps {
 	padding: 0;
 	flex-direction: row;
 }
+@media (max-width: 250px) {
+	ul.steps {
+		display: none;
+	}
+}
 
 li.step {
     width: 33%;
     position: relative;
     text-align: center;
-	font-size: 1.25rem;
+	font-size: clamp(0.75rem, 4vw, 1.25rem);
 	font-weight: bolder;
 	color: var(--color-light);
 }
+
 
 li.step::before {
 	content: " ";
