@@ -12,6 +12,8 @@ use kissj\Participant\ParticipantService;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserController extends AbstractController
 {
@@ -40,10 +42,16 @@ class UserController extends AbstractController
 
     public function login(Response $response, Event $event): Response
     {
+        $form = $this->formFactory->createBuilder()
+            ->add('email', EmailType::class, ['label' => 'login.email'])
+            ->add('submit', SubmitType::class, ['label' => 'login.submit'])
+            ->getForm();
+
         return $this->view->render(
             $response,
             'kissj/login.twig',
             [
+                'loginForm' => $form->createView(),
                 'skautisLoginUri' => $this->skautisService->getLoginUri($event->slug),
             ],
         );

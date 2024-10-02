@@ -50,6 +50,7 @@
 		"slim/slim": "^4",
 		"slim/twig-view": "^3.1",
 		"symfony/console": "^7.0",
+		"symfony/form": "^7.0",
 		"symfony/mailer": "^7.0",
 		"symfony/translation": "^7.0",
 		"symfony/twig-bridge": "^7.0",

@@ -97,12 +97,21 @@ use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
 use SessionHandlerInterface;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormRegistry;
+use Symfony\Component\Form\FormRegistryInterface;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\ResolvedFormTypeFactory;
+use Symfony\Component\Form\ResolvedFormTypeFactoryInterface;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
 
+use Twig\RuntimeLoader\FactoryRuntimeLoader;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -173,6 +182,7 @@ class Settings
             ExportService::class => autowire(),
             FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
+            FormFactory::class => autowire(),
             GuestRepository::class => autowire(),
             GuestService::class => autowire(),
             IstRepository::class => autowire(),
@@ -224,6 +234,9 @@ class Settings
                 . $_ENV['FILE_HANDLER_TYPE']),
         };
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
+        $container[FormRegistryInterface::class] = autowire(FormRegistry::class)
+            ->constructorParameter('extensions', []);
+        $container[ResolvedFormTypeFactoryInterface::class] = autowire(ResolvedFormTypeFactory::class);
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
         $container[IBankPaymentService::class] = autowire(FioBankPaymentService::class);
@@ -318,6 +331,13 @@ class Settings
 
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
 
+            $formEngine = new TwigRendererEngine([], $view->getEnvironment());
+            $view->addRuntimeLoader(new FactoryRuntimeLoader([
+                FormRenderer::class => function () use ($formEngine): FormRenderer {
+                    return new FormRenderer($formEngine);
+                },
+            ]));
+
             $user = $userRegeneration->getCurrentUser();
             $view->getEnvironment()->addGlobal('user', $user);
             $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG'] === "true");
@@ -325,6 +345,7 @@ class Settings
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));
             $view->addExtension(new TwigExtension());
+            $view->addExtension(new FormExtension($translator));
 
             return $view;
         };

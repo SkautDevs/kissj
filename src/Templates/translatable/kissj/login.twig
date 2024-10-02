@@ -21,6 +21,9 @@
                     </div>
                     <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
                 </form>
+                {{ form_start(loginForm) }}
+                    {{ form_widget(loginForm) }}
+                {{ form_end(loginForm) }}
             {% endif %}
         </div>
         <div class="card approved-theme text-muted">

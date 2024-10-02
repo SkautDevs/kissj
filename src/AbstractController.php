@@ -16,6 +16,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 
@@ -40,6 +41,9 @@ abstract class AbstractController
 
     #[Inject]
     protected SentryCollector $sentryCollector;
+    
+    #[Inject]
+    protected FormFactory $formFactory;
 
     /**
      * @param string[] $arguments
