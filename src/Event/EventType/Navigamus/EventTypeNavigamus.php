@@ -49,8 +49,23 @@ class EventTypeNavigamus extends EventType
         ];
     }
 
-    public function isUnlockExpiredButtonAllowed(): bool
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getStylesheetNameWithoutLeadingSlash(): string
     {
-        return true;
+        return 'eventSpecificCss/stylesNavigamus25.css';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getLanguages(): array
+    {
+        return [
+            'cs' => '🇨🇿 Česky',
+        ];
     }
 }
