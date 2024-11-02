@@ -1,21 +1,22 @@
-<div class="card registration-theme">
-    {% for deal in deals %}
-        <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
-        {% if deal.isDone %}
-            {{ ('deal.'~deal.slug~'-done')|trans({'%tieCode%': person.tieCode})|raw }}
-        {% else %}
-            {% if deal.getDoneAt() %}
-                {{ ('deal.'~deal.slug~'-doneBadly')|trans({
-                    '%date%': deal.doneAt.format('d. m. Y, H:i:s')
-                }) }}:<br/>
+{% if deals %}
+    <div class="card registration-theme">
+        {% for deal in deals %}
+            <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
+            {% if deal.isDone %}
+                {{ ('deal.'~deal.slug~'-done')|trans({'%tieCode%': person.tieCode})|raw }}
             {% else %}
-                {{ ('deal.'~deal.slug~'-missing')|trans({'%tieCode%': person.tieCode})|raw }}:<br/>
+                {% if deal.getDoneAt() %}
+                    {{ ('deal.'~deal.slug~'-doneBadly')|trans({
+                        '%date%': deal.doneAt.format('d. m. Y, H:i:s')
+                    }) }}:<br/>
+                {% else %}
+                    {{ ('deal.'~deal.slug~'-missing')|trans({'%tieCode%': person.tieCode})|raw }}:<br/>
+                {% endif %}
+                <br/>
+                <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
             {% endif %}
             <br/>
-            <a class="btn" href="{{ deal.urlAddress }}" target="_blank">{{ ('deal.'~deal.slug~'-button')|trans }}</a>
-        {% endif %}
-        <br/>
-        <br/>
-    {% endfor %}
-</div>
-
+            <br/>
+        {% endfor %}
+    </div>
+{% endif %}
