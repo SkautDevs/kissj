@@ -59,6 +59,36 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
+     * @return array<string>
+     */
+    public function getFoodOptions(): array
+    {
+        return [
+            'detail.foodWithout',
+            'detail.foodVegetarian',
+            'detail.foodVegan',
+            'detail.foodLactoseFree',
+            'detail.foodGlutenFree',
+            'detail.foodOther',
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPositionOptions(): array
+    {
+        return [
+            'detail.position.registration',
+            'detail.position.kitchen',
+            'detail.position.hygiene',
+            'detail.position.site',
+            'detail.position.security',
+            'detail.position.programme',
+        ];
+    }
+
+    /**
      * @inheritDoc
      */
     #[\Override]

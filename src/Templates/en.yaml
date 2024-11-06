@@ -151,9 +151,11 @@ detail:
     position-title: "Preferred position"
     position-placeholder: "Select max. 5. We don't guarantee you to be placed at the selected position, but we'll try our best!"
     position:
+        registration: "Registration"
+        site: "Site and logistics"
         photo: "Photographer"
         kitchen: "Kitchen helper / chef"
-        security: "Campus guard, ticket control"
+        security: "Campus guard"
         hygiene: "Toilet cleaning"
         programme: "Support for program of the event"
     driver: "Driver license"
