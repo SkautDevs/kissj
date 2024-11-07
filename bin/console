@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+use kissj\Application\ApplicationGetter;
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = (new ApplicationGetter())->getConsoleApp();
+
+$app->run();

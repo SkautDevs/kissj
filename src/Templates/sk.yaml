@@ -297,6 +297,7 @@ email:
         paymentTransfered: "Presun inej platby pre Tvoju registráciu"
 payments-admin:
     confirmText: "Potvrzovaní plateb na akci"
+    paymentsAreAutomatic: "Platební systém je automatický, ale někdy se může stát, že něco nevyjde podle plánu. Zde můžeš ručně stáhnout a napárovat platby z banky klikem tlačítka."
     openDuePayments: "Odemknout platby po splatnosti"
     back: "Zpět"
     patrols: "Patroly"

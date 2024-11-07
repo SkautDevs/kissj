@@ -9,6 +9,7 @@ use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
 use SessionHandlerInterface;
 use Slim\App;
+use Symfony\Component\Console\Application as ConsoleApp;
 
 class ApplicationGetter
 {
@@ -20,17 +21,7 @@ class ApplicationGetter
         string $envFilename = '.env',
         string $tempPath = __DIR__.'/../../temp'
     ): App {
-        $containerBuilder = new ContainerBuilder();
-        $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
-            $envPath,
-            $envFilename,
-        ));
-        $containerBuilder->useAttributes(true);
-        if ($_ENV['DEBUG'] === 'false') {
-            $containerBuilder->enableCompilation($tempPath);
-        }
-
-        $container = $containerBuilder->build();
+        $container = $this->buildContainer($envPath, $envFilename, $tempPath);
         $app = Bridge::create($container);
         $app->setBasePath($_ENV['BASEPATH']);
 
@@ -49,5 +40,33 @@ class ApplicationGetter
         $app = (new Route())->addRoutesInto($app);
 
         return $app;
+    }
+
+    public function getConsoleApp(
+        string $envPath = __DIR__.'/../../',
+        string $envFilename = '.env',
+        string $tempPath = __DIR__.'/../../temp'
+    ): ConsoleApp {
+        $container = $this->buildContainer($envPath, $envFilename, $tempPath);
+
+        $consoleApp = new ConsoleApp();
+        $consoleApp = (new Command())->addCommandsInto($consoleApp, $container);
+
+        return $consoleApp;
+    }
+
+    private function buildContainer(string $envPath, string $envFilename, string $tempPath): Container
+    {
+        $containerBuilder = new ContainerBuilder();
+        $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
+            $envPath,
+            $envFilename,
+        ));
+        $containerBuilder->useAttributes(true);
+        if ($_ENV['DEBUG'] === 'false') {
+            $containerBuilder->enableCompilation($tempPath);
+        }
+
+        return $containerBuilder->build();
     }
 }

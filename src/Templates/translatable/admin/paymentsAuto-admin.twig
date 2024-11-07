@@ -3,6 +3,7 @@
 {% block content %}
     <div class="card approved-theme">
         <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
+        <p>{% trans %}payments-admin.paymentsAreAutomatic{% endtrans %}</p>
         <form action="{{ url_for('admin-update-payments', {'eventSlug': event.slug} ) }}" method="POST">
             <input type="submit" class="btn btn-small" value="{% trans %}paymentsAuto-admin.update{% endtrans %}">
         </form>

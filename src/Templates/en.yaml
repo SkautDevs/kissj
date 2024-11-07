@@ -297,6 +297,7 @@ email:
         paymentTransfered: "transferring different payment into your registration"
 payments-admin:
     confirmText: "Confirming payments on event"
+    paymentsAreAutomatic: "Payment system is automatic, but sometimes it can go wrong. Here you can manually download and pair payments from the bank by clicking the button."
     openDuePayments: "Unlock payments after due deadline"
     back: "Back"
     patrols: "Patrols"

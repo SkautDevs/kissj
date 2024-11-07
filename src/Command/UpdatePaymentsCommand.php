@@ -5,23 +5,42 @@ declare(strict_types=1);
 namespace kissj\Command;
 
 use kissj\Event\EventRepository;
+use kissj\Logging\Sentry\SentryCollector;
 use kissj\Payment\PaymentService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-// TODO
+#[AsCommand(
+    name: 'app:update-payments',
+    description: 'Update all payments for active non-test autopayments on events',
+)]
 class UpdatePaymentsCommand extends Command
 {
     public function __construct(
         private readonly PaymentService $paymentService,
         private readonly EventRepository $eventRepository,
+        private readonly SentryCollector $sentryCollector,
     ) {
         parent::__construct();
     }
 
-    public function handle(): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($this->eventRepository->findActiveNontestAutopaymentsOnEvents() as $event) {
-            $this->paymentService->updatePayments($event);
+        try {
+            $events = $this->eventRepository->findActiveNontestAutopaymentsOnEvents();
+            $output->writeln('Updating payments for ' . count($events) . ' events...');
+
+            foreach ($events as $event) {
+                $this->paymentService->updatePayments($event);
+            }
+
+            return Command::SUCCESS;
+        } catch (\Throwable $t) {
+            $this->sentryCollector->collect($t);
+
+            throw $t;
         }
     }
 }
