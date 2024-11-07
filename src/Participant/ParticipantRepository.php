@@ -304,7 +304,7 @@ class ParticipantRepository extends Repository
         $rowsPp = $qb->fetchPairs('f', 'count');
 
         // merge patrol participants into rest
-        foreach($rowsPp as $foodKey => $count) {
+        foreach ($rowsPp as $foodKey => $count) {
             if (array_key_exists($foodKey, $rows) === false) {
                 $rows[$foodKey] = 0;
             }
@@ -344,7 +344,7 @@ class ParticipantRepository extends Repository
                 = $this->getEntryStatisticForRole($event, ParticipantRole::TroopLeader);
         }
 
-        if  ($event->allowIsts) {
+        if ($event->allowIsts) {
             $entries[ParticipantRole::Ist->value]
                 = $this->getEntryStatisticForRole($event, ParticipantRole::Ist);
         }
@@ -463,7 +463,7 @@ class ParticipantRepository extends Repository
         ]);
 
         $participants = [];
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             /** @var string $role */
             $role = $row['role'];
             /** @var string $id */

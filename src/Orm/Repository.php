@@ -144,7 +144,7 @@ class Repository extends BaseRepository
      */
     protected function addOrdersBy(Fluent $qb, array $orders): void
     {
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
             $qb->orderBy($order->getField());
 
             if ($order->isOrderAsc()) {

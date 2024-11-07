@@ -20,7 +20,7 @@ class DealRepository extends Repository
         $eventDeals = $participant->getUserButNotNull()->event->eventType->getEventDeals($participant);
         $allActiveDeals = [];
 
-        foreach($eventDeals as $eventDeal) {
+        foreach ($eventDeals as $eventDeal) {
             $deal = $participant->findDeal($eventDeal->slug);
             if ($deal === null) {
                 $deal = $this->createNewDeal($eventDeal, $participant);
