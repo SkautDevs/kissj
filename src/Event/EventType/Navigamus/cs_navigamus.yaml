@@ -1,11 +1,5 @@
-closed:
-    welcome: "Ahoj!"
-    successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme kvůli účetnictví počkat do začátku roku 2022 (buď tedy trpělivý/á, prosím) a potom zkontrolujeme, zda je všechno v pořádku. Pokud ano, pošleme ti platební údaje."
 chooseRole:
     advicePlText: "je vedoucí skupiny účastníků. Účastníci se neregistrují samostatně, ale prostřednictvím svého vedoucího patroly. Ten je odpovědný za svoji patrolu v průběhu celé akce a také za ní jako celek platí registrační poplatek."
-    adviceIstText: " - spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
+    adviceIstText: " je spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
 detail:
     patrolNamePlaceholder: "stejný název jako pro předprogram, pokud jste se účastnili"
-email:
-    payment-successful:
-        enjoy: "Prosím, vyplň dotazník o jídle a doprovodných programech na <a href='https://forms.gle/Y4MSmfdxoMw6gxRA9'>https://forms.gle/Y4MSmfdxoMw6gxRA9</a> a potom si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"

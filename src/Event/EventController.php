@@ -22,7 +22,7 @@ class EventController extends AbstractController
         );
     }
 
-    public function redirectEvent(string $eventSlug, Request $request, Response $response): Response
+    public function landingPrettyUrl(string $eventSlug, Request $request, Response $response): Response
     {
         $event = $this->eventRepository->findBySlug($eventSlug);
         if ($event === null) {

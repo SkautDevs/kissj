@@ -51,7 +51,7 @@ class EventInfoMiddleware extends BaseMiddleware
             $this->mailerSettings->setFullUrlLink(
                 $this->getRouter($request)->fullUrlFor(
                     $request->getUri(),
-                    'landing',
+                    'landingPrettyUrl',
                     ['eventSlug' => $event->slug],
                 )
             );

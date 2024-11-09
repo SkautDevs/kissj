@@ -13,6 +13,9 @@
     {% endif %}
     </b></i><br/>
 {% endif %}
+{% if not ca.email and person is hasUser %}
+    <i>{% trans %}detail.email{% endtrans %}: <b>{{ person.user.email }}</b></i><br/>
+{% endif %}
 {% if person is not PatrolParticipant and person.user.status.value != 'open' and person.getRegistrationCloseDate %}
     <i>{% trans %}detail.closed-at{% endtrans %}: <b>{{ person.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b></i><br/>
 {% endif %}

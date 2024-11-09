@@ -379,8 +379,8 @@ class Route
             });
         });
 
-        $app->get($app->getBasePath() . '/{eventSlug}', EventController::class . '::redirectEvent')
-            ->setName('redirectEvent');
+        $app->get($app->getBasePath() . '/{eventSlug}', EventController::class . '::landingPrettyUrl')
+            ->setName('landingPrettyUrl');
 
         return $app;
     }
