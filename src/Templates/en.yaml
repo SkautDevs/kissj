@@ -218,6 +218,7 @@ chooseRole:
 login:
     registrationFor: "Registration for "
     email: "email"
+    or: "or"
     sendMeEmail: "Send me an email to register"
     howItWorks: "How does the registration system work?"
     submitEmail: "Submit your email"

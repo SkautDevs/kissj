@@ -5,7 +5,10 @@
         <div class="card registration-theme">
             <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
             {% if event.eventType.isLoginSkautisAllowed %}
-                <a href="{{ skautisLoginUri }}" class="btn">{% trans %}login.skautis{% endtrans %}</a><br>
+                <a href="{{ skautisLoginUri }}" class="btn">{% trans %}login.skautis{% endtrans %}</a>
+            {% endif %}
+            {% if event.eventType.isLoginEmailAllowed and event.eventType.isLoginSkautisAllowed %}
+                <p class="text-inside-line">{% trans %}login.or{% endtrans %}</p>
             {% endif %}
             {% if event.eventType.isLoginEmailAllowed %}
                 <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="post">
@@ -22,6 +25,7 @@
                     <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
                 </form>
             {% endif %}
+            <br/>
         </div>
         <div class="card approved-theme text-muted">
             <h2>{% trans %}login.howItWorks{% endtrans %}</h2>

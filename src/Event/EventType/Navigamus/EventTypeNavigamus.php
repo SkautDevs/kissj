@@ -100,4 +100,9 @@ class EventTypeNavigamus extends EventType
             'cs' => '🇨🇿 Česky',
         ];
     }
+
+    public function isLoginSkautisAllowed(): bool
+    {
+        return true;
+    }
 }

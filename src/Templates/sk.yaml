@@ -218,6 +218,7 @@ chooseRole:
 login:
     registrationFor: "Registrácia na "
     email: "E-mail"
+    or: "nebo"
     sendMeEmail: "Pošli mi prihlasovací link"
     howItWorks: "Ako funguje registračný systém?"
     submitEmail: "Zadaj svoj mail"

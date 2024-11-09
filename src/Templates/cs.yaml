@@ -218,6 +218,7 @@ chooseRole:
 login:
     registrationFor: "Registrace pro "
     email: "E-mail"
+    or: "nebo"
     sendMeEmail: "Odešli přihlašovací mail"
     howItWorks: "Jak přihlašování funguje?"
     submitEmail: "Zadej svůj e-mail"
@@ -227,7 +228,7 @@ login:
     waitForApproval: "Počkej na schválení a informace k platbě"
     pay: "Zaplať a jeď!"
     more: "Více informací o registraci"
-    skautis: "Přihlásit se přes skautIS"
+    skautis: "Přihlásit se přes skautIS ⚜️"
 email:
     layout:
         welcome: "Ahoj!"

@@ -456,3 +456,29 @@ tr:nth-child(even) {
 .m-0 {
 	margin: 0;
 }
+
+.text-inside-line {
+	overflow: hidden;
+	text-align: center;
+}
+
+.text-inside-line::before,
+.text-inside-line::after {
+	background-color: var(--color-main);
+	content: "";
+	display: inline-block;
+	height: 1px;
+	position: relative;
+	vertical-align: middle;
+	width: 40%;
+}
+
+.text-inside-line::before {
+	right: 0.5em;
+	margin-left: -50%;
+}
+
+.text-inside-line::after {
+	left: 0.5em;
+	margin-right: -50%;
+}
