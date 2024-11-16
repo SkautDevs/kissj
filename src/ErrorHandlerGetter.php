@@ -8,6 +8,7 @@ use kissj\Logging\Sentry\SentryCollector;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Views\Twig;
 use Throwable;
@@ -40,6 +41,13 @@ readonly class ErrorHandlerGetter
         return function (Throwable $throwable, Inspector $inspector) {
             if ($throwable instanceof HttpNotFoundException) {
                 http_response_code(404);
+                /** @phpstan-ignore-next-line shipmonk.checkedExceptionInCallable */
+                echo $this->twig->fetch('404.twig');
+                die;
+            }
+
+            if ($throwable instanceof HttpMethodNotAllowedException) {
+                http_response_code(405);
                 /** @phpstan-ignore-next-line shipmonk.checkedExceptionInCallable */
                 echo $this->twig->fetch('404.twig');
                 die;

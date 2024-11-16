@@ -226,7 +226,6 @@ class Settings
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
         $container[IMapper::class] = create(Mapper::class);
         $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
-        $container[IBankPaymentService::class] = autowire(FioBankPaymentService::class);
         $container[SentryClient::class] = $sentryClient;
         $container[SentryHub::class] = $sentryHub;
 
