@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace kissj\BankPayment;
 
 use DateTimeInterface;
-use h4kuna\Fio\Response\Read\Transaction;
+use h4kuna\Fio\Read\Transaction;
 use kissj\Event\Event;
 use kissj\Orm\EntityDatetime;
 
@@ -42,7 +42,7 @@ class BankPayment extends EntityDatetime
         $this->event = $event;
         $this->bankId = (string)$t->moveId;
         $this->moveDate = $t->moveDate;
-        $this->price = (string)$t->volume;
+        $this->price = (string)$t->amount;
         $this->variableSymbol = $t->variableSymbol;
         $this->accountNumber = $t->toAccount . '/' . $t->bankCode;
         $this->constantSymbol = $t->constantSymbol;

@@ -34,7 +34,7 @@
 		"doctrine/annotations": "^1.8",
 		"endroid/qr-code": "^4.4",
 		"guzzlehttp/guzzle": "^7.8",
-		"h4kuna/fio": "^2.0",
+		"h4kuna/fio": "^3.0",
 		"league/csv": "^9.15",
 		"middlewares/negotiation": "^2.0",
 		"middlewares/trailing-slash": "^2.0",

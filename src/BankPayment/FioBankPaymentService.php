@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\BankPayment;
 
-use h4kuna\Fio\Response\Read\Transaction;
+use h4kuna\Fio\Read\Transaction;
 use kissj\Event\Event;
 
 readonly class FioBankPaymentService implements IBankPaymentService
@@ -28,10 +28,10 @@ readonly class FioBankPaymentService implements IBankPaymentService
 
         $savedBankPaymentsCount = 0;
         foreach ($freshPayments as $freshPayment) {
-            if ($freshPayment->volume > 0) { // get only incomes
+            if ($freshPayment->amount > 0) { // get only incomes
                 $bankPayment = new BankPayment();
                 $bankPayment = $bankPayment->mapTransactionInto($freshPayment, $event);
-                // TODO optimalize
+                // TODO optimize
                 $this->bankPaymentRepository->persist($bankPayment);
                 $savedBankPaymentsCount++;
             }

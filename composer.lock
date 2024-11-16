@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5088a17ab8cbb5a8403330178da6d3c8",
+    "content-hash": "40238e4b62aa1d0cdbde9b69d641396e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1617,39 +1617,104 @@
             "time": "2024-07-18T11:15:46+00:00"
         },
         {
-            "name": "h4kuna/fio",
-            "version": "v2.0.8",
+            "name": "h4kuna/dir",
+            "version": "v0.1.7",
             "source": {
                 "type": "git",
-                "url": "https://github.com/h4kuna/fio.git",
-                "reference": "5294d1ee6444adcba2ea4a343d79786ac26ebe75"
+                "url": "https://github.com/h4kuna/dir.git",
+                "reference": "2780ac88fc8f9c24574fb5cccecf0d6fe11259e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/h4kuna/fio/zipball/5294d1ee6444adcba2ea4a343d79786ac26ebe75",
-                "reference": "5294d1ee6444adcba2ea4a343d79786ac26ebe75",
+                "url": "https://api.github.com/repos/h4kuna/dir/zipball/2780ac88fc8f9c24574fb5cccecf0d6fe11259e1",
+                "reference": "2780ac88fc8f9c24574fb5cccecf0d6fe11259e1",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
-                "ext-simplexml": "*",
-                "ext-xmlwriter": "*",
-                "guzzlehttp/guzzle": "^6.0 | ^7.0",
-                "nette/safe-stream": "^2.4",
-                "nette/utils": "^2.0 | ^3.0",
-                "php-64bit": ">=7.1"
+                "nette/utils": "^2.2 || ^3.0 || ^4.0",
+                "php": ">=8.0"
             },
             "require-dev": {
-                "nette/tester": "^2.5",
-                "phpstan/phpstan": "^0.12",
-                "tracy/tracy": "^2.10"
+                "nette/tester": "^2.4",
+                "phpstan/phpstan-strict-rules": "^1.4"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "h4kuna\\Fio\\": [
-                        "src/"
-                    ]
+                    "h4kuna\\Dir\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Milan Matějček",
+                    "email": "milan.matejcek@gmail.com"
+                }
+            ],
+            "description": "Create easily directories",
+            "support": {
+                "issues": "https://github.com/h4kuna/dir/issues",
+                "source": "https://github.com/h4kuna/dir/tree/v0.1.7"
+            },
+            "funding": [
+                {
+                    "url": "https://revolut.me/milan2m/czk1000/dir",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/h4kuna",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-07-15T05:34:09+00:00"
+        },
+        {
+            "name": "h4kuna/fio",
+            "version": "v3.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/h4kuna/fio.git",
+                "reference": "4cc40a705d1e6d323ffc54bd490a09cd344d1cde"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/h4kuna/fio/zipball/4cc40a705d1e6d323ffc54bd490a09cd344d1cde",
+                "reference": "4cc40a705d1e6d323ffc54bd490a09cd344d1cde",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-mbstring": "*",
+                "ext-simplexml": "*",
+                "ext-xmlwriter": "*",
+                "guzzlehttp/psr7": "^2.4",
+                "h4kuna/dir": "^0.1.3",
+                "h4kuna/memoize": "^0.1.3",
+                "nette/safe-stream": "^3.0",
+                "nette/utils": "^3.0 || ^4.0",
+                "php": ">=8.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.5",
+                "nette/tester": "^2.4",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-strict-rules": "^1.4",
+                "symfony/http-client": "^6.0",
+                "tracy/tracy": "^2.9"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "As default implementation for PSR-7, PSR-17 and PSR-18 standards."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "h4kuna\\Fio\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1663,11 +1728,11 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Read JSON file from Fio bank and can send request.",
+            "description": "Read movements by json file from Fio bank and send payments.",
             "homepage": "https://github.com/h4kuna/fio",
             "support": {
                 "issues": "https://github.com/h4kuna/fio/issues",
-                "source": "https://github.com/h4kuna/fio/tree/v2.0.8"
+                "source": "https://github.com/h4kuna/fio/tree/v3.0.12"
             },
             "funding": [
                 {
@@ -1679,7 +1744,56 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-03T09:44:46+00:00"
+            "time": "2024-09-02T13:35:59+00:00"
+        },
+        {
+            "name": "h4kuna/memoize",
+            "version": "v0.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/h4kuna/memoize.git",
+                "reference": "97ab15947e540d496197cd453de7614699e58cbd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/h4kuna/memoize/zipball/97ab15947e540d496197cd453de7614699e58cbd",
+                "reference": "97ab15947e540d496197cd453de7614699e58cbd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0",
+                "psr/simple-cache": "^3.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.9",
+                "phpstan/phpstan-strict-rules": "^1.4",
+                "phpunit/phpunit": "^11.2"
+            },
+            "type": "tool",
+            "autoload": {
+                "files": [
+                    "aliases.php"
+                ],
+                "psr-4": {
+                    "h4kuna\\Memoize\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Milan Matějček",
+                    "email": "milan.matejcek@gmail.com"
+                }
+            ],
+            "description": "Provide cache to memory for your class.",
+            "support": {
+                "issues": "https://github.com/h4kuna/memoize/issues",
+                "source": "https://github.com/h4kuna/memoize/tree/v0.1.7"
+            },
+            "time": "2024-08-23T05:52:13+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -2545,35 +2659,38 @@
         },
         {
             "name": "nette/safe-stream",
-            "version": "v2.5.1",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/safe-stream.git",
-                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5"
+                "reference": "b9a275f7f2517cacac6ab4360a73722340478bce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/safe-stream/zipball/96c57055927d0f2b4d0fe545896a7a0335adbeb5",
-                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5",
+                "url": "https://api.github.com/repos/nette/safe-stream/zipball/b9a275f7f2517cacac6ab4360a73722340478bce",
+                "reference": "b9a275f7f2517cacac6ab4360a73722340478bce",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": "8.0 - 8.3"
             },
             "require-dev": {
-                "nette/tester": "^2.0",
+                "nette/tester": "^2.4",
                 "phpstan/phpstan": "^0.12",
-                "tracy/tracy": "^2.3"
+                "tracy/tracy": "^2.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
                 "files": [
                     "src/loader.php"
+                ],
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2604,35 +2721,36 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/safe-stream/issues",
-                "source": "https://github.com/nette/safe-stream/tree/v2.5.1"
+                "source": "https://github.com/nette/safe-stream/tree/v3.0.1"
             },
-            "time": "2022-12-12T17:17:33+00:00"
+            "time": "2023-08-05T18:54:54+00:00"
         },
         {
             "name": "nette/utils",
-            "version": "v3.2.10",
+            "version": "v4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "a4175c62652f2300c8017fb7e640f9ccb11648d2"
+                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/a4175c62652f2300c8017fb7e640f9ccb11648d2",
-                "reference": "a4175c62652f2300c8017fb7e640f9ccb11648d2",
+                "url": "https://api.github.com/repos/nette/utils/zipball/736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
+                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2 <8.4"
+                "php": "8.0 - 8.4"
             },
             "conflict": {
-                "nette/di": "<3.0.6"
+                "nette/finder": "<3",
+                "nette/schema": "<1.2.2"
             },
             "require-dev": {
                 "jetbrains/phpstorm-attributes": "dev-master",
-                "nette/tester": "~2.0",
+                "nette/tester": "^2.5",
                 "phpstan/phpstan": "^1.0",
-                "tracy/tracy": "^2.3"
+                "tracy/tracy": "^2.9"
             },
             "suggest": {
                 "ext-gd": "to use Image",
@@ -2640,13 +2758,12 @@
                 "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
                 "ext-json": "to use Nette\\Utils\\Json",
                 "ext-mbstring": "to use Strings::lower() etc...",
-                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()",
-                "ext-xml": "to use Strings::length() etc. when mbstring is not available"
+                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.2-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -2690,9 +2807,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v3.2.10"
+                "source": "https://github.com/nette/utils/tree/v4.0.5"
             },
-            "time": "2023-07-30T15:38:18+00:00"
+            "time": "2024-08-07T15:39:19+00:00"
         },
         {
             "name": "nikic/fast-route",

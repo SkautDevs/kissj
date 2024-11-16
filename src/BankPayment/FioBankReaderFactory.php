@@ -3,25 +3,27 @@
 namespace kissj\BankPayment;
 
 use h4kuna\Fio\FioRead;
-use h4kuna\Fio\Utils\FioFactory;
+use h4kuna\Fio\FioFactory;
 use kissj\Event\Event;
 
+/**
+ * reader needs to be created in run-time because of dynamic Event
+ */
 class FioBankReaderFactory
 {
-    private ?FioRead $event = null;
+    private ?FioRead $fioRead = null;
 
     public function getFioRead(Event $event): FioRead
     {
-        if ($this->event === null) {
-            $this->event = $this->createFioRead($event);
+        if ($this->fioRead === null) {
+            $this->fioRead = $this->createFioRead($event);
         }
 
-        return $this->event;
+        return $this->fioRead;
     }
 
     private function createFioRead(Event $event): FioRead
     {
-        // using h4kuna/fio - https://github.com/h4kuna/fio
         $fioAccountName = 'fio-account';
         $fioFactory = new FioFactory([
             $fioAccountName => [
