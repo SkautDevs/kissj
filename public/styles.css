@@ -488,6 +488,10 @@ tr:nth-child(even) {
 	align-items: center;
 }
 
+.login-box-item {
+	flex-grow: 1;
+}
+
 .text-rotated {
 	transform: rotate(90deg);
 	font-weight: normal;

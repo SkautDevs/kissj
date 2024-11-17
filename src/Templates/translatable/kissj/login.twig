@@ -7,7 +7,7 @@
             <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
             {% if event.eventType.isLoginSkautisAllowed %}
                 <div class="login-box">
-                    <a href="{{ skautisLoginUri }}" class="btn">
+                    <a href="{{ skautisLoginUri }}" class="btn login-box-item">
                         {% trans %}login.skautis{% endtrans %}
                     </a>
                     {% if bothLogins and lastLogin == 'skautis' %}
@@ -22,7 +22,11 @@
             {% endif %}
             {% if event.eventType.isLoginEmailAllowed %}
             <div class="login-box">
-                <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="POST">
+                <form
+                        action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}"
+                        method="POST"
+                        class="login-box-item"
+                >
                     <div class="form-group">
                         <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
                         <input
