@@ -6,6 +6,7 @@ namespace kissj\User;
 
 use Exception;
 use kissj\AbstractController;
+use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
@@ -22,6 +23,7 @@ class UserController extends AbstractController
         protected SkautisService $skautisService,
         protected ParticipantService $participantService,
         protected ParticipantRepository $participantRepository,
+        protected CookieHandler $cookieHandler,
     ) {
     }
 
@@ -38,13 +40,14 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'getDashboard');
     }
 
-    public function login(Response $response, Event $event): Response
+    public function login(Request $request, Response $response, Event $event): Response
     {
         return $this->view->render(
             $response,
             'kissj/login.twig',
             [
                 'skautisLoginUri' => $this->skautisService->getLoginUri($event->slug),
+                'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
             ],
         );
     }
@@ -61,7 +64,7 @@ class UserController extends AbstractController
             $this->userService->sendLoginTokenByMail($email, $request, $event);
         } catch (Exception $e) {
             if ($_ENV['DEBUG'] === 'true') {
-                throw new Exception($e->getMessage(), $e->getCode(), $e);
+                throw $e; // TODO refactor into new EmailException
             }
             $this->sentryCollector->collect($e);
             $this->logger->error('Error sending login email to ' . $email . ' with token ' .
@@ -88,6 +91,7 @@ class UserController extends AbstractController
             $user = $loginToken->user;
             $this->userRegeneration->saveUserIdIntoSession($user);
             $this->userService->invalidateAllLoginTokens($user);
+            $response = $this->cookieHandler->setCookie($response, 'lastLogin', 'email');
 
             return $this->redirect($request, $response, 'getDashboard');
         }

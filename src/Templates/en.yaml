@@ -220,6 +220,7 @@ login:
     email: "email"
     or: "or"
     sendMeEmail: "Send me an email to register"
+    lastUsedLogin: "Last login"
     howItWorks: "How does the registration system work?"
     submitEmail: "Submit your email"
     followButton: "Follow an access button in your email"

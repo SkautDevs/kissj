@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Skautis;
 
 use kissj\AbstractController;
+use kissj\Application\CookieHandler;
 use kissj\Event\EventRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -14,6 +15,7 @@ class SkautisController extends AbstractController
     public function __construct(
         private readonly EventRepository $eventRepository,
         private readonly SkautisService $skautisService,
+        private readonly CookieHandler $cookieHandler,
     ) {
     }
 
@@ -41,6 +43,8 @@ class SkautisController extends AbstractController
 
             return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);
         }
+
+        $response = $this->cookieHandler->setCookie($response, 'lastLogin', 'skautis');
 
         $user = $this->skautisService->getOrCreateAndLogInSkautisUser($skautisUserData, $event);
         $this->skautisService->updateSkautisUserMembership($user, $skautisUserData);

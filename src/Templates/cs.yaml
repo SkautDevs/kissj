@@ -220,6 +220,7 @@ login:
     email: "E-mail"
     or: "nebo"
     sendMeEmail: "Odešli přihlašovací mail"
+    lastUsedLogin: "Poslední přihlášení"
     howItWorks: "Jak přihlašování funguje?"
     submitEmail: "Zadej svůj e-mail"
     followButton: "Následuj přihlašovací tlačítko, které ti přijde na zadaný e-mail"

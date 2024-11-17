@@ -87,6 +87,7 @@ use Monolog\Logger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
+use Negotiation\LanguageNegotiator;
 use Psr\Log\LoggerInterface;
 use Redis;
 use Sentry\Client as SentryClient;
@@ -176,6 +177,7 @@ class Settings
             GuestRepository::class => autowire(),
             GuestService::class => autowire(),
             IstRepository::class => autowire(),
+            LanguageNegotiator::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
             MonologContextMiddleware::class => autowire(),

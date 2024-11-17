@@ -482,3 +482,14 @@ tr:nth-child(even) {
 	left: 0.5em;
 	margin-right: -50%;
 }
+
+.login-box {
+	display: flex;
+	align-items: center;
+}
+
+.text-rotated {
+	transform: rotate(90deg);
+	font-weight: normal;
+	color: var(--color-light);
+}

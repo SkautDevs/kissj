@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Middleware;
 
-use Dflydev\FigCookies\FigRequestCookies;
-use Dflydev\FigCookies\FigResponseCookies;
-use Dflydev\FigCookies\SetCookie;
+use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Event\EventType\EventTypeDefault;
 use Negotiation\AcceptLanguage;
@@ -24,6 +22,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     public function __construct(
         private readonly Twig $view,
         private readonly Translator $translator,
+        private readonly CookieHandler $cookieHandler,
+        private readonly LanguageNegotiator $negotiator,
     ) {
     }
 
@@ -32,15 +32,15 @@ class LocalizationResolverMiddleware extends BaseMiddleware
         $bestLanguage = $this->getBestLanguage($request);
 
         $this->translator->setLocale($bestLanguage);
-        $this->view->getEnvironment()->addGlobal('locale', $bestLanguage); // used in templates
+        $this->view->getEnvironment()->addGlobal('locale', $bestLanguage); // used in many templates
 
         $response = $handler->handle($request);
 
         if (isset($request->getQueryParams()[self::LOCALE_COOKIE_NAME])) {
-            $response = FigResponseCookies::remove($response, self::LOCALE_COOKIE_NAME);
-            $response = FigResponseCookies::set(
+            $response = $this->cookieHandler->setCookie(
                 $response,
-                SetCookie::create(self::LOCALE_COOKIE_NAME, $bestLanguage)
+                self::LOCALE_COOKIE_NAME,
+                $bestLanguage,
             );
         }
 
@@ -58,7 +58,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware
             }
         }
 
-        $cookieLanguage = FigRequestCookies::get($request, self::LOCALE_COOKIE_NAME)->getValue();
+        $cookieLanguage = $this->cookieHandler->getCookie($request, self::LOCALE_COOKIE_NAME);
         if ($cookieLanguage !== null && in_array($cookieLanguage, $availableLanguages, true)) {
             return $cookieLanguage;
         }
@@ -92,13 +92,12 @@ class LocalizationResolverMiddleware extends BaseMiddleware
             throw new \RuntimeException('available languages cannot be empty');
         }
 
-        $negotiator = new LanguageNegotiator();
         $header = $request->getHeaderLine('Accept-Language');
         if ($header === '') {
             return $defaultLocale;
         }
         /** @var ?AcceptLanguage $negotiatedLanguage */
-        $negotiatedLanguage = $negotiator->getBest($header, $availableLanguages);
+        $negotiatedLanguage = $this->negotiator->getBest($header, $availableLanguages);
 
         if ($negotiatedLanguage === null || !in_array($negotiatedLanguage->getValue(), $availableLanguages, true)) {
             return $defaultLocale;

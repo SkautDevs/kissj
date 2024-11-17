@@ -1,17 +1,28 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+    {% set bothLogins = event.eventType.isLoginEmailAllowed and event.eventType.isLoginSkautisAllowed %}
     <div class="two-cards">
         <div class="card registration-theme">
             <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
             {% if event.eventType.isLoginSkautisAllowed %}
-                <a href="{{ skautisLoginUri }}" class="btn">{% trans %}login.skautis{% endtrans %}</a>
+                <div class="login-box">
+                    <a href="{{ skautisLoginUri }}" class="btn">
+                        {% trans %}login.skautis{% endtrans %}
+                    </a>
+                    {% if bothLogins and lastLogin == 'skautis' %}
+                        <p class="text-rotated">
+                            {% trans %}login.lastUsedLogin{% endtrans %}
+                        </p>
+                    {% endif %}
+                </div>
             {% endif %}
-            {% if event.eventType.isLoginEmailAllowed and event.eventType.isLoginSkautisAllowed %}
+            {% if bothLogins %}
                 <p class="text-inside-line">{% trans %}login.or{% endtrans %}</p>
             {% endif %}
             {% if event.eventType.isLoginEmailAllowed %}
-                <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="post">
+            <div class="login-box">
+                <form action="{{ url_for('sendLoginEmail', {'eventSlug': event.slug}) }}" method="POST">
                     <div class="form-group">
                         <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
                         <input
@@ -22,12 +33,22 @@
                             required
                         />
                     </div>
-                    <input type="submit" value="{% trans %}login.sendMeEmail{% endtrans %}" class="btn form-wide"/>
+                    <input
+                            type="submit"
+                            value="{% trans %}login.sendMeEmail{% endtrans %}"
+                            class="btn form-wide"
+                    />
                 </form>
+                {% if bothLogins and lastLogin == 'email' %}
+                    <p class="text-rotated">
+                        {% trans %}login.lastUsedLogin{% endtrans %}
+                    </p>
+                {% endif %}
+            </div>
             {% endif %}
             <br/>
         </div>
-        <div class="card approved-theme text-muted">
+        <div class="card text-muted">
             <h2>{% trans %}login.howItWorks{% endtrans %}</h2>
             <ol class="text-left">
                 <li>{% trans %}login.submitEmail{% endtrans %}</li>
