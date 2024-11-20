@@ -17,10 +17,10 @@ class EventTypeNavigamus extends EventType
     {
         $now = DateTimeUtils::getDateTime();
         $patrolPrice = match (true) {
-            $now < DateTimeUtils::getDateTime('2022-03-31 23:59:59') => 1100,
-            $now < DateTimeUtils::getDateTime('2022-05-01 23:59:59') => 1150,
-            $now < DateTimeUtils::getDateTime('2022-05-31 23:59:59') => 1200,
-            default => 1200,
+            $now < DateTimeUtils::getDateTime('2025-02-28 23:59:59') => 1500,
+            $now < DateTimeUtils::getDateTime('2025-03-31 23:59:59') => 1700,
+            $now < DateTimeUtils::getDateTime('2025-04-30 23:59:59') => 2000,
+            default => 3000,
         };
 
         return match (true) {
