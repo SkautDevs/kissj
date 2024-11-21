@@ -1,0 +1,195 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-payment-update
+
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name}}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: paymetnt-update
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Replace
+  jobTemplate:
+    metadata:
+      name: {{ .Release.Name }}-payment-update
+      labels:
+        app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+        app.kubernetes.io/instance: {{.Release.Name | quote }}
+    spec:
+      template:
+        metadata:
+          name: {{ .Release.Name }}-payment-update
+          labels:
+            app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+            app.kubernetes.io/instance: {{.Release.Name | quote }}
+
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: payment-update
+              image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
+              imagePullPolicy: Always
+              command: ["bin/console"]
+              args: ["app:update-payments"]
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "200m"
+              env:
+                - name: DB_TYPE
+                  value: postgresql
+
+                - name: DATABASE_HOST
+                  value: {{ .Release.Name }}-pgbouncer
+
+                - name: POSTGRES_DB
+                  value: {{ .Values.postgres.dbname }}
+
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-postgres
+                      key: username
+
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-postgres
+                      key: password
+
+                - name: FILE_HANDLER_TYPE
+                  value: s3bucket
+
+                - name: S3_REGION
+                  value: {{ .Values.app.s3.region }}
+
+                - name: S3_ENDPOINT
+                  value: {{ .Values.app.s3.endpoint }}
+
+                - name: S3_BUCKET
+                  value: {{ .Values.app.s3.bucket }}
+
+                - name: S3_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-s3
+                      key: key
+
+                - name: S3_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-s3
+                      key: secret
+
+                - name: TEMPLATE_CACHE
+                  value: "true"
+
+                - name: TESTING_SITE
+                  value: {{ .Values.app.test_site | quote }}
+
+                - name: BASEPATH
+                  value: ""
+
+                - name: DEBUG
+                  value: {{ .Values.app.debug | quote }}
+
+                - name: DEFAULT_LOCALE
+                  value: {{ .Values.app.locale | quote }}
+
+                - name: LOGGER_FILENAME
+                  value: dummy
+
+                - name: LOGGER_LEVEL
+                  value: {{ .Values.app.log_level | quote }}
+
+                - name: MAIL_DEBUG_OUTPUT_LEVEL
+                  value: {{ .Values.app.mail.log_level | quote }}
+
+                - name: MAIL_DISABLE_TLS
+                  value: "false"
+
+                - name: MAIL_SEND_MAIL_TO_MAIN_RECIPIENT
+                  value: "true"
+
+                - name: MAIL_SMTP
+                  value: "true"
+
+                - name: MAIL_SMTP_AUTH
+                  value: "true"
+
+                - name: MAIL_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: dsn
+
+                - name: MAIL_SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: username
+
+                - name: MAIL_SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: password
+
+                - name: MAIL_SMTP_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: port
+
+                - name: MAIL_SMTP_SECURE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: encryption
+
+                - name: MAIL_SMTP_SERVER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ .Release.Name }}-mail
+                      key: server
+
+                - name: SENTRY_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-sentry-dsn
+                      key: dsn
+
+                - name: SENTRY_PROFILING_RATE
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-sentry-dsn
+                      key: profiling_rate
+
+                - name: SKAUTIS_USE_TEST
+                  value: {{ .Values.app.skautis.useTest | quote }}
+
+                - name: SKAUTIS_APP_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-skautis
+                      key: appId
+
+                - name: REDIS_HOST
+                  value: {{ .Values.app.redis.host }}
+
+                - name: REDIS_PORT
+                  value: {{ .Values.app.redis.port | quote }}
+
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-redis-creds
+                      key: password
