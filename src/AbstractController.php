@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj;
 
 use DI\Attribute\Inject;
+use GuzzleHttp\Utils;
 use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
@@ -68,12 +69,24 @@ abstract class AbstractController
             ->withStatus(302);
     }
 
+    protected function getJsonResponseFromException(Response $response, TranslatableException $e): Response
+    {
+        return $this->getResponseWithJson(
+            $response,
+            [
+                'translationKey' => $e->translationKey,
+                'translationMessage' => $this->translator->trans($e->translationKey),
+            ],
+            $e->httpStatus,
+        );
+    }
+
     /**
      * @param array<string,int|string|EntryStatus|null|array<mixed>> $json
      */
     protected function getResponseWithJson(Response $response, array $json, int $statusCode = 200): Response
     {
-        $encodedJson = guzzleJsonEncode($json);
+        $encodedJson = Utils::jsonEncode($json);
         $response->getBody()->write($encodedJson);
 
         return $response
