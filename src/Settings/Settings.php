@@ -50,6 +50,7 @@ use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Orm\Mapper;
 use kissj\Participant\Admin\AdminController;
+use kissj\Participant\Admin\AdminJsonController;
 use kissj\Participant\Admin\AdminRepository;
 use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Guest\GuestRepository;
@@ -153,6 +154,7 @@ class Settings
         // https://php-di.org/doc/performances.html#optimizing-for-compilation
         $container = [
             AdminController::class => autowire(),
+            AdminJsonController::class => autowire(),
             AdminRepository::class => autowire(),
             AdminService::class => autowire(),
             AdminsOnlyMiddleware::class => autowire(),

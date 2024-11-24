@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
+use kissj\Participant\Guest\Guest;
+use kissj\Participant\ParticipantException;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use RuntimeException;
 use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
@@ -258,8 +261,19 @@ class AdminController extends AbstractController
     ): Response {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
-        $this->participantService->approveRegistration($participant);
-        $this->logger->info('Approved registration for participant with ID ' . $participant->id);
+        try {
+            $participant = $this->participantService->approveRegistration($participant);
+
+            if ($participant instanceof Guest) {
+                $this->flashMessages->success('flash.success.guestApproved');
+            } elseif ($participant instanceof TroopParticipant) {
+                $this->flashMessages->success('flash.success.tpApproved');
+            } else {
+                $this->flashMessages->success('flash.success.approved');
+            }
+        } catch (ParticipantException $e) {
+            $this->flashMessages->warning($e->translationKey);
+        }
 
         return $this->redirect($request, $response, 'admin-show-approving');
     }

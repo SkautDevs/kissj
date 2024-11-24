@@ -347,12 +347,13 @@ readonly class ParticipantService
         return $participant;
     }
 
+    /**
+     * @throws ParticipantException
+     */
     public function approveRegistration(Participant $participant): Participant
     {
         if ($participant->getUserButNotNull()->status === UserStatus::Approved) {
-            $this->flashMessages->warning('flash.warning.notApproved');
-
-            return $participant;
+            throw new ParticipantException('flash.warning.notApproved');
         }
 
         $this->userService->setUserApproved($participant->getUserButNotNull());
@@ -363,28 +364,18 @@ readonly class ParticipantService
         if ($participant instanceof Guest) {
             $this->userService->setUserPaid($participant->getUserButNotNull());
             $this->mailer->sendGuestRegistrationFinished($participant);
-            $this->flashMessages->success('flash.success.guestApproved');
 
             return $participant;
         }
 
         if ($participant instanceof TroopParticipant) {
             $this->mailer->sendTroopParticipantRegistrationFinished($participant);
-            $this->flashMessages->success('flash.success.tpApproved');
 
             return $participant;
         }
 
         $payment = $this->paymentService->createAndPersistNewPayment($participant);
-
-        if ($participant->isInCzechContingent()) {
-            $this->mailer->sendRegistrationApprovedForSpecialPayment($participant, $payment);
-        } elseif ($participant->isInSpecialPaymentContingent()) {
-            $this->mailer->sendRegistrationApprovedWithoutPayment($participant);
-        } else {
-            $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
-        }
-        $this->flashMessages->success('flash.success.approved');
+        $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
 
         return $participant;
     }

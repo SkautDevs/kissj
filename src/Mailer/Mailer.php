@@ -78,13 +78,6 @@ readonly class Mailer
         $this->sendMailWithPayment($participant, $payment, 'payment-nonfirst-info');
     }
 
-    public function sendRegistrationApprovedForSpecialPayment(
-        Participant $participant,
-        Payment $payment,
-    ): void {
-        $this->sendMailWithPayment($participant, $payment, 'payment-cs-contingent-info');
-    }
-
     private function sendMailWithPayment(
         Participant $participant,
         Payment $payment,

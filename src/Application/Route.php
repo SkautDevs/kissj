@@ -7,6 +7,7 @@ namespace kissj\Application;
 use DI\Container;
 use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
+use kissj\Participant\Admin\AdminJsonController;
 use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
@@ -372,8 +373,13 @@ class Route
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
-                        $app->post('/adminNote', AdminController::class . '::changeAdminNote')
+                        $app->post('/adminNote', AdminJsonController::class . '::changeAdminNote')
                             ->setName('admin-change-note');
+                    });
+
+                    $app->group('/approving', function (RouteCollectorProxy $app) {
+                        $app->post('/approveParticipant/{participantId}', AdminJsonController::class . '::approveParticipant')
+                            ->setName('admin-approve-json');
                     });
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
