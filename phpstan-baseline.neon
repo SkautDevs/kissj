@@ -1,0 +1,733 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/AbstractController.php
+
+		-
+			message: '#^Method kissj\\AbstractController\:\:getParameterFromBody\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/AbstractController.php
+
+		-
+			message: '#^Method kissj\\AbstractController\:\:getParameterFromQuery\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/AbstractController.php
+
+		-
+			message: '#^Parameter \#2 \$data of method Slim\\Interfaces\\RouteParserInterface\:\:urlFor\(\) expects array\<string, string\>, array\<string\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/AbstractController.php
+
+		-
+			message: '#^Parameter \#1 \$basePath of method Slim\\Routing\\RouteCollectorProxy\<Psr\\Container\\ContainerInterface\|null\>\:\:setBasePath\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Application/ApplicationGetter.php
+
+		-
+			message: '#^PHPDoc tag @var with type Psr\\Http\\Message\\StreamInterface\|null is not subtype of native type Psr\\Http\\Message\\StreamInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Application/CsvParser.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<h4kuna\\Fio\\Read\\Transaction\> is not subtype of native type h4kuna\\Fio\\Read\\TransactionList\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/BankPayment/FioBankPaymentService.php
+
+		-
+			message: '#^Method obtainAllDealsForParticipant always return list, but is marked as array\<kissj\\Deal\\Deal\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Deal/DealRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''unknown event type\: '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Event/Event.php
+
+		-
+			message: '#^Method getAvailableRoles always return list, but is marked as array\<kissj\\Participant\\ParticipantRole\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/Event.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Aqua/EventTypeAqua.php
+
+		-
+			message: '#^Method getParticipantCountries always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Aqua/EventTypeAqua.php
+
+		-
+			message: '#^Method getPositionOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Aqua/EventTypeAqua.php
+
+		-
+			message: '#^PHPDoc tag @var with type kissj\\Participant\\Participant is not subtype of type kissj\\Participant\\Patrol\\PatrolLeader\|kissj\\Participant\\Patrol\\PatrolParticipant\.$#'
+			identifier: varTag.type
+			count: 1
+			path: src/Event/EventType/Aqua/EventTypeAqua.php
+
+		-
+			message: '#^Method getContingents always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Cej/EventTypeCej.php
+
+		-
+			message: '#^Method getEventDeals always return list, but is marked as array\<kissj\\Deal\\EventDeal\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Cej/EventTypeCej.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Cej/EventTypeCej.php
+
+		-
+			message: '#^Method getParticipantCountries always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Cej/EventTypeCej.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/EventType.php
+
+		-
+			message: '#^Method getParticipantCountries always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/EventType.php
+
+		-
+			message: '#^Method getPositionOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/EventType.php
+
+		-
+			message: '#^Method getContingents always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Navigamus/EventTypeNavigamus.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Navigamus/EventTypeNavigamus.php
+
+		-
+			message: '#^Method getPositionOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Navigamus/EventTypeNavigamus.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Nsj/EventTypeNsj.php
+
+		-
+			message: '#^Method getPositionOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Nsj/EventTypeNsj.php
+
+		-
+			message: '#^Method getContingents always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Obrok/EventTypeObrok.php
+
+		-
+			message: '#^Method getEventDeals always return list, but is marked as array\<kissj\\Deal\\EventDeal\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Obrok/EventTypeObrok.php
+
+		-
+			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Obrok/EventTypeObrok.php
+
+		-
+			message: '#^Method getPositionOptions always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Event/EventType/Wsj/EventTypeWsj.php
+
+		-
+			message: '#^Method allRegistrationDataToCSV always return list, but is marked as array\<int, array\<int, string\>\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Export/ExportService.php
+
+		-
+			message: '#^Method healthDataToCSV always return list, but is marked as array\<int, array\<int, string\>\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Export/ExportService.php
+
+		-
+			message: '#^Method paidContactDataToCSV always return list, but is marked as array\<int, array\<int, string\>\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Export/ExportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Export/ExportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: src/Export/ExportService.php
+
+		-
+			message: '#^Cannot access offset ''ContentType'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/FileHandler/S3BucketSaveFileHandler.php
+
+		-
+			message: '#^Parameter \#2 \$mimeContentType of class kissj\\FileHandler\\File constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/FileHandler/S3BucketSaveFileHandler.php
+
+		-
+			message: '#^Cannot access an offset on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: src/FlashMessages/FlashMessagesBySession.php
+
+		-
+			message: '#^Method kissj\\FlashMessages\\FlashMessagesBySession\:\:dumpMessagesIntoArray\(\) should return array\<string\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/FlashMessages/FlashMessagesBySession.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<array\<string, string\>\> is not subtype of native type Iterator\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Import/ImportSrs.php
+
+		-
+			message: '#^Method getEmbeddedQr always return list, but is marked as array\<kissj\\Mailer\\EmbedDTO\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Mailer/Mailer.php
+
+		-
+			message: '#^Method getAvailableLanguages always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Middleware/LocalizationResolverMiddleware.php
+
+		-
+			message: '#^Binary operation "\." between ''Got unknown…'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Orm/Mapper.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Orm/Mapper.php
+
+		-
+			message: '#^Method findBy always return list, but is marked as array\<LeanMapper\\Entity\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Orm/Repository.php
+
+		-
+			message: '#^Parameter \#1 \$dibiRow of method LeanMapper\\Repository\:\:createEntity\(\) expects Dibi\\Row&iterable\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Orm/Repository.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Participant/Admin/AdminController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Participant/Admin/AdminService.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/Participant/Participant.php
+
+		-
+			message: '#^Class kissj\\Participant\\Participant has PHPDoc tag @property for property \$preferredPosition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Participant/Participant.php
+
+		-
+			message: '#^Method getPreferredPosition always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Participant/Participant.php
+
+		-
+			message: '#^Method getTshirtParsed always return list, but is marked as array\<string\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Participant/Participant.php
+
+		-
+			message: '#^Method kissj\\Participant\\Participant\:\:getTshirt\(\) should return string\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Participant/Participant.php
+
+		-
+			message: '#^Binary operation "\+\=" between \(float\|int\) and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getFoodStatistic\(\) should return array\<string, int\> but returns array\<\(float\|int\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getRowsForEntryParticipant\(\) should return array\<Dibi\\Row\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getRowsForEntryPatrolParticipant\(\) should return array\<Dibi\\Row\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Method sortParticipantsBasedOnTroopOrPatrol always return list, but is marked as array\<kissj\\Participant\\Participant\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Parameter \#1 \$openCount of class kissj\\Participant\\Admin\\StatisticUserValueObject constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Parameter \#2 \$closedCount of class kissj\\Participant\\Admin\\StatisticUserValueObject constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Parameter \#3 \$approvedCount of class kissj\\Participant\\Admin\\StatisticUserValueObject constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^Parameter \#4 \$paidCount of class kissj\\Participant\\Admin\\StatisticUserValueObject constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/ParticipantRepository.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<string\> is not subtype of type array\{\}\|string\.$#'
+			identifier: varTag.type
+			count: 1
+			path: src/Participant/ParticipantService.php
+
+		-
+			message: '#^Parameter \#1 \$params of method kissj\\Participant\\ParticipantService\:\:addParamsIntoPerson\(\) expects array\<string, string\|null\>, array\<string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/ParticipantService.php
+
+		-
+			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Participant/Troop/TroopParticipantRepository.php
+
+		-
+			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Payment/PaymentRepository.php
+
+		-
+			message: '#^Method kissj\\PdfGenerator\\mPdfGenerator\:\:generatePatrolRoster\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/PdfGenerator/mPdfGenerator.php
+
+		-
+			message: '#^Method kissj\\PdfGenerator\\mPdfGenerator\:\:generatePdfReceipt\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/PdfGenerator/mPdfGenerator.php
+
+		-
+			message: '#^Binary operation "\." between ''Got unknown…'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Binary operation "\." between ''kissj@'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$appId of class kissj\\Skautis\\SkautisFactory constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$locale of class Symfony\\Component\\Translation\\Translator constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$locales of method Symfony\\Component\\Translation\\Translator\:\:setFallbackLocales\(\) expects array\<string\>, array\<int, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$mailDsn of class kissj\\Mailer\\MailerSettings constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$name of class Monolog\\Logger constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#2 \$host of class kissj\\Session\\RedisSessionHandler constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#2 \$level of class Monolog\\Handler\\StreamHandler constructor expects 100\|200\|250\|300\|400\|500\|550\|600\|''ALERT''\|''alert''\|''CRITICAL''\|''critical''\|''DEBUG''\|''debug''\|''EMERGENCY''\|''emergency''\|''ERROR''\|''error''\|''INFO''\|''info''\|''NOTICE''\|''notice''\|''WARNING''\|''warning''\|Monolog\\Level, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#2 \$s3bucket of class kissj\\FileHandler\\S3BucketSaveFileHandler constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#2 \$sendMailToMainRecipient of class kissj\\Mailer\\MailerSettings constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Parameter \#4 \$password of class kissj\\Session\\RedisSessionHandler constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php
+
+		-
+			message: '#^Method getTests always return list, but is marked as array\<Twig\\TwigTest\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/Settings/TwigExtension.php
+
+		-
+			message: '#^Parameter \#1 \$parsedBody of method kissj\\Skautis\\SkautisService\:\:saveDataFromPost\(\) expects array\<string, string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisController.php
+
+		-
+			message: '#^Cannot access property \$Birthday on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$City on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$Email on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$FirstName on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$HasMembership on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$ID on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$ID_Person on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$LastName on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$MembershipAllOutput on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$NickName on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$Phone on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$PostCode on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$RegistrationNumber on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$Street on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$Unit on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access property \$UserName on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot call method MembershipAllPerson\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot call method UserDetail\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot call method UserDetailExternal\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of static method kissj\\Application\\DateTimeUtils\:\:getDateTime\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#1 \$skautisId of class kissj\\Skautis\\SkautisUserData constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#10 \$street of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#11 \$city of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#12 \$postCode of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#13 \$hasMembership of class kissj\\Skautis\\SkautisUserData constructor expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#2 \$skautisUserName of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#3 \$skautisIdPerson of class kissj\\Skautis\\SkautisUserData constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#4 \$firstName of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#5 \$lastName of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#6 \$nickName of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#8 \$email of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Parameter \#9 \$phone of class kissj\\Skautis\\SkautisUserData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Skautis/SkautisService.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/User/UserRegeneration.php
+
+		-
+			message: '#^Parameter \#1 \$userSession of method kissj\\User\\UserRegeneration\:\:recreateUserFromSession\(\) expects array\<string\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/User/UserRegeneration.php
+
+		-
+			message: '#^Method adminRoles always return list, but is marked as array\<kissj\\User\\UserRole\>$#'
+			identifier: shipmonk.returnListNotUsed
+			count: 1
+			path: src/User/UserRole.php

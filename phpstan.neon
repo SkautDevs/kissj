@@ -1,5 +1,5 @@
 parameters:
-	level: 9
+	level: 10
 	paths:
 		- src
 		#- tests
@@ -34,3 +34,9 @@ parameters:
 	shipmonkRules:
 		enforceReadonlyPublicProperty:
 			enabled: false
+
+rules:
+	- kissj\Phpstan\NoConstructorUseDatetimeRule
+
+includes:
+	- phpstan-baseline.neon
