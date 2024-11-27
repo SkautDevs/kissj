@@ -7,6 +7,7 @@ namespace kissj\Export;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Participant\Ist\Ist;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -66,7 +67,7 @@ readonly class ExportService
                 (string)$participant->id, // 0
                 $participant->role?->value ?? '',
                 $participant->user?->status->value ?? '',
-                $this->translator->trans($participant->contingent ?? ''),
+                $this->getContingentTranslated($participant),
                 $participant->firstName ?? '',
                 $participant->lastName ?? '', // 5
                 $participant->gender ?? '',
@@ -124,7 +125,7 @@ readonly class ExportService
                         $participant instanceof TroopLeader => (string)$participant->getTroopParticipantsCount(),
                         default => '',
                     },
-                    $this->translator->trans($participant->contingent ?? ''),
+                    $this->getContingentTranslated($participant),
                     $participant->nickname ?? '',
                     $participant->firstName ?? '', // 5
                     $participant->lastName ?? '',
@@ -252,7 +253,7 @@ readonly class ExportService
                     $participant->user?->event->readableName ?? '',
                     $participant->role?->value ?? '',
                     $participant->user?->status->value ?? '',
-                    $this->translator->trans($participant->contingent ?? ''),
+                    $this->getContingentTranslated($participant),
                     $participant->firstName ?? '', // 5
                     $participant->lastName ?? '',
                     $participant->nickname ?? '',
@@ -273,7 +274,7 @@ readonly class ExportService
                     $participant->foodPreferences ?? '',
                     $participant->idNumber ?? '',
                     $participant->scarf ?? '',
-                    $this->translator->trans($participant->swimming ?? ''), //25
+                    $this->translator->trans($participant->swimming ?? ''), // 25
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                         . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
                     $participant->arrivalDate !== null ? $participant->arrivalDate->format('d. m. Y') : '',
@@ -293,5 +294,19 @@ readonly class ExportService
         }
 
         return $rows;
+    }
+
+    public function getContingentTranslated(Participant $participant): string
+    {
+        $contingent = $participant->contingent;
+        if ($contingent === null) {
+            if ($participant instanceof PatrolParticipant) {
+                $contingent = $participant->patrolLeader->contingent;
+            } elseif ($participant instanceof TroopParticipant) {
+                $contingent = $participant->troopLeader?->contingent;
+            }
+        }
+
+        return $this->translator->trans($contingent ?? '');
     }
 }
