@@ -67,7 +67,7 @@
 <footer>
     {% if eventImageExists %}
         <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-            <img class="footer-logo" src="{{ email.image( event.logoUrl ) }}" alt="logo of {{ event.readableName }}">
+            <img class="footer-logo" src="{{ email.image(eventLogo(event.logoUrl)) }}" alt="logo of {{ event.readableName }}">
         </a>
     {% endif %}
 </footer>
