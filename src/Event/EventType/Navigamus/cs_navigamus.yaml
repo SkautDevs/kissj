@@ -2,7 +2,12 @@ closed:
     welcome: "Ahoj!"
 successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme kvůli účetnictví počkat do začátku roku 2025, buď tedy trpělivý/á, prosím. Potom zkontrolujeme, zda je všechno, co jsi vyplnil, v pořádku. Pokud ano, pošleme ti po Novém roce platební údaje."
 chooseRole:
+    registerAsPl: "Registrovat oddíl/patrolu!"
     advicePlText: "je vedoucí skupiny účastníků. Účastníci se neregistrují samostatně, ale prostřednictvím svého vedoucího patroly. Ten je odpovědný za svoji patrolu v průběhu celé akce a také za ní jako celek platí registrační poplatek."
     adviceIstText: " je spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
 detail:
     patrolNamePlaceholder: "stejný název jako pro předprogram, pokud jste se účastnili"
+    contingentTitle: "Tým"
+    contingent:
+        volunteer: "💪 Dobrovolkyně nebo dobrovolník"
+        org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
