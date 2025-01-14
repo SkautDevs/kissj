@@ -9,7 +9,7 @@ jobs:
     name: Install & Cache Dependencies
 
     runs-on: ubuntu-latest
-    container: docker.io/composer/composer:2
+    container: quay.io/kissj/php-ubi
 
     steps:
     - uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
   stan:
     name: Static Analysis
     runs-on: ubuntu-latest
-    container: docker.io/composer/composer:2
+    container: quay.io/kissj/php-ubi
     needs: deps
     steps:
 
@@ -71,7 +71,7 @@ jobs:
   unit:
     name: Unit Tests
     runs-on: ubuntu-latest
-    container: docker.io/composer/composer:2
+    container: quay.io/kissj/php-ubi
     needs: deps
     steps:
 
@@ -93,7 +93,7 @@ jobs:
   lint: 
     name: Check PHP syntax
     runs-on: ubuntu-latest
-    container: docker.io/composer/composer:2
+    container: quay.io/kissj/php-ubi
     needs: deps
     steps:
     
@@ -107,7 +107,7 @@ jobs:
 #  cs: 
 #    name: CodeSniffer 
 #    runs-on: ubuntu-latest
-#    container: docker.io/composer/composer:2.2.12
+#    container: quay.io/kissj/php-ubi
 #    needs: deps
 #    steps:
 #
