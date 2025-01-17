@@ -127,12 +127,6 @@ parameters:
 			path: src/Event/EventType/EventType.php
 
 		-
-			message: '#^Method getContingents always return list, but is marked as array\<string\>$#'
-			identifier: shipmonk.returnListNotUsed
-			count: 1
-			path: src/Event/EventType/Navigamus/EventTypeNavigamus.php
-
-		-
 			message: '#^Method getFoodOptions always return list, but is marked as array\<string\>$#'
 			identifier: shipmonk.returnListNotUsed
 			count: 1
