@@ -38,7 +38,6 @@ class EventTypeNavigamus extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
-        $caIst->contingent = true;
         $caIst->food = true;
         $caIst->preferredPosition = true;
         $caIst->tshirt = true;
@@ -62,18 +61,6 @@ class EventTypeNavigamus extends EventType
         $caPp->food = true;
 
         return $caPp;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    #[\Override]
-    public function getContingents(): array
-    {
-        return [
-            self::CONTINGENT_VOLUNTEER,
-            self::CONTINGENT_ORG,
-        ];
     }
 
     /**
