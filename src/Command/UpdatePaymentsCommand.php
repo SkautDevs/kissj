@@ -6,6 +6,7 @@ namespace kissj\Command;
 
 use kissj\Event\EventRepository;
 use kissj\Logging\Sentry\SentryCollector;
+use kissj\Mailer\MailerSettings;
 use kissj\Payment\PaymentService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -21,6 +22,7 @@ class UpdatePaymentsCommand extends Command
     public function __construct(
         private readonly PaymentService $paymentService,
         private readonly EventRepository $eventRepository,
+        private readonly MailerSettings $mailerSettings,
         private readonly SentryCollector $sentryCollector,
     ) {
         parent::__construct();
@@ -33,6 +35,7 @@ class UpdatePaymentsCommand extends Command
             $output->writeln('Updating payments for ' . count($events) . ' events...');
 
             foreach ($events as $event) {
+                $this->mailerSettings->setEvent($event);
                 $this->paymentService->updatePayments($event);
             }
 

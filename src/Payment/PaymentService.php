@@ -182,7 +182,7 @@ class PaymentService
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;
                 } else {
-                    // matching VS, not matchnig price
+                    // matching VS, not matching price
                     $bankPayment->status = BankPayment::STATUS_UNKNOWN;
                     $counterUnknownPayment++;
                 }
