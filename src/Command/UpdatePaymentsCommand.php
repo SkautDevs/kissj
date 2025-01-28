@@ -36,6 +36,10 @@ class UpdatePaymentsCommand extends Command
 
             foreach ($events as $event) {
                 $this->mailerSettings->setEvent($event);
+                $this->mailerSettings->setFullUrlLink(
+                    // ugly hack, but it is complicated to get RouterCollector in command
+                    sprintf("https://kissj.net/%s", $event->slug), // production address
+                );
                 $this->paymentService->updatePayments($event);
             }
 
