@@ -7,7 +7,7 @@
 {% if ca.contingent %}
     - <b>{{ person.getContingent|trans }}</b>
 {% endif %}
-{% if person.user is defined %}
+{% if person is hasUser %}
     - {{ person.user.email }}
 {% endif %}
 
