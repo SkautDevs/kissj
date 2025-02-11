@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace kissj\Participant;
 
 use DateTimeInterface;
-use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Deal\Deal;

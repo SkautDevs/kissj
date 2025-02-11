@@ -134,7 +134,7 @@ class PaymentService
     }
 
     /**
-     * plan - frstly it looks, if they are any payments downloaded from bank to pair with our generated payments
+     * plan - firstly it looks, if they are any payments downloaded from bank to pair with our generated payments
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
