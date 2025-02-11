@@ -8,6 +8,7 @@ use kissj\Event\EventRepository;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\MailerSettings;
 use kissj\Payment\PaymentService;
+use Slim\Views\Twig;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,6 +25,7 @@ class UpdatePaymentsCommand extends Command
         private readonly EventRepository $eventRepository,
         private readonly MailerSettings $mailerSettings,
         private readonly SentryCollector $sentryCollector,
+        private readonly Twig $view,
     ) {
         parent::__construct();
     }
@@ -35,11 +37,14 @@ class UpdatePaymentsCommand extends Command
             $output->writeln('Updating payments for ' . count($events) . ' events...');
 
             foreach ($events as $event) {
+                // deduplicate same code in class EventInfoMiddleware:36
+                $this->view->getEnvironment()->addGlobal('event', $event); // used in templates
                 $this->mailerSettings->setEvent($event);
                 $this->mailerSettings->setFullUrlLink(
                     // ugly hack, but it is complicated to get RouterCollector in command
                     sprintf("https://kissj.net/%s", $event->slug), // production address
                 );
+
                 $this->paymentService->updatePayments($event);
             }
 
