@@ -31,9 +31,9 @@ use RuntimeException;
 class ParticipantRepository extends Repository
 {
     /**
-     * @param ParticipantRole[] $roles
-     * @param UserStatus[] $statuses
-     * @param Order[] $orders
+     * @param list<ParticipantRole>$roles
+     * @param list<UserStatus>$statuses
+     * @param list<Order> $orders
      * @return Participant[]
      */
     public function getAllParticipantsWithStatus(
@@ -203,7 +203,7 @@ class ParticipantRepository extends Repository
 
     /**
      * @param Participant[] $participants
-     * @return Participant[]
+     * @return list<Participant>
      */
     private function sortParticipantsBasedOnTroopOrPatrol(array $participants): array
     {

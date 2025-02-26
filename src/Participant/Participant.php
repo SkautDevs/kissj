@@ -134,7 +134,7 @@ class Participant extends EntityDatetime
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     protected function getTshirtParsed(): array
     {
@@ -198,10 +198,11 @@ class Participant extends EntityDatetime
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     protected function getPreferredPosition(): array
     {
+        /** @var ?string $prefferedPositionFromDb */
         $prefferedPositionFromDb = $this->row->preferred_position;
         if ($prefferedPositionFromDb === null || $prefferedPositionFromDb === '') {
             return [];

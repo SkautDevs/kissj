@@ -12,13 +12,13 @@ use kissj\Orm\Repository;
 /**
  * @method Event get(int $id)
  * @method Event getOneBy(mixed[] $criteria)
- * @method Event[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method list<Event> findBy(mixed[] $criteria, Order[] $orders = [])
  * @method Event|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class EventRepository extends Repository
 {
     /**
-     * @return Event[]
+     * @return list<Event>
      */
     public function findActiveNontestEvents(): array
     {
@@ -29,7 +29,7 @@ class EventRepository extends Repository
     }
 
     /**
-     * @return Event[]
+     * @return list<Event>
      */
     public function findActiveNontestAutopaymentsOnEvents(): array
     {

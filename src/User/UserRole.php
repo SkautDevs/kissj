@@ -19,7 +19,7 @@ enum UserRole: string
     case ContingentAdminSw = 'contingentAdminSw';
 
     /**
-     * @return UserRole[]
+     * @return list<UserRole>
      */
     public static function adminRoles(): array
     {

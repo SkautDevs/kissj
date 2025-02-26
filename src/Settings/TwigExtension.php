@@ -16,7 +16,7 @@ use Twig\TwigTest;
 class TwigExtension extends AbstractExtension
 {
     /**
-     * @return TwigTest[]
+     * @return list<TwigTest>
      */
     public function getTests(): array
     {

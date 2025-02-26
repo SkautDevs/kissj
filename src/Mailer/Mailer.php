@@ -194,7 +194,7 @@ readonly class Mailer
 
     /**
      * @param array<string, mixed> $parameters
-     * @param array<EmbedDTO> $embeds
+     * @param list<EmbedDTO> $embeds
      * @param array<string, string> $attachments
      */
     private function sendMailFromTemplate(
@@ -243,7 +243,7 @@ readonly class Mailer
     }
 
     /**
-     * @return EmbedDTO[]
+     * @return list<EmbedDTO>
      */
     private function getEmbeddedQr(Participant $participant): array
     {

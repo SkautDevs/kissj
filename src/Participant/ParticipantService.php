@@ -41,7 +41,7 @@ readonly class ParticipantService
     }
 
     /**
-     * @param string[] $params
+     * @param array<string, string|null> $params
      */
     public function addParamsIntoParticipant(Participant $participant, array $params): Participant
     {

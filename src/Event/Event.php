@@ -98,7 +98,7 @@ class Event extends EntityDatetime
     }
 
     /**
-     * @return ParticipantRole[]
+     * @return list<ParticipantRole>
      */
     public function getAvailableRoles(): array
     {

@@ -13,7 +13,7 @@ use kissj\Participant\Participant;
 class DealRepository extends Repository
 {
     /**
-     * @return Deal[]
+     * @return list<Deal>
      */
     public function obtainAllDealsForParticipant(Participant $participant): array
     {

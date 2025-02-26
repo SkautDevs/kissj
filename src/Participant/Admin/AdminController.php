@@ -598,7 +598,7 @@ class AdminController extends AbstractController
     ): Response {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
-        /** @var string[] $parsed */
+        /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
         $this->participantService->handleUploadedFiles($participant, $request);

@@ -27,7 +27,7 @@ readonly class ExportService
     }
 
     /**
-     * @return array<int, array<int, string>>
+     * @return list<array<int, string>>
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
@@ -83,7 +83,7 @@ readonly class ExportService
     }
 
     /**
-     * @return array<int, array<int, string>>
+     * @return list<array<int, string>>
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
@@ -139,7 +139,7 @@ readonly class ExportService
     }
 
     /**
-     * @return array<int, array<int, string>>
+     * @return list<array<int, string>>
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
