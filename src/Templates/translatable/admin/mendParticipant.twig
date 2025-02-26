@@ -4,8 +4,8 @@
     <div class="card paid-theme">
         <h2>{% trans %}mend-admin.headline{% endtrans %}</h2>
         <div>
-            {# TODO add UserStatus as variable #}
-            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ participant.getUserButNotNull().status.value)|trans }}</b><br/>
+            {% set userStatus = participant.getUserButNotNull().status.value %}
+            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ userStatus)|trans }}</b><br/>
             {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  participant.role.value)|trans }}</b>
             {% if participant is TroopLeader %}
                 ({{ participant.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
@@ -15,7 +15,7 @@
             {% trans %}mend-admin.tieCode{% endtrans %}: <b>{{ participant.tieCode }}</b>
             <br/>
             <br/>
-            {{ include('widgets/details.twig', {person: participant, ca: ca}) }}
+            {{ include('widgets/detailsForAdmin.twig', {person: participant, ca: ca}) }}
             <br/>
             {% trans %}mend-admin.enter{% endtrans %}:
             {% set entryDate = participant.getEntryDate() %}
@@ -54,7 +54,7 @@
             {% endif %}
         </div>
         <br/>
-        {% if participant.getUserButNotNull().status.value == 'cancelled' %}
+        {% if userStatus == 'cancelled' %}
             <form
                     method="POST"
                     action="{{ url_for('admin-uncancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
@@ -64,7 +64,7 @@
             <br/>
         {% endif %}
 
-        {% if participant.getUserButNotNull().status.value == 'paid' %}
+        {% if userStatus == 'paid' %}
             <a
                     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                     class="btn">
