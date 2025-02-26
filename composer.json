@@ -92,6 +92,7 @@
 	"scripts": {
 		"unit": "vendor/bin/phpunit tests/",
 		"stan": "vendor/bin/phpstan analyse --configuration phpstan.neon --memory-limit=1G",
+		"stan:generate:baseline": "vendor/bin/phpstan analyse --generate-baseline --configuration phpstan.neon --memory-limit=1G",
 		"cs": "vendor/bin/php-cs-fixer fix src --rules=@PSR12,-indentation_type",
 		"test": [
 			"@stan",

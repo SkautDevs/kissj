@@ -95,7 +95,7 @@ abstract class EventType
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getFoodOptions(): array
     {
@@ -110,7 +110,7 @@ abstract class EventType
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getPositionOptions(): array
     {
@@ -124,7 +124,7 @@ abstract class EventType
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getParticipantCountries(): array
     {
@@ -148,7 +148,7 @@ abstract class EventType
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getContingents(): array
     {
@@ -241,7 +241,7 @@ abstract class EventType
     }
 
     /**
-     * @return array<EventDeal>
+     * @return list<EventDeal>
      */
     public function getEventDeals(Participant $participant): array
     {

@@ -15,9 +15,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeNavigamus extends EventType
 {
-    public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
-    public const string CONTINGENT_ORG = 'detail.contingent.org';
-
     protected function getPrice(Participant $participant): int
     {
         $now = DateTimeUtils::getDateTime();
@@ -51,6 +48,7 @@ class EventTypeNavigamus extends EventType
     {
         $caPl = parent::getContentArbiterPatrolLeader();
         $caPl->food = true;
+        $caPl->contingent = true;
 
         return $caPl;
     }
@@ -64,7 +62,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getTranslationFilePaths(): array
     {
@@ -80,7 +78,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getFoodOptions(): array
     {
@@ -95,7 +93,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getPositionOptions(): array
     {
@@ -117,6 +115,21 @@ class EventTypeNavigamus extends EventType
     {
         return [
             'cs' => '🇨🇿 Česky',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getContingents(): array
+    {
+        return [
+            'detail.contingent.without',
+            'detail.contingent.endeavour',
+            'detail.contingent.adventure',
+            'detail.contingent.discovery',
+            'detail.contingent.resolution',
         ];
     }
 

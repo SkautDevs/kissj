@@ -52,7 +52,7 @@ class EventTypeWsj extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getTranslationFilePaths(): array
     {
@@ -113,7 +113,7 @@ class EventTypeWsj extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getLanguages(): array
     {
@@ -123,7 +123,7 @@ class EventTypeWsj extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getPositionOptions(): array
     {
