@@ -16,6 +16,7 @@ use kissj\Event\EventType\Miquik\EventTypeMiquik;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
+use kissj\Event\EventType\Ospz\EventTypeOspz;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
@@ -86,6 +87,7 @@ class Event extends EntityDatetime
             'nsj' => EventTypeNsj::class,
             'wsj' => EventTypeWsj::class,
             'obrok' => EventTypeObrok::class,
+            'ospz' => EventTypeOspz::class,
             default => throw new \RuntimeException('unknown event type: ' . $this->row->event_type),
         };
 
