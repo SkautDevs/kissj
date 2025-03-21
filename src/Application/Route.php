@@ -308,6 +308,11 @@ class Route
                             ->setName('admin-troop-untie');
                     });
 
+                    $app->group('/foodStats',  function (RouteCollectorProxy $app) {
+                       $app->get('', AdminController::class . '::showDetailedFoodStats')
+                            ->setName('admin-food-stats');
+                    });
+
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')
                             ->setName('admin-export-health');
@@ -318,8 +323,15 @@ class Route
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
 
-                        $app->get('patrolsRoster', ExportController::class . '::exportPatrolsRoster')
+                        $app->get('/patrolsRoster', ExportController::class . '::exportPatrolsRoster')
                             ->setName('admin-export-patrols-roster');
+                        $app->group('/food', function (RouteCollectorProxy $app) {
+                            $app->get('/summary', ExportController::class . '::exportFoodSummary')
+                                ->setName('admin-export-food');
+                            $app->get('/patrols', ExportController::class . '::exportFoodPatrolsAndTroops') // also used for troops
+                                ->setName('admin-export-patrols-food');
+                        });
+
                     });
 
                     $app->post('/import/ist', AdminController::class . '::importIstFromSrs')

@@ -442,6 +442,12 @@ transferPayment-admin:
     participantNotFound: "Participant was not found :( Mail:"
     transfer: "Transfer payment"
     notPossible: "Transfer is blocked"
+foodStats-admin:
+    summary: "all participants summary"
+    daySum: "daily sum"
+    exportFoodData: "export food statistics based on roles"
+    exportPatrolsFoodData: "export food statistics based on troops or patrols"
+    back: "Back"
 troopManagement-admin:
     troopManagement: "troop management"
     noTroopLeaders: "There are no unlocked troops"

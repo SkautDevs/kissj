@@ -8,6 +8,7 @@ use Exception;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use League\Csv\ByteSequence;
@@ -58,6 +59,39 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_full');
     }
 
+    public function exportFoodSummary(
+        Response $response,
+        User $user,
+        Event $event,
+    ): Response {
+        $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
+        $this->logger->info('Exported participants food summary by user with ID' . $user->id); //do we need this?
+
+        return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
+    }
+
+    public function exportFoodPatrolsAndTroops(
+        Response $response,
+        User $user,
+        Event $event,
+    ): Response {
+
+        $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent(
+            $event,
+            true,
+            [
+                ParticipantRole::PatrolLeader,
+                ParticipantRole::PatrolParticipant,
+                ParticipantRole::TroopLeader,
+                ParticipantRole::TroopParticipant]
+        )
+
+            ->aggregatedToCSV();
+        $this->logger->info('Exported patrols and troops food summary by user with ID' . $user->id); //do we need this?
+
+        return $this->outputCSVresponse($response, $csvRows, $event->slug . '_patrol_troop_food');
+    }
+
     /**
      * @param array<array<string>> $csvRows
      */
@@ -84,7 +118,6 @@ class ExportController extends AbstractController
 
         return $response->withBody($body);
     }
-
 
     public function exportPatrolsRoster(
         Request $request,
@@ -117,4 +150,5 @@ class ExportController extends AbstractController
 
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
+
 }
