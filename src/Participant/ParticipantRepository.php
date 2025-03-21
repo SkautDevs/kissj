@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use DateTime;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
@@ -272,8 +273,26 @@ class ParticipantRepository extends Repository
     /**
      * @return array<string,int>
      */
-    public function getFoodStatistic(
+    public function getDigestFoodStatistic(
         Event $event,
+    ): array {
+        return []; //TODO: move retriveRows SQL here.
+    }
+
+    /**
+     * @return array<string, array<string, int>
+     */
+    public function getCompleteFoodStatistic() {
+
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    //TODO: move SQL to getDigestFoodStatistic and use this as ORM and calc full stats
+    private function RetrieveFoodStatistic(
+        Event $event,
+        DateTime|null $focusDate,
     ): array {
         $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
@@ -281,6 +300,11 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
+        if ($focusDate) {
+            $qb->where("COALESCE(participant.arrival_date, e.start_day) <= %d", $focusDate->getTimestamp());
+            $qb->where("COALESCE(participant.departue_date, e.end_day) >= %d", $focusDate->getTimestamp());
+        }
 
         $qb->groupBy('participant.food_preferences');
         $qb->orderBy('participant.food_preferences');
@@ -296,6 +320,11 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
+        if ($focusDate) {
+            $qb->where("COALESCE(participant.arrival_date, e.start_day) <= %d", $focusDate->getTimestamp());
+            $qb->where("COALESCE(participant.departue_date, e.end_day) >= %d", $focusDate->getTimestamp());
+        }
 
         $qb->groupBy('participant.food_preferences');
         $qb->orderBy('participant.food_preferences');
