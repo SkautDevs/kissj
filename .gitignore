@@ -18,6 +18,7 @@
 /backup/*
 /uploads/*
 
+deploy/prereqs
 # editor and IDE paraphernalia
 .idea
 .vscode
