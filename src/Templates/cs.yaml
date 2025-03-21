@@ -442,6 +442,12 @@ transferPayment-admin:
     participantNotFound: "Účastník nebyl nalezen :( Mail:"
     transfer: "Přesuň platbu"
     notPossible: "Přesun nelze uskutečnit"
+foodStats-admin:
+    summary: "souhrn všech rolí"
+    daySum: "denní součet"
+    exportFoodData: "exportovat počty dle rolí"
+    exportPatrolsFoodData: "exportovat počty dle účastnických skupin"
+    back: "Zpět"
 troopManagement-admin:
     troopManagement: "management skupin"
     noTroopLeaders: "žádné odemčené skupiny nejsou k dispozici"

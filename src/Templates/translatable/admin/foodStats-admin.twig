@@ -1,0 +1,50 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+
+    <div class="card paid-theme">
+        <a href="{{ url_for('admin-export-food', {'eventSlug': event.slug}) }}"
+           target="_blank"
+           class="btn">{% trans %}foodStats-admin.exportFoodData{% endtrans %}</a>
+        <br/>
+
+        {% if event.allowTroops or event.allowPatrols%}
+            <a href="{{ url_for('admin-export-patrols-food', {'eventSlug': event.slug}) }}"
+               target="_blank"
+               class="btn">{% trans %}foodStats-admin.exportPatrolsFoodData{% endtrans %}</a>
+            <br/>
+        {% endif %}
+
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-small btn-grey">{% trans %}foodStats-admin.back{% endtrans %}</a>
+
+    </div>
+{% for aggregator, row in foodStatistic.rows %}
+    <div class="card approved-theme">
+            <h3>{{aggregator|trans}}</h3>
+            <table >
+                <thead>
+                <tr>
+                    <th>x</th>
+                    {% for diet in foodStatistic.diet_types %}
+                        <th  style="text-align: left" > {{diet|trans}}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for date in foodStatistic.dates %}
+                    <tr>
+                        <th>{{date}}</th>
+                        {% for diet in foodStatistic.diet_types %}
+                            <td>{{ row[date][diet]|trans }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+    </div>
+{% endfor %}
+
+{% endblock %}
+
+
