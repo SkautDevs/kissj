@@ -302,6 +302,11 @@ class Route
                             ->setName('admin-troop-untie');
                     });
 
+                    $app->group('/foodStats',  function (RouteCollectorProxy $app) {
+                       $app->get('', AdminController::class . '::showDetailedFoodStats')
+                            ->setName('admin-food-stats');
+                    });
+
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')
                             ->setName('admin-export-health');

@@ -68,7 +68,7 @@ class AdminController extends AbstractController
 
         $foodStatistic = [];
         if ($eventType->showFoodStats()) {
-            $foodStatistic = $this->participantRepository->getFoodStatistic($event);
+            $foodStatistic = $this->participantRepository->getDigestFoodStatistic($event);
         }
 
         return $this->view->render(
@@ -816,5 +816,28 @@ class AdminController extends AbstractController
             $response,
             'admin-dashboard',
         );
+    }
+
+    public function showDetailedFoodStats(
+        Request $request,
+        Response $response,
+        Event $event,
+    )
+    {
+        $eventType = $event->getEventType();
+
+        if (!$eventType->showFoodStats()) {
+            return $this->redirect(
+                $request,
+                $response,
+                'admin-dashboard',
+            );
+
+        }
+
+        return $this->view->render($response, 'admin/foodStats-admin.twig', [
+            'event'  => $event,
+            'foodStatistic' => $this->participantRepository->getDigestFoodStatistic($event),
+        ]);
     }
 }

@@ -1,0 +1,10 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
+        {% for food, count in foodStatistic %}
+            <p>{{ food|trans }}: <b>{{ count }}</b></p>
+        {% endfor %}
+    </div>
+{% endblock %}

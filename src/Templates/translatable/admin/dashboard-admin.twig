@@ -145,6 +145,10 @@
                     <a href="{{ url_for('admin-troop-management', {'eventSlug': event.slug}) }}"
                        class="btn">{% trans %}dashboard-admin.troopManagement{% endtrans %}</a><br/>    
                 {% endif %}
+                {% if event.eventType.showFoodStats() %}
+                    <a href="{{ url_for('admin-food-stats', {'eventSlug': event.slug}) }}"
+                       class="btn">{% trans %}dashboard-admin.foodCount{% endtrans %}</a><br/>
+                {% endif %}
                 <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
                    class="btn">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
                 <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
