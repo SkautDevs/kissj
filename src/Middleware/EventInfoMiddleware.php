@@ -52,7 +52,7 @@ class EventInfoMiddleware extends BaseMiddleware
                 );
 
                 foreach ($translationFilePaths as $locale => $path) {
-                    $translator->addResource('yaml', $path, $locale, 'messages', $cachedLoader);
+                    $translator->addResource('yaml', $path, $locale, 'messages');
                 }
             }
 

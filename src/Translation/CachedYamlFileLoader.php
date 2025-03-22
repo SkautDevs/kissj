@@ -24,6 +24,10 @@ class CachedYamlFileLoader extends YamlFileLoader
             return parent::load($resource, $locale, $domain);
         }
 
+        if (!is_string($resource)) {
+            return parent::load($resource, $locale, $domain);
+        }
+
         $cacheKey = $this->getCacheKey($resource, $locale, $domain);
         $cache = new FilesystemAdapter('translations', 0, $this->cacheDir); // 0 means no TTL
 
@@ -40,7 +44,7 @@ class CachedYamlFileLoader extends YamlFileLoader
 
     private function getCacheKey(string $resource, string $locale, string $domain): string
     {
-        $eventTypePrefix = $this->eventType ? str_replace('\\', '_', $this->eventType) . '_' : '';
+        $eventTypePrefix = $this->eventType !== null ? str_replace('\\', '_', $this->eventType) . '_' : '';
         $fileHash = md5_file($resource);
         return "{$eventTypePrefix}{$locale}_{$domain}_{$fileHash}";
     }
