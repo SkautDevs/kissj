@@ -1,5 +1,9 @@
 <h4>{{ person.getFullName }}</h4>
 {% trans %}payments-admin.email{% endtrans %}: <b>{{ person.user.getEmail }}</b><br/>
+<a
+    href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
+    class="btn btn-small btn-mini"
+>{% trans %}mend-admin.addPayment{% endtrans %}</a></br>
 {% if ca.contingent %}
     {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}{% if ca.notes %}
@@ -28,7 +32,7 @@
                 <input type="submit"
                        value="{% trans %}payments-admin.confirm{% endtrans %}"
                        class="btn btn-small">
-            </form>
+            </form><br/>
         {% endif %}
     </div>
 {% endfor %}

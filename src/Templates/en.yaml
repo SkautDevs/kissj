@@ -258,8 +258,8 @@ email:
         finish: "To finish your registration properly, there is only one more step - to pay the registration fee till"
         days: "days"
         nonfirst:
-            approved: "we are pleased by your longing interest about"
-            finish: "It is time to pay your second payment. Pay-due is"
+            approved: "we are pleased by your interest about"
+            finish: "We are sending next payment. Pay-due is"
             days: "days"
         paymentDetails: "Payment details"
         iban: "IBAN"
@@ -323,6 +323,14 @@ deny-admin:
     reason: "with reason for denial (will be send via email, be gentle please)"
     back: "Back"
     denyAndSend: "Deny and send email"
+addNewPayment-admin:
+    newPayment: "Add new payment"
+    wantAddPayment: "Add to participant"
+    withRole: "with role"
+    withPayment: "new payment with price"
+    withReason: "with reason"
+    addPayment: "Add payment"
+    back: "Back"
 dashboard-admin:
     dashboard: "Administrator dashboard of event"
     admin: "Administrator"
@@ -448,6 +456,7 @@ mend-admin:
     enter: "Enter into event"
     didNotEnterYet: "did not enter yet"
     editParticipant: "Edit participant"
+    addPayment: "Add payment"
     cancelParticipant: "Mark participant as not going"
     uncancelParticipant: "Mark participant as going, from state when he is not going"
     entryParticipant: "Mark participant as entered into event"
@@ -509,6 +518,7 @@ flash:
         roleChanged: "Role successfully changed!"
         participantCancelled: "Participant was successfully cancelled"
         participantUncancelled: "Participant was successfully marked as going again!"
+        paymentAdded: "Payment added!"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -560,6 +570,9 @@ flash:
         notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
         cancelPatrolLeaderNotSupported: "Canceling patrol leader is not supported"
         participantNotInCancelledStatus: "Participant cannot be marked as going, because he is not in 'not going' status"
+        participantNotFoundAddPaymentNotPossible: "Participant not found, it is not possible to add payment"
+        patrolParticipantCannotHavePayment: "Patrol participant cannot have payment"
+        participantNotInCorrectStatusForAddPayment: "Participant is not in approved or paid status, therefore is uneligible for new payment"
     error:
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"

@@ -17,4 +17,9 @@ enum UserStatus: string
     {
         return in_array($this, [self::Paid, self::Cancelled], true);
     }
+
+    public function isUnfitForNewPayment(): bool
+    {
+        return in_array($this, [self::Approved, self::Paid], true) === false;
+    }
 }

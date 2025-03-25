@@ -71,6 +71,15 @@
                 {% trans %}mend-admin.editParticipant{% endtrans %}
             </a>
             <br/>
+            {% if participant is not PatrolParticipant %}
+                <a
+                    href="{{ url_for('admin-show-add-new-payment', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                    class="btn"
+                >
+                    {% trans %}mend-admin.addPayment{% endtrans %}
+                </a>
+                <br/>
+            {% endif %}
             {% if participant is not PatrolLeader %}
                 {# TODO add placeholder for PL "not supported yet" #}
                 <form

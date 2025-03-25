@@ -7,6 +7,7 @@ namespace kissj\Participant\Admin;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopParticipant;
 use RuntimeException;
 use kissj\AbstractController;
@@ -712,6 +713,42 @@ class AdminController extends AbstractController
 				'participantId' => (string)$participantId,
 			],
         );
+    }
+
+    public function showAddNewPayment(
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        return $this->view->render($response, 'admin/addNewPayment.twig', [
+            'participant' => $participant,
+        ]);
+    }
+
+    public function addNewPayment(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $price = (int)$this->getParameterFromBody($request, 'price', true);
+        $reason = $this->getParameterFromBody($request, 'reason', true);
+
+        $participant = $this->participantRepository->findParticipantById($participantId, $event);
+        if ($participant === null) {
+            $this->flashMessages->warning('flash.warning.participantNotFoundAddPaymentNotPossible');
+        } elseif ($participant instanceof PatrolParticipant) {
+            $this->flashMessages->warning('flash.warning.patrolParticipantCannotHavePayment');
+        } elseif ($participant->getUserButNotNull()->status->isUnfitForNewPayment()) {
+            $this->flashMessages->warning('flash.warning.participantNotInCorrectStatusForAddPayment');
+        } else {
+            $this->participantService->addNewPayment($participant, $price, $reason);
+            $this->flashMessages->success('flash.success.paymentAdded');
+        }
+
+        return $this->redirect($request, $response, 'admin-dashboard');
     }
 
     public function generateMorePayments(

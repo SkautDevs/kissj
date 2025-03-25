@@ -323,6 +323,15 @@ readonly class ParticipantService
         return $participant;
     }
 
+    public function addNewPayment(Participant $participant, int $price, string $reason): Payment
+    {
+        $payment = $this->paymentService->createAndPersistNewCustomPayment($participant, $price, $reason);
+        $this->userService->setUserApproved($participant->getUserButNotNull());
+        $this->mailer->sendRegistrationApprovedWithNonFirstPayment($participant, $payment);
+
+        return $payment;
+    }
+
     public function cancelPayment(Payment $payment, string $reason): Payment
     {
         $this->paymentService->cancelPayment($payment);
@@ -374,7 +383,7 @@ readonly class ParticipantService
             return $participant;
         }
 
-        $payment = $this->paymentService->createAndPersistNewPayment($participant);
+        $payment = $this->paymentService->createAndPersistNewEventPayment($participant);
         $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
 
         return $participant;
@@ -396,12 +405,13 @@ readonly class ParticipantService
 
     /**
      * @param Participant[] $participants
+     * TODO check if works correctly
      */
     public function generatePaymentsFor(array $participants): int
     {
         $count = 0;
         foreach ($participants as $participant) {
-            $payment = $this->paymentService->createAndPersistNewPayment($participant);
+            $payment = $this->paymentService->createAndPersistNewEventPayment($participant);
             $this->userService->setUserApproved($participant->getUserButNotNull());
             $this->mailer->sendRegistrationApprovedWithNonFirstPayment($participant, $payment);
             $count++;

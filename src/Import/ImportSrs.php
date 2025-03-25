@@ -210,7 +210,7 @@ readonly class ImportSrs
     private function getVariableSymbol(string $variableSymbolRaw, Event $event): string
     {
         if (in_array($variableSymbolRaw, ['0', '', null], true)) {
-            return $this->paymentService->getVariableNumber($event);
+            return $this->paymentService->getNewVariableNumber($event);
         }
 
         $pieces = explode(', ', $variableSymbolRaw);

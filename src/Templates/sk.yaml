@@ -258,8 +258,8 @@ email:
         finish: " Pre riadne dokončenie registrácie ostáva ešte jeden krok - zaplatiť registračný poplatok do "
         days: "dní"
         nonfirst:
-            approved: "těší nás tvůj přetrvávající zájem o"
-            finish: "Přišel čas na zaplacení druhé splátky. Splatnost je"
+            approved: "jsme rádi, že máš zájem o"
+            finish: "Posíláme další platbu. Splatnost je"
             days: "dní"
         paymentDetails: "Platobné údaje"
         iban: "IBAN"
@@ -323,6 +323,14 @@ deny-admin:
     reason: "z důvodu (bude posláno mailem, tak nějak mile)"
     back: "Zpět"
     denyAndSend: "Zamítnout a poslat e-mail"
+addNewPayment-admin:
+    newPayment: "Přidat další platbu"
+    wantAddPayment: "Přidáváš účastníkovi"
+    withRole: "s rolí"
+    withPayment: "novou platbu ve výši"
+    withReason: "s důvodem"
+    addPayment: "Přidat platbu"
+    back: "Zpět"
 dashboard-admin:
     dashboard: "Administrátorský přehled akce"
     admin: "Administrátor"
@@ -448,6 +456,7 @@ mend-admin:
     enter: "Vstup na akci"
     didNotEnterYet: "ještě na akci nevstoupil"
     editParticipant: "Upravit účastníka"
+    addPayment: "Přidat platbu"
     cancelParticipant: "Označit účastníka že nejede"
     uncancelParticipant: "Označit účastníka že opět přijede"
     entryParticipant: "Označit účastníka, že vstoupil na akci"
@@ -509,6 +518,7 @@ flash:
         roleChanged: "Rola účastníka úspěšně změněna!"
         participantCancelled: "Účastník úspěšně označen že nejede!"
         participantUncancelled: "Účastník úspěšně označen že opět přijede!"
+        paymentAdded: "Platba přidána!"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -560,6 +570,9 @@ flash:
         notOpenCannotChangeRole: "Registrace účastníka není odemknutá, změna role není možná"
         cancelPatrolLeaderNotSupported: "Označení patroly že nepřijede není zatím podporováno"
         participantNotInCancelledStatus: "Účastník nemůže být označen že přijede, protože není ve stavu 'nepřijede'"
+        participantNotFoundAddPaymentNotPossible: "Účastník nebyl nalezen, přidání platby není možné"
+        patrolParticipantCannotHavePayment: "Účastník patroly nemůže mít přidanou platbu"
+        participantNotInCorrectStatusForAddPayment: "Účastník není schválený ani zaplacený, tedy mu nemůže být přidána platba"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"

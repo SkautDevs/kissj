@@ -286,6 +286,12 @@ class Route
                         $app->post('/transferPayment', AdminController::class . '::transferPayment')
                             ->setName('admin-transfer-payment');
 
+                        $app->get('/addNewPayment/{participantId}', AdminController::class . '::showAddNewPayment')
+                            ->setName('admin-show-add-new-payment');
+
+                        $app->post('/addNewPayment/{participantId}', AdminController::class . '::addNewPayment')
+                            ->setName('admin-add-new-payment');
+
                         $app->post('/generateMorePayments', AdminController::class . '::generateMorePayments')
                             ->setName('admin-generate-more-payments');
                     })->add(AdminPaymentsOnlyMiddleware::class);
