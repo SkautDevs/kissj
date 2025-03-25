@@ -15,15 +15,13 @@ readonly class SentryCollector
     ) {
     }
 
-    public function collect(Throwable $e): Throwable
+    public function collect(Throwable $t): void
     {
         // Sentry client is wrapped in Sentry\State\Hub::withScope(...) to pass HTTP, Event and User context
-        $this->sentryHub->withScope(function (Scope $scope) use ($e): void {
-            $scope->setFingerprint([md5($e::class)]);
+        $this->sentryHub->withScope(function (Scope $scope) use ($t): void {
+            $scope->setFingerprint([md5($t::class)]);
 
-            $this->sentryHub->captureException($e);
+            $this->sentryHub->captureException($t);
         });
-
-        return $e;
     }
 }
