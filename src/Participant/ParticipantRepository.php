@@ -272,28 +272,58 @@ class ParticipantRepository extends Repository
     }
 
     # retrieve count of food diets ordered by role (or pl if patrols/troops are allowed) and event days. Taking into account arrival dates for all participants.
-    # returns array<role, array<diet, array<day, count of food>>
+    # returns array<role, array<day, array<diet, count of food>>
     /**
-     * @return array<string, array<string, array<string, int>>
+     * @return array<string, array<string, array<string, int>>>
      */
     public function getCompleteFoodStatistic(
         Event $event,
-    ) :array {
-        // will have to implement new ORM criteria "not null" as relation, so that array_filter can be removed
+    ) :array
+    {
+        // TODO: will have to implement new ORM criteria "not null" as relation, so that array_filter can be removed
         $eventParticipants = $this->findBy([
             'event' => $event,
-            ]);
+        ]);
         $eventParticipants = array_filter(
-                                $eventParticipants,
-                                function (Participant $participant): bool { return $participant->foodPreferences !== null; });
-        $eventStartDay = $event->startDay;
-        $eventEndDay = $event->endDay;
-        $firstDayToShow = $eventParticipants[0]->arrival_date;
+            $eventParticipants,
+            function (Participant $participant): bool {
+                return $participant->foodPreferences !== null;
+            });
+        if ($eventParticipants === []) return [];
+
+        $dietaryArray = [];
+
+        foreach ($event->getAvailableRoles() as $role) {
+            $dietaryArray[$role->value] = [];
+        }
+        foreach ($eventParticipants as $participant) {
+
+            $participantStartDay = $participant->arrivalDate ?? $event->startDay;
+            $participantEndDay = $participant->departureDate ?? $event->endDay;
+
+            for ($currentDay = (new DateTime())->setTimestamp($participantStartDay->getTimestamp()); $currentDay <= $participantEndDay; $currentDay->modify('+1 day')) {//TODO: optimize for patrol/troop leaders
+                $dietaryArray[$participant->role->value ?? "norole"][$currentDay->format('d-m')][$participant->foodPreferences]++;
+            }
+        }
+
+        // Sort level 0 (roles)
+        ksort($dietaryArray);
+
+        foreach ($dietaryArray as &$roleArray) {
+            foreach ($roleArray as &$dailyFoodArray) {
+                // Sort level 3 (food preferences inside each date)
+                ksort($dailyFoodArray);
+            }
+            unset($dailyFoodArray);
+        }
+        unset($roleArray);
+
+        return $dietaryArray;
 
 
     }
 
-    # retrieve absolute maximum count of food diets for event
+    # retrieve absolute count of diets for event
     /**
      * @return array<string, int>
      */
