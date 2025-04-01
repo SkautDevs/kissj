@@ -36,7 +36,7 @@ use kissj\Participant\ParticipantRole;
  * @property string            $accountNumber with bank code after slash
  * @property string            $iban
  * @property string            $swift
- * @property int               $prefixVariableSymbol // TODO add null
+ * @property int|null          $prefixVariableSymbol
  * @property string            $constantSymbol
  * @property bool              $automaticPaymentPairing
  * @property string            $bankSlug
