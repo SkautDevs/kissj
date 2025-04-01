@@ -137,4 +137,10 @@ class EventTypeNavigamus extends EventType
     {
         return true;
     }
+
+    #[\Override]
+    public function isReceiptAllowed(): bool
+    {
+        return true;
+    }
 }
