@@ -385,10 +385,8 @@ class AdminController extends AbstractController
         int $paymentId,
     ): Response {
         $payment = $this->paymentRepository->getById($paymentId, $event);
-        $participant = $payment->participant;
 
         $this->paymentService->confirmPayment($payment);
-        $this->flashMessages->success('flash.success.confirmPayment');
         $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
 
         return $this->redirect(
@@ -751,6 +749,7 @@ class AdminController extends AbstractController
         return $this->redirect($request, $response, 'admin-dashboard');
     }
 
+    // TODO shift into "approved" event to generate multiple payments, with different dates even
     public function generateMorePayments(
         Request $request,
         Response $response,

@@ -275,7 +275,7 @@ email:
         denied: "Bohužiaľ, Tvoja platba za %event.getReadableName% bola zamietnutá"
         reason: "z dôvodu"
         dontPay: "Neplať znovu predošlými platobnými údajmi!"
-        registerAgain: "Chceš ísť na akciu aj tak? Uprav a uzamkni svoju registráciu"
+        registerAgainSlovakOnly: "Chceš ísť na akciu aj tak? Ak nemáš ďalšie čakajúce platby, uprav a uzamkni svoju registráciu"
         newPayment: "(zadané údaje sú stále uložené), skontrolujeme a schválime ju nanovo a pošleme nové platobné údaje"
     payment-successful:
         subject: "platba obdržena"
@@ -573,6 +573,8 @@ flash:
         participantNotFoundAddPaymentNotPossible: "Účastník nebyl nalezen, přidání platby není možné"
         patrolParticipantCannotHavePayment: "Účastník patroly nemůže mít přidanou platbu"
         participantNotInCorrectStatusForAddPayment: "Účastník není schválený ani zaplacený, tedy mu nemůže být přidána platba"
+        paymentAlreadyPaid: "Platbu nelze označit jako zaplacenou, protože už zaplacená je"
+        paymentAlreadyCanceled: "Platbu nelze označit jako zrušenou, protože už zrušená je"
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
         adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"

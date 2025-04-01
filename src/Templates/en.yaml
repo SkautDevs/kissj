@@ -275,7 +275,7 @@ email:
         denied: "Unfortunately, your payment for %event.getReadableName% was denied"
         reason: "with reason"
         dontPay: "Don't take further attempts to pay again with the previous payment details!"
-        registerAgain: "Do you want to attend the event nevertheless? Edit and lock your registration again"
+        registerAgain: "Do you want to attend the event nevertheless? If you have no waiting payments, edit and lock your registration again"
         newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
     payment-successful:
         subject: "payment successful"
@@ -573,6 +573,8 @@ flash:
         participantNotFoundAddPaymentNotPossible: "Participant not found, it is not possible to add payment"
         patrolParticipantCannotHavePayment: "Patrol participant cannot have payment"
         participantNotInCorrectStatusForAddPayment: "Participant is not in approved or paid status, therefore is uneligible for new payment"
+        paymentAlreadyPaid: "Payment cannot be marked as paid, because it is already paid"
+        paymentAlreadyCanceled: "Payment cannot be marked as cancelled, because it is already cancelled"
     error:
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"

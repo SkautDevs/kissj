@@ -86,6 +86,12 @@ class PaymentService
 
     public function cancelPayment(Payment $payment): Payment
     {
+        if ($payment->status === PaymentStatus::Canceled) {
+            $this->flashMessages->warning('flash.warning.paymentAlreadyCanceled');
+
+            return $payment;
+        }
+
         if ($payment->status !== PaymentStatus::Waiting) {
             throw new \RuntimeException('Payment cancellation is allow only for payments with status '
                 . PaymentStatus::Waiting->value);
@@ -120,6 +126,12 @@ class PaymentService
 
     public function confirmPayment(Payment $payment): Payment
     {
+        if ($payment->status === PaymentStatus::Paid) {
+            $this->flashMessages->warning('flash.warning.paymentAlreadyPaid');
+
+            return $payment;
+        }
+
         if ($payment->status !== PaymentStatus::Waiting) {
             throw new \RuntimeException('Payment confirmation is allow only for payments with status '
                 . PaymentStatus::Waiting->value);
@@ -132,7 +144,7 @@ class PaymentService
 
         $participant = $payment->participant;
         if ($participant->countWaitingPayments() === 0) {
-            // TODO set paid time in each payment too
+            // TODO set paid time in each payment
             $this->setParticipantPaidWithTime($participant, $now);
 
             if ($participant instanceof TroopLeader) {
@@ -142,6 +154,9 @@ class PaymentService
             }
 
             $this->mailer->sendRegistrationPaid($participant);
+            $this->flashMessages->success('flash.success.confirmPayment');
+        } else {
+            // TODO add sending mail "thanks for payment, but you still needs to pay more"
         }
 
         return $payment;

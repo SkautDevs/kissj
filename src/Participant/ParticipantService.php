@@ -336,10 +336,13 @@ readonly class ParticipantService
     {
         $this->paymentService->cancelPayment($payment);
         $participant = $payment->participant;
-        $this->userService->setUserClosed($participant->getUserButNotNull());
-        if ($participant instanceof TroopLeader) {
-            foreach ($participant->troopParticipants as $tp) {
-                $this->userService->setUserClosed($tp->getUserButNotNull());
+
+        if ($participant->countWaitingPayments() === 0) {
+            $this->userService->setUserClosed($participant->getUserButNotNull());
+            if ($participant instanceof TroopLeader) {
+                foreach ($participant->troopParticipants as $tp) {
+                    $this->userService->setUserClosed($tp->getUserButNotNull());
+                }
             }
         }
 
