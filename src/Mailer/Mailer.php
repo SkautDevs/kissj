@@ -214,6 +214,20 @@ readonly class Mailer
             $email->bcc(new Address($event->emailBccFrom, $event->emailFromName));
         }
         $email->subject($event->readableName . ' - ' . $subject);
+        // Add Common headers to help with deliverability.
+        $email->getHeaders()->addTextHeader(
+            'List-Unsubscribe',
+            '<mailto:devs@skaut.cz>'
+        )->addTextHeader(
+            'Auto-Submitted',
+            'auto-generated'
+        )->addTextHeader(
+            'X-Auto-Response-Suppress',
+            'All'
+        )->addTextHeader(
+            'Reply-To',
+            $event->contactEmail
+        );
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
