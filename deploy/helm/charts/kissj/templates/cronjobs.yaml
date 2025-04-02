@@ -116,9 +116,6 @@ spec:
                 - name: MAIL_DISABLE_TLS
                   value: "false"
 
-                - name: MAIL_SEND_MAIL_TO_MAIN_RECIPIENT
-                  value: "true"
-
                 - name: MAIL_SMTP
                   value: "true"
 
