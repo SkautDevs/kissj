@@ -295,12 +295,6 @@ parameters:
 			path: src/Settings/Settings.php
 
 		-
-			message: '#^Parameter \#2 \$sendMailToMainRecipient of class kissj\\Mailer\\MailerSettings constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Settings/Settings.php
-
-		-
 			message: '#^Parameter \#4 \$password of class kissj\\Session\\RedisSessionHandler constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
