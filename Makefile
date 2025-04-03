@@ -3,6 +3,7 @@ DOCKER := $(shell command -v podman 2> /dev/null || command -v docker 2> /dev/nu
 
 # Check for docker-compose/podman-compose
 DOCKER_COMPOSE := $(shell command -v podman-compose 2> /dev/null || command -v docker-compose 2> /dev/null)
+COMPOSE_FILE := $(PWD)/deploy/dev/docker-compose.yml
 
 .PHONY: info
 info:
@@ -17,18 +18,18 @@ ifeq ($(DOCKER_COMPOSE),)
 	@echo "Neither docker-compose nor podman-compose is installed."
 	exit 1
 else
-	@echo "Using $(DOCKER_COMPOSE)"
+	@echo "Using $(DOCKER_COMPOSE) with $(COMPOSE_FILE)"
 endif
 
 # Start the containers
 .PHONY: compose-up
 compose-up:
-	$(DOCKER_COMPOSE) --file deploy/dev/docker-compose.yml up -d
+	$(DOCKER_COMPOSE) --file $(COMPOSE_FILE) up -d
 
 # Stop the containers
 .PHONY: compose-down
 compose-down:
-	$(DOCKER_COMPOSE) --file deploy/dev/docker-compose.yml down
+	$(DOCKER_COMPOSE) --file $(COMPOSE_FILE) down
 
 # Get container ID
 .PHONY: $(FPM_ID)
@@ -45,4 +46,3 @@ migrate:
 
 dev-up: info compose-up composer-install migrate
 dev-down: info compose-down
-
