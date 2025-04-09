@@ -837,7 +837,7 @@ class AdminController extends AbstractController
 
         return $this->view->render($response, 'admin/foodStats-admin.twig', [
             'event'  => $event,
-            'foodStatistic' => $this->participantRepository->getDigestFoodStatistic($event),
+            'foodStatistic' => $this->participantRepository->getCompleteFoodStatistic($event),
         ]);
     }
 }

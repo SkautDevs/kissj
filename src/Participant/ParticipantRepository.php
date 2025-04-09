@@ -271,106 +271,6 @@ class ParticipantRepository extends Repository
         return $rows;
     }
 
-    # retrieve count of food diets ordered by role (or pl if patrols/troops are allowed) and event days. Taking into account arrival dates for all participants.
-    # returns array<role, array<day, array<diet, count of food>>
-    /**
-     * @return array<string, array<string, array<string, int>>>
-     */
-    public function getCompleteFoodStatistic(
-        Event $event,
-    ) :array
-    {
-        // TODO: will have to implement new ORM criteria "not null" as relation, so that array_filter can be removed
-        $eventParticipants = $this->findBy([
-            'event' => $event,
-        ]);
-        $eventParticipants = array_filter(
-            $eventParticipants,
-            function (Participant $participant): bool {
-                return $participant->foodPreferences !== null;
-            });
-        if ($eventParticipants === []) return [];
-
-        $dietaryArray = [];
-
-        foreach ($event->getAvailableRoles() as $role) {
-            $dietaryArray[$role->value] = [];
-        }
-        foreach ($eventParticipants as $participant) {
-
-            $participantStartDay = $participant->arrivalDate ?? $event->startDay;
-            $participantEndDay = $participant->departureDate ?? $event->endDay;
-
-            for ($currentDay = (new DateTime())->setTimestamp($participantStartDay->getTimestamp()); $currentDay <= $participantEndDay; $currentDay->modify('+1 day')) {//TODO: optimize for patrol/troop leaders
-                $dietaryArray[$participant->role->value ?? "norole"][$currentDay->format('d-m')][$participant->foodPreferences]++;
-            }
-        }
-
-        // Sort level 0 (roles)
-        ksort($dietaryArray);
-
-        foreach ($dietaryArray as &$roleArray) {
-            foreach ($roleArray as &$dailyFoodArray) {
-                // Sort level 3 (food preferences inside each date)
-                ksort($dailyFoodArray);
-            }
-            unset($dailyFoodArray);
-        }
-        unset($roleArray);
-
-        return $dietaryArray;
-
-
-    }
-
-    # retrieve absolute count of diets for event
-    /**
-     * @return array<string, int>
-     */
-    public function getDigestFoodStatistic(
-        Event $event,
-    ): array {
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
-
-        $qb->where('u.role = %s', UserRole::Participant);
-        $qb->where('u.status = %s', UserStatus::Paid);
-        $qb->where('u.event_id = %i', $event->id);
-
-        $qb->groupBy('participant.food_preferences');
-        $qb->orderBy('participant.food_preferences');
-
-        /** @var array<string,int> $rows */
-        $rows = $qb->fetchPairs('f', 'count');
-
-        // count patrol participants and merge
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
-        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
-        $qb->join('user')->as('u')->on('u.id = pl.user_id');
-
-        $qb->where('u.role = %s', UserRole::Participant);
-        $qb->where('u.status = %s', UserStatus::Paid);
-        $qb->where('u.event_id = %i', $event->id);
-
-
-        $qb->groupBy('participant.food_preferences');
-        $qb->orderBy('participant.food_preferences');
-
-        /** @var array<string,int> $rows */
-        $rowsPp = $qb->fetchPairs('f', 'count');
-
-        // merge patrol participants into rest
-        foreach ($rowsPp as $foodKey => $count) {
-            if (array_key_exists($foodKey, $rows) === false) {
-                $rows[$foodKey] = 0;
-            }
-
-            $rows[$foodKey] += $count;
-        }
-
-        return $rows;
-    }
-
     /**
      * @return array<string,int>
      */
@@ -797,5 +697,86 @@ class ParticipantRepository extends Repository
         }
 
         return $qb;
+    }
+
+    # retrieve count of food diets ordered by role (or pl if patrols/troops are allowed) and event days. Taking into account arrival dates for all participants.
+    # returns array<role, array<day, array<diet, count of food>>
+
+    /**
+     * @return array<string, array<string, array<string, int>>>
+     */
+    public function getCompleteFoodStatistic(
+        Event $event,
+    ) :array
+    {
+        $eventParticipants = $this->getAllParticipantsWithStatus(
+            [ParticipantRole::TroopLeader, ParticipantRole::PatrolLeader,  ParticipantRole::Ist,  ParticipantRole::Guest],
+            [UserStatus::Paid],
+            $event,
+        );
+
+        // TODO: [nice to have] implement new ORM criteria (or getAllParticipantsWithStatus atribute) "not null" as relation, so that array_filter can be removed
+        $eventParticipants = array_filter(
+            $eventParticipants,
+            function (Participant $participant): bool {
+                return $participant->foodPreferences !== null;
+            });
+
+
+        if ($eventParticipants === []) return [];
+
+        return (new ParticipantFoodPlan($eventParticipants, $event))->toArray();
+
+        //main logic
+
+
+    }
+    # retrieve absolute count of diets for event
+
+    /**
+     * @return array<string, int>
+     */
+    public function getDigestFoodStatistic(
+        Event $event,
+    ): array {
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+        $qb->groupBy('participant.food_preferences');
+        $qb->orderBy('participant.food_preferences');
+
+        /** @var array<string,int> $rows */
+        $rows = $qb->fetchPairs('f', 'count');
+
+        // count patrol participants and merge
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
+
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status = %s', UserStatus::Paid);
+        $qb->where('u.event_id = %i', $event->id);
+
+
+        $qb->groupBy('participant.food_preferences');
+        $qb->orderBy('participant.food_preferences');
+
+        /** @var array<string,int> $rows */
+        $rowsPp = $qb->fetchPairs('f', 'count');
+
+        // merge patrol participants into rest
+        foreach ($rowsPp as $foodKey => $count) {
+            if (array_key_exists($foodKey, $rows) === false) {
+                $rows[$foodKey] = 0;
+            }
+
+            $rows[$foodKey] += $count;
+        }
+
+        return $rows;
     }
 }
