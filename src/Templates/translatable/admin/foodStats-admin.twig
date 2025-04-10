@@ -2,9 +2,36 @@
 
 {% block content %}
     <div class="card">
-        <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
-        {% for food, count in foodStatistic %}
-            <p>{{ food|trans }}: <b>{{ count }}</b></p>
-        {% endfor %}
+        <table >
+            <thead style="color: black">
+            <tr>
+                <th rowspan="2">role</th>
+                {% for date in foodStatistic.dates %}
+                    <th colspan="{{ foodStatistic.diet_types|length }}" style="text-align: left" > {{ date }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for date in foodStatistic.dates %}
+                    {% for diet in foodStatistic.diet_types %}
+                        <th style="writing-mode: vertical-lr" >{{ diet }}</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for role, dates in foodStatistic.rows %}
+                <tr>
+                    <td>{{ role }}</td>
+                    {% for date in foodStatistic.dates %}
+                        {% for diet in foodStatistic.diet_types %}
+                            <td>{{ dates[date][diet] }}</td>
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
+
+

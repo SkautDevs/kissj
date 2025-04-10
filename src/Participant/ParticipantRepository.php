@@ -727,8 +727,6 @@ class ParticipantRepository extends Repository
 
         return (new ParticipantFoodPlan($eventParticipants, $event))->toArray();
 
-        //main logic
-
 
     }
     # retrieve absolute count of diets for event
