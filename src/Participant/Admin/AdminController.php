@@ -822,8 +822,7 @@ class AdminController extends AbstractController
         Request $request,
         Response $response,
         Event $event,
-    )
-    {
+    ): Response {
         $eventType = $event->getEventType();
 
         if (!$eventType->showFoodStats()) {
