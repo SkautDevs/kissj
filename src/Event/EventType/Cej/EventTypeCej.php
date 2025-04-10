@@ -29,7 +29,7 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_SWEDEN = 'detail.contingent.sweden';
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
-    public function transformPayment(Payment $payment, Participant $participant): Payment
+    public function transformPaymentPrice(Payment $payment, Participant $participant): Payment
     {
         if ($participant->contingent === self::CONTINGENT_CZECHIA) {
             $payment->accountNumber = '2302084720/2010';

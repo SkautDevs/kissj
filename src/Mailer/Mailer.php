@@ -195,7 +195,7 @@ readonly class Mailer
 
     /**
      * @param array<string, mixed> $parameters
-     * @param array<EmbedDTO> $embeds
+     * @param list<EmbedDTO> $embeds
      * @param array<string, string> $attachments
      */
     private function sendMailFromTemplate(
@@ -215,6 +215,22 @@ readonly class Mailer
             $email->bcc(new Address($event->emailBccFrom, $event->emailFromName));
         }
         $email->subject($event->readableName . ' - ' . $subject);
+
+        // add common headers to help with deliverability
+        $email->getHeaders()->addTextHeader(
+            'List-Unsubscribe',
+            '<mailto:' . $this->settings->devMail . '>',
+        )->addTextHeader(
+            'Auto-Submitted',
+            'auto-generated',
+        )->addTextHeader(
+            'X-Auto-Response-Suppress',
+            'All',
+        )->addMailboxListHeader(
+            'Reply-To',
+            [$event->contactEmail],
+        );
+
         $email->htmlTemplate('emails/' . $templateName . '.twig');
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
@@ -244,7 +260,7 @@ readonly class Mailer
     }
 
     /**
-     * @return EmbedDTO[]
+     * @return list<EmbedDTO>
      */
     private function getEmbeddedQr(Participant $participant): array
     {

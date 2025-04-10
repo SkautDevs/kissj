@@ -10,8 +10,8 @@ class MailerSettings
     private string $fullUrlLink;
 
     public function __construct(
-        public string $mailDsn,
-        public string $sendMailToMainRecipient,// TODO remove as option
+        readonly public string $mailDsn,
+        readonly public string $devMail = 'devs@skaut.cz',
     ) {
     }
 

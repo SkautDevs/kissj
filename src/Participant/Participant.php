@@ -134,7 +134,7 @@ class Participant extends EntityDatetime
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     protected function getTshirtParsed(): array
     {
@@ -192,16 +192,25 @@ class Participant extends EntityDatetime
         });
     }
 
+    public function countWaitingPayments(): int
+    {
+        // TODO optimalize
+        return count(array_filter($this->payment, function (Payment $payment): bool {
+            return $payment->status === PaymentStatus::Waiting;
+        }));
+    }
+
     public function getQrParticipantInfoString(): string
     {
         return $this->entryCode;
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     protected function getPreferredPosition(): array
     {
+        /** @var ?string $prefferedPositionFromDb */
         $prefferedPositionFromDb = $this->row->preferred_position;
         if ($prefferedPositionFromDb === null || $prefferedPositionFromDb === '') {
             return [];

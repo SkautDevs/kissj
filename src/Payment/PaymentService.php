@@ -40,33 +40,58 @@ class PaymentService
     ) {
     }
 
-    public function createAndPersistNewPayment(Participant $participant): Payment
+    public function createAndPersistNewEventPayment(Participant $participant): Payment
     {
         $event = $participant->getUserButNotNull()->event;
 
-        $payment = new Payment();
-        $payment->participant = $participant;
-        $payment->variableSymbol = $this->getVariableNumber($event);
-        $payment->constantSymbol = $event->constantSymbol;
-        $payment->price = (string)$event->defaultPrice;
-        $payment->currency = $event->currency;
-        $payment->status = PaymentStatus::Waiting;
-        $payment->purpose = 'event fee';
-        $payment->accountNumber = $event->accountNumber;
-        $payment->iban = $event->iban;
-        $payment->swift = $event->swift;
-        $payment->due = $this->calculatePaymentDueDate(DateTimeUtils::getDateTime(), $event->startDay);
-        $payment->note = $this->composeNote($participant, $event);
+        $payment =  $this->createNewPayment($participant, $event, $event->defaultPrice);
+        $payment = $event->getEventType()->transformPaymentPrice($payment, $participant);
+        $this->paymentRepository->persist($payment);
 
-        $payment = $event->getEventType()->transformPayment($payment, $participant);
+        return $payment;
+    }
+
+    public function createAndPersistNewCustomPayment(Participant $participant, int $price, string $purpouse): Payment
+    {
+        $event = $participant->getUserButNotNull()->event;
+        $payment =  $this->createNewPayment($participant, $event, $price, $purpouse);
 
         $this->paymentRepository->persist($payment);
 
         return $payment;
     }
 
+    private function createNewPayment(
+        Participant $participant,
+        Event $event,
+        int $price,
+        string $purpouse = 'event fee',
+    ): Payment {
+        $payment = new Payment();
+        $payment->participant = $participant;
+        $payment->variableSymbol = $this->getNewVariableNumber($event);
+        $payment->constantSymbol = $event->constantSymbol;
+        $payment->price = (string)$price;
+        $payment->currency = $event->currency;
+        $payment->status = PaymentStatus::Waiting;
+        $payment->purpose = $purpouse;
+        $payment->accountNumber = $event->accountNumber;
+        $payment->iban = $event->iban;
+        $payment->swift = $event->swift;
+        $payment->due = $this->calculatePaymentDueDate(DateTimeUtils::getDateTime(), $event->startDay);
+        $payment->note = $this->composeNote($participant, $event);
+
+        return $payment;
+    }
+
     public function cancelPayment(Payment $payment): Payment
     {
+        if ($payment->status === PaymentStatus::Canceled) {
+            $this->flashMessages->warning('flash.warning.paymentAlreadyCanceled');
+
+            return $payment;
+        }
+
         if ($payment->status !== PaymentStatus::Waiting) {
             throw new \RuntimeException('Payment cancellation is allow only for payments with status '
                 . PaymentStatus::Waiting->value);
@@ -101,6 +126,12 @@ class PaymentService
 
     public function confirmPayment(Payment $payment): Payment
     {
+        if ($payment->status === PaymentStatus::Paid) {
+            $this->flashMessages->warning('flash.warning.paymentAlreadyPaid');
+
+            return $payment;
+        }
+
         if ($payment->status !== PaymentStatus::Waiting) {
             throw new \RuntimeException('Payment confirmation is allow only for payments with status '
                 . PaymentStatus::Waiting->value);
@@ -112,15 +143,21 @@ class PaymentService
         $now = DateTimeUtils::getDateTime();
 
         $participant = $payment->participant;
-        $this->setParticipantPaidWithTime($participant, $now);
+        if ($participant->countWaitingPayments() === 0) {
+            // TODO set paid time in each payment
+            $this->setParticipantPaidWithTime($participant, $now);
 
-        if ($participant instanceof TroopLeader) {
-            foreach ($participant->troopParticipants as $tp) {
-                $this->setParticipantPaidWithTime($tp, $now);
+            if ($participant instanceof TroopLeader) {
+                foreach ($participant->troopParticipants as $tp) {
+                    $this->setParticipantPaidWithTime($tp, $now);
+                }
             }
-        }
 
-        $this->mailer->sendRegistrationPaid($participant);
+            $this->mailer->sendRegistrationPaid($participant);
+            $this->flashMessages->success('flash.success.confirmPayment');
+        } else {
+            // TODO add sending mail "thanks for payment, but you still needs to pay more"
+        }
 
         return $payment;
     }
@@ -204,7 +241,7 @@ class PaymentService
         }
     }
 
-    public function getVariableNumber(Event $event): string
+    public function getNewVariableNumber(Event $event): string
     {
         do {
             $variableNumber = $this->generateVariableNumber($event->prefixVariableSymbol);

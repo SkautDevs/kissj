@@ -56,7 +56,7 @@ class ParticipantController extends AbstractController
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
 
-        /** @var string[] $parsed */
+        /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
         $this->participantService->handleUploadedFiles($participant, $request);

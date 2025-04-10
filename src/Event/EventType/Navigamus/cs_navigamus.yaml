@@ -7,7 +7,10 @@ chooseRole:
     adviceIstText: " je spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
 detail:
     patrolNamePlaceholder: "stejný název jako pro předprogram, pokud jste se účastnili"
-    contingentTitle: "Tým"
+    contingentTitle: "Preferované loďstvo"
     contingent:
-        volunteer: "💪 Dobrovolkyně nebo dobrovolník"
-        org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
+        without: "nesdílíme materiál přes více skupin - nemáme preferenci"
+        endeavour: "Endeavour - 🟧 oranžová"
+        adventure: "Adventure - 🟥 červená"
+        discovery: "Discovery - 🟩 zelená"
+        resolution: "Resolution - 🟦 modrá"

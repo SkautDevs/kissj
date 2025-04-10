@@ -53,8 +53,8 @@ class Repository extends BaseRepository
 
     /**
      * @param array<string,Entity|Relation|bool|int|float|string> $criteria
-     * @param Order[] $orders
-     * @return Entity[]
+     * @param list<Order> $orders
+     * @return list<Entity>
      */
     public function findBy(array $criteria, array $orders = []): array
     {
@@ -78,7 +78,7 @@ class Repository extends BaseRepository
 
     /**
      * @param array<string,Entity|Relation|bool|int|float|string> $criteria
-     * @param Order[] $orders
+     * @param list<Order> $orders
      */
     public function findOneBy(array $criteria, array $orders = []): ?Entity
     {
@@ -140,7 +140,7 @@ class Repository extends BaseRepository
     }
 
     /**
-     * @param Order[] $orders
+     * @param list<Order> $orders
      */
     protected function addOrdersBy(Fluent $qb, array $orders): void
     {
@@ -153,14 +153,5 @@ class Repository extends BaseRepository
                 $qb->desc();
             }
         }
-    }
-
-    protected function overloadEntityIfNeeded(): ?string
-    {
-        if ($this->getTable() === 'participant') {
-            return static::class;
-        }
-
-        return null;
     }
 }

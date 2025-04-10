@@ -256,7 +256,6 @@ class Settings
         $container[LoggerInterface::class] = get(Logger::class);
         $container[MailerSettings::class] = fn () => new MailerSettings(
             $_ENV['MAIL_DSN'],
-            $_ENV['MAIL_SEND_MAIL_TO_MAIN_RECIPIENT'],
         );
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),
@@ -343,7 +342,6 @@ class Settings
         $dotenv->required('LOGGER_FILENAME')->notEmpty();
         $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(Level::NAMES);
         $dotenv->required('MAIL_DSN');
-        $dotenv->required('MAIL_SEND_MAIL_TO_MAIN_RECIPIENT');
         $dotenv->required('FILE_HANDLER_TYPE')->allowedValues([
             'local',
             's3bucket',

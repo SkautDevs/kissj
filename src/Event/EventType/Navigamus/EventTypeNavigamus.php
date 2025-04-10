@@ -15,14 +15,11 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeNavigamus extends EventType
 {
-    public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
-    public const string CONTINGENT_ORG = 'detail.contingent.org';
-
     protected function getPrice(Participant $participant): int
     {
         $now = DateTimeUtils::getDateTime();
         $patrolPrice = match (true) {
-            $now < DateTimeUtils::getDateTime('2025-02-28 23:59:59') => 1300,
+            $now < DateTimeUtils::getDateTime('2025-03-05 23:59:59') => 1300,
             $now < DateTimeUtils::getDateTime('2025-03-31 23:59:59') => 1500,
             $now < DateTimeUtils::getDateTime('2025-04-30 23:59:59') => 1800,
             default => 2800,
@@ -51,6 +48,7 @@ class EventTypeNavigamus extends EventType
     {
         $caPl = parent::getContentArbiterPatrolLeader();
         $caPl->food = true;
+        $caPl->contingent = true;
 
         return $caPl;
     }
@@ -64,7 +62,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string, string>
+     * @inheritDoc
      */
     public function getTranslationFilePaths(): array
     {
@@ -80,7 +78,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getFoodOptions(): array
     {
@@ -95,7 +93,7 @@ class EventTypeNavigamus extends EventType
     }
 
     /**
-     * @return array<string>
+     * @inheritDoc
      */
     public function getPositionOptions(): array
     {
@@ -120,7 +118,28 @@ class EventTypeNavigamus extends EventType
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getContingents(): array
+    {
+        return [
+            'detail.contingent.without',
+            'detail.contingent.endeavour',
+            'detail.contingent.adventure',
+            'detail.contingent.discovery',
+            'detail.contingent.resolution',
+        ];
+    }
+
     public function isLoginSkautisAllowed(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
+    public function isReceiptAllowed(): bool
     {
         return true;
     }
