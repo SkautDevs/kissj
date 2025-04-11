@@ -131,6 +131,9 @@ readonly class ParticipantService
         if (
             $this->getClosedSameRoleParticipantsCount($participant)
             >= $event->eventType->getMaximumClosedParticipants($participant)
+            // TODO fix problem with contingents
+            // - in CEJ we want to limit each contingent by its own, but
+            // - in Navigamus we want to count all contingents together
         ) {
             $this->flashMessages->warning('flash.warning.fullRegistration');
 

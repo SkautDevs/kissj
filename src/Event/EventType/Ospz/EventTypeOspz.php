@@ -7,16 +7,19 @@ namespace kissj\Event\EventType\Ospz;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\EventType\EventType;
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeOspz extends EventType
 {
     protected function getPrice(Participant $participant): int
     {
-        return match ($participant->role) {
-            ParticipantRole::Ist => 200,
-            default => 400,
+        return match (true) {
+            $participant instanceof Ist => 200,
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 400,
+            default => $participant->getUserButNotNull()->event->defaultPrice,
         };
     }
 
