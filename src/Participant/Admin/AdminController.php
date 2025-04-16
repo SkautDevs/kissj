@@ -834,9 +834,12 @@ class AdminController extends AbstractController
 
         }
 
+        $aggregators = array_values($event->getAvailableRoles());
+        $aggregators[] = "summary";
         return $this->view->render($response, 'admin/foodStats-admin.twig', [
             'event'  => $event,
             'foodStatistic' => $this->participantRepository->getCompleteFoodStatistic($event),
+            'aggregators' => $aggregators,
         ]);
     }
 }
