@@ -94,14 +94,28 @@ class ParticipantFoodPlan
     }
 
     /**
+     * array with all necessary data for foodstats view render
      * @return array<string, array<string, array<string, array<int>>|string>>
      */
     public function toArray(): array {
         $dateKeys = [];
-        foreach ($this->dates as $d) $dateKeys[] = $d->format('j.n.');
-        return ['dates' => $dateKeys, 'diet_types' => $this->dietTypes, 'rows' => $this->rows];
+        foreach ($this->dates as $date) $dateKeys[] = $date->format('j.n.');
+
+        $summary = array_fill_keys($dateKeys, array_fill_keys($this->dietTypes, 0));
+        foreach ($this->rows as $row) {
+            foreach ($dateKeys as $date) {
+                foreach ($this->dietTypes as $dietType) {
+                    $summary[$date][$dietType] += $row[$date][$dietType];
+                }
+            }
+        }
+
+        $temporaryRows = $this->rows;
+        $temporaryRows["summary"] = $summary;
+        return ['dates' => $dateKeys, 'diet_types' => $this->dietTypes, 'rows' => $temporaryRows];
 
     }
 }
+
 
 
