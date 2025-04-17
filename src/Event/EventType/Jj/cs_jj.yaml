@@ -1,0 +1,23 @@
+role:
+    guest: "tým"
+chooseRole:
+    registerAsGuest: "Registrovat se jako tým!"
+    adviceGuestText: "je na akci jako člen týmu. Pokud nevíš, jestli jsi součást týmu, nejspíše nejsi&nbsp;(:"
+detail:
+    scarf: "Šátek"
+    scarfYes: "Ano, chci jeden! Doplatím na akci za přibližně 200 Kč"
+    scarfNo: "Ne, nechci šátek."
+    skills-placeholder: "lanáč, focení, zvukařina, hraní na kytaru, dokážu sehnat LED obrazovku do 10k..."
+    notice-placeholder: "vlastníš zdravotní průkaz? Jaký?"
+dashboard-admin:
+    limitGuest: "limit týmu"
+    openGuest: "nezamčený tým"
+    lockedGuest: "tým s uzamčenou přihláškou"
+    approvedGuest: "schválený tým"
+    paidGuest: "potvrzený tým (nemuseli platit)"
+flash:
+    success:
+        guestApproved: "Týmák schválen a e-mail odeslán (bez platby)"
+    error:
+        notGuest: "Pardon, jsi přihlášený jako tým"
+

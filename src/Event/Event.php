@@ -11,6 +11,7 @@ use kissj\Event\EventType\Aqua\EventTypeAqua;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeDefault;
+use kissj\Event\EventType\Jj\EventTypeJj;
 use kissj\Event\EventType\Korbo\EventTypeKorbo;
 use kissj\Event\EventType\Miquik\EventTypeMiquik;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
@@ -88,6 +89,7 @@ class Event extends EntityDatetime
             'wsj' => EventTypeWsj::class,
             'obrok' => EventTypeObrok::class,
             'ospz' => EventTypeOspz::class,
+            'jj' => EventTypeJj::class,
             default => throw new \RuntimeException('unknown event type: ' . $this->row->event_type),
         };
 
