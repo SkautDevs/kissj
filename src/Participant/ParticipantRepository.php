@@ -699,16 +699,14 @@ class ParticipantRepository extends Repository
         return $qb;
     }
 
-    # retrieve count of food diets ordered by role (or pl if patrols/troops are allowed) and event days. Taking into account arrival dates for all participants.
-    # returns array<role, array<day, array<diet, count of food>>
-
+    # retrieve count of food diets aggregated by role and event days. Takes into account arrival and departure dates for all participants.
     /**
-     * @return array<string, array<string, array<string, int>>>
+     * @param Event $event
+     * @return ParticipantFoodPlan
      */
-    public function getCompleteFoodStatistic(
+    public function createParticipantFoodPlanFromEvent(
         Event $event,
-    ) :array
-    {
+    ): ParticipantFoodPlan {
         $eventParticipants = $this->getAllParticipantsWithStatus(
             [ParticipantRole::TroopLeader, ParticipantRole::PatrolLeader,  ParticipantRole::Ist,  ParticipantRole::Guest],
             [UserStatus::Paid],
@@ -722,15 +720,10 @@ class ParticipantRepository extends Repository
                 return $participant->foodPreferences !== null;
             });
 
-
-        if ($eventParticipants === []) return [];
-
-        return (new ParticipantFoodPlan($eventParticipants, $event))->toArray();
-
-
+        return new ParticipantFoodPlan($eventParticipants, $event);
     }
-    # retrieve absolute count of diets for event
 
+    # retrieve absolute count of diets for event
     /**
      * @return array<string, int>
      */
