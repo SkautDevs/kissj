@@ -1,25 +1,47 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+{# print whole foodstatistic
+    {% for firstLevel, secondLevels in foodStatistic %}
+        <h3>{{ firstLevel }}</h3>
+        {% for secondLevel, thirdLevels in secondLevels %}
+            <h4>{{ secondLevel }}</h4>
+            {% for thirdLevel, items in thirdLevels %}
+                <h5>{{ thirdLevel }}</h5>
+                <ul>
+                    {% for key, value in items %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+#}
 
+    <div class="card paid-theme">
+        <a href="{{ url_for('admin-export-food', {'eventSlug': event.slug}) }}"
+           target="_blank"
+           class="btn">{% trans %}foodStats-admin.exportFoodData{% endtrans %}</a><br/>
+    </div>
     //individual roles including summary
-{% for aggregator in aggregators %}
+{% for aggregator, row in foodStatistic.rows %}
     <div class="card approved-theme">
-            <h3>{{ aggregator }}</h3>
+            <h3>{{aggregator|trans}}</h3>
             <table >
                 <thead>
                 <tr>
-                    <th>dieta/den</th>
+                    <th>x</th>
                     {% for diet in foodStatistic.diet_types %}
-                        <th  style="text-align: left" > {{ diet }}</th>
+                        <th  style="text-align: left" > {{diet|trans}}</th>
                     {% endfor %}
                 </tr>
                 </thead>
                 <tbody>
                 {% for date in foodStatistic.dates %}
                     <tr>
+                        <th>{{date}}</th>
                         {% for diet in foodStatistic.diet_types %}
-                            <td>{{ foodStatistic[aggregator][date][diet] }}</td>
+                            <td>{{ row[date][diet]|trans }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

@@ -58,6 +58,25 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_full');
     }
 
+    public function exportFoodSummary(
+        Response $response,
+        User $user,
+        Event $event,
+    ): Response {
+        $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent($event)->toCSV();
+        $this->logger->info('Exported participants food summary by user with ID' . $user->id); //do we need this?
+
+        return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
+    }
+/*
+    public function exportFoodPatrols(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+
+    }
+*/
     /**
      * @param array<array<string>> $csvRows
      */
@@ -84,7 +103,6 @@ class ExportController extends AbstractController
 
         return $response->withBody($body);
     }
-
 
     public function exportPatrolsRoster(
         Request $request,
@@ -117,4 +135,5 @@ class ExportController extends AbstractController
 
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
+
 }

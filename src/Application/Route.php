@@ -317,8 +317,15 @@ class Route
                         $app->get('/full', ExportController::class . '::exportFullData')
                             ->setName('admin-export-full');
 
-                        $app->get('patrolsRoster', ExportController::class . '::exportPatrolsRoster')
+                        $app->get('/patrolsRoster', ExportController::class . '::exportPatrolsRoster')
                             ->setName('admin-export-patrols-roster');
+                        $app->group('/food', function (RouteCollectorProxy $app) {
+                            $app->get('/summary', ExportController::class . '::exportFoodSummary')
+                                ->setName('admin-export-food');
+                            //$app->get('/patrols', ExportController::class . '::exportFoodPatrols') // also used for troops
+                              //  ->setName('admin-export-patrols-food');
+                        });
+
                     });
 
                     $app->post('/import/ist', AdminController::class . '::importIstFromSrs')

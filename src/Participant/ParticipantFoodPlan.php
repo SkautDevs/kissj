@@ -11,7 +11,7 @@ use kissj\User\UserRole;
 
 class ParticipantFoodPlan
 {
-    /** @var DatePeriod<DateTime>*/
+    /** @var DatePeriod<DateTime, DateTime, null>*/
     public DatePeriod $dates;
     /** @var string[] */
     public array $dietTypes;
@@ -38,7 +38,7 @@ class ParticipantFoodPlan
 
     /**
      * @param Participant[] $participants
-     * @return DatePeriod<DateTime>
+     * @return DatePeriod<DateTime, DateTime, null>
      */
     private function getDateRange(array $participants, DateTimeInterface $defaultStartDay, DateTimeInterface $defaultEndDay): DatePeriod
     {
@@ -48,17 +48,19 @@ class ParticipantFoodPlan
                     return $carry; // skip null/empty
                 }
                 return $participant->arrivalDate < $carry ? $participant->arrivalDate : $carry;
-            }, $defaultStartDay);
+            },
+            $defaultStartDay);
 
         $lastDay = array_reduce($participants,
-        function (DateTimeInterface $carry, Participant $participant) {
-            if ($participant->arrivalDate === null) {
-                return $carry; // skip null/empty
-            }
-            return $participant->arrivalDate > $carry ? $participant->arrivalDate : $carry;
-        }, $defaultEndDay);
+            function (DateTimeInterface $carry, Participant $participant) {
+                if ($participant->departureDate === null) {
+                    return $carry; // skip null/empty
+                }
+                return $participant->departureDate > $carry ? $participant->departureDate : $carry;
+            },
+            $defaultEndDay);
 
-        return new DatePeriod(DateTime::createFromInterface($firstDay), new DateInterval('P1D'), DateTime::createFromInterface($lastDay)->modify('+1 day'));
+        return new DatePeriod(DateTime::createFromInterface($firstDay), new DateInterval('P1D'), DateTime::createFromInterface($lastDay), DatePeriod::INCLUDE_END_DATE);
     }
 
     /**
@@ -72,7 +74,7 @@ class ParticipantFoodPlan
         $rows = [];
 
         foreach ($participants as $p) {
-            $role = $p->role;
+            $role = 'role.' . ($p->role->value ?? 'p'); // convert participantRole to translatable
             $diet = $p->foodPreferences;
             $arrival = $p->arrivalDate ?? $defaultStartDay;
             $departure = $p->departureDate ?? $defaultEndDay;
@@ -82,11 +84,11 @@ class ParticipantFoodPlan
 
                 if ($diet === null) continue;
                 $dayKey = $date->format('j.n.');
-                if (!isset($rows[$role->value  ?? 'p'][$dayKey])) {
-                    $rows[$role->value  ?? 'p'][$dayKey] = array_fill_keys($this->dietTypes, 0);
+                if (!isset($rows[$role][$dayKey])) {
+                    $rows[$role][$dayKey] = array_fill_keys($this->dietTypes, 0);
                 }
 
-                $rows[$role->value  ?? 'p'][$dayKey][$diet]++;
+                $rows[$role][$dayKey][$diet]++;
             }
         }
 
@@ -94,27 +96,76 @@ class ParticipantFoodPlan
     }
 
     /**
-     * array with all necessary data for foodstats view render
-     * @return array<string, array<string, array<string, array<int>>|string>>
+     * array with all necessary data for foodstats-admin view render
+     * @return array<string, array<array<string, array<string, int>>|string>>
      */
     public function toArray(): array {
         $dateKeys = [];
         foreach ($this->dates as $date) $dateKeys[] = $date->format('j.n.');
 
-        $summary = array_fill_keys($dateKeys, array_fill_keys($this->dietTypes, 0));
-        foreach ($this->rows as $row) {
+        $dietTypesIncludingSum = $this->dietTypes;
+        $dietTypesIncludingSum[] = "foodStats-admin.daySum"; // include sum value for every day
+        $temporaryRows = $this->rows;
+
+        $summary = array_fill_keys($dateKeys, array_fill_keys($dietTypesIncludingSum, 0)); // fill summary with zeros
+
+        foreach ($temporaryRows as $role => $row) {
             foreach ($dateKeys as $date) {
-                foreach ($this->dietTypes as $dietType) {
-                    $summary[$date][$dietType] += $row[$date][$dietType];
+                if (isset($row[$date])) {
+                    $sum = 0;
+                    foreach ($dietTypesIncludingSum as $dietType) {
+                        if (isset($row[$date][$dietType])) { // day summaries are not yet initialized at this point - so skip them
+                            $summary[$date][$dietType] += $row[$date][$dietType];
+                            $sum += $row[$date][$dietType];
+                        }
+                    }
+
+                    $temporaryRows[$role][$date]["foodStats-admin.daySum"] = $sum;
+                    $summary[$date]["foodStats-admin.daySum"] += $sum;
                 }
             }
         }
 
-        $temporaryRows = $this->rows;
-        $temporaryRows["summary"] = $summary;
-        return ['dates' => $dateKeys, 'diet_types' => $this->dietTypes, 'rows' => $temporaryRows];
+        $temporaryRows["foodStats-admin.summary"] = $summary;
 
+        return ['dates' => $dateKeys, 'diet_types' => $dietTypesIncludingSum, 'rows' => $temporaryRows];
     }
+
+    /**
+     * Food plan array containing count of foodPreferences aggregated by role and day
+     * intended to be converted into CSV
+     * @return list<list<string>>
+     *
+     */
+    public function toCSV(): array {
+
+        $newArray = [[], []];
+        $dateKeys = [];
+        $dietTypesCount = count($this->dietTypes);
+        foreach ($this->dates as $date) $dateKeys[] = $date->format('j.n.');
+        $newArray[0][] = "day";
+        $newArray[1][] = "diet";
+        foreach($dateKeys as $dateKey) {
+            foreach($this->dietTypes as $dietType) {
+                $newArray[0][] = $dateKey;
+                $newArray[1][] = $dietType;
+            }
+        }
+
+        foreach ($this->rows as $role => $row) {
+            $newRow = [$role];
+            foreach ($dateKeys as $dateKey) {
+                foreach ($this->dietTypes as $dietType) if (isset($row[$dateKey])) {
+                    $newRow[] =  (string)$row[$dateKey][$dietType];
+                }
+                else $newRow[] = "0";
+            }
+            $newArray[] = $newRow;
+        }
+
+        return $newArray;
+    }
+
 }
 
 
