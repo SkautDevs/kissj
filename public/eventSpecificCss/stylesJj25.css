@@ -1,8 +1,18 @@
 :root {
     --color-background: #e4e1d5;
+    --color-card-background: #f9f9f9;
+    --color-input-background: #ffffff;
     --color-main: #286582;
     --color-accent: #a81d16;
     --color-fading: #fdac40;
     --color-light: #fdac40;
-    --color-dark: #8a9874;
+    --color-dark: #06375a;
+    --color-grey: #818181;
+    --color-link: #274b80;
+    --color-link-visited: #5281ab;
+}
+
+.alert-success {
+    --color: #8a9874;
+    color: black;
 }
