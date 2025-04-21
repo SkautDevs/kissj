@@ -32,14 +32,7 @@ readonly class ExportService
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [
-                ParticipantRole::PatrolLeader,
-                ParticipantRole::PatrolParticipant,
-                ParticipantRole::TroopLeader,
-                ParticipantRole::TroopParticipant,
-                ParticipantRole::Ist,
-                ParticipantRole::Guest,
-            ],
+            ParticipantRole::all(),
             [UserStatus::Paid],
             $event,
             $adminUser,
@@ -88,14 +81,7 @@ readonly class ExportService
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [
-                ParticipantRole::PatrolLeader,
-                ParticipantRole::PatrolParticipant,
-                ParticipantRole::TroopLeader,
-                ParticipantRole::TroopParticipant,
-                ParticipantRole::Ist,
-                ParticipantRole::Guest,
-            ],
+            ParticipantRole::all(),
             [UserStatus::Paid],
             $event,
             $adminUser,
@@ -144,15 +130,8 @@ readonly class ExportService
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
-            [
-                ParticipantRole::PatrolLeader,
-                ParticipantRole::PatrolParticipant,
-                ParticipantRole::TroopLeader,
-                ParticipantRole::TroopParticipant,
-                ParticipantRole::Ist,
-                ParticipantRole::Guest,
-            ],
-            [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
+            ParticipantRole::all(),
+            [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid, UserStatus::Cancelled],
             $event,
             $adminUser,
             sortedByTroopOrPatrol: true,

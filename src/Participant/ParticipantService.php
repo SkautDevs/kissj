@@ -280,14 +280,7 @@ readonly class ParticipantService
     public function getParticipantsComingToEventCount(Event $event): int
     {
         $allParticipants = $this->participantRepository->getParticipantsCount(
-            [
-                ParticipantRole::PatrolLeader,
-                ParticipantRole::PatrolParticipant,
-                ParticipantRole::TroopLeader,
-                ParticipantRole::TroopParticipant,
-                ParticipantRole::Ist,
-                ParticipantRole::Guest,
-            ],
+            ParticipantRole::all(),
             [
                 UserStatus::Closed,
                 UserStatus::Approved,

@@ -12,4 +12,19 @@ enum ParticipantRole: string
     case Guest = 'guest';
     case TroopLeader = 'tl';
     case TroopParticipant = 'tp';
+
+    /**
+     * @return list<ParticipantRole>
+     */
+    public static function all(): array
+    {
+        return [
+            self::Ist,
+            self::PatrolLeader,
+            self::PatrolParticipant,
+            self::Guest,
+            self::TroopLeader,
+            self::TroopParticipant,
+        ];
+    }
 }
