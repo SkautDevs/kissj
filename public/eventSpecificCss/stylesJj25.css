@@ -12,7 +12,19 @@
     --color-link-visited: #5281ab;
 }
 
+.alert-info {
+    --color: #b17e4d;
+    color: var(--color-dark);
+}
 .alert-success {
     --color: #8a9874;
-    color: black;
+    color: var(--color-dark)
+}
+.alert-warning {
+    --color: #f3d046;
+    color: var(--color-dark)
+}
+.alert-error {
+    --color: #a21f16;
+    color: white;
 }
