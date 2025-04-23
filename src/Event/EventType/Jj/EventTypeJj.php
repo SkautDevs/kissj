@@ -16,13 +16,29 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeJj extends EventType
 {
+    private const int SCARF_PRICE = 200;
+
     protected function getPrice(Participant $participant): int
     {
-        return match (true) {
+        $price = match (true) {
             $participant instanceof Ist => 300,
             $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 650,
             default => throw new \Exception('Unknown participant class'),
         };
+
+        if ($participant->scarf === Participant::SCARF_YES) {
+            $price += self::SCARF_PRICE;
+        }
+
+        if ($participant instanceof PatrolLeader) {
+            foreach ($participant->patrolParticipants as $patrolParticipant) {
+                if ($patrolParticipant->scarf === Participant::SCARF_YES) {
+                    $price += self::SCARF_PRICE;
+                }
+            }
+        }
+
+        return $price;
     }
 
     public function getContentArbiterIst(): ContentArbiterIst

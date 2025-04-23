@@ -5,7 +5,7 @@ chooseRole:
     adviceGuestText: "je na akci jako člen týmu. Pokud nevíš, jestli jsi součást týmu, nejspíše nejsi&nbsp;(:"
 detail:
     scarf: "Šátek"
-    scarfYes: "Ano, chci jeden! Doplatím na akci za přibližně 200 Kč"
+    scarfYes: "Ano, chci jeden za 200 Kč!"
     scarfNo: "Ne, nechci šátek."
     skills-placeholder: "lanáč, focení, zvukařina, hraní na kytaru, dokážu sehnat LED obrazovku do 10k..."
     notice-placeholder: "vlastníš zdravotní průkaz? Jaký?"
