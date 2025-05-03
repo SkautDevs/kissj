@@ -1,8 +1,8 @@
 <b>{{ person.getFullName }}</b>
 {% if person is PatrolLeader %}
-    - {{ person.getPatrolParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
+    - {{ person.getPatrolParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %} <b>{{ person.getPatrolName }}</b>
 {% elseif person is TroopLeader %}
-    - {{ person.getTroopParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %}
+    - {{ person.getTroopParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %} <b>{{ person.getPatrolName }}</b>
 {% endif %}
 {% if ca.contingent %}
     - <b>{{ person.getContingent|trans }}</b>

@@ -392,7 +392,7 @@ dashboard-admin:
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"
-    numberPatrolParticipantsTotal: "v patrole celkem"
+    numberPatrolParticipantsTotal: "v patrole"
     paid: "Zaplacení účastníci akce"
     generate-more-payments: "Vygenerovat více plateb"
     changeRole: "Změnit roli"
