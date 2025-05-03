@@ -350,7 +350,7 @@ textarea {
 	min-height: 3rem;
 }
 
-div.payment-overdue {
+div.payment-cancelled {
 	text-decoration: line-through;
 }
 
