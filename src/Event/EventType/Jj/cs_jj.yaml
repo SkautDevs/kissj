@@ -4,6 +4,7 @@ chooseRole:
     registerAsGuest: "Registrovat se jako tým!"
     adviceGuestText: "je na akci jako člen týmu. Pokud nevíš, jestli jsi součást týmu, nejspíše nejsi&nbsp;(:"
 detail:
+    phonePlaceholder: "pokud nemá, napiš telefon vedoucího"
     scarf: "Šátek"
     scarfYes: "Ano, chci jeden za 200 Kč!"
     scarfNo: "Ne, nechci šátek."
@@ -15,9 +16,13 @@ dashboard-admin:
     lockedGuest: "tým s uzamčenou přihláškou"
     approvedGuest: "schválený tým"
     paidGuest: "potvrzený tým (nemuseli platit)"
+email:
+    layout:
+        ifQuestion: "Pokud máš otázky, můžeš odpovědi na ně najít na našem webu"
+        sendEmail: "nebo můžeš rovnou kontaktovat našeho admina pro registraci"
+        farewell: "Brzy na viděnou!"
 flash:
     success:
         guestApproved: "Týmák schválen a e-mail odeslán (bez platby)"
     error:
         notGuest: "Pardon, jsi přihlášený jako tým"
-
