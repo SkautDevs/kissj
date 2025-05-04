@@ -699,18 +699,14 @@ class ParticipantRepository extends Repository
         return $qb;
     }
 
-    # retrieve count of food diets aggregated by role or troop/patrol names and event days. Takes into account arrival and departure dates for all participants.
-
-
     /**
-     * @param Event $event
-     * @param bool $usePatrolAndTroopsAgreggator
+     * Retrieve count of food diets aggregated by role or troop/patrol names and event days. Takes into account arrival and departure dates for all participants.
+     *
      * @param list<ParticipantRole> $participantRole
-     * @return ParticipantFoodPlan
      */
     public function createParticipantFoodPlanFromEvent(
         Event $event,
-        bool $usePatrolAndTroopsAgreggator,
+        bool $usePatrolAndTroopsAggregator,
         array $participantRole = [
             ParticipantRole::TroopLeader,
             ParticipantRole::PatrolLeader,
@@ -719,7 +715,6 @@ class ParticipantRepository extends Repository
             ParticipantRole::Ist,
             ParticipantRole::Guest,
         ],
-
     ): ParticipantFoodPlan {
         $eventParticipants = $this->getAllParticipantsWithStatus(
             $participantRole,
@@ -732,15 +727,15 @@ class ParticipantRepository extends Repository
             $eventParticipants,
             function (Participant $participant): bool {
                 return $participant->foodPreferences !== null;
-            });
+            }
+        );
 
-
-
-        return new ParticipantFoodPlan($eventParticipants, $event, usePatrolAndTroopsAgreggator: $usePatrolAndTroopsAgreggator);
+        return new ParticipantFoodPlan($eventParticipants, $event, $usePatrolAndTroopsAggregator);
     }
 
-    # retrieve absolute count of diets for event
     /**
+     * retrieve absolute count of diets for event
+     *
      * @return array<string, int>
      */
     public function getDigestFoodStatistic(

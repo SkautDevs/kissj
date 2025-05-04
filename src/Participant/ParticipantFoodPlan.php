@@ -14,23 +14,24 @@ use kissj\Participant\Troop\TroopParticipant;
 
 class ParticipantFoodPlan
 {
-    /** @var DatePeriod<DateTime, DateTime, null>*/
+    /** @var DatePeriod<DateTime, DateTime, null> */
     public DatePeriod $dates;
+
     /** @var string[] */
     public array $dietTypes;
 
-    /** @var bool*/
-    private bool $usePatrolAndTroopsAgreggator;
+    /** @var bool */
+    private bool $usePatrolAndTroopsAggregator;
 
     /** @var  array<int|string, string> */
     private array $participantPatrolTroopName; // patrol leader id => patrolName, so that we don't have to query db later
+
     /** @var array<string, array<string, array<string, int>>> */
-    private array $AggregatedRows;
+    private array $aggregatedRows;
 
 
     /**
      * @param Participant[] $participants
-     * @param Event $event
      */
     public function __construct(array $participants, Event $event, bool $usePatrolAndTroopsAgreggator = false)
     {
@@ -38,13 +39,13 @@ class ParticipantFoodPlan
         $this->dietTypes = array_unique(
             array_filter(
                 array_column($participants, 'foodPreferences'),
-                fn(?string $food) => !is_null($food)
+                fn (?string $food) => !is_null($food)
             )
         );
 
-        $this->usePatrolAndTroopsAgreggator = $usePatrolAndTroopsAgreggator;
+        $this->usePatrolAndTroopsAggregator = $usePatrolAndTroopsAgreggator;
 
-        $this->AggregatedRows = $this->buildRoleAggregatedPlan($participants, $event->startDay, $event->endDay);
+        $this->aggregatedRows = $this->buildRoleAggregatedPlan($participants, $event->startDay, $event->endDay);
 
     }
 
@@ -52,64 +53,78 @@ class ParticipantFoodPlan
      * @param Participant[] $participants
      * @return DatePeriod<DateTime, DateTime, null>
      */
-    private function getDateRange(array $participants, DateTimeInterface $defaultStartDay, DateTimeInterface $defaultEndDay): DatePeriod
-    {
-        $firstDay = array_reduce($participants,
+    private function getDateRange(
+        array $participants,
+        DateTimeInterface $defaultStartDay,
+        DateTimeInterface $defaultEndDay,
+    ): DatePeriod {
+        $firstDay = array_reduce(
+            $participants,
             function (DateTimeInterface $carry, Participant $participant) {
                 if ($participant->arrivalDate === null) {
                     return $carry; // skip null/empty
                 }
+
                 return $participant->arrivalDate < $carry ? $participant->arrivalDate : $carry;
             },
-            $defaultStartDay);
+            $defaultStartDay,
+        );
 
-        $lastDay = array_reduce($participants,
+        $lastDay = array_reduce(
+            $participants,
             function (DateTimeInterface $carry, Participant $participant) {
                 if ($participant->departureDate === null) {
                     return $carry; // skip null/empty
                 }
+
                 return $participant->departureDate > $carry ? $participant->departureDate : $carry;
             },
-            $defaultEndDay);
+            $defaultEndDay,
+        );
 
-        return new DatePeriod(DateTime::createFromInterface($firstDay), new DateInterval('P1D'), DateTime::createFromInterface($lastDay), DatePeriod::INCLUDE_END_DATE);
+        return new DatePeriod(
+            DateTime::createFromInterface($firstDay),
+            new DateInterval('P1D'),
+            DateTime::createFromInterface($lastDay),
+            DatePeriod::INCLUDE_END_DATE,
+        );
     }
 
     /**
      * @param Participant[] $participants
-     * @param DateTimeInterface $defaultStartDay
-     * @param DateTimeInterface $defaultEndDay
      * @return array<string, array<string, array<string, int>>>
      */
-    private function buildRoleAggregatedPlan(array $participants, DateTimeInterface $defaultStartDay, DateTimeInterface $defaultEndDay): array
-    {
+    private function buildRoleAggregatedPlan(
+        array $participants,
+        DateTimeInterface $defaultStartDay,
+        DateTimeInterface $defaultEndDay,
+    ): array {
         $rows = [];
 
-        if ($this->usePatrolAndTroopsAgreggator) {
+        if ($this->usePatrolAndTroopsAggregator) {
             $this->participantPatrolTroopName = [];
 
             foreach ($participants as $p) {
                 if ($p instanceof PatrolLeader || $p instanceof TroopLeader) {
                     $patrolOrTroopLeaderName = $p->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)$p->id;
-                }
-                else if ($p instanceof PatrolParticipant) {
+                } elseif ($p instanceof PatrolParticipant) {
                     $patrolOrTroopLeaderName = $p->patrolLeader->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)$p->patrolLeader->id;
-                }
-                else if ($p instanceof TroopParticipant) {
+                } elseif ($p instanceof TroopParticipant) {
                     $patrolOrTroopLeaderName = $p->troopLeader->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)($p->troopLeader ?? $p)->id;
+                } else {
+                    continue;
                 }
-                else continue;
 
                 $this->participantPatrolTroopName[$patrolOrTroopLeaderId] = $patrolOrTroopLeaderName;
-                $rows = $this->InsertParticipantIntoRows($p, $defaultStartDay, $defaultEndDay, $rows, $patrolOrTroopLeaderId);
+                $rows = $this->insertParticipantIntoRows($p, $defaultStartDay, $defaultEndDay, $rows, $patrolOrTroopLeaderId);
             }
         } else {
             foreach ($participants as $p) {
                 $role = 'role.' . ($p->role->value ?? 'p'); // convert participantRole to translatable
-                $rows = $this->InsertParticipantIntoRows($p, $defaultStartDay, $defaultEndDay, $rows, $role);
+                $rows = $this->insertParticipantIntoRows($p, $defaultStartDay, $defaultEndDay, $rows, $role);
             }
         }
 
@@ -118,18 +133,23 @@ class ParticipantFoodPlan
 
     /**
      * array with all necessary data for foodstats-admin view render
+     *
      * @return array<string, array<array<string, array<string, int>>|string>>
      */
-    public function roleAggregatedToArray(): array {
-
-        if ($this->usePatrolAndTroopsAgreggator) return [];
+    public function roleAggregatedToArray(): array
+    {
+        if ($this->usePatrolAndTroopsAggregator) {
+            return [];
+        }
 
         $dateKeys = [];
-        foreach ($this->dates as $date) $dateKeys[] = $date->format('j.n.');
+        foreach ($this->dates as $date) {
+            $dateKeys[] = $date->format('j.n.');
+        }
 
         $dietTypesIncludingSum = $this->dietTypes;
         $dietTypesIncludingSum[] = "foodStats-admin.daySum"; // include sum value for every day
-        $temporaryRows = $this->AggregatedRows;
+        $temporaryRows = $this->aggregatedRows;
 
         $summary = array_fill_keys($dateKeys, array_fill_keys($dietTypesIncludingSum, 0)); // fill summary with zeros
 
@@ -158,37 +178,40 @@ class ParticipantFoodPlan
     /**
      * Food plan array containing count of foodPreferences aggregated by role and day
      * intended to be converted into CSV
-     * @return list<list<string>>
      *
+     * @return list<list<string>>
      */
-    public function aggregatedToCSV(): array {
-
+    public function aggregatedToCSV(): array
+    {
         $newArray = [[], []];
         $dateKeys = [];
 
-        foreach ($this->dates as $date) $dateKeys[] = $date->format('j.n.');
+        foreach ($this->dates as $date) {
+            $dateKeys[] = $date->format('j.n.');
+        }
         $newArray[0][] = "day";
         $newArray[1][] = "diet";
-        foreach($dateKeys as $dateKey) {
-            foreach($this->dietTypes as $dietType) {
+        foreach ($dateKeys as $dateKey) {
+            foreach ($this->dietTypes as $dietType) {
                 $newArray[0][] = $dateKey;
                 $newArray[1][] = $dietType;
             }
         }
 
-
-        foreach ($this->AggregatedRows as $aggregator => $row) {
-
-            if ($this->usePatrolAndTroopsAgreggator) {
+        foreach ($this->aggregatedRows as $aggregator => $row) {
+            if ($this->usePatrolAndTroopsAggregator) {
                 $aggregator = $this->participantPatrolTroopName[$aggregator];
             }
 
             $newRow = [$aggregator];
             foreach ($dateKeys as $dateKey) {
-                foreach ($this->dietTypes as $dietType) if (isset($row[$dateKey])) {
-                    $newRow[] =  (string)$row[$dateKey][$dietType];
+                foreach ($this->dietTypes as $dietType) {
+                    if (isset($row[$dateKey])) {
+                        $newRow[] =  (string)$row[$dateKey][$dietType];
+                    } else {
+                        $newRow[] = '0';
+                    }
                 }
-                else $newRow[] = "0";
             }
             $newArray[] = $newRow;
         }
@@ -197,23 +220,29 @@ class ParticipantFoodPlan
     }
 
     /**
-     * @param Participant $p
-     * @param DateTimeInterface $defaultStartDay
-     * @param DateTimeInterface $defaultEndDay
      * @param array<string, array<string, array<string, int>>> $rows
-     * @param string $aggregator
+     *
      * @return array<string, array<string, array<string, int>>>
      */
-    private function InsertParticipantIntoRows(Participant $p, DateTimeInterface $defaultStartDay, DateTimeInterface $defaultEndDay, array $rows, string $aggregator): array
-    {
+    private function insertParticipantIntoRows(
+        Participant $p,
+        DateTimeInterface $defaultStartDay,
+        DateTimeInterface $defaultEndDay,
+        array $rows,
+        string $aggregator,
+    ): array {
         $diet = $p->foodPreferences;
         $arrival = $p->arrivalDate ?? $defaultStartDay;
         $departure = $p->departureDate ?? $defaultEndDay;
 
         foreach ($this->dates as $date) {
-            if ($date < $arrival || $date > $departure) continue;
+            if ($date < $arrival || $date > $departure) {
+                continue;
+            }
 
-            if ($diet === null) continue;
+            if ($diet === null) {
+                continue;
+            }
             $dayKey = $date->format('j.n.');
             if (!isset($rows[$aggregator][$dayKey])) {
                 $rows[$aggregator][$dayKey] = array_fill_keys($this->dietTypes, 0);
@@ -223,8 +252,4 @@ class ParticipantFoodPlan
         }
         return $rows;
     }
-
 }
-
-
-

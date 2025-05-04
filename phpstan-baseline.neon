@@ -139,18 +139,6 @@ parameters:
 			path: src/Participant/Participant.php
 
 		-
-			message: '#^Binary operation "\+\=" between \(float\|int\) and mixed results in an error\.$#'
-			identifier: assignOp.invalid
-			count: 1
-			path: src/Participant/ParticipantRepository.php
-
-		-
-			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getFoodStatistic\(\) should return array\<string, int\> but returns array\<\(float\|int\)\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Participant/ParticipantRepository.php
-
-		-
 			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getRowsForEntryParticipant\(\) should return array\<Dibi\\Row\> but returns array\.$#'
 			identifier: return.type
 			count: 1
