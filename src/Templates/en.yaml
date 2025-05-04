@@ -581,6 +581,7 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Participant is not in approved or paid status, therefore is uneligible for new payment"
         paymentAlreadyPaid: "Payment cannot be marked as paid, because it is already paid"
         paymentAlreadyCanceled: "Payment cannot be marked as cancelled, because it is already cancelled"
+        foodStatsNotAllowed: "You are not allowed to see food stats for this event."
     error:
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"

@@ -65,7 +65,7 @@ class ExportController extends AbstractController
         Event $event,
     ): Response {
         $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
-        $this->logger->info('Exported participants food summary by user with ID' . $user->id); //do we need this?
+        $this->logger->info('Exported participants food summary by user with ID: ' . $user->id);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
     }
@@ -75,7 +75,6 @@ class ExportController extends AbstractController
         User $user,
         Event $event,
     ): Response {
-
         $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent(
             $event,
             true,
@@ -83,11 +82,10 @@ class ExportController extends AbstractController
                 ParticipantRole::PatrolLeader,
                 ParticipantRole::PatrolParticipant,
                 ParticipantRole::TroopLeader,
-                ParticipantRole::TroopParticipant]
-        )
-
-            ->aggregatedToCSV();
-        $this->logger->info('Exported patrols and troops food summary by user with ID' . $user->id); //do we need this?
+                ParticipantRole::TroopParticipant,
+            ],
+        )->aggregatedToCSV();
+        $this->logger->info('Exported patrols and troops food summary by user with ID: ' . $user->id);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_patrol_troop_food');
     }
@@ -150,5 +148,4 @@ class ExportController extends AbstractController
 
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
-
 }

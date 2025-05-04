@@ -7,6 +7,7 @@ namespace kissj\Application;
 use DI\Container;
 use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
+use kissj\Middleware\ShowFoodStatsAllowedOnly;
 use kissj\Participant\Admin\AdminJsonController;
 use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Event\EventController;
@@ -308,10 +309,10 @@ class Route
                             ->setName('admin-troop-untie');
                     });
 
-                    $app->group('/foodStats',  function (RouteCollectorProxy $app) {
-                       $app->get('', AdminController::class . '::showDetailedFoodStats')
-                            ->setName('admin-food-stats');
-                    });
+                    $app->group('/foodStats', function (RouteCollectorProxy $app) {
+                        $app->get('', AdminController::class . '::showDetailedFoodStats')
+                             ->setName('admin-food-stats');
+                    })->add(ShowFoodStatsAllowedOnly::class);
 
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')

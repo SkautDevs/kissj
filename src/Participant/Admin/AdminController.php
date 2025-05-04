@@ -858,21 +858,9 @@ class AdminController extends AbstractController
     }
 
     public function showDetailedFoodStats(
-        Request $request,
         Response $response,
         Event $event,
     ): Response {
-        $eventType = $event->getEventType();
-
-        if (!$eventType->showFoodStats()) {
-            return $this->redirect(
-                $request,
-                $response,
-                'admin-dashboard',
-            );
-
-        }
-
         return $this->view->render($response, 'admin/foodStats-admin.twig', [
             'event'  => $event,
             'foodStatistic' => $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->roleAggregatedToArray(),

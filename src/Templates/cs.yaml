@@ -581,6 +581,7 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Účastník není schválený ani zaplacený, tedy mu nemůže být přidána platba"
         paymentAlreadyPaid: "Platbu nelze označit jako zaplacenou, protože už zaplacená je"
         paymentAlreadyCanceled: "Platbu nelze označit jako zrušenou, protože už zrušená je"
+        foodStatsNotAllowed: "Nemáš oprávnění vidět statistiky jídla pro tuto akci."
     error:
         adminOnly: "Sorry bro, pouze pro administrátory"
         adminPaymentsOnly: "Sorry bro, pouze pro administrátory s pravomocí plateb"
