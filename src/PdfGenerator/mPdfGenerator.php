@@ -77,8 +77,28 @@ class mPdfGenerator extends PdfGenerator
         ];
 
         $html = $this->twig->fetch($templateName, $templateData);
-        foreach (str_split($html, 999_999) as $htmlChunk) {
-            $this->mpdf->WriteHTML($htmlChunk);
+        $htmlLength = strlen($html);
+
+        $targetChunkSize = 999_999;
+        $offset = 0;
+
+        while ($offset < $htmlLength) {
+            $chunk = substr($html, $offset, $targetChunkSize);
+            $chunkLength = strlen($chunk);
+
+            if ($offset + $chunkLength < $htmlLength) {
+                // find the last closing tag in this chunk
+                $lastTagPos = strrpos($chunk, '>');
+
+                if ($lastTagPos !== false) {
+                    // adjust chunk to end at a tag boundary, so split won't emerge inside a HTML tag
+                    $chunk = substr($chunk, 0, $lastTagPos + 1);
+                    $chunkLength = strlen($chunk);
+                }
+            }
+
+            $this->mpdf->WriteHTML($chunk);
+            $offset += $chunkLength;
         }
 
         return $this->mpdf->Output(dest: 'S');
