@@ -122,7 +122,7 @@ detail:
     medicaments: "Léky"
     medicaments-placeholder: "pravidelně užívané léky o kterých bychom měli vědět"
     psychicalIssues: "Duševní onemocnění"
-    psychicalIssues-placeholder: ""
+    psychicalIssues-placeholder: "např. úzkosti, deprese, panické ataky..."
     language: "Jazyky + úroveň"
     language-placeholder: "např. angličtina B1, francouština C1, němčina pasivně"
     idNumber: "Číslo občanky/pasu"
