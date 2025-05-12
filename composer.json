@@ -87,7 +87,6 @@
 		"sort-packages": true,
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
-		"apcu-autoloader": true,
 		"allow-plugins": {
 			"php-http/discovery": false,
 			"phpstan/extension-installer": true
