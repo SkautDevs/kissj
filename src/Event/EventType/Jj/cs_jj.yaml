@@ -26,3 +26,11 @@ flash:
         guestApproved: "Týmák schválen a e-mail odeslán (bez platby)"
     error:
         notGuest: "Pardon, jsi přihlášený jako tým"
+receipt:
+    headline: "Potvrzení o přijetí platby"
+    number: "Číslo dokladu"
+    accepter: "Junák – český skaut, středisko Zlatá Růže Jindřichův Hradec, z. s.<br/>
+      Sídliště Vajgar 876/III<br/>
+      377 01 Jindřichův Hradec<br/>
+     IČO: 60816970"
+    acceptedSign: "Potvrzení automaticky vystavil hospodář akce Šimon Roubíček dne %acceptedDate%"
