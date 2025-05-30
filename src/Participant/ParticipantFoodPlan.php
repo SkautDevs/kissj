@@ -6,6 +6,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use kissj\Event\Event;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -35,7 +36,11 @@ class ParticipantFoodPlan
      */
     public function __construct(array $participants, Event $event, bool $usePatrolAndTroopsAgreggator = false)
     {
-        $this->dates = $this->getDateRange($participants, $event->startDay, $event->endDay);
+        //normalize dates from event
+        $defaultStartDay = DateTime::createFromInterface($event->startDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0);
+        $defaultEndDay = DateTime::createFromInterface($event->endDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0);
+
+        $this->dates = $this->getDateRange($participants, $defaultStartDay, $defaultEndDay, );
         $this->dietTypes = array_unique(
             array_filter(
                 array_column($participants, 'foodPreferences'),
@@ -45,7 +50,7 @@ class ParticipantFoodPlan
 
         $this->usePatrolAndTroopsAggregator = $usePatrolAndTroopsAgreggator;
 
-        $this->aggregatedRows = $this->buildRoleAggregatedPlan($participants, $event->startDay, $event->endDay);
+        $this->aggregatedRows = $this->buildRoleAggregatedPlan($participants, $defaultStartDay, $defaultEndDay, );
 
     }
 
@@ -82,10 +87,11 @@ class ParticipantFoodPlan
             $defaultEndDay,
         );
 
+        // date period for which stats will be generated.
         return new DatePeriod(
-            DateTime::createFromInterface($firstDay),
+            DateTime::createFromInterface($firstDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0),
             new DateInterval('P1D'),
-            DateTime::createFromInterface($lastDay),
+            DateTime::createFromInterface($lastDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0),
             DatePeriod::INCLUDE_END_DATE,
         );
     }
