@@ -48,7 +48,7 @@ class EventTypeNavigamus extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
-        $caIst->phone = true;
+        $caPl->phone = true;
         $caPl->food = true;
         $caPl->contingent = true;
 
