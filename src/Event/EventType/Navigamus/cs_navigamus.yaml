@@ -13,3 +13,5 @@ detail:
         adventure: "Adventure - 🟥 červená"
         discovery: "Discovery - 🟩 zelená"
         resolution: "Resolution - 🟦 modrá"
+roster:
+    perex: "Podpisem potvrzuji, že souhlasím s Pravidly akce + GDPR + Safe from Harm."

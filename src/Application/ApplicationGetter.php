@@ -26,7 +26,6 @@ class ApplicationGetter
         $app->setBasePath($_ENV['BASEPATH']);
 
         if (headers_sent() === false) { // because of PhpUnit handling sessions poorly
-            /** @var SessionHandlerInterface|null $sessionHandler */
             $sessionHandler = $container->get(SessionHandlerInterface::class);
             if ($sessionHandler instanceof RedisSessionHandler) {
                 // temporary fix for not deployed Redis in infrastructure, remove if when deployed

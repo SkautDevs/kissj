@@ -4,7 +4,12 @@
     {% for patrol in patrolsRoster.patrolsRoster %}
         <div class="roster">
             <div class="roster-header">
-                <span class="roster-header-headline ">{{ patrol.patrolName }} ({{ patrol.patrolId }})</span>
+                <span class="roster-header-headline ">
+                    {{ patrol.patrolName }} ({{ patrol.patrolId }})
+                    {% if patrol.contingent %}
+                        -  {{ patrol.contingent|trans }}
+                    {% endif %}
+                </span>
                 <img class="roster-header-image" src="data:image/png;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
                 <p>{{ 'roster.perex'|trans }}</p>
             </div>

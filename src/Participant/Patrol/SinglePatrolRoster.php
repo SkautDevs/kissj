@@ -12,6 +12,7 @@ readonly class SinglePatrolRoster
     public function __construct(
         public string $patrolId,
         public string $patrolName,
+        public string $contingent,
         public string $patrolLeaderName,
         public array $patrolParticipantNames,
     ) {

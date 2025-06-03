@@ -574,6 +574,7 @@ class ParticipantRepository extends Repository
             $singlePatrolsRoster[] = new SinglePatrolRoster(
                 (string)$pl->id,
                 $pl->patrolName ?? '',
+                $pl->contingent ?? '',
                 $pl->getFullName(),
                 array_map(
                     fn (PatrolParticipant $pp): string => $pp->getFullName(),
