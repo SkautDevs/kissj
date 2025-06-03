@@ -25,15 +25,17 @@ class mPdfGenerator extends PdfGenerator
     public function generatePdfReceipt(Participant $participant, string $templateName): string
     {
         $event = $participant->getUserButNotNull()->event;
-        $payment = $participant->getFirstPaidPayment();
+        $payments = $participant->getAllPaidPayment();
+        $firstPaymentId = $payments[0]->id ?? null;
+
         $templateData = [
         	'event' => $event,
         	'skautLogo' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautLogoPath($participant)),
-        	'receiptNumber' => $event->eventType->getReceiptNumber($event->slug, $participant, (string)$payment?->id),
+        	'receiptNumber' => $event->eventType->getReceiptNumber($event->slug, $participant, (string)$firstPaymentId),
         	'eventDates' => $event->startDay->format('j. n. Y') . ' až ' . $event->endDay->format('j. n. Y'),
         	'participant' => $participant,
         	'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
-        	'payment' => $payment,
+        	'payments' => $payments,
         	'acceptedDate' => $participant->registrationPayDate?->format('j. n. Y'),
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
         ];

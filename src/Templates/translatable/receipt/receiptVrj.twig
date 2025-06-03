@@ -21,12 +21,14 @@
             '%allOtherParticipants%': allOtherParticipants,
         }) }}</p>
 {% endif %}
-<p>{{ 'receipt.acceptPaymentPayment'|trans({
-        '%paymentAmount%': payment.price,
-        '%paymentCurrency%': payment.currency,
-        '%paymentVariableSymbol%': payment.variableSymbol,
-        '%paymentAccountTo%': payment.accountNumber,
-    }) }}</p>
+<p>{% for payment in payments %}
+    {{ 'receipt.acceptPaymentPayment'|trans({
+            '%paymentAmount%': payment.price,
+            '%paymentCurrency%': payment.currency,
+            '%paymentVariableSymbol%': payment.variableSymbol,
+            '%paymentAccountTo%': payment.accountNumber,
+        }) }}
+    {% endfor %}</p>
 <p class="content-right">{{ 'receipt.acceptedSign'|trans({
         '%acceptedDate%': participant.registrationPayDate.format('j. n. Y'),
     }) }}</p>

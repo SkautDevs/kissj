@@ -175,10 +175,18 @@ class Participant extends EntityDatetime
 
     public function getFirstPaidPayment(): ?Payment
     {
+        return $this->getAllPaidPayment()[0] ?? null;
+    }
+
+    /**
+     * @return array<Payment>
+     */
+    public function getAllPaidPayment(): array
+    {
         return array_filter(
             $this->getPayments(),
             fn (Payment $payment): bool => $payment->status === PaymentStatus::Paid,
-        )[0] ?? null;
+        );
     }
 
     /**
