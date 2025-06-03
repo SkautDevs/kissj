@@ -359,11 +359,10 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                // TODO change route name here and in entry app
-                $app->map(['POST', 'OPTIONS'], '/troop/{participantId}', EntryController::class . '::entryGroupFromWebApp')
+                $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::entryGroupFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
-                    ->setName('entry-troop-from-web-app');
+                    ->setName('entry-group-from-web-app');
             });
 
             $app->group('/leave', function (RouteCollectorProxy $app) {
@@ -372,10 +371,10 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-participant-from-web-app');
 
-                $app->map(['POST', 'OPTIONS'], '/troop/{participantId}', EntryController::class . '::leaveTroopFromWebApp')
+                $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::leaveGroupFromWebApp')
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
-                    ->setName('leave-troop-from-web-app');
+                    ->setName('leave-group-from-web-app');
             });
 
             $app->group('/vendor', function (RouteCollectorProxy $app) {

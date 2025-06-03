@@ -6,6 +6,7 @@ namespace kissj\Entry;
 
 use kissj\AbstractController;
 use kissj\Event\Event;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -112,6 +113,7 @@ class EntryController extends AbstractController
             $response,
             [
                 'status' => EntryStatus::ENTRY_STATUS_VALID,
+                'alteredParticipantId' => $participant->id,
             ],
         );
     }
@@ -142,6 +144,7 @@ class EntryController extends AbstractController
             $response,
             [
                 'status' => EntryStatus::ENTRY_STATUS_LEAVED,
+                'alteredParticipantId' => $participant->id,
             ],
         );
     }
@@ -178,23 +181,38 @@ class EntryController extends AbstractController
         );
     }
 
+    /**
+     * @return Participant[]|null
+     */
+    private function getGroupParticipantsIncludingLeader(?Participant $leader): ?array {
+        if ($leader instanceof TroopLeader) {
+            $groupParticipants = $leader->troopParticipants;
+        } elseif ($leader instanceof PatrolLeader) {
+            $groupParticipants = $leader->patrolParticipants;
+        } else {
+            return null;
+        }
+
+        return array_merge([$leader], $groupParticipants);
+    }
     public function entryGroupFromWebApp(
         Response $response,
         Event $authorizedEvent,
         int $participantId,
     ): Response {
-        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
-        if ($participant instanceof TroopLeader) {
-            $groupParticipants = $participant->troopParticipants;
-        } elseif ($participant instanceof PatrolLeader) {
-            $groupParticipants = $participant->patrolParticipants;
-        } else {
-            return $this->createErrorEntryResponse($response, 'troop not found');
+        $groupParticipants = $this->getGroupParticipantsIncludingLeader(
+            $this->participantRepository->findParticipantById($participantId, $authorizedEvent)
+        );
+
+        if ($groupParticipants === null) {
+            return $this->createErrorEntryResponse($response, 'one or more participants not found');
         }
 
-        foreach (array_merge([$participant], $groupParticipants) as $troopParticipant) {
-            if ($troopParticipant->entryDate === null) {
-                $this->participantService->setAsEntered($troopParticipant);
+        $alteredParticipantIds = [];
+        foreach ( $groupParticipants as $groupParticipant) {
+            if ($groupParticipant->entryDate === null) {
+                $alteredParticipantIds[] = $groupParticipant->id;
+                $this->participantService->setAsEntered($groupParticipant);
             }
         }
 
@@ -202,23 +220,30 @@ class EntryController extends AbstractController
             $response,
             [
                 'status' => EntryStatus::ENTRY_STATUS_VALID,
+                'alteredParticipantIds' => $alteredParticipantIds,
             ],
         );
     }
 
-    public function leaveTroopFromWebApp(
+    public function leaveGroupFromWebApp(
         Response $response,
         Event $authorizedEvent,
         int $participantId,
     ): Response {
-        $participant = $this->participantRepository->findParticipantById($participantId, $authorizedEvent);
-        if ($participant instanceof TroopLeader === false) {
-            return $this->createErrorEntryResponse($response, 'troop not found');
+        $groupParticipants = $this->getGroupParticipantsIncludingLeader(
+            $this->participantRepository->findParticipantById($participantId, $authorizedEvent)
+        );
+
+        if ($groupParticipants === null) {
+            return $this->createErrorEntryResponse($response, 'one or more participants not found');
         }
 
-        foreach (array_merge([$participant], $participant->troopParticipants) as $troopParticipant) {
-            if ($participant->leaveDate === null) {
-                $this->participantService->setAsLeaved($troopParticipant);
+        $alteredParticipantIds = [];
+
+        foreach ( $groupParticipants as $groupParticipant) {
+            if ($groupParticipant->leaveDate === null) {
+                $alteredParticipantIds[] = $groupParticipant->id;
+                $this->participantService->setAsLeaved($groupParticipant);
             }
         }
 
@@ -226,6 +251,7 @@ class EntryController extends AbstractController
             $response,
             [
                 'status' => EntryStatus::ENTRY_STATUS_LEAVED,
+                'alteredParticipantIds' => $alteredParticipantIds,
             ],
         );
     }
