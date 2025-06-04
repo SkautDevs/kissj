@@ -39,5 +39,8 @@
                 </tbody>
             </table>
         </div>
+        {% if not loop.last %}
+            <pagebreak />
+        {% endif %}
     {% endfor %}
 {% endblock %}
