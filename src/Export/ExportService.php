@@ -155,31 +155,32 @@ readonly class ExportService
             'scoutUnit',
             'languages', // 15
             'birthDate',
+            'age',
             'birthPlace',
             'healthProblems',
-            'medicaments',
-            'psychicalHealthProblems', // 20
+            'medicaments', // 20
+            'psychicalHealthProblems',
             'foodPreferences',
             'foodPreferencesRaw',
             'idNumber',
-            'scarf',
-            'swimming', // 25
+            'scarf', // 25
+            'swimming',
             'tshirt',
             'arrivalDate',
             'departureDate',
-            'uploadedOriginalFilename',
-            'printedHandbook', // 30
+            'uploadedOriginalFilename', // 30
+            'printedHandbook',
             'notes',
             'updatedAt',
             'registrationCloseDate',
-            'registrationApproveDate',
-            'registrationPayDate', // 35
+            'registrationApproveDate', // 35
+            'registrationPayDate',
             'entryDate',
             'leaveDate',
             'patrolOrTroopLeaderId',
             'patrolName',
-            'patrolParticipantCount',
-            'istSkills', // 40
+            'patrolParticipantCount', // 40
+            'istSkills',
             'istPreferredPosition',
             'driverLicense',
         ]];
@@ -246,6 +247,7 @@ readonly class ExportService
                     $participant->scoutUnit ?? '',
                     $participant->languages ?? '', // 15
                     $participant->birthDate !== null ? $participant->birthDate->format('d. m. Y') : '',
+                    $participant->birthDate !== null ? $participant->getAgeAtStartOfEvent() : '',
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
                     $participant->medicaments ?? '',
