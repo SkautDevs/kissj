@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Entry;
 
+use Exception;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
@@ -23,10 +24,18 @@ class EntryController extends AbstractController
     }
 
     public function list(
+        Request $request,
         Response $response,
         Event $authorizedEvent,
     ): Response {
-        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent);
+
+        try {
+            $filterPaidonly = (bool)$request->getQueryParams()['paidOnly'];
+        } catch (Exception $e) {
+            $this->logger->alert("Missing data about status filtering of entry app participant list, using default \"Paid only\"");
+            $filterPaidonly = true;
+        }
+        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly);
 
         return $this->getResponseWithJson(
             $response,

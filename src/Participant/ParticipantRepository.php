@@ -409,14 +409,14 @@ class ParticipantRepository extends Repository
     /**
      * @return array<string, array<EntryParticipant>>
      */
-    public function getParticipantsForEntry(Event $event): array
+    public function getParticipantsForEntry(Event $event, bool $paidOnly): array
     {
         $rows = $this->getRowsForEntryParticipant($event, [
             ParticipantRole::PatrolLeader,
             ParticipantRole::TroopLeader,
             ParticipantRole::Ist,
             ParticipantRole::Guest,
-        ]);
+        ], $paidOnly);
 
         $participants = [];
         foreach ($rows as $row) {
@@ -428,8 +428,8 @@ class ParticipantRepository extends Repository
         }
 
         $rowsDependableParticipants = array_merge(
-            $this->getRowsForEntryParticipant($event, [ParticipantRole::TroopParticipant]),
-            $this->getRowsForEntryPatrolParticipant($event),
+            $this->getRowsForEntryParticipant($event, [ParticipantRole::TroopParticipant], $paidOnly),
+            $this->getRowsForEntryPatrolParticipant($event, $paidOnly),
         );
 
         foreach ($rowsDependableParticipants as $rowDependableParticipant) {
@@ -462,7 +462,7 @@ class ParticipantRepository extends Repository
      * @return array<Row>
      * /
      */
-    private function getRowsForEntryParticipant(Event $event, array $participantRoles): array
+    private function getRowsForEntryParticipant(Event $event, array $participantRoles, bool $paidOnly): array
     {
         $qb = $this->connection->select('
             participant.id,
@@ -483,8 +483,9 @@ class ParticipantRepository extends Repository
         $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
 
         $qb->where('u.role = %s', UserRole::Participant);
-        $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
+        if ($paidOnly)  {$qb->where('u.status = %s', UserStatus::Paid);}
 
         $qb->where('participant.role IN %in', $participantRoles);
 
@@ -498,7 +499,7 @@ class ParticipantRepository extends Repository
      * @return array<Row>
      * /
      */
-    private function getRowsForEntryPatrolParticipant(Event $event): array
+    private function getRowsForEntryPatrolParticipant(Event $event, bool $paidOnly): array
     {
         $qb = $this->connection->select('
             participant.id,
@@ -520,8 +521,9 @@ class ParticipantRepository extends Repository
         $qb->leftJoin('deal')->as('d')->on('participant.id = d.participant_id')->and('d.slug = %s', 'sfh');
 
         $qb->where('u.role = %s', UserRole::Participant);
-        $qb->where('u.status = %s', UserStatus::Paid);
         $qb->where('u.event_id = %i', $event->id);
+
+        if ($paidOnly) {$qb->where('u.status = %s', UserStatus::Paid);}
 
         $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
 
