@@ -104,6 +104,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
+use kissj\Translation\CachedYamlFileLoader;
 
 use function DI\autowire;
 use function DI\create;
@@ -288,11 +289,15 @@ class Settings
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
         $container[Translator::class] = function () {
             $defLocale = $_ENV['DEFAULT_LOCALE'];
+            $cacheDir = $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/translations' : null;
+            
             // https://symfony.com/doc/current/components/translation.html
-            $translator = new Translator($defLocale);
+            $translator = new Translator($defLocale, null, $cacheDir);
             $translator->setFallbackLocales([$defLocale]);
 
-            $translator->addLoader('yaml', new YamlFileLoader());
+            $cachedLoader = new CachedYamlFileLoader($cacheDir);
+            $translator->addLoader('yaml', $cachedLoader);
+            
             $translator->addResource('yaml', __DIR__ . '/../Templates/cs.yaml', 'cs');
             $translator->addResource('yaml', __DIR__ . '/../Templates/sk.yaml', 'sk');
             $translator->addResource('yaml', __DIR__ . '/../Templates/en.yaml', 'en');
@@ -315,6 +320,8 @@ class Settings
                     // env. variables are parsed into strings
                     'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/twig' : false,
                     'debug' => $_ENV['DEBUG'] === 'true',
+                    'auto_reload' => $_ENV['DEBUG'] === 'true', // Only reload templates in debug mode
+                    'optimizations' => -1, // Enable all optimizations
                 ],
             );
 
