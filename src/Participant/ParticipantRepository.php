@@ -485,7 +485,9 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.event_id = %i', $event->id);
 
-        if ($paidOnly)  {$qb->where('u.status = %s', UserStatus::Paid);}
+        if ($paidOnly) {
+            $qb->where('u.status = %s', UserStatus::Paid);
+        }
 
         $qb->where('participant.role IN %in', $participantRoles);
 
@@ -523,7 +525,9 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.event_id = %i', $event->id);
 
-        if ($paidOnly) {$qb->where('u.status = %s', UserStatus::Paid);}
+        if ($paidOnly) {
+            $qb->where('u.status = %s', UserStatus::Paid);
+        }
 
         $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
 

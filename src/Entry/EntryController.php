@@ -193,7 +193,8 @@ class EntryController extends AbstractController
     /**
      * @return Participant[]|null
      */
-    private function getGroupParticipantsIncludingLeader(?Participant $leader): ?array {
+    private function getGroupParticipantsIncludingLeader(?Participant $leader): ?array
+    {
         if ($leader instanceof TroopLeader) {
             $groupParticipants = $leader->troopParticipants;
         } elseif ($leader instanceof PatrolLeader) {
@@ -218,7 +219,7 @@ class EntryController extends AbstractController
         }
 
         $alteredParticipantIds = [];
-        foreach ( $groupParticipants as $groupParticipant) {
+        foreach ($groupParticipants as $groupParticipant) {
             if ($groupParticipant->entryDate === null) {
                 $alteredParticipantIds[] = $groupParticipant->id;
                 $this->participantService->setAsEntered($groupParticipant);
@@ -249,7 +250,7 @@ class EntryController extends AbstractController
 
         $alteredParticipantIds = [];
 
-        foreach ( $groupParticipants as $groupParticipant) {
+        foreach ($groupParticipants as $groupParticipant) {
             if ($groupParticipant->leaveDate === null) {
                 $alteredParticipantIds[] = $groupParticipant->id;
                 $this->participantService->setAsLeaved($groupParticipant);
