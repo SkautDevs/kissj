@@ -208,6 +208,14 @@ class Participant extends EntityDatetime
         }));
     }
 
+    public function countPaidPayments(): int
+    {
+        // TODO optimalize
+        return count(array_filter($this->payment, function (Payment $payment): bool {
+            return $payment->status === PaymentStatus::Paid;
+        }));
+    }
+
     public function getQrParticipantInfoString(): string
     {
         return $this->entryCode;
