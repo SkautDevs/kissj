@@ -27,7 +27,7 @@ readonly class ExportService
     }
 
     /**
-     * @return list<array<int, string>>
+     * @return non-empty-list<array<int, string>>
      */
     public function healthDataToCSV(Event $event, User $adminUser): array
     {
@@ -76,7 +76,7 @@ readonly class ExportService
     }
 
     /**
-     * @return list<array<int, string>>
+     * @return non-empty-list<array<int, string>>
      */
     public function paidContactDataToCSV(Event $event, User $adminUser): array
     {
@@ -125,7 +125,7 @@ readonly class ExportService
     }
 
     /**
-     * @return list<array<int, string>>
+     * @return non-empty-list<array<string>>
      */
     public function allRegistrationDataToCSV(Event $event, User $adminUser): array
     {
@@ -247,7 +247,7 @@ readonly class ExportService
                     $participant->scoutUnit ?? '',
                     $participant->languages ?? '', // 15
                     $participant->birthDate !== null ? $participant->birthDate->format('d. m. Y') : '',
-                    $participant->birthDate !== null ? $participant->getAgeAtStartOfEvent() : '',
+                    $participant->birthDate !== null ? (string)$participant->getAgeAtStartOfEvent() : '',
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
                     $participant->medicaments ?? '',
