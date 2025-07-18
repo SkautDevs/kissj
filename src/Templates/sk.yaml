@@ -283,6 +283,11 @@ email:
         thanks: ". Vďaka!"
         qrInfo: "Tady je QR kód, který budou chtít organizátoři při vstupu na akci:"
         enjoy: "Teraz už sa môžeš plne tešiť na nadchádzajúcu akciu! Takže - nezlom si nohu, skontroluj stan, a priprav sa na pobyt na severe Slovenska! Sleduj nás pre viac informácií. ;)"
+    payment-successful-pay-more:
+        subject: "platba obdržaná, čakáme na dokončenie platieb"
+        received: "Obdržali sme tvoju platbu na"
+        thanks: ". Ďakujeme!"
+        please: "Prosíme, zaplať zvyšné platby čo najskôr, aby sme mohli považovať tvoju registráciu za plne zaplatenú."
     finished:
         subject: "schváleno"
         approved: "Schválili jsme tvou přihlášku pro"

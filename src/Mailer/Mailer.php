@@ -131,6 +131,17 @@ readonly class Mailer
         );
     }
 
+    public function sendPaidPartially(Participant $participant): void
+    {
+        $user = $participant->getUserButNotNull();
+
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.payment-successful-pay-more.subject'),
+            'payment-successful-pay-more',
+        );
+    }
+
     public function sendRegistrationPaid(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();
