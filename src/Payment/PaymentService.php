@@ -143,21 +143,22 @@ class PaymentService
         $now = DateTimeUtils::getDateTime();
 
         $participant = $payment->participant;
-        if ($participant->countWaitingPayments() === 0) {
-            // TODO set paid time in each payment
-            $this->setParticipantPaidWithTime($participant, $now);
+        if ($participant->countWaitingPayments() > 0) {
+            $this->mailer->sendPaidPartially($participant);
 
-            if ($participant instanceof TroopLeader) {
-                foreach ($participant->troopParticipants as $tp) {
-                    $this->setParticipantPaidWithTime($tp, $now);
-                }
-            }
-
-            $this->mailer->sendRegistrationPaid($participant);
-            $this->flashMessages->success('flash.success.confirmPayment');
-        } else {
-            // TODO add sending mail "thanks for payment, but you still needs to pay more"
+            return $payment;
         }
+
+        $this->setParticipantPaidWithTime($participant, $now);
+
+        if ($participant instanceof TroopLeader) {
+            foreach ($participant->troopParticipants as $tp) {
+                $this->setParticipantPaidWithTime($tp, $now);
+            }
+        }
+
+        $this->mailer->sendRegistrationPaid($participant);
+        $this->flashMessages->success('flash.success.confirmPayment');
 
         return $payment;
     }

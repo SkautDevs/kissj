@@ -1,0 +1,8 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <div class="text-center">
+        <p>{% trans %}email.payment-successful-pay-more.received{% endtrans %} {{ event.readableName }}{% trans %}email.payment-successful-pay-more.thanks{% endtrans %}</p>
+        <p>{% trans %}email.payment-successful-pay-more.please{% endtrans %}</p>
+    </div>
+{% endblock %}
