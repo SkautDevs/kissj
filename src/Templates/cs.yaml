@@ -551,6 +551,7 @@ flash:
         importCantStart: "Soubor importu se nepodařilo načíst"
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"
+        missingSkautisMembership: "Pro uzamčení registrace musí být tvůj skautIs účet propojený s reálnou osobou. Pokud jsi ho propojil v nedávné době, zkus se prosím odhlásit a zase přihlásit."
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
         differentParticipants: "Účastníci musí být různí (:"
         sameRole: "Účastníci musí mít stejné role"

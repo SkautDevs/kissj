@@ -64,6 +64,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function enforceActiveSkautisMembership(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
     public function isLoginSkautisAllowed(): bool
     {
         return true;
