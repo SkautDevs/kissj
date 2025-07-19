@@ -195,6 +195,11 @@ abstract class EventType
         return false;
     }
 
+    public function enforceActiveSkautisMembership(): bool
+    {
+        return false;
+    }
+
     public function isReceiptAllowed(): bool
     {
         return false;

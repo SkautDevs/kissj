@@ -19,6 +19,7 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
+use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -28,16 +29,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 readonly class ParticipantService
 {
     public function __construct(
-        private ParticipantRepository $participantRepository,
+        private ParticipantRepository      $participantRepository,
         private TroopParticipantRepository $troopParticipantRepository,
-        private PaymentService $paymentService,
-        private UserService $userService,
-        private FlashMessagesBySession $flashMessages,
-        private TranslatorInterface $translator,
-        private Mailer $mailer,
-        private SaveFileHandler $saveFileHandler,
-        private UploadFileHandler $uploadFileHandler,
-    ) {
+        private PaymentService             $paymentService,
+        private UserService                $userService,
+        private FlashMessagesBySession     $flashMessages,
+        private TranslatorInterface        $translator,
+        private Mailer                     $mailer,
+        private SaveFileHandler            $saveFileHandler,
+        private UploadFileHandler          $uploadFileHandler,
+    )
+    {
     }
 
     /**
@@ -153,6 +155,14 @@ readonly class ParticipantService
             $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed', [
                 '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%H:%I:%S'),
             ]));
+
+            $validityFlag = false;
+        }
+
+        if ($event->eventType->enforceActiveSkautisMembership()
+            && $participant->getUserButNotNull()->loginType === UserLoginType::Skautis
+            && !(bool)$participant->getUserButNotNull()->skautisHasMembership) {
+            $this->flashMessages->warning($this->translator->trans('flash.warning.missingSkautisMembership'));
 
             $validityFlag = false;
         }
@@ -302,7 +312,7 @@ readonly class ParticipantService
     {
         return array_filter(
             $participants,
-            fn (Participant $participant): bool => $participant->contingent === $contingent,
+            fn(Participant $participant): bool => $participant->contingent === $contingent,
         );
     }
 
@@ -430,7 +440,8 @@ readonly class ParticipantService
 
     public function getContentArbiterForParticipant(
         Participant $participant,
-    ): AbstractContentArbiter {
+    ): AbstractContentArbiter
+    {
         $eventType = $participant->getUserButNotNull()->event->eventType;
 
         return match ($participant->role) {
@@ -459,6 +470,7 @@ readonly class ParticipantService
 
         return $participant;
     }
+
     public function setAsLeaved(Participant $participant): Participant
     {
         $participant->leaveDate = DateTimeUtils::getDateTime();
