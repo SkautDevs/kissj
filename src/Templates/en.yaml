@@ -551,6 +551,7 @@ flash:
         importCantStart: "Import file cannot be started"
         notApproved: "Participant is not approved, because it already has approved status"
         registrationNotAllowed: "Lock your registration is not yet allowed. We're opening after %difference%"
+        missingSkautisMembership: "To lock your registration, your ScoutIs account must be linked to a real person. If you have linked it recently, please try logging out and back in."
         nullParticipants: "One or both participants was not found in system"
         differentParticipants: "Participants must be different (:"
         sameRole: "Participants must have same roles"

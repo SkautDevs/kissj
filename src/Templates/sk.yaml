@@ -551,6 +551,7 @@ flash:
         importCantStart: "Soubor importu se nepodařilo načíst"
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"
+        missingSkautisMembership: "Ak chcete zablokovať svoju registráciu, vaše konto ScoutIs musí byť prepojené so skutočnou osobou. Ak ste ho prepojili nedávno, skúste sa odhlásiť a znova prihlásiť."
         nullParticipants: "Jedného alebo viacerých účastníkov sa nepodarilo nájsť v systéme"
         differentParticipants: "Účastníci musí být různí (:"
         sameRole: "Účastníci musí mít stejné role"
