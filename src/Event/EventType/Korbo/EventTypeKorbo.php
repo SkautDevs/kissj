@@ -66,6 +66,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function enforceActiveSkautisMembership(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
     public function showFoodStats(): bool
     {
         return false;
