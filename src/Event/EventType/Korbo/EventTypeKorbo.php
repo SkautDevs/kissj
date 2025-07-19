@@ -15,7 +15,7 @@ class EventTypeKorbo extends EventType
     #[\Override]
     protected function getPrice(Participant $participant): int
     {
-        $price = 600;
+        $price = 650;
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
         }
@@ -39,8 +39,6 @@ class EventTypeKorbo extends EventType
         $ca->country = true;
         $ca->unit = true;
         $ca->scarf = true;
-        $ca->uploadFile = true;
-        $ca->skills = true;
 
         return $ca;
     }
@@ -64,6 +62,19 @@ class EventTypeKorbo extends EventType
             'cs' => '🇨🇿 Česky',
         ];
     }
+
+    #[\Override]
+    public function isLoginSkautisAllowed(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
+    public function isLoginEmailAllowed(): bool
+    {
+        return false;
+    }
+
 
     #[\Override]
     public function showFoodStats(): bool
