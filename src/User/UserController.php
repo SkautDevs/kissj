@@ -9,6 +9,7 @@ use kissj\AbstractController;
 use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -109,28 +110,46 @@ class UserController extends AbstractController
         return $this->redirect($request, $response, 'landing');
     }
 
-    public function chooseRole(User $user, Response $response): Response
+    public function chooseRole(User $user, Request $request, Response $response): Response
     {
+        $roles = $user->event->getAvailableRoles();
+        if (count($roles) === 1) {
+            $role = $roles[0];
+            if (
+                $user->loginType === UserLoginType::Skautis &&
+                !$this->skautisService->isUserLoggedIn()
+            ) {
+                $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
+                return $this->redirect($request, $response, 'landing');
+            }
+
+            $this->userService->createParticipantSetRole(
+                $user,
+                $role,
+            );
+
+            return $this->redirect($request, $response, 'getDashboard');
+
+        }
         // TODO add preference into get parameter
         return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $user->event,]);
     }
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
-        $participant = $this->userService->createParticipantSetRole(
-            $user,
-            $this->getParameterFromBody($request, 'role'),
-        );
-
-        if ($participant->getUserButNotNull()->loginType === UserLoginType::Skautis) {
-            if (!$this->skautisService->isUserLoggedIn()) {
-                $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
-
-                return $this->redirect($request, $response, 'landing');
-            }
-
-            $this->skautisService->prefillDataFromSkautis($participant);
+        if (
+            $user->loginType === UserLoginType::Skautis &&
+            !$this->skautisService->isUserLoggedIn()
+        ) {
+            $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
+            return $this->redirect($request, $response, 'landing');
         }
+
+        $participantRole = ParticipantRole::from($this->getParameterFromBody($request, 'role'));
+        $this->userService->createParticipantSetRole(
+            $user,
+            $participantRole,
+        );
 
         return $this->redirect($request, $response, 'getDashboard');
     }

@@ -10,6 +10,7 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
@@ -18,6 +19,7 @@ readonly class UserService
     public function __construct(
         private LoginTokenRepository $loginTokenRepository,
         private ParticipantRepository $participantRepository,
+        protected SkautisService $skautisService,
         private UserRepository $userRepository,
         private Mailer $mailer,
     ) {
@@ -116,9 +118,8 @@ readonly class UserService
         }
     }
 
-    public function createParticipantSetRole(User $user, string $role): Participant
+    public function createParticipantSetRole(User $user, ParticipantRole $participantRole): Participant
     {
-        $participantRole = ParticipantRole::from($role);
 
         $participant = new Participant();
         $participant->user = $user;
@@ -128,6 +129,10 @@ readonly class UserService
         $user->role = UserRole::Participant; // TODO move into entity creation (simple)
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
+        
+        if ($user->loginType === UserLoginType::Skautis) {
+            $this->skautisService->prefillDataFromSkautis($participant);
+        }
 
         return $participant;
     }
