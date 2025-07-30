@@ -21,6 +21,8 @@ readonly class FioBankPaymentService implements IBankPaymentService
         $lastBankPaymentId = $this->bankPaymentRepository->getLastBankPaymentId($event);
         if ($lastBankPaymentId !== null) {
             $fioRead->setLastId((int)$lastBankPaymentId);
+        } else {
+            $fioRead->setLastDate('now - 89 days'); // bank allows max 90 days back
         }
 
         /** @var Transaction[] $freshPayments */
