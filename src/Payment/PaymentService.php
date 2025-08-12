@@ -234,11 +234,11 @@ class PaymentService
         }
 
         if ($counterNewPaid > 0) {
-            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
+            #$this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
         }
 
         if ($counterUnknownPayment > 0) {
-            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
+            #$this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
         }
     }
 
