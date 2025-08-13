@@ -143,7 +143,8 @@ class PaymentService
         $now = DateTimeUtils::getDateTime();
 
         $participant = $payment->participant;
-        if ($participant->countWaitingPayments() > 0) {
+        if ($participant->countWaitingPayments() > 1) {
+            // one payment was just marked as paid, but not propagated to the participant entity yet
             $this->mailer->sendPaidPartially($participant);
 
             return $payment;
@@ -158,7 +159,7 @@ class PaymentService
         }
 
         $this->mailer->sendRegistrationPaid($participant);
-        #$this->flashMessages->success('flash.success.confirmPayment');
+        $this->flashMessages->success('flash.success.confirmPayment');
 
         return $payment;
     }
@@ -234,11 +235,11 @@ class PaymentService
         }
 
         if ($counterNewPaid > 0) {
-            #$this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
+            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
         }
 
         if ($counterUnknownPayment > 0) {
-            #$this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
+            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
         }
     }
 
