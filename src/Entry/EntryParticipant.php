@@ -10,15 +10,15 @@ class EntryParticipant
     public array $participants = [];
 
     public function __construct(
-        readonly public int $id,
-        readonly public string $firstname,
-        readonly public string $lastname,
-        readonly public string $nickname,
-        readonly public ?string $patrolName,
-        readonly public string $tieCode,
-        readonly public \DateTimeInterface $birthDate,
-        readonly public EntryStatus $entryStatus,
-        readonly public bool $sfh,
+        public readonly int $id,
+        public readonly string $firstname,
+        public readonly string $lastname,
+        public readonly string $nickname,
+        public readonly ?string $patrolName,
+        public readonly string $tieCode,
+        public readonly \DateTimeInterface $birthDate,
+        public readonly EntryStatus $entryStatus,
+        public readonly bool $sfh,
     ) {
     }
 }

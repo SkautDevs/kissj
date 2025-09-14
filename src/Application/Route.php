@@ -33,6 +33,7 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
+use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteCollectorProxy;
@@ -40,8 +41,8 @@ use Slim\Routing\RouteCollectorProxy;
 class Route
 {
     /**
-     * @param App<Container> $app
-     * @return App<Container>
+     * @param App<ContainerInterface> $app
+     * @return App<ContainerInterface>
      */
     public function addRoutesInto(App $app): App
     {
@@ -411,7 +412,7 @@ class Route
     }
 
     /**
-     * @param App<Container> $app
+     * @param App<ContainerInterface> $app
      */
     private function getBasePathSlashPrefixed(App $app): string
     {

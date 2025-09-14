@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
-use DI\Container;
 use kissj\ErrorHandlerGetter;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
@@ -13,6 +12,7 @@ use kissj\Middleware\SentryContextMiddleware;
 use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use Middlewares\TrailingSlash;
+use Psr\Container\ContainerInterface;
 use Selective\BasePath\BasePathMiddleware;
 use Slim\App;
 use Slim\Middleware\ContentLengthMiddleware;
@@ -23,8 +23,8 @@ use Zeuxisoo\Whoops\Slim\WhoopsMiddleware;
 class Middleware
 {
     /**
-     * @param App<Container> $app
-     * @return App<Container>
+     * @param App<ContainerInterface> $app
+     * @return App<ContainerInterface>
      */
     public function addMiddlewaresInto(App $app): App
     {
