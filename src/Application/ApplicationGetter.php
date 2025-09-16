@@ -7,6 +7,7 @@ use DI\Container;
 use DI\ContainerBuilder;
 use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
+use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 use Slim\App;
 use Symfony\Component\Console\Application as ConsoleApp;
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Application as ConsoleApp;
 class ApplicationGetter
 {
     /**
-     * @return App<Container>
+     * @return App<ContainerInterface>
      */
     public function getApp(
         string $envPath = __DIR__.'/../../',

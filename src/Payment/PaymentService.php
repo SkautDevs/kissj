@@ -143,7 +143,8 @@ class PaymentService
         $now = DateTimeUtils::getDateTime();
 
         $participant = $payment->participant;
-        if ($participant->countWaitingPayments() > 0) {
+        if ($participant->countWaitingPayments() > 1) {
+            // one payment was just marked as paid, but not propagated to the participant entity yet
             $this->mailer->sendPaidPartially($participant);
 
             return $payment;

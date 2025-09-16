@@ -217,7 +217,7 @@ readonly class ExportService
             if ($participant instanceof Ist) {
                 $istPart = [
                     $participant->skills ?? '',
-                    implode(' | ', $participant->preferredPosition),
+                    implode(' | ', $participant->preferredPosition ?? []),
                     $participant->driversLicense ?? '',
                 ];
             } else {
