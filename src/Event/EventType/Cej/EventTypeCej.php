@@ -24,9 +24,6 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_HUNGARY = 'detail.contingent.hungary';
     public const string CONTINGENT_EUROPEAN = 'detail.contingent.european';
     public const string CONTINGENT_ROMANIA = 'detail.contingent.romania';
-    public const string CONTINGENT_ISRAEL = 'detail.contingent.israel';
-    public const string CONTINGENT_BRITAIN = 'detail.contingent.britain';
-    public const string CONTINGENT_SWEDEN = 'detail.contingent.sweden';
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
     public function transformPaymentPrice(Payment $payment, Participant $participant): Payment
@@ -72,24 +69,6 @@ class EventTypeCej extends EventType
             $participant instanceof Ist => 4100,
             default => throw new \Exception('Unknown participant class'),
         };
-    }
-
-    public function getMaximumClosedParticipants(Participant $participant): int
-    {
-        if ($participant instanceof PatrolLeader) {
-            return match ($participant->contingent) {
-                self::CONTINGENT_CZECHIA => 35,
-                self::CONTINGENT_SLOVAKIA => 25,
-                self::CONTINGENT_POLAND => 6,
-                self::CONTINGENT_HUNGARY => 10,
-                self::CONTINGENT_EUROPEAN => 13,
-                self::CONTINGENT_BRITAIN => 9,
-                self::CONTINGENT_SWEDEN => 10,
-                default => 0,
-            };
-        }
-
-        return parent::getMaximumClosedParticipants($participant);
     }
 
     /**
@@ -194,8 +173,6 @@ class EventTypeCej extends EventType
             self::CONTINGENT_HUNGARY,
             self::CONTINGENT_POLAND,
             self::CONTINGENT_EUROPEAN,
-            self::CONTINGENT_BRITAIN,
-            self::CONTINGENT_SWEDEN,
             self::CONTINGENT_TEAM,
         ];
     }

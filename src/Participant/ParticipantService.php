@@ -38,8 +38,7 @@ readonly class ParticipantService
         private Mailer                     $mailer,
         private SaveFileHandler            $saveFileHandler,
         private UploadFileHandler          $uploadFileHandler,
-    )
-    {
+    ) {
     }
 
     /**
@@ -130,13 +129,13 @@ readonly class ParticipantService
             $validityFlag = false;
         }
 
-        if (
-            $this->getClosedSameRoleParticipantsCount($participant)
-            >= $event->eventType->getMaximumClosedParticipants($participant)
+        if ($event->eventType->isFullForParticipant(
+            $participant,
+            $this->getClosedSameRoleSameContingentParticipantsCount($participant),
+        )) {
             // TODO fix problem with contingents
             // - in CEJ we want to limit each contingent by its own, but
             // - in Navigamus we want to count all contingents together
-        ) {
             $this->flashMessages->warning('flash.warning.fullRegistration');
 
             $validityFlag = false;
@@ -272,7 +271,7 @@ readonly class ParticipantService
         return true;
     }
 
-    public function getClosedSameRoleParticipantsCount(Participant $participant): int
+    private function getClosedSameRoleSameContingentParticipantsCount(Participant $participant): int
     {
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             $participant->role === null ? [] : [$participant->role],
@@ -312,7 +311,7 @@ readonly class ParticipantService
     {
         return array_filter(
             $participants,
-            fn(Participant $participant): bool => $participant->contingent === $contingent,
+            fn (Participant $participant): bool => $participant->contingent === $contingent,
         );
     }
 
@@ -440,8 +439,7 @@ readonly class ParticipantService
 
     public function getContentArbiterForParticipant(
         Participant $participant,
-    ): AbstractContentArbiter
-    {
+    ): AbstractContentArbiter {
         $eventType = $participant->getUserButNotNull()->event->eventType;
 
         return match ($participant->role) {

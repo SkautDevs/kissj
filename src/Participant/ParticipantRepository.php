@@ -153,12 +153,6 @@ class ParticipantRepository extends Repository
             case UserRole::ContingentAdminRo:
                 $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_ROMANIA);
                 break;
-            case UserRole::ContingentAdminGb:
-                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_BRITAIN);
-                break;
-            case UserRole::ContingentAdminSw:
-                $qb->where('participant.contingent = %s', EventTypeCej::CONTINGENT_SWEDEN);
-                break;
             case UserRole::Participant:
                 throw new RuntimeException('UserRole Participant is used as administrator');
         }

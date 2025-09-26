@@ -37,11 +37,13 @@ abstract class EventType
         return $participant->getUserButNotNull()->event->defaultPrice;
     }
 
-    public function getMaximumClosedParticipants(Participant $participant): int
-    {
+    public function isFullForParticipant(
+        Participant $participant,
+        int $closedSameRoleSameContingentParticipantsCount,
+    ): bool {
         $event = $participant->getUserButNotNull()->event;
 
-        return match ($participant::class) {
+        $maximumParticipants = match ($participant::class) {
             PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
             TroopLeader::class => $event->maximalClosedTroopLeadersCount ?? 0,
             TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
@@ -49,6 +51,8 @@ abstract class EventType
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
             default => throw new \RuntimeException('Unexpected participant class: ' . $participant::class),
         };
+
+        return $maximumParticipants <= $closedSameRoleSameContingentParticipantsCount;
     }
 
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
