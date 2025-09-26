@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Mailer;
 
+use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Payment\QrCodeService;
@@ -68,7 +69,11 @@ readonly class Mailer
         Participant $participant,
         Payment $payment,
     ): void {
-        $this->sendMailWithPayment($participant, $payment, 'payment-info');
+        if ($participant->contingent === EventTypeCej::CONTINGENT_EUROPEAN) {
+            $this->sendRegistrationApprovedWithoutPayment($participant);
+        } else {
+            $this->sendMailWithPayment($participant, $payment, 'payment-info');
+        }
     }
 
     public function sendRegistrationApprovedWithNonFirstPayment(
@@ -95,6 +100,7 @@ readonly class Mailer
         }
         $user = $participant->getUserButNotNull();
 
+        $eventType = $user->event->getEventType();
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
@@ -102,7 +108,8 @@ readonly class Mailer
             [
                 'participant' => $participant,
                 'payment' => $payment,
-                'showIban' => $user->event->getEventType()->showIban(),
+                'showIban' => $eventType->showIban(),
+                'showPaymentQrCode' => $eventType->showPaymentQrCode($participant),
             ],
             $embeds,
         );

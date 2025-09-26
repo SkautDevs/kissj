@@ -42,17 +42,17 @@ enum UserRole: string
         return match ($this) {
             self::Admin,
             self::ContingentAdminCs,
-            self::ContingentAdminSk
-                => true,
-            self::Participant,
-            self::IstAdmin,
             self::ContingentAdminPl,
             self::ContingentAdminHu,
             self::ContingentAdminEu,
             self::ContingentAdminRo,
+            self::ContingentAdminSk
+                => true,
+            self::Participant,
+            self::IstAdmin,
             self::ContingentAdminGb,
             self::ContingentAdminSw,
-            => false,
+                => false,
         };
     }
 
@@ -61,17 +61,17 @@ enum UserRole: string
         return match ($this) {
             self::Admin,
             self::ContingentAdminCs,
-            self::ContingentAdminSk
-                => true,
-            self::Participant,
-            self::IstAdmin,
             self::ContingentAdminPl,
             self::ContingentAdminHu,
             self::ContingentAdminEu,
             self::ContingentAdminRo,
+            self::ContingentAdminSk
+                => true,
+            self::Participant,
+            self::IstAdmin,
             self::ContingentAdminGb,
             self::ContingentAdminSw,
-            => false,
+                => false,
         };
     }
 

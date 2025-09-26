@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Cej;
 
-use kissj\Deal\EventDeal;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
-use kissj\Event\Event;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
-use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Payment\Payment;
+use kissj\User\UserRole;
 
 class EventTypeCej extends EventType
 {
@@ -24,72 +22,118 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_HUNGARY = 'detail.contingent.hungary';
     public const string CONTINGENT_EUROPEAN = 'detail.contingent.european';
     public const string CONTINGENT_ROMANIA = 'detail.contingent.romania';
-    public const string CONTINGENT_ISRAEL = 'detail.contingent.israel';
-    public const string CONTINGENT_BRITAIN = 'detail.contingent.britain';
-    public const string CONTINGENT_SWEDEN = 'detail.contingent.sweden';
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
     public function transformPaymentPrice(Payment $payment, Participant $participant): Payment
     {
-        if ($participant->contingent === self::CONTINGENT_CZECHIA) {
-            $payment->accountNumber = '2302084720/2010';
-            $payment->iban = 'CZ3120100000002302084720';
-            $payment->swift = 'FIOBCZPPXXX';
-            $payment->price = (string)$this->getPriceForCzechia($participant);
-            $payment->currency = 'Kč';
-            $payment->variableSymbol = 42438 . substr($payment->variableSymbol, 5);
-            $payment->constantSymbol = '';
+        return match ((string)$participant->contingent) {
+            self::CONTINGENT_CZECHIA => $this->transformPaymentPriceForCzechia($payment, $participant),
+            self::CONTINGENT_SLOVAKIA => $this->transformPaymentPriceForSlovakia($payment, $participant),
+            self::CONTINGENT_POLAND => $this->transformPaymentPriceForPoland($payment, $participant),
+            self::CONTINGENT_HUNGARY => $this->transformPaymentPriceForHungary($payment, $participant),
+            self::CONTINGENT_ROMANIA => $this->transformPaymentPriceForRomania($payment, $participant),
+            self::CONTINGENT_EUROPEAN => $this->transformPaymentPriceForEurope($payment, $participant),
+        };
+    }
 
-            return $payment;
-        }
+    private function transformPaymentPriceForCzechia(Payment $payment, Participant $participant): Payment
+    {
+        $price = match (true) {
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 7700,
+            $participant instanceof Ist => 3300,
+        };
 
-        $payment->price = (string)$this->getPrice($participant);
-        $payment->swift = 'TATRSKBX';
-        $payment->constantSymbol = '0558';
+        $payment->price = (string)$price;
+        $payment->currency = 'CZK';
+        $payment->accountNumber = '2302084720/2010';
+        $payment->iban = 'CZ31 2010 0000 0023 0208 4720';
+        $payment->swift = 'FIOBCZPP';
 
         return $payment;
     }
 
-    protected function getPrice(Participant $participant): int
+    private function transformPaymentPriceForSlovakia(Payment $payment, Participant $participant): Payment
     {
-        if ($participant->contingent === self::CONTINGENT_TEAM) {
-            return 150;
-        }
-
         $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() * 250) + 250,
-            $participant instanceof Ist => 150,
-            default => throw new \Exception('Unknown participant class'),
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 350,
+            $participant instanceof Ist => 180,
         };
 
-        return $price;
+        $payment->price = (string)$price;
+        $payment->currency = 'EUR';
+        $payment->accountNumber = '2660080180/1100';
+        $payment->iban = 'SK98 1100 0000 0026 6008 0180';
+        $payment->swift = 'TATRSKBX';
+
+        return $payment;
     }
 
-    private function getPriceForCzechia(Participant $participant): int
+    private function transformPaymentPriceForPoland(Payment $payment, Participant $participant): Payment
     {
-        return match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 6600,
-            $participant instanceof Ist => 4100,
-            default => throw new \Exception('Unknown participant class'),
+        $price = match (true) {
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 1400,
+            $participant instanceof Ist => 700,
         };
+
+        $payment->price = (string)$price;
+        $payment->currency = 'PLN';
+        $payment->accountNumber = 'TODO';
+        $payment->iban = 'PL44 1140 1010 0000 5392 2900 1106';
+        $payment->swift = 'BREXPLPWXXX';
+        $payment->note = $payment->variableSymbol . ' ' . $payment->note;
+
+        return $payment;
     }
 
-    public function getMaximumClosedParticipants(Participant $participant): int
+    private function transformPaymentPriceForHungary(Payment $payment, Participant $participant): Payment
     {
-        if ($participant instanceof PatrolLeader) {
-            return match ($participant->contingent) {
-                self::CONTINGENT_CZECHIA => 35,
-                self::CONTINGENT_SLOVAKIA => 25,
-                self::CONTINGENT_POLAND => 6,
-                self::CONTINGENT_HUNGARY => 10,
-                self::CONTINGENT_EUROPEAN => 13,
-                self::CONTINGENT_BRITAIN => 9,
-                self::CONTINGENT_SWEDEN => 10,
-                default => 0,
-            };
-        }
+        $price = match (true) {
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 155_500,
+            $participant instanceof Ist => 105_000,
+        };
 
-        return parent::getMaximumClosedParticipants($participant);
+        $payment->price = (string)$price;
+        $payment->currency = 'HUF';
+        $payment->accountNumber = '10918001-00000071-76940552';
+        $payment->iban = 'HU60 10918001-00000071-76940552';
+        $payment->swift = 'BACXHUHB';
+        $payment->note = 'Adomány ' . $payment->variableSymbol . ' ' . $payment->note;
+
+        return $payment;
+    }
+
+    private function transformPaymentPriceForRomania(Payment $payment, Participant $participant): Payment
+    {
+        $price = match (true) {
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 1506,
+            $participant instanceof Ist => 668,
+        };
+
+        $payment->price = (string)$price;
+        $payment->currency = 'RON';
+        $payment->accountNumber = 'TODO';
+        $payment->iban = 'RO49BTRLRONCRT033228121B';
+        $payment->swift = 'BTRLRO22';
+        $payment->note = $payment->variableSymbol . ' ' . $payment->note;
+
+        return $payment;
+    }
+
+    private function transformPaymentPriceForEurope(Payment $payment, Participant $participant): Payment
+    {
+        $price = match (true) {
+            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 135_000,
+            $participant instanceof Ist => 135_000,
+        };
+
+        $payment->price = (string)$price;
+        $payment->currency = 'HUF';
+        $payment->accountNumber = '1091 8001 0000 0071 7694 0301';
+        $payment->iban = 'HU47 1091 8001 0000 0071 7694 0301';
+        $payment->swift = 'BACXHUHB';
+        $payment->note = $payment->variableSymbol . ' ' . $payment->note;
+
+        return $payment;
     }
 
     /**
@@ -106,16 +150,16 @@ class EventTypeCej extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->contingent = true;
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
         $ca->phone = true;
+        $ca->country = true;
         $ca->email = true;
+        $ca->languages = true;
+        $ca->birthPlace = true;
+        $ca->emergencyContact = true;
+        $ca->food = true;
+        $ca->idNumber = true;
         $ca->swimming = true;
         $ca->tshirt = true;
-        $ca->skills = true;
-        $ca->unit = true;
 
         return $ca;
     }
@@ -124,14 +168,16 @@ class EventTypeCej extends EventType
     {
         $ca = parent::getContentArbiterPatrolLeader();
         $ca->contingent = true;
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
         $ca->phone = true;
+        $ca->country = true;
         $ca->email = true;
+        $ca->languages = true;
+        $ca->birthPlace = true;
+        $ca->emergencyContact = true;
+        $ca->food = true;
+        $ca->idNumber = true;
         $ca->swimming = true;
-        $ca->unit = true;
+        $ca->tshirt = true;
 
         return $ca;
     }
@@ -139,15 +185,16 @@ class EventTypeCej extends EventType
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $ca = parent::getContentArbiterPatrolParticipant();
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
         $ca->phone = true;
+        $ca->country = true;
         $ca->email = true;
+        $ca->languages = true;
+        $ca->birthPlace = true;
+        $ca->emergencyContact = true;
+        $ca->food = true;
+        $ca->idNumber = true;
         $ca->swimming = true;
-        $ca->unit = true;
-        $ca->uploadFile = true;
+        $ca->tshirt = true;
 
         return $ca;
     }
@@ -179,6 +226,7 @@ class EventTypeCej extends EventType
             'detail.countryCzechRepublic',
             'detail.countryPoland',
             'detail.countryHungary',
+            'detail.countryRomania',
             'detail.countryOther',
         ];
     }
@@ -189,15 +237,30 @@ class EventTypeCej extends EventType
     public function getContingents(): array
     {
         return [
-            self::CONTINGENT_SLOVAKIA,
-            self::CONTINGENT_CZECHIA,
             self::CONTINGENT_HUNGARY,
             self::CONTINGENT_POLAND,
+            self::CONTINGENT_SLOVAKIA,
+            self::CONTINGENT_CZECHIA,
             self::CONTINGENT_EUROPEAN,
-            self::CONTINGENT_BRITAIN,
-            self::CONTINGENT_SWEDEN,
             self::CONTINGENT_TEAM,
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContingentsForAdmin(UserRole $userRole): array
+    {
+        return match ($userRole) {
+            UserRole::Admin, UserRole::IstAdmin => $this->getContingents(),
+            UserRole::ContingentAdminCs => [self::CONTINGENT_CZECHIA],
+            UserRole::ContingentAdminSk => [self::CONTINGENT_SLOVAKIA],
+            UserRole::ContingentAdminPl => [self::CONTINGENT_POLAND],
+            UserRole::ContingentAdminHu => [self::CONTINGENT_HUNGARY],
+            UserRole::ContingentAdminRo => [self::CONTINGENT_ROMANIA],
+            UserRole::ContingentAdminEu => [self::CONTINGENT_EUROPEAN],
+            UserRole::Participant, UserRole::ContingentAdminGb, UserRole::ContingentAdminSw => [],
+        };
     }
 
     public function showContingentPatrolStats(): bool
@@ -205,9 +268,10 @@ class EventTypeCej extends EventType
         return true;
     }
 
+    #[\Override]
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
-        return 'eventSpecificCss/stylesCej24.css';
+        return 'eventSpecificCss/stylesCej26.css';
     }
 
     /**
@@ -222,7 +286,7 @@ class EventTypeCej extends EventType
 
     public function isReceiptAllowed(): bool
     {
-        return true;
+        return false;
     }
 
     public function getReceiptTemplateName(Participant $participant): string
@@ -233,31 +297,18 @@ class EventTypeCej extends EventType
         };
     }
 
-    public function getMinimalPpCount(Event $event, Participant $participant): int
-    {
-        return match ($participant->contingent) {
-            self::CONTINGENT_CZECHIA,
-            self::CONTINGENT_SLOVAKIA,
-            self::CONTINGENT_POLAND,
-            => 9,
-            self::CONTINGENT_HUNGARY,
-            => 6,
-
-            default => $event->minimalPatrolParticipantsCount ?? 0,
-        };
-    }
-
-    public function getMaximalPpCount(Event $param, Participant $participant): int
-    {
-        return match ($participant->contingent) {
-            self::CONTINGENT_HUNGARY => 11,
-            default => 10,
-        };
-    }
-
     public function showIban(): bool
     {
         return true;
+    }
+
+    public function showPaymentQrCode(Participant $participant): bool
+    {
+        if ($participant->contingent === self::CONTINGENT_CZECHIA) {
+            return true;
+        }
+
+        return false;
     }
 
     public function getSkautLogoPath(Participant $participant): string
@@ -274,28 +325,5 @@ class EventTypeCej extends EventType
             self::CONTINGENT_CZECHIA => parent::getSkautStampSignPath($participant),
             default => '/SkSkautingSignStamp.png',
         };
-    }
-
-    #[\Override]
-    public function getEventDeals(Participant $participant): array
-    {
-        $eventDeals = [];
-
-        if ($participant instanceof Ist) {
-            $eventDeals[] = new EventDeal(
-                self::SLUG_SFH,
-                sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSe3FPRiN7o9nupa-sLs0w6xf6IFFEW5kJVMJSPSExfHn0qCtw/viewform?usp=pp_url&entry.499691302=%s',
-                    $participant->tieCode,
-                ),
-            );
-        } elseif ($participant instanceof PatrolLeader || $participant instanceof PatrolParticipant) {
-            $eventDeals[] = new EventDeal(
-                self::SLUG_SFH,
-                'https://docs.google.com/forms/d/18TEPrRNzeS9JLxEf3SLuJte8do99_aM-ATOxccHTBpE/edit'
-            );
-        }
-
-        return $eventDeals;
     }
 }

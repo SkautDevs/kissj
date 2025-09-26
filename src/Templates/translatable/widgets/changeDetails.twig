@@ -122,6 +122,18 @@
             onchange="OnBirthDateChange(this)"
         >
     </div>
+{% endif %}{% if ca.birthPlace %}
+    <div class="form-group">
+        <label for="birthDate">{% trans %}detail.birthPlace{% endtrans %}:</label>
+        <input
+            id="birthPlace"
+            class="form-control form-wide"
+            type="text"
+            name="birthPlace"
+            value="{{ personDetails.getBirthPlace }}"
+            required="required"
+        >
+    </div>
 {% endif %}{% if ca.uploadFile %} 
      <div id="uploadFileForm" class="form-group" hidden>
          <label>{% trans %}detail.uploadFile{% endtrans %}:
@@ -314,6 +326,19 @@
                  name="psychicalHealthProblems"
                  placeholder="{% trans %}detail.psychicalIssues-placeholder{% endtrans %}"
                  value="{{ personDetails.getPsychicalHealthProblems }}"
+         >
+     </div>
+ {% endif %}{% if ca.emergencyContact %}
+     <div class="form-group">
+         <label for="emergencyContact">{% trans %}detail.emergencyContact{% endtrans %}:</label>
+         <input
+                 id="emergencyContact"
+                 class="form-control form-wide"
+                 type="text"
+                 name="emergencyContact"
+                 placeholder="{% trans %}detail.emergencyContact-placeholder{% endtrans %}"
+                 required="required"
+                 value="{{ personDetails.getEmergencyContact }}"
          >
      </div>
  {% endif %}{% if ca.languages %}

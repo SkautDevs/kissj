@@ -21,6 +21,7 @@ abstract class AbstractContentArbiter
     public bool $health = true;
     public bool $medicaments = false;
     public bool $psychicalHealth = true;
+    public bool $emergencyContact = false;
     public bool $food = false;
     public bool $idNumber = false;
     public bool $scarf = false;

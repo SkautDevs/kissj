@@ -19,6 +19,8 @@
         <h4>{% trans %}email.payment-info.constantSymbol{% endtrans %}: {{ payment.constantSymbol }}</h4>
     {% endif %}
     <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
-    <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
-    <img src="cid:qr_payment" alt="QR payment code"/>
+    {% if showPaymentQrCode %}
+        <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
+        <img src="cid:qr_payment" alt="QR payment code"/>
+    {% endif %}
 {% endblock %}

@@ -20,6 +20,7 @@ use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Deal\EventDeal;
 use kissj\Payment\Payment;
+use kissj\User\UserRole;
 
 abstract class EventType
 {
@@ -37,11 +38,13 @@ abstract class EventType
         return $participant->getUserButNotNull()->event->defaultPrice;
     }
 
-    public function getMaximumClosedParticipants(Participant $participant): int
-    {
+    public function isFullForParticipant(
+        Participant $participant,
+        int $closedSameRoleSameContingentParticipantsCount,
+    ): bool {
         $event = $participant->getUserButNotNull()->event;
 
-        return match ($participant::class) {
+        $maximumParticipants = match ($participant::class) {
             PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
             TroopLeader::class => $event->maximalClosedTroopLeadersCount ?? 0,
             TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
@@ -49,6 +52,8 @@ abstract class EventType
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
             default => throw new \RuntimeException('Unexpected participant class: ' . $participant::class),
         };
+
+        return $maximumParticipants <= $closedSameRoleSameContingentParticipantsCount;
     }
 
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
@@ -155,6 +160,14 @@ abstract class EventType
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
+    public function getContingentsForAdmin(UserRole $userRole): array
+    {
+        return [];
+    }
+
     public function showContingentPatrolStats(): bool
     {
         return false;
@@ -233,6 +246,11 @@ abstract class EventType
     public function showIban(): bool
     {
         return false;
+    }
+
+    public function showPaymentQrCode(Participant $participant): bool
+    {
+        return true;
     }
 
     public function getSkautLogoPath(Participant $participant): string

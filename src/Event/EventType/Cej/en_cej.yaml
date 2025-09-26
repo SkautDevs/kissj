@@ -13,6 +13,8 @@ detail:
     foodKosherPeanutAllergy: "kosher peanut allergy"
     foodNoPorkVege: "no pork / vege"
     foodGlutenFreeVegetarian: "gluten free vegetarian"
+    issues: "Health issues"
+    issues-placeholder: "allergies - trigger, symptoms, medicine used; blood type; past serious illnesses and surgeries..."
     countryPoland: "Poland"
     countryHungary: "Hungary"
     countryRomania: "Romania"
@@ -35,7 +37,7 @@ dashboard:
 email:
     payment-info-contingents:
         approved: "Congratulations, you are approved to participate at"
-        wait: "Please wait for payment details to be received from your contingent."
+        wait: "You will receive another email from us with further instructions on how to complete the payment."
 receipt:
     headline: "Confirmation of payment acceptance"
     number: "Receipt number"

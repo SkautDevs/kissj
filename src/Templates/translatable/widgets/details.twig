@@ -31,6 +31,8 @@
         {% if person.getBirthDate %}
             ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
         {% endif %}<br/>
+{% endif %}{% if ca.birthPlace %}
+    {% trans %}detail.birthPlace{% endtrans %}: <b>{{ person.getBirthPlace }}</b><br/>
 {% endif %}{% if ca.idNumber %}
     {% trans %}detail.idNumber{% endtrans %}: <b>{{ person.getIdNumber }}</b><br/>
 {% endif %}{% if ca.address %}
@@ -53,6 +55,8 @@
     {% trans %}detail.medicaments{% endtrans %}: <b>{{ person.getMedicaments }}</b><br/>
 {% endif %}{% if ca.psychicalHealth %}
     {% trans %}detail.psychicalIssues{% endtrans %}: <b>{{ person.getPsychicalHealthProblems }}</b><br/>
+{% endif %}{% if ca.emergencyContact %}
+    {% trans %}detail.emergencyContact{% endtrans %}: <b>{{ person.getEmergencyContact }}</b><br/>
 {% endif %}{% if ca.languages %}
     {% trans %}detail.language{% endtrans %}: <b>{{ person.getLanguages }}</b><br/>
 {% endif %}{% if ca.swimming %}

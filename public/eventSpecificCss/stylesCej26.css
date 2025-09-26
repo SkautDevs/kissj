@@ -1,0 +1,17 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-main: #8e2923;
+        --color-fading: #556910;
+        --color-light: #556910;
+        background-image: url('/background_cej26.jpg');
+    };
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-main: #8e2923;
+        --color-fading: #556910;
+        --color-light: #556910;
+        background-image: url('/background_dark_cej26.png');
+    }
+}

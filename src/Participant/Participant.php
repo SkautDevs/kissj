@@ -60,6 +60,7 @@ use Ramsey\Uuid\Uuid;
  * @property string                 $entryCode
  * @property DateTimeInterface|null $entryDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $leaveDate m:passThru(dateFromString|dateToString)
+ * @property string|null            $emergencyContact
  *
  * @property Payment[]              $payment m:belongsToMany
  * @property Deal[]      $deals m:belongsToMany

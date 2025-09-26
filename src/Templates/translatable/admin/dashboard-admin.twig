@@ -90,7 +90,7 @@
             <h3>{% trans %}dashboard-admin.contingentPatrolStats{% endtrans %}</h3>
             <div class="card-divide">
                 <div>
-                    {% for contingent in event.eventType.getContingents %}
+                    {% for contingent in event.eventType.getContingentsForAdmin(user.role) %}
                         {% if loop.index is odd %}
                             <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                             <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
@@ -101,7 +101,7 @@
                     {% endfor %}
                 </div>
                 <div>
-                    {% for contingent in event.eventType.getContingents %}
+                    {% for contingent in event.eventType.getContingentsForAdmin(user.role) %}
                         {% if loop.index is even %}
                             <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
                             <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
