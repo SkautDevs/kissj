@@ -1,72 +1,72 @@
 name: kissj-app
 services:
-    #database
-    postgresql:
-        image: postgres:16-alpine
-        volumes:
-            - db-data:/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
-        environment:
-            - POSTGRES_USER=user
-            - POSTGRES_PASSWORD=password
-            - POSTGRES_DB=kissj
+  #database
+  postgresql:
+    image: postgres:18-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=kissj
 
-    #php-fpm
-    php-fpm:
-        image: quay.io/kissj/php-ubi
-        depends_on:
-            - postgresql
-        links:
-            - postgresql
+  #php-fpm
+  php-fpm:
+    image: quay.io/kissj/php-ubi
+    depends_on:
+      - postgresql
+    links:
+      - postgresql
 
-        environment:
-            - POSTGRES_USER=user
-            - POSTGRES_PASSWORD=password
-            - POSTGRES_DB=kissj
-            - DATABASE_HOST=postgresql
-            - DB_TYPE=postgresql
-            - REDIS_HOST=dragonfly
-            - REDIS_PASSWORD=dragonfly
-            - REDIS_PORT=6379
-        env_file: "compose.env"
-        volumes:
-            - ../../:/var/www/html
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=kissj
+      - DATABASE_HOST=postgresql
+      - DB_TYPE=postgresql
+      - REDIS_HOST=dragonfly
+      - REDIS_PASSWORD=dragonfly
+      - REDIS_PORT=6379
+    env_file: "compose.env"
+    volumes:
+      - ../../:/var/www/html
 
-    #Frontend Web Server
-    caddy:
-        image: quay.io/kissj/caddy-ubi
-        ports:
-            - 8080:8080
-        depends_on:
-            - php-fpm
-        links:
-            - php-fpm
+  #Frontend Web Server
+  caddy:
+    image: quay.io/kissj/caddy-ubi
+    ports:
+      - 8080:8080
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm
 
-        environment:
-            - PHPFPM_HOST=php-fpm
-            - WEB_HOST=localhost
-        env_file: "compose.env"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - ../../:/var/www/html
+    environment:
+      - PHPFPM_HOST=php-fpm
+      - WEB_HOST=localhost
+    env_file: "compose.env"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ../../:/var/www/html
 
-    #session storage
-    dragonfly:
-        image: docker.dragonflydb.io/dragonflydb/dragonfly
-        ports:
-            - "6379:6379"
-        environment:
-            - DFLY_requirepass=dragonfly
+  #session storage
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    ports:
+      - "6379:6379"
+    environment:
+      - DFLY_requirepass=dragonfly
 
-    # debug mail server
-    mailhog:
-        image: mailhog/mailhog
-        ports:
-            - "8025:8025"
+  # debug mail server
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
 
 volumes:
-    db-data:
+  db-data:
 
 networks:
-    default:
+  default:
