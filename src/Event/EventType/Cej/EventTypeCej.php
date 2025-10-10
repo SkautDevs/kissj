@@ -241,6 +241,7 @@ class EventTypeCej extends EventType
             self::CONTINGENT_POLAND,
             self::CONTINGENT_SLOVAKIA,
             self::CONTINGENT_CZECHIA,
+            self::CONTINGENT_ROMANIA,
             self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_TEAM,
         ];
