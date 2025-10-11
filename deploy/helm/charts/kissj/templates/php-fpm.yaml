@@ -41,7 +41,7 @@ spec:
         env:
           - name: PHP_FPM_SCRAPE_URI
             value: tcp://localhost:9000/status
-        
+
       - name: php-fpm
         image: {{ .Values.php.image.name }}:{{ .Values.php.image.tag }}
         imagePullPolicy: Always
@@ -51,46 +51,46 @@ spec:
           protocol: TCP
         resources:
           requests:
-            memory: "500Mi"
+            memory: "1000Mi"
             cpu: "500m"
           limits:
-            memory: "1Gi"
+            memory: "1500Mi"
             cpu: "1000m"
-        
-        env:    
+
+        env:
           - name: DB_TYPE
             value: postgresql
 
           - name: DATABASE_HOST
-            value: {{ .Release.Name }}-pgbouncer 
+            value: {{ .Release.Name }}-pgbouncer
 
           - name: POSTGRES_DB
             value: {{ .Values.postgres.dbname }}
-          
+
           - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgres
-                key: username 
-          
+                key: username
+
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgres
-                key: password 
-          
+                key: password
+
           - name: FILE_HANDLER_TYPE
             value: s3bucket
-          
+
           - name: S3_REGION
             value: {{ .Values.app.s3.region }}
 
           - name: S3_ENDPOINT
             value: {{ .Values.app.s3.endpoint }}
-          
+
           - name: S3_BUCKET
             value: {{ .Values.app.s3.bucket }}
-          
+
           - name: S3_KEY
             valueFrom:
               secretKeyRef:
@@ -101,41 +101,41 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-s3
-                key: secret 
-          
+                key: secret
+
           - name: TEMPLATE_CACHE
             value: "true"
 
           - name: TESTING_SITE
             value: {{ .Values.app.test_site | quote }}
-          
+
           - name: BASEPATH
             value: ""
-          
+
           - name: DEBUG
-            value: {{ .Values.app.debug | quote }} 
+            value: {{ .Values.app.debug | quote }}
 
           - name: DEFAULT_LOCALE
-            value: {{ .Values.app.locale | quote }} 
+            value: {{ .Values.app.locale | quote }}
 
           - name: LOGGER_FILENAME
             value: dummy
 
           - name: LOGGER_LEVEL
-            value: {{ .Values.app.log_level | quote }}           
-          
+            value: {{ .Values.app.log_level | quote }}
+
           - name: MAIL_DEBUG_OUTPUT_LEVEL
             value: {{ .Values.app.mail.log_level | quote }}
-              
+
           - name: MAIL_DISABLE_TLS
             value: "false"
-              
+
           - name: MAIL_SMTP
             value: "true"
-              
+
           - name: MAIL_SMTP_AUTH
             value: "true"
-          
+
           - name: MAIL_DSN
             valueFrom:
               secretKeyRef:
@@ -153,19 +153,19 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-mail
                 key: password
-          
+
           - name: MAIL_SMTP_PORT
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-mail
                 key: port
-          
+
           - name: MAIL_SMTP_SECURE
             valueFrom:
-              configMapKeyRef: 
+              configMapKeyRef:
                 name: {{ .Release.Name }}-mail
                 key: encryption
-          
+
           - name: MAIL_SMTP_SERVER
             valueFrom:
               configMapKeyRef:
