@@ -7,6 +7,7 @@ namespace kissj\Event\EventType\Cej;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\Event;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -295,6 +296,14 @@ class EventTypeCej extends EventType
         return match ($participant->contingent) {
             self::CONTINGENT_CZECHIA => 'receipt/receiptCejCs.twig',
             default => 'receipt/receiptCejSk.twig',
+        };
+    }
+
+    public function getMinimalPpCount(Event $event, Participant $participant): int
+    {
+        return match ($participant->contingent) {
+            self::CONTINGENT_EUROPEAN => 2,
+            default => $event->minimalPatrolParticipantsCount ?? 0,
         };
     }
 
