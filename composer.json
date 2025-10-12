@@ -56,7 +56,8 @@
 		"symfony/yaml": "^7.0",
 		"tharos/leanmapper": "^4.0",
 		"vlucas/phpdotenv": "^5.0",
-		"zeuxisoo/slim-whoops": "^0.7"
+		"zeuxisoo/slim-whoops": "^0.7",
+		"symfony/cache": "^7.0"
 	},
 	"require-dev": {
 		"ext-pdo": "*",
@@ -84,6 +85,8 @@
 	"config": {
 		"process-timeout": 0,
 		"sort-packages": true,
+		"optimize-autoloader": true,
+		"classmap-authoritative": true,
 		"allow-plugins": {
 			"php-http/discovery": false,
 			"phpstan/extension-installer": true
