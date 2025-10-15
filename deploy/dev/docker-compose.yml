@@ -4,7 +4,7 @@ services:
   postgresql:
     image: postgres:18-alpine
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/18/docker
     ports:
       - "5432:5432"
     environment:
