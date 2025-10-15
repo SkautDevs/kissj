@@ -58,7 +58,7 @@
 }
 
 :root {
-	background: var(--color-background);
+	background: var(--color-background) repeat 80px -40px;
 	--border-radius: 6px;
 	font-family: 'themix', sans-serif;
 	box-sizing: border-box;
@@ -80,6 +80,7 @@
 		--color-grey: #636363;
 		--color-link: #0000ee;
 		--color-link-visited: #551a8b;
+		background-image: url("/background_shapes_2016_light_600.png");
 	}
 }
 
@@ -96,6 +97,7 @@
 		--color-grey: #888888;
 		--color-link: lightskyblue;
 		--color-link-visited: #ad76de;
+		background-image: url("/background_shapes_2016_dark_600.png");
 	}
 }
 
