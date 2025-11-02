@@ -1,6 +1,7 @@
 {
 	"name": "skaut/kissj",
 	"description": "Scout registration system for jamborees",
+	"version":  "1.0",
 	"keywords": [
 		"registraton",
 		"system",

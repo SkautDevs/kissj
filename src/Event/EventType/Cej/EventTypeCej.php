@@ -14,6 +14,7 @@ use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Payment\Payment;
 use kissj\User\UserRole;
+use LogicException;
 
 class EventTypeCej extends EventType
 {
@@ -34,14 +35,17 @@ class EventTypeCej extends EventType
             self::CONTINGENT_HUNGARY => $this->transformPaymentPriceForHungary($payment, $participant),
             self::CONTINGENT_ROMANIA => $this->transformPaymentPriceForRomania($payment, $participant),
             self::CONTINGENT_EUROPEAN => $this->transformPaymentPriceForEurope($payment, $participant),
+            self::CONTINGENT_TEAM => $this->transformPaymentPriceForOrgs($payment, $participant),
+            default => throw new LogicException('unknown contingent for this event type'),
         };
     }
 
     private function transformPaymentPriceForCzechia(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 7700,
-            $participant instanceof Ist => 3300,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 7700,
+            Ist::class => 3300,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -55,9 +59,10 @@ class EventTypeCej extends EventType
 
     private function transformPaymentPriceForSlovakia(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 350,
-            $participant instanceof Ist => 180,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 350,
+            Ist::class => 180,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -71,9 +76,10 @@ class EventTypeCej extends EventType
 
     private function transformPaymentPriceForPoland(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 1400,
-            $participant instanceof Ist => 700,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 1400,
+            Ist::class => 700,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -88,9 +94,10 @@ class EventTypeCej extends EventType
 
     private function transformPaymentPriceForHungary(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 155_500,
-            $participant instanceof Ist => 105_000,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 155_500,
+            Ist::class => 105_000,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -105,9 +112,10 @@ class EventTypeCej extends EventType
 
     private function transformPaymentPriceForRomania(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 1506,
-            $participant instanceof Ist => 668,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 1506,
+            Ist::class => 668,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -122,9 +130,10 @@ class EventTypeCej extends EventType
 
     private function transformPaymentPriceForEurope(Payment $payment, Participant $participant): Payment
     {
-        $price = match (true) {
-            $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 135_000,
-            $participant instanceof Ist => 135_000,
+        $price = match ($participant::class) {
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * 135_000,
+            Ist::class => 135_000,
+            default => throw new LogicException('not supported in this event type'),
         };
 
         $payment->price = (string)$price;
@@ -133,6 +142,14 @@ class EventTypeCej extends EventType
         $payment->iban = 'HU47 1091 8001 0000 0071 7694 0301';
         $payment->swift = 'BACXHUHB';
         $payment->note = $payment->variableSymbol . ' ' . $payment->note;
+
+        return $payment;
+    }
+
+    private function transformPaymentPriceForOrgs(Payment $payment, Participant $participant): Payment
+    {
+        $payment = $this->transformPaymentPriceForHungary($payment, $participant);
+        $payment->price = '0';
 
         return $payment;
     }
