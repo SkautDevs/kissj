@@ -31,7 +31,6 @@
 		"composer": "^2",
 		"aws/aws-sdk-php": "^3.158",
 		"dflydev/fig-cookies": "^3.0",
-		"doctrine/annotations": "^1.8",
 		"endroid/qr-code": "^4.4",
 		"guzzlehttp/guzzle": "^7.8",
 		"h4kuna/fio": "^3.0",
