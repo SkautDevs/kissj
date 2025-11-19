@@ -51,6 +51,7 @@ class EventTypeCej extends EventType
         $payment->price = (string)$price;
         $payment->currency = 'CZK';
         $payment->accountNumber = '2302084720/2010';
+        $payment->variableSymbol = '26307' . substr($payment->variableSymbol, 5);
         $payment->iban = 'CZ31 2010 0000 0023 0208 4720';
         $payment->swift = 'FIOBCZPP';
 
