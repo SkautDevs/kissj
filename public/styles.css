@@ -215,6 +215,12 @@ a:visited {
 	grid-gap: 13px;
 }
 
+@media (width < 600px) {
+    .two-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
 .login-card {
 	margin: 0 auto;
 	max-width: 400px;
@@ -419,15 +425,23 @@ tr:nth-child(even) {
 	margin-bottom: 30px;
 }
 
+@media (width < 600px) {
+    .card-divide {
+        grid-template-columns: 1fr;
+    }
+}
+
 @supports (display: grid) {
-	.card-divide::before {
-		height: 100%;
-		width: 1px;
-		position: absolute;
-		left: 50%;
-		background: #ccc;
-		content: '';
-	}
+    @media (width >= 600px) {
+        .card-divide::before {
+            height: 100%;
+            width: 1px;
+            position: absolute;
+            left: 50%;
+            background: var(--color-grey);
+            content: '';
+        }
+    }
 }
 
 .text-left {
