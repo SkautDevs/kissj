@@ -145,9 +145,11 @@ h1 {
 	text-align: center;
 }
 
-.card-half {
-	max-width: 50%;
-	margin: 0 auto 11px;
+@media (width >= 600px) {
+    .card-half {
+        max-width: 50%;
+        margin: 0 auto 11px;
+    }
 }
 
 .card-double-layout {
@@ -213,6 +215,12 @@ a:visited {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	grid-gap: 13px;
+}
+
+@media (width < 600px) {
+    .two-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 .login-card {
@@ -419,15 +427,23 @@ tr:nth-child(even) {
 	margin-bottom: 30px;
 }
 
+@media (width < 600px) {
+    .card-divide {
+        grid-template-columns: 1fr;
+    }
+}
+
 @supports (display: grid) {
-	.card-divide::before {
-		height: 100%;
-		width: 1px;
-		position: absolute;
-		left: 50%;
-		background: #ccc;
-		content: '';
-	}
+    @media (width >= 600px) {
+        .card-divide::before {
+            height: 100%;
+            width: 1px;
+            position: absolute;
+            left: 50%;
+            background: var(--color-grey);
+            content: '';
+        }
+    }
 }
 
 .text-left {
