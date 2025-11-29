@@ -137,10 +137,11 @@ class PaymentService
                 . PaymentStatus::Waiting->value);
         }
 
-        $payment->status = PaymentStatus::Paid;
-        $this->paymentRepository->persist($payment);
-
         $now = DateTimeUtils::getDateTime();
+
+        $payment->status = PaymentStatus::Paid;
+        $payment->paidAt = $now;
+        $this->paymentRepository->persist($payment);
 
         $participant = $payment->participant;
         if ($participant->countWaitingPayments() > 1) {

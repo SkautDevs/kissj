@@ -11,19 +11,20 @@ use kissj\Orm\EntityDatetime;
 use kissj\Participant\Participant;
 
 /**
- * @property int               $id
- * @property string            $variableSymbol
- * @property string            $price
- * @property string            $currency
- * @property PaymentStatus     $status m:passThru(statusFromString|statusToString)
- * @property string            $purpose
- * @property string            $accountNumber
- * @property string            $iban
- * @property string            $swift
- * @property string            $constantSymbol
- * @property DateTimeInterface $due m:passThru(dateFromString|dateToString)
- * @property string            $note
- * @property Participant       $participant m:hasOne
+ * @property int                    $id
+ * @property string                 $variableSymbol
+ * @property string                 $price
+ * @property string                 $currency
+ * @property PaymentStatus          $status m:passThru(statusFromString|statusToString)
+ * @property string                 $purpose
+ * @property string                 $accountNumber
+ * @property string                 $iban
+ * @property string                 $swift
+ * @property string                 $constantSymbol
+ * @property DateTimeInterface      $due m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $paidAt m:passThru(dateFromString|dateToString)
+ * @property string                 $note
+ * @property Participant            $participant m:hasOne
  */
 class Payment extends EntityDatetime
 {
