@@ -146,9 +146,11 @@ h1 {
 	text-align: center;
 }
 
-.card-half {
-	max-width: 50%;
-	margin: 0 auto 11px;
+@media (width >= 600px) {
+    .card-half {
+        max-width: 50%;
+        margin: 0 auto 11px;
+    }
 }
 
 .card-double-layout {
