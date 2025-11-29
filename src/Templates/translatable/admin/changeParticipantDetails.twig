@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card text-left open-theme">
+    <div class="card text-left">
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST" action="{{ url_for('admin-change-participant-details', {'eventSlug': event.slug, 'participantId': person.id}) }}"
               enctype="multipart/form-data">

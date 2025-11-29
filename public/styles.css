@@ -63,6 +63,7 @@
 	font-family: 'themix', sans-serif;
 	box-sizing: border-box;
 	color: var(--color-main);
+    --color: var(--color-main);
 	color-scheme: light dark;
 	accent-color: var(--color-main);
 }
@@ -287,16 +288,6 @@ li.step.is-active::after {
     background-color: var(--color-main);
 }
 
-.registration-theme,
-.open-theme,
-.closed-theme,
-.approved-theme,
-.paid-theme,
-.admin-theme {
-	color: var(--color-main);
-	--color: var(--color-main);
-}
-
 .form-group {
 	font-size: 20px;
 	text-align: left;
@@ -340,7 +331,7 @@ li.step.is-active::after {
 	color: var(--color-accent);
 }
 
-.hightlight {
+.highlight {
 	color: var(--color-accent);
 }
 

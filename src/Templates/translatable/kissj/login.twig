@@ -3,7 +3,7 @@
 {% block content %}
     {% set bothLogins = event.eventType.isLoginEmailAllowed and event.eventType.isLoginSkautisAllowed %}
     <div class="two-cards">
-        <div class="card registration-theme">
+        <div class="card">
             <h2>{% trans %}login.registrationFor{% endtrans %}{{ event.readableName }}</h2>
             {% if event.eventType.isLoginSkautisAllowed %}
                 <div class="login-box">

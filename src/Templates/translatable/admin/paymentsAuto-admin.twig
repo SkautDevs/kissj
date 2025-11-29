@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card approved-theme">
+    <div class="card">
         <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
         <p>{% trans %}payments-admin.paymentsAreAutomatic{% endtrans %}</p>
         <form action="{{ url_for('admin-update-payments', {'eventSlug': event.slug} ) }}" method="POST">
@@ -12,7 +12,7 @@
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
     <br/>
-    <div class="card approved-theme">
+    <div class="card">
         <h3>{% trans %}paymentsAuto-admin.needToSolve{% endtrans %}</h3>
         {% if bankPaymentsTodo %}
         <table class="">
@@ -56,7 +56,7 @@
         {% endif %}
     </div>
     <br/>
-    <div class="card approved-theme">
+    <div class="card">
         <h3>{% trans %}paymentsAuto-admin.paymentsOnAccount{% endtrans %} {{ event.accountNumber }}</h3>
         {% if bankPayments %}
             <table class="">

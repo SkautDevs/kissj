@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="two-cards">
-        <div class="card registration-theme">
+        <div class="card">
             <h2>{% trans %}chooseRole.chooseRole{% endtrans %}</h2>
             {% if event.allowPatrols %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
@@ -41,7 +41,7 @@
             {% endif %}
         </div>
 
-        <div class="card approved-theme">
+        <div class="card">
             <h2>{% trans %}chooseRole.rolesAdvice{% endtrans %}</h2>
             {% if event.allowPatrols %}
                 <p><b>{% trans %}role.pl{% endtrans %}</b> {% trans %}chooseRole.advicePlText{% endtrans %}</p>

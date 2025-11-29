@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card open-theme">
+    <div class="card">
         <h2>{% trans %}open-admin.open{% endtrans %} {{ event.readableName }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
@@ -9,18 +9,18 @@
     <br/>
     {% if event.allowIsts %}
         {% if openIsts is not empty %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}role.ist{% endtrans %}</h2>
             </div>
             <br/>
             {% for ist in openIsts %}
-                <div class="card open-theme">
+                <div class="card">
                     {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
                 </div>
             {% endfor %}
         {% else %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.ist{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -29,12 +29,12 @@
 
     {% if event.allowPatrols %}
         {% if openPatrolLeaders is not empty %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}role.pl{% endtrans %}</h2>
             </div>
             <br/>
             {% for pl in openPatrolLeaders %}
-                <div class="card open-theme">
+                <div class="card">
                     <h3>{{ pl.getPatrolName }}</h3>
                     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ pl.getPatrolParticipantsCount + 1}}</b><br/>
                     <br/>
@@ -51,7 +51,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.pl{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -60,12 +60,12 @@
     
     {% if event.allowTroops %}
         {% if openTroopLeaders is not empty %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}role.tl{% endtrans %}</h2>
             </div>
             <br/>
             {% for tl in openTroopLeaders %}
-                <div class="card open-theme">
+                <div class="card">
                     <h3>{{ tl.getPatrolName }}</h3>
                     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ tl.getTroopParticipantsCount + 1}}</b><br/>
                     <br/>
@@ -75,26 +75,26 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.tl{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
             </div>
             <br/>
         {% endif %}
 
         {% if openTroopParticipants is not empty %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}role.tp{% endtrans %}</h2>
             </div>
             <br/>
             {% for tp in openTroopParticipants %}
-                <div class="card open-theme">
+                <div class="card">
                     {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
                 </div>
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.tp{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -103,12 +103,12 @@
 
     {% if event.allowGuests %}
         {% if openGuests is not empty %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}role.guest{% endtrans %}</h2>
             </div>
             <br/>
             {% for guest in openGuests %}
-                <div class="card open-theme">
+                <div class="card">
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
@@ -116,7 +116,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card open-theme">
+            <div class="card">
                 <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.guest{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
             </div>
             <br/>

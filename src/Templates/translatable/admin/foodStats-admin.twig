@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card paid-theme">
+    <div class="card">
         <a href="{{ url_for('admin-export-food', {'eventSlug': event.slug}) }}"
            target="_blank"
            class="btn">{% trans %}foodStats-admin.exportFoodData{% endtrans %}</a>
@@ -20,7 +20,7 @@
     </div>
 
     {% for aggregator, row in foodStatistic.rows %}
-        <div class="card approved-theme">
+        <div class="card">
                 <h3>{{aggregator|trans}}</h3>
                 <table >
                     <thead>

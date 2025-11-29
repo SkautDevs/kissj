@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card approved-theme">
+    <div class="card">
         <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
         {% if event.getEventType.isUnlockExpiredButtonAllowed %}
             <form method="POST" action="{{ url_for('admin-cancel-due-payments', {'eventSlug': event.slug} ) }}">
@@ -15,16 +15,16 @@
 
     {% if event.allowIsts %}
         {% if approvedIsts is empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}payments-admin.allIstsPaid{% endtrans %}</h2>
             </div>
         {% else %}
-            <div class="card approved-theme">
+            <div class="card">
                 <h2>{% trans %}role.ist{% endtrans %}</h2>
             </div>
             <br/>
             {% for ist in approvedIsts %}
-                <div class="card approved-theme">
+                <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
                         'person': ist,
                         'ca': event.getEventType.getContentArbiterIst,
@@ -38,16 +38,16 @@
     
     {% if event.allowPatrols %}
         {% if approvedPatrolLeaders is empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}payments-admin.allPatrolsPaid{% endtrans %}</h2>
             </div>
         {% else %}
-            <div class="card approved-theme">
+            <div class="card">
                 <h2>{% trans %}role.pl{% endtrans %}</h2>
             </div>
             <br/>
             {% for pl in approvedPatrolLeaders %}
-                <div class="card approved-theme">
+                <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
                         'person': pl,
                         'ca': event.getEventType.getContentArbiterPatrolLeader,
@@ -61,16 +61,16 @@
     
     {% if event.allowTroops %}
         {% if approvedTroopLeaders is empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}payments-admin.allTroopLeadersPaid{% endtrans %}</h2>
             </div>
         {% else %}
-            <div class="card approved-theme">
+            <div class="card">
                 <h2>{% trans %}role.tl{% endtrans %}</h2>
             </div>
             <br/>
             {% for tl in approvedTroopLeaders %}
-                <div class="card approved-theme">
+                <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
                         'person': tl,
                         'ca': event.getEventType.getContentArbiterTroopLeader,

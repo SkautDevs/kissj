@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="two-cards">
-        <div class="card approved-theme">
+        <div class="card">
             <h2>KISSJ umí dvě věci - sbírá data od účastníků a stará se o příchozí platby</h2>
             <ul>
                 <li>Registraci máš vytvořenou za míň než minutu</li>
@@ -11,14 +11,14 @@
                 <li>Můžeš vše exportovat do excelových tabulek</li>
             </ul>
         </div>
-        <div class="card registration-theme">
+        <div class="card">
             <h2>Pořádáš akci? Ozvi se a můžeme založit akci i tobě!</h2>
             <p>KISSJ už používá třeba Central European Jamboree, KORBO, Navigamus, Obrok a další</p>
             <a target="_blank" href="https://github.com/SkautDevs/kissj">Jsi vývojář? Opencource kód pro KISSJ najdeš na
                 github.com!</a>
         </div>
     </div>
-    <div class="card paid-theme">
+    <div class="card">
         <h2>Akce, které mají nyní otevřenou registraci:</h2>
         {% for event in events %}
             <p><a href="{{ url_for('landing', {'eventSlug': event.slug}) }}" class="btn">{{ event.readableName }}</a></p>
