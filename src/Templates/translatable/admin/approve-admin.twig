@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card closed-theme">
+    <div class="card">
         <h2>{% trans %}approve-admin.approving{% endtrans %} {{ event.readableName }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
@@ -9,12 +9,12 @@
     <br/>
     {% if event.allowIsts %}
         {% if closedIsts is not empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}role.ist{% endtrans %}</h2>
             </div>
             <br/>
             {% for ist in closedIsts %}
-                <div class="card closed-theme">
+                <div class="card">
                     <h4>{{ ist.getFullName }}</h4>
                     {% include 'widgets/detailsForAdmin.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
@@ -32,7 +32,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.ist{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -41,12 +41,12 @@
 
     {% if event.allowPatrols %}
         {% if closedPatrolLeaders is not empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}role.pl{% endtrans %}</h2>
             </div>
             <br/>
             {% for pl in closedPatrolLeaders %}
-                <div class="card closed-theme">
+                <div class="card">
                     <h3>{{ pl.getPatrolName }}</h3>
                     <br/>
                     <h4>{{ pl.getFullName }}</h4>
@@ -72,7 +72,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.pl{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -81,12 +81,12 @@
     
     {% if event.allowTroops %}
         {% if closedTroopLeaders is not empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}role.tl{% endtrans %}</h2>
             </div>
             <br/>
             {% for tl in closedTroopLeaders %}
-                <div class="card closed-theme">
+                <div class="card">
                     <h3>{{ tl.getPatrolName }}</h3>
                     <br/>
                     <h4>{{ tl.getFullName }}</h4>
@@ -112,19 +112,19 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tl{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
             </div>
             <br/>
         {% endif %}
 
         {% if closedTroopParticipants is not empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}role.tp{% endtrans %}</h2>
             </div>
             <br/>
             {% for tp in closedTroopParticipants %}
-                <div class="card closed-theme">
+                <div class="card">
                     <h4>{{ tp.getFullName }}</h4>
                     {% include 'widgets/detailsForAdmin.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
@@ -143,7 +143,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tp{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
             </div>
             <br/>
@@ -152,12 +152,12 @@
 
     {% if event.allowGuests %}
         {% if closedGuests is not empty %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}role.guest{% endtrans %}</h2>
             </div>
             <br/>
             {% for guest in closedGuests %}
-                <div class="card closed-theme">
+                <div class="card">
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/detailsForAdmin.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
@@ -173,7 +173,7 @@
                 <br/>
             {% endfor %}
         {% else %}
-            <div class="card closed-theme">
+            <div class="card">
                 <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.guest{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
             </div>
             <br/>

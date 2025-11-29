@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card closed-theme">
+    <div class="card">
         <h2>{% trans %}stats-admin.stats{% endtrans %} {{ event.readableName }}</h2>
         {% if event.eventType.isMultiplePaymentsAllowed %}
             <form method="POST" action="{{ url_for('admin-generate-more-payments', {'eventSlug': event.slug} ) }}">
@@ -14,7 +14,7 @@
     </div>
     <br/>
 
-    <div class="card closed-theme">
+    <div class="card">
         <h2>{% trans %}stats-admin.paid{% endtrans %} {{ event.readableName }}</h2>
 
         {% if event.allowIsts %}

@@ -6,7 +6,7 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
     </div>
-    <div class="card approved-theme">
+    <div class="card">
         <h2>{% trans %}troopManagement-admin.tieTogether{% endtrans %}</h2>
         <form
                 method="POST"
@@ -41,16 +41,16 @@
     </div>
 
     {% if troopLeaders is empty %}
-        <div class="card closed-theme">
+        <div class="card">
             <h2>{% trans %}troopManagement-admin.noTroopLeaders{% endtrans %}</h2>
         </div>
     {% else %}
-        <div class="card approved-theme">
+        <div class="card">
             <h2>{% trans %}troopManagement-admin.openTroopLeaders{% endtrans %}</h2>
         </div>
         <div class="card-double-layout">
             {% for tl in troopLeaders %}
-                <div class="card card-double approved-theme">
+                <div class="card card-double">
                     {% trans %}dashboard.tieCode{% endtrans %}: <b>{{ tl.tieCode }}</b><br/>
                     {% include 'widgets/detailsForAdmin.twig' with {
                         'person': tl,
@@ -78,17 +78,17 @@
     {% endif %}
 
     {% if troopParticipants is empty %}
-        <div class="card closed-theme">
+        <div class="card">
             <h2>{% trans %}troopManagement-admin.noTroopParticipants{% endtrans %}</h2>
         </div>
         <br/>
     {% else %}
-        <div class="card closed-theme">
+        <div class="card">
             <h2>{% trans %}troopManagement-admin.troopParticipantsWithoutLeader{% endtrans %}</h2>
         </div>
         <div class="card-double-layout">
             {% for tp in troopParticipants %}
-                <div class="card card-double closed-theme">
+                <div class="card card-double">
                     {% trans %}dashboard.tieCode{% endtrans %}: <b>{{ tp.tieCode }}</b><br/>
                     {% include 'widgets/detailsForAdmin.twig' with {
                         'person': tp,

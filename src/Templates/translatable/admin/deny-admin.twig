@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card card-half closed-theme">
+    <div class="card card-half">
         <h2>{% trans %}deny-admin.deny{% endtrans %} {{ ('role.' ~ participant.role.value)|trans }}</h2>
         <p></p>
         <form method="post"

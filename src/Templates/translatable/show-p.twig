@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-    <div class="card card-half closed-theme">
+    <div class="card card-half">
         <h2>{% trans %}role.p{% endtrans %} - {% trans %}dashboard.details{% endtrans %}</h2>
         {% include 'widgets/details.twig' with {'person': pDetail} %}
         <br/>
