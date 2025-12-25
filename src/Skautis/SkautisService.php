@@ -19,21 +19,25 @@ use Skautis\Exception as SkautisException;
 use Skautis\Skautis;
 use Throwable;
 
-readonly class SkautisService
+class SkautisService
 {
     private Skautis $skautis;
 
     public function __construct(
-        SkautisFactory $skautisFactory,
-        private ParticipantRepository $participantRepository,
-        private UserService $userService,
-        private UserRegeneration $userRegeneration,
-        private UserRepository $userRepository,
-        private FlashMessagesInterface $flashMessages,
-        private LoggerInterface $logger,
-        private SentryCollector $sentryCollector,
+        readonly private SkautisFactory $skautisFactory,
+        readonly private ParticipantRepository $participantRepository,
+        readonly private UserService $userService,
+        readonly private UserRegeneration $userRegeneration,
+        readonly private UserRepository $userRepository,
+        readonly private FlashMessagesInterface $flashMessages,
+        readonly private LoggerInterface $logger,
+        readonly private SentryCollector $sentryCollector,
     ) {
-        $this->skautis = $skautisFactory->getSkautis();
+    }
+
+    public function initSkautis(string $appId): void
+    {
+        $this->skautis = $this->skautisFactory->getSkautis($appId);
     }
 
     public function getLoginUri(string $backlink): string

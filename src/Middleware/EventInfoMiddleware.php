@@ -6,7 +6,9 @@ namespace kissj\Middleware;
 
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\Event\EventType\EventType;
 use kissj\Mailer\MailerSettings;
+use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -21,6 +23,7 @@ class EventInfoMiddleware extends BaseMiddleware
         private readonly EventRepository $eventRepository,
         private readonly Twig $view,
         private readonly MailerSettings $mailerSettings,
+        private readonly SkautisService $skautisService,
     ) {
     }
 
@@ -31,34 +34,58 @@ class EventInfoMiddleware extends BaseMiddleware
 
         $eventSlug = $route?->getArgument('eventSlug') ?? '';
         $event = $this->eventRepository->findBySlug($eventSlug);
+        $request = $request->withAttribute('event', $event);
+
         if ($event instanceof Event) {
-            $request = $request->withAttribute('event', $event);
-            $this->view->getEnvironment()->addGlobal('event', $event); // used in templates
+            $eventType = $event->getEventType();
 
-            $translationFilePaths = $event->getEventType()->getTranslationFilePaths();
-            if ($translationFilePaths !== []) {
-                /** @var TranslationExtension $translatorExtension */
-                $translatorExtension = $this->view->getEnvironment()->getExtension(TranslationExtension::class);
-                /** @var Translator $translator */
-                $translator = $translatorExtension->getTranslator();
+            $this->enrichTemplatesWithEvent($event);
+            $this->addEventSpecificTranslations($eventType);
+            $this->enrichMailerSettingsWithEvent($event, $request);
 
-                foreach ($translationFilePaths as $locale => $path) {
-                    $translator->addResource('yaml', $path, $locale);
-                }
+            if ($eventType->isLoginSkautisAllowed()) {
+                $this->initSkautis($event);
             }
-
-            $this->mailerSettings->setEvent($event);
-            $this->mailerSettings->setFullUrlLink(
-                $this->getRouter($request)->fullUrlFor(
-                    $request->getUri(),
-                    'landingPrettyUrl',
-                    ['eventSlug' => $event->slug],
-                )
-            );
-        } else {
-            $request = $request->withAttribute('event', null);
         }
 
         return $handler->handle($request);
+    }
+
+    public function enrichTemplatesWithEvent(Event $event): void
+    {
+        $this->view->getEnvironment()->addGlobal('event', $event);
+    }
+
+    public function addEventSpecificTranslations(EventType $eventType): void
+    {
+        $translationFilePaths = $eventType->getTranslationFilePaths();
+        if ($translationFilePaths !== []) {
+            /** @var TranslationExtension $translatorExtension */
+            $translatorExtension = $this->view->getEnvironment()->getExtension(TranslationExtension::class);
+            /** @var Translator $translator */
+            $translator = $translatorExtension->getTranslator();
+
+            foreach ($translationFilePaths as $locale => $path) {
+                $translator->addResource('yaml', $path, $locale);
+            }
+        }
+    }
+
+    public function enrichMailerSettingsWithEvent(Event $event, Request $request): void
+    {
+        $this->mailerSettings->setEvent($event);
+        $this->mailerSettings->setFullUrlLink(
+            $this->getRouter($request)->fullUrlFor(
+                $request->getUri(),
+                'landingPrettyUrl',
+                ['eventSlug' => $event->slug],
+            )
+        );
+    }
+
+    private function initSkautis(Event $event): void
+    {
+        // init Skautis only when it is needed, because it is not possible start with empty app ID
+        $this->skautisService->initSkautis($event->skautisAppId);
     }
 }
