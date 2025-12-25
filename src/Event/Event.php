@@ -73,6 +73,8 @@ use kissj\Participant\ParticipantRole;
  * @property string|null       $emailBccFrom
  *
  * @property string            $apiSecret
+ *
+ * @property string            $skautisAppId
  */
 class Event extends EntityDatetime
 {

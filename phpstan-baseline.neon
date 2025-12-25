@@ -235,12 +235,6 @@ parameters:
 			path: src/Settings/Settings.php
 
 		-
-			message: '#^Parameter \#1 \$appId of class kissj\\Skautis\\SkautisFactory constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Settings/Settings.php
-
-		-
 			message: '#^Parameter \#1 \$locale of class Symfony\\Component\\Translation\\Translator constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1

@@ -285,7 +285,6 @@ class Settings
             ],
         ]);
         $container[SkautisFactory::class] = fn () => new SkautisFactory(
-            $_ENV['SKAUTIS_APP_ID'],
             $_ENV['SKAUTIS_USE_TEST'] !== 'false',
         );
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
@@ -360,7 +359,6 @@ class Settings
         $dotenv->required('POSTGRES_DB');
         $dotenv->required('SENTRY_DSN');
         $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
-        $dotenv->required('SKAUTIS_APP_ID')->notEmpty();
         $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
         $dotenv->required('GIT_HASH');
         $dotenv->required('REDIS_HOST')->notEmpty();

@@ -11,12 +11,18 @@ use Skautis\User;
 use Skautis\Wsdl\WebServiceFactory;
 use Skautis\Wsdl\WsdlManager;
 
-readonly class SkautisFactory
+class SkautisFactory
 {
+    private string $appId;
+
     public function __construct(
-        private string $appId,
-        private bool $isTestMode,
+        private readonly bool $isTestMode,
     ) {
+    }
+
+    public function setAppId(string $appId): void
+    {
+        $this->appId = $appId;
     }
 
     public function getSkautis(): Skautis
