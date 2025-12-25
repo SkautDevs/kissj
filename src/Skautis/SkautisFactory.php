@@ -14,14 +14,13 @@ use Skautis\Wsdl\WsdlManager;
 readonly class SkautisFactory
 {
     public function __construct(
-        private string $appId,
         private bool $isTestMode,
     ) {
     }
 
-    public function getSkautis(): Skautis
+    public function getSkautis(string $appId): Skautis
     {
-        $config = new Config($this->appId, $this->isTestMode, true, true);
+        $config = new Config($appId, $this->isTestMode, true, true);
         $wsdlManager = new WsdlManager(new WebServiceFactory(), $config);
         $user = new User($wsdlManager, new SessionAdapter());
 
