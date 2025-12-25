@@ -9,7 +9,6 @@ use Dotenv\Dotenv;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
-use kissj\BankPayment\IBankPaymentService;
 use kissj\BankPayment\TatraBankPaymentService;
 use kissj\Entry\EntryController;
 use kissj\Event\ContentArbiterGuest;
@@ -88,6 +87,7 @@ use Monolog\Logger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
+use Mpdf\Mpdf;
 use Negotiation\LanguageNegotiator;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -228,8 +228,8 @@ class Settings
                 . $_ENV['FILE_HANDLER_TYPE']),
         };
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
-        $container[IMapper::class] = create(Mapper::class);
-        $container[IEntityFactory::class] = create(DefaultEntityFactory::class);
+        $container[IMapper::class] = autowire(Mapper::class);
+        $container[IEntityFactory::class] = autowire(DefaultEntityFactory::class);
         $container[SentryClient::class] = $sentryClient;
         $container[SentryHub::class] = $sentryHub;
 
@@ -257,6 +257,9 @@ class Settings
         $container[MailerSettings::class] = fn () => new MailerSettings(
             $_ENV['MAIL_DSN'],
         );
+        $container[Mpdf::class] = fn () => new Mpdf([
+            'tempDir' => __DIR__ . '/../../temp/mpdf',
+        ]);
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),
             $_ENV['REDIS_HOST'],
