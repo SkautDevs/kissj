@@ -65,7 +65,6 @@ class ApplicationGetter
         $containerBuilder->useAttributes(true);
         if ($_ENV['DEBUG'] === 'false') {
             $containerBuilder->enableCompilation($tempPath);
-            $containerBuilder->writeProxiesToFile(true, $tempPath);
         }
 
         return $containerBuilder->build();

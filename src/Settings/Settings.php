@@ -106,7 +106,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
 
 use function DI\autowire;
-use function DI\create;
 use function DI\get;
 
 class Settings
