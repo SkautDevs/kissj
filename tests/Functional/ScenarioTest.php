@@ -10,13 +10,13 @@ class ScenarioTest extends AppTestCase
 
     public function testRunApp(): void
     {
-        // redirect to login
+        // redirect from landing to login (via middleware chain)
         $responseRoot = $this->getTestApp()->handle($this->createRequest(self::TEST_EVENT_PREFIX_URL));
         $this->assertSame(302, $responseRoot->getStatusCode());
-        $responseLandingHeader = $responseRoot->getHeaderLine('location');
+        $responseLoginHeader = $responseRoot->getHeaderLine('location');
 
-        // show login
-        $responseLogin = $this->getTestApp(false)->handle($this->createRequest($responseLandingHeader));
+        // show login page
+        $responseLogin = $this->getTestApp(false)->handle($this->createRequest($responseLoginHeader));
         $this->assertSame(200, $responseLogin->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('id="form-email"', (string)$responseLogin->getBody());
 

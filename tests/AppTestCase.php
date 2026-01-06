@@ -21,10 +21,69 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class AppTestCase extends TestCase
 {
+    /** @var callable|null */
+    private $originalErrorHandler = null;
+
+    /** @var callable|null */
+    private $originalExceptionHandler = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Save original handlers before test runs
+        // Note: set_error_handler returns the previous handler
+        $this->originalErrorHandler = set_error_handler(fn () => false);
+        restore_error_handler();
+
+        $this->originalExceptionHandler = set_exception_handler(fn () => null);
+        restore_exception_handler();
+    }
+
+    protected function tearDown(): void
+    {
+        // Destroy session to ensure clean state between tests
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_unset();
+            session_destroy();
+        }
+
+        // Restore original handlers after test completes
+        // This cleans up any handlers registered by Whoops or other middleware
+        while (true) {
+            $current = set_error_handler(fn () => false);
+            restore_error_handler();
+            if ($current === $this->originalErrorHandler || $current === null) {
+                break;
+            }
+            restore_error_handler();
+        }
+
+        while (true) {
+            $current = set_exception_handler(fn () => null);
+            restore_exception_handler();
+            if ($current === $this->originalExceptionHandler || $current === null) {
+                break;
+            }
+            restore_exception_handler();
+        }
+
+        parent::tearDown();
+    }
+
     protected function getTestApp(bool $freshInit = true): App
     {
         if ($freshInit) {
             $this->clearTempFolder();
+
+            // Properly destroy any active session before starting fresh
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_unset();
+                session_destroy();
+            }
+            
+            // Clear session superglobal
+            $_SESSION = [];
 
             $arguments = [
                 'command' => 'migrate',
@@ -85,6 +144,12 @@ class AppTestCase extends TestCase
             if (is_file($file)) {
                 unlink($file);
             }
+        }
+
+        // Ensure mpdf temp directory exists (required by mpdf library)
+        $mpdfTempDir = __DIR__ . '/temp/mpdf/mpdf';
+        if (!is_dir($mpdfTempDir)) {
+            mkdir($mpdfTempDir, 0777, true);
         }
     }
     

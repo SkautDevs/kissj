@@ -42,13 +42,17 @@ class UserController extends AbstractController
 
     public function login(Request $request, Response $response, Event $event): Response
     {
+        $data = [
+            'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
+        ];
+        if ($event->getEventType()->isLoginSkautisAllowed()) {
+            $data['skautisLoginUri'] = $this->skautisService->getLoginUri($event->slug);
+        }
+
         return $this->view->render(
             $response,
             'kissj/login.twig',
-            [
-                'skautisLoginUri' => $this->skautisService->getLoginUri($event->slug),
-                'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
-            ],
+            $data,
         );
     }
 
