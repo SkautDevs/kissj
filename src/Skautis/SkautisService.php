@@ -24,14 +24,14 @@ class SkautisService
     private Skautis $skautis;
 
     public function __construct(
-        readonly private SkautisFactory $skautisFactory,
-        readonly private ParticipantRepository $participantRepository,
-        readonly private UserService $userService,
-        readonly private UserRegeneration $userRegeneration,
-        readonly private UserRepository $userRepository,
-        readonly private FlashMessagesInterface $flashMessages,
-        readonly private LoggerInterface $logger,
-        readonly private SentryCollector $sentryCollector,
+        private readonly SkautisFactory $skautisFactory,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly UserService $userService,
+        private readonly UserRegeneration $userRegeneration,
+        private readonly UserRepository $userRepository,
+        private readonly FlashMessagesInterface $flashMessages,
+        private readonly LoggerInterface $logger,
+        private readonly SentryCollector $sentryCollector,
     ) {
     }
 
