@@ -40,14 +40,14 @@ spec:
             memory: "128Mi"
             cpu: "128m"
         env:
-          - name: COMPOSER_ALLOW_SUPERUSER 
+          - name: COMPOSER_ALLOW_SUPERUSER
             value: "1"
-            
+
           - name: DB_TYPE
             value: postgresql
 
           - name: DATABASE_HOST
-            value: {{ .Release.Name }}-pgbouncer
+            value: {{ .Values.postgres.host }}
 
           - name: POSTGRES_DB
             value: {{ .Values.postgres.dbname }}
@@ -56,10 +56,10 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgres
-                key: username 
+                key: username
 
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgres
-                key: password 
+                key: password
