@@ -379,7 +379,9 @@ class Route
             });
 
             $app->group('/vendor', function (RouteCollectorProxy $app) {
-                $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) { return $response->withStatus(200); })
+                $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) {
+                    return $response->withStatus(200);
+                })
                     ->add(ApiAuthorizedOnlyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
