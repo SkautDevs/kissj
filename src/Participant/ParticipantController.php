@@ -100,7 +100,9 @@ class ParticipantController extends AbstractController
 
     public function downloadReceipt(Request $request, Response $response, User $user): Response
     {
-        if ($user->event->eventType->isReceiptAllowed() === false) {
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+
+        if ($user->event->eventType->showReceiptToParticipant($participant) === false) {
             $this->flashMessages->error('flash.error.receiptNotAllowed');
             $this->sentryCollector->collect(new Exception('Receipt not allowed'));
 
@@ -114,8 +116,6 @@ class ParticipantController extends AbstractController
 
             return $this->redirect($request, $response, 'dashboard');
         }
-
-        $participant = $this->participantRepository->getParticipantFromUser($user);
 
         fwrite($stream, $this->pdfGenerator->generatePdfReceipt(
             $participant,

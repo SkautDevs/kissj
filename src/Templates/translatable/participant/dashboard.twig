@@ -19,8 +19,8 @@
             {% endif %}
         </h2>
     {% endif %}
-    
-    {% if event.eventtype.isReceiptAllowed and userStatus == 'paid' and person.role.value != 'guest' %}
+
+    {% if event.eventtype.showReceiptToParticipant(person) %}
         <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{% trans %}dashboard.downloadReceipt{% endtrans %}</a><br/>
     {% endif %}
 </div>

@@ -15,12 +15,14 @@ use kissj\Event\Event;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Deal\EventDeal;
 use kissj\Payment\Payment;
 use kissj\User\UserRole;
+use kissj\User\UserStatus;
 
 abstract class EventType
 {
@@ -213,9 +215,17 @@ abstract class EventType
         return false;
     }
 
-    public function isReceiptAllowed(): bool
+    protected function isReceiptAllowed(): bool
     {
         return false;
+    }
+
+    public function showReceiptToParticipant(Participant $participant): bool
+    {
+        return
+            $this->isReceiptAllowed()
+            && $participant->getUserButNotNull()->status === UserStatus::Paid
+            && $participant->role !== ParticipantRole::Guest;
     }
 
     public function getReceiptTemplateName(Participant $participant): string

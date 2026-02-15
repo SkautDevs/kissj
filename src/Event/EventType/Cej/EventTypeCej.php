@@ -304,17 +304,29 @@ class EventTypeCej extends EventType
         ];
     }
 
-    public function isReceiptAllowed(): bool
+    #[\Override]
+    protected function isReceiptAllowed(): bool
     {
+        return true;
+    }
+
+    #[\Override]
+    public function showReceiptToParticipant(Participant $participant): bool
+    {
+        if (
+            parent::showReceiptToParticipant($participant)
+            && $participant->contingent === self::CONTINGENT_CZECHIA
+        ) {
+            return true;
+        }
+
         return false;
     }
 
+    #[\Override]
     public function getReceiptTemplateName(Participant $participant): string
     {
-        return match ($participant->contingent) {
-            self::CONTINGENT_CZECHIA => 'receipt/receiptCejCs.twig',
-            default => 'receipt/receiptCejSk.twig',
-        };
+        return 'receipt/receiptCejCs.twig';
     }
 
     public function getMinimalPpCount(Event $event, Participant $participant): int

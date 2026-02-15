@@ -175,7 +175,7 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
-    public function isReceiptAllowed(): bool
+    protected function isReceiptAllowed(): bool
     {
         return true;
     }

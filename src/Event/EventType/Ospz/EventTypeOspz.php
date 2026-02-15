@@ -77,7 +77,8 @@ class EventTypeOspz extends EventType
         return true;
     }
 
-    public function isReceiptAllowed(): bool
+    #[\Override]
+    protected function isReceiptAllowed(): bool
     {
         return true;
     }
