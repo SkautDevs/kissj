@@ -56,7 +56,7 @@ class PaymentTest extends TestCase
             ],
             'examplePayment' => [
                 $examplePayment1,
-                'SPD*1.0*ACC:CZ2806000000000168540115*AM:450*CC:CZK*MSG:PLATBA ZA ZBOZI*X-KS:0558*X-VS:1234567890'
+                'SPD*1.0*ACC:CZ2806000000000168540115+SWIFTCODE*AM:450*CC:CZK*MSG:PLATBA ZA ZBOZI*X-KS:0558*X-VS:1234567890'
             ],
         ];
     }

@@ -67,8 +67,13 @@ class Payment extends EntityDatetime
 
     public function getQrPaymentString(): string
     {
+        $swiftPart = '';
+        if ($this->swift !== '') {
+            $swiftPart = '+' . $this->swift;
+        }
+
         return
-            'SPD*1.0*ACC:' . $this->iban . '*'
+            'SPD*1.0*ACC:' . $this->iban . $swiftPart . '*'
             . 'AM:' . $this->price . '*'
             . 'CC:' . $this->mapDbCurrencyToIban($this->currency) . '*'
             . 'MSG:' . StringUtils::stripDiacritic($this->note) . '*'
