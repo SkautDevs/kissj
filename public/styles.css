@@ -110,6 +110,7 @@ footer {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+    text-align: center;
 }
 
 .footer-item {
@@ -447,6 +448,12 @@ tr:nth-child(even) {
 
 .text-right {
 	text-align: right;
+}
+
+.user-bar {
+	text-align: right;
+	overflow-wrap: break-word;
+	word-break: break-word;
 }
 
 .material-icons {

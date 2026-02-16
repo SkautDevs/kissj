@@ -416,7 +416,7 @@ cancelPayment-admin:
     participantNeedsToKnow: "The participant needs to know about the cancellation, because the payment can be on the way - if you cancel it now and the payment arrives, it will be quite an extra efford to solve this issue. You will need to return the payment and make him send it again with newly generated variable number."
     reason: "Reason for payment cancellation (will be sent via mail):"
     back: "Back"
-    cancelPayment: "CancelPayment"
+    cancelPayment: "Cancel payment"
 approve-admin:
     approving: "Approving participants on event"
     back: "Back"

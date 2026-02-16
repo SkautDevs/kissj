@@ -749,7 +749,12 @@ class AdminController extends AbstractController
             $this->flashMessages->success('flash.success.paymentAdded');
         }
 
-        return $this->redirect($request, $response, 'admin-dashboard');
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            ['participantId' => (string)$participantId],
+        );
     }
 
     // TODO shift into "approved" event to generate multiple payments, with different dates even
