@@ -56,6 +56,11 @@ use kissj\Participant\ParticipantRole;
  * @property bool              $allowGuests
  * @property int|null          $maximalClosedGuestsCount
  *
+ * @property bool              $allowOrganizingTeam
+ * @property int|null          $maximalClosedOrganizingTeamCount
+ * @property int|null          $organizingTeamPrice
+ * @property string|null       $organizingTeamRegistrationToken
+ *
  * @property bool              $allowTroops
  * @property int|null          $maximalClosedTroopLeadersCount
  * @property int|null          $maximalClosedTroopParticipantsCount
@@ -122,6 +127,9 @@ class Event extends EntityDatetime
         }
         if ($this->allowGuests) {
             $roles[] = ParticipantRole::Guest;
+        }
+        if ($this->allowOrganizingTeam) {
+            $roles[] = ParticipantRole::OrganizingTeam;
         }
 
         return $roles;

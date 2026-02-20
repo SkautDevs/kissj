@@ -27,6 +27,9 @@
                         method="POST"
                         class="login-box-item"
                 >
+                    {% if otToken is defined and otToken is not null %}
+                        <input type="hidden" name="ot_token" value="{{ otToken }}">
+                    {% endif %}
                     <div class="form-group">
                         <label for="form-email">{% trans %}login.email{% endtrans %}:</label>
                         <input
