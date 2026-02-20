@@ -7,6 +7,7 @@ namespace kissj\Event\EventType;
 use kissj\Application\StringUtils;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Event\ContentArbiterTroopLeader;
@@ -14,6 +15,7 @@ use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\Event;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
+use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -37,6 +39,10 @@ abstract class EventType
 
     protected function getPrice(Participant $participant): int
     {
+        if ($participant instanceof OrganizingTeam) {
+            return $participant->getUserButNotNull()->event->organizingTeamPrice ?? 0;
+        }
+
         return $participant->getUserButNotNull()->event->defaultPrice;
     }
 
@@ -52,6 +58,7 @@ abstract class EventType
             TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
             Ist::class => $event->maximalClosedIstsCount ?? 0,
             Guest::class => $event->maximalClosedGuestsCount ?? 0,
+            OrganizingTeam::class => $event->maximalClosedOrganizingTeamCount ?? 0,
             default => throw new \RuntimeException('Unexpected participant class: ' . $participant::class),
         };
 
@@ -86,6 +93,11 @@ abstract class EventType
     public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
     {
         return new ContentArbiterTroopParticipant();
+    }
+
+    public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
+    {
+        return new ContentArbiterOrganizingTeam();
     }
 
     /**
