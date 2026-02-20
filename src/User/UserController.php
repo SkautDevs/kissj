@@ -42,8 +42,12 @@ class UserController extends AbstractController
 
     public function login(Request $request, Response $response, Event $event): Response
     {
+        $queryParams = $request->getQueryParams();
+        $otToken = $queryParams['ot_token'] ?? null;
+
         $data = [
             'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
+            'otToken' => $otToken,
         ];
         if ($event->getEventType()->isLoginSkautisAllowed()) {
             $data['skautisLoginUri'] = $this->skautisService->getLoginUri($event->slug);
@@ -60,12 +64,15 @@ class UserController extends AbstractController
     {
         $email = $this->getParameterFromBody($request, 'email', true);
         $event = $this->getEvent($request);
+        $parsedBody = $request->getParsedBody();
+        $otToken = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
+
         if (!$this->userRepository->isEmailUserExisting($email, $event)) {
             $this->userService->registerEmailUser($email, $event);
         }
 
         try {
-            $this->userService->sendLoginTokenByMail($email, $request, $event);
+            $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken);
         } catch (Exception $e) {
             if ($_ENV['DEBUG'] === 'true') {
                 throw $e; // TODO refactor into new EmailException
@@ -96,6 +103,12 @@ class UserController extends AbstractController
             $this->userRegeneration->saveUserIdIntoSession($user);
             $this->userService->invalidateAllLoginTokens($user);
             $response = $this->cookieHandler->setCookie($response, 'lastLogin', 'email');
+
+            $queryParams = $request->getQueryParams();
+            $otToken = $queryParams['ot_token'] ?? null;
+            if ($otToken !== null && $otToken === $user->event->organizingTeamRegistrationToken) {
+                $_SESSION['ot_access_granted'] = true;
+            }
 
             return $this->redirect($request, $response, 'getDashboard');
         }

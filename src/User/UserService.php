@@ -47,7 +47,7 @@ readonly class UserService
         return $user;
     }
 
-    public function sendLoginTokenByMail(string $email, Request $request, Event $event): string
+    public function sendLoginTokenByMail(string $email, Request $request, Event $event, ?string $otToken = null): string
     {
         $user = $this->userRepository->getUserFromEmail($email, $event);
         $this->invalidateAllLoginTokens($user);
@@ -68,6 +68,9 @@ readonly class UserService
             'loginWithToken',
             ['token' => $token, 'eventSlug' => $event->slug]
         );
+        if ($otToken !== null) {
+            $fullLink .= '?ot_token=' . urlencode($otToken);
+        }
         $this->mailer->sendLoginToken($user, $fullLink);
 
         return $token;
@@ -106,6 +109,7 @@ readonly class UserService
     public function logoutUser(): void
     {
         unset($_SESSION['user']);
+        unset($_SESSION['ot_access_granted']);
     }
 
     public function invalidateAllLoginTokens(User $user): void
