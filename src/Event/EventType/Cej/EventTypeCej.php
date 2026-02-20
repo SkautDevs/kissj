@@ -323,12 +323,6 @@ class EventTypeCej extends EventType
         return false;
     }
 
-    #[\Override]
-    public function getReceiptTemplateName(Participant $participant): string
-    {
-        return 'receipt/receiptCejCs.twig';
-    }
-
     public function getMinimalPpCount(Event $event, Participant $participant): int
     {
         return match ($participant->contingent) {
