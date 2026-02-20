@@ -122,4 +122,26 @@
             <br/>
         {% endif %}
     {% endif %}
+
+    {% if event.allowOrganizingTeam %}
+        {% if openOrganizingTeam is not empty %}
+            <div class="card">
+                <h2>{% trans %}role.ot{% endtrans %}</h2>
+            </div>
+            <br/>
+            {% for ot in openOrganizingTeam %}
+                <div class="card">
+                    <h4>{{ ot.getFullName }}</h4>
+                    {% include 'widgets/detailsMinimal.twig' with {'person': ot, 'ca': caOt} %}
+                    <br/>
+                </div>
+                <br/>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <h2>{% trans %}open-admin.none{% endtrans %} {% trans %}role.ot{% endtrans %} {% trans %}open-admin.need{% endtrans %}</h2>
+            </div>
+            <br/>
+        {% endif %}
+    {% endif %}
 {% endblock %}

@@ -44,5 +44,12 @@
                 {% include 'widgets/participantRow.twig' with {'person': guest, 'ca': caGuest} %}<br/>
             {% endfor %}
         {% endif %}
+
+        {% if event.allowOrganizingTeam %}
+            <h4>{% trans %}role.ot{% endtrans %}</h4>
+            {% for ot in paidOrganizingTeam %}
+                {% include 'widgets/participantRow.twig' with {'person': ot, 'ca': caOt} %}<br/>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
