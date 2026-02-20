@@ -217,7 +217,7 @@ readonly class ExportService
             if ($participant instanceof Ist) {
                 $istPart = [
                     $participant->skills ?? '',
-                    implode(' | ', $participant->preferredPosition ?? []),
+                    $this->getPreferredPositionTranslated($participant),
                     $participant->driversLicense ?? '',
                 ];
             } else {
@@ -291,5 +291,17 @@ readonly class ExportService
         }
 
         return $this->translator->trans($contingent ?? '');
+    }
+
+    public function getPreferredPositionTranslated(Ist $participant): string
+    {
+        $translated = [];
+        /** @var list<string> $preferredPositions */
+        $preferredPositions = $participant->preferredPosition ?? [];
+        foreach ($preferredPositions as $position) {
+            $translated[] = $this->translator->trans($position);
+        }
+
+        return implode(' | ', $translated);
     }
 }
