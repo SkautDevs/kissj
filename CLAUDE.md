@@ -8,7 +8,10 @@ KISSJ (Keep It Simple Stupid for Jamborees) is a Scout registration system for n
 
 ## Git Workflow
 
-Trunk-based with a staging branch. Feature branches are rebased into `staging` for testing, then rebased into `master` for release. PRs target `staging` unless explicitly told otherwise.
+Trunk-based with a staging branch.
+Feature branches are rebased into `staging` for testing, then rebased into `master` for release.
+PRs target `staging` unless explicitly told otherwise.
+Git commit messages should be concise and starts with non-capitalized past tense verb (e.g., "added", "fixed", "refactor"), followed by a brief description of the change.
 
 ## Commands
 
