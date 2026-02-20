@@ -14,6 +14,7 @@ use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
+use kissj\Event\EventRepository;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\Import\ImportSrs;
 use kissj\Orm\Order;
@@ -30,6 +31,7 @@ use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Routing\RouteContext;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -48,6 +50,7 @@ class AdminController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly ImportSrs $importSrs,
         private readonly UploadFileHandler $uploadFileHandler,
+        private readonly EventRepository $eventRepository,
     ) {
     }
 
@@ -870,5 +873,47 @@ class AdminController extends AbstractController
             'event'  => $event,
             'foodStatistic' => $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->roleAggregatedToArray(),
         ]);
+    }
+
+    public function showOrganizingTeam(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+        $organizingTeamParticipants = $this->participantRepository->getAllParticipantsWithStatus(
+            [ParticipantRole::OrganizingTeam],
+            [UserStatus::Open, UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
+            $event,
+        );
+
+        $otRegistrationUrl = null;
+        if ($event->allowOrganizingTeam && $event->organizingTeamRegistrationToken !== null) {
+            $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+            $otRegistrationUrl = $routeParser->fullUrlFor(
+                $request->getUri(),
+                'loginAskEmail',
+                ['eventSlug' => $event->slug],
+                ['ot_token' => $event->organizingTeamRegistrationToken]
+            );
+        }
+
+        return $this->view->render($response, 'admin/organizingTeam-admin.twig', [
+            'organizingTeamParticipants' => $organizingTeamParticipants,
+            'otRegistrationUrl' => $otRegistrationUrl,
+        ]);
+    }
+
+    public function regenerateOrganizingTeamToken(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+        $event->organizingTeamRegistrationToken = bin2hex(random_bytes(16));
+        $this->eventRepository->persist($event);
+
+        $this->flashMessages->success('flash.success.otTokenRegenerated');
+        $this->logger->info('OT registration token regenerated for event ' . $event->slug);
+
+        return $this->redirect($request, $response, 'admin-organizing-team');
     }
 }
