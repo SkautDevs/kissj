@@ -39,6 +39,14 @@
                 </form>
                 <br/>
             {% endif %}
+            {% if otAccessGranted %}
+                <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
+                    <input type="hidden" name="role" value="ot">
+                    <input type="submit" class="btn form-wide"
+                           value="{% trans %}chooseRole.registerAsOt{% endtrans %}">
+                </form>
+                <br/>
+            {% endif %}
         </div>
 
         <div class="card">
@@ -55,6 +63,9 @@
             {% endif %}
             {% if event.allowGuests %}
                 <p><b>{% trans %}role.guest{% endtrans %}</b> {% trans %}chooseRole.adviceGuestText{% endtrans %}</p>
+            {% endif %}
+            {% if otAccessGranted %}
+                <p><b>{% trans %}role.ot{% endtrans %}</b> {% trans %}chooseRole.adviceOtText{% endtrans %}</p>
             {% endif %}
         </div>
     </div>
