@@ -9,6 +9,7 @@ use kissj\AbstractController;
 use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -65,7 +66,8 @@ class UserController extends AbstractController
         $email = $this->getParameterFromBody($request, 'email', true);
         $event = $this->getEvent($request);
         $parsedBody = $request->getParsedBody();
-        $otToken = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
+        $otTokenRaw = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
+        $otToken = is_string($otTokenRaw) ? $otTokenRaw : null;
 
         if (!$this->userRepository->isEmailUserExisting($email, $event)) {
             $this->userService->registerEmailUser($email, $event);
@@ -128,16 +130,23 @@ class UserController extends AbstractController
 
     public function chooseRole(User $user, Response $response): Response
     {
-        // TODO add preference into get parameter
-        return $this->view->render($response, 'kissj/choose-role.twig', ['event' => $user->event,]);
+        return $this->view->render($response, 'kissj/choose-role.twig', [
+            'event' => $user->event,
+            'otAccessGranted' => $_SESSION['ot_access_granted'] ?? false,
+        ]);
     }
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
-        $participant = $this->userService->createParticipantSetRole(
-            $user,
-            $this->getParameterFromBody($request, 'role'),
-        );
+        $role = $this->getParameterFromBody($request, 'role');
+
+        if ($role === ParticipantRole::OrganizingTeam->value && !((bool)($_SESSION['ot_access_granted'] ?? false))) {
+            $this->flashMessages->error('flash.error.otAccessDenied');
+
+            return $this->redirect($request, $response, 'chooseRole');
+        }
+
+        $participant = $this->userService->createParticipantSetRole($user, $role);
 
         if ($participant->getUserButNotNull()->loginType === UserLoginType::Skautis) {
             if (!$this->skautisService->isUserLoggedIn()) {
