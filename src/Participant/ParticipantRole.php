@@ -12,6 +12,7 @@ enum ParticipantRole: string
     case Guest = 'guest';
     case TroopLeader = 'tl';
     case TroopParticipant = 'tp';
+    case OrganizingTeam = 'ot';
 
     /**
      * @return list<ParticipantRole>
@@ -25,6 +26,7 @@ enum ParticipantRole: string
             self::Guest,
             self::TroopLeader,
             self::TroopParticipant,
+            self::OrganizingTeam,
         ];
     }
 }
