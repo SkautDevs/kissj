@@ -1,0 +1,47 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{% trans %}organizingTeam-admin.title{% endtrans %} {{ event.readableName }}</h2>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+    </div>
+    <br/>
+    {% if otRegistrationUrl %}
+        <div class="card">
+            <h3>{% trans %}organizingTeam-admin.registrationUrl{% endtrans %}</h3>
+            <p>{% trans %}organizingTeam-admin.registrationUrlDescription{% endtrans %}</p>
+            <input type="text" class="form-control form-wide" value="{{ otRegistrationUrl }}" readonly onclick="this.select()">
+            <br/>
+            <form method="POST" action="{{ url_for('admin-organizing-team-regenerate-token', {'eventSlug': event.slug}) }}">
+                <input type="submit" class="btn btn-grey btn-small" value="{% trans %}organizingTeam-admin.regenerateToken{% endtrans %}">
+            </form>
+        </div>
+        <br/>
+    {% endif %}
+    <div class="card">
+        <h3>{% trans %}organizingTeam-admin.participants{% endtrans %}</h3>
+        {% if organizingTeamParticipants %}
+            <table>
+                <thead>
+                <tr>
+                    <th>{% trans %}organizingTeam-admin.name{% endtrans %}</th>
+                    <th>{% trans %}organizingTeam-admin.email{% endtrans %}</th>
+                    <th>{% trans %}organizingTeam-admin.status{% endtrans %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in organizingTeamParticipants %}
+                    <tr>
+                        <td>{{ p.getFullName() }}</td>
+                        <td>{{ p.getUserButNotNull().email }}</td>
+                        <td>{{ p.getUserButNotNull().status.value }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% trans %}organizingTeam-admin.noParticipants{% endtrans %}</p>
+        {% endif %}
+    </div>
+{% endblock %}
