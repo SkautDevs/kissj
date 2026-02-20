@@ -451,6 +451,7 @@ readonly class ParticipantService
             ParticipantRole::TroopParticipant => $eventType->getContentArbiterTroopParticipant(),
             ParticipantRole::Ist => $eventType->getContentArbiterIst(),
             ParticipantRole::Guest => $eventType->getContentArbiterGuest(),
+            ParticipantRole::OrganizingTeam => $eventType->getContentArbiterOrganizingTeam(),
             null => throw new \RuntimeException('Missing role for participant ID: ' . $participant->id),
         };
     }
