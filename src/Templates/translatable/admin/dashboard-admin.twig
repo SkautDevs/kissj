@@ -58,6 +58,15 @@
                     <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.approvedCount }}</p>
                     <p>{% trans %}dashboard-admin.paidGuest{% endtrans %}: {{ guests.paidCount }}</p>
                 {% endif %}
+                {% if event.allowOrganizingTeam %}
+                    <h3>{% trans %}role.ot{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
+                    <p>{% trans %}dashboard-admin.limitOt{% endtrans %}
+                        : {{ event.getMaximalClosedOrganizingTeamCount() }}</p>
+                    <p>{% trans %}dashboard-admin.openOt{% endtrans %}: {{ organizingTeam.openCount }}</p>
+                    <p>{% trans %}dashboard-admin.lockedOt{% endtrans %}: {{ organizingTeam.closedCount }}</p>
+                    <p>{% trans %}dashboard-admin.approvedOt{% endtrans %}: {{ organizingTeam.approvedCount }}</p>
+                    <p>{% trans %}dashboard-admin.paidOt{% endtrans %}: {{ organizingTeam.paidCount }}</p>
+                {% endif %}
             </div>
         </div>
         <div class="card-divide">

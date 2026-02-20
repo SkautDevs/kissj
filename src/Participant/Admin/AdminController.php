@@ -87,6 +87,7 @@ class AdminController extends AbstractController
                 'troopLeaders' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopLeader),
                 'troopParticipants' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopParticipant),
                 'guests' => $this->participantRepository->getStatistic($event, ParticipantRole::Guest),
+                'organizingTeam' => $this->participantRepository->getStatistic($event, ParticipantRole::OrganizingTeam),
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
                 'foodStatistic' => $foodStatistic,
@@ -140,12 +141,20 @@ class AdminController extends AbstractController
                 $user,
                 [$orderByUpdatedAtDesc],
             ),
+            'paidOrganizingTeam' => $this->participantRepository->getAllParticipantsWithStatus(
+                [ParticipantRole::OrganizingTeam],
+                [UserStatus::Paid],
+                $event,
+                $user,
+                [$orderByUpdatedAtDesc],
+            ),
             'caIst' => $eventType->getContentArbiterIst(),
             'caPl' => $eventType->getContentArbiterPatrolLeader(),
             'caPp' => $eventType->getContentArbiterPatrolParticipant(),
             'caTl' => $eventType->getContentArbiterTroopLeader(),
             'caTp' => $eventType->getContentArbiterTroopParticipant(),
             'caGuest' => $eventType->getContentArbiterGuest(),
+            'caOt' => $eventType->getContentArbiterOrganizingTeam(),
         ]);
     }
 
@@ -198,12 +207,21 @@ class AdminController extends AbstractController
                 [$orderByUpdatedAtDesc],
                 true,
             ),
+            'openOrganizingTeam' => $this->participantRepository->getAllParticipantsWithStatus(
+                [ParticipantRole::OrganizingTeam],
+                [UserStatus::Open],
+                $event,
+                $user,
+                [$orderByUpdatedAtDesc],
+                true,
+            ),
             'caIst' => $eventType->getContentArbiterIst(),
             'caPl' => $eventType->getContentArbiterPatrolLeader(),
             'caPp' => $eventType->getContentArbiterPatrolParticipant(),
             'caTl' => $eventType->getContentArbiterTroopLeader(),
             'caTp' => $eventType->getContentArbiterTroopParticipant(),
             'caGuest' => $eventType->getContentArbiterGuest(),
+            'caOt' => $eventType->getContentArbiterOrganizingTeam(),
         ]);
     }
 
@@ -251,12 +269,20 @@ class AdminController extends AbstractController
                 $user,
                 [$orderByUpdatedAtDesc],
             ),
+            'closedOrganizingTeam' => $this->participantRepository->getAllParticipantsWithStatus(
+                [ParticipantRole::OrganizingTeam],
+                [UserStatus::Closed],
+                $event,
+                $user,
+                [$orderByUpdatedAtDesc],
+            ),
             'caIst' => $eventType->getContentArbiterIst(),
             'caPl' => $eventType->getContentArbiterPatrolLeader(),
             'caPp' => $eventType->getContentArbiterPatrolParticipant(),
             'caTl' => $eventType->getContentArbiterTroopLeader(),
             'caTp' => $eventType->getContentArbiterTroopParticipant(),
             'caGuest' => $eventType->getContentArbiterGuest(),
+            'caOt' => $eventType->getContentArbiterOrganizingTeam(),
         ]);
     }
 
