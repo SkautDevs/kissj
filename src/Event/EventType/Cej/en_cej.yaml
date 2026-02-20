@@ -39,24 +39,6 @@ email:
         approved: "Congratulations, you are approved to participate at"
         wait: "You will receive another email from us with further instructions on how to complete the payment."
 receipt:
-    headline: "Confirmation of payment acceptance"
-    number: "Receipt number"
-    accepter: "
-        Slovenský skauting, o. z.<br/>
-        Mokrohájska cesta 6<br/>
-        841 04 Bratislava<br/>
-        IČO: 00598721
-    "
-    acceptPaymentEvent: "We confirm the acceptance of payment for the event %eventReadableName% with date %eventDates%."
-    acceptPaymentParticipant: "Accepted for participant %participantFullName% with address %participantFullAddress%."
-    acceptPaymentMoreParticipant: "Other participants of the event for which the payment was made: %allOtherParticipants%"
-    acceptPaymentPayment: "
-        Payment was accepted in the amount of %paymentAmount% %paymentCurrency%
-        with variable symbol %paymentVariableSymbol%
-        to the account %paymentAccountTo%.
-        "
-    acceptedSign: "issued automatically on %acceptedDate%"
-receiptCs:
     headline: "Potvrzení o přijetí platby"
     number: "Číslo dokladu"
     accepter: "
