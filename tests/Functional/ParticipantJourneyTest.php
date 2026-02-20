@@ -587,6 +587,34 @@ class ParticipantJourneyTest extends AppTestCase
         $this->assertSame($troopLeader->id, $troopParticipant->troopLeader->id);
     }
 
+    public function testSetRoleRejectsOtWithoutSessionFlag(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'ot-gate-test@example.com';
+        $user = $this->registerUser($container, $email);
+        $loginToken = $this->createLoginToken($container, $user);
+
+        // Login via token (without ot_token param, so no session flag)
+        $app->handle($this->createRequest(
+            self::BASE_URL . '/tryLogin/' . $loginToken->token
+        ));
+
+        // Attempt to set OT role without session flag
+        $app = $this->getTestApp(false);
+        $responseSetRole = $app->handle($this->createRequest(
+            self::BASE_URL . '/setRole',
+            'POST',
+            ['role' => 'ot'],
+        ));
+
+        // Should be redirected back to chooseRole (302), not to dashboard
+        self::assertSame(302, $responseSetRole->getStatusCode());
+        $location = $responseSetRole->getHeaderLine('Location');
+        self::assertStringContainsString('chooseRole', $location);
+    }
+
     private function getContainer(App $app): ContainerInterface
     {
         $container = $app->getContainer();
