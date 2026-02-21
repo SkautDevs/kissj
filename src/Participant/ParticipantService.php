@@ -11,7 +11,6 @@ use kissj\FileHandler\SaveFileHandler;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\Mailer;
-use kissj\Participant\Guest\Guest;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Troop\TroopLeader;
@@ -389,15 +388,18 @@ readonly class ParticipantService
         $participant->registrationApproveDate = DateTimeUtils::getDateTime();
         $this->participantRepository->persist($participant);
 
-        if ($participant instanceof Guest) {
-            $this->userService->setUserPaid($participant->getUserButNotNull());
-            $this->mailer->sendGuestRegistrationFinished($participant);
+        if ($participant instanceof TroopParticipant) {
+            $this->mailer->sendTroopParticipantRegistrationFinished($participant);
 
             return $participant;
         }
 
-        if ($participant instanceof TroopParticipant) {
-            $this->mailer->sendTroopParticipantRegistrationFinished($participant);
+        $event = $participant->getUserButNotNull()->event;
+        $price = $event->getEventType()->getPrice($participant);
+
+        if ($price === 0) {
+            $this->userService->setUserPaid($participant->getUserButNotNull());
+            $this->mailer->sendRegistrationApprovedNoPayment($participant);
 
             return $participant;
         }
