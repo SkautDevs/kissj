@@ -19,6 +19,8 @@
 /uploads/*
 
 deploy/prereqs
+.worktrees
+
 # editor and IDE paraphernalia
 .idea
 .vscode
