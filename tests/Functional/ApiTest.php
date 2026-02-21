@@ -34,7 +34,7 @@ class ApiTest extends AppTestCase
         $container = $this->getContainer($app);
         
         // Set up event with API secret
-        $this->setupEventApiSecret($container);
+        $this->setupEventApiKeys($container);
         
         $request = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/nonexistent-code',
@@ -55,7 +55,7 @@ class ApiTest extends AppTestCase
         $container = $this->getContainer($app);
         
         // Set up event and create a participant with entry code
-        $this->setupEventApiSecret($container);
+        $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
         
         $request = $this->createJsonRequest(
@@ -77,7 +77,7 @@ class ApiTest extends AppTestCase
         $container = $this->getContainer($app);
         
         // Set up event and create a participant
-        $this->setupEventApiSecret($container);
+        $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
         
         $request = $this->createJsonRequest(
@@ -100,7 +100,7 @@ class ApiTest extends AppTestCase
         $container = $this->getContainer($app);
         
         // Set up event and create a participant
-        $this->setupEventApiSecret($container);
+        $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
         
         // First entry
@@ -157,13 +157,15 @@ class ApiTest extends AppTestCase
         return new Request($method, $uri, $headers, [], [], $stream);
     }
 
-    private function setupEventApiSecret(ContainerInterface $container): void
+    private function setupEventApiKeys(ContainerInterface $container): void
     {
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         if ($event !== null) {
-            $event->apiSecret = self::TEST_EVENT_SECRET;
+            $event->apiKeyDeals = self::TEST_EVENT_SECRET;
+            $event->apiKeyEntry = self::TEST_EVENT_SECRET;
+            $event->apiKeyVendor = self::TEST_EVENT_SECRET;
             $eventRepository->persist($event);
         }
     }
