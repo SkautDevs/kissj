@@ -299,11 +299,6 @@ email:
         received: "We have received your payment for"
         thanks: ". Thank you!"
         please: "Please, pay the rest of the payment as soon as possible, so we can consider your registration as fully paid."
-    finished:
-        subject: "approved"
-        approved: "We approved your registration for"
-        thanks: ". Thank you!"
-        enjoy: "Now you can fully enjoy the excitement for the upcoming event! Stay tuned for more information. ;)"
     finished-tp:
         subject: "approved"
         approved: "We approved your registration for"

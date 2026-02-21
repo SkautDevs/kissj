@@ -53,7 +53,6 @@ use kissj\Participant\Admin\AdminJsonController;
 use kissj\Participant\Admin\AdminRepository;
 use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Guest\GuestRepository;
-use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\ParticipantRepository;
@@ -176,7 +175,6 @@ class Settings
             FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),
-            GuestService::class => autowire(),
             IstRepository::class => autowire(),
             LanguageNegotiator::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),

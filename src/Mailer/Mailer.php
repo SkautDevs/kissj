@@ -161,20 +161,6 @@ readonly class Mailer
         );
     }
 
-    public function sendGuestRegistrationFinished(Participant $participant): void
-    {
-        $user = $participant->getUserButNotNull();
-        $this->sendMailFromTemplate(
-            $user->email,
-            $this->translator->trans('email.finished.subject'),
-            'finished',
-            [
-                'participant' => $participant,
-            ],
-            $this->getEmbeddedQr($participant),
-        );
-    }
-
     public function sendRegistrationApprovedNoPayment(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();

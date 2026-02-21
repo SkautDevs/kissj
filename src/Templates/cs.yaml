@@ -299,11 +299,6 @@ email:
         received: "Obdrželi jsme tvou platbu na"
         thanks: ". Děkujeme!"
         please: "Prosíme, zaplať zbývající platby co nejdříve, abychom mohli považovat tvou registraci za plně zaplacenou."
-    finished:
-        subject: "schváleno"
-        approved: "Schválili jsme tvou přihlášku pro"
-        thanks: ". Děkujeme!"
-        enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
     finished-tp:
         subject: "schváleno"
         approved: "Schválili jsme tvou účastnickou přihlášku pro"
