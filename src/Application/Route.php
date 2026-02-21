@@ -15,7 +15,9 @@ use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
-use kissj\Middleware\ApiAuthorizedOnlyMiddleware;
+use kissj\Middleware\DealApiKeyMiddleware;
+use kissj\Middleware\EntryApiKeyMiddleware;
+use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
@@ -352,36 +354,36 @@ class Route
 
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
             $app->post('/deal', DealController::class . '::catchDataFromGoogleForm')
-                ->add(ApiAuthorizedOnlyMiddleware::class)
+                ->add(DealApiKeyMiddleware::class)
                 ->setName('deal-catch-data-from-google-form');
 
             $app->group('/entry', function (RouteCollectorProxy $app) {
                 $app->get('/list', EntryController::class . '::list')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(EntryApiKeyMiddleware::class)
                     ->setName('entry-list');
 
                 $app->post('/code/{entryCode}', EntryController::class . '::entry')
                     ->setName('entry');
 
                 $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
                 $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::entryGroupFromWebApp')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-group-from-web-app');
             });
 
             $app->group('/leave', function (RouteCollectorProxy $app) {
                 $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::leaveParticipantFromWebApp')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-participant-from-web-app');
 
                 $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::leaveGroupFromWebApp')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-group-from-web-app');
             });
@@ -390,12 +392,12 @@ class Route
                 $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) {
                     return $response->withStatus(200);
                 })
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(VendorApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
                 $app->map(['GET', 'OPTIONS'], '/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
-                    ->add(ApiAuthorizedOnlyMiddleware::class)
+                    ->add(VendorApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-troop-from-web-app');
             });
