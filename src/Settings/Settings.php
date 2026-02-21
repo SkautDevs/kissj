@@ -33,6 +33,8 @@ use kissj\Mailer\Mailer;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
+use kissj\Middleware\DealApiKeyMiddleware;
+use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
@@ -47,6 +49,7 @@ use kissj\Middleware\SentryHttpContextMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
+use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Orm\Mapper;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Admin\AdminJsonController;
@@ -159,12 +162,14 @@ class Settings
             BankPaymentRepository::class => autowire(),
             CheckLeaderParticipants::class => autowire(),
             ChoosedRoleOnlyMiddleware::class => autowire(),
+            DealApiKeyMiddleware::class => autowire(),
             ContentArbiterGuest::class => autowire(),
             ContentArbiterIst::class => autowire(),
             ContentArbiterPatrolLeader::class => autowire(),
             ContentArbiterPatrolParticipant::class => autowire(),
             ContentArbiterTroopLeader::class => autowire(),
             ContentArbiterTroopParticipant::class => autowire(),
+            EntryApiKeyMiddleware::class => autowire(),
             EntryController::class => autowire(),
             EventController::class => autowire(),
             EventInfoMiddleware::class => autowire(),
@@ -209,6 +214,7 @@ class Settings
             TroopParticipantsOnlyMiddleware::class => autowire(),
             TroopService::class => autowire(),
             UserAuthenticationMiddleware::class => autowire(),
+            VendorApiKeyMiddleware::class => autowire(),
         ];
 
         $container[Connection::class] = fn () => new Connection([

@@ -65,7 +65,7 @@ class EntryController extends AbstractController
         $eventSecret = $bodyJson['eventSecret'];
         $event = $participant->getUserButNotNull()->event;
 
-        if ($event->apiKeyEntry !== $eventSecret) {
+        if (!is_string($eventSecret) || $event->apiKeyEntry === null || !hash_equals($event->apiKeyEntry, $eventSecret)) {
             return $this->createErrorEntryResponse($response, 'invalid event secret');
         }
 

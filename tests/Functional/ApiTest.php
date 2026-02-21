@@ -33,7 +33,7 @@ class ApiTest extends AppTestCase
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
         
-        // Set up event with API secret
+        // Set up event with API keys
         $this->setupEventApiKeys($container);
         
         $request = $this->createJsonRequest(
@@ -43,21 +43,21 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        $this->assertEquals(403, $response->getStatusCode());
+        self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
-        $this->assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
-        $this->assertEquals('participant not found', $body['reason']);
+        self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
+        self::assertEquals('participant not found', $body['reason']);
     }
 
     public function testEntryWithInvalidEventSecret(): void
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
-        
+
         // Set up event and create a participant with entry code
         $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
-        
+
         $request = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/' . $participant->entryCode,
             'POST',
@@ -65,10 +65,10 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        $this->assertEquals(403, $response->getStatusCode());
+        self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
-        $this->assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
-        $this->assertEquals('invalid event secret', $body['reason']);
+        self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
+        self::assertEquals('invalid event secret', $body['reason']);
     }
 
     public function testEntryFirstTime(): void
@@ -87,11 +87,11 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
-        $this->assertEquals(EntryStatus::ENTRY_STATUS_VALID->value, $body['status']);
-        $this->assertArrayHasKey('fullName', $body);
-        $this->assertArrayHasKey('email', $body);
+        self::assertEquals(EntryStatus::ENTRY_STATUS_VALID->value, $body['status']);
+        self::assertArrayHasKey('fullName', $body);
+        self::assertArrayHasKey('email', $body);
     }
 
     public function testEntrySecondTime(): void
@@ -110,8 +110,8 @@ class ApiTest extends AppTestCase
             ['eventSecret' => self::TEST_EVENT_SECRET],
         );
         $response1 = $app->handle($request1);
-        $this->assertEquals(200, $response1->getStatusCode());
-        
+        self::assertEquals(200, $response1->getStatusCode());
+
         // Second entry (same participant)
         $request2 = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/' . $participant->entryCode,
@@ -120,10 +120,10 @@ class ApiTest extends AppTestCase
         );
         $response2 = $this->getTestApp(false)->handle($request2);
 
-        $this->assertEquals(200, $response2->getStatusCode());
+        self::assertEquals(200, $response2->getStatusCode());
         $body = json_decode((string)$response2->getBody(), true);
-        $this->assertEquals(EntryStatus::ENTRY_STATUS_USED->value, $body['status']);
-        $this->assertArrayHasKey('entryDateTime', $body);
+        self::assertEquals(EntryStatus::ENTRY_STATUS_USED->value, $body['status']);
+        self::assertArrayHasKey('entryDateTime', $body);
     }
 
     private function getContainer(App $app): ContainerInterface
@@ -213,6 +213,65 @@ class ApiTest extends AppTestCase
         return $istRepository->get($ist->id);
     }
 
+    public function testEntryListWithoutAuthHeaderReturns401(): void
+    {
+        $app = $this->getTestApp();
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', null);
+        $response = $app->handle($request);
+
+        self::assertEquals(401, $response->getStatusCode());
+        self::assertStringContainsString('missing Authorization header', (string)$response->getBody());
+    }
+
+    public function testEntryListWithInvalidTokenReturns401(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->setupEventApiKeys($container);
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'wrong-token');
+        $response = $app->handle($request);
+
+        self::assertEquals(401, $response->getStatusCode());
+        self::assertStringContainsString('no event exists', (string)$response->getBody());
+    }
+
+    public function testEntryListWithValidTokenReturns200(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->setupEventApiKeys($container);
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
+        $response = $app->handle($request);
+
+        self::assertEquals(200, $response->getStatusCode());
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertArrayHasKey('eventName', $body);
+    }
+
+    public function testWrongScopeKeyReturns401(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug');
+        if ($event !== null) {
+            $event->apiKeyDeals = 'deals-only-key';
+            $event->apiKeyEntry = 'entry-only-key';
+            $event->apiKeyVendor = 'vendor-only-key';
+            $eventRepository->persist($event);
+        }
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'deals-only-key');
+        $response = $app->handle($request);
+
+        self::assertEquals(401, $response->getStatusCode());
+    }
+
     public function testChangeAdminNote(): void
     {
         // First app instance to set up data
@@ -222,7 +281,7 @@ class ApiTest extends AppTestCase
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
-        $this->assertNotNull($event);
+        self::assertNotNull($event);
 
         // Create admin user
         /** @var UserRepository $userRepository */
@@ -258,17 +317,17 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
-        $this->assertIsArray($body);
-        $this->assertArrayHasKey('adminNote', $body);
-        $this->assertEquals($noteText, $body['adminNote']);
+        self::assertIsArray($body);
+        self::assertArrayHasKey('adminNote', $body);
+        self::assertEquals($noteText, $body['adminNote']);
 
         // Verify note was persisted
         /** @var ParticipantRepository $participantRepository */
         $participantRepository = $container->get(ParticipantRepository::class);
         $updatedParticipant = $participantRepository->get($participant->id);
-        $this->assertEquals($noteText, $updatedParticipant->adminNote);
+        self::assertEquals($noteText, $updatedParticipant->adminNote);
     }
 
     public function testChangeAdminNoteRequiresAdmin(): void
@@ -280,7 +339,7 @@ class ApiTest extends AppTestCase
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
-        $this->assertNotNull($event);
+        self::assertNotNull($event);
 
         // Create regular (non-admin) user
         /** @var UserService $userService */
@@ -312,7 +371,25 @@ class ApiTest extends AppTestCase
         $response = $app->handle($request);
 
         // Should redirect (302) because user is not admin
-        $this->assertEquals(302, $response->getStatusCode());
+        self::assertEquals(302, $response->getStatusCode());
+    }
+
+    private function createBearerRequest(string $path, string $method, ?string $token): Request
+    {
+        $uri = new Uri('', '', 80, $path);
+        $handle = fopen('php://temp', 'wb+');
+        if ($handle === false) {
+            throw new RuntimeException('opening php://temp failed');
+        }
+        $stream = (new StreamFactory())->createStreamFromResource($handle);
+
+        $headerData = ['Content-Type' => 'application/json'];
+        if ($token !== null) {
+            $headerData['Authorization'] = 'Bearer ' . $token;
+        }
+        $headers = new Headers($headerData);
+
+        return new Request($method, $uri, $headers, [], [], $stream);
     }
 
     /**
