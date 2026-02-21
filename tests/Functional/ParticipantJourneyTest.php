@@ -314,6 +314,13 @@ class ParticipantJourneyTest extends AppTestCase
         $guestUser = $this->registerUser($container, $guestEmail);
         self::assertSame(UserStatus::WithoutRole, $guestUser->status);
 
+        // Ensure guestPrice is null (defaults to 0) for this test
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($guestUser->event->id);
+        $event->guestPrice = null;
+        $eventRepository->persist($event);
+
         // Step 2: Choose guest role
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);
@@ -626,6 +633,7 @@ class ParticipantJourneyTest extends AppTestCase
     /**
      * Test that approval with a nonzero price creates a Payment and keeps status at Approved.
      */
+    #[Group('approval')]
     public function testApprovalWithPriceCreatesPayment(): void
     {
         $app = $this->getTestApp();
@@ -677,6 +685,7 @@ class ParticipantJourneyTest extends AppTestCase
     /**
      * Test that OT with price=0 goes directly to Paid after approval, with no Payment created.
      */
+    #[Group('approval')]
     public function testOrganizingTeamWithZeroPriceGoesToPaid(): void
     {
         $app = $this->getTestApp();
@@ -726,6 +735,60 @@ class ParticipantJourneyTest extends AppTestCase
         $finalUser = $userRepository->get($user->id);
         self::assertSame(UserStatus::Paid, $finalUser->status);
         self::assertSame(0, $ot->countWaitingPayments());
+    }
+
+    /**
+     * Test that Guest with nonzero guestPrice creates a Payment and stays at Approved.
+     */
+    #[Group('guest')]
+    #[Group('approval')]
+    public function testGuestWithNonzeroPriceCreatesPayment(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'guest-price-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->guestPrice = 500;
+        $eventRepository->persist($event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'guest');
+
+        /** @var GuestRepository $guestRepository */
+        $guestRepository = $container->get(GuestRepository::class);
+        /** @var Guest $guest */
+        $guest = $guestRepository->get($participant->id);
+
+        $guest->firstName = 'Paying';
+        $guest->lastName = 'Guest';
+        $guest->nickname = 'PG';
+        $guest->permanentResidence = '123 Pay Street';
+        $guest->gender = 'male';
+        $guest->birthDate = new \DateTimeImmutable('1990-01-01');
+        $guest->healthProblems = 'None';
+        $guest->psychicalHealthProblems = 'None';
+        $guest->notes = '';
+        $guest->email = $email;
+        $guestRepository->persist($guest);
+
+        $this->initializeMailerSettings($container, $event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($guest);
+        $participantService->approveRegistration($guest);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $finalUser = $userRepository->get($user->id);
+        self::assertSame(UserStatus::Approved, $finalUser->status);
+        self::assertSame(1, $guest->countWaitingPayments());
     }
 
     private function getContainer(App $app): ContainerInterface

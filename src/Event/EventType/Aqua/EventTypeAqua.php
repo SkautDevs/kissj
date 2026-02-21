@@ -41,7 +41,7 @@ class EventTypeAqua extends EventType
             return 60;
         }
 
-        throw new \RuntimeException('Generating price for unknown role - participant ID: '.$participant->id);
+        return parent::getPrice($participant);
     }
 
     private function getFullPriceForToday(): int

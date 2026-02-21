@@ -6,6 +6,7 @@ namespace kissj\Event\EventType\Korbo;
 
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\EventType\EventType;
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType
@@ -15,6 +16,10 @@ class EventTypeKorbo extends EventType
     #[\Override]
     public function getPrice(Participant $participant): int
     {
+        if (!$participant instanceof Ist) {
+            return parent::getPrice($participant);
+        }
+
         $price = 650;
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
