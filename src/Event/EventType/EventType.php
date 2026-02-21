@@ -37,8 +37,12 @@ abstract class EventType
         return $payment;
     }
 
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
+        if ($participant instanceof Guest) {
+            return $participant->getUserButNotNull()->event->guestPrice ?? 0;
+        }
+
         if ($participant instanceof OrganizingTeam) {
             return $participant->getUserButNotNull()->event->organizingTeamPrice ?? 0;
         }

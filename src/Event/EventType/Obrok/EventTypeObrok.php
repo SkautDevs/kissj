@@ -10,6 +10,7 @@ use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
+use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Deal\EventDeal;
@@ -24,11 +25,12 @@ class EventTypeObrok extends EventType
     public const string CONTINGENT_ORG = 'detail.contingent.org';
 
     #[\Override]
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
         return match (true) {
             $participant instanceof Ist => 500,
             $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 1600,
+            $participant instanceof OrganizingTeam => parent::getPrice($participant),
             default => throw new \Exception('Unknown participant class'),
         };
     }
@@ -127,7 +129,7 @@ class EventTypeObrok extends EventType
     #[\Override]
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
-        return 'eventSpecificCss/stylesObrok.css';
+        return 'eventSpecificCss/stylesObrok27.css';
     }
 
     /**
