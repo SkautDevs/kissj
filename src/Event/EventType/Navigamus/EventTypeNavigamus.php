@@ -15,7 +15,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeNavigamus extends EventType
 {
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
         $now = DateTimeUtils::getDateTime();
         $patrolPrice = match (true) {

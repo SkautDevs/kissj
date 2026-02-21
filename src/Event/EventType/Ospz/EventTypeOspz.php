@@ -14,7 +14,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeOspz extends EventType
 {
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
         return match (true) {
             $participant instanceof Ist => 200,

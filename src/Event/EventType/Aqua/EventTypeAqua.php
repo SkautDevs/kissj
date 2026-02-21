@@ -20,7 +20,7 @@ class EventTypeAqua extends EventType
      * discount 40€ for self-eating participant (not for ISTs)
      * TODO update
      */
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
         if ($participant instanceof PatrolLeader) {
             $todayPrice = $this->getFullPriceForToday();

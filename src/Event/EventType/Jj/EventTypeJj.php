@@ -18,7 +18,7 @@ class EventTypeJj extends EventType
 {
     private const int SCARF_PRICE = 200;
 
-    protected function getPrice(Participant $participant): int
+    public function getPrice(Participant $participant): int
     {
         $price = match (true) {
             $participant instanceof Ist => 300,
