@@ -19,7 +19,7 @@ class EventTypeOspz extends EventType
         return match (true) {
             $participant instanceof Ist => 200,
             $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 400,
-            default => $participant->getUserButNotNull()->event->defaultPrice,
+            default => parent::getPrice($participant),
         };
     }
 

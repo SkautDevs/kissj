@@ -25,7 +25,7 @@ class EventTypeWsj extends EventType
                 $participant instanceof TroopParticipant,
                 $participant instanceof Ist,
                 => 12_000,
-                default => throw new \Exception('Unknown participant class for payment count 0̈́'),
+                default => parent::getPrice($participant),
             },
             1 => match (true) {
                 $participant instanceof TroopLeader,
@@ -33,20 +33,14 @@ class EventTypeWsj extends EventType
                 => 15_000,
                 $participant instanceof Ist,
                 => 12_000,
-                default => throw new \Exception('Unknown participant class for payment count 1'),
+                default => parent::getPrice($participant),
             },
             2 => match (true) {
                 $participant instanceof TroopLeader,
                 $participant instanceof TroopParticipant,
                 => 17_000,
-                default => throw new \Exception('Unknown participant class for payment count 2'),
+                default => parent::getPrice($participant),
             },
-            /*3 => match (true) {
-                $participant instanceof TroopLeader,
-                $participant instanceof TroopParticipant,
-                    => 10_000,
-                default => throw new \Exception('Unknown participant class for payment count 2'),
-            },*/
             default => throw new \Exception('Problematic payment count: ' . $paymentsCount),
         };
     }

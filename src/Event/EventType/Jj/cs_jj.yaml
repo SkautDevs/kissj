@@ -22,8 +22,6 @@ email:
         sendEmail: "nebo můžeš rovnou kontaktovat našeho admina pro registraci"
         farewell: "Brzy na viděnou!"
 flash:
-    success:
-        guestApproved: "Týmák schválen a e-mail odeslán (bez platby)"
     error:
         notGuest: "Pardon, jsi přihlášený jako tým"
 receipt:

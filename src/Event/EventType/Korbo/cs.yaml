@@ -380,7 +380,6 @@ flash:
         detailsSaved: "Informace úspěšně uloženy."
         locked: "Přihláška úspěšně uzamknuta a poslána"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
-        guestApproved: "Host schválen a e-mail odeslán (bez platby)"
         adminPairedPayments: "Spárováno bankovních transakcí: "
         transfer: "Platba úspěšně přesunuta!"
     warning:
