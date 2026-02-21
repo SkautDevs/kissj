@@ -23,7 +23,7 @@ class EventTypeJj extends EventType
         $price = match (true) {
             $participant instanceof Ist => 300,
             $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 650,
-            default => throw new \Exception('Unknown participant class'),
+            default => parent::getPrice($participant),
         };
 
         if ($participant->scarf === Participant::SCARF_YES) {

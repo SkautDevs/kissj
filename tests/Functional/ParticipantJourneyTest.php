@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\Group;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Guest\GuestRepository;
-use kissj\Participant\Guest\GuestService;
 use kissj\Participant\Ist\IstRepository;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
@@ -298,62 +298,70 @@ class ParticipantJourneyTest extends AppTestCase
 
     /**
      * Test Guest registration journey:
-     * Register → Choose Guest Role → Fill Details → Finish Registration (no payment needed)
-     * 
-     * Guests have a simpler flow - they go directly to Paid status after registration is finished.
+     * Register → Choose Guest Role → Fill Details → Close → Admin Approve → Paid (no payment needed)
+     *
+     * Guests have price 0 by default, so approval sets them directly to Paid with no Payment created.
      */
     #[Group('guest')]
     public function testGuestRegistrationJourney(): void
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
-        
+
         $guestEmail = 'guest-test@example.com';
-        
+
         // Step 1: Register guest user
         $guestUser = $this->registerUser($container, $guestEmail);
-        $this->assertSame(UserStatus::WithoutRole, $guestUser->status);
-        
+        self::assertSame(UserStatus::WithoutRole, $guestUser->status);
+
         // Step 2: Choose guest role
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);
         $participant = $userService->createParticipantSetRole($guestUser, 'guest');
-        
+
         // Verify role is set and status is Open
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
         $guestUser = $userRepository->get($guestUser->id);
-        $this->assertSame(UserStatus::Open, $guestUser->status);
-        
-        // Step 3: Fill guest details (required fields from AbstractContentArbiter defaults)
+        self::assertSame(UserStatus::Open, $guestUser->status);
+
+        // Step 3: Fill guest details
         /** @var GuestRepository $guestRepository */
         $guestRepository = $container->get(GuestRepository::class);
         /** @var Guest $guest */
         $guest = $guestRepository->get($participant->id);
-        
+
         $guest->firstName = 'Test';
         $guest->lastName = 'Guest';
         $guest->nickname = 'Visitor';
         $guest->permanentResidence = '123 Guest Street, Guest City';
         $guest->gender = 'other';
         $guest->birthDate = new \DateTimeImmutable('1985-08-20');
+        $guest->telephoneNumber = '+420123456789';
+        $guest->arrivalDate = new \DateTimeImmutable('2026-07-01');
+        $guest->departureDate = new \DateTimeImmutable('2026-07-10');
         $guest->healthProblems = 'None';
         $guest->psychicalHealthProblems = 'None';
         $guest->notes = 'VIP guest';
         $guest->email = $guestEmail;
         $guestRepository->persist($guest);
-        
+
         // Initialize mailer settings (normally done by middleware)
         $this->initializeMailerSettings($container, $guestUser->event);
-        
-        // Step 4: Finish registration (Guest goes directly to Paid, no approval/payment needed)
-        /** @var GuestService $guestService */
-        $guestService = $container->get(GuestService::class);
-        $guestService->finishRegistration($guest);
-        
-        // Verify final status is Paid
+
+        // Step 4: Close registration
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($guest);
+
+        // Step 5: Admin approves (Guest price is 0, so goes directly to Paid)
+        $participantService->approveRegistration($guest);
+
+        // Verify final status is Paid with no payments
         $finalUser = $userRepository->get($guestUser->id);
-        $this->assertSame(UserStatus::Paid, $finalUser->status);
+        self::assertSame(UserStatus::Paid, $finalUser->status);
+        self::assertSame(0, $guest->countPaidPayments());
+        self::assertSame(0, $guest->countWaitingPayments());
     }
 
     /**
@@ -615,6 +623,111 @@ class ParticipantJourneyTest extends AppTestCase
         self::assertStringContainsString('chooseRole', $location);
     }
 
+    /**
+     * Test that approval with a nonzero price creates a Payment and keeps status at Approved.
+     */
+    public function testApprovalWithPriceCreatesPayment(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'ist-price-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        // Set nonzero default price on the event
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->defaultPrice = 100;
+        $eventRepository->persist($event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        /** @var IstRepository $istRepository */
+        $istRepository = $container->get(IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+
+        $ist->firstName = 'Test';
+        $ist->lastName = 'IST';
+        $ist->nickname = 'Tester';
+        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->email = $email;
+        $ist->gender = 'male';
+        $ist->country = 'CZ';
+        $ist->contingent = 'detail.contingent.czechia';
+        $istRepository->persist($ist);
+
+        $this->initializeMailerSettings($container, $user->event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($ist);
+
+        $participantService->approveRegistration($ist);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $finalUser = $userRepository->get($user->id);
+        self::assertSame(UserStatus::Approved, $finalUser->status);
+        self::assertSame(1, $ist->countWaitingPayments());
+    }
+
+    /**
+     * Test that OT with price=0 goes directly to Paid after approval, with no Payment created.
+     */
+    public function testOrganizingTeamWithZeroPriceGoesToPaid(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'ot-zero-price@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->allowOrganizingTeam = true;
+        $event->organizingTeamPrice = 0;
+        $event->organizingTeamRegistrationToken = 'test-token';
+        $eventRepository->persist($event);
+
+        $_SESSION['ot_access_granted'] = true;
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ot');
+
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $container->get(ParticipantRepository::class);
+        $ot = $participantRepository->get($participant->id);
+        $ot->firstName = 'Test';
+        $ot->lastName = 'OT';
+        $ot->nickname = 'Organizer';
+        $ot->permanentResidence = '123 OT Street, OT City';
+        $ot->gender = 'male';
+        $ot->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ot->healthProblems = 'None';
+        $ot->psychicalHealthProblems = 'None';
+        $ot->notes = '';
+        $ot->email = $email;
+        $participantRepository->persist($ot);
+
+        $this->initializeMailerSettings($container, $event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($ot);
+        $participantService->approveRegistration($ot);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $finalUser = $userRepository->get($user->id);
+        self::assertSame(UserStatus::Paid, $finalUser->status);
+        self::assertSame(0, $ot->countWaitingPayments());
+    }
+
     private function getContainer(App $app): ContainerInterface
     {
         $container = $app->getContainer();
@@ -660,6 +773,10 @@ class ParticipantJourneyTest extends AppTestCase
         $mailerSettings = $container->get(MailerSettings::class);
         $mailerSettings->setEvent($event);
         $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $event->slug);
+
+        /** @var \Slim\Views\Twig $view */
+        $view = $container->get(\Slim\Views\Twig::class);
+        $view->getEnvironment()->addGlobal('event', $event);
     }
 
     /**
