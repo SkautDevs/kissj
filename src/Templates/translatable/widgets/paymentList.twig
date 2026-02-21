@@ -1,0 +1,30 @@
+{% for payment in payments %}
+    <div class="payment{% if payment.status.value == 'canceled' %} payment-cancelled{% endif %}">
+        {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.paymentStatus.' ~ payment.status.value)|trans }}</b><br/>
+        {% trans %}payments-admin.paymentWas{% endtrans %}: <b>{{ payment.due.format('d. m. Y') }}</b>
+        {% if payment.status.value != 'canceled' and payment.status.value != 'paid' %}
+            (<span class="{% if payment.isPaymentOverdue %}overdue{% endif %}"><b>{{ payment.getRemainingDays|abs }}</b>
+                {% if payment.isPaymentOverdue %}{% trans %}payments-admin.daysAfterDeadline{% endtrans %}{% else %}{% trans %}payments-admin.daysBeforeDeadline{% endtrans %}{% endif %}</span>)
+        {% endif %}<br/>
+        {% trans %}payments-admin.variableSymbol{% endtrans %}: <b>{{ payment.variableSymbol }}</b><br/>
+        {% trans %}payments-admin.amount{% endtrans %}: <b>{{ payment.price }} {{ payment.currency }}</b><br/>
+        {% trans %}payments-admin.note{% endtrans %}: <b>{{ payment.note }}</b><br/>
+        {% if payment.getPaidAt %}
+            {% trans %}detail.paid-at{% endtrans %}: <b>{{ payment.getPaidAt.format('d. m. Y, H:i:s') }}</b><br/>
+        {% endif %}
+        <br/>
+        {% if payment.status.value == 'waiting' %}
+            <a href="{{ url_for('admin-cancel-payment-show',
+                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
+            <br/>
+            <br/>
+            <form method="post"
+                  action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+                <input type="submit"
+                       value="{% trans %}payments-admin.confirm{% endtrans %}"
+                       class="btn btn-small">
+            </form><br/>
+        {% endif %}
+    </div>
+{% endfor %}

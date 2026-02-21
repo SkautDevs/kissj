@@ -54,6 +54,7 @@
             {% endif %}
         </div>
         <br/>
+        {% include 'widgets/paymentList.twig' with {'payments': participant.getPayments} %}
         {% if userStatus == 'cancelled' %}
             <form
                     method="POST"
