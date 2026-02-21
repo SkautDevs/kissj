@@ -78,7 +78,9 @@ use kissj\Participant\ParticipantRole;
  * @property string            $emailFromName
  * @property string|null       $emailBccFrom
  *
- * @property string            $apiSecret
+ * @property string|null       $apiKeyDeals
+ * @property string|null       $apiKeyEntry
+ * @property string|null       $apiKeyVendor
  *
  * @property string            $skautisAppId
  */
