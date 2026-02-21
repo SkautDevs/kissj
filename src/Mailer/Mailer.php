@@ -175,6 +175,20 @@ readonly class Mailer
         );
     }
 
+    public function sendRegistrationApprovedNoPayment(Participant $participant): void
+    {
+        $user = $participant->getUserButNotNull();
+        $this->sendMailFromTemplate(
+            $user->email,
+            $this->translator->trans('email.approved-without-payment.subject'),
+            'approved-without-payment',
+            [
+                'participant' => $participant,
+            ],
+            $this->getEmbeddedQr($participant),
+        );
+    }
+
     public function sendTroopParticipantRegistrationFinished(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();
