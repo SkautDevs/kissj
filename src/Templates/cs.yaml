@@ -547,7 +547,7 @@ flash:
         locked: "Přihláška úspěšně uzamknuta a poslána"
         otTokenRegenerated: "Nový odkaz pro organizátory úspěšně vygenerován"
         approved: "Účastník akce schválen, platební údaje vygenerovány a e-mail odeslán"
-        guestApproved: "Host schválen a e-mail odeslán (bez platby)"
+        approvedWithoutPayment: "Účastník schválen, platba není vyžadována (e-mail odeslán)"
         tpApproved: "Účastník akce schválen a e-mail odeslán (bez platby)"
         adminPairedPayments: "Spárováno bankovních transakcí: "
         transfer: "Platba úspěšně přesunuta!"
