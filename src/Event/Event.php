@@ -55,6 +55,7 @@ use kissj\Participant\ParticipantRole;
  *
  * @property bool              $allowGuests
  * @property int|null          $maximalClosedGuestsCount
+ * @property int|null          $guestPrice
  *
  * @property bool              $allowOrganizingTeam
  * @property int|null          $maximalClosedOrganizingTeamCount
