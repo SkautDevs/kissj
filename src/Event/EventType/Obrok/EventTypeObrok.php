@@ -30,8 +30,7 @@ class EventTypeObrok extends EventType
         return match (true) {
             $participant instanceof Ist => 500,
             $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 1600,
-            $participant instanceof OrganizingTeam => parent::getPrice($participant),
-            default => throw new \Exception('Unknown participant class'),
+            default => parent::getPrice($participant),
         };
     }
 
