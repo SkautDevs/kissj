@@ -1,0 +1,15 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <div class="text-center">
+        <p>{% trans %}email.approved-without-payment.approved{% endtrans %} {{ event.readableName }}!</p>
+        <p>{% trans %}email.approved-without-payment.noPayment{% endtrans %}</p>
+
+        {% if event.getEventType.showParticipantInfoInMail %}
+            <p>{% trans %}email.payment-successful.qrInfo{% endtrans %}</p>
+            <img src="cid:qr_info" alt="QR participant info"/>
+        {% endif %}
+
+        <p>{% trans %}email.approved-without-payment.enjoy{% endtrans %}</p>
+    </div>
+{% endblock %}

@@ -237,6 +237,11 @@ login:
     more: "Více informací o registraci"
     skautis: "Přihlásit se přes skautIS ⚜️"
 email:
+    approved-without-payment:
+        subject: "registrace schválena"
+        approved: "Tvá registrace byla schválena na"
+        noPayment: "Není potřeba nic platit. Tvá registrace je kompletní."
+        enjoy: "Těšíme se na tebe na akci!"
     layout:
         welcome: "Ahoj!"
         registration: "Registrace"

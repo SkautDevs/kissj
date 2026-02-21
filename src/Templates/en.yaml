@@ -237,6 +237,11 @@ login:
     more: "More information about registration system"
     skautis: "Skautis login"
 email:
+    approved-without-payment:
+        subject: "registration approved"
+        approved: "Your registration has been approved for"
+        noPayment: "No payment is required. Your registration is complete."
+        enjoy: "We look forward to seeing you at the event!"
     layout:
         welcome: "Hello!"
         registration: "Registration"
