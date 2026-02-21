@@ -1,6 +1,7 @@
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Use superskills whenever possible to enhance understanding and execution of tasks.
 
 ## Project Overview
 
@@ -12,6 +13,7 @@ Trunk-based with a staging branch.
 Feature branches are rebased into `staging` for testing, then rebased into `master` for release.
 PRs target `staging` unless explicitly told otherwise.
 Git commit messages should be concise and starts with non-capitalized past tense verb (e.g., "added", "fixed", "refactor"), followed by a brief description of the change.
+Do not include your signature. 
 
 ## Commands
 
