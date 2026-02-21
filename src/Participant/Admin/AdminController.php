@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
-use kissj\Participant\Guest\Guest;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -297,10 +296,10 @@ class AdminController extends AbstractController
         try {
             $participant = $this->participantService->approveRegistration($participant);
 
-            if ($participant instanceof Guest) {
-                $this->flashMessages->success('flash.success.guestApproved');
-            } elseif ($participant instanceof TroopParticipant) {
+            if ($participant instanceof TroopParticipant) {
                 $this->flashMessages->success('flash.success.tpApproved');
+            } elseif ($participant->getUserButNotNull()->status === UserStatus::Paid) {
+                $this->flashMessages->success('flash.success.approvedWithoutPayment');
             } else {
                 $this->flashMessages->success('flash.success.approved');
             }
