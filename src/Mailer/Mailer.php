@@ -91,6 +91,7 @@ readonly class Mailer
         Payment $payment,
         string $templateName,
         array $extraParameters = [],
+        ?string $subject = null,
     ): void {
         $qrCode = fopen(
             $this->qrCodeService->generateQrBase64FromString($payment->getQrPaymentString()),
@@ -107,7 +108,7 @@ readonly class Mailer
         $eventType = $user->event->getEventType();
         $this->sendMailFromTemplate(
             $user->email,
-            $this->translator->trans('email.payment-info.subject'),
+            $subject ?? $this->translator->trans('email.payment-info.subject'),
             $templateName,
             array_merge([
                 'participant' => $participant,
@@ -144,9 +145,13 @@ readonly class Mailer
 
     public function sendPaymentPriceChanged(Participant $participant, Payment $payment, string $reason): void
     {
-        $this->sendMailWithPayment($participant, $payment, 'payment-price-changed', [
-            'reason' => $reason,
-        ]);
+        $this->sendMailWithPayment(
+            $participant,
+            $payment,
+            'payment-price-changed',
+            ['reason' => $reason],
+            $this->translator->trans('email.payment-price-changed.subject'),
+        );
     }
 
     public function sendPaidPartially(Participant $participant): void

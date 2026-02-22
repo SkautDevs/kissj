@@ -914,6 +914,65 @@ class ParticipantJourneyTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $finalUser->status);
     }
 
+    /**
+     * Test that changing price of a non-waiting payment throws RuntimeException.
+     */
+    #[Group('payment')]
+    public function testChangePaymentPriceRejectsNonWaitingPayment(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'reject-price-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->defaultPrice = 500;
+        $eventRepository->persist($event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        /** @var IstRepository $istRepository */
+        $istRepository = $container->get(IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+        $ist->firstName = 'Reject';
+        $ist->lastName = 'Test';
+        $ist->nickname = 'RT';
+        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->email = $email;
+        $ist->gender = 'male';
+        $ist->country = 'CZ';
+        $ist->contingent = 'detail.contingent.czechia';
+        $istRepository->persist($ist);
+
+        $this->initializeMailerSettings($container, $event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($ist);
+        $participantService->approveRegistration($ist);
+
+        $ist = $istRepository->get($ist->id);
+        $payments = $ist->getNoncanceledPayments();
+        $originalPayment = $payments[0];
+
+        /** @var PaymentService $paymentService */
+        $paymentService = $container->get(PaymentService::class);
+        $paymentService->confirmPayment($originalPayment);
+
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = $container->get(PaymentRepository::class);
+        $paidPayment = $paymentRepository->get($originalPayment->id);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot change price of payment that is not in waiting status');
+        $participantService->changePaymentPrice($paidPayment, 300, 'Should fail');
+    }
+
     private function getContainer(App $app): ContainerInterface
     {
         $container = $app->getContainer();

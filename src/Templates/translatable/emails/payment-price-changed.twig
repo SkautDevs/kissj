@@ -10,10 +10,21 @@
     </p>
     <p>{% trans %}email.payment-price-changed.newPaymentDetails{% endtrans %}</p>
     <h3><u>{% trans %}email.payment-info.paymentDetails{% endtrans %}</u></h3>
+    {% if showIban %}
+        <h4>{% trans %}email.payment-info.iban{% endtrans %}: {{ payment.iban }}</h4>
+    {% endif %}
+    {% if payment.swift %}
+        <h4>{% trans %}email.payment-info.swift{% endtrans %}: {{ payment.swift }}</h4>
+    {% endif %}
     <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
     <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
     <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
+    {% if payment.constantSymbol %}
+        <h4>{% trans %}email.payment-info.constantSymbol{% endtrans %}: {{ payment.constantSymbol }}</h4>
+    {% endif %}
     <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
-    <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
-    <img src="cid:qr_payment" alt="QR payment code"/>
+    {% if showPaymentQrCode %}
+        <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
+        <img src="cid:qr_payment" alt="QR payment code"/>
+    {% endif %}
 {% endblock %}
