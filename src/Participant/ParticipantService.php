@@ -230,43 +230,62 @@ readonly class ParticipantService
 
     public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
-        if (
-            ($ca->patrolName->allowed && $p->patrolName === null)
-            || ($ca->contingent->allowed && $p->contingent === null)
-            || ($ca->firstName->allowed && $p->firstName === null)
-            || ($ca->lastName->allowed && $p->lastName === null)
-            || ($ca->address->allowed && $p->permanentResidence === null)
-            || ($ca->phone->allowed && $p->telephoneNumber === null)
-            || ($ca->gender->allowed && $p->gender === null)
-            || ($ca->country->allowed && $p->country === null)
-            || ($ca->email->allowed && $p->email === null)
-            || ($ca->unit->allowed && $p->scoutUnit === null)
-            || ($ca->languages->allowed && $p->languages === null)
-            || ($ca->birthDate->allowed && $p->birthDate === null)
-            || ($ca->birthPlace->allowed && $p->birthPlace === null)
-            || ($ca->emergencyContact->allowed && $p->emergencyContact === null)
-            || ($ca->food->allowed && $p->foodPreferences === null)
-            || ($ca->idNumber->allowed && $p->idNumber === null)
-            || ($ca->scarf->allowed && $p->scarf === null)
-            || ($ca->swimming->allowed && $p->swimming === null)
-            || ($ca->arrivalDate->allowed && $p->arrivalDate === null)
-            || ($ca->departureDate->allowed && $p->departureDate === null)
-            #|| ($ca->uploadFile->allowed && $p->uploadedFilename === null)
-            || ($ca->skills->allowed && $p->skills === null)
-            || ($ca->preferredPosition->allowed && $p->preferredPosition === null)
-            || ($ca->driver->allowed && $p->driversLicense === null)
-            || ($ca->tshirt->allowed && $p->getTshirtShape() === null)
-            || ($ca->tshirt->allowed && $p->getTshirtSize() === null)
-        ) {
-            return false;
+        $valueMap = [
+            'contingent' => $p->contingent,
+            'patrolName' => $p->patrolName,
+            'firstName' => $p->firstName,
+            'lastName' => $p->lastName,
+            'nickname' => $p->nickname,
+            'permanentResidence' => $p->permanentResidence,
+            'telephoneNumber' => $p->telephoneNumber,
+            'gender' => $p->gender,
+            'country' => $p->country,
+            'email' => $p->email,
+            'scoutUnit' => $p->scoutUnit,
+            'languages' => $p->languages,
+            'birthDate' => $p->birthDate,
+            'birthPlace' => $p->birthPlace,
+            'healthProblems' => $p->healthProblems,
+            'medicaments' => $p->medicaments,
+            'psychicalHealthProblems' => $p->psychicalHealthProblems,
+            'emergencyContact' => $p->emergencyContact,
+            'foodPreferences' => $p->foodPreferences,
+            'idNumber' => $p->idNumber,
+            'scarf' => $p->scarf,
+            'swimming' => $p->swimming,
+            'arrivalDate' => $p->arrivalDate,
+            'departureDate' => $p->departureDate,
+            'skills' => $p->skills,
+            'preferredPosition' => $p->preferredPosition,
+            'driversLicense' => $p->driversLicense,
+        ];
+
+        foreach ($ca->getAllowedItems() as $item) {
+            if (!$item->required) {
+                continue;
+            }
+
+            if ($item->id === 'tshirt') {
+                if ($p->getTshirtShape() === null || $p->getTshirtSize() === null) {
+                    return false;
+                }
+                continue;
+            }
+
+            if (!array_key_exists($item->id, $valueMap)) {
+                continue;
+            }
+
+            if ($valueMap[$item->id] === null) {
+                return false;
+            }
         }
 
         if ($ca->email->allowed && $p->email !== null && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
             return false;
         }
 
-        // numbers and plus sight up front only
-        if ($ca->phone->allowed && ($p->telephoneNumber === null || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
+        if ($ca->phone->allowed && $p->telephoneNumber !== null && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
             return false;
         }
 
