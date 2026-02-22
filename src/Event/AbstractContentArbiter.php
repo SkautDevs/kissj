@@ -240,7 +240,6 @@ abstract class AbstractContentArbiter
             order: 240,
             label: 'detail.scarf',
             placeholder: '',
-            required: false,
             options: ['yes', 'no'],
         );
         $this->arrivalDate = new ContentArbiterItem(
@@ -266,7 +265,6 @@ abstract class AbstractContentArbiter
             order: 270,
             label: 'detail.driver',
             placeholder: '',
-            required: false,
             options: ['dont', 'less 10000 km', 'more 10000 km'],
         );
         $this->skills = new ContentArbiterItem(
@@ -276,7 +274,6 @@ abstract class AbstractContentArbiter
             order: 280,
             label: 'detail.skills',
             placeholder: 'detail.skills-placeholder',
-            required: false,
         );
         $this->preferredPosition = new ContentArbiterItem(
             id: 'preferredPosition',
@@ -285,7 +282,6 @@ abstract class AbstractContentArbiter
             order: 290,
             label: 'detail.preferredPosition',
             placeholder: '',
-            required: false,
         );
         $this->printedHandbook = new ContentArbiterItem(
             id: 'printedHandbook',
