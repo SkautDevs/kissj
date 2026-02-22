@@ -7,11 +7,11 @@ namespace kissj\Participant;
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
-use LeanMapper\Exception\MemberAccessException;
 use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
+use LeanMapper\Exception\MemberAccessException;
 use Ramsey\Uuid\Uuid;
 
 /**

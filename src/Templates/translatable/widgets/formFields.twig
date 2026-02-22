@@ -43,7 +43,7 @@
                 class="form-control{% if item.id != 'arrivalDate' and item.id != 'departureDate' %} form-wide{% endif %}"
                 type="date"
                 name="{{ item.id }}"
-                value="{% if item.id == 'birthDate' %}{{ value.format('Y-m-d') ?? 'now - 18 years'|date('Y-m-d') }}{% elseif item.id == 'arrivalDate' %}{{ (value ?? event.startDay)|date('Y-m-d') }}{% elseif item.id == 'departureDate' %}{{ (value ?? event.endDay)|date('Y-m-d') }}{% else %}{{ value }}{% endif %}"
+                value="{% if item.id == 'birthDate' %}{% if value %}{{ value.format('Y-m-d') }}{% else %}{{ 'now - 18 years'|date('Y-m-d') }}{% endif %}{% elseif item.id == 'arrivalDate' %}{{ (value ?? event.startDay)|date('Y-m-d') }}{% elseif item.id == 'departureDate' %}{{ (value ?? event.endDay)|date('Y-m-d') }}{% else %}{{ value }}{% endif %}"
                 {% if item.required %}required="required"{% endif %}
                 {% if item.id == 'birthDate' %}onchange="OnBirthDateChange(this)"{% endif %}
             >
