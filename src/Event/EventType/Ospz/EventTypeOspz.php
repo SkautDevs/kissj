@@ -26,7 +26,7 @@ class EventTypeOspz extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
-        $caIst->food = true;
+        $caIst->food->allowed = true;
 
         return $caIst;
     }
@@ -34,7 +34,7 @@ class EventTypeOspz extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
-        $caPl->contingent = true;
+        $caPl->contingent->allowed = true;
 
         return $caPl;
     }

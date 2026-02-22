@@ -3,17 +3,17 @@
     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getPatrolParticipantsCount + 1}}</b><br/>
 {% endif %}{% if person is TroopLeader %}
     {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
-{% endif %}{% if ca.contingent %}
+{% endif %}{% if ca.contingent.allowed %}
     {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
-{% endif %}{% if ca.email %}
+{% endif %}{% if ca.email.allowed %}
     {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
 {% elseif person.getUser is not null %}
     {% trans %}detail.email{% endtrans %}: <b>{{ person.getUser.email }}</b><br/>
-{% endif %}{% if ca.phone %}
+{% endif %}{% if ca.phone.allowed %}
     {% trans %}detail.phone{% endtrans %}: <b>{{ person.getTelephoneNumber }}</b><br/>
-{% endif %}{% if ca.unit %}
+{% endif %}{% if ca.unit.allowed %}
     {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
-{% endif %}{% if ca.notes %}
+{% endif %}{% if ca.notes.allowed %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>

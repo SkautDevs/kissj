@@ -12,12 +12,12 @@ class EventTypeNsj extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = new ContentArbiterIst();
-        $ca->arrivalDate = true;
-        $ca->departureDate = true;
-        $ca->preferredPosition = true;
-        $ca->food = true;
-        $ca->tshirt = true;
-        $ca->skills = true;
+        $ca->arrivalDate->allowed = true;
+        $ca->departureDate->allowed = true;
+        $ca->preferredPosition->allowed = true;
+        $ca->food->allowed = true;
+        $ca->tshirt->allowed = true;
+        $ca->skills->allowed = true;
 
         return $ca;
     }

@@ -38,15 +38,15 @@ class EventTypeObrok extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
-        $ca->gender = false;
-        $ca->contingent = true;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->unit = true;
-        $ca->medicaments = true;
-        $ca->printedHandbook = true;
-        $ca->food = true;
-        $ca->arrivalDate = true;
+        $ca->gender->allowed = false;
+        $ca->contingent->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->medicaments->allowed = true;
+        $ca->printedHandbook->allowed = true;
+        $ca->food->allowed = true;
+        $ca->arrivalDate->allowed = true;
 
         return $ca;
     }
@@ -55,12 +55,12 @@ class EventTypeObrok extends EventType
     public function getContentArbiterTroopLeader(): ContentArbiterTroopLeader
     {
         $ca = parent::getContentArbiterTroopLeader();
-        $ca->gender = false;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->unit = true;
-        $ca->medicaments = true;
-        $ca->printedHandbook = true;
+        $ca->gender->allowed = false;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->medicaments->allowed = true;
+        $ca->printedHandbook->allowed = true;
 
         return $ca;
     }
@@ -69,12 +69,12 @@ class EventTypeObrok extends EventType
     public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
     {
         $ca = parent::getContentArbiterTroopParticipant();
-        $ca->gender = false;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->unit = true;
-        $ca->medicaments = true;
-        $ca->printedHandbook = true;
+        $ca->gender->allowed = false;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->medicaments->allowed = true;
+        $ca->printedHandbook->allowed = true;
 
         return $ca;
     }
@@ -83,15 +83,15 @@ class EventTypeObrok extends EventType
     public function getContentArbiterGuest(): ContentArbiterGuest
     {
         $ca = parent::getContentArbiterGuest();
-        $ca->gender = false;
-        $ca->address = false;
-        $ca->contingent = false;
-        $ca->medicaments = true;
-        $ca->printedHandbook = false;
-        $ca->food = true;
-        $ca->arrivalDate = true;
-        $ca->departureDate = true;
-        $ca->languages = true;
+        $ca->gender->allowed = false;
+        $ca->address->allowed = false;
+        $ca->contingent->allowed = false;
+        $ca->medicaments->allowed = true;
+        $ca->printedHandbook->allowed = false;
+        $ca->food->allowed = true;
+        $ca->arrivalDate->allowed = true;
+        $ca->departureDate->allowed = true;
+        $ca->languages->allowed = true;
 
         return $ca;
     }

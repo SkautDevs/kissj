@@ -4,7 +4,7 @@
 {% elseif person is TroopLeader %}
     - {{ person.getTroopParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %} <b>{{ person.getPatrolName }}</b>
 {% endif %}
-{% if ca.contingent %}
+{% if ca.contingent.allowed %}
     - <b>{{ person.getContingent|trans }}</b>
 {% endif %}
 {% if person is hasUser %}

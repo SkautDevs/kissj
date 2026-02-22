@@ -1,23 +1,23 @@
-{% if ca.contingent %}
+{% if ca.contingent.allowed %}
     {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}
-{% if ca.patrolName %}
+{% if ca.patrolName.allowed %}
     {% trans %}detail.patrolName{% endtrans %}: <b>{{ person.getPatrolName }}</b><br/>
 {% endif %}
 {% if useShortNaming %}
     {% if person.getFullName == " " %}<i>{% trans %}dashboard.withoutFullName {% endtrans %}</i>{% else %}<b>{{ person.getFullName }}</b>{% endif %}<br/>
 {% else %}
-    {% if ca.firstName %}
+    {% if ca.firstName.allowed %}
         {% trans %}detail.firstName{% endtrans %}: <b>{{ person.getFirstName }}</b><br/>
     {% endif %}
-    {% if ca.lastName %}
+    {% if ca.lastName.allowed %}
         {% trans %}detail.surname{% endtrans %}: <b>{{ person.getLastName }}</b><br/>
     {% endif %}
-    {% if ca.nickname %}
+    {% if ca.nickname.allowed %}
         {% trans %}detail.scoutNick{% endtrans %}: <b>{{ person.getNickname }}</b><br/>
     {% endif %}
 {% endif %}
-{% if ca.gender %}
+{% if ca.gender.allowed %}
     {% trans %}detail.gender{% endtrans %}: <b>
     {% if person.getGender == 'man' %}
         {% trans %}detail.genderMan{% endtrans %}
@@ -26,63 +26,63 @@
     {% elseif person.getGender == 'other' %}
         {% trans %}detail.genderOther{% endtrans %}
     {% endif %}</b><br/>
-{% endif %}{% if ca.birthDate %}
+{% endif %}{% if ca.birthDate.allowed %}
     {% trans %}detail.birthDate{% endtrans %}: <b>{{ person.getBirthDate.format('d. m. Y') }}</b>
         {% if person.getBirthDate %}
             ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
         {% endif %}<br/>
-{% endif %}{% if ca.birthPlace %}
+{% endif %}{% if ca.birthPlace.allowed %}
     {% trans %}detail.birthPlace{% endtrans %}: <b>{{ person.getBirthPlace }}</b><br/>
-{% endif %}{% if ca.idNumber %}
+{% endif %}{% if ca.idNumber.allowed %}
     {% trans %}detail.idNumber{% endtrans %}: <b>{{ person.getIdNumber }}</b><br/>
-{% endif %}{% if ca.address %}
+{% endif %}{% if ca.address.allowed %}
     {% trans %}detail.address{% endtrans %}: <b>{{ person.getPermanentResidence }}</b><br/>
-{% endif %}{% if ca.country %}
+{% endif %}{% if ca.country.allowed %}
     {% trans %}detail.country{% endtrans %}: <b>{{ person.getCountry|trans }}</b><br/>
-{% endif %}{% if ca.email %}
+{% endif %}{% if ca.email.allowed %}
     {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
-{% endif %}{% if ca.phone %}
+{% endif %}{% if ca.phone.allowed %}
     {% trans %}detail.phone{% endtrans %}: <b>{{ person.getTelephoneNumber }}</b><br/>
-{% endif %}{% if ca.unit %}
+{% endif %}{% if ca.unit.allowed %}
     {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
-{% endif %}{% if ca.tshirt %}
+{% endif %}{% if ca.tshirt.allowed %}
     {% trans %}detail.tshirt{% endtrans %}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
-{% endif %}{% if ca.food %}
+{% endif %}{% if ca.food.allowed %}
     {% trans %}detail.foodHeader{% endtrans %}: <b>{{ person.getFoodPreferences|trans }}</b><br/>
-{% endif %}{% if ca.health %}
+{% endif %}{% if ca.health.allowed %}
     {% trans %}detail.issues{% endtrans %}: <b>{{ person.getHealthProblems }}</b><br/>
-{% endif %}{% if ca.medicaments %}
+{% endif %}{% if ca.medicaments.allowed %}
     {% trans %}detail.medicaments{% endtrans %}: <b>{{ person.getMedicaments }}</b><br/>
-{% endif %}{% if ca.psychicalHealth %}
+{% endif %}{% if ca.psychicalHealth.allowed %}
     {% trans %}detail.psychicalIssues{% endtrans %}: <b>{{ person.getPsychicalHealthProblems }}</b><br/>
-{% endif %}{% if ca.emergencyContact %}
+{% endif %}{% if ca.emergencyContact.allowed %}
     {% trans %}detail.emergencyContact{% endtrans %}: <b>{{ person.getEmergencyContact }}</b><br/>
-{% endif %}{% if ca.languages %}
+{% endif %}{% if ca.languages.allowed %}
     {% trans %}detail.language{% endtrans %}: <b>{{ person.getLanguages }}</b><br/>
-{% endif %}{% if ca.swimming %}
+{% endif %}{% if ca.swimming.allowed %}
     {% trans %}detail.swimSkill{% endtrans %}: <b>{{ person.getSwimming|trans }}</b><br/>
-{% endif %}{% if ca.driver %}
+{% endif %}{% if ca.driver.allowed %}
     {% trans %}detail.driver{% endtrans %}: <b>{{ person.getDriversLicense }}</b><br/>
-{% endif %}{% if ca.skills %}
+{% endif %}{% if ca.skills.allowed %}
     {% trans %}detail.skills{% endtrans %}: <b>{{ person.getSkills }}</b><br/>
-{% endif %}{% if ca.preferredPosition %}
+{% endif %}{% if ca.preferredPosition.allowed %}
     {% trans %}detail.position-title{% endtrans %}: <b>
         {% for preferredPosition in person.preferredPosition %}
             {{ preferredPosition|trans }}{% if not loop.last %}, {% endif %}
         {% endfor %}
     </b><br/>
-{% endif %}{% if ca.scarf %}
+{% endif %}{% if ca.scarf.allowed %}
     {% trans %}detail.scarf{% endtrans %}: <b>
         {% if person.getScarf == 'yes' %}
             {% trans %}detail.scarfYes{% endtrans %}
         {% elseif person.getScarf == 'no' %}
             {% trans %}detail.scarfNo{% endtrans %}
         {% endif %}</b><br/>
-{% endif %}{% if ca.arrivalDate %}
+{% endif %}{% if ca.arrivalDate.allowed %}
     {% trans %}detail.arrivalDate{% endtrans %}: <b>{{ person.getArrivalDate.format('d. m. Y') }}</b><br/>
-{% endif %}{% if ca.departureDate %}
+{% endif %}{% if ca.departureDate.allowed %}
     {% trans %}detail.departureDate{% endtrans %}: <b>{{ person.getDepartureDate.format('d. m. Y') }}</b><br/>
-{% endif %}{% if ca.uploadFile and person.getAgeAtStartOfEvent < 18%}
+{% endif %}{% if ca.uploadFile.allowed and person.getAgeAtStartOfEvent < 18%}
     {% trans %}detail.uploadFile{% endtrans %}:
     {% if person.getUploadedFilename %}
         <a target="_blank"
@@ -92,9 +92,9 @@
     {% else %}
         {{ detail.uploadFileMissing|trans }}
     {% endif %}<br/>
-{% endif %}{% if ca.printedHandbook %}
+{% endif %}{% if ca.printedHandbook.allowed %}
     {% trans %}detail.printedHandbook{% endtrans %}: <b>
         {% if person.getPrintedHandbook %}{% trans %}detail.handbook-yes{% endtrans %}{% else %}{% trans %}detail.handbook-no{% endtrans %}{% endif %}</b><br/>
-{% endif %}{% if ca.notes %}
+{% endif %}{% if ca.notes.allowed %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}

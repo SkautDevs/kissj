@@ -19,7 +19,7 @@
         }
         window.addEventListener( "load", () => OnBirthDateChange(document.getElementById("birthDate")))
     </script>
-{% if ca.contingent %}
+{% if ca.contingent.allowed %}
     <div class="form-group">
         <label for="contingent">{% trans %}detail.contingentTitle{% endtrans %}:</label>
         <select
@@ -38,7 +38,7 @@
             {% endfor %}
         </select>
     </div>
-{% endif %}{% if ca.patrolName %}
+{% endif %}{% if ca.patrolName.allowed %}
     <div class="form-group">
         <label for="patrolName">{% trans %}detail.patrolName{% endtrans %}:</label>
         <input
@@ -51,7 +51,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.firstName %}
+{% endif %}{% if ca.firstName.allowed %}
     <div class="form-group">
         <label for="firstName">{% trans %}detail.firstName{% endtrans %}:</label>
         <input
@@ -64,7 +64,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.lastName %}
+{% endif %}{% if ca.lastName.allowed %}
     <div class="form-group">
         <label for="lastName">{% trans %}detail.surname{% endtrans %}:</label>
         <input
@@ -77,7 +77,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.nickname %}
+{% endif %}{% if ca.nickname.allowed %}
     <div class="form-group">
         <label for="nickname">{% trans %}detail.scoutNick{% endtrans %}:</label>
         <input
@@ -89,7 +89,7 @@
             value="{{ personDetails.getNickname }}"
         >
     </div>
-{% endif %}{% if ca.gender %}
+{% endif %}{% if ca.gender.allowed %}
     <div class="form-group">
         <label for="gender">{% trans %}detail.gender{% endtrans %}:</label>
         <select
@@ -109,7 +109,7 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.birthDate %}
+{% endif %}{% if ca.birthDate.allowed %}
     <div class="form-group">
         <label for="birthDate">{% trans %}detail.birthDate{% endtrans %}:</label>
         <input
@@ -122,7 +122,7 @@
             onchange="OnBirthDateChange(this)"
         >
     </div>
-{% endif %}{% if ca.birthPlace %}
+{% endif %}{% if ca.birthPlace.allowed %}
     <div class="form-group">
         <label for="birthDate">{% trans %}detail.birthPlace{% endtrans %}:</label>
         <input
@@ -134,7 +134,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.uploadFile %} 
+{% endif %}{% if ca.uploadFile.allowed %} 
      <div id="uploadFileForm" class="form-group" hidden>
          <label>{% trans %}detail.uploadFile{% endtrans %}:
              <input id="uploadFile" class="form-control form-group-inline" type="file" name="uploadFile"
@@ -146,7 +146,7 @@
          {% trans %}detail.uploadedFileNote{% endtrans %}
      </div>
 
- {% endif %}{% if ca.idNumber %}
+ {% endif %}{% if ca.idNumber.allowed %}
     <div class="form-group">
         <label for="idNumber">{% trans %}detail.idNumber{% endtrans %}:</label>
         <input
@@ -159,7 +159,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.address %}
+{% endif %}{% if ca.address.allowed %}
     <div class="form-group">
         <label for="permanentResidence">{% trans %}detail.address{% endtrans %}:</label>
         <input
@@ -172,7 +172,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.country %}
+{% endif %}{% if ca.country.allowed %}
     <div class="form-group">
         <label for="country">{% trans %}detail.country{% endtrans %}:</label>
         <select 
@@ -190,7 +190,7 @@
             {% endfor %}
         </select>
     </div>
-{% endif %}{% if ca.email %}
+{% endif %}{% if ca.email.allowed %}
     <div class="form-group">
         <label for="email">{% trans %}detail.email{% endtrans %}:</label>
         <input
@@ -203,7 +203,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.phone %}
+{% endif %}{% if ca.phone.allowed %}
     <div class="form-group">
         <label for="telephoneNumber">{% trans %}detail.phone{% endtrans %}:</label>
         <input
@@ -217,7 +217,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.unit %}
+{% endif %}{% if ca.unit.allowed %}
     <div class="form-group">
         <label for="scoutUnit">{% trans %}detail.unit{% endtrans %}:</label>
         <input
@@ -230,7 +230,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.tshirt %}
+{% endif %}{% if ca.tshirt.allowed %}
     <div class="form-group">
         <label for="tshirtShape">{% trans %}detail.tshirtGender{% endtrans %}:</label>
         <select id="tshirtShape" class="form-control form-wide" name="tshirtShape" required="required">
@@ -272,7 +272,7 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.food %}
+{% endif %}{% if ca.food.allowed %}
     <div class="form-group">
         <label for="foodPreferences">{% trans %}detail.foodHeader{% endtrans %}:</label>
         <select
@@ -292,7 +292,7 @@
     </div>
     {% trans %}detail.food-placeholder{% endtrans %}
     <br><br>
-{% endif %}{% if ca.health %}
+{% endif %}{% if ca.health.allowed %}
     <div class="form-group">
         <label for="healthProblems">{% trans %}detail.issues{% endtrans %}:</label>
         <input
@@ -304,7 +304,7 @@
             value="{{ personDetails.getHealthProblems }}"
         >
     </div>
-{% endif %}{% if ca.medicaments %}
+{% endif %}{% if ca.medicaments.allowed %}
      <div class="form-group">
          <label for="medicaments">{% trans %}detail.medicaments{% endtrans %}:</label>
          <input
@@ -316,7 +316,7 @@
                  value="{{ personDetails.getMedicaments }}"
          >
      </div>
- {% endif %}{% if ca.psychicalHealth %}
+ {% endif %}{% if ca.psychicalHealth.allowed %}
      <div class="form-group">
          <label for="psychicalHealthProblems">{% trans %}detail.psychicalIssues{% endtrans %}:</label>
          <input
@@ -328,7 +328,7 @@
                  value="{{ personDetails.getPsychicalHealthProblems }}"
          >
      </div>
- {% endif %}{% if ca.emergencyContact %}
+ {% endif %}{% if ca.emergencyContact.allowed %}
      <div class="form-group">
          <label for="emergencyContact">{% trans %}detail.emergencyContact{% endtrans %}:</label>
          <input
@@ -341,7 +341,7 @@
                  value="{{ personDetails.getEmergencyContact }}"
          >
      </div>
- {% endif %}{% if ca.languages %}
+ {% endif %}{% if ca.languages.allowed %}
     <div class="form-group">
         <label for="languages">{% trans %}detail.language{% endtrans %}:</label>
         <input
@@ -354,7 +354,7 @@
             value="{{ personDetails.getLanguages }}"
         >
     </div>
-{% endif %}{% if ca.swimming %}
+{% endif %}{% if ca.swimming.allowed %}
     <div class="form-group">
         <label for="swimming">{% trans %}detail.swimSkill{% endtrans %}:</label>
         <select
@@ -383,7 +383,7 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.skills %}
+{% endif %}{% if ca.skills.allowed %}
     <div class="form-group">
         <label for="skills">{% trans %}detail.skills{% endtrans %}:</label>
         <input
@@ -395,7 +395,7 @@
             value="{{ personDetails.getSkills }}"
         >
     </div>
-{% endif %}{% if ca.preferredPosition %}
+{% endif %}{% if ca.preferredPosition.allowed %}
     <div class="form-group">
         <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
         {% set preferredPositions = personDetails.getPreferredPosition %}
@@ -409,7 +409,7 @@
     </div>
     {% trans %}detail.position-placeholder{% endtrans %}
     <br>
-{% endif %}{% if ca.driver %}
+{% endif %}{% if ca.driver.allowed %}
     <div class="form-group">
         <label for="driversLicense">{% trans %}detail.driver{% endtrans %}:</label>
         <select
@@ -438,7 +438,7 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.arrivalDate %}
+{% endif %}{% if ca.arrivalDate.allowed %}
     <div class="form-group">
         <label for="arrivalDate">{% trans %}detail.arrivalDate{% endtrans %}:</label>
         <input
@@ -450,7 +450,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.departureDate %}
+{% endif %}{% if ca.departureDate.allowed %}
     <div class="form-group">
         <label for="departureDate">{% trans %}detail.departureDate{% endtrans %}:</label>
         <input
@@ -462,7 +462,7 @@
             required="required"
         >
     </div>
-{% endif %}{% if ca.scarf %}
+{% endif %}{% if ca.scarf.allowed %}
     <div class="form-group">
         <label for="scarf">{% trans %}detail.scarf{% endtrans %}:</label>
         {# TODO: refactor:use checkbox #}
@@ -479,7 +479,7 @@
             </option>
         </select>
     </div>
-{% endif %}{% if ca.printedHandbook %}
+{% endif %}{% if ca.printedHandbook.allowed %}
      <div class="form-group">
          <label for="printedHandbook">{% trans %}detail.printedHandbook-detail{% endtrans %}: </label>
          <input
@@ -490,7 +490,7 @@
                  {% if personDetails.getPrintedHandbook %} checked{% endif %}
          >
      </div>
- {% endif %}{% if ca.notes %}
+ {% endif %}{% if ca.notes.allowed %}
     <div class="form-group">
         <label for="notes">{% trans %}detail.notice{% endtrans %}:</label>
         <textarea

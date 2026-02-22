@@ -168,17 +168,17 @@ class EventTypeCej extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
-        $ca->contingent = true;
-        $ca->phone = true;
-        $ca->country = true;
-        $ca->email = true;
-        $ca->languages = true;
-        $ca->birthPlace = true;
-        $ca->emergencyContact = true;
-        $ca->food = true;
-        $ca->idNumber = true;
-        $ca->swimming = true;
-        $ca->tshirt = true;
+        $ca->contingent->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->country->allowed = true;
+        $ca->email->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->birthPlace->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->food->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->tshirt->allowed = true;
 
         return $ca;
     }
@@ -186,17 +186,17 @@ class EventTypeCej extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $ca = parent::getContentArbiterPatrolLeader();
-        $ca->contingent = true;
-        $ca->phone = true;
-        $ca->country = true;
-        $ca->email = true;
-        $ca->languages = true;
-        $ca->birthPlace = true;
-        $ca->emergencyContact = true;
-        $ca->food = true;
-        $ca->idNumber = true;
-        $ca->swimming = true;
-        $ca->tshirt = true;
+        $ca->contingent->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->country->allowed = true;
+        $ca->email->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->birthPlace->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->food->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->tshirt->allowed = true;
 
         return $ca;
     }
@@ -204,16 +204,16 @@ class EventTypeCej extends EventType
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $ca = parent::getContentArbiterPatrolParticipant();
-        $ca->phone = true;
-        $ca->country = true;
-        $ca->email = true;
-        $ca->languages = true;
-        $ca->birthPlace = true;
-        $ca->emergencyContact = true;
-        $ca->food = true;
-        $ca->idNumber = true;
-        $ca->swimming = true;
-        $ca->tshirt = true;
+        $ca->phone->allowed = true;
+        $ca->country->allowed = true;
+        $ca->email->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->birthPlace->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->food->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->tshirt->allowed = true;
 
         return $ca;
     }
