@@ -37,6 +37,8 @@ make dev-up     # Start containers + install + migrate
 make dev-down   # Stop containers
 ```
 
+Remove `-it` from `docker exec` commands if running in a non-interactive environment. 
+
 ## Architecture
 
 **Entry point:** `public/index.php` → `ApplicationGetter::getApp()` bootstraps DI (PHP-DI), middleware, and routes.

@@ -155,8 +155,7 @@ class ParticipantJourneyTest extends AppTestCase
         /** @var PatrolLeader $patrolLeader */
         $patrolLeader = $patrolLeaderRepository->get($participant->id);
         
-        // Required fields from AbstractContentArbiter (default = true)
-        $patrolLeader->patrolName = 'Test Patrol';  // Required for PatrolLeader
+        $patrolLeader->patrolName = 'Test Patrol';
         $patrolLeader->firstName = 'Leader';
         $patrolLeader->lastName = 'Test';
         $patrolLeader->nickname = 'LeaderNick';
@@ -166,8 +165,17 @@ class ParticipantJourneyTest extends AppTestCase
         $patrolLeader->healthProblems = 'None';
         $patrolLeader->psychicalHealthProblems = 'None';
         $patrolLeader->notes = 'Test notes';
-        // Optional but good to have
         $patrolLeader->email = $leaderEmail;
+        $patrolLeader->contingent = 'detail.contingent.czechia';
+        $patrolLeader->telephoneNumber = '+420111222333';
+        $patrolLeader->country = 'detail.countryCzechRepublic';
+        $patrolLeader->languages = 'Czech, English';
+        $patrolLeader->birthPlace = 'Prague';
+        $patrolLeader->emergencyContact = 'Emergency Contact, +420999888777';
+        $patrolLeader->foodPreferences = 'detail.foodWithout';
+        $patrolLeader->idNumber = 'AB123456';
+        $patrolLeader->swimming = 'good';
+        $patrolLeader->setTshirt('male', 'L');
         $patrolLeaderRepository->persist($patrolLeader);
         
         // Step 3: Add patrol participants with ALL required fields
@@ -176,7 +184,6 @@ class ParticipantJourneyTest extends AppTestCase
         /** @var PatrolParticipantRepository $patrolParticipantRepository */
         $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
         
-        // Participant 1 - fill all required fields
         $participant1 = $patrolService->addPatrolParticipant($patrolLeader);
         $participant1->firstName = 'Participant';
         $participant1->lastName = 'One';
@@ -188,9 +195,17 @@ class ParticipantJourneyTest extends AppTestCase
         $participant1->psychicalHealthProblems = 'None';
         $participant1->notes = '';
         $participant1->email = 'participant1@example.com';
+        $participant1->telephoneNumber = '+420111222444';
+        $participant1->country = 'detail.countryCzechRepublic';
+        $participant1->languages = 'Czech';
+        $participant1->birthPlace = 'Brno';
+        $participant1->emergencyContact = 'Parent One, +420999888666';
+        $participant1->foodPreferences = 'detail.foodWithout';
+        $participant1->idNumber = 'CD123456';
+        $participant1->swimming = 'good';
+        $participant1->setTshirt('male', 'M');
         $patrolParticipantRepository->persist($participant1);
         
-        // Participant 2 - fill all required fields
         $participant2 = $patrolService->addPatrolParticipant($patrolLeader);
         $participant2->firstName = 'Participant';
         $participant2->lastName = 'Two';
@@ -202,6 +217,15 @@ class ParticipantJourneyTest extends AppTestCase
         $participant2->psychicalHealthProblems = 'None';
         $participant2->notes = '';
         $participant2->email = 'participant2@example.com';
+        $participant2->telephoneNumber = '+420111222555';
+        $participant2->country = 'detail.countryCzechRepublic';
+        $participant2->languages = 'Czech';
+        $participant2->birthPlace = 'Olomouc';
+        $participant2->emergencyContact = 'Parent Two, +420999888555';
+        $participant2->foodPreferences = 'detail.foodVegetarian';
+        $participant2->idNumber = 'EF123456';
+        $participant2->swimming = 'average';
+        $participant2->setTshirt('female', 'S');
         $patrolParticipantRepository->persist($participant2);
         
         // Verify participants are linked (need minimum 2 for test event)
@@ -388,7 +412,8 @@ class ParticipantJourneyTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
-        
+        $this->resetEventToDefault($container);
+
         // Enable troop registrations for test event (limits are null by default = full)
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
@@ -746,6 +771,7 @@ class ParticipantJourneyTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
+        $this->resetEventToDefault($container);
 
         $email = 'guest-price-test@example.com';
         $user = $this->registerUser($container, $email);
