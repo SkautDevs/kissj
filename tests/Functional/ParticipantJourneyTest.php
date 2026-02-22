@@ -791,6 +791,129 @@ class ParticipantJourneyTest extends AppTestCase
         self::assertSame(1, $guest->countWaitingPayments());
     }
 
+    /**
+     * Test that changing payment price cancels old payment, creates new one,
+     * and if price is 0, auto-confirms.
+     */
+    #[Group('payment')]
+    public function testChangePaymentPrice(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'change-price-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->defaultPrice = 500;
+        $eventRepository->persist($event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        /** @var IstRepository $istRepository */
+        $istRepository = $container->get(IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+        $ist->firstName = 'Price';
+        $ist->lastName = 'Change';
+        $ist->nickname = 'PC';
+        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->email = $email;
+        $ist->gender = 'male';
+        $ist->country = 'CZ';
+        $ist->contingent = 'detail.contingent.czechia';
+        $istRepository->persist($ist);
+
+        $this->initializeMailerSettings($container, $event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($ist);
+        $participantService->approveRegistration($ist);
+
+        // Verify initial payment
+        $ist = $istRepository->get($ist->id);
+        self::assertSame(1, $ist->countWaitingPayments());
+        $payments = $ist->getNoncanceledPayments();
+        self::assertCount(1, $payments);
+        $originalPayment = $payments[0];
+
+        // Change price to 300
+        $newPayment = $participantService->changePaymentPrice($originalPayment, 300, 'Discount for early registration');
+
+        // Refresh participant
+        $ist = $istRepository->get($ist->id);
+
+        // Old payment should be cancelled, new one waiting
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = $container->get(PaymentRepository::class);
+        $oldPayment = $paymentRepository->get($originalPayment->id);
+        self::assertSame(PaymentStatus::Canceled, $oldPayment->status);
+        self::assertSame(PaymentStatus::Waiting, $newPayment->status);
+        self::assertSame('300', $newPayment->price);
+        self::assertSame(1, $ist->countWaitingPayments());
+    }
+
+    /**
+     * Test that changing payment price to 0 auto-confirms and sets participant to Paid.
+     */
+    #[Group('payment')]
+    public function testChangePaymentPriceToZeroAutoConfirms(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        $email = 'zero-price-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->get($user->event->id);
+        $event->defaultPrice = 500;
+        $eventRepository->persist($event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        /** @var IstRepository $istRepository */
+        $istRepository = $container->get(IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+        $ist->firstName = 'Zero';
+        $ist->lastName = 'Price';
+        $ist->nickname = 'ZP';
+        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->email = $email;
+        $ist->gender = 'male';
+        $ist->country = 'CZ';
+        $ist->contingent = 'detail.contingent.czechia';
+        $istRepository->persist($ist);
+
+        $this->initializeMailerSettings($container, $event);
+
+        /** @var ParticipantService $participantService */
+        $participantService = $container->get(ParticipantService::class);
+        $participantService->closeRegistration($ist);
+        $participantService->approveRegistration($ist);
+
+        $ist = $istRepository->get($ist->id);
+        $payments = $ist->getNoncanceledPayments();
+        $originalPayment = $payments[0];
+
+        // Change price to 0 — should auto-confirm
+        $newPayment = $participantService->changePaymentPrice($originalPayment, 0, 'Full scholarship');
+
+        self::assertSame(PaymentStatus::Paid, $newPayment->status);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $finalUser = $userRepository->get($user->id);
+        self::assertSame(UserStatus::Paid, $finalUser->status);
+    }
+
     private function getContainer(App $app): ContainerInterface
     {
         $container = $app->getContainer();

@@ -18,6 +18,7 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentStatus;
 use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
@@ -364,6 +365,27 @@ readonly class ParticipantService
         $this->mailer->sendCancelledPayment($participant, $reason);
 
         return $payment;
+    }
+
+    public function changePaymentPrice(Payment $oldPayment, int $newPrice, string $reason): Payment
+    {
+        if ($oldPayment->status !== PaymentStatus::Waiting) {
+            throw new \RuntimeException('Cannot change price of payment that is not in waiting status');
+        }
+
+        $participant = $oldPayment->participant;
+
+        $this->paymentService->cancelPayment($oldPayment);
+
+        $newPayment = $this->paymentService->createAndPersistNewCustomPayment($participant, $newPrice, $reason);
+
+        if ($newPrice === 0) {
+            $this->paymentService->confirmPayment($newPayment);
+        } else {
+            $this->mailer->sendPaymentPriceChanged($participant, $newPayment, $reason);
+        }
+
+        return $newPayment;
     }
 
     public function denyRegistration(Participant $participant, string $reason): Participant
