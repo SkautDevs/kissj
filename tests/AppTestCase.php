@@ -8,6 +8,7 @@ use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
 use kissj\User\UserRole;
+use LeanMapper\Connection;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -153,6 +154,13 @@ class AppTestCase extends TestCase
         }
     }
     
+    protected function resetEventToDefault(ContainerInterface $container, string $slug = 'test-event-slug'): void
+    {
+        /** @var Connection $connection */
+        $connection = $container->get(Connection::class);
+        $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', 'default', $slug);
+    }
+
     protected function createAdminUser(App $app): User
     {
         /** @var ContainerInterface $container */
