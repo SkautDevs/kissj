@@ -25,6 +25,7 @@ use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
@@ -393,6 +394,39 @@ class AdminController extends AbstractController
             $response,
             'admin-show-payments',
         );
+    }
+
+    public function showChangePaymentPrice(
+        Response $response,
+        Event $event,
+        int $paymentId,
+    ): Response {
+        $payment = $this->paymentRepository->getById($paymentId, $event);
+
+        return $this->view->render($response, 'admin/changePaymentPrice.twig', ['payment' => $payment]);
+    }
+
+    public function changePaymentPrice(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $paymentId,
+    ): Response {
+        $newPrice = (int)$this->getParameterFromBody($request, 'newPrice', true);
+        $reason = $this->getParameterFromBody($request, 'reason', true);
+        $payment = $this->paymentRepository->getById($paymentId, $event);
+
+        if ($payment->status !== PaymentStatus::Waiting) {
+            $this->flashMessages->warning('flash.warning.paymentNotWaitingCannotChangePrice');
+
+            return $this->redirect($request, $response, 'admin-show-payments');
+        }
+
+        $this->participantService->changePaymentPrice($payment, $newPrice, $reason);
+        $this->flashMessages->success('flash.success.paymentPriceChanged');
+        $this->logger->info('Payment ID ' . $paymentId . ' price changed to ' . $newPrice . ' with reason: ' . $reason);
+
+        return $this->redirect($request, $response, 'admin-show-payments');
     }
 
     public function cancelAllDuePayments(

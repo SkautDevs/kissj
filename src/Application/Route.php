@@ -261,6 +261,12 @@ class Route
                         $app->post('/cancelPayment/{paymentId}', AdminController::class . '::cancelPayment')
                             ->setName('admin-cancel-payment');
 
+                        $app->get('/changePrice/{paymentId}', AdminController::class . '::showChangePaymentPrice')
+                            ->setName('admin-show-change-payment-price');
+
+                        $app->post('/changePrice/{paymentId}', AdminController::class . '::changePaymentPrice')
+                            ->setName('admin-change-payment-price');
+
                         $app->post('/cancelDuePayments', AdminController::class . '::cancelAllDuePayments')
                             ->setName('admin-cancel-due-payments');
 
