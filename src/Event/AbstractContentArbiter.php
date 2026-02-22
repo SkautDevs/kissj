@@ -62,8 +62,8 @@ abstract class AbstractContentArbiter
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 30,
-            label: 'detail.name',
-            placeholder: 'detail.namePlaceholder',
+            label: 'detail.firstName',
+            placeholder: 'detail.firstNamePlaceholder',
         );
         $this->lastName = new ContentArbiterItem(
             id: 'lastName',
@@ -78,8 +78,8 @@ abstract class AbstractContentArbiter
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 50,
-            label: 'detail.nickname',
-            placeholder: 'detail.nicknamePlaceholder',
+            label: 'detail.scoutNick',
+            placeholder: 'detail.scoutNickPlaceholder',
             required: false,
         );
         $this->gender = new ContentArbiterItem(
@@ -89,7 +89,7 @@ abstract class AbstractContentArbiter
             order: 60,
             label: 'detail.gender',
             placeholder: '',
-            options: ['detail.male', 'detail.female', 'detail.other'],
+            options: ['man', 'woman', 'other'],
         );
         $this->birthDate = new ContentArbiterItem(
             id: 'birthDate',
@@ -122,12 +122,12 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::Text,
             order: 100,
             label: 'detail.idNumber',
-            placeholder: 'detail.idNumberPlaceholder',
+            placeholder: 'detail.idNumber-placeholder',
         );
         $this->address = new ContentArbiterItem(
             id: 'permanentResidence',
             allowed: true,
-            type: ContentArbiterItemType::Textarea,
+            type: ContentArbiterItemType::Text,
             order: 110,
             label: 'detail.address',
             placeholder: 'detail.addressPlaceholder',
@@ -170,8 +170,8 @@ abstract class AbstractContentArbiter
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 160,
-            label: 'detail.languages',
-            placeholder: 'detail.languagesPlaceholder',
+            label: 'detail.language',
+            placeholder: 'detail.language-placeholder',
         );
         $this->tshirt = new ContentArbiterItem(
             id: 'tshirt',
@@ -186,34 +186,34 @@ abstract class AbstractContentArbiter
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 180,
-            label: 'detail.food',
+            label: 'detail.foodHeader',
             placeholder: '',
         );
         $this->health = new ContentArbiterItem(
             id: 'healthProblems',
             allowed: true,
-            type: ContentArbiterItemType::Textarea,
+            type: ContentArbiterItemType::Text,
             order: 190,
-            label: 'detail.health',
-            placeholder: 'detail.healthPlaceholder',
+            label: 'detail.issues',
+            placeholder: 'detail.issues-placeholder',
             required: false,
         );
         $this->medicaments = new ContentArbiterItem(
             id: 'medicaments',
             allowed: false,
-            type: ContentArbiterItemType::Textarea,
+            type: ContentArbiterItemType::Text,
             order: 200,
             label: 'detail.medicaments',
-            placeholder: 'detail.medicamentsPlaceholder',
+            placeholder: 'detail.medicaments-placeholder',
             required: false,
         );
         $this->psychicalHealth = new ContentArbiterItem(
             id: 'psychicalHealthProblems',
             allowed: true,
-            type: ContentArbiterItemType::Textarea,
+            type: ContentArbiterItemType::Text,
             order: 210,
-            label: 'detail.psychicalHealth',
-            placeholder: 'detail.psychicalHealthPlaceholder',
+            label: 'detail.psychicalIssues',
+            placeholder: 'detail.psychicalIssues-placeholder',
             required: false,
         );
         $this->emergencyContact = new ContentArbiterItem(
@@ -222,25 +222,26 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::Text,
             order: 220,
             label: 'detail.emergencyContact',
-            placeholder: 'detail.emergencyContactPlaceholder',
+            placeholder: 'detail.emergencyContact-placeholder',
         );
         $this->swimming = new ContentArbiterItem(
             id: 'swimming',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 230,
-            label: 'detail.swimming',
+            label: 'detail.swimSkill',
             placeholder: '',
-            options: ['detail.swimmingGood', 'detail.swimmingAverage', 'detail.swimmingBad'],
+            options: ['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50'],
         );
         $this->scarf = new ContentArbiterItem(
             id: 'scarf',
             allowed: false,
-            type: ContentArbiterItemType::Text,
+            type: ContentArbiterItemType::Select,
             order: 240,
             label: 'detail.scarf',
-            placeholder: 'detail.scarfPlaceholder',
+            placeholder: '',
             required: false,
+            options: ['yes', 'no'],
         );
         $this->arrivalDate = new ContentArbiterItem(
             id: 'arrivalDate',
@@ -261,11 +262,12 @@ abstract class AbstractContentArbiter
         $this->driver = new ContentArbiterItem(
             id: 'driversLicense',
             allowed: false,
-            type: ContentArbiterItemType::Checkbox,
+            type: ContentArbiterItemType::Select,
             order: 270,
             label: 'detail.driver',
             placeholder: '',
             required: false,
+            options: ['dont', 'less 10000 km', 'more 10000 km'],
         );
         $this->skills = new ContentArbiterItem(
             id: 'skills',
@@ -273,7 +275,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::Textarea,
             order: 280,
             label: 'detail.skills',
-            placeholder: 'detail.skillsPlaceholder',
+            placeholder: 'detail.skills-placeholder',
             required: false,
         );
         $this->preferredPosition = new ContentArbiterItem(
@@ -299,8 +301,8 @@ abstract class AbstractContentArbiter
             allowed: true,
             type: ContentArbiterItemType::Textarea,
             order: 310,
-            label: 'detail.notes',
-            placeholder: 'detail.notesPlaceholder',
+            label: 'detail.notice',
+            placeholder: 'detail.notice-placeholder',
             required: false,
         );
     }
