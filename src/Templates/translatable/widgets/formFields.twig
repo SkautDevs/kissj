@@ -1,32 +1,4 @@
 {#
-    Form field macros for rendering ContentArbiterItem fields.
-    Used by changeDetails.twig (renderField) and details.twig (renderDetail).
-#}
-
-{# Mapping of raw gender values to translation keys #}
-{% macro _genderDisplayKey(value) %}
-    {%- if value == 'man' -%}detail.genderMan
-    {%- elseif value == 'woman' -%}detail.genderWoman
-    {%- elseif value == 'other' -%}detail.genderOther
-    {%- endif -%}
-{% endmacro %}
-
-{# Mapping of raw scarf values to translation keys #}
-{% macro _scarfDisplayKey(value) %}
-    {%- if value == 'yes' -%}detail.scarfYes
-    {%- elseif value == 'no' -%}detail.scarfNo
-    {%- endif -%}
-{% endmacro %}
-
-{# Mapping of raw driver values to translation keys #}
-{% macro _driverDisplayKey(value) %}
-    {%- if value == 'dont' -%}detail.driver-dont
-    {%- elseif value == 'less 10000 km' -%}detail.driver-less10k
-    {%- elseif value == 'more 10000 km' -%}detail.driver-more10k
-    {%- endif -%}
-{% endmacro %}
-
-{#
     Renders a form input field for changeDetails.twig.
 
     @param item          ContentArbiterItem instance
