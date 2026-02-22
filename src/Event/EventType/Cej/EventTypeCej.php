@@ -169,13 +169,16 @@ class EventTypeCej extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->contingent->allowed = true;
+        $ca->contingent->options = $this->getContingents();
         $ca->phone->allowed = true;
         $ca->country->allowed = true;
+        $ca->country->options = $this->getParticipantCountries();
         $ca->email->allowed = true;
         $ca->languages->allowed = true;
         $ca->birthPlace->allowed = true;
         $ca->emergencyContact->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->idNumber->allowed = true;
         $ca->swimming->allowed = true;
         $ca->tshirt->allowed = true;
@@ -187,13 +190,16 @@ class EventTypeCej extends EventType
     {
         $ca = parent::getContentArbiterPatrolLeader();
         $ca->contingent->allowed = true;
+        $ca->contingent->options = $this->getContingents();
         $ca->phone->allowed = true;
         $ca->country->allowed = true;
+        $ca->country->options = $this->getParticipantCountries();
         $ca->email->allowed = true;
         $ca->languages->allowed = true;
         $ca->birthPlace->allowed = true;
         $ca->emergencyContact->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->idNumber->allowed = true;
         $ca->swimming->allowed = true;
         $ca->tshirt->allowed = true;
@@ -206,11 +212,13 @@ class EventTypeCej extends EventType
         $ca = parent::getContentArbiterPatrolParticipant();
         $ca->phone->allowed = true;
         $ca->country->allowed = true;
+        $ca->country->options = $this->getParticipantCountries();
         $ca->email->allowed = true;
         $ca->languages->allowed = true;
         $ca->birthPlace->allowed = true;
         $ca->emergencyContact->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->idNumber->allowed = true;
         $ca->swimming->allowed = true;
         $ca->tshirt->allowed = true;

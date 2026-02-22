@@ -40,12 +40,14 @@ class EventTypeObrok extends EventType
         $ca = parent::getContentArbiterIst();
         $ca->gender->allowed = false;
         $ca->contingent->allowed = true;
+        $ca->contingent->options = $this->getContingents();
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->unit->allowed = true;
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->arrivalDate->allowed = true;
 
         return $ca;
@@ -89,6 +91,7 @@ class EventTypeObrok extends EventType
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = false;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->arrivalDate->allowed = true;
         $ca->departureDate->allowed = true;
         $ca->languages->allowed = true;
