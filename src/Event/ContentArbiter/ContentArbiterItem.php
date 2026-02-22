@@ -7,7 +7,7 @@ namespace kissj\Event\ContentArbiter;
 class ContentArbiterItem
 {
     /**
-     * @param array<string, string> $options key=dbValue, value=translationKey
+     * @param array<string, string> $options key=dbValue, value=translationKey, backward compatibility for selfMappedOptions
      * @param list<string> $extraClasses
      */
     public function __construct(

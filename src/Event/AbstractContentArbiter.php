@@ -110,7 +110,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.birthPlacePlaceholder',
         );
         $this->uploadFile = new ContentArbiterItem(
-            id: 'uploadFile',
+            id: 'uploadFile', // not a real entity property; templates pass null explicitly, validation skips via required:false
             allowed: false,
             type: ContentArbiterItemType::File,
             order: 90,
