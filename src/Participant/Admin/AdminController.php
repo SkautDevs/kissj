@@ -69,7 +69,7 @@ class AdminController extends AbstractController
         }
 
         $istArrivalStatistic = [];
-        if ($eventType->getContentArbiterIst()->arrivalDate) {
+        if ($eventType->getContentArbiterIst()->arrivalDate->allowed) {
             $istArrivalStatistic = $this->participantRepository->getIstArrivalStatistic($event);
         }
 

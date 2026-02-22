@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace kissj\Event;
 
@@ -355,6 +357,6 @@ abstract class AbstractContentArbiter
 
         usort($items, fn (ContentArbiterItem $a, ContentArbiterItem $b) => $a->order <=> $b->order);
 
-        return array_values($items);
+        return $items;
     }
 }
