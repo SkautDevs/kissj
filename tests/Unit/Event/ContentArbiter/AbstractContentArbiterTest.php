@@ -87,4 +87,60 @@ class AbstractContentArbiterTest extends TestCase
         $ca = new ContentArbiterIst();
         self::assertSame(ContentArbiterItemType::TshirtComposite, $ca->tshirt->type);
     }
+
+    public function testLabelsMatchTemplateTranslationKeys(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertSame('detail.firstName', $ca->firstName->label);
+        self::assertSame('detail.scoutNick', $ca->nickname->label);
+        self::assertSame('detail.issues', $ca->health->label);
+        self::assertSame('detail.psychicalIssues', $ca->psychicalHealth->label);
+        self::assertSame('detail.foodHeader', $ca->food->label);
+        self::assertSame('detail.swimSkill', $ca->swimming->label);
+        self::assertSame('detail.notice', $ca->notes->label);
+        self::assertSame('detail.language', $ca->languages->label);
+    }
+
+    public function testPlaceholdersMatchTemplateTranslationKeys(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertSame('detail.firstNamePlaceholder', $ca->firstName->placeholder);
+        self::assertSame('detail.scoutNickPlaceholder', $ca->nickname->placeholder);
+        self::assertSame('detail.issues-placeholder', $ca->health->placeholder);
+        self::assertSame('detail.medicaments-placeholder', $ca->medicaments->placeholder);
+        self::assertSame('detail.psychicalIssues-placeholder', $ca->psychicalHealth->placeholder);
+        self::assertSame('detail.emergencyContact-placeholder', $ca->emergencyContact->placeholder);
+        self::assertSame('detail.language-placeholder', $ca->languages->placeholder);
+        self::assertSame('detail.skills-placeholder', $ca->skills->placeholder);
+        self::assertSame('detail.notice-placeholder', $ca->notes->placeholder);
+        self::assertSame('detail.idNumber-placeholder', $ca->idNumber->placeholder);
+    }
+
+    public function testFieldTypesMatchTemplateRendering(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertSame(ContentArbiterItemType::Text, $ca->address->type);
+        self::assertSame(ContentArbiterItemType::Text, $ca->health->type);
+        self::assertSame(ContentArbiterItemType::Text, $ca->medicaments->type);
+        self::assertSame(ContentArbiterItemType::Text, $ca->psychicalHealth->type);
+        self::assertSame(ContentArbiterItemType::Select, $ca->driver->type);
+        self::assertSame(ContentArbiterItemType::Select, $ca->scarf->type);
+        self::assertSame(ContentArbiterItemType::Textarea, $ca->notes->type);
+    }
+
+    public function testSelectOptionsMatchTemplateValues(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertSame(['man', 'woman', 'other'], $ca->gender->options);
+        self::assertSame(
+            ['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50'],
+            $ca->swimming->options,
+        );
+        self::assertSame(['dont', 'less 10000 km', 'more 10000 km'], $ca->driver->options);
+        self::assertSame(['yes', 'no'], $ca->scarf->options);
+    }
 }
