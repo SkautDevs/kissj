@@ -297,27 +297,53 @@ class ParticipantJourneyTest extends AppTestCase
     }
 
     /**
-     * Test that user can view dashboard after choosing role
+     * Test that IST dashboard renders successfully (HTTP 200) after choosing role
      */
-    public function testDashboardAccessAfterRoleSelection(): void
+    public function testDashboardRendersForIst(): void
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
-        
-        $email = 'dashboard-test@example.com';
+        $this->resetEventToDefault($container);
+
+        $email = 'dashboard-render-test@example.com';
         $user = $this->registerUser($container, $email);
-        
+
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
-        
-        // User should now have participant role
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        $updatedUser = $userRepository->get($user->id);
-        
-        $this->assertSame(UserStatus::Open, $updatedUser->status);
-        $this->assertNotNull($participant);
+
+        /** @var IstRepository $istRepository */
+        $istRepository = $container->get(IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+        $ist->firstName = 'Test';
+        $ist->lastName = 'IST';
+        $ist->nickname = 'Tester';
+        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->email = $email;
+        $ist->gender = 'male';
+        $ist->country = 'CZ';
+        $ist->contingent = 'detail.contingent.czechia';
+        $ist->permanentResidence = 'Test Street 1';
+        $ist->telephoneNumber = '+420123456789';
+        $ist->scoutUnit = 'Test Unit';
+        $ist->foodPreferences = 'none';
+        $ist->healthProblems = '';
+        $ist->psychicalHealthProblems = '';
+        $ist->swimming = 'detail.swimSkillMore50';
+        $ist->driversLicense = 'dont';
+        $ist->notes = '';
+        $istRepository->persist($ist);
+
+        $_SESSION['user']['id'] = $user->id;
+
+        // Re-create app without fresh init so UserRegeneration picks up the session
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
     }
 
     /**
