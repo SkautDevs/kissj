@@ -1,0 +1,19 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <p>
+        {% trans with {'%event.getReadableName%': event.getReadableName} %}email.payment-price-changed.changed{% endtrans %}
+        {% trans %}email.payment-price-changed.reason{% endtrans %}: {{ reason }}.
+    </p>
+    <p>
+        <b>{% trans %}email.payment-price-changed.dontPay{% endtrans %}</b>
+    </p>
+    <p>{% trans %}email.payment-price-changed.newPaymentDetails{% endtrans %}</p>
+    <h3><u>{% trans %}email.payment-info.paymentDetails{% endtrans %}</u></h3>
+    <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
+    <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
+    <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
+    <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
+    <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
+    <img src="cid:qr_payment" alt="QR payment code"/>
+{% endblock %}

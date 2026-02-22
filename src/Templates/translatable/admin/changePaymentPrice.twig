@@ -1,0 +1,30 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card card-half">
+        <h2>{% trans %}changePaymentPrice-admin.changePrice{% endtrans %}</h2>
+        <p>{% trans %}changePaymentPrice-admin.wantChangePrice{% endtrans %} <b>{{ payment.participant.getFullName }}</b>
+            ({{ ('role.' ~ payment.participant.role.value)|trans }})</p>
+        <p>{% trans %}changePaymentPrice-admin.currentPrice{% endtrans %}: <b>{{ payment.price }} {{ payment.currency }}</b></p>
+        <form method="post" action="{{ url_for('admin-change-payment-price',
+            {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+            <div class="form-group">
+                <label>{% trans %}changePaymentPrice-admin.newPrice{% endtrans %} ({{ event.currency }}):<br/>
+                    <input type="number" min="0" max="99999" name="newPrice" id="form-newPrice"
+                           class="form-control form-wide" required="required">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>{% trans %}changePaymentPrice-admin.reason{% endtrans %}<br/>
+                    <input type="text" name="reason" id="form-reason" class="form-control form-wide"
+                           required="required">
+                </label>
+            </div>
+            <br/>
+            <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
+               class="btn btn-small btn-grey">{% trans %}changePaymentPrice-admin.back{% endtrans %}</a><br/><br/>
+            <input type="submit" value="{% trans %}changePaymentPrice-admin.submitChangePrice{% endtrans %}"
+                   class="btn btn-small">
+        </form>
+    </div>
+{% endblock %}

@@ -19,6 +19,11 @@
                class="btn btn-grey btn-small">{% trans %}payments-admin.cancel{% endtrans %}</a>
             <br/>
             <br/>
+            <a href="{{ url_for('admin-show-change-payment-price',
+                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{% trans %}payments-admin.changePrice{% endtrans %}</a>
+            <br/>
+            <br/>
             <form method="post"
                   action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
                 <input type="submit"
