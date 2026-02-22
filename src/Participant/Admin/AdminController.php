@@ -397,11 +397,18 @@ class AdminController extends AbstractController
     }
 
     public function showChangePaymentPrice(
+        Request $request,
         Response $response,
         Event $event,
         int $paymentId,
     ): Response {
         $payment = $this->paymentRepository->getById($paymentId, $event);
+
+        if ($payment->status !== PaymentStatus::Waiting) {
+            $this->flashMessages->warning('flash.warning.paymentNotWaitingCannotChangePrice');
+
+            return $this->redirect($request, $response, 'admin-show-payments');
+        }
 
         return $this->view->render($response, 'admin/changePaymentPrice.twig', ['payment' => $payment]);
     }
@@ -417,6 +424,12 @@ class AdminController extends AbstractController
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
         if ($payment->status !== PaymentStatus::Waiting) {
+            $this->flashMessages->warning('flash.warning.paymentNotWaitingCannotChangePrice');
+
+            return $this->redirect($request, $response, 'admin-show-payments');
+        }
+
+        if ($newPrice < 0 || $newPrice > 99999) {
             $this->flashMessages->warning('flash.warning.paymentNotWaitingCannotChangePrice');
 
             return $this->redirect($request, $response, 'admin-show-payments');
