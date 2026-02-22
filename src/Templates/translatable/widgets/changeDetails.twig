@@ -26,6 +26,6 @@
     {% if item.id == 'tshirt' or item.id == 'uploadFile' %}
         {{ forms.renderField(item, null, personDetails, event, user) }}
     {% else %}
-        {{ forms.renderField(item, attribute(personDetails, item.id), personDetails, event, user) }}
+        {{ forms.renderField(item, personDetails.getValueForField(item.id), personDetails, event, user) }}
     {% endif %}
 {% endfor %}

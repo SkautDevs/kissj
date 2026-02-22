@@ -7,11 +7,11 @@
 {% for item in ca.getAllowedItems() %}
     {% if item.id == 'firstName' or item.id == 'lastName' or item.id == 'nickname' %}
         {% if not useShortNaming %}
-            {{ forms.renderDetail(item, attribute(person, item.id), person, event) }}
+            {{ forms.renderDetail(item, person.getValueForField(item.id), person, event) }}
         {% endif %}
     {% elseif item.id == 'tshirt' or item.id == 'uploadFile' or item.id == 'preferredPosition' %}
         {{ forms.renderDetail(item, null, person, event) }}
     {% else %}
-        {{ forms.renderDetail(item, attribute(person, item.id), person, event) }}
+        {{ forms.renderDetail(item, person.getValueForField(item.id), person, event) }}
     {% endif %}
 {% endfor %}

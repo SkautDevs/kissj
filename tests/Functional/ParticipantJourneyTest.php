@@ -297,9 +297,36 @@ class ParticipantJourneyTest extends AppTestCase
     }
 
     /**
-     * Test that IST dashboard renders successfully (HTTP 200) after choosing role
+     * Test that IST dashboard renders without error even when no details are filled
      */
-    public function testDashboardRendersForIst(): void
+    public function testDashboardRendersForIstWithoutDetails(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->resetEventToDefault($container);
+
+        $email = 'dashboard-empty-test@example.com';
+        $user = $this->registerUser($container, $email);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        $userService->createParticipantSetRole($user, 'ist');
+
+        $_SESSION['user']['id'] = $user->id;
+
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * Test that IST dashboard renders successfully with filled details
+     */
+    public function testDashboardRendersForIstWithDetails(): void
     {
         $app = $this->getTestApp();
         $container = $this->getContainer($app);
@@ -336,7 +363,6 @@ class ParticipantJourneyTest extends AppTestCase
 
         $_SESSION['user']['id'] = $user->id;
 
-        // Re-create app without fresh init so UserRegeneration picks up the session
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
@@ -344,6 +370,9 @@ class ParticipantJourneyTest extends AppTestCase
         ));
 
         self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('Test', $body);
+        self::assertStringContainsString('IST', $body);
     }
 
     /**

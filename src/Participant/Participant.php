@@ -86,6 +86,15 @@ class Participant extends EntityDatetime
         $this->adminNote = '';
     }
 
+    public function getValueForField(string $field): mixed
+    {
+        try {
+            return $this->__get($field);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
     public function setUser(User $user): void
     {
         // else  LeanMapper \ Exception \ MemberAccessException
