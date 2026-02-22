@@ -83,10 +83,14 @@ readonly class Mailer
         $this->sendMailWithPayment($participant, $payment, 'payment-nonfirst-info');
     }
 
+    /**
+     * @param array<string, mixed> $extraParameters
+     */
     private function sendMailWithPayment(
         Participant $participant,
         Payment $payment,
         string $templateName,
+        array $extraParameters = [],
     ): void {
         $qrCode = fopen(
             $this->qrCodeService->generateQrBase64FromString($payment->getQrPaymentString()),
@@ -105,12 +109,12 @@ readonly class Mailer
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
             $templateName,
-            [
+            array_merge([
                 'participant' => $participant,
                 'payment' => $payment,
                 'showIban' => $eventType->showIban(),
                 'showPaymentQrCode' => $eventType->showPaymentQrCode($participant),
-            ],
+            ], $extraParameters),
             $embeds,
         );
     }
@@ -136,6 +140,13 @@ readonly class Mailer
                 'reason' => $reason,
             ],
         );
+    }
+
+    public function sendPaymentPriceChanged(Participant $participant, Payment $payment, string $reason): void
+    {
+        $this->sendMailWithPayment($participant, $payment, 'payment-price-changed', [
+            'reason' => $reason,
+        ]);
     }
 
     public function sendPaidPartially(Participant $participant): void
