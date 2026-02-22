@@ -60,15 +60,15 @@ class EventTypeWsj extends EventType
     {
         $ca = parent::getContentArbiterTroopLeader();
 
-        $ca->patrolName = false;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->swimming = true;
-        $ca->unit = true;
-        $ca->skills = true;
+        $ca->patrolName->allowed = false;
+        $ca->idNumber->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->food->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->skills->allowed = true;
 
         return $ca;
     }
@@ -77,14 +77,14 @@ class EventTypeWsj extends EventType
     {
         $ca = parent::getContentArbiterTroopParticipant();
 
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->swimming = true;
-        $ca->unit = true;
-        $ca->uploadFile = true;
+        $ca->idNumber->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->food->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->uploadFile->allowed = true;
 
         return $ca;
     }
@@ -93,15 +93,15 @@ class EventTypeWsj extends EventType
     {
         $ca = parent::getContentArbiterIst();
 
-        $ca->unit = true;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->food = true;
-        $ca->skills = true;
-        $ca->preferredPosition = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->swimming = true;
+        $ca->unit->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->food->allowed = true;
+        $ca->skills->allowed = true;
+        $ca->preferredPosition->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->swimming->allowed = true;
 
         return $ca;
     }

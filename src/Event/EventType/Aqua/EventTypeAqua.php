@@ -68,18 +68,18 @@ class EventTypeAqua extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->swimming = true;
-        $ca->tshirt = true;
-        $ca->driver = true;
-        $ca->skills = true;
-        $ca->preferredPosition = true;
-        $ca->unit = true;
+        $ca->country->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->food->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->tshirt->allowed = true;
+        $ca->driver->allowed = true;
+        $ca->skills->allowed = true;
+        $ca->preferredPosition->allowed = true;
+        $ca->unit->allowed = true;
 
         return $ca;
     }
@@ -87,15 +87,15 @@ class EventTypeAqua extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $ca = parent::getContentArbiterPatrolLeader();
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->languages = true;
-        $ca->food = true;
-        $ca->phone = true;
-        $ca->tshirt = true;
-        $ca->email = true;
-        $ca->swimming = true;
-        $ca->unit = true;
+        $ca->country->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->languages->allowed = true;
+        $ca->food->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->tshirt->allowed = true;
+        $ca->email->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->unit->allowed = true;
 
         return $ca;
     }
@@ -103,15 +103,15 @@ class EventTypeAqua extends EventType
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $ca = parent::getContentArbiterPatrolParticipant();
-        $ca->country = true;
-        $ca->idNumber = true;
-        $ca->food = true;
-        $ca->phone = true;
-        $ca->tshirt = true;
-        $ca->email = true;
-        $ca->swimming = true;
-        $ca->unit = true;
-        $ca->uploadFile = true;
+        $ca->country->allowed = true;
+        $ca->idNumber->allowed = true;
+        $ca->food->allowed = true;
+        $ca->phone->allowed = true;
+        $ca->tshirt->allowed = true;
+        $ca->email->allowed = true;
+        $ca->swimming->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->uploadFile->allowed = true;
 
         return $ca;
     }

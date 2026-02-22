@@ -4,9 +4,9 @@
     href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
     class="btn btn-small btn-mini"
 >{% trans %}mend-admin.addPayment{% endtrans %}</a></br>
-{% if ca.contingent %}
+{% if ca.contingent.allowed %}
     {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
-{% endif %}{% if ca.notes %}
+{% endif %}{% if ca.notes.allowed %}
     {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}

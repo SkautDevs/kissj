@@ -44,12 +44,12 @@ class EventTypeJj extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
-        $caIst->phone = true;
-        $caIst->unit = true;
-        $caIst->food = true;
-        $caIst->scarf = true;
-        $caIst->swimming = true;
-        $caIst->skills = true;
+        $caIst->phone->allowed = true;
+        $caIst->unit->allowed = true;
+        $caIst->food->allowed = true;
+        $caIst->scarf->allowed = true;
+        $caIst->swimming->allowed = true;
+        $caIst->skills->allowed = true;
 
         return $caIst;
     }
@@ -57,11 +57,11 @@ class EventTypeJj extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
-        $caPl->phone = true;
-        $caPl->unit = true;
-        $caPl->food = true;
-        $caPl->scarf = true;
-        $caPl->swimming = true;
+        $caPl->phone->allowed = true;
+        $caPl->unit->allowed = true;
+        $caPl->food->allowed = true;
+        $caPl->scarf->allowed = true;
+        $caPl->swimming->allowed = true;
 
         return $caPl;
     }
@@ -69,11 +69,11 @@ class EventTypeJj extends EventType
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $caPp = parent::getContentArbiterPatrolParticipant();
-        $caPp->phone = true;
-        $caPp->unit = true;
-        $caPp->food = true;
-        $caPp->scarf = true;
-        $caPp->swimming = true;
+        $caPp->phone->allowed = true;
+        $caPp->unit->allowed = true;
+        $caPp->food->allowed = true;
+        $caPp->scarf->allowed = true;
+        $caPp->swimming->allowed = true;
 
         return $caPp;
     }
@@ -82,18 +82,18 @@ class EventTypeJj extends EventType
     {
         $caGuest = parent::getContentArbiterGuest();
 
-        $caGuest->address = true;
-        $caGuest->gender = true;
-        $caGuest->birthDate = true;
-        $caGuest->health = true;
-        $caGuest->psychicalHealth = true;
+        $caGuest->address->allowed = true;
+        $caGuest->gender->allowed = true;
+        $caGuest->birthDate->allowed = true;
+        $caGuest->health->allowed = true;
+        $caGuest->psychicalHealth->allowed = true;
 
-        $caGuest->phone = true;
-        $caGuest->unit = true;
-        $caGuest->food = true;
-        $caGuest->scarf = true;
-        $caGuest->swimming = true;
-        $caGuest->skills = true;
+        $caGuest->phone->allowed = true;
+        $caGuest->unit->allowed = true;
+        $caGuest->food->allowed = true;
+        $caGuest->scarf->allowed = true;
+        $caGuest->swimming->allowed = true;
+        $caGuest->skills->allowed = true;
 
         return $caGuest;
     }

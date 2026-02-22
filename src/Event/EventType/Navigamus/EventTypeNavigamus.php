@@ -35,12 +35,12 @@ class EventTypeNavigamus extends EventType
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
-        $caIst->phone = true;
-        $caIst->food = true;
-        $caIst->preferredPosition = true;
-        $caIst->tshirt = true;
-        $caIst->arrivalDate = true;
-        $caIst->departureDate = true;
+        $caIst->phone->allowed = true;
+        $caIst->food->allowed = true;
+        $caIst->preferredPosition->allowed = true;
+        $caIst->tshirt->allowed = true;
+        $caIst->arrivalDate->allowed = true;
+        $caIst->departureDate->allowed = true;
 
         return $caIst;
     }
@@ -48,9 +48,9 @@ class EventTypeNavigamus extends EventType
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
-        $caPl->phone = true;
-        $caPl->food = true;
-        $caPl->contingent = true;
+        $caPl->phone->allowed = true;
+        $caPl->food->allowed = true;
+        $caPl->contingent->allowed = true;
 
         return $caPl;
     }
@@ -58,7 +58,7 @@ class EventTypeNavigamus extends EventType
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $caPp = parent::getContentArbiterPatrolParticipant();
-        $caPp->food = true;
+        $caPp->food->allowed = true;
 
         return $caPp;
     }

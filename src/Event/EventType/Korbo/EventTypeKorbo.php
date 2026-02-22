@@ -39,11 +39,11 @@ class EventTypeKorbo extends EventType
     {
         $ca = parent::getContentArbiterIst();
 
-        $ca->phone = true;
-        $ca->email = true;
-        $ca->country = true;
-        $ca->unit = true;
-        $ca->scarf = true;
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->country->allowed = true;
+        $ca->unit->allowed = true;
+        $ca->scarf->allowed = true;
 
         return $ca;
     }

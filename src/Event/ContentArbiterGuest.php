@@ -1,16 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace kissj\Event;
 
 class ContentArbiterGuest extends AbstractContentArbiter
 {
-    public bool $address = false;
-    public bool $gender = false;
-    public bool $birthDate = false;
-    public bool $health = false;
-    public bool $psychicalHealth = false;
-    public bool $phone = true;
-    public bool $email = true;
-    public bool $arrivalDate = true;
-    public bool $departureDate = true;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->address->allowed = false;
+        $this->gender->allowed = false;
+        $this->birthDate->allowed = false;
+        $this->health->allowed = false;
+        $this->psychicalHealth->allowed = false;
+        $this->phone->allowed = true;
+        $this->email->allowed = true;
+        $this->arrivalDate->allowed = true;
+        $this->departureDate->allowed = true;
+    }
 }

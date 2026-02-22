@@ -104,7 +104,7 @@ readonly class ParticipantService
     {
         $contentArbiter = $this->getContentArbiterForParticipant($participant);
 
-        if ($contentArbiter->uploadFile) {
+        if ($contentArbiter->uploadFile->allowed) {
             $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
             if ($uploadedFile instanceof UploadedFile) {
                 $this->saveFileHandler->saveFileTo($participant, $uploadedFile);
@@ -231,42 +231,42 @@ readonly class ParticipantService
     public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
         if (
-            ($ca->patrolName && $p->patrolName === null)
-            || ($ca->contingent && $p->contingent === null)
-            || ($ca->firstName && $p->firstName === null)
-            || ($ca->lastName && $p->lastName === null)
-            || ($ca->address && $p->permanentResidence === null)
-            || ($ca->phone && $p->telephoneNumber === null)
-            || ($ca->gender && $p->gender === null)
-            || ($ca->country && $p->country === null)
-            || ($ca->email && $p->email === null)
-            || ($ca->unit && $p->scoutUnit === null)
-            || ($ca->languages && $p->languages === null)
-            || ($ca->birthDate && $p->birthDate === null)
-            || ($ca->birthPlace && $p->birthPlace === null)
-            || ($ca->emergencyContact && $p->emergencyContact === null)
-            || ($ca->food && $p->foodPreferences === null)
-            || ($ca->idNumber && $p->idNumber === null)
-            || ($ca->scarf && $p->scarf === null)
-            || ($ca->swimming && $p->swimming === null)
-            || ($ca->arrivalDate && $p->arrivalDate === null)
-            || ($ca->departureDate && $p->departureDate === null)
-            #|| ($ca->uploadFile && $p->uploadedFilename === null)
-            || ($ca->skills && $p->skills === null)
-            || ($ca->preferredPosition && $p->preferredPosition === null)
-            || ($ca->driver && $p->driversLicense === null)
-            || ($ca->tshirt && $p->getTshirtShape() === null)
-            || ($ca->tshirt && $p->getTshirtSize() === null)
+            ($ca->patrolName->allowed && $p->patrolName === null)
+            || ($ca->contingent->allowed && $p->contingent === null)
+            || ($ca->firstName->allowed && $p->firstName === null)
+            || ($ca->lastName->allowed && $p->lastName === null)
+            || ($ca->address->allowed && $p->permanentResidence === null)
+            || ($ca->phone->allowed && $p->telephoneNumber === null)
+            || ($ca->gender->allowed && $p->gender === null)
+            || ($ca->country->allowed && $p->country === null)
+            || ($ca->email->allowed && $p->email === null)
+            || ($ca->unit->allowed && $p->scoutUnit === null)
+            || ($ca->languages->allowed && $p->languages === null)
+            || ($ca->birthDate->allowed && $p->birthDate === null)
+            || ($ca->birthPlace->allowed && $p->birthPlace === null)
+            || ($ca->emergencyContact->allowed && $p->emergencyContact === null)
+            || ($ca->food->allowed && $p->foodPreferences === null)
+            || ($ca->idNumber->allowed && $p->idNumber === null)
+            || ($ca->scarf->allowed && $p->scarf === null)
+            || ($ca->swimming->allowed && $p->swimming === null)
+            || ($ca->arrivalDate->allowed && $p->arrivalDate === null)
+            || ($ca->departureDate->allowed && $p->departureDate === null)
+            #|| ($ca->uploadFile->allowed && $p->uploadedFilename === null)
+            || ($ca->skills->allowed && $p->skills === null)
+            || ($ca->preferredPosition->allowed && $p->preferredPosition === null)
+            || ($ca->driver->allowed && $p->driversLicense === null)
+            || ($ca->tshirt->allowed && $p->getTshirtShape() === null)
+            || ($ca->tshirt->allowed && $p->getTshirtSize() === null)
         ) {
             return false;
         }
 
-        if ($ca->email && $p->email !== null && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
+        if ($ca->email->allowed && $p->email !== null && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
             return false;
         }
 
         // numbers and plus sight up front only
-        if ($ca->phone && ($p->telephoneNumber === null || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
+        if ($ca->phone->allowed && ($p->telephoneNumber === null || preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0)) {
             return false;
         }
 
