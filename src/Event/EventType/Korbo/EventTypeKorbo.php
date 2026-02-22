@@ -42,6 +42,7 @@ class EventTypeKorbo extends EventType
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->country->allowed = true;
+        $ca->country->options = $this->getParticipantCountries();
         $ca->unit->allowed = true;
         $ca->scarf->allowed = true;
 

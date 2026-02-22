@@ -64,6 +64,7 @@ class EventTypeWsj extends EventType
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
@@ -80,6 +81,7 @@ class EventTypeWsj extends EventType
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
@@ -97,8 +99,10 @@ class EventTypeWsj extends EventType
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->skills->allowed = true;
         $ca->preferredPosition->allowed = true;
+        $ca->preferredPosition->options = $this->getPositionOptions();
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->swimming->allowed = true;

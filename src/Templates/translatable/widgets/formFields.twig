@@ -77,7 +77,7 @@
             >
         </div>
     {% elseif item.type.value == 'select' %}
-        {% if item.id == 'contingent' %}
+        {% if item.id == 'contingent' or item.id == 'country' or item.id == 'foodPreferences' %}
             <div class="form-group">
                 <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
                 <select
@@ -86,54 +86,20 @@
                     name="{{ item.id }}"
                     {% if item.required %}required="required"{% endif %}
                 >
-                    {% for contingent in event.eventType.getContingents() %}
+                    {% for option in item.options %}
                         <option
-                            value="{{ contingent }}"
-                            {% if value == contingent %} selected="selected"{% endif %}
+                            value="{{ option }}"
+                            {% if value == option %}selected="selected"{% endif %}
                         >
-                            {{ contingent | trans }}
+                            {{ option | trans }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
-        {% elseif item.id == 'country' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                >
-                    {% for country in event.eventType.getParticipantCountries() %}
-                        <option
-                            value="{{ country }}"
-                            {% if value == country %} selected="selected"{% endif %}
-                        >
-                            {{ country | trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-        {% elseif item.id == 'foodPreferences' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
-                    {% for foodOption in event.eventType.getFoodOptions() %}
-                        <option value="{{ foodOption }}"
-                                {% if value == foodOption %}selected="selected"{% endif %}
-                        >
-                            {{ foodOption|trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            {% trans %}detail.food-placeholder{% endtrans %}
-            <br><br>
+            {% if item.id == 'foodPreferences' %}
+                {% trans %}detail.food-placeholder{% endtrans %}
+                <br><br>
+            {% endif %}
         {% elseif item.id == 'gender' %}
             <div class="form-group">
                 <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
@@ -265,7 +231,7 @@
         {% if item.id == 'preferredPosition' %}
             <div class="form-group">
                 <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
-                {% for positionOption in event.eventType.getPositionOptions() %}
+                {% for positionOption in item.options %}
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="{{ positionOption }}"
                                {% if positionOption in personDetails.preferredPosition %}checked="checked"{% endif %}>

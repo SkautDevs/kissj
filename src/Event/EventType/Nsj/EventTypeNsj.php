@@ -15,7 +15,9 @@ class EventTypeNsj extends EventType
         $ca->arrivalDate->allowed = true;
         $ca->departureDate->allowed = true;
         $ca->preferredPosition->allowed = true;
+        $ca->preferredPosition->options = $this->getPositionOptions();
         $ca->food->allowed = true;
+        $ca->food->options = $this->getFoodOptions();
         $ca->tshirt->allowed = true;
         $ca->skills->allowed = true;
 
