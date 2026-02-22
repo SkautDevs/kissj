@@ -7,6 +7,7 @@ namespace kissj\Participant;
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
+use LeanMapper\Exception\MemberAccessException;
 use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
@@ -20,6 +21,7 @@ use Ramsey\Uuid\Uuid;
  * @property int                    $id
  * @property User|null              $user m:hasOne
  * @property ParticipantRole|null   $role m:passThru(roleFromString|roleToString) #needed for DB working (see Mapper.php)
+ *
  * @property string|null            $patrolName #used for troops too # TODO move to PatrolLeader + TroopLeader
  * @property string|null            $contingent
  * @property string|null            $firstName
@@ -63,7 +65,7 @@ use Ramsey\Uuid\Uuid;
  * @property string|null            $emergencyContact
  *
  * @property Payment[]              $payment m:belongsToMany
- * @property Deal[]      $deals m:belongsToMany
+ * @property Deal[]                 $deals m:belongsToMany
  */
 class Participant extends EntityDatetime
 {
@@ -90,7 +92,7 @@ class Participant extends EntityDatetime
     {
         try {
             return $this->__get($field);
-        } catch (\Throwable) {
+        } catch (MemberAccessException) {
             return null;
         }
     }

@@ -7,7 +7,7 @@ namespace kissj\Event\ContentArbiter;
 class ContentArbiterItem
 {
     /**
-     * @param list<string> $options
+     * @param array<string, string> $options key=dbValue, value=translationKey
      * @param list<string> $extraClasses
      */
     public function __construct(
@@ -23,5 +23,14 @@ class ContentArbiterItem
         public array $options = [],
         public array $extraClasses = [],
     ) {
+    }
+
+    /**
+     * @param list<string> $translationKeys
+     * @return array<string, string>
+     */
+    public static function selfMappedOptions(array $translationKeys): array
+    {
+        return array_combine($translationKeys, $translationKeys);
     }
 }

@@ -91,7 +91,7 @@ abstract class AbstractContentArbiter
             order: 60,
             label: 'detail.gender',
             placeholder: '',
-            options: ['man', 'woman', 'other'],
+            options: ['man' => 'detail.genderMan', 'woman' => 'detail.genderWoman', 'other' => 'detail.genderOther'],
         );
         $this->birthDate = new ContentArbiterItem(
             id: 'birthDate',
@@ -233,7 +233,7 @@ abstract class AbstractContentArbiter
             order: 230,
             label: 'detail.swimSkill',
             placeholder: '',
-            options: ['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50'],
+            options: ContentArbiterItem::selfMappedOptions(['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50']),
         );
         $this->scarf = new ContentArbiterItem(
             id: 'scarf',
@@ -242,7 +242,7 @@ abstract class AbstractContentArbiter
             order: 240,
             label: 'detail.scarf',
             placeholder: '',
-            options: ['yes', 'no'],
+            options: ['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'],
         );
         $this->arrivalDate = new ContentArbiterItem(
             id: 'arrivalDate',
@@ -267,7 +267,7 @@ abstract class AbstractContentArbiter
             order: 270,
             label: 'detail.driver',
             placeholder: '',
-            options: ['dont', 'less 10000 km', 'more 10000 km'],
+            options: ['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'],
         );
         $this->skills = new ContentArbiterItem(
             id: 'skills',

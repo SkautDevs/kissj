@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Korbo;
 
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -42,7 +43,7 @@ class EventTypeKorbo extends EventType
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->country->allowed = true;
-        $ca->country->options = $this->getParticipantCountries();
+        $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->unit->allowed = true;
         $ca->scarf->allowed = true;
 

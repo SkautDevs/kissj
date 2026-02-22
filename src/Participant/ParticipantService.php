@@ -230,36 +230,6 @@ readonly class ParticipantService
 
     public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
-        $valueMap = [
-            'contingent' => $p->contingent,
-            'patrolName' => $p->patrolName,
-            'firstName' => $p->firstName,
-            'lastName' => $p->lastName,
-            'nickname' => $p->nickname,
-            'permanentResidence' => $p->permanentResidence,
-            'telephoneNumber' => $p->telephoneNumber,
-            'gender' => $p->gender,
-            'country' => $p->country,
-            'email' => $p->email,
-            'scoutUnit' => $p->scoutUnit,
-            'languages' => $p->languages,
-            'birthDate' => $p->birthDate,
-            'birthPlace' => $p->birthPlace,
-            'healthProblems' => $p->healthProblems,
-            'medicaments' => $p->medicaments,
-            'psychicalHealthProblems' => $p->psychicalHealthProblems,
-            'emergencyContact' => $p->emergencyContact,
-            'foodPreferences' => $p->foodPreferences,
-            'idNumber' => $p->idNumber,
-            'scarf' => $p->scarf,
-            'swimming' => $p->swimming,
-            'arrivalDate' => $p->arrivalDate,
-            'departureDate' => $p->departureDate,
-            'skills' => $p->skills,
-            'preferredPosition' => $p->preferredPosition,
-            'driversLicense' => $p->driversLicense,
-        ];
-
         foreach ($ca->getAllowedItems() as $item) {
             if (!$item->required) {
                 continue;
@@ -272,11 +242,7 @@ readonly class ParticipantService
                 continue;
             }
 
-            if (!array_key_exists($item->id, $valueMap)) {
-                continue;
-            }
-
-            if ($valueMap[$item->id] === null) {
+            if ($p->getValueForField($item->id) === null) {
                 return false;
             }
         }
