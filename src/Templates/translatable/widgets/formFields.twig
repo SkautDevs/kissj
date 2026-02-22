@@ -49,133 +49,27 @@
             >
         </div>
     {% elseif item.type.value == 'select' %}
-        {% if item.id == 'contingent' or item.id == 'country' or item.id == 'foodPreferences' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
-                    {% for option in item.options %}
-                        <option
-                            value="{{ option }}"
-                            {% if value == option %}selected="selected"{% endif %}
-                        >
-                            {{ option | trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            {% if item.id == 'foodPreferences' %}
-                {% trans %}detail.food-placeholder{% endtrans %}
-                <br><br>
-            {% endif %}
-        {% elseif item.id == 'gender' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
-                    <option value="man" {% if value == 'man' %}selected="selected"{% endif %}>
-                        {% trans %}detail.genderMan{% endtrans %}
-                    </option>
-                    <option value="woman" {% if value == 'woman' %}selected="selected"{% endif %}>
-                        {% trans %}detail.genderWoman{% endtrans %}
-                    </option>
-                    <option value="other" {% if value == 'other' %}selected="selected"{% endif %}>
-                        {% trans %}detail.genderOther{% endtrans %}
-                    </option>
-                </select>
-            </div>
-        {% elseif item.id == 'swimming' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
-                    {% for option in item.options %}
-                        <option
-                            value="{{ option }}"
-                            {% if value == option %}selected="selected"{% endif %}
-                        >
-                            {{ option|trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-        {% elseif item.id == 'scarf' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                >
-                    <option value="yes"{% if value == 'yes' %} selected="selected"{% endif %}>
-                        {% trans %}detail.scarfYes{% endtrans %}
-                    </option>
-                    <option value="no"{% if value == 'no' %} selected="selected"{% endif %}>
-                        {% trans %}detail.scarfNo{% endtrans %}
-                    </option>
-                </select>
-            </div>
-        {% elseif item.id == 'driversLicense' %}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
+        <div class="form-group">
+            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <select
+                id="{{ item.id }}"
+                class="form-control form-wide"
+                name="{{ item.id }}"
+                {% if item.required %}required="required"{% endif %}
+            >
+                {% for dbValue, transKey in item.options %}
                     <option
-                        value="dont"
-                        {% if value == 'dont' %}selected="selected"{% endif %}
+                        value="{{ dbValue }}"
+                        {% if value == dbValue %}selected="selected"{% endif %}
                     >
-                        {% trans %}detail.driver-dont{% endtrans %}
+                        {{ transKey|trans }}
                     </option>
-                    <option
-                        value="less 10000 km"
-                        {% if value == 'less 10000 km' %}selected="selected"{% endif %}
-                    >
-                        {% trans %}detail.driver-less10k{% endtrans %}
-                    </option>
-                    <option
-                        value="more 10000 km"
-                        {% if value == 'more 10000 km' %}selected="selected"{% endif %}
-                    >
-                        {% trans %}detail.driver-more10k{% endtrans %}
-                    </option>
-                </select>
-            </div>
-        {% else %}
-            {# Generic select with options from item.options (values are translation keys) #}
-            <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
-                <select
-                    id="{{ item.id }}"
-                    class="form-control form-wide"
-                    name="{{ item.id }}"
-                    {% if item.required %}required="required"{% endif %}
-                >
-                    {% for option in item.options %}
-                        <option
-                            value="{{ option }}"
-                            {% if value == option %}selected="selected"{% endif %}
-                        >
-                            {{ option | trans }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+                {% endfor %}
+            </select>
+        </div>
+        {% if item.id == 'foodPreferences' %}
+            {% trans %}detail.food-placeholder{% endtrans %}
+            <br><br>
         {% endif %}
     {% elseif item.type.value == 'textarea' %}
         <div class="form-group">
@@ -203,11 +97,11 @@
         {% if item.id == 'preferredPosition' %}
             <div class="form-group">
                 <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
-                {% for positionOption in item.options %}
+                {% for dbValue, transKey in item.options %}
                     <label class="form-control">
-                        <input type="checkbox" name="preferredPosition[]" value="{{ positionOption }}"
-                               {% if positionOption in personDetails.preferredPosition %}checked="checked"{% endif %}>
-                        {{ positionOption|trans }}
+                        <input type="checkbox" name="preferredPosition[]" value="{{ dbValue }}"
+                               {% if dbValue in personDetails.preferredPosition %}checked="checked"{% endif %}>
+                        {{ transKey|trans }}
                     </label>
                 {% endfor %}
             </div>
@@ -291,30 +185,16 @@
 #}
 {% macro renderDetail(item, value, person, event) %}
     {% if item.type.value == 'tshirtComposite' %}
-        {{ item.label|trans }}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
-    {% elseif item.id == 'gender' %}
-        {{ item.label|trans }}: <b>
-        {% if value == 'man' %}
-            {% trans %}detail.genderMan{% endtrans %}
-        {% elseif value == 'woman' %}
-            {% trans %}detail.genderWoman{% endtrans %}
-        {% elseif value == 'other' %}
-            {% trans %}detail.genderOther{% endtrans %}
-        {% endif %}</b><br/>
-    {% elseif item.id == 'scarf' %}
-        {{ item.label|trans }}: <b>
-            {% if value == 'yes' %}
-                {% trans %}detail.scarfYes{% endtrans %}
-            {% elseif value == 'no' %}
-                {% trans %}detail.scarfNo{% endtrans %}
-            {% endif %}</b><br/>
+        {{ item.label|trans }}: <b>{% if person.getTshirtShape %}{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}{% endif %}</b><br/>
+    {% elseif item.type.value == 'select' %}
+        {{ item.label|trans }}: <b>{% if value and item.options[value] is defined %}{{ item.options[value]|trans }}{% elseif value %}{{ value }}{% endif %}</b><br/>
     {% elseif item.id == 'birthDate' %}
-        {{ item.label|trans }}: <b>{{ value.format('d. m. Y') }}</b>
+        {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b>
             {% if value %}
                 ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
             {% endif %}<br/>
     {% elseif item.id == 'arrivalDate' or item.id == 'departureDate' %}
-        {{ item.label|trans }}: <b>{{ value.format('d. m. Y') }}</b><br/>
+        {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b><br/>
     {% elseif item.id == 'preferredPosition' %}
         {% trans %}detail.position-title{% endtrans %}: <b>
             {% for preferredPosition in person.preferredPosition %}
@@ -336,12 +216,6 @@
                 {{ 'detail.uploadFileMissing'|trans }}
             {% endif %}<br/>
         {% endif %}
-    {% elseif item.id == 'contingent' or item.id == 'country' or item.id == 'foodPreferences' %}
-        {{ item.label|trans }}: <b>{{ value|trans }}</b><br/>
-    {% elseif item.type.value == 'select' and item.id == 'swimming' %}
-        {{ item.label|trans }}: <b>{{ value|trans }}</b><br/>
-    {% elseif item.type.value == 'select' and item.id == 'driversLicense' %}
-        {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% else %}
         {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% endif %}

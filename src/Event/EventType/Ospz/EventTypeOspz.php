@@ -6,6 +6,7 @@ namespace kissj\Event\EventType\Ospz;
 
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -27,7 +28,7 @@ class EventTypeOspz extends EventType
     {
         $caIst = parent::getContentArbiterIst();
         $caIst->food->allowed = true;
-        $caIst->food->options = $this->getFoodOptions();
+        $caIst->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
 
         return $caIst;
     }
@@ -36,7 +37,7 @@ class EventTypeOspz extends EventType
     {
         $caPl = parent::getContentArbiterPatrolLeader();
         $caPl->contingent->allowed = true;
-        $caPl->contingent->options = $this->getContingents();
+        $caPl->contingent->options = ContentArbiterItem::selfMappedOptions($this->getContingents());
 
         return $caPl;
     }

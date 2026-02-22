@@ -44,15 +44,25 @@ class ContentArbiterItemTest extends TestCase
             required: false,
             defaultValue: 'detail.foodWithout',
             pattern: null,
-            options: ['detail.foodWithout', 'detail.foodVegetarian'],
+            options: ['detail.foodWithout' => 'detail.foodWithout', 'detail.foodVegetarian' => 'detail.foodVegetarian'],
             extraClasses: ['food-select'],
         );
 
         self::assertTrue($item->allowed);
         self::assertFalse($item->required);
         self::assertSame('detail.foodWithout', $item->defaultValue);
-        self::assertSame(['detail.foodWithout', 'detail.foodVegetarian'], $item->options);
+        self::assertSame(['detail.foodWithout' => 'detail.foodWithout', 'detail.foodVegetarian' => 'detail.foodVegetarian'], $item->options);
         self::assertSame(['food-select'], $item->extraClasses);
+    }
+
+    public function testSelfMappedOptions(): void
+    {
+        $result = ContentArbiterItem::selfMappedOptions(['detail.foodWithout', 'detail.foodVegetarian']);
+
+        self::assertSame(
+            ['detail.foodWithout' => 'detail.foodWithout', 'detail.foodVegetarian' => 'detail.foodVegetarian'],
+            $result,
+        );
     }
 
     public function testPropertiesAreMutable(): void
@@ -69,11 +79,11 @@ class ContentArbiterItemTest extends TestCase
         $item->allowed = true;
         $item->required = false;
         $item->label = 'custom.phone';
-        $item->options = ['opt1', 'opt2'];
+        $item->options = ['opt1' => 'trans.opt1', 'opt2' => 'trans.opt2'];
 
         self::assertTrue($item->allowed);
         self::assertFalse($item->required);
         self::assertSame('custom.phone', $item->label);
-        self::assertSame(['opt1', 'opt2'], $item->options);
+        self::assertSame(['opt1' => 'trans.opt1', 'opt2' => 'trans.opt2'], $item->options);
     }
 }

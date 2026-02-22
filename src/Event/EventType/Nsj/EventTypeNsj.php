@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Nsj;
 
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 
 class EventTypeNsj extends EventType
@@ -15,9 +16,9 @@ class EventTypeNsj extends EventType
         $ca->arrivalDate->allowed = true;
         $ca->departureDate->allowed = true;
         $ca->preferredPosition->allowed = true;
-        $ca->preferredPosition->options = $this->getPositionOptions();
+        $ca->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->tshirt->allowed = true;
         $ca->skills->allowed = true;
 

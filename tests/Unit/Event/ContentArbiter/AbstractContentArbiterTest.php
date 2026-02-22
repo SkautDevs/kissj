@@ -135,12 +135,12 @@ class AbstractContentArbiterTest extends TestCase
     {
         $ca = new ContentArbiterIst();
 
-        self::assertSame(['man', 'woman', 'other'], $ca->gender->options);
+        self::assertSame(['man' => 'detail.genderMan', 'woman' => 'detail.genderWoman', 'other' => 'detail.genderOther'], $ca->gender->options);
         self::assertSame(
-            ['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50'],
+            ['detail.swimSkillNo' => 'detail.swimSkillNo', 'detail.swimSkillLess50' => 'detail.swimSkillLess50', 'detail.swimSkillMore50' => 'detail.swimSkillMore50'],
             $ca->swimming->options,
         );
-        self::assertSame(['dont', 'less 10000 km', 'more 10000 km'], $ca->driver->options);
-        self::assertSame(['yes', 'no'], $ca->scarf->options);
+        self::assertSame(['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'], $ca->driver->options);
+        self::assertSame(['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'], $ca->scarf->options);
     }
 }

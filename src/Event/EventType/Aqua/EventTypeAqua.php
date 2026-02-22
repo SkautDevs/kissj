@@ -8,6 +8,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -69,11 +70,11 @@ class EventTypeAqua extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->country->allowed = true;
-        $ca->country->options = $this->getParticipantCountries();
+        $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
@@ -81,7 +82,7 @@ class EventTypeAqua extends EventType
         $ca->driver->allowed = true;
         $ca->skills->allowed = true;
         $ca->preferredPosition->allowed = true;
-        $ca->preferredPosition->options = $this->getPositionOptions();
+        $ca->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
         $ca->unit->allowed = true;
 
         return $ca;
@@ -91,11 +92,11 @@ class EventTypeAqua extends EventType
     {
         $ca = parent::getContentArbiterPatrolLeader();
         $ca->country->allowed = true;
-        $ca->country->options = $this->getParticipantCountries();
+        $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->phone->allowed = true;
         $ca->tshirt->allowed = true;
         $ca->email->allowed = true;
@@ -109,10 +110,10 @@ class EventTypeAqua extends EventType
     {
         $ca = parent::getContentArbiterPatrolParticipant();
         $ca->country->allowed = true;
-        $ca->country->options = $this->getParticipantCountries();
+        $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->idNumber->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->phone->allowed = true;
         $ca->tshirt->allowed = true;
         $ca->email->allowed = true;

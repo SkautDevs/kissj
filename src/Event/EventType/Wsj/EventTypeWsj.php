@@ -7,6 +7,7 @@ namespace kissj\Event\EventType\Wsj;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -64,7 +65,7 @@ class EventTypeWsj extends EventType
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
@@ -81,7 +82,7 @@ class EventTypeWsj extends EventType
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
@@ -99,10 +100,10 @@ class EventTypeWsj extends EventType
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->food->allowed = true;
-        $ca->food->options = $this->getFoodOptions();
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->skills->allowed = true;
         $ca->preferredPosition->allowed = true;
-        $ca->preferredPosition->options = $this->getPositionOptions();
+        $ca->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
         $ca->idNumber->allowed = true;
         $ca->languages->allowed = true;
         $ca->swimming->allowed = true;

@@ -9,6 +9,7 @@ use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
@@ -47,7 +48,7 @@ class EventTypeJj extends EventType
         $caIst->phone->allowed = true;
         $caIst->unit->allowed = true;
         $caIst->food->allowed = true;
-        $caIst->food->options = $this->getFoodOptions();
+        $caIst->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $caIst->scarf->allowed = true;
         $caIst->swimming->allowed = true;
         $caIst->skills->allowed = true;
@@ -61,7 +62,7 @@ class EventTypeJj extends EventType
         $caPl->phone->allowed = true;
         $caPl->unit->allowed = true;
         $caPl->food->allowed = true;
-        $caPl->food->options = $this->getFoodOptions();
+        $caPl->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $caPl->scarf->allowed = true;
         $caPl->swimming->allowed = true;
 
@@ -74,7 +75,7 @@ class EventTypeJj extends EventType
         $caPp->phone->allowed = true;
         $caPp->unit->allowed = true;
         $caPp->food->allowed = true;
-        $caPp->food->options = $this->getFoodOptions();
+        $caPp->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $caPp->scarf->allowed = true;
         $caPp->swimming->allowed = true;
 
@@ -94,7 +95,7 @@ class EventTypeJj extends EventType
         $caGuest->phone->allowed = true;
         $caGuest->unit->allowed = true;
         $caGuest->food->allowed = true;
-        $caGuest->food->options = $this->getFoodOptions();
+        $caGuest->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $caGuest->scarf->allowed = true;
         $caGuest->swimming->allowed = true;
         $caGuest->skills->allowed = true;
