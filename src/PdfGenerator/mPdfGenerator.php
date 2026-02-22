@@ -7,6 +7,7 @@ namespace kissj\PdfGenerator;
 use kissj\Application\ImageUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
+use kissj\Payment\Payment;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
@@ -26,17 +27,20 @@ class mPdfGenerator extends PdfGenerator
     {
         $event = $participant->getUserButNotNull()->event;
         $payments = $participant->getAllPaidPayment();
-        $firstPaymentId = $payments[0]->id ?? null;
+
+        $receipts = array_map(fn (Payment $payment) => [
+            'payment' => $payment,
+            'receiptNumber' => $event->eventType->getReceiptNumber($event->slug, $participant, (string)$payment->id),
+            'acceptedDate' => $payment->paidAt?->format('j. n. Y'),
+        ], $payments);
 
         $templateData = [
-        	'event' => $event,
-        	'skautLogo' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautLogoPath($participant)),
-        	'receiptNumber' => $event->eventType->getReceiptNumber($event->slug, $participant, (string)$firstPaymentId),
-        	'eventDates' => $event->startDay->format('j. n. Y') . ' až ' . $event->endDay->format('j. n. Y'),
-        	'participant' => $participant,
-        	'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
-        	'payments' => $payments,
-        	'acceptedDate' => $participant->registrationPayDate?->format('j. n. Y'),
+            'event' => $event,
+            'skautLogo' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautLogoPath($participant)),
+            'eventDates' => $event->startDay->format('j. n. Y') . ' až ' . $event->endDay->format('j. n. Y'),
+            'participant' => $participant,
+            'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
+            'receipts' => $receipts,
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
         ];
 

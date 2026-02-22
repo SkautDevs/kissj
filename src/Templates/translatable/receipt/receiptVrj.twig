@@ -1,13 +1,17 @@
 {% extends "_layoutPdf.twig" %}
 
 {% block content %}
+{% for receipt in receipts %}
+{% if not loop.first %}
+    <pagebreak />
+{% endif %}
 <div class="header">
     <img class="header-logo" src="data:image/png;base64,{{ event.getLogoInBase64 }}" alt="logo of {{ event.readableName }}">
     <img class="header-logo content-right" src="data:image/png;base64,{{ skautLogo }}" alt="logo of Scout organization">
 </div>
 <h1 class="content-center">{{ 'receipt.headline' |trans }}</h1>
 <p class="content-left">{{ 'receipt.accepter'|trans|raw }}</p>
-<p class="content-right">{{ 'receipt.number'|trans }}: {{ receiptNumber }}</p>
+<p class="content-right">{{ 'receipt.number'|trans }}: {{ receipt.receiptNumber }}</p>
 <p>{{ 'receipt.acceptPaymentEvent'|trans({
         '%eventReadableName%': event.readableName,
         '%eventDates%': eventDates,
@@ -21,15 +25,14 @@
             '%allOtherParticipants%': allOtherParticipants,
         }) }}</p>
 {% endif %}
-<p>{% for payment in payments %}
-    {{ 'receipt.acceptPaymentPayment'|trans({
-            '%paymentAmount%': payment.price,
-            '%paymentCurrency%': payment.currency,
-            '%paymentVariableSymbol%': payment.variableSymbol,
-            '%paymentAccountTo%': payment.accountNumber,
-        }) }}
-    {% endfor %}</p>
-<p class="content-right">{{ 'receipt.acceptedSign'|trans({
-        '%acceptedDate%': participant.registrationPayDate.format('j. n. Y'),
+<p>{{ 'receipt.acceptPaymentPayment'|trans({
+        '%paymentAmount%': receipt.payment.price,
+        '%paymentCurrency%': receipt.payment.currency,
+        '%paymentVariableSymbol%': receipt.payment.variableSymbol,
+        '%paymentAccountTo%': receipt.payment.accountNumber,
     }) }}</p>
+<p class="content-right">{{ 'receipt.acceptedSign'|trans({
+        '%acceptedDate%': receipt.acceptedDate,
+    }) }}</p>
+{% endfor %}
 {% endblock %}
