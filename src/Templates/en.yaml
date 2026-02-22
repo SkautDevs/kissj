@@ -288,6 +288,12 @@ email:
         dontPay: "Don't take further attempts to pay again with the previous payment details!"
         registerAgain: "Do you want to attend the event nevertheless? If you have no waiting payments, edit and lock your registration again"
         newPayment: "(submitted information is still saved in your account), we will check and approve it again and send you new payment details."
+    payment-price-changed:
+        subject: "payment price changed"
+        changed: "The price of your payment for %event.getReadableName% has been changed."
+        reason: "Reason"
+        dontPay: "Do not pay using the previous payment details!"
+        newPaymentDetails: "Here are your new payment details:"
     payment-successful:
         subject: "payment successful"
         received: "We have received your payment for"
@@ -323,6 +329,7 @@ payments-admin:
     amount: "Amount"
     note: "Note"
     cancel: "Cancel payment"
+    changePrice: "Change price"
     confirm: "Confirm payment"
     allPatrolsPaid: "All patrols are paid up!"
     allIstPaid: "All ISTs are paid up!"
@@ -426,6 +433,14 @@ cancelPayment-admin:
     reason: "Reason for payment cancellation (will be sent via mail):"
     back: "Back"
     cancelPayment: "Cancel payment"
+changePaymentPrice-admin:
+    changePrice: "Change payment price"
+    wantChangePrice: "Change payment price for participant"
+    currentPrice: "Current price"
+    newPrice: "New price"
+    reason: "Reason for price change (will be sent via email):"
+    back: "Back"
+    submitChangePrice: "Change price"
 approve-admin:
     approving: "Approving participants on event"
     back: "Back"
@@ -553,6 +568,7 @@ flash:
         participantCancelled: "Participant was successfully cancelled"
         participantUncancelled: "Participant was successfully marked as going again!"
         paymentAdded: "Payment added!"
+        paymentPriceChanged: "Payment price changed, new payment generated and email sent"
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
@@ -610,6 +626,7 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Participant is not in approved or paid status, therefore is uneligible for new payment"
         paymentAlreadyPaid: "Payment cannot be marked as paid, because it is already paid"
         paymentAlreadyCanceled: "Payment cannot be marked as cancelled, because it is already cancelled"
+        paymentNotWaitingCannotChangePrice: "Payment is not in waiting status, price cannot be changed"
         foodStatsNotAllowed: "You are not allowed to see food stats for this event."
     error:
         adminOnly: "Sorry bro, admins only"

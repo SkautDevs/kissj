@@ -288,6 +288,12 @@ email:
         dontPay: "Neplať znovu predošlými platobnými údajmi!"
         registerAgainSlovakOnly: "Chceš ísť na akciu aj tak? Ak nemáš ďalšie čakajúce platby, uprav a uzamkni svoju registráciu"
         newPayment: "(zadané údaje sú stále uložené), skontrolujeme a schválime ju nanovo a pošleme nové platobné údaje"
+    payment-price-changed:
+        subject: "zmena ceny platby"
+        changed: "Cena tvojej platby pre %event.getReadableName% bola zmenená."
+        reason: "Dôvod"
+        dontPay: "Neplať pomocou predchádzajúcich platobných údajov!"
+        newPaymentDetails: "Tu sú tvoje nové platobné údaje:"
     payment-successful:
         subject: "platba obdržena"
         received: "Obdržali sme Tvoju platbu na"
@@ -323,6 +329,7 @@ payments-admin:
     amount: "Cena"
     note: "Poznámka"
     cancel: "Zrušit platbu"
+    changePrice: "Zmeniť cenu"
     confirm: "Potvrdit platbu"
     allPatrolsPaid: "Všechny patroly mají zaplaceno!"
     allIstPaid: "Všichni ISTs mají zaplaceno!"
@@ -426,6 +433,14 @@ cancelPayment-admin:
     reason: "Důvod zrušení platby (bude poslán e-mailem, tak nebuď sprostý/á):"
     back: "Zpět"
     cancelPayment: "Zamítnout platbu"
+changePaymentPrice-admin:
+    changePrice: "Zmeniť cenu platby"
+    wantChangePrice: "Zmeniť cenu platby pre účastníka"
+    currentPrice: "Aktuálna cena"
+    newPrice: "Nová cena"
+    reason: "Dôvod zmeny ceny (bude zaslaný e-mailom):"
+    back: "Späť"
+    submitChangePrice: "Zmeniť cenu"
 approve-admin:
     approving: "Schvalování účastníků na akci"
     back: "Zpět"
@@ -553,6 +568,7 @@ flash:
         participantCancelled: "Účastník úspěšně označen že nejede!"
         participantUncancelled: "Účastník úspěšně označen že opět přijede!"
         paymentAdded: "Platba přidána!"
+        paymentPriceChanged: "Cena platby zmenená, nová platba vygenerovaná a e-mail odoslaný"
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         plWrongData: "Nie je možné uzamknúť registráciu - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
@@ -610,6 +626,7 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Účastník není schválený ani zaplacený, tedy mu nemůže být přidána platba"
         paymentAlreadyPaid: "Platbu nelze označit jako zaplacenou, protože už zaplacená je"
         paymentAlreadyCanceled: "Platbu nelze označit jako zrušenou, protože už zrušená je"
+        paymentNotWaitingCannotChangePrice: "Platba nie je v stave čakania, cenu nemožno zmeniť"
         foodStatsNotAllowed: "Nemáš oprávnenie vidieť štatistiky jedla pre túto akciu."
     error:
         adminOnly: "Sorry bro, sem môžu len admini"
