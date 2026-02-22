@@ -10,13 +10,13 @@
 {% macro renderField(item, value, personDetails, event, user) %}
     {% if item.type.value == 'text' or item.type.value == 'phone' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
             <input
                 id="{{ item.id }}"
                 class="form-control form-wide"
                 type="text"
                 name="{{ item.id }}"
-                {% if item.placeholder %}placeholder="{% trans %}{{ item.placeholder }}{% endtrans %}"{% endif %}
+                {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 value="{{ value }}"
                 {% if item.pattern %}pattern="{{ item.pattern }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
@@ -24,20 +24,20 @@
         </div>
     {% elseif item.type.value == 'email' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
             <input
                 id="{{ item.id }}"
                 class="form-control form-wide"
                 type="email"
                 name="{{ item.id }}"
                 value="{% if value is empty and personDetails.role != 'pp' %}{{ user.email }}{% else %}{{ value }}{% endif %}"
-                {% if item.placeholder %}placeholder="{% trans %}{{ item.placeholder }}{% endtrans %}"{% endif %}
+                {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
             >
         </div>
     {% elseif item.type.value == 'date' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
             <input
                 id="{{ item.id }}"
                 class="form-control{% if item.id != 'arrivalDate' and item.id != 'departureDate' %} form-wide{% endif %}"
@@ -51,7 +51,7 @@
     {% elseif item.type.value == 'select' %}
         {% if item.id == 'contingent' or item.id == 'country' or item.id == 'foodPreferences' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -74,7 +74,7 @@
             {% endif %}
         {% elseif item.id == 'gender' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -94,7 +94,7 @@
             </div>
         {% elseif item.id == 'swimming' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -106,14 +106,14 @@
                             value="{{ option }}"
                             {% if value == option %}selected="selected"{% endif %}
                         >
-                            {% trans %}{{ option }}{% endtrans %}
+                            {{ option|trans }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
         {% elseif item.id == 'scarf' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -129,7 +129,7 @@
             </div>
         {% elseif item.id == 'driversLicense' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -159,7 +159,7 @@
         {% else %}
             {# Generic select with options from item.options (values are translation keys) #}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <select
                     id="{{ item.id }}"
                     class="form-control form-wide"
@@ -179,18 +179,18 @@
         {% endif %}
     {% elseif item.type.value == 'textarea' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
             <textarea
                 id="{{ item.id }}"
                 class="form-control form-wide"
                 type="text"
                 name="{{ item.id }}"
-                {% if item.placeholder %}placeholder="{% trans %}{{ item.placeholder }}{% endtrans %}"{% endif %}
+                {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
             >{{ value }}</textarea>
         </div>
     {% elseif item.type.value == 'file' %}
         <div id="uploadFileForm" class="form-group" hidden>
-            <label>{% trans %}{{ item.label }}{% endtrans %}:
+            <label>{{ item.label|trans }}:
                 <input id="uploadFile" class="form-control form-group-inline" type="file" name="uploadFile"
                         {% if not personDetails.getUploadedFilename %} {% endif %}>
             </label>
@@ -226,7 +226,7 @@
             </div>
         {% else %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}{{ item.label }}{% endtrans %}:</label>
+                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
                 <input
                     id="{{ item.id }}"
                     type="checkbox"
@@ -291,9 +291,9 @@
 #}
 {% macro renderDetail(item, value, person, event) %}
     {% if item.type.value == 'tshirtComposite' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
+        {{ item.label|trans }}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
     {% elseif item.id == 'gender' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>
+        {{ item.label|trans }}: <b>
         {% if value == 'man' %}
             {% trans %}detail.genderMan{% endtrans %}
         {% elseif value == 'woman' %}
@@ -302,19 +302,19 @@
             {% trans %}detail.genderOther{% endtrans %}
         {% endif %}</b><br/>
     {% elseif item.id == 'scarf' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>
+        {{ item.label|trans }}: <b>
             {% if value == 'yes' %}
                 {% trans %}detail.scarfYes{% endtrans %}
             {% elseif value == 'no' %}
                 {% trans %}detail.scarfNo{% endtrans %}
             {% endif %}</b><br/>
     {% elseif item.id == 'birthDate' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value.format('d. m. Y') }}</b>
+        {{ item.label|trans }}: <b>{{ value.format('d. m. Y') }}</b>
             {% if value %}
                 ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
             {% endif %}<br/>
     {% elseif item.id == 'arrivalDate' or item.id == 'departureDate' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value.format('d. m. Y') }}</b><br/>
+        {{ item.label|trans }}: <b>{{ value.format('d. m. Y') }}</b><br/>
     {% elseif item.id == 'preferredPosition' %}
         {% trans %}detail.position-title{% endtrans %}: <b>
             {% for preferredPosition in person.preferredPosition %}
@@ -322,11 +322,11 @@
             {% endfor %}
         </b><br/>
     {% elseif item.id == 'printedHandbook' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>
+        {{ item.label|trans }}: <b>
             {% if value %}{% trans %}detail.handbook-yes{% endtrans %}{% else %}{% trans %}detail.handbook-no{% endtrans %}{% endif %}</b><br/>
     {% elseif item.id == 'uploadFile' %}
         {% if person.getAgeAtStartOfEvent < 18 %}
-            {% trans %}{{ item.label }}{% endtrans %}:
+            {{ item.label|trans }}:
             {% if person.getUploadedFilename %}
                 <a target="_blank"
                    href="{{ url_for('admin-show-file', {'filename': person.getUploadedFilename, 'eventSlug': event.slug}) }}">
@@ -337,12 +337,12 @@
             {% endif %}<br/>
         {% endif %}
     {% elseif item.id == 'contingent' or item.id == 'country' or item.id == 'foodPreferences' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value|trans }}</b><br/>
+        {{ item.label|trans }}: <b>{{ value|trans }}</b><br/>
     {% elseif item.type.value == 'select' and item.id == 'swimming' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value|trans }}</b><br/>
+        {{ item.label|trans }}: <b>{{ value|trans }}</b><br/>
     {% elseif item.type.value == 'select' and item.id == 'driversLicense' %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value }}</b><br/>
+        {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% else %}
-        {% trans %}{{ item.label }}{% endtrans %}: <b>{{ value }}</b><br/>
+        {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% endif %}
 {% endmacro %}
