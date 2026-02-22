@@ -349,8 +349,9 @@
     @param item   ContentArbiterItem instance
     @param value  Current field value (from person getter)
     @param person The participant entity
+    @param event  The event entity (for upload file admin link)
 #}
-{% macro renderDetail(item, value, person) %}
+{% macro renderDetail(item, value, person, event) %}
     {% if item.type.value == 'tshirtComposite' %}
         {% trans %}{{ item.label }}{% endtrans %}: <b>{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}</b><br/>
     {% elseif item.id == 'gender' %}
