@@ -24,12 +24,15 @@ class SkautisController extends AbstractController
      */
     public function redirectFromSkautis(Request $request, Response $response): Response
     {
+        $eventSlug = $this->getParameterFromQuery($request, 'ReturnUrl');
+        $event = $this->eventRepository->getOneBy(['slug' => $eventSlug]);
+
+        // it uses generic route without usage of EventInfoMiddleware, must init Skautis locally
+        $this->skautisService->initSkautis($event->skautisAppId);
+
         // TODO fix into method $this->getParsedBody();
         /** @phpstan-ignore shipmonk.forbiddenCast */
         $this->skautisService->saveDataFromPost((array)$request->getParsedBody());
-
-        $eventSlug = $this->getParameterFromQuery($request, 'ReturnUrl');
-        $event = $this->eventRepository->getOneBy(['slug' => $eventSlug]);
 
         if (!$this->skautisService->isUserLoggedIn()) {
             $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
