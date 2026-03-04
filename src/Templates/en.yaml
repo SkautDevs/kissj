@@ -184,6 +184,19 @@ _layout:
     payedBar: "Paid (:"
     creator: "with ♥ created by Lung & company"
     analytics: "We are using Plausible Analytics to collect basic numbers on usage of KISSJ. Plausible Analytics is privacy focused, GDPR compliant and cookie-free analytcs."
+landing:
+    cta:
+        description: "KISSJ is already used by Central European Jamboree, KORBO, Navigamus, Obrok and more"
+        github: "Are you a developer? Find the open source code for KISSJ on github.com!"
+        title: "Organizing an event? Get in touch and we can set one up for you!"
+    events:
+        title: "Events with currently open registration:"
+    features:
+        emails: "Emails to participants are sent automatically"
+        export: "You can export everything to Excel spreadsheets"
+        payments: "Generate and match payments with a click"
+        setup: "Your registration is set up in under a minute"
+        title: "KISSJ does two things — collects data from participants and handles incoming payments"
 404:
     pardon: "Oops! Nothing is here... bad link maybe?"
     button: "From the top!"

@@ -184,6 +184,19 @@ _layout:
     payedBar: "Zaplatené! (:"
     creator: "s ♥ vytvoril Lung & company"
     analytics: "Využíváme Plausible Analytics, abychom získali základní informace o využití KISSJ. Plausible Analytics jsou zaměřené na soukromí uživatelů, jsou plně GDPR kompatibilní a nevyužívají cookies."
+landing:
+    cta:
+        description: "KISSJ už používa napríklad Central European Jamboree, KORBO, Navigamus, Obrok a ďalšie"
+        github: "Si vývojár? Open source kód pre KISSJ nájdeš na github.com!"
+        title: "Organizuješ akciu? Ozvi sa a môžeme založiť akciu aj tebe!"
+    events:
+        title: "Akcie, ktoré majú teraz otvorenú registráciu:"
+    features:
+        emails: "Emaily účastníkom chodia samy"
+        export: "Môžeš všetko exportovať do excelových tabuliek"
+        payments: "Generuješ aj páruješ platby na klik myšou"
+        setup: "Registráciu máš vytvorenú za menej než minútu"
+        title: "KISSJ vie dve veci — zbiera dáta od účastníkov a stará sa o prichádzajúce platby"
 404:
     pardon: "Ups! Tady nic není... možná špatný odkaz?"
     button: "Zpátky na začátek!"

@@ -41,6 +41,16 @@ class EventRepository extends Repository
         ]);
     }
 
+    /**
+     * @return list<Event>
+     */
+    public function findAllNontestEvents(): array
+    {
+        return $this->findBy([
+            'testing_site' => false,
+        ], [new Order('start_day')]);
+    }
+
     public function findBySlug(string $eventSlug): ?Event
     {
         return $this->findOneBy(['slug' => $eventSlug]);
