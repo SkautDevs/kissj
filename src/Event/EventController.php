@@ -18,7 +18,10 @@ class EventController extends AbstractController
         return $this->view->render(
             $response,
             'event/landing.twig',
-            ['events' => $this->eventRepository->findActiveNontestEvents()],
+            [
+                'events' => $this->eventRepository->findActiveNontestEvents(),
+                'allEvents' => $this->eventRepository->findAllNontestEvents(),
+            ],
         );
     }
 
