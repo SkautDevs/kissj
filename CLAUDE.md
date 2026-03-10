@@ -37,7 +37,7 @@ make dev-up     # Start containers + install + migrate
 make dev-down   # Stop containers
 ```
 
-Remove `-it` from `docker exec` commands if running in a non-interactive environment. 
+Remove `-it` from `docker exec` commands if running in a non-interactive environment.
 
 ## Architecture
 
@@ -69,12 +69,15 @@ Do not modify without extra caution:
 ## Code Style
 
 - Use imports, not FQN
+- Take advantage of strong types whenever possible
 - Use static typing instead of PHPDoc
-- Do not use overly expressive comments
+- Do not use overly expressive comments and only when they describe choice of developer with reasons
+- Write code for human readers as much as possible
 - Use `LogicException` for impossible/unexpected states that should never occur
 - In tests, use static assertion methods (e.g., `self::assertEquals()`)
 - PHPStan level 10 with a baseline (`phpstan-baseline.neon`) for pre-existing issues
 - PSR-12 style enforced by PHP-CS-Fixer
+- Do not introduce new phpstan ignores
 
 ## Testing
 
@@ -101,4 +104,5 @@ Always create a Phinx migration for schema changes — no manual SQL.
 
 ## Longevity
 
-Codebase is actively maintained. Do not change code recklessly; ensure changes are actually needed and bring value in performance or usability.
+Codebase is actively maintained.
+Do not change code recklessly; ensure changes are actually needed and bring value in performance or usability.

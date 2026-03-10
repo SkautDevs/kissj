@@ -11,17 +11,19 @@ class ContentArbiterItem
      * @param list<string> $extraClasses
      */
     public function __construct(
-        public string $id,
+        public string $slug,
         public bool $allowed,
         public ContentArbiterItemType $type,
         public int $order,
         public string $label,
-        public string $placeholder,
+        public ?string $placeholder = null,
         public bool $required = true,
         public ?string $defaultValue = null,
         public ?string $pattern = null,
         public array $options = [],
         public array $extraClasses = [],
+        public ?string $helpText = null,
+        public ?AgeGroup $ageGroup = null,
     ) {
     }
 

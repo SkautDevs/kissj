@@ -11,7 +11,7 @@ class ContentArbiterItemTest extends TestCase
     public function testConstructionWithDefaults(): void
     {
         $item = new ContentArbiterItem(
-            id: 'telephoneNumber',
+            slug: 'telephoneNumber',
             allowed: false,
             type: ContentArbiterItemType::Phone,
             order: 140,
@@ -19,7 +19,7 @@ class ContentArbiterItemTest extends TestCase
             placeholder: 'detail.phonePlaceholder',
         );
 
-        self::assertSame('telephoneNumber', $item->id);
+        self::assertSame('telephoneNumber', $item->slug);
         self::assertFalse($item->allowed);
         self::assertSame(ContentArbiterItemType::Phone, $item->type);
         self::assertSame(140, $item->order);
@@ -35,7 +35,7 @@ class ContentArbiterItemTest extends TestCase
     public function testConstructionWithAllParams(): void
     {
         $item = new ContentArbiterItem(
-            id: 'foodPreferences',
+            slug: 'foodPreferences',
             allowed: true,
             type: ContentArbiterItemType::Select,
             order: 190,
@@ -68,7 +68,7 @@ class ContentArbiterItemTest extends TestCase
     public function testPropertiesAreMutable(): void
     {
         $item = new ContentArbiterItem(
-            id: 'telephoneNumber',
+            slug: 'telephoneNumber',
             allowed: false,
             type: ContentArbiterItemType::Phone,
             order: 140,

@@ -6,6 +6,7 @@ namespace kissj\Participant;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FileHandler\UploadFileHandler;
@@ -104,10 +105,14 @@ readonly class ParticipantService
     {
         $contentArbiter = $this->getContentArbiterForParticipant($participant);
 
-        if ($contentArbiter->uploadFile->allowed) {
-            $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
+        foreach ($contentArbiter->getAllowedItems() as $item) {
+            if ($item->type !== ContentArbiterItemType::File) {
+                continue;
+            }
+
+            $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request, $item->slug);
             if ($uploadedFile instanceof UploadedFile) {
-                $this->saveFileHandler->saveFileTo($participant, $uploadedFile);
+                $this->saveFileHandler->saveFileTo($participant, $uploadedFile, $item->slug);
             }
         }
     }
@@ -235,14 +240,18 @@ readonly class ParticipantService
                 continue;
             }
 
-            if ($item->id === 'tshirt') {
+            if ($item->type === ContentArbiterItemType::File) {
+                continue;
+            }
+
+            if ($item->type === ContentArbiterItemType::TshirtComposite) {
                 if ($p->getTshirtShape() === null || $p->getTshirtSize() === null) {
                     return false;
                 }
                 continue;
             }
 
-            if ($p->getValueForField($item->id) === null) {
+            if ($p->getValueForField($item->slug) === null) {
                 return false;
             }
         }

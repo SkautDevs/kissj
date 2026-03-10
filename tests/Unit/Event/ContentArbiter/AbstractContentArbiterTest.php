@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Event\ContentArbiter;
 
+use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\ContentArbiterIst;
@@ -9,20 +10,31 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractContentArbiterTest extends TestCase
 {
-    public function testGetAllItemsReturns31Items(): void
+    public function testGetAllItemsMatchesContentArbiterItemProperties(): void
     {
         $ca = new ContentArbiterIst();
         $items = $ca->getAllItems();
 
-        self::assertCount(31, $items);
         self::assertContainsOnlyInstancesOf(ContentArbiterItem::class, $items);
+
+        $reflection = new \ReflectionClass(AbstractContentArbiter::class);
+        $expectedCount = 0;
+        foreach ($reflection->getProperties() as $property) {
+            if ($property->getType() instanceof \ReflectionNamedType
+                && $property->getType()->getName() === ContentArbiterItem::class
+            ) {
+                $expectedCount++;
+            }
+        }
+
+        self::assertCount($expectedCount, $items, 'getAllItems() must return all ContentArbiterItem properties');
     }
 
     public function testGetAllowedItemsFiltersDisabledFields(): void
     {
         $ca = new ContentArbiterIst();
         $allowedItems = $ca->getAllowedItems();
-        $allowedIds = array_map(fn (ContentArbiterItem $item) => $item->id, $allowedItems);
+        $allowedIds = array_map(fn (ContentArbiterItem $item) => $item->slug, $allowedItems);
 
         // phone is disabled by default
         self::assertNotContains('telephoneNumber', $allowedIds);
@@ -63,14 +75,17 @@ class AbstractContentArbiterTest extends TestCase
         self::assertFalse($ca->country->allowed);
         self::assertFalse($ca->email->allowed);
         self::assertFalse($ca->tshirt->allowed);
-        self::assertFalse($ca->uploadFile->allowed);
+        self::assertFalse($ca->parentalConsent->allowed);
+        self::assertFalse($ca->hospitalConsent->allowed);
+        self::assertFalse($ca->childWorkCert->allowed);
+        self::assertFalse($ca->adultEventCert->allowed);
     }
 
     public function testEnablingFieldMakesItAppearInAllowed(): void
     {
         $ca = new ContentArbiterIst();
         $ca->phone->allowed = true;
-        $allowedIds = array_map(fn (ContentArbiterItem $item) => $item->id, $ca->getAllowedItems());
+        $allowedIds = array_map(fn (ContentArbiterItem $item) => $item->slug, $ca->getAllowedItems());
 
         self::assertContains('telephoneNumber', $allowedIds);
     }

@@ -26,6 +26,7 @@ use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\NotGuestMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
+use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
@@ -107,6 +108,10 @@ class Route
                 $app->group('', function (RouteCollectorProxy $app) {
                     $app->get('/getDashboard', UserController::class . '::getDashboard')
                         ->setName('getDashboard');
+
+                    $app->get('/showFile/{filename}', ParticipantController::class . '::downloadFile')
+                        ->setName('show-file')
+                        ->add(ParticipantOwnerOrAdminMiddleware::class);
 
                     $app->group('/patrol', function (RouteCollectorProxy $app) {
                         $app->get('/participant/{participantId}/show', PatrolController::class . '::showParticipant')
@@ -193,9 +198,6 @@ class Route
                 $app->group('/admin', function (RouteCollectorProxy $app) {
                     $app->get('/dashboard', AdminController::class . '::showDashboard')
                         ->setName('admin-dashboard');
-
-                    $app->get('/showFile/{filename}', AdminController::class . '::showFile')
-                        ->setName('admin-show-file');
 
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
                         $app->get('/mend', AdminController::class . '::mendParticipant')

@@ -11,7 +11,6 @@ enum ContentArbiterItemType: string
     case Phone = 'phone';
     case Date = 'date';
     case Select = 'select';
-    case Radio = 'radio';
     case Textarea = 'textarea';
     case File = 'file';
     case Checkbox = 'checkbox';

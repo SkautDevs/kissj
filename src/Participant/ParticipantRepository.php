@@ -376,6 +376,36 @@ class ParticipantRepository extends Repository
         return null;
     }
 
+    public function findParticipantByUploadedFilename(string $filename, Event $event): ?Participant
+    {
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.event_id = %i', $event->id);
+
+        $conditions = array_map(
+            fn (string $id) => 'participant.uploaded_'
+                . strtolower((string)preg_replace('/[A-Z]/', '_$0', $id))
+                . '_filename = %s',
+            Participant::FILE_ITEM_IDS,
+        );
+        $params = array_fill(0, count(Participant::FILE_ITEM_IDS), $filename);
+        $qb->where('(' . implode(' OR ', $conditions) . ')', ...$params);
+
+        /** @var Row|null $row */
+        $row = $qb->fetch();
+
+        if ($row === null) {
+            return null;
+        }
+
+        $participant = $this->createEntity($row);
+        if (!$participant instanceof Participant) {
+            return null;
+        }
+
+        return $participant;
+    }
+
     public function findParticipantById(int $participantId, Event $event): ?Participant
     {
         $participant = $this->findOneBy(['id' => $participantId]);

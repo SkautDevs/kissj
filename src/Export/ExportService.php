@@ -168,19 +168,22 @@ readonly class ExportService
             'tshirt',
             'arrivalDate',
             'departureDate',
-            'uploadedOriginalFilename', // 30
+            'uploadedParentalConsentOriginalFilename', // 30
+            'uploadedHospitalConsentOriginalFilename',
+            'uploadedChildWorkCertOriginalFilename',
+            'uploadedAdultEventCertOriginalFilename',
             'printedHandbook',
-            'notes',
+            'notes', // 35
             'updatedAt',
             'registrationCloseDate',
-            'registrationApproveDate', // 35
+            'registrationApproveDate',
             'registrationPayDate',
-            'entryDate',
+            'entryDate', // 40
             'leaveDate',
             'patrolOrTroopLeaderId',
             'patrolName',
-            'patrolParticipantCount', // 40
-            'istSkills',
+            'patrolParticipantCount',
+            'istSkills', // 45
             'istPreferredPosition',
             'driverLicense',
         ]];
@@ -250,25 +253,28 @@ readonly class ExportService
                     $participant->birthDate !== null ? (string)$participant->getAgeAtStartOfEvent() : '',
                     $participant->birthPlace ?? '',
                     $participant->healthProblems ?? '',
-                    $participant->medicaments ?? '',
-                    $participant->psychicalHealthProblems ?? '', // 20
+                    $participant->medicaments ?? '', // 20
+                    $participant->psychicalHealthProblems ?? '',
                     $this->translator->trans($participant->foodPreferences ?? ''),
                     $participant->foodPreferences ?? '',
                     $participant->idNumber ?? '',
-                    $participant->scarf ?? '',
-                    $this->translator->trans($participant->swimming ?? ''), // 25
+                    $participant->scarf ?? '', // 25
+                    $this->translator->trans($participant->swimming ?? ''),
                     $this->translator->trans($participant->getTshirtSize() ?? '')
                         . ' - ' . $this->translator->trans($participant->getTshirtShape() ?? ''),
                     $participant->arrivalDate !== null ? $participant->arrivalDate->format('d. m. Y') : '',
                     $participant->departureDate !== null ? $participant->departureDate->format('d. m. Y') : '',
-                    $participant->uploadedOriginalFilename ?? '', // 30
+                    $participant->uploadedParentalConsentOriginalFilename ?? '', // 30
+                    $participant->uploadedHospitalConsentOriginalFilename ?? '',
+                    $participant->uploadedChildWorkCertOriginalFilename ?? '',
+                    $participant->uploadedAdultEventCertOriginalFilename ?? '',
                     $participant->printedHandbook !== null ? (string)$participant->printedHandbook : '',
-                    $participant->notes ?? '',
+                    $participant->notes ?? '', // 35
                     $participant->updatedAt !== null ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
                     $participant->registrationCloseDate !== null ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
-                    $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '', // 35
+                    $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
-                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '',
+                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '', // 40
                     $participant->leaveDate !== null ? $participant->leaveDate->format('d. m. Y H:i:s') : '',
                 ],
                 $ptPart,
