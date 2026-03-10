@@ -1,31 +1,38 @@
-<script>
-    function OnBirthDateChange(element) {
-        let EighteenMinusForm = document.getElementById("uploadFileForm")
-        if (!EighteenMinusForm) return;
-        if (element.value) {
-            let EighteenYearsAt = new Date(element.value)
-            EighteenYearsAt.setFullYear(EighteenYearsAt.getFullYear() + 18)
-            if (EighteenYearsAt.getTime() / 1000 > {{ event.startDay.getTimestamp() }}) {
-                EighteenMinusForm.hidden = false
-                document.getElementById("uploadFile").setAttribute("required", "true")
-            } else {
-                EighteenMinusForm.hidden = true
-                document.getElementById("uploadFile").removeAttribute("required")
-            }
-        } else {
-            EighteenMinusForm.hidden = false
-            document.getElementById("uploadFile").setAttribute("required", "true")
-        }
-    }
-    window.addEventListener( "load", () => OnBirthDateChange(document.getElementById("birthDate")))
-</script>
-
 {% import 'widgets/formFields.twig' as forms %}
 
 {% for item in ca.getAllowedItems() %}
-    {% if item.id == 'tshirt' or item.id == 'uploadFile' %}
+    {% if item.type.value == 'tshirtComposite' %}
         {{ forms.renderField(item, null, personDetails, event, user) }}
     {% else %}
-        {{ forms.renderField(item, personDetails.getValueForField(item.id), personDetails, event, user) }}
+        {{ forms.renderField(item, personDetails.getValueForField(item.slug), personDetails, event, user) }}
     {% endif %}
 {% endfor %}
+
+<script>
+    function showField(field, show) {
+        field.style.display = show ? '' : 'none'
+        let input = field.querySelector('input[type="file"]')
+        if (input) {
+            if (show) input.setAttribute("required", "true")
+            else input.removeAttribute("required")
+        }
+    }
+
+    function OnBirthDateChange(element) {
+        let under18Fields = document.querySelectorAll('[data-age-group="under18"]');
+        let over18Fields = document.querySelectorAll('[data-age-group="over18"]');
+        if (under18Fields.length === 0 && over18Fields.length === 0) return;
+        if (element && element.value) {
+            let eighteenYearsAt = new Date(element.value)
+            eighteenYearsAt.setFullYear(eighteenYearsAt.getFullYear() + 18)
+            let isUnder18 = eighteenYearsAt.getTime() / 1000 > {{ event.startDay.getTimestamp() }}
+            under18Fields.forEach(f => showField(f, isUnder18))
+            over18Fields.forEach(f => showField(f, !isUnder18))
+        } else {
+            under18Fields.forEach(f => showField(f, true))
+            over18Fields.forEach(f => showField(f, true))
+        }
+    }
+
+    OnBirthDateChange(document.getElementById("birthDate"))
+</script>

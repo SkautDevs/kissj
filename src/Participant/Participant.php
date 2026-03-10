@@ -46,9 +46,18 @@ use Ramsey\Uuid\Uuid;
  * @property string|null            $tshirt m:useMethods(getTshirt|setThirt)
  * @property DateTimeInterface|null $arrivalDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $departureDate (departue_date) m:passThru(dateFromString|dateToString)
- * @property string|null            $uploadedFilename
- * @property string|null            $uploadedOriginalFilename
- * @property string|null            $uploadedContenttype
+ * @property string|null            $uploadedParentalConsentFilename
+ * @property string|null            $uploadedParentalConsentOriginalFilename
+ * @property string|null            $uploadedParentalConsentContenttype
+ * @property string|null            $uploadedHospitalConsentFilename
+ * @property string|null            $uploadedHospitalConsentOriginalFilename
+ * @property string|null            $uploadedHospitalConsentContenttype
+ * @property string|null            $uploadedChildWorkCertFilename
+ * @property string|null            $uploadedChildWorkCertOriginalFilename
+ * @property string|null            $uploadedChildWorkCertContenttype
+ * @property string|null            $uploadedAdultEventCertFilename
+ * @property string|null            $uploadedAdultEventCertOriginalFilename
+ * @property string|null            $uploadedAdultEventCertContenttype
  * @property string|null            $skills
  * @property array|null             $preferredPosition m:useMethods(getPreferredPosition|setPreferredPosition)
  * @property string|null            $driversLicense
@@ -76,9 +85,9 @@ class Participant extends EntityDatetime
     protected const string TSHIRT_DELIMITER = '-';
     protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
-    public const string FOOD_OTHER = 'other';
-    public const string SCARF_NO = 'no';
-    public const string SCARF_YES = 'yes';
+    public const string FOOD_OTHER = 'other'; // refactor into ContentArbiter
+    public const string SCARF_NO = 'no'; // refactor into ContentArbiter
+    public const string SCARF_YES = 'yes'; // refactor into ContentArbiter
 
     protected function initDefaults(): void
     {
@@ -88,13 +97,66 @@ class Participant extends EntityDatetime
         $this->adminNote = '';
     }
 
+    public const array FILE_ITEM_IDS = [
+        'parentalConsent',
+        'hospitalConsent',
+        'childWorkCert',
+        'adultEventCert',
+    ];
+
     public function getValueForField(string $field): mixed
     {
+        if (in_array($field, self::FILE_ITEM_IDS, true)) {
+            return $this->__get('uploaded' . ucfirst($field) . 'OriginalFilename');
+        }
+
         try {
             return $this->__get($field);
-        } catch (MemberAccessException) {
-            return null;
+        } catch (MemberAccessException $e) {
+            throw new \LogicException('Unknown participant field: ' . $field, 0, $e);
         }
+    }
+
+    public function getOriginalFilenameForStoredFile(string $storedFilename): ?string
+    {
+        foreach (self::FILE_ITEM_IDS as $fileItemId) {
+            if ($this->getUploadedFilename($fileItemId) === $storedFilename) {
+                /** @var string|null $original */
+                $original = $this->__get('uploaded' . ucfirst($fileItemId) . 'OriginalFilename');
+
+                return $original;
+            }
+        }
+
+        return null;
+    }
+
+    public function getUploadedFilename(string $fileItemId): ?string
+    {
+        if (!in_array($fileItemId, self::FILE_ITEM_IDS, true)) {
+            throw new \LogicException('Unknown file item id: ' . $fileItemId);
+        }
+
+        /** @var string|null $filename */
+        $filename = $this->__get('uploaded' . ucfirst($fileItemId) . 'Filename');
+
+        return $filename;
+    }
+
+    public function setUploadedFile(
+        string $fileItemId,
+        string $filename,
+        ?string $originalFilename,
+        ?string $contentType,
+    ): void {
+        if (!in_array($fileItemId, self::FILE_ITEM_IDS, true)) {
+            throw new \LogicException('Unknown file item id: ' . $fileItemId);
+        }
+
+        $prefix = 'uploaded' . ucfirst($fileItemId);
+        $this->__set($prefix . 'Filename', $filename);
+        $this->__set($prefix . 'OriginalFilename', $originalFilename);
+        $this->__set($prefix . 'Contenttype', $contentType);
     }
 
     public function setUser(User $user): void

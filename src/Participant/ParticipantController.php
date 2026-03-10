@@ -126,6 +126,25 @@ class ParticipantController extends AbstractController
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
 
+    public function downloadFile(Request $request, Response $response, string $filename): Response
+    {
+        if (preg_match('/^[a-f0-9]{32}$/', $filename) !== 1) {
+            // prevent possible access to filesystem with filtering the characters
+            return $response->withStatus(400);
+        }
+
+        $file = $this->fileHandler->getFile($filename);
+
+        /** @var Participant $participant */
+        $participant = $request->getAttribute('participant');
+        $originalFilename = $participant->getOriginalFilenameForStoredFile($filename) ?? $filename;
+
+        return $response
+            ->withHeader('Content-Type', $file->mimeContentType)
+            ->withHeader('Content-Disposition', 'inline; filename="' . $originalFilename . '"')
+            ->withBody($file->stream);
+    }
+
     /**
      * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]>
      */

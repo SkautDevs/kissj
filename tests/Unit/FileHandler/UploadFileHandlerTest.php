@@ -29,13 +29,13 @@ class UploadFileHandlerTest extends TestCase
     public function testMissingUploadFileKeyReturnsNull(): void
     {
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn([]);
+        $request->allows('getUploadedFiles')->andReturns([]);
 
         $this->flashMessages->shouldReceive('warning')
             ->once()
             ->with('flash.warning.fileTooBig');
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertNull($result);
     }
@@ -43,13 +43,13 @@ class UploadFileHandlerTest extends TestCase
     public function testNonUploadedFileInstanceReturnsNull(): void
     {
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => 'not-an-uploaded-file']);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => 'not-an-uploaded-file']);
 
         $this->flashMessages->shouldReceive('warning')
             ->once()
             ->with('flash.warning.fileTooBig');
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertNull($result);
     }
@@ -57,13 +57,14 @@ class UploadFileHandlerTest extends TestCase
     public function testSuccessfulUploadReturnsFile(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_OK);
-        $uploadedFile->shouldReceive('getSize')->andReturn(5_000_000);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('application/pdf');
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertSame($uploadedFile, $result);
     }
@@ -71,17 +72,17 @@ class UploadFileHandlerTest extends TestCase
     public function testFileExceeding10MbReturnsNull(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_OK);
-        $uploadedFile->shouldReceive('getSize')->andReturn(10_000_001);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(10_000_001);
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
         $this->flashMessages->shouldReceive('warning')
             ->once()
             ->with('flash.warning.fileTooBig');
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertNull($result);
     }
@@ -89,13 +90,14 @@ class UploadFileHandlerTest extends TestCase
     public function testFileExactly10MbReturnsFile(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_OK);
-        $uploadedFile->shouldReceive('getSize')->andReturn(10_000_000);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(10_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('application/pdf');
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertSame($uploadedFile, $result);
     }
@@ -103,31 +105,31 @@ class UploadFileHandlerTest extends TestCase
     public function testNullFileSizeThrowsException(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_OK);
-        $uploadedFile->shouldReceive('getSize')->andReturn(null);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(null);
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Uploaded file size is null.');
 
-        $this->handler->resolveUploadedFile($request);
+        $this->handler->resolveUploadedFile($request, 'uploadFile');
     }
 
     public function testUploadErrIniSizeReturnsNull(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_INI_SIZE);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_INI_SIZE);
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
         $this->flashMessages->shouldReceive('warning')
             ->once()
             ->with('flash.warning.fileTooBig');
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
 
         self::assertNull($result);
     }
@@ -135,14 +137,111 @@ class UploadFileHandlerTest extends TestCase
     public function testOtherUploadErrorReturnsNull(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
-        $uploadedFile->shouldReceive('getError')->andReturn(UPLOAD_ERR_PARTIAL);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_PARTIAL);
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getUploadedFiles')->andReturn(['uploadFile' => $uploadedFile]);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
 
         $this->flashMessages->shouldNotReceive('warning');
 
-        $result = $this->handler->resolveUploadedFile($request);
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertNull($result);
+    }
+
+    public function testDisallowedContentTypeReturnsNull(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('application/x-executable');
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
+
+        $this->flashMessages->shouldReceive('warning')
+            ->once()
+            ->with('flash.warning.invalidFileType');
+
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertNull($result);
+    }
+
+    public function testNullContentTypeReturnsNull(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns(null);
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
+
+        $this->flashMessages->shouldReceive('warning')
+            ->once()
+            ->with('flash.warning.invalidFileType');
+
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertNull($result);
+    }
+
+    public function testPngContentTypeIsAllowed(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('image/png');
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
+
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertSame($uploadedFile, $result);
+    }
+
+    public function testJpegContentTypeIsAllowed(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('image/jpeg');
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
+
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertSame($uploadedFile, $result);
+    }
+
+    public function testResolveByCustomKeyReturnsFile(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns(5_000_000);
+        $uploadedFile->allows('getClientMediaType')->andReturns('application/pdf');
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['parentalConsent' => $uploadedFile]);
+
+        $result = $this->handler->resolveUploadedFile($request, 'parentalConsent');
+
+        self::assertSame($uploadedFile, $result);
+    }
+
+    public function testResolveByCustomKeyMissingReturnsNull(): void
+    {
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns([]);
+
+        $this->flashMessages->shouldReceive('warning')
+            ->once()
+            ->with('flash.warning.fileTooBig');
+
+        $result = $this->handler->resolveUploadedFile($request, 'parentalConsent');
 
         self::assertNull($result);
     }

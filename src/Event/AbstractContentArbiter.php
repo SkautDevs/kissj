@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use kissj\Application\DateTimeUtils;
+use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 
@@ -34,7 +36,10 @@ abstract class AbstractContentArbiter
     public ContentArbiterItem $tshirt;
     public ContentArbiterItem $arrivalDate;
     public ContentArbiterItem $departureDate;
-    public ContentArbiterItem $uploadFile;
+    public ContentArbiterItem $parentalConsent;
+    public ContentArbiterItem $hospitalConsent;
+    public ContentArbiterItem $childWorkCert;
+    public ContentArbiterItem $adultEventCert;
     public ContentArbiterItem $skills;
     public ContentArbiterItem $preferredPosition;
     public ContentArbiterItem $driver;
@@ -44,15 +49,15 @@ abstract class AbstractContentArbiter
     public function __construct()
     {
         $this->contingent = new ContentArbiterItem(
-            id: 'contingent',
+            slug: 'contingent',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 10,
             label: 'detail.contingentTitle',
-            placeholder: '',
+            placeholder: 'detail.contingentPlaceholder',
         );
         $this->patrolName = new ContentArbiterItem(
-            id: 'patrolName',
+            slug: 'patrolName',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 20,
@@ -60,7 +65,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.patrolNamePlaceholder',
         );
         $this->firstName = new ContentArbiterItem(
-            id: 'firstName',
+            slug: 'firstName',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 30,
@@ -68,7 +73,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.firstNamePlaceholder',
         );
         $this->lastName = new ContentArbiterItem(
-            id: 'lastName',
+            slug: 'lastName',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 40,
@@ -76,7 +81,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.surnamePlaceholder',
         );
         $this->nickname = new ContentArbiterItem(
-            id: 'nickname',
+            slug: 'nickname',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 50,
@@ -85,41 +90,34 @@ abstract class AbstractContentArbiter
             required: false,
         );
         $this->gender = new ContentArbiterItem(
-            id: 'gender',
+            slug: 'gender',
             allowed: true,
             type: ContentArbiterItemType::Select,
             order: 60,
             label: 'detail.gender',
-            placeholder: '',
+            placeholder: 'detail.genderPlaceholder',
             options: ['man' => 'detail.genderMan', 'woman' => 'detail.genderWoman', 'other' => 'detail.genderOther'],
         );
         $this->birthDate = new ContentArbiterItem(
-            id: 'birthDate',
+            slug: 'birthDate',
             allowed: true,
             type: ContentArbiterItemType::Date,
             order: 70,
             label: 'detail.birthDate',
-            placeholder: '',
+            placeholder: 'detail.birthDatePlaceholder',
+            defaultValue: DateTimeUtils::getDateTime('-18 years')->format('Y-m-d'),
+            extraClasses: ['form-wide'],
         );
         $this->birthPlace = new ContentArbiterItem(
-            id: 'birthPlace',
+            slug: 'birthPlace',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 80,
             label: 'detail.birthPlace',
             placeholder: 'detail.birthPlacePlaceholder',
         );
-        $this->uploadFile = new ContentArbiterItem(
-            id: 'uploadFile', // not a real entity property; templates pass null explicitly, validation skips via required:false
-            allowed: false,
-            type: ContentArbiterItemType::File,
-            order: 90,
-            label: 'detail.uploadFile',
-            placeholder: '',
-            required: false,
-        );
         $this->idNumber = new ContentArbiterItem(
-            id: 'idNumber',
+            slug: 'idNumber',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 100,
@@ -127,7 +125,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.idNumber-placeholder',
         );
         $this->address = new ContentArbiterItem(
-            id: 'permanentResidence',
+            slug: 'permanentResidence',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 110,
@@ -135,15 +133,15 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.addressPlaceholder',
         );
         $this->country = new ContentArbiterItem(
-            id: 'country',
+            slug: 'country',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 120,
             label: 'detail.country',
-            placeholder: '',
+            placeholder: 'detail.countryPlaceholder',
         );
         $this->email = new ContentArbiterItem(
-            id: 'email',
+            slug: 'email',
             allowed: false,
             type: ContentArbiterItemType::Email,
             order: 130,
@@ -151,7 +149,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.emailPlaceholder',
         );
         $this->phone = new ContentArbiterItem(
-            id: 'telephoneNumber',
+            slug: 'telephoneNumber',
             allowed: false,
             type: ContentArbiterItemType::Phone,
             order: 140,
@@ -160,7 +158,7 @@ abstract class AbstractContentArbiter
             pattern: '^\+?[0-9 ]+$',
         );
         $this->unit = new ContentArbiterItem(
-            id: 'scoutUnit',
+            slug: 'scoutUnit',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 150,
@@ -168,7 +166,7 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.unitPlaceholder',
         );
         $this->languages = new ContentArbiterItem(
-            id: 'languages',
+            slug: 'languages',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 160,
@@ -176,23 +174,23 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.language-placeholder',
         );
         $this->tshirt = new ContentArbiterItem(
-            id: 'tshirt',
+            slug: 'tshirt',
             allowed: false,
             type: ContentArbiterItemType::TshirtComposite,
             order: 170,
             label: 'detail.tshirt',
-            placeholder: '',
+            placeholder: 'detail.tshirtPlaceholder',
         );
         $this->food = new ContentArbiterItem(
-            id: 'foodPreferences',
+            slug: 'foodPreferences',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 180,
             label: 'detail.foodHeader',
-            placeholder: '',
+            helpText: 'detail.food-helptext',
         );
         $this->health = new ContentArbiterItem(
-            id: 'healthProblems',
+            slug: 'healthProblems',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 190,
@@ -201,7 +199,7 @@ abstract class AbstractContentArbiter
             required: false,
         );
         $this->medicaments = new ContentArbiterItem(
-            id: 'medicaments',
+            slug: 'medicaments',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 200,
@@ -210,7 +208,7 @@ abstract class AbstractContentArbiter
             required: false,
         );
         $this->psychicalHealth = new ContentArbiterItem(
-            id: 'psychicalHealthProblems',
+            slug: 'psychicalHealthProblems',
             allowed: true,
             type: ContentArbiterItemType::Text,
             order: 210,
@@ -219,7 +217,7 @@ abstract class AbstractContentArbiter
             required: false,
         );
         $this->emergencyContact = new ContentArbiterItem(
-            id: 'emergencyContact',
+            slug: 'emergencyContact',
             allowed: false,
             type: ContentArbiterItemType::Text,
             order: 220,
@@ -227,50 +225,50 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.emergencyContact-placeholder',
         );
         $this->swimming = new ContentArbiterItem(
-            id: 'swimming',
+            slug: 'swimming',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 230,
             label: 'detail.swimSkill',
-            placeholder: '',
+            placeholder: 'detail.swimSkillPlaceholder',
             options: ContentArbiterItem::selfMappedOptions(['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50']),
         );
         $this->scarf = new ContentArbiterItem(
-            id: 'scarf',
+            slug: 'scarf',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 240,
             label: 'detail.scarf',
-            placeholder: '',
+            placeholder: 'detail.scarfPlaceholder',
             options: ['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'],
         );
         $this->arrivalDate = new ContentArbiterItem(
-            id: 'arrivalDate',
+            slug: 'arrivalDate',
             allowed: false,
             type: ContentArbiterItemType::Date,
             order: 250,
             label: 'detail.arrivalDate',
-            placeholder: '',
+            placeholder: 'detail.arrivalDatePlaceholder',
         );
         $this->departureDate = new ContentArbiterItem(
-            id: 'departureDate',
+            slug: 'departureDate',
             allowed: false,
             type: ContentArbiterItemType::Date,
             order: 260,
             label: 'detail.departureDate',
-            placeholder: '',
+            placeholder: 'detail.departureDatePlaceholder',
         );
         $this->driver = new ContentArbiterItem(
-            id: 'driversLicense',
+            slug: 'driversLicense',
             allowed: false,
             type: ContentArbiterItemType::Select,
             order: 270,
             label: 'detail.driver',
-            placeholder: '',
+            placeholder: 'detail.driverPlaceholder',
             options: ['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'],
         );
         $this->skills = new ContentArbiterItem(
-            id: 'skills',
+            slug: 'skills',
             allowed: false,
             type: ContentArbiterItemType::Textarea,
             order: 280,
@@ -278,27 +276,67 @@ abstract class AbstractContentArbiter
             placeholder: 'detail.skills-placeholder',
         );
         $this->preferredPosition = new ContentArbiterItem(
-            id: 'preferredPosition',
+            slug: 'preferredPosition',
             allowed: false,
             type: ContentArbiterItemType::Checkbox,
             order: 290,
             label: 'detail.preferredPosition',
-            placeholder: '',
+            placeholder: 'detail.position-placeholder',
         );
         $this->printedHandbook = new ContentArbiterItem(
-            id: 'printedHandbook',
+            slug: 'printedHandbook',
             allowed: false,
             type: ContentArbiterItemType::Checkbox,
             order: 300,
             label: 'detail.printedHandbook',
-            placeholder: '',
+            placeholder: 'detail.printedHandbookPlaceholder',
             required: false,
         );
+        $this->parentalConsent = new ContentArbiterItem(
+            slug: 'parentalConsent',
+            allowed: false,
+            type: ContentArbiterItemType::File,
+            order: 400,
+            label: 'detail.parentalConsent',
+            placeholder: 'detail.parentalConsentPlaceholder',
+            required: false,
+            ageGroup: AgeGroup::Under18,
+        );
+        $this->hospitalConsent = new ContentArbiterItem(
+            slug: 'hospitalConsent',
+            allowed: false,
+            type: ContentArbiterItemType::File,
+            order: 410,
+            label: 'detail.hospitalConsent',
+            placeholder: 'detail.hospitalConsentPlaceholder',
+            required: false,
+            ageGroup: AgeGroup::Under18,
+        );
+        $this->childWorkCert = new ContentArbiterItem(
+            slug: 'childWorkCert',
+            allowed: false,
+            type: ContentArbiterItemType::File,
+            order: 420,
+            label: 'detail.childWorkCert',
+            placeholder: 'detail.childWorkCertPlaceholder',
+            required: false,
+            ageGroup: AgeGroup::Over18,
+        );
+        $this->adultEventCert = new ContentArbiterItem(
+            slug: 'adultEventCert',
+            allowed: false,
+            type: ContentArbiterItemType::File,
+            order: 430,
+            label: 'detail.adultEventCert',
+            placeholder: 'detail.adultEventCertPlaceholder',
+            required: false,
+            ageGroup: AgeGroup::Over18,
+        );
         $this->notes = new ContentArbiterItem(
-            id: 'notes',
+            slug: 'notes',
             allowed: true,
             type: ContentArbiterItemType::Textarea,
-            order: 310,
+            order: 500,
             label: 'detail.notice',
             placeholder: 'detail.notice-placeholder',
             required: false,
@@ -319,7 +357,10 @@ abstract class AbstractContentArbiter
             $this->gender,
             $this->birthDate,
             $this->birthPlace,
-            $this->uploadFile,
+            $this->parentalConsent,
+            $this->hospitalConsent,
+            $this->childWorkCert,
+            $this->adultEventCert,
             $this->idNumber,
             $this->address,
             $this->country,

@@ -5,13 +5,13 @@
 {% endif %}
 
 {% for item in ca.getAllowedItems() %}
-    {% if item.id == 'firstName' or item.id == 'lastName' or item.id == 'nickname' %}
+    {% if item.slug == 'firstName' or item.slug == 'lastName' or item.slug == 'nickname' %}
         {% if not useShortNaming %}
-            {{ forms.renderDetail(item, person.getValueForField(item.id), person, event) }}
+            {{ forms.renderDetail(item, person.getValueForField(item.slug), person, event) }}
         {% endif %}
-    {% elseif item.id == 'tshirt' or item.id == 'uploadFile' or item.id == 'preferredPosition' %}
+    {% elseif item.type.value == 'tshirtComposite' or item.type.value == 'checkbox' %}
         {{ forms.renderDetail(item, null, person, event) }}
     {% else %}
-        {{ forms.renderDetail(item, person.getValueForField(item.id), person, event) }}
+        {{ forms.renderDetail(item, person.getValueForField(item.slug), person, event) }}
     {% endif %}
 {% endfor %}

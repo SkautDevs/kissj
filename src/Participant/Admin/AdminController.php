@@ -474,17 +474,6 @@ class AdminController extends AbstractController
         );
     }
 
-    public function showFile(
-        string $filename,
-    ): Response {
-        // TODO check if correct event
-        $file = $this->fileHandler->getFile($filename);
-        $response = new \Slim\Psr7\Response(200, null, $file->stream);
-        $response = $response->withAddedHeader('Content-Type', $file->mimeContentType);
-
-        return $response;
-    }
-
     public function showAutoPayments(
         Response $response,
         Event $event,
@@ -912,12 +901,13 @@ class AdminController extends AbstractController
         );
     }
 
+    // TODO refactor or remove
     public function importIstFromSrs(
         Request $request,
         Response $response,
         Event $event,
     ): Response {
-        $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request);
+        $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request, 'uploadedFile');
         if ($uploadedFile === null) {
             $this->flashMessages->warning('flash.warning.importCantStart');
 

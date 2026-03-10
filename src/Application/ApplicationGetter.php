@@ -26,7 +26,7 @@ class ApplicationGetter
         $app = Bridge::create($container);
         $app->setBasePath($_ENV['BASEPATH']);
 
-        if (headers_sent() === false) { // because of PhpUnit handling sessions poorly
+        if (session_status() === PHP_SESSION_NONE) { // because of PhpUnit handling sessions poorly
             $sessionHandler = $container->get(SessionHandlerInterface::class);
             if ($sessionHandler instanceof RedisSessionHandler) {
                 // temporary fix for not deployed Redis in infrastructure, remove if when deployed

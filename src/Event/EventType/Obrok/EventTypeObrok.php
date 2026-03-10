@@ -20,7 +20,6 @@ use kissj\Participant\Troop\TroopParticipant;
 class EventTypeObrok extends EventType
 {
     public const string SLUG_PROGRAMME = 'programme';
-    public const string SLUG_BUS = 'bus';
 
     public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
     public const string CONTINGENT_ORG = 'detail.contingent.org';
@@ -40,8 +39,6 @@ class EventTypeObrok extends EventType
     {
         $ca = parent::getContentArbiterIst();
         $ca->gender->allowed = false;
-        $ca->contingent->allowed = true;
-        $ca->contingent->options = ContentArbiterItem::selfMappedOptions($this->getContingents());
         $ca->phone->allowed = true;
         $ca->email->allowed = true;
         $ca->unit->allowed = true;
@@ -50,6 +47,10 @@ class EventTypeObrok extends EventType
         $ca->food->allowed = true;
         $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->arrivalDate->allowed = true;
+        $ca->parentalConsent->allowed = true;
+        $ca->hospitalConsent->allowed = true;
+        $ca->childWorkCert->allowed = true;
+        $ca->adultEventCert->allowed = true;
 
         return $ca;
     }
@@ -64,6 +65,9 @@ class EventTypeObrok extends EventType
         $ca->unit->allowed = true;
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = true;
+        $ca->parentalConsent->allowed = true;
+        $ca->hospitalConsent->allowed = true;
+        $ca->adultEventCert->allowed = true;
 
         return $ca;
     }
@@ -78,6 +82,9 @@ class EventTypeObrok extends EventType
         $ca->unit->allowed = true;
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = true;
+        $ca->parentalConsent->allowed = true;
+        $ca->hospitalConsent->allowed = true;
+        $ca->adultEventCert->allowed = true;
 
         return $ca;
     }
@@ -88,7 +95,6 @@ class EventTypeObrok extends EventType
         $ca = parent::getContentArbiterGuest();
         $ca->gender->allowed = false;
         $ca->address->allowed = false;
-        $ca->contingent->allowed = false;
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = false;
         $ca->food->allowed = true;
@@ -98,18 +104,6 @@ class EventTypeObrok extends EventType
         $ca->languages->allowed = true;
 
         return $ca;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    #[\Override]
-    public function getContingents(): array
-    {
-        return [
-            self::CONTINGENT_VOLUNTEER,
-            self::CONTINGENT_ORG,
-        ];
     }
 
     #[\Override]

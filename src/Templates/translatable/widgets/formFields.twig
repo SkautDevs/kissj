@@ -10,12 +10,12 @@
 {% macro renderField(item, value, personDetails, event, user) %}
     {% if item.type.value == 'text' or item.type.value == 'phone' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <input
-                id="{{ item.id }}"
+                id="{{ item.slug }}"
                 class="form-control form-wide"
                 type="text"
-                name="{{ item.id }}"
+                name="{{ item.slug }}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 value="{{ value }}"
                 {% if item.pattern %}pattern="{{ item.pattern }}"{% endif %}
@@ -24,12 +24,12 @@
         </div>
     {% elseif item.type.value == 'email' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <input
-                id="{{ item.id }}"
+                id="{{ item.slug }}"
                 class="form-control form-wide"
                 type="email"
-                name="{{ item.id }}"
+                name="{{ item.slug }}"
                 value="{% if value is empty and personDetails.role != 'pp' %}{{ user.email }}{% else %}{{ value }}{% endif %}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
@@ -37,24 +37,24 @@
         </div>
     {% elseif item.type.value == 'date' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <input
-                id="{{ item.id }}"
-                class="form-control{% if item.id != 'arrivalDate' and item.id != 'departureDate' %} form-wide{% endif %}"
+                id="{{ item.slug }}"
+                class="form-control{% for cls in item.extraClasses %} {{ cls }}{% endfor %}"
                 type="date"
-                name="{{ item.id }}"
-                value="{% if item.id == 'birthDate' %}{% if value %}{{ value.format('Y-m-d') }}{% else %}{{ 'now - 18 years'|date('Y-m-d') }}{% endif %}{% elseif item.id == 'arrivalDate' %}{{ (value ?? event.startDay)|date('Y-m-d') }}{% elseif item.id == 'departureDate' %}{{ (value ?? event.endDay)|date('Y-m-d') }}{% else %}{{ value }}{% endif %}"
+                name="{{ item.slug }}"
+                value="{% if value %}{{ value|date('Y-m-d') }}{% elseif item.slug == 'arrivalDate' %}{{ event.startDay|date('Y-m-d') }}{% elseif item.slug == 'departureDate' %}{{ event.endDay|date('Y-m-d') }}{% elseif item.defaultValue %}{{ item.defaultValue }}{% endif %}"
                 {% if item.required %}required="required"{% endif %}
-                {% if item.id == 'birthDate' %}onchange="OnBirthDateChange(this)"{% endif %}
+                {% if item.slug == 'birthDate' %}onchange="OnBirthDateChange(this)"{% endif %}
             >
         </div>
     {% elseif item.type.value == 'select' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <select
-                id="{{ item.id }}"
+                id="{{ item.slug }}"
                 class="form-control form-wide"
-                name="{{ item.id }}"
+                name="{{ item.slug }}"
                 {% if item.required %}required="required"{% endif %}
             >
                 {% for dbValue, transKey in item.options %}
@@ -67,34 +67,44 @@
                 {% endfor %}
             </select>
         </div>
-        {% if item.id == 'foodPreferences' %}
-            {% trans %}detail.food-placeholder{% endtrans %}
+        {% if item.helpText %}
+            {{ item.helpText|trans }}
             <br><br>
         {% endif %}
     {% elseif item.type.value == 'textarea' %}
         <div class="form-group">
-            <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <textarea
-                id="{{ item.id }}"
+                id="{{ item.slug }}"
                 class="form-control form-wide"
                 type="text"
-                name="{{ item.id }}"
+                name="{{ item.slug }}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
             >{{ value }}</textarea>
         </div>
     {% elseif item.type.value == 'file' %}
-        <div id="uploadFileForm" class="form-group" hidden>
+        <div id="{{ item.slug }}Form" class="form-group"
+            {% if item.ageGroup %}
+                data-age-group="{{ item.ageGroup.value }}" style="display:none"
+            {% endif %}
+        >
             <label>{{ item.label|trans }}:
-                <input id="uploadFile" class="form-control form-group-inline" type="file" name="uploadFile"
-                        {% if not personDetails.getUploadedFilename %} {% endif %}>
+                <input id="{{ item.slug }}" class="form-control form-group-inline" type="file" name="{{ item.slug }}"
+                        {% if not value %} {% endif %}>
             </label>
-            {% if personDetails.getUploadedOriginalFilename %}
-                <b>{{ personDetails.getUploadedOriginalFilename }} {% trans %}detail.uploadedFileSuccessful{% endtrans %}</b>
+            {% if value %}
+                {% set storedFilename = personDetails.getUploadedFilename(item.slug) %}
+                <b>
+                    <a target="_blank" href="{{ url_for('show-file', {'filename': storedFilename, 'eventSlug': event.slug}) }}">
+                        {{ value }}
+                    </a>
+                    {% trans %}detail.uploadedFileSuccessful{% endtrans %}
+                </b>
             {% endif %}
             {% trans %}detail.uploadedFileNote{% endtrans %}
         </div>
     {% elseif item.type.value == 'checkbox' %}
-        {% if item.id == 'preferredPosition' %}
+        {% if item.slug == 'preferredPosition' %}
             <div class="form-group">
                 <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
                 {% for dbValue, transKey in item.options %}
@@ -107,24 +117,24 @@
             </div>
             {% trans %}detail.position-placeholder{% endtrans %}
             <br>
-        {% elseif item.id == 'printedHandbook' %}
+        {% elseif item.slug == 'printedHandbook' %}
             <div class="form-group">
-                <label for="{{ item.id }}">{% trans %}detail.printedHandbook-detail{% endtrans %}: </label>
+                <label for="{{ item.slug }}">{% trans %}detail.printedHandbook-detail{% endtrans %}: </label>
                 <input
-                        id="{{ item.id }}"
+                        id="{{ item.slug }}"
                         type="checkbox"
-                        name="{{ item.id }}"
+                        name="{{ item.slug }}"
                         value="yes"
                         {% if personDetails.getPrintedHandbook %} checked{% endif %}
                 >
             </div>
         {% else %}
             <div class="form-group">
-                <label for="{{ item.id }}">{{ item.label|trans }}:</label>
+                <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
                 <input
-                    id="{{ item.id }}"
+                    id="{{ item.slug }}"
                     type="checkbox"
-                    name="{{ item.id }}"
+                    name="{{ item.slug }}"
                     value="yes"
                     {% if value %} checked{% endif %}
                 >
@@ -188,34 +198,33 @@
         {{ item.label|trans }}: <b>{% if person.getTshirtShape %}{{ person.getTshirtShape|trans }} - {{ person.getTshirtSize|trans }}{% endif %}</b><br/>
     {% elseif item.type.value == 'select' %}
         {{ item.label|trans }}: <b>{% if value and item.options[value] is defined %}{{ item.options[value]|trans }}{% elseif value %}{{ value }}{% endif %}</b><br/>
-    {% elseif item.id == 'birthDate' %}
+    {% elseif item.slug == 'birthDate' %}
         {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b>
             {% if value %}
                 ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
             {% endif %}<br/>
-    {% elseif item.id == 'arrivalDate' or item.id == 'departureDate' %}
+    {% elseif item.slug == 'arrivalDate' or item.slug == 'departureDate' %}
         {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b><br/>
-    {% elseif item.id == 'preferredPosition' %}
+    {% elseif item.slug == 'preferredPosition' %}
         {% trans %}detail.position-title{% endtrans %}: <b>
             {% for preferredPosition in person.preferredPosition %}
                 {{ preferredPosition|trans }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         </b><br/>
-    {% elseif item.id == 'printedHandbook' %}
+    {% elseif item.slug == 'printedHandbook' %}
         {{ item.label|trans }}: <b>
             {% if value %}{% trans %}detail.handbook-yes{% endtrans %}{% else %}{% trans %}detail.handbook-no{% endtrans %}{% endif %}</b><br/>
-    {% elseif item.id == 'uploadFile' %}
-        {% if person.getAgeAtStartOfEvent < 18 %}
-            {{ item.label|trans }}:
-            {% if person.getUploadedFilename %}
-                <a target="_blank"
-                   href="{{ url_for('admin-show-file', {'filename': person.getUploadedFilename, 'eventSlug': event.slug}) }}">
-                    {{ person.getUploadedOriginalFilename }}
-                </a>
-            {% else %}
-                {{ 'detail.uploadFileMissing'|trans }}
-            {% endif %}<br/>
-        {% endif %}
+    {% elseif item.type.value == 'file' %}
+        {{ item.label|trans }}:
+        {% set filename = person.getUploadedFilename(item.slug) %}
+        {% if filename %}
+            <a target="_blank"
+               href="{{ url_for('show-file', {'filename': filename, 'eventSlug': event.slug}) }}">
+                {{ value }}
+            </a>
+        {% else %}
+            {{ 'detail.uploadFileMissing'|trans }}
+        {% endif %}<br/>
     {% else %}
         {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% endif %}

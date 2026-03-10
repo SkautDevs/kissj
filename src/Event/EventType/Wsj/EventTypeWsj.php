@@ -87,7 +87,7 @@ class EventTypeWsj extends EventType
         $ca->email->allowed = true;
         $ca->swimming->allowed = true;
         $ca->unit->allowed = true;
-        $ca->uploadFile->allowed = true;
+        $ca->parentalConsent->allowed = true;
 
         return $ca;
     }

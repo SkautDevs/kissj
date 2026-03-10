@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace kissj\FileHandler;
 
 use kissj\Participant\Participant;
@@ -9,14 +11,20 @@ abstract class SaveFileHandler
 {
     abstract public function getFile(string $filename): File;
 
-    public function saveFileTo(Participant $participant, UploadedFile $uploadedFile): Participant
-    {
+    public function saveFileTo(
+        Participant $participant,
+        UploadedFile $uploadedFile,
+        string $fileItemId,
+    ): Participant {
         $newFilename = $this->getNewFilename();
         $this->saveFile($uploadedFile, $newFilename);
 
-        $participant->uploadedFilename = $newFilename;
-        $participant->uploadedOriginalFilename = $uploadedFile->getClientFilename();
-        $participant->uploadedContenttype = $uploadedFile->getClientMediaType();
+        $participant->setUploadedFile(
+            $fileItemId,
+            $newFilename,
+            $uploadedFile->getClientFilename(),
+            $uploadedFile->getClientMediaType(),
+        );
 
         return $participant;
     }
@@ -25,6 +33,6 @@ abstract class SaveFileHandler
 
     protected function getNewFilename(): string
     {
-        return \md5((string)microtime(true));
+        return \bin2hex(\random_bytes(16));
     }
 }

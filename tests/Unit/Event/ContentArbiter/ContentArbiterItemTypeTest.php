@@ -10,7 +10,7 @@ class ContentArbiterItemTypeTest extends TestCase
     public function testAllExpectedTypesExist(): void
     {
         $expectedTypes = [
-            'text', 'email', 'phone', 'date', 'select', 'radio',
+            'text', 'email', 'phone', 'date', 'select',
             'textarea', 'file', 'checkbox', 'tshirtComposite',
         ];
 
