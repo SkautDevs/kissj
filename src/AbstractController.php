@@ -11,6 +11,8 @@ use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
+use kissj\Payment\PaymentMessageSeverity;
+use kissj\Payment\PaymentResult;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -41,6 +43,19 @@ abstract class AbstractController
 
     #[Inject]
     protected SentryCollector $sentryCollector;
+
+    protected function flashPaymentResult(PaymentResult $result): void
+    {
+        foreach ($result->messages as $message) {
+            $translatedText = $this->translator->trans($message->translationKey, $message->translationParams);
+            match ($message->severity) {
+                PaymentMessageSeverity::Info => $this->flashMessages->info($translatedText),
+                PaymentMessageSeverity::Success => $this->flashMessages->success($translatedText),
+                PaymentMessageSeverity::Warning => $this->flashMessages->warning($translatedText),
+                PaymentMessageSeverity::Error => $this->flashMessages->error($translatedText),
+            };
+        }
+    }
 
     /**
      * @param string[] $arguments

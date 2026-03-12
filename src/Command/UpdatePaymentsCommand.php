@@ -45,7 +45,10 @@ class UpdatePaymentsCommand extends Command
                     sprintf("https://kissj.net/%s", $event->slug), // production address
                 );
 
-                $this->paymentService->updatePayments($event);
+                $result = $this->paymentService->updatePayments($event);
+                foreach ($result->messages as $message) {
+                    $output->writeln(sprintf('[%s] %s', $message->severity->value, $message->translationKey));
+                }
             }
 
             return Command::SUCCESS;
