@@ -72,6 +72,7 @@ Do not modify without extra caution:
 - Take advantage of strong types whenever possible
 - Use static typing instead of PHPDoc
 - Do not use overly expressive comments and only when they describe choice of developer with reasons
+- Do not remove comments if it is not directly related to touched code
 - Write code for human readers as much as possible
 - Use `LogicException` for impossible/unexpected states that should never occur
 - In tests, use static assertion methods (e.g., `self::assertEquals()`)

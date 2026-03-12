@@ -11,6 +11,7 @@ use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
+use kissj\Participant\RegistrationCloseResult;
 use kissj\Payment\PaymentMessageSeverity;
 use kissj\Payment\PaymentResult;
 use Monolog\Logger;
@@ -43,6 +44,13 @@ abstract class AbstractController
 
     #[Inject]
     protected SentryCollector $sentryCollector;
+
+    protected function flashRegistrationCloseResult(RegistrationCloseResult $result): void
+    {
+        foreach ($result->warnings as $warning) {
+            $this->flashMessages->warning($this->translator->trans($warning['key'], $warning['params']));
+        }
+    }
 
     protected function flashPaymentResult(PaymentResult $result): void
     {

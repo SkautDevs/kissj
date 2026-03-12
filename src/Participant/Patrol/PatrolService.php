@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace kissj\Participant\Patrol;
 
 use kissj\Application\DateTimeUtils;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\RegistrationCloseResult;
 use kissj\User\User;
 use kissj\User\UserService;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class PatrolService
 {
@@ -20,8 +19,6 @@ readonly class PatrolService
         private PatrolParticipantRepository $patrolParticipantRepository,
         private UserService $userService,
         private ParticipantService $participantService,
-        private FlashMessagesBySession $flashMessages,
-        private TranslatorInterface $translator,
         private Mailer $mailer,
     ) {
     }
@@ -69,32 +66,22 @@ readonly class PatrolService
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
     }
 
-    public function isCloseRegistrationValid(PatrolLeader $patrolLeader): bool
+    public function isCloseRegistrationValid(PatrolLeader $patrolLeader): RegistrationCloseResult
     {
-        $validityFlag = $this->participantService->isCloseRegistrationValid($patrolLeader);
+        $result = $this->participantService->isCloseRegistrationValid($patrolLeader);
         $event = $patrolLeader->getUserButNotNull()->event;
         $participants = $patrolLeader->patrolParticipants;
 
         $participantsCount = count($participants);
         if ($participantsCount < $event->getMinimalPpCount($patrolLeader)) {
-            $this->flashMessages->warning(
-                $this->translator->trans(
-                    'flash.warning.plTooFewParticipants',
-                    ['%minimalPatrolParticipantsCount%' => $event->getMinimalPpCount($patrolLeader)],
-                )
-            );
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.plTooFewParticipants', [
+                '%minimalPatrolParticipantsCount%' => (string)$event->getMinimalPpCount($patrolLeader),
+            ]);
         }
         if ($participantsCount > $event->getMaximalPpCount($patrolLeader)) {
-            $this->flashMessages->warning(
-                $this->translator->trans(
-                    'flash.warning.plTooManyParticipants',
-                    ['%maximalPatrolParticipantsCount%' => $event->getMaximalPpCount($patrolLeader)],
-                )
-            );
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.plTooManyParticipants', [
+                '%maximalPatrolParticipantsCount%' => (string)$event->getMaximalPpCount($patrolLeader),
+            ]);
         }
 
         $contentArbiterPatrolParticipant = $event->getEventType()->getContentArbiterPatrolParticipant();
@@ -103,24 +90,18 @@ readonly class PatrolService
                 $participant,
                 $contentArbiterPatrolParticipant,
             )) {
-                $this->flashMessages->warning(
-                    $this->translator->trans(
-                        'flash.warning.plWrongDataParticipant',
-                        ['%participantFullName%' => $participant->getFullName()],
-                    )
-                );
-
-                $validityFlag = false;
+                $result = $result->withWarning('flash.warning.plWrongDataParticipant', [
+                    '%participantFullName%' => $participant->getFullName(),
+                ]);
             }
         }
 
-        // to show all warnings
-        return $validityFlag;
+        return $result;
     }
 
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader
     {
-        if ($this->isCloseRegistrationValid($patrolLeader)) {
+        if ($this->isCloseRegistrationValid($patrolLeader)->isValid) {
             $user = $patrolLeader->getUserButNotNull();
             $patrolLeader->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->patrolLeaderRepository->persist($patrolLeader);
