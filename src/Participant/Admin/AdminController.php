@@ -21,6 +21,7 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\ParticipantStatisticsService;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
@@ -41,6 +42,7 @@ class AdminController extends AbstractController
     public function __construct(
         private readonly ParticipantService $participantService,
         private readonly ParticipantRepository $participantRepository,
+        private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly PaymentService $paymentService,
         private readonly PaymentRepository $paymentRepository,
         private readonly BankPaymentRepository $bankPaymentRepository,
@@ -61,7 +63,7 @@ class AdminController extends AbstractController
         $eventType = $event->getEventType();
         $contingentStatistic = [];
         if ($eventType->showContingentPatrolStats()) {
-            $contingentStatistic = $this->participantRepository->getContingentStatistic(
+            $contingentStatistic = $this->participantStatisticsService->getContingentStatistic(
                 $event,
                 ParticipantRole::PatrolLeader,
                 $eventType->getContingents(),
@@ -75,19 +77,19 @@ class AdminController extends AbstractController
 
         $foodStatistic = [];
         if ($eventType->showFoodStats()) {
-            $foodStatistic = $this->participantRepository->getDigestFoodStatistic($event);
+            $foodStatistic = $this->participantStatisticsService->getDigestFoodStatistic($event);
         }
 
         return $this->view->render(
             $response,
             'admin/dashboard-admin.twig',
             [
-                'patrols' => $this->participantRepository->getStatistic($event, ParticipantRole::PatrolLeader),
-                'ists' => $this->participantRepository->getStatistic($event, ParticipantRole::Ist),
-                'troopLeaders' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopLeader),
-                'troopParticipants' => $this->participantRepository->getStatistic($event, ParticipantRole::TroopParticipant),
-                'guests' => $this->participantRepository->getStatistic($event, ParticipantRole::Guest),
-                'organizingTeam' => $this->participantRepository->getStatistic($event, ParticipantRole::OrganizingTeam),
+                'patrols' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::PatrolLeader),
+                'ists' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Ist),
+                'troopLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopLeader),
+                'troopParticipants' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopParticipant),
+                'guests' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Guest),
+                'organizingTeam' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::OrganizingTeam),
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
                 'foodStatistic' => $foodStatistic,
@@ -933,7 +935,7 @@ class AdminController extends AbstractController
     ): Response {
         return $this->view->render($response, 'admin/foodStats-admin.twig', [
             'event'  => $event,
-            'foodStatistic' => $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->roleAggregatedToArray(),
+            'foodStatistic' => $this->participantStatisticsService->createParticipantFoodPlanFromEvent($event, false)->roleAggregatedToArray(),
         ]);
     }
 
