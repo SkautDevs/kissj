@@ -60,6 +60,7 @@ use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\ParticipantStatisticsService;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
@@ -192,6 +193,7 @@ class Settings
             ParticipantController::class => autowire(),
             ParticipantRepository::class => autowire(),
             ParticipantService::class => autowire(),
+            ParticipantStatisticsService::class => autowire(),
             ParticipantVendorController::class => autowire(),
             PatrolController::class => autowire(),
             PatrolLeaderRepository::class => autowire(),

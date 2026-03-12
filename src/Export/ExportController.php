@@ -9,6 +9,7 @@ use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\ParticipantStatisticsService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use League\Csv\ByteSequence;
@@ -22,6 +23,7 @@ class ExportController extends AbstractController
     public function __construct(
         private readonly ExportService $exportService,
         private readonly ParticipantRepository $participantRepository,
+        private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly PdfGenerator $pdfGenerator,
     ) {
     }
@@ -64,7 +66,7 @@ class ExportController extends AbstractController
         User $user,
         Event $event,
     ): Response {
-        $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
+        $csvRows = $this->participantStatisticsService->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
         $this->logger->info('Exported participants food summary by user with ID: ' . $user->id);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
@@ -75,7 +77,7 @@ class ExportController extends AbstractController
         User $user,
         Event $event,
     ): Response {
-        $csvRows = $this->participantRepository->createParticipantFoodPlanFromEvent(
+        $csvRows = $this->participantStatisticsService->createParticipantFoodPlanFromEvent(
             $event,
             true,
             [

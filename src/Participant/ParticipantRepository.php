@@ -222,27 +222,6 @@ class ParticipantRepository extends Repository
     }
 
     /**
-     * @param string[] $contingents
-     * @return StatisticUserValueObject[]
-     */
-    public function getContingentStatistic(
-        Event $event,
-        ParticipantRole $role,
-        array $contingents,
-    ): array {
-        $statistics = [];
-        foreach ($contingents as $contingent) {
-            $statistics[$contingent] = $this->getStatistic(
-                $event,
-                $role,
-                $contingent,
-            );
-        }
-
-        return $statistics;
-    }
-
-    /**
      * @return array<string,int>
      */
     public function getIstArrivalStatistic(
@@ -728,40 +707,6 @@ class ParticipantRepository extends Repository
         }
 
         return $qb;
-    }
-
-    /**
-     * Retrieve count of food diets aggregated by role or troop/patrol names and event days. Takes into account arrival and departure dates for all participants.
-     *
-     * @param list<ParticipantRole> $participantRole
-     */
-    public function createParticipantFoodPlanFromEvent(
-        Event $event,
-        bool $usePatrolAndTroopsAggregator,
-        array $participantRole = [
-            ParticipantRole::TroopLeader,
-            ParticipantRole::PatrolLeader,
-            ParticipantRole::TroopParticipant,
-            ParticipantRole::PatrolParticipant,
-            ParticipantRole::Ist,
-            ParticipantRole::Guest,
-        ],
-    ): ParticipantFoodPlan {
-        $eventParticipants = $this->getAllParticipantsWithStatus(
-            $participantRole,
-            [UserStatus::Paid],
-            $event,
-        );
-
-        // TODO: [nice to have] implement new ORM criteria (or getAllParticipantsWithStatus atribute) "not null" as relation, so that array_filter can be removed
-        $eventParticipants = array_filter(
-            $eventParticipants,
-            function (Participant $participant): bool {
-                return $participant->foodPreferences !== null;
-            }
-        );
-
-        return new ParticipantFoodPlan($eventParticipants, $event, $usePatrolAndTroopsAggregator);
     }
 
     /**
