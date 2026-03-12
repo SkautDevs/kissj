@@ -8,8 +8,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\Event;
-use kissj\FileHandler\SaveFileHandler;
-use kissj\FileHandler\UploadFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -23,8 +21,6 @@ use kissj\Payment\PaymentStatus;
 use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class ParticipantService
@@ -37,8 +33,6 @@ readonly class ParticipantService
         private FlashMessagesBySession     $flashMessages,
         private TranslatorInterface        $translator,
         private Mailer                     $mailer,
-        private SaveFileHandler            $saveFileHandler,
-        private UploadFileHandler          $uploadFileHandler,
     ) {
     }
 
@@ -99,22 +93,6 @@ readonly class ParticipantService
         $p->notes = $params['notes'] ?? null;
 
         return $p;
-    }
-
-    public function handleUploadedFiles(Participant $participant, Request $request): void
-    {
-        $contentArbiter = $this->getContentArbiterForParticipant($participant);
-
-        foreach ($contentArbiter->getAllowedItems() as $item) {
-            if ($item->type !== ContentArbiterItemType::File) {
-                continue;
-            }
-
-            $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request, $item->slug);
-            if ($uploadedFile instanceof UploadedFile) {
-                $this->saveFileHandler->saveFileTo($participant, $uploadedFile, $item->slug);
-            }
-        }
     }
 
     public function isCloseRegistrationValid(Participant $participant): bool

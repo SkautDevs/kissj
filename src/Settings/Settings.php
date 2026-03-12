@@ -58,6 +58,7 @@ use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantController;
+use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
@@ -191,6 +192,7 @@ class Settings
             OpenStatusOnlyMiddleware::class => autowire(),
             PaidCancelledStatusOnlyMiddleware::class => autowire(),
             ParticipantController::class => autowire(),
+            ParticipantFileService::class => autowire(),
             ParticipantRepository::class => autowire(),
             ParticipantService::class => autowire(),
             ParticipantStatisticsService::class => autowire(),

@@ -18,6 +18,7 @@ use kissj\FileHandler\UploadFileHandler;
 use kissj\Import\ImportSrs;
 use kissj\Orm\Order;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
@@ -41,6 +42,7 @@ class AdminController extends AbstractController
 {
     public function __construct(
         private readonly ParticipantService $participantService,
+        private readonly ParticipantFileService $participantFileService,
         private readonly ParticipantRepository $participantRepository,
         private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly PaymentService $paymentService,
@@ -669,7 +671,7 @@ class AdminController extends AbstractController
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
-        $this->participantService->handleUploadedFiles($participant, $request);
+        $this->participantFileService->handleUploadedFiles($participant, $request);
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');

@@ -26,6 +26,7 @@ class ParticipantController extends AbstractController
 {
     public function __construct(
         private readonly ParticipantService $participantService,
+        private readonly ParticipantFileService $participantFileService,
         private readonly ParticipantRepository $participantRepository,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
@@ -59,7 +60,7 @@ class ParticipantController extends AbstractController
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
-        $this->participantService->handleUploadedFiles($participant, $request);
+        $this->participantFileService->handleUploadedFiles($participant, $request);
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');
