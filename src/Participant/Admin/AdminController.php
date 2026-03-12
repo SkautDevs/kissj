@@ -451,7 +451,7 @@ class AdminController extends AbstractController
         Response $response,
         User $user,
     ): Response {
-        $this->paymentService->cancelDuePayments($user->event);
+        $this->flashPaymentResult($this->paymentService->cancelDuePayments($user->event));
 
         return $this->redirect(
             $request,
@@ -468,7 +468,7 @@ class AdminController extends AbstractController
     ): Response {
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
-        $this->paymentService->confirmPayment($payment);
+        $this->flashPaymentResult($this->paymentService->confirmPayment($payment));
         $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
 
         return $this->redirect(
@@ -498,7 +498,7 @@ class AdminController extends AbstractController
         Response $response,
         Event $event,
     ): Response {
-        $this->paymentService->updatePayments($event);
+        $this->flashPaymentResult($this->paymentService->updatePayments($event));
 
         return $this->redirect(
             $request,

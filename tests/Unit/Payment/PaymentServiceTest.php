@@ -5,7 +5,6 @@ namespace Tests\Unit\Payment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\Banks;
 use kissj\BankPayment\BankServiceProvider;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\Mailer;
 use kissj\Mailer\MailerSettings;
@@ -48,9 +47,7 @@ class PaymentServiceTest extends TestCase
                 Mockery::mock(UserRepository::class),
                 $mailerMock,
             ),
-            Mockery::mock(FlashMessagesBySession::class),
             $mailerMock,
-            Mockery::mock(TranslatorInterface::class),
             Mockery::mock(Logger::class),
             new SentryCollector(
                 Mockery::mock(Hub::class),

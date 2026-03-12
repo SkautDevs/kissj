@@ -13,7 +13,6 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\BankServiceProvider;
 use kissj\Event\Event;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Logging\Sentry\SentryCollector;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
@@ -22,7 +21,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\User\UserService;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentService
 {
@@ -32,9 +30,7 @@ class PaymentService
         private readonly PaymentRepository $paymentRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly UserService $userService,
-        private readonly FlashMessagesBySession $flashMessages,
         private readonly Mailer $mailer,
-        private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
         private readonly SentryCollector $sentryCollector,
     ) {
@@ -84,12 +80,10 @@ class PaymentService
         return $payment;
     }
 
-    public function cancelPayment(Payment $payment): Payment
+    public function cancelPayment(Payment $payment): PaymentResult
     {
         if ($payment->status === PaymentStatus::Canceled) {
-            $this->flashMessages->warning('flash.warning.paymentAlreadyCanceled');
-
-            return $payment;
+            return PaymentResult::warning($payment, 'flash.warning.paymentAlreadyCanceled');
         }
 
         if ($payment->status !== PaymentStatus::Waiting) {
@@ -100,10 +94,10 @@ class PaymentService
         $payment->status = PaymentStatus::Canceled;
         $this->paymentRepository->persist($payment);
 
-        return $payment;
+        return new PaymentResult($payment);
     }
 
-    public function cancelDuePayments(Event $event, int $limit = 5): void
+    public function cancelDuePayments(Event $event, int $limit = 5): PaymentResult
     {
         $duePayments = $this->paymentRepository->getDuePayments($event);
         $singleDuePayments = array_filter(
@@ -121,15 +115,19 @@ class PaymentService
             $deniedPaymentsCount++;
         }
 
-        $this->flashMessages->info($this->translator->trans('flash.info.duePaymentDenied') . ': ' . $deniedPaymentsCount);
+        return PaymentResult::withMessages([
+            new PaymentResultMessage(
+                PaymentMessageSeverity::Info,
+                'flash.info.duePaymentDenied',
+                ['%count%' => (string)$deniedPaymentsCount],
+            ),
+        ]);
     }
 
-    public function confirmPayment(Payment $payment): Payment
+    public function confirmPayment(Payment $payment): PaymentResult
     {
         if ($payment->status === PaymentStatus::Paid) {
-            $this->flashMessages->warning('flash.warning.paymentAlreadyPaid');
-
-            return $payment;
+            return PaymentResult::warning($payment, 'flash.warning.paymentAlreadyPaid');
         }
 
         if ($payment->status !== PaymentStatus::Waiting) {
@@ -148,7 +146,7 @@ class PaymentService
             // one payment was just marked as paid, but not propagated to the participant entity yet
             $this->mailer->sendPaidPartially($participant);
 
-            return $payment;
+            return new PaymentResult($payment);
         }
 
         $this->setParticipantPaidWithTime($participant, $now);
@@ -160,9 +158,8 @@ class PaymentService
         }
 
         $this->mailer->sendRegistrationPaid($participant);
-        $this->flashMessages->success('flash.success.confirmPayment');
 
-        return $payment;
+        return PaymentResult::success($payment, 'flash.success.confirmPayment');
     }
 
     private function setParticipantPaidWithTime(Participant $participant, DateTimeImmutable $now): void
@@ -178,7 +175,7 @@ class PaymentService
      * if not, download fresh data from bank and then vvv
      * pair few of them (few because of mailing and processing time)
      */
-    public function updatePayments(Event $event, int $limit = 10): void
+    public function updatePayments(Event $event, int $limit = 10): PaymentResult
     {
         $freshBankPayments = $this->bankPaymentRepository->getBankPaymentsOrderedWithStatus(
             $event,
@@ -191,17 +188,26 @@ class PaymentService
                     ->getAndSafeFreshPaymentsFromBank($event);
 
                 if ($newPaymentsCount > 0) {
-                    $this->flashMessages->info($this->translator->trans('flash.info.newPayments') . $newPaymentsCount);
-                } else {
-                    $this->flashMessages->info('flash.info.noNewPayments');
+                    return PaymentResult::withMessages([
+                        new PaymentResultMessage(
+                            PaymentMessageSeverity::Info,
+                            'flash.info.newPayments',
+                            ['%count%' => (string)$newPaymentsCount],
+                        ),
+                    ]);
                 }
+
+                return PaymentResult::withMessages([
+                    new PaymentResultMessage(PaymentMessageSeverity::Info, 'flash.info.noNewPayments'),
+                ]);
             } catch (ServiceUnavailable $e) {
                 $this->sentryCollector->collect($e);
-                $this->flashMessages->error('flash.error.fioConnectionFailed');
                 $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
-            }
 
-            return;
+                return PaymentResult::withMessages([
+                    new PaymentResultMessage(PaymentMessageSeverity::Error, 'flash.error.fioConnectionFailed'),
+                ]);
+            }
         }
 
         // TODO make more atomic - set "processing" status or something
@@ -235,13 +241,24 @@ class PaymentService
             $this->bankPaymentRepository->persist($bankPayment);
         }
 
+        $messages = [];
         if ($counterNewPaid > 0) {
-            $this->flashMessages->success($this->translator->trans('flash.success.adminPairedPayments') . $counterNewPaid);
+            $messages[] = new PaymentResultMessage(
+                PaymentMessageSeverity::Success,
+                'flash.success.adminPairedPayments',
+                ['%count%' => (string)$counterNewPaid],
+            );
         }
 
         if ($counterUnknownPayment > 0) {
-            $this->flashMessages->info($this->translator->trans('flash.info.adminPaymentsUnrecognized') . $counterUnknownPayment);
+            $messages[] = new PaymentResultMessage(
+                PaymentMessageSeverity::Info,
+                'flash.info.adminPaymentsUnrecognized',
+                ['%count%' => (string)$counterUnknownPayment],
+            );
         }
+
+        return PaymentResult::withMessages($messages);
     }
 
     public function getNewVariableNumber(Event $event): string
