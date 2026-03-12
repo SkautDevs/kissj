@@ -72,7 +72,10 @@ class ParticipantController extends AbstractController
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
 
-        if ($this->participantService->isCloseRegistrationValid($participant)) {
+        $closeResult = $this->participantService->isCloseRegistrationValid($participant);
+        $this->flashRegistrationCloseResult($closeResult);
+
+        if ($closeResult->isValid) {
             return $this->view->render(
                 $response,
                 'participant/closeRegistration.twig',

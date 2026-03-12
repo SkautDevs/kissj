@@ -27,8 +27,10 @@ class PatrolController extends AbstractController
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
-        $validRegistration = $this->patrolService->isCloseRegistrationValid($patrolLeader); // call because of warnings
-        if ($validRegistration) {
+        $closeResult = $this->patrolService->isCloseRegistrationValid($patrolLeader);
+        $this->flashRegistrationCloseResult($closeResult);
+
+        if ($closeResult->isValid) {
             return $this->view->render(
                 $response,
                 'closeRegistration-pl.twig',

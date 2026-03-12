@@ -8,7 +8,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\Event;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -21,7 +20,6 @@ use kissj\Payment\PaymentStatus;
 use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class ParticipantService
 {
@@ -30,8 +28,6 @@ readonly class ParticipantService
         private TroopParticipantRepository $troopParticipantRepository,
         private PaymentService             $paymentService,
         private UserService                $userService,
-        private FlashMessagesBySession     $flashMessages,
-        private TranslatorInterface        $translator,
         private Mailer                     $mailer,
     ) {
     }
@@ -95,22 +91,19 @@ readonly class ParticipantService
         return $p;
     }
 
-    public function isCloseRegistrationValid(Participant $participant): bool
+    public function isCloseRegistrationValid(Participant $participant): RegistrationCloseResult
     {
-        $validityFlag = true;
-
+        $result = RegistrationCloseResult::startChecking();
         $event = $participant->getUserButNotNull()->event;
 
         // TODO move check for patrol leader here
 
         if ($participant instanceof TroopLeader) {
-            $validityFlag = $this->isCloseRegistrationValidForTroopLeader($participant, $event);
+            $result = $this->validateTroopLeaderRegistrationClose($participant, $event, $result);
         }
 
         if (!$this->isParticipantDataValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
-            $this->flashMessages->warning('flash.warning.noLock');
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.noLock');
         }
 
         if ($event->eventType->isFullForParticipant(
@@ -120,65 +113,48 @@ readonly class ParticipantService
             // TODO fix problem with contingents
             // - in CEJ we want to limit each contingent by its own, but
             // - in Navigamus we want to count all contingents together
-            $this->flashMessages->warning('flash.warning.fullRegistration');
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.fullRegistration');
         }
 
         if (
             $event->maximalClosedParticipantsCount !== null
             && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount
         ) {
-            $this->flashMessages->warning('flash.warning.fullRegistration');
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.fullRegistration');
         }
 
         if (!$participant instanceof TroopParticipant && !$event->canRegistrationBeLocked()) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.registrationNotAllowed', [
+            $result = $result->withWarning('flash.warning.registrationNotAllowed', [
                 '%difference%' => $event->startRegistration->diff(DateTimeUtils::getDateTime())->format('%H:%I:%S'),
-            ]));
-
-            $validityFlag = false;
+            ]);
         }
 
         if ($event->eventType->enforceActiveSkautisMembership()
             && $participant->getUserButNotNull()->loginType === UserLoginType::Skautis
             && !(bool)$participant->getUserButNotNull()->skautisHasMembership) {
-            $this->flashMessages->warning($this->translator->trans('flash.warning.missingSkautisMembership'));
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.missingSkautisMembership');
         }
 
-        // to show all warnings
-        return $validityFlag;
+        return $result;
     }
 
-    private function isCloseRegistrationValidForTroopLeader(TroopLeader $troopLeader, Event $event): bool
-    {
-        $validityFlag = true;
+    private function validateTroopLeaderRegistrationClose(
+        TroopLeader $troopLeader,
+        Event $event,
+        RegistrationCloseResult $result,
+    ): RegistrationCloseResult {
         $troopParticipants = $troopLeader->troopParticipants;
 
         $participantsCount = count($troopParticipants);
         if ($participantsCount < $event->getMinimalPpCount($troopLeader)) {
-            $this->flashMessages->warning(
-                $this->translator->trans(
-                    'flash.warning.tlTooFewParticipantsTroop',
-                    ['%minimalTroopParticipantsCount%' => $event->getMinimalPpCount($troopLeader)],
-                )
-            );
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.tlTooFewParticipantsTroop', [
+                '%minimalTroopParticipantsCount%' => (string)$event->getMinimalPpCount($troopLeader),
+            ]);
         }
         if ($participantsCount > $event->getMaximalPpCount($troopLeader)) {
-            $this->flashMessages->warning(
-                $this->translator->trans(
-                    'flash.warning.tlTooManyParticipantsTroop',
-                    ['%maximalTroopParticipantsCount%' => $event->getMaximalPpCount($troopLeader)],
-                )
-            );
-
-            $validityFlag = false;
+            $result = $result->withWarning('flash.warning.tlTooManyParticipantsTroop', [
+                '%maximalTroopParticipantsCount%' => (string)$event->getMaximalPpCount($troopLeader),
+            ]);
         }
 
         foreach ($troopParticipants as $participant) {
@@ -186,29 +162,19 @@ readonly class ParticipantService
                 $participant,
                 $event->getEventType()->getContentArbiterTroopParticipant(),
             )) {
-                $this->flashMessages->warning(
-                    $this->translator->trans(
-                        'flash.warning.tlWrongDataParticipant',
-                        ['%participantFullName%' => $participant->getFullName()],
-                    )
-                );
-
-                $validityFlag = false;
+                $result = $result->withWarning('flash.warning.tlWrongDataParticipant', [
+                    '%participantFullName%' => $participant->getFullName(),
+                ]);
             }
 
             if ($participant->getUserButNotNull()->status === UserStatus::Open) {
-                $this->flashMessages->warning(
-                    $this->translator->trans(
-                        'flash.warning.tpNotClosed',
-                        ['%participantFullName%' => $participant->getFullName()],
-                    )
-                );
-
-                $validityFlag = false;
+                $result = $result->withWarning('flash.warning.tpNotClosed', [
+                    '%participantFullName%' => $participant->getFullName(),
+                ]);
             }
         }
 
-        return $validityFlag;
+        return $result;
     }
 
     public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
@@ -291,7 +257,7 @@ readonly class ParticipantService
 
     public function closeRegistration(Participant $participant): Participant
     {
-        if ($this->isCloseRegistrationValid($participant)) {
+        if ($this->isCloseRegistrationValid($participant)->isValid) {
             $user = $participant->getUserButNotNull();
             $participant->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->participantRepository->persist($participant);
@@ -484,41 +450,31 @@ readonly class ParticipantService
         return $participant;
     }
 
-    public function tryChangeRoleWithMessages(string $roleFromBody, Participant $participant, Event $event): bool
+    public function tryChangeRole(string $roleFromBody, Participant $participant, Event $event): RoleChangeResult
     {
         $role = ParticipantRole::tryFrom($roleFromBody);
         if ($role === null || !in_array($role, $event->getAvailableRoles(), true)) {
-            $this->flashMessages->error('flash.error.roleNotValid');
-
-            return false;
+            return RoleChangeResult::RoleNotValid;
         }
 
         if ($participant instanceof PatrolLeader) {
             if ($participant->getPatrolParticipantsCount() > 0) {
-                $this->flashMessages->warning('flash.warning.patrolHasParticipantsCannotChangeRole');
-
-                return false;
+                return RoleChangeResult::PatrolHasParticipants;
             }
         }
 
         if ($participant instanceof TroopLeader) {
             if ($participant->getTroopParticipantsCount() > 0) {
-                $this->flashMessages->warning('flash.warning.troopHasParticipantsCannotChangeRole');
-
-                return false;
+                return RoleChangeResult::TroopHasParticipants;
             }
         }
 
         if ($role === $participant->role) {
-            $this->flashMessages->warning('flash.warning.sameRoleCannotChangeRole');
-
-            return false;
+            return RoleChangeResult::SameRole;
         }
 
         if ($participant->getUserButNotNull()->status !== UserStatus::Open) {
-            $this->flashMessages->warning('flash.warning.notOpenCannotChangeRole');
-
-            return false;
+            return RoleChangeResult::NotOpen;
         }
 
         if ($participant instanceof PatrolParticipant) {
@@ -532,9 +488,7 @@ readonly class ParticipantService
         $participant->role = $role;
         $this->participantRepository->persist($participant);
 
-        $this->flashMessages->success('flash.success.roleChanged');
-
-        return true;
+        return RoleChangeResult::Success;
     }
 
     public function setAdminNote(Participant $participant, string $adminNote): Participant

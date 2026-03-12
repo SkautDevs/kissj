@@ -22,6 +22,7 @@ use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\RoleChangeResult;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
@@ -709,9 +710,17 @@ class AdminController extends AbstractController
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $roleFromBody = $this->getParameterFromBody($request, 'role');
 
-        $success = $this->participantService->tryChangeRoleWithMessages($roleFromBody, $participant, $event);
+        $roleChangeResult = $this->participantService->tryChangeRole($roleFromBody, $participant, $event);
+        match ($roleChangeResult) {
+            RoleChangeResult::Success => $this->flashMessages->success($roleChangeResult->value),
+            RoleChangeResult::RoleNotValid => $this->flashMessages->error($roleChangeResult->value),
+            RoleChangeResult::PatrolHasParticipants,
+            RoleChangeResult::TroopHasParticipants,
+            RoleChangeResult::SameRole,
+            RoleChangeResult::NotOpen => $this->flashMessages->warning($roleChangeResult->value),
+        };
 
-        if ($success) {
+        if ($roleChangeResult === RoleChangeResult::Success) {
             return $this->redirect(
                 $request,
                 $response,
