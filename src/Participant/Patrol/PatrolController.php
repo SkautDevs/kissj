@@ -6,6 +6,7 @@ namespace kissj\Participant\Patrol;
 
 use kissj\AbstractController;
 use kissj\Event\Event;
+use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\User\User;
@@ -18,6 +19,7 @@ class PatrolController extends AbstractController
     public function __construct(
         private readonly PatrolService $patrolService,
         private readonly ParticipantService $participantService,
+        private readonly ParticipantFileService $participantFileService,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
     ) {
     }
@@ -99,7 +101,7 @@ class PatrolController extends AbstractController
             $this->patrolService->getPatrolParticipant($participantId),
             $params
         );
-        $this->participantService->handleUploadedFiles($patrolParticipant, $request);
+        $this->participantFileService->handleUploadedFiles($patrolParticipant, $request);
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
         $this->flashMessages->success('flash.success.detailsSaved');
