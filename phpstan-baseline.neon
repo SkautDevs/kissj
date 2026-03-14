@@ -109,12 +109,6 @@ parameters:
 			path: src/Orm/Mapper.php
 
 		-
-			message: '#^Parameter \#1 \$dibiRow of method LeanMapper\\Repository\:\:createEntity\(\) expects Dibi\\Row&iterable\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Orm/Repository.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -139,27 +133,9 @@ parameters:
 			path: src/Participant/Participant.php
 
 		-
-			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getRowsForEntryParticipant\(\) should return array\<Dibi\\Row\> but returns array\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Participant/ParticipantRepository.php
-
-		-
-			message: '#^Method kissj\\Participant\\ParticipantRepository\:\:getRowsForEntryPatrolParticipant\(\) should return array\<Dibi\\Row\> but returns array\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Participant/ParticipantRepository.php
-
-		-
 			message: '#^Parameter \#1 \$openCount of class kissj\\Participant\\Admin\\StatisticUserValueObject constructor expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Participant/ParticipantRepository.php
-
-		-
-			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
-			identifier: argument.type
-			count: 2
 			path: src/Participant/ParticipantRepository.php
 
 		-
@@ -185,18 +161,6 @@ parameters:
 			identifier: varTag.type
 			count: 1
 			path: src/Participant/ParticipantService.php
-
-		-
-			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Participant/Troop/TroopParticipantRepository.php
-
-		-
-			message: '#^Parameter \#1 \$rows of method LeanMapper\\Repository\:\:createEntities\(\) expects array\<Dibi\\Row\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Payment/PaymentRepository.php
 
 		-
 			message: '#^Method kissj\\PdfGenerator\\mPdfGenerator\:\:generatePatrolRoster\(\) should return string but returns mixed\.$#'

@@ -70,6 +70,7 @@ class Repository extends BaseRepository
         $entities = [];
 
         foreach ($rows as $row) {
+            /** @var Row&iterable<string, mixed> $row */
             $entities[] = $this->createEntity($row);
         }
 
@@ -86,7 +87,7 @@ class Repository extends BaseRepository
         $this->addConditions($qb, $criteria);
         $this->addOrdersBy($qb, $orders);
 
-        /** @var ?Row $row */
+        /** @var ?(Row&iterable<string, mixed>) $row */
         $row = $qb->fetch();
 
         if ($row === null) {
