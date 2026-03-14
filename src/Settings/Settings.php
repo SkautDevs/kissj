@@ -249,12 +249,12 @@ class Settings
                 new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL']),
             );
             $logger->pushHandler(
-                new SentryHandler($sentryHub, Logger::INFO),
+                new SentryHandler($sentryHub, Level::Info),
             );
 
             if ($_ENV['DEBUG'] === 'true') {
                 $logger->pushHandler(
-                    new StreamHandler(__DIR__ . '/../../logs/debug.log', Logger::DEBUG),
+                    new StreamHandler(__DIR__ . '/../../logs/debug.log', Level::Debug),
                 );
             }
 
