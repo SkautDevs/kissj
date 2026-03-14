@@ -133,6 +133,9 @@ class Repository extends BaseRepository
                 $qb->where("$field = %i", $value);
             } elseif (is_float($value)) {
                 $qb->where("$field = %f", $value);
+            } elseif (is_string($value)) {
+                // remove invalid UTF-8 characters to sanitize malicious inputs
+                $qb->where("$field = %s", mb_convert_encoding($value, 'UTF-8', 'UTF-8'));
             } else {
                 $qb->where("$field = %s", $value);
             }
