@@ -370,7 +370,7 @@ class ParticipantRepository extends Repository
         $params = array_fill(0, count(Participant::FILE_ITEM_IDS), $filename);
         $qb->where('(' . implode(' OR ', $conditions) . ')', ...$params);
 
-        /** @var Row|null $row */
+        /** @var (Row&iterable<string, mixed>)|null $row */
         $row = $qb->fetch();
 
         if ($row === null) {
@@ -462,7 +462,7 @@ class ParticipantRepository extends Repository
     /**
      * @param Event $event
      * @param array<ParticipantRole> $participantRoles
-     * @return array<Row>
+     * @return list<Row>
      * /
      */
     private function getRowsForEntryParticipant(Event $event, array $participantRoles, bool $paidOnly): array
@@ -501,7 +501,7 @@ class ParticipantRepository extends Repository
 
     /**
      * @param Event $event
-     * @return array<Row>
+     * @return list<Row>
      * /
      */
     private function getRowsForEntryPatrolParticipant(Event $event, bool $paidOnly): array

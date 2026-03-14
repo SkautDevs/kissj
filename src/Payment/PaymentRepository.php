@@ -19,7 +19,7 @@ class PaymentRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('payment.id = %i', $paymentId);
 
-        /** @var ?Row $row */
+        /** @var ?(Row&iterable<string, mixed>) $row */
         $row = $qb->fetch();
         if ($row === null) {
             throw new RuntimeException(sprintf('Payment with ID %s not found', $paymentId));

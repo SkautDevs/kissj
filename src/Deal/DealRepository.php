@@ -111,7 +111,7 @@ class DealRepository extends Repository
         $qb->join('participant')->as('participant')->on('participant.id = deal.participant_id');
         $qb->where('participant.tie_code = %s', $tieCode);
 
-        /** @var ?Row $row */
+        /** @var ?(Row&iterable<string, mixed>) $row */
         $row = $qb->fetch();
         if ($row === null) {
             return null;
