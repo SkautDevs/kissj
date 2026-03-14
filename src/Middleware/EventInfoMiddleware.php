@@ -12,6 +12,7 @@ use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
+use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
@@ -24,6 +25,7 @@ class EventInfoMiddleware extends BaseMiddleware
         private readonly Twig $view,
         private readonly MailerSettings $mailerSettings,
         private readonly SkautisService $skautisService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -85,7 +87,14 @@ class EventInfoMiddleware extends BaseMiddleware
 
     private function initSkautis(Event $event): void
     {
-        // init Skautis only when it is needed, because it is not possible start with empty app ID
+        if ($event->skautisAppId === '') {
+            $this->logger->warning(
+                sprintf('Event "%s" has Skautis login enabled, but skautisAppId in DB is empty', $event->slug),
+            );
+
+            return;
+        }
+
         $this->skautisService->initSkautis($event->skautisAppId);
     }
 }
