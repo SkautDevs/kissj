@@ -44,10 +44,9 @@ readonly class ImportSrs
     {
         $istsData = [];
         try {
-            /** @var array<array<string,string>> $istsData */
-            /** @phpstan-ignore shipmonk.variableTypeOverwritten */
-            $istsData = $this->csvParser->parseCsv($istsDataFile);
-        } catch (\UnexpectedValueException | LeagueCsvException) {
+            /** @var list<array<string,string>> $istsData */
+            $istsData = iterator_to_array($this->csvParser->parseCsv($istsDataFile), false);
+        } catch (LeagueCsvException) {
             $this->flashMessages->error('flash.error.importSrs.invalidCsv');
         }
 
@@ -60,6 +59,7 @@ readonly class ImportSrs
                 continue;
             }
 
+            /** @var array<string, string> $istData */
             $istData = array_map(
                 fn (string $value): string => substr($value, 1, -1),
                 $istData,

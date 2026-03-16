@@ -81,8 +81,9 @@ readonly class ParticipantService
             $p->departureDate = DateTimeUtils::getDateTime($params['departureDate']);
         }
         $p->skills = $params['skills'] ?? null;
-        /** @var string[] $preferredPosition */
-        $preferredPosition = $params['preferredPosition'] ?? [];
+        $rawPreferredPosition = $params['preferredPosition'] ?? [];
+        /** @var list<string> $preferredPosition */
+        $preferredPosition = is_array($rawPreferredPosition) ? $rawPreferredPosition : [];
         $p->preferredPosition = $preferredPosition;
         $p->driversLicense = $params['driversLicense'] ?? null;
         $p->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;

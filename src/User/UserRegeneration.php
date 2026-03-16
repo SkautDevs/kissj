@@ -10,6 +10,7 @@ readonly class UserRegeneration
 
     public function __construct(private UserRepository $userRepository)
     {
+        /** @var array<string, string|int> $userSession */
         $userSession = $_SESSION['user'] ?? [];
 
         $this->currentUser = $this->recreateUserFromSession($userSession);
@@ -21,7 +22,7 @@ readonly class UserRegeneration
     }
 
     /**
-     * @param string[] $userSession
+     * @param array<string, string|int> $userSession
      */
     private function recreateUserFromSession(array $userSession): ?User
     {
@@ -34,6 +35,10 @@ readonly class UserRegeneration
 
     public function saveUserIdIntoSession(User $user): void
     {
+        if (!isset($_SESSION['user']) || !is_array($_SESSION['user'])) {
+            $_SESSION['user'] = [];
+        }
+
         $_SESSION['user']['id'] = $user->id;
     }
 }

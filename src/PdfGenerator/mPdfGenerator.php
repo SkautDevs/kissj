@@ -47,7 +47,10 @@ class mPdfGenerator extends PdfGenerator
         $html = $this->twig->fetch($templateName, $templateData);
         $this->mpdf->WriteHTML($html);
 
-        return $this->mpdf->Output(dest: 'S');
+        /** @var string $output */
+        $output = $this->mpdf->Output(dest: 'S');
+
+        return $output;
     }
 
     private function getOtherParticipantsIfNeeded(Participant $participant): ?string
@@ -85,6 +88,9 @@ class mPdfGenerator extends PdfGenerator
         $html = $this->twig->fetch($templateName, $templateData);
         $this->mpdf->WriteHTML($html);
 
-        return $this->mpdf->Output(dest: 'S');
+        /** @var string $output */
+        $output = $this->mpdf->Output(dest: 'S');
+
+        return $output;
     }
 }

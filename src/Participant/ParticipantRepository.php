@@ -312,6 +312,7 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->groupBy('u.status');
 
+        /** @var array<string, int> $rows */
         $rows = $qb->fetchPairs('status', 'count');
 
         return new StatisticUserValueObject(

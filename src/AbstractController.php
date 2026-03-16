@@ -66,7 +66,7 @@ abstract class AbstractController
     }
 
     /**
-     * @param string[] $arguments
+     * @param array<string, string> $arguments
      */
     protected function redirect(
         Request $request,
@@ -151,10 +151,14 @@ abstract class AbstractController
             throw new \RuntimeException('body does not contain parameter ' . $parameterName);
         }
 
+        if (!is_string($parsedBody[$parameterName])) {
+            throw new \RuntimeException('body parameter ' . $parameterName . ' is not a string');
+        }
+
         $parameter = $parsedBody[$parameterName];
 
         if ($escapeValue) {
-            $parameter = htmlspecialchars((string)$parameter, ENT_QUOTES);
+            $parameter = htmlspecialchars($parameter, ENT_QUOTES);
         }
 
         return $parameter;
@@ -166,6 +170,10 @@ abstract class AbstractController
 
         if (!array_key_exists($parameterName, $queryParams)) {
             throw new \RuntimeException('query parameter does not contain key ' . $parameterName);
+        }
+
+        if (!is_string($queryParams[$parameterName])) {
+            throw new \RuntimeException('query parameter ' . $parameterName . ' is not a string');
         }
 
         return $queryParams[$parameterName];

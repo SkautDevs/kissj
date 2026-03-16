@@ -30,9 +30,10 @@ class SkautisController extends AbstractController
         // it uses generic route without usage of EventInfoMiddleware, must init Skautis locally
         $this->skautisService->initSkautis($event->skautisAppId);
 
-        // TODO fix into method $this->getParsedBody();
-        /** @phpstan-ignore shipmonk.forbiddenCast */
-        $this->skautisService->saveDataFromPost((array)$request->getParsedBody());
+        $rawBody = $request->getParsedBody();
+        /** @var array<string, string> $parsedBody */
+        $parsedBody = is_array($rawBody) ? $rawBody : [];
+        $this->skautisService->saveDataFromPost($parsedBody);
 
         if (!$this->skautisService->isUserLoggedIn()) {
             $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');

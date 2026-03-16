@@ -24,12 +24,13 @@ class S3BucketSaveFileHandler extends SaveFileHandler
         $stream = Utils::streamFor($file);
 
         // get content type from S3
-        $contentType = $this->s3client->HeadObject([
+        /** @var array{ContentType: string} $headObject */
+        $headObject = $this->s3client->HeadObject([
             'Bucket' => $this->s3bucket,
             'Key' => $filename,
         ]);
 
-        return new File($stream, $contentType['ContentType']);
+        return new File($stream, $headObject['ContentType']);
     }
 
     public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile

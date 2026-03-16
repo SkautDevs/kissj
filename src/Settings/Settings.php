@@ -132,6 +132,7 @@ class Settings
         $this->validateAllSettings($dotenv);
 
         // init every time for capturing performance
+        /** @var array<string, string> $_ENV */
         $sentryClient = ClientBuilder::create([
             'dsn' => $_ENV['SENTRY_DSN'],
             'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
@@ -241,12 +242,14 @@ class Settings
         $container[SentryHub::class] = $sentryHub;
 
         $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
+            /** @var array<string, string> $_ENV */
             $logger = new Logger($_ENV['APP_NAME']);
             $logger->pushProcessor(new UidProcessor());
             $logger->pushProcessor(new GitProcessor());
             $logger->pushProcessor(new WebProcessor());
+            $loggerLevel = Level::fromName($_ENV['LOGGER_LEVEL']);
             $logger->pushHandler(
-                new StreamHandler('php://stdout', $_ENV['LOGGER_LEVEL']),
+                new StreamHandler('php://stdout', $loggerLevel),
             );
             $logger->pushHandler(
                 new SentryHandler($sentryHub, Level::Info),
@@ -296,6 +299,7 @@ class Settings
         );
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
         $container[Translator::class] = function () {
+            /** @var array<string, string> $_ENV */
             $defLocale = $_ENV['DEFAULT_LOCALE'];
             // https://symfony.com/doc/current/components/translation.html
             $translator = new Translator($defLocale);

@@ -13,6 +13,7 @@ use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
 
 class EventTypeAqua extends EventType
 {
@@ -26,8 +27,8 @@ class EventTypeAqua extends EventType
         if ($participant instanceof PatrolLeader) {
             $todayPrice = $this->getFullPriceForToday();
             $patrolPriceSum = 0;
+            /** @var list<PatrolLeader|PatrolParticipant> $fullPatrol */
             $fullPatrol = array_merge([$participant], $participant->patrolParticipants);
-            /** @var Participant $patrolParticipant */
             foreach ($fullPatrol as $patrolParticipant) {
                 $patrolPriceSum += $todayPrice;
                 if ($patrolParticipant->foodPreferences === Participant::FOOD_OTHER) {

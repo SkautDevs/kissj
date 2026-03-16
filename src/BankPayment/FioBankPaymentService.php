@@ -25,7 +25,7 @@ readonly class FioBankPaymentService implements IBankPaymentService
             $fioRead->setLastDate('now - 89 days'); // bank allows max 90 days back
         }
 
-        /** @var Transaction[] $freshPayments */
+        /** @var iterable<Transaction> $freshPayments */
         $freshPayments = $fioRead->lastDownload();
 
         $savedBankPaymentsCount = 0;
