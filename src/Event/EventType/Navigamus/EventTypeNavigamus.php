@@ -33,6 +33,7 @@ class EventTypeNavigamus extends EventType
         };
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
@@ -48,6 +49,7 @@ class EventTypeNavigamus extends EventType
         return $caIst;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
@@ -60,6 +62,7 @@ class EventTypeNavigamus extends EventType
         return $caPl;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $caPp = parent::getContentArbiterPatrolParticipant();

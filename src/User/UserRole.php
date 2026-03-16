@@ -75,22 +75,4 @@ enum UserRole: string
         };
     }
 
-    public function isEligibleToImportIst(): bool
-    {
-        return match ($this) {
-            self::Admin
-                => true,
-            self::Participant,
-            self::IstAdmin,
-            self::ContingentAdminCs,
-            self::ContingentAdminSk,
-            self::ContingentAdminPl,
-            self::ContingentAdminHu,
-            self::ContingentAdminEu,
-            self::ContingentAdminRo,
-            self::ContingentAdminGb,
-            self::ContingentAdminSw,
-            => false,
-        };
-    }
 }

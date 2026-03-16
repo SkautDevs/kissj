@@ -166,6 +166,7 @@ class EventTypeCej extends EventType
         ];
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
@@ -187,6 +188,7 @@ class EventTypeCej extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $ca = parent::getContentArbiterPatrolLeader();
@@ -208,6 +210,7 @@ class EventTypeCej extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $ca = parent::getContentArbiterPatrolParticipant();

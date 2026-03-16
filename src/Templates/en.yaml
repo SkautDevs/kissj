@@ -442,8 +442,6 @@ dashboard-admin:
     cancelParticipant: "Mark participant as not going"
     uncancelParticipant: "Mark participant as going, from state when he is not going"
     changeNotice: "Edit"
-    import-file: "Import SRS for IST file"
-    import-submit: "Start import"
     exportPatrolsRoster: "Export patrols roster"
 stats-admin:
     stats: "Statistics for event"
@@ -579,9 +577,8 @@ flash:
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
         differentScarfs: "Participants have differently selected scarf option - it will be changed at the buyer's registration form to correspond the payment."
         duePaymentDenied: "Participants denied which missed due payment deadline by mail: %count%"
-        generatedPayments: "Generated payments and emails sent"
+        generatedPayments: "Generated payments and emails sent: %count%"
         skautisDataPrefilled: "Data from Skautis were prefilled - you still need to fill in the rest of the details"
-        istsImported: "%importedCount% ISTs were imported, %existingCount% ISTs were existing and %errorCount% not imported because error in their data"
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         confirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -619,7 +616,6 @@ flash:
         fileTooBig: "Uploaded file is too big, please try upload smaller"
         fileGeneral: "There is something wrong with uploaded file, please try it again."
         fileNotUploaded: "File was not uploaded."
-        importCantStart: "Import file cannot be started"
         invalidFileType: "Uploaded file type is not allowed. Please upload a PDF or image file (JPEG, PNG, GIF)."
         notApproved: "Participant is not approved, because it already has approved status"
         registrationNotAllowed: "Lock your registration is not yet allowed. We're opening after %difference%"

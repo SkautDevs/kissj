@@ -122,7 +122,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if event.eventType.getContentArbiterIst().arrivalDate %}
+        {% if event.eventType.getContentArbiterIst().arrivalDate.allowed %}
             <h3>{% trans %}dashboard-admin.istArrivalStats{% endtrans %} {% trans %}role.ist{% endtrans %}</h3>
             {% for date, count in istArrivalStatistic %}
                 <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
@@ -188,24 +188,6 @@
                 <input class="btn btn-small"
                        type="submit"
                        value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
-            </form>
-        </div>
-    {% endif %}
-    {% if event.eventType.showIstImport and user.role.isEligibleToImportIst %}
-        <div class="card card-half">
-            <form
-                    id="uploadFileForm"
-                    class="form-group"
-                    method="POST"
-                    action="{{ url_for('admin-import-ist', {'eventSlug': event.slug}) }}"
-                    enctype="multipart/form-data"
-            >
-                <label class="form-group">{% trans %}dashboard-admin.import-file{% endtrans %}:<br/>
-                    <input id="uploadFile" class="form-control form-wide" type="file" name="uploadFile" required="required">
-                </label><br/>
-                <input class="btn btn-small"
-                       type="submit"
-                       value="{% trans %}dashboard-admin.import-submit{% endtrans %}">
             </form>
         </div>
     {% endif %}

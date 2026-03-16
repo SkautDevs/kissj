@@ -8,6 +8,7 @@ use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Slim\Psr7\UploadedFile;
 
 class UploadFileHandlerTest extends TestCase
@@ -18,7 +19,9 @@ class UploadFileHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->flashMessages = Mockery::mock(FlashMessagesInterface::class);
-        $this->handler = new UploadFileHandler($this->flashMessages);
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('warning')->byDefault();
+        $this->handler = new UploadFileHandler($this->flashMessages, $logger);
     }
 
     protected function tearDown(): void
@@ -134,10 +137,25 @@ class UploadFileHandlerTest extends TestCase
         self::assertNull($result);
     }
 
-    public function testOtherUploadErrorReturnsNull(): void
+    public function testOtherUploadErrorReturnsNullWithWarning(): void
     {
         $uploadedFile = Mockery::mock(UploadedFile::class);
         $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_PARTIAL);
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);
+
+        $this->flashMessages->shouldReceive('warning')->once()->with('flash.warning.fileGeneral');
+
+        $result = $this->handler->resolveUploadedFile($request, 'uploadFile');
+
+        self::assertNull($result);
+    }
+
+    public function testNoFileUploadErrorReturnsNullSilently(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_NO_FILE);
 
         $request = Mockery::mock(Request::class);
         $request->allows('getUploadedFiles')->andReturns(['uploadFile' => $uploadedFile]);

@@ -42,6 +42,7 @@ class EventTypeJj extends EventType
         return $price;
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
@@ -56,6 +57,7 @@ class EventTypeJj extends EventType
         return $caIst;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();
@@ -69,6 +71,7 @@ class EventTypeJj extends EventType
         return $caPl;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $caPp = parent::getContentArbiterPatrolParticipant();
@@ -82,6 +85,7 @@ class EventTypeJj extends EventType
         return $caPp;
     }
 
+    #[\Override]
     public function getContentArbiterGuest(): ContentArbiterGuest
     {
         $caGuest = parent::getContentArbiterGuest();
