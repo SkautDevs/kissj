@@ -88,7 +88,9 @@ class Event extends EntityDatetime
 {
     public function getEventType(): EventType
     {
-        $eventTypeClass = match ($this->row->event_type) {
+        /** @var string $eventTypeValue */
+        $eventTypeValue = $this->row->event_type;
+        $eventTypeClass = match ($eventTypeValue) {
             'default' => EventTypeDefault::class,
             'aqua' => EventTypeAqua::class,
             'cej' => EventTypeCej::class,
@@ -100,7 +102,7 @@ class Event extends EntityDatetime
             'obrok' => EventTypeObrok::class,
             'ospz' => EventTypeOspz::class,
             'jj' => EventTypeJj::class,
-            default => throw new \RuntimeException('unknown event type: ' . $this->row->event_type),
+            default => throw new \RuntimeException('unknown event type: ' . $eventTypeValue),
         };
 
         return new $eventTypeClass();

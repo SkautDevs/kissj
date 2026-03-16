@@ -187,7 +187,10 @@ class Participant extends EntityDatetime
 
     public function getTshirt(): ?string
     {
-        return $this->row->tshirt;
+        /** @var string|null $tshirt */
+        $tshirt = $this->row->tshirt;
+
+        return $tshirt;
     }
 
     public function setTshirt(?string $shape, ?string $size): void

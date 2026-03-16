@@ -75,7 +75,10 @@ class Mapper implements IMapper
                     return Participant::class;
                 }
 
-                return match ($row->getData()['role']) {
+                /** @var array{role: string, id: int|string} $rowData */
+                $rowData = $row->getData();
+
+                return match ($rowData['role']) {
                     ParticipantRole::PatrolLeader->value => PatrolLeader::class,
                     ParticipantRole::PatrolParticipant->value => PatrolParticipant::class,
                     ParticipantRole::TroopLeader->value => TroopLeader::class,
@@ -84,7 +87,7 @@ class Mapper implements IMapper
                     ParticipantRole::Guest->value => Guest::class,
                     ParticipantRole::OrganizingTeam->value => OrganizingTeam::class,
                     default => throw new \UnexpectedValueException('Got unknown Participant role: '
-                        . $row->getData()['role'] . ' for Participant with ID: ' . $row->getData()['id']),
+                        . $rowData['role'] . ' for Participant with ID: ' . $rowData['id']),
                 };
 
             case 'deal':

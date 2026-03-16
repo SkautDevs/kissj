@@ -15,7 +15,7 @@ interface FlashMessagesInterface
     public function error(string $message): void;
 
     /**
-     * @return string[]
+     * @return array<array{type: string, message: string}>
      */
     public function dumpMessagesIntoArray(): array;
 }

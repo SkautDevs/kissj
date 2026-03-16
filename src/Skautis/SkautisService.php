@@ -65,7 +65,9 @@ class SkautisService
     public function getUserDetailsFromLoggedSkautisUser(): ?SkautisUserData
     {
         try {
+            /** @var object{ID_Person: int|string, HasMembership: bool} $skautisUserDetail */
             $skautisUserDetail = $this->skautis->UserManagement->UserDetail();
+            /** @var object{ID: int, UserName: string, FirstName: string, LastName: string, NickName: string, Birthday: string, Email: string, Phone: string, Street: string, City: string, PostCode: string} $skautisUserDetailExternal */
             $skautisUserDetailExternal = $this->skautis->UserManagement->UserDetailExternal();
             $idPersonFromSkautis = $skautisUserDetail->ID_Person;
             if ($skautisUserDetail->HasMembership === true && is_numeric($idPersonFromSkautis)) {
@@ -78,7 +80,7 @@ class SkautisService
             return new SkautisUserData(
                 $skautisUserDetailExternal->ID,
                 $skautisUserDetailExternal->UserName,
-                $idPersonFromSkautis,
+                (int)$idPersonFromSkautis,
                 $skautisUserDetailExternal->FirstName ?? '',
                 $skautisUserDetailExternal->LastName ?? '',
                 $skautisUserDetailExternal->NickName ?? '',
@@ -152,16 +154,18 @@ class SkautisService
 
     private function requestForUnitNameFromActiveMembership(int $idPersonFromSkautis): string
     {
-        $skautisMemberships = $this->skautis->OrganizationUnit->MembershipAllPerson([
+        /** @var object{MembershipAllOutput: object{RegistrationNumber: string, Unit: string}} $membershipResult */
+        $membershipResult = $this->skautis->OrganizationUnit->MembershipAllPerson([
             'ID_Person' => $idPersonFromSkautis,
             'ID_MembershipType' => 'radne',
             'IsValid' => true,
-        ])->MembershipAllOutput;
+        ]);
+        $skautisMemberships = $membershipResult->MembershipAllOutput;
 
         $skautisUnitName = sprintf(
             '%s - %s',
             $skautisMemberships->RegistrationNumber,
-            $skautisMemberships->Unit
+            $skautisMemberships->Unit,
         );
 
         return $skautisUnitName;

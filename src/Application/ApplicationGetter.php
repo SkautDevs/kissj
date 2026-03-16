@@ -24,7 +24,9 @@ class ApplicationGetter
     ): App {
         $container = $this->buildContainer($envPath, $envFilename, $tempPath);
         $app = Bridge::create($container);
-        $app->setBasePath($_ENV['BASEPATH']);
+        /** @var string $basePath */
+        $basePath = $_ENV['BASEPATH'];
+        $app->setBasePath($basePath);
 
         if (session_status() === PHP_SESSION_NONE) { // because of PhpUnit handling sessions poorly
             $sessionHandler = $container->get(SessionHandlerInterface::class);
