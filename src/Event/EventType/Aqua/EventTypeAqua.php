@@ -67,6 +67,7 @@ class EventTypeAqua extends EventType
         ];
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
@@ -89,6 +90,7 @@ class EventTypeAqua extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $ca = parent::getContentArbiterPatrolLeader();
@@ -107,6 +109,7 @@ class EventTypeAqua extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolParticipant(): ContentArbiterPatrolParticipant
     {
         $ca = parent::getContentArbiterPatrolParticipant();

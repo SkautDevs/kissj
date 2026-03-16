@@ -41,44 +41,44 @@ readonly class AdminService
         $isPossible = true;
 
         if ($participantFrom === null || $participantTo === null) {
-            $flash->warning($this->translator->trans('flash.warning.nullParticipants'));
+            $flash->warning('flash.warning.nullParticipants');
 
             return false;
         }
 
         if ($participantFrom->id === $participantTo->id) {
-            $flash->warning($this->translator->trans('flash.warning.differentParticipants'));
+            $flash->warning('flash.warning.differentParticipants');
             return false;
         }
 
         if ($participantFrom->role !== $participantTo->role) {
-            $flash->warning($this->translator->trans('flash.warning.sameRole'));
+            $flash->warning('flash.warning.sameRole');
             $isPossible = false;
         }
 
         if (!$participantFrom->getUserButNotNull()->status->isPaidOrCancelled()) {
-            $flash->warning($this->translator->trans('flash.warning.notPaid'));
+            $flash->warning('flash.warning.notPaid');
             $isPossible = false;
         }
 
         if ($participantTo->getUserButNotNull()->status->isPaidOrCancelled()) {
-            $flash->warning($this->translator->trans('flash.warning.isPaid'));
+            $flash->warning('flash.warning.isPaid');
             $isPossible = false;
         }
 
         if ($participantTo instanceof TroopLeader && $participantTo->getTroopParticipantsCount() > 0) {
-            $flash->warning($this->translator->trans('flash.warning.troopLeaderHasParticipants'));
+            $flash->warning('flash.warning.troopLeaderHasParticipants');
             $isPossible = false;
         }
 
         if ($participantFrom instanceof PatrolLeader || $participantTo instanceof PatrolLeader) {
-            $flash->warning($this->translator->trans('flash.warning.patrolLeaderNotSupported'));
+            $flash->warning('flash.warning.patrolLeaderNotSupported');
             $isPossible = false;
         }
 
         // KORBO specific check
         if ($participantFrom->scarf !== $participantTo->scarf) {
-            $flash->info($this->translator->trans('flash.info.differentScarfs'));
+            $flash->info('flash.info.differentScarfs');
         }
 
         return $isPossible;

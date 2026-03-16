@@ -442,8 +442,6 @@ dashboard-admin:
     cancelParticipant: "Označit účastníka že nedorazí"
     uncancelParticipant: "Označit účastníka že opět dorazí, ze stavu, kdy nedorazí"
     changeNotice: "Upravit"
-    import-file: "Import SRS souboru pro IST"
-    import-submit: "Start importu"
     exportPatrolsRoster: "Export průvodek patrol"
 stats-admin:
     stats: "Statistiky akce"
@@ -579,9 +577,8 @@ flash:
         markedAsUnrelated: "Payment has been marked as unrelated with registration system"
         differentScarfs: "Účastníci mají různě nastavené šátky - šátek bude změněn u kupujícího, aby odpovídal platbě"
         duePaymentDenied: "Participants denied which missed due payment deadline by mail: %count%"
-        generatedPayments: "Vygenerováno plateb a rozposláno emailů"
+        generatedPayments: "Vygenerováno plateb a rozposláno emailů: %count%"
         skautisDataPrefilled: "Data ze Skautisu byla předvyplněna - je stále potřeba doplnit zbytek údajů"
-        istsImported: "%importedCount% ISTs bylo importováno, %existingCount% ISTs bylo již v databázi a %errorCount% nebylo importováno kvůli chybě v datech"
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
         confirmPayment: "Platba účastníka byla potvrzena, e-mail o potvrzení byl odeslán"
@@ -619,7 +616,6 @@ flash:
         fileTooBig: "Nahraný súbor je príliš veľký, prosím, skús nahrať menší."
         fileGeneral: "S nahraným súborom je niečo v neporiadku, prosím, skús to znovu."
         fileNotUploaded: "Súbor nebol nahraný."
-        importCantStart: "Súbor importu sa nepodarilo načítať"
         invalidFileType: "Nahraný typ súboru nie je povolený. Prosím, nahraj PDF alebo obrázok (JPEG, PNG, GIF)."
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"

@@ -13,24 +13,24 @@ class FlashMessagesBySession implements FlashMessagesInterface
     ) {
     }
 
-    public function info(string $message): void
+    public function info(string $message, array $params = []): void
     {
-        $this->addMessage('info', $message);
+        $this->addMessage('info', $message, $params);
     }
 
-    public function success(string $message): void
+    public function success(string $message, array $params = []): void
     {
-        $this->addMessage('success', $message);
+        $this->addMessage('success', $message, $params);
     }
 
-    public function warning(string $message): void
+    public function warning(string $message, array $params = []): void
     {
-        $this->addMessage('warning', $message);
+        $this->addMessage('warning', $message, $params);
     }
 
-    public function error(string $message): void
+    public function error(string $message, array $params = []): void
     {
-        $this->addMessage('error', $message);
+        $this->addMessage('error', $message, $params);
     }
 
     /**
@@ -45,7 +45,10 @@ class FlashMessagesBySession implements FlashMessagesInterface
         return $messages;
     }
 
-    private function addMessage(string $type, string $message): void
+    /**
+     * @param array<string, string> $params
+     */
+    private function addMessage(string $type, string $message, array $params = []): void
     {
         if (!isset($_SESSION['flashMessages']) || !is_array($_SESSION['flashMessages'])) {
             $_SESSION['flashMessages'] = [];
@@ -53,7 +56,7 @@ class FlashMessagesBySession implements FlashMessagesInterface
 
         $_SESSION['flashMessages'][] = [
             'type' => $type,
-            'message' => $this->translator->trans($message),
+            'message' => $this->translator->trans($message, $params),
         ];
     }
 }

@@ -10,6 +10,7 @@ use kissj\Event\EventType\EventType;
 
 class EventTypeNsj extends EventType
 {
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = new ContentArbiterIst();

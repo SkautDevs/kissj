@@ -346,9 +346,6 @@ class Route
 
                     });
 
-                    $app->post('/import/ist', AdminController::class . '::importIstFromSrs')
-                        ->setName('admin-import-ist');
-
                     $app->group('/organizing-team', function (RouteCollectorProxy $app) {
                         $app->get('', AdminController::class . '::showOrganizingTeam')
                             ->setName('admin-organizing-team');

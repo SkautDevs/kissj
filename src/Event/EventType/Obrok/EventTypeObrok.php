@@ -106,12 +106,6 @@ class EventTypeObrok extends EventType
         return $ca;
     }
 
-    #[\Override]
-    public function showIstImport(): bool
-    {
-        return true;
-    }
-
     /**
      * @inheritDoc
      */

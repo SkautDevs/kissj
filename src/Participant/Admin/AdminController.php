@@ -14,8 +14,6 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use kissj\FileHandler\UploadFileHandler;
-use kissj\Import\ImportSrs;
 use kissj\Orm\Order;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantFileService;
@@ -53,8 +51,6 @@ class AdminController extends AbstractController
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly AdminService $adminService,
         private readonly UserRepository $userRepository,
-        private readonly ImportSrs $importSrs,
-        private readonly UploadFileHandler $uploadFileHandler,
         private readonly EventRepository $eventRepository,
     ) {
     }
@@ -846,7 +842,7 @@ class AdminController extends AbstractController
             $participants = $this->participantRepository->getPaidParticipantsWithExactPayments($event, 1, 10);
             $count = $this->participantService->generatePaymentsFor($participants);
 
-            $this->flashMessages->info($this->translator->trans('flash.info.generatedPayments') . ': ' . $count);
+            $this->flashMessages->info('flash.info.generatedPayments', ['%count%' => (string)$count]);
         }
 
         return $this->redirect(
@@ -911,32 +907,6 @@ class AdminController extends AbstractController
             $request,
             $response,
             'admin-troop-management',
-        );
-    }
-
-    // TODO refactor or remove
-    public function importIstFromSrs(
-        Request $request,
-        Response $response,
-        Event $event,
-    ): Response {
-        $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request, 'uploadedFile');
-        if ($uploadedFile === null) {
-            $this->flashMessages->warning('flash.warning.importCantStart');
-
-            return $this->redirect(
-                $request,
-                $response,
-                'admin-dashboard',
-            );
-        }
-
-        $this->importSrs->importIst($uploadedFile, $event);
-
-        return $this->redirect(
-            $request,
-            $response,
-            'admin-dashboard',
         );
     }
 

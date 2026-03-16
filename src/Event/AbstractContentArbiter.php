@@ -348,7 +348,7 @@ abstract class AbstractContentArbiter
      */
     public function getAllItems(): array
     {
-        return [
+        $items = [
             $this->contingent,
             $this->patrolName,
             $this->firstName,
@@ -357,10 +357,6 @@ abstract class AbstractContentArbiter
             $this->gender,
             $this->birthDate,
             $this->birthPlace,
-            $this->parentalConsent,
-            $this->hospitalConsent,
-            $this->childWorkCert,
-            $this->adultEventCert,
             $this->idNumber,
             $this->address,
             $this->country,
@@ -382,8 +378,16 @@ abstract class AbstractContentArbiter
             $this->skills,
             $this->preferredPosition,
             $this->printedHandbook,
+            $this->parentalConsent,
+            $this->hospitalConsent,
+            $this->childWorkCert,
+            $this->adultEventCert,
             $this->notes,
         ];
+
+        usort($items, fn (ContentArbiterItem $a, ContentArbiterItem $b) => $a->order <=> $b->order);
+
+        return $items;
     }
 
     /**

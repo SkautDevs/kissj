@@ -24,6 +24,7 @@ class EventTypeOspz extends EventType
         };
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $caIst = parent::getContentArbiterIst();
@@ -33,6 +34,7 @@ class EventTypeOspz extends EventType
         return $caIst;
     }
 
+    #[\Override]
     public function getContentArbiterPatrolLeader(): ContentArbiterPatrolLeader
     {
         $caPl = parent::getContentArbiterPatrolLeader();

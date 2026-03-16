@@ -6,13 +6,25 @@ namespace kissj\FlashMessages;
 
 interface FlashMessagesInterface
 {
-    public function info(string $message): void;
+    /**
+     * @param array<string, string> $params
+     */
+    public function info(string $message, array $params = []): void;
 
-    public function success(string $message): void;
+    /**
+     * @param array<string, string> $params
+     */
+    public function success(string $message, array $params = []): void;
 
-    public function warning(string $message): void;
+    /**
+     * @param array<string, string> $params
+     */
+    public function warning(string $message, array $params = []): void;
 
-    public function error(string $message): void;
+    /**
+     * @param array<string, string> $params
+     */
+    public function error(string $message, array $params = []): void;
 
     /**
      * @return array<array{type: string, message: string}>

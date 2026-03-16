@@ -6,6 +6,7 @@ namespace kissj\FileHandler;
 
 use kissj\FlashMessages\FlashMessagesInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Slim\Psr7\UploadedFile;
 
 readonly class UploadFileHandler
@@ -19,6 +20,7 @@ readonly class UploadFileHandler
 
     public function __construct(
         private FlashMessagesInterface $flashMessages,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -61,7 +63,12 @@ readonly class UploadFileHandler
                 $this->flashMessages->warning('flash.warning.fileTooBig');
 
                 return null;
+            case UPLOAD_ERR_NO_FILE:
+                return null;
             default:
+                $this->logger->warning('Unexpected file upload error', ['error' => $errorNum, 'slug' => $slug]);
+                $this->flashMessages->warning('flash.warning.fileGeneral');
+
                 return null;
         }
     }

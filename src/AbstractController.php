@@ -48,19 +48,18 @@ abstract class AbstractController
     protected function flashRegistrationCloseResult(RegistrationCloseResult $result): void
     {
         foreach ($result->warnings as $warning) {
-            $this->flashMessages->warning($this->translator->trans($warning['key'], $warning['params']));
+            $this->flashMessages->warning($warning['key'], $warning['params']);
         }
     }
 
     protected function flashPaymentResult(PaymentResult $result): void
     {
         foreach ($result->messages as $message) {
-            $translatedText = $this->translator->trans($message->translationKey, $message->translationParams);
             match ($message->severity) {
-                PaymentMessageSeverity::Info => $this->flashMessages->info($translatedText),
-                PaymentMessageSeverity::Success => $this->flashMessages->success($translatedText),
-                PaymentMessageSeverity::Warning => $this->flashMessages->warning($translatedText),
-                PaymentMessageSeverity::Error => $this->flashMessages->error($translatedText),
+                PaymentMessageSeverity::Info => $this->flashMessages->info($message->translationKey, $message->translationParams),
+                PaymentMessageSeverity::Success => $this->flashMessages->success($message->translationKey, $message->translationParams),
+                PaymentMessageSeverity::Warning => $this->flashMessages->warning($message->translationKey, $message->translationParams),
+                PaymentMessageSeverity::Error => $this->flashMessages->error($message->translationKey, $message->translationParams),
             };
         }
     }

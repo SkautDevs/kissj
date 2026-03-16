@@ -57,6 +57,7 @@ class EventTypeWsj extends EventType
         ];
     }
 
+    #[\Override]
     public function getContentArbiterTroopLeader(): ContentArbiterTroopLeader
     {
         $ca = parent::getContentArbiterTroopLeader();
@@ -75,6 +76,7 @@ class EventTypeWsj extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterTroopParticipant(): ContentArbiterTroopParticipant
     {
         $ca = parent::getContentArbiterTroopParticipant();
@@ -92,6 +94,7 @@ class EventTypeWsj extends EventType
         return $ca;
     }
 
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();
