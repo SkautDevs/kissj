@@ -17,7 +17,6 @@ class LocalSaveFileHandler extends SaveFileHandler
     {
         $mimeContentType = mime_content_type($this->uploadFolder . $filename);
         if ($mimeContentType === false) {
-            /** @phpstan-ignore shipmonk.variableTypeOverwritten */
             $mimeContentType = 'unknown_mime_type';
         }
 

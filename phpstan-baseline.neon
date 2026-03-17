@@ -1,55 +1,31 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 3
-			path: src/Export/ExportService.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: src/Export/ExportService.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
+			message: '#^Overwriting variable \$mimeContentType while changing its type from bool to string$#'
+			identifier: shipmonk.variableTypeOverwritten
 			count: 1
-			path: src/Participant/Admin/AdminService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Participant/Admin/AdminController.php
-
-		-
-			message: '#^Cannot call method UserDetail\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Skautis/SkautisService.php
-
-		-
-			message: '#^Cannot call method UserDetailExternal\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Skautis/SkautisService.php
-
-		-
-			message: '#^Cannot call method MembershipAllPerson\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Skautis/SkautisService.php
-
-		-
-			message: '#^Parameter \#1 \$name of static method Monolog\\Level\:\:fromName\(\) expects ''ALERT''\|''Alert''\|''alert''\|''CRITICAL''\|''Critical''\|''critical''\|''DEBUG''\|''Debug''\|''debug''\|''EMERGENCY''\|''Emergency''\|''emergency''\|''ERROR''\|''Error''\|''error''\|''INFO''\|''Info''\|''info''\|''NOTICE''\|''Notice''\|''notice''\|''WARNING''\|''Warning''\|''warning'', string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Settings/Settings.php
+			path: src/FileHandler/LocalSaveFileHandler.php
 
 		-
 			message: '#^Class kissj\\Participant\\Participant has PHPDoc tag @property for property \$preferredPosition with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Participant/Participant.php
+
+		-
+			message: '#^Property kissj\\Participant\\Patrol\\PatrolParticipant\:\:\$patrolLeader \(kissj\\Participant\\Patrol\\PatrolLeader\) does not accept null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Participant/ParticipantService.php
+
+		-
+			message: '#^Parameter \#1 \$name of static method Monolog\\Level\:\:fromName\(\) expects ''ALERT''\|''Alert''\|''alert''\|''CRITICAL''\|''Critical''\|''critical''\|''DEBUG''\|''Debug''\|''debug''\|''EMERGENCY''\|''Emergency''\|''emergency''\|''ERROR''\|''Error''\|''error''\|''INFO''\|''Info''\|''info''\|''NOTICE''\|''Notice''\|''notice''\|''WARNING''\|''Warning''\|''warning'', string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Settings/Settings.php

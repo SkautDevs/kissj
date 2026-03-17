@@ -58,7 +58,7 @@ readonly class ExportService
         foreach ($participants as $participant) {
             $rows[] = [
                 (string)$participant->id, // 0
-                $participant->role?->value ?? '',
+                $participant->role->value ?? '',
                 $participant->user?->status->value ?? '',
                 $this->getContingentTranslated($participant),
                 $participant->firstName ?? '',
@@ -105,7 +105,7 @@ readonly class ExportService
             if (!$participant instanceof PatrolParticipant) {
                 $rows[] = [
                     (string)$participant->id, // 0
-                    $participant->role?->value ?? '',
+                    $participant->role->value ?? '',
                     match (true) {
                         $participant instanceof PatrolLeader => (string)$participant->getPatrolParticipantsCount(),
                         $participant instanceof TroopLeader => (string)$participant->getTroopParticipantsCount(),
@@ -235,7 +235,7 @@ readonly class ExportService
                 [
                     (string)$participant->id, // 0
                     $participant->user?->event->readableName ?? '',
-                    $participant->role?->value ?? '',
+                    $participant->role->value ?? '',
                     $participant->user?->status->value ?? '',
                     $this->getContingentTranslated($participant),
                     $participant->firstName ?? '', // 5
