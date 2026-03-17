@@ -7,30 +7,33 @@ parameters:
 		- tests/temp/*
 	ignoreErrors:
 		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#' # 3rd party library
-		 - 
+		 -
 		     # 3rd party library
 		     message: '#Access to an undefined property LeanMapper\\Entity::\$id.#'
 		     path: src\Orm\Repository.php
-		 - 
+		 -
 		     # 3rd party library
 		     message: '#Call to an undefined method Aws\\S3\\S3Client::HeadObject\(\)\.#'
 		     path: src\FileHandler\S3BucketSaveFileHandler.php
-		 - 
+		 -
 		     # 3rd party library
 		     message: '#Access to an undefined property Skautis\\Skautis::\$UserManagement\.#'
 		     path: src\Skautis\SkautisService.php
-		 - 
+		 -
 		     # 3rd party library
 		     message: '#Access to an undefined property Skautis\\Skautis::\$OrganizationUnit\.#'
 		     path: src\Skautis\SkautisService.php
 		 -
-		     # database manipulation
-		     message: '#kissj\\Participant\\Patrol\\PatrolParticipant::\$patrolLeader \(kissj\\Participant\\Patrol\\PatrolLeader\) does not accept null\.#'
-		     path: src\Participant\ParticipantService.php
+		     # 3rd party library
+		     message: '#Cannot call method .+\(\) on mixed\.#'
+		     path: src\Skautis\SkautisService.php
+		 -
+		     # 3rd party library
+		     message: '#Throwing checked exception Twig\\Error\\.+ in closure!#'
 	exceptions:
 		uncheckedExceptionRegexes:
 			- '#Exception#'
-	treatPhpDocTypesAsCertain: false	
+	treatPhpDocTypesAsCertain: false
 	shipmonkRules:
 		enforceReadonlyPublicProperty:
 			enabled: false

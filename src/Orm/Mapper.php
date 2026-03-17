@@ -150,8 +150,7 @@ class Mapper implements IMapper
 
     protected function toUnderScore(string $string): string
     {
-        /** @phpstan-ignore shipmonk.unknownClosureParamType */
-        $pregReplaced = preg_replace_callback('#(?<=.)([A-Z])#', fn ($m) => '_' . strtolower($m[1]), $string);
+        $pregReplaced = preg_replace_callback('#(?<=.)([A-Z])#', fn (array $m): string => '_' . strtolower($m[1]), $string);
         if ($pregReplaced === null) {
             throw new \RuntimeException('preg_replace_callback failed');
         }
@@ -161,8 +160,7 @@ class Mapper implements IMapper
 
     protected function toCamelCase(string $string): string
     {
-        /** @phpstan-ignore shipmonk.unknownClosureParamType */
-        $pregReplaced = preg_replace_callback('#_(.)#', fn ($m) => strtoupper($m[1]), $string);
+        $pregReplaced = preg_replace_callback('#_(.)#', fn (array $m): string => strtoupper($m[1]), $string);
         if ($pregReplaced === null) {
             throw new \RuntimeException('preg_replace_callback failed');
         }

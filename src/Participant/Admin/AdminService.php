@@ -156,7 +156,7 @@ readonly class AdminService
 
         $this->logger->info(sprintf(
             'Transferred payment ID %s from participant ID %s to participant ID %s',
-            $transferredPayment?->id ?? 'N/A',
+            $transferredPayment !== null ? (string)$transferredPayment->id : 'N/A',
             $userFrom->id,
             $userTo->id,
         ));

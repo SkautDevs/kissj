@@ -335,7 +335,7 @@ class AdminController extends AbstractController
 
         $this->flashMessages->info('flash.info.denied');
         $this->logger->info('Denied registration for participant with ID '
-            . $participantId . ' and role ' . ($participant->role?->value ?? 'missing') . ' with reason: ' . $reason);
+            . $participantId . ' and role ' . ($participant->role->value ?? 'missing') . ' with reason: ' . $reason);
 
         return $this->redirect($request, $response, 'admin-show-approving');
     }

@@ -318,7 +318,6 @@ class Settings
             Translator $translator,
             FlashMessagesBySession $flashMessages,
         ) {
-            /** @phpstan-ignore shipmonk.checkedExceptionInCallable */
             $view = Twig::create(
                 [
                     __DIR__ . '/../Templates/translatable',
