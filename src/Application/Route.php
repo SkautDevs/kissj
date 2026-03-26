@@ -220,6 +220,9 @@ class Route
 
                         $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
                             ->setName('admin-change-participant-details');
+
+                        $app->post('/swapTroopLeader', AdminController::class . '::swapTroopLeader')
+                            ->setName('admin-swap-troop-leader');
                     });
 
                     $app->group('/changeRole/{participantId}', function (RouteCollectorProxy $app) {

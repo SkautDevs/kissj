@@ -99,11 +99,11 @@
                                 {% trans %}dashboard.andMaximally {% endtrans %} {{ event.getMaximalPpCount(person) }}
                             {% endif %}
                         {% elseif person is TroopLeader %}
-                            {% if event.minimalTroopParticipantsCount == event.maximalTroopParticipantsCount %}
-                                {% trans %}dashboard.exactly {% endtrans %} {{ event.minimalTroopParticipantsCount }}
+                            {% if event.getMinimalTroopParticipantsCount == event.getMaximalTroopParticipantsCount %}
+                                {% trans %}dashboard.exactly {% endtrans %} {{ event.getMinimalTroopParticipantsCount }}
                             {% else %}
-                                {% trans %}dashboard.minimally {% endtrans %} {{ event.minimalTroopParticipantsCount }}
-                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.maximalTroopParticipantsCount }}
+                                {% trans %}dashboard.minimally {% endtrans %} {{ event.getMinimalTroopParticipantsCount }}
+                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.getMaximalTroopParticipantsCount }}
                             {% endif %}
                         {% endif %}
                         {% trans %}dashboard.pForValidReg {% endtrans %}

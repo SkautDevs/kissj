@@ -682,6 +682,162 @@ class ParticipantJourneyTest extends AppTestCase
         $this->assertSame($troopLeader->id, $troopParticipant->troopLeader->id);
     }
 
+    #[Group('troop')]
+    public function testSwapTroopLeaderWithParticipant(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->resetEventToDefault($container);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($container, $event);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var TroopLeaderRepository $troopLeaderRepository */
+        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
+        /** @var TroopService $troopService */
+        $troopService = $container->get(TroopService::class);
+        /** @var PaymentService $paymentService */
+        $paymentService = $container->get(PaymentService::class);
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = $container->get(PaymentRepository::class);
+
+        $troopLeader = $this->createTroopLeaderWithDetails($container, 'swap-leader@example.com', 'Swap Test Troop');
+        $oldLeaderId = $troopLeader->id;
+
+        $tp1 = $this->createTroopParticipantWithDetails($container, 'swap-tp1@example.com');
+        $newLeaderId = $tp1->id;
+
+        $tp2 = $this->createTroopParticipantWithDetails($container, 'swap-tp2@example.com');
+        $tp2Id = $tp2->id;
+
+        $troopService->tieTroopParticipantToTroopLeader($tp1, $troopLeader);
+        $troopService->tieTroopParticipantToTroopLeader($tp2, $troopLeader);
+
+        // Set all users to Approved so swap is allowed (same-status check)
+        foreach ([$troopLeader, $tp1, $tp2] as $participant) {
+            $user = $participant->getUserButNotNull();
+            $user->status = UserStatus::Approved;
+            $userRepository->persist($user);
+        }
+
+        // Create payments on both leader and participant to test bidirectional swap
+        $troopLeader = $troopLeaderRepository->get($oldLeaderId);
+        $leaderPayment = $paymentService->createAndPersistNewEventPayment($troopLeader);
+        $leaderPaymentId = $leaderPayment->id;
+
+        /** @var TroopParticipantRepository $troopParticipantRepository */
+        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+        $tp1Refetched = $troopParticipantRepository->get($newLeaderId);
+        /** @var TroopParticipant $tp1Refetched */
+        $participantPayment = $paymentService->createAndPersistNewEventPayment($tp1Refetched);
+        $participantPaymentId = $participantPayment->id;
+
+        $troopService->swapTroopLeaderWithParticipant($tp1Refetched);
+
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $container->get(ParticipantRepository::class);
+
+        // Verify: new leader has role 'tl' and troop name
+        $newLeaderAfterSwap = $participantRepository->findParticipantById($newLeaderId, $event);
+        self::assertNotNull($newLeaderAfterSwap);
+        self::assertInstanceOf(TroopLeader::class, $newLeaderAfterSwap);
+        self::assertSame('Swap Test Troop', $newLeaderAfterSwap->patrolName);
+
+        // Verify: old leader has role 'tp' and is tied to new leader
+        $oldLeaderAfterSwap = $participantRepository->findParticipantById($oldLeaderId, $event);
+        self::assertNotNull($oldLeaderAfterSwap);
+        self::assertInstanceOf(TroopParticipant::class, $oldLeaderAfterSwap);
+        self::assertSame($newLeaderId, $oldLeaderAfterSwap->troopLeader->id);
+
+        // Verify: tp2 is now tied to new leader
+        $tp2AfterSwap = $participantRepository->findParticipantById($tp2Id, $event);
+        self::assertNotNull($tp2AfterSwap);
+        self::assertInstanceOf(TroopParticipant::class, $tp2AfterSwap);
+        self::assertSame($newLeaderId, $tp2AfterSwap->troopLeader->id);
+
+        // Verify: new leader has 2 participants (old leader + tp2)
+        /** @var TroopLeader $newLeaderEntity */
+        $newLeaderEntity = $troopLeaderRepository->get($newLeaderId);
+        self::assertSame(2, $newLeaderEntity->getTroopParticipantsCount());
+
+        // Verify: leader's payment moved to new leader
+        $paymentAfterSwap = $paymentRepository->getById($leaderPaymentId, $event);
+        self::assertSame($newLeaderId, $paymentAfterSwap->participant->id);
+
+        // Verify: participant's payment moved to demoted leader
+        $participantPaymentAfterSwap = $paymentRepository->getById($participantPaymentId, $event);
+        self::assertSame($oldLeaderId, $participantPaymentAfterSwap->participant->id);
+    }
+
+    #[Group('troop')]
+    public function testSwapTroopLeaderRejectsStatusMismatch(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->resetEventToDefault($container);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($container, $event);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var TroopService $troopService */
+        $troopService = $container->get(TroopService::class);
+
+        $troopLeader = $this->createTroopLeaderWithDetails($container, 'swap-mismatch-leader@example.com', 'Mismatch Troop');
+        $tp = $this->createTroopParticipantWithDetails($container, 'swap-mismatch-tp@example.com');
+
+        $troopService->tieTroopParticipantToTroopLeader($tp, $troopLeader);
+
+        // Set different statuses
+        $leaderUser = $troopLeader->getUserButNotNull();
+        $leaderUser->status = UserStatus::Approved;
+        $userRepository->persist($leaderUser);
+        $tpUser = $tp->getUserButNotNull();
+        $tpUser->status = UserStatus::Closed;
+        $userRepository->persist($tpUser);
+
+        $troopService->swapTroopLeaderWithParticipant($tp);
+
+        // Verify roles unchanged
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $container->get(ParticipantRepository::class);
+        $leaderAfter = $participantRepository->findParticipantById($troopLeader->id, $event);
+        self::assertInstanceOf(TroopLeader::class, $leaderAfter);
+        $tpAfter = $participantRepository->findParticipantById($tp->id, $event);
+        self::assertInstanceOf(TroopParticipant::class, $tpAfter);
+    }
+
+    #[Group('troop')]
+    public function testSwapTroopLeaderRejectsNoTroopLeader(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+        $this->resetEventToDefault($container);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($container, $event);
+
+        $tp = $this->createTroopParticipantWithDetails($container, 'swap-no-leader@example.com');
+
+        /** @var TroopService $troopService */
+        $troopService = $container->get(TroopService::class);
+
+        $this->expectException(\LogicException::class);
+        $troopService->swapTroopLeaderWithParticipant($tp);
+    }
+
     public function testSetRoleRejectsOtWithoutSessionFlag(): void
     {
         $app = $this->getTestApp();
@@ -1114,7 +1270,7 @@ class ParticipantJourneyTest extends AppTestCase
     {
         /** @var EventRepository $eventRepository */
         $eventRepository = $container->get(EventRepository::class);
-        
+
         $event->allowTroops = true;
         // Use high limits to handle accumulated test data in PostgreSQL
         $event->maximalClosedTroopLeadersCount = 10000;
@@ -1124,5 +1280,61 @@ class ParticipantJourneyTest extends AppTestCase
         $event->minimalPatrolParticipantsCount = 1;
         $event->maximalPatrolParticipantsCount = 10;
         $eventRepository->persist($event);
+    }
+
+    private function createTroopLeaderWithDetails(
+        ContainerInterface $container,
+        string $email,
+        string $troopName,
+    ): TroopLeader {
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var TroopLeaderRepository $troopLeaderRepository */
+        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
+
+        $user = $this->registerUser($container, $email);
+        $participant = $userService->createParticipantSetRole($user, 'tl');
+        /** @var TroopLeader $troopLeader */
+        $troopLeader = $troopLeaderRepository->get($participant->id);
+        $troopLeader->patrolName = $troopName;
+        $troopLeader->firstName = 'Test';
+        $troopLeader->lastName = 'Leader';
+        $troopLeader->email = $email;
+        $troopLeader->gender = 'male';
+        $troopLeader->birthDate = new \DateTimeImmutable('1990-01-01');
+        $troopLeader->permanentResidence = 'Addr';
+        $troopLeader->healthProblems = 'None';
+        $troopLeader->psychicalHealthProblems = 'None';
+        $troopLeader->notes = '';
+        $troopLeaderRepository->persist($troopLeader);
+
+        return $troopLeader;
+    }
+
+    private function createTroopParticipantWithDetails(
+        ContainerInterface $container,
+        string $email,
+    ): TroopParticipant {
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var TroopParticipantRepository $troopParticipantRepository */
+        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+
+        $user = $this->registerUser($container, $email);
+        $participant = $userService->createParticipantSetRole($user, 'tp');
+        /** @var TroopParticipant $tp */
+        $tp = $troopParticipantRepository->get($participant->id);
+        $tp->firstName = 'Test';
+        $tp->lastName = 'Participant';
+        $tp->email = $email;
+        $tp->gender = 'female';
+        $tp->birthDate = new \DateTimeImmutable('1995-01-01');
+        $tp->permanentResidence = 'Addr';
+        $tp->healthProblems = 'None';
+        $tp->psychicalHealthProblems = 'None';
+        $tp->notes = '';
+        $troopParticipantRepository->persist($tp);
+
+        return $tp;
     }
 }

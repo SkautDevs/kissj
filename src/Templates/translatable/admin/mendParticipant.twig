@@ -65,6 +65,13 @@
             <br/>
         {% endif %}
 
+        {% if participant is TroopParticipant and participant.troopLeader is not null and participant.userButNotNull.status == participant.troopLeader.userButNotNull.status %}
+            <form method="POST" action="{{ url_for('admin-swap-troop-leader', {eventSlug: event.slug, participantId: participant.id}) }}" style="display:inline">
+                <input type="submit" class="btn" value="{% trans %}mend-admin.swapLeader{% endtrans %}">
+            </form>
+            <br/>
+        {% endif %}
+
         {% if userStatus == 'paid' %}
             <a
                     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
@@ -109,6 +116,7 @@
                 <br/>
             {% endif %}
         {% endif %}
+
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
            class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
     </div>

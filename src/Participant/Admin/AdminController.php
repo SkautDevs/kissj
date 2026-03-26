@@ -910,6 +910,24 @@ class AdminController extends AbstractController
         );
     }
 
+    public function swapTroopLeader(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        if ($participant instanceof TroopParticipant === false || $participant->troopLeader === null) {
+            $this->flashMessages->warning('flash.warning.troopParticipantNotInTroop');
+
+            return $this->redirect($request, $response, 'admin-mend-participant', ['participantId' => (string) $participantId]);
+        }
+
+        $this->troopService->swapTroopLeaderWithParticipant($participant);
+
+        return $this->redirect($request, $response, 'admin-mend-participant', ['participantId' => (string) $participantId]);
+    }
+
     public function showDetailedFoodStats(
         Response $response,
         Event $event,

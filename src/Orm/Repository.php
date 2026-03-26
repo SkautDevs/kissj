@@ -144,6 +144,25 @@ class Repository extends BaseRepository
     }
 
     /**
+     * @template T
+     * @param callable(): T $callback
+     * @return T
+     */
+    public function transactional(callable $callback): mixed
+    {
+        $this->connection->begin();
+        try {
+            $result = $callback();
+            $this->connection->commit();
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->connection->rollback();
+            throw $e;
+        }
+    }
+
+    /**
      * @param list<Order> $orders
      */
     protected function addOrdersBy(Fluent $qb, array $orders): void
