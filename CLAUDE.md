@@ -79,6 +79,8 @@ Do not modify without extra caution:
 - PHPStan level 10 with a baseline (`phpstan-baseline.neon`) for pre-existing issues
 - PSR-12 style enforced by PHP-CS-Fixer
 - Do not introduce new phpstan ignores
+- Use repository pattern -> repository classes every time data from database is needed 
+- Do not use any native calls to database
 
 ## Testing
 

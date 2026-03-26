@@ -1,23 +1,10 @@
-closed:
-    welcome: "Ahoj!"
-closeRegistration:
-    lockRegistration: "Skutečně chceš uzamknout registraci a poslat nám ji ke schválení?"
-    protectionAgree: "Přečetl*a jsem si a souhlasím s <a href='https://obrok24.cz/zasady-o-nakladani-s-osobnimi-udaji-na-akci-obrok-24/'>zásadami o nákládání s osobními údaji</a> a podmínkami registrace dostupnými na:"
 userCustomHelp:
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek za skupinu."
     statusApprovedTp: "Tvá přihláška byla schválena. Nyní už musí jen tvůj vedoucí skupiny zaplatit registrační poplatek."
-    statusOpenTl: "Chceš připnout účastníka*účastnici do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí účastníkovi*účastnici a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
-    statusOpenTp: "Chceš se připnout do skupiny? Jsou dvě možnosti - buď pošli svůj kód pro připnutí vedoucí*mu skupiny a on*ona ho vloží do své registrace, nebo on*ona musí poslat svůj kód pro připnutí tobě a ty ho vložíš sem"
 flash:
     warning:
         fullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Zkus to později, třeba někdo nezaplatí registrační poplatek v termínu."
         noLock: "Registraci nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (možná chybí jméno skupiny?)"
-        tlTooFewParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš málo účastníků*účastnic. Pro funkční skupinu jich je potřeba nejméně %minimalTroopParticipantsCount%"
-        tlTooManyParticipantsTroop: "Nemůžeme uzamknout registraci - ve skupině je příliš účastníků*účastnic. Může jich být nejvíce %maximalTroopParticipantsCount%, nějaké odstraň prosím"
-        notLogged: "Omlouváme se, ale nejsi přihlášen*a. Přihlaš se prosím přes skautIS"
-        troopLeaderNotOpen: "Skupina byla již zamknuta, proto nelze připojit účastníka*účastnici ke skupině"
-        troopParticipantAlreadyTied: "Účastník*účastnice již byl*a do skupiny přidán*a"
-        alreadyTied: "Nemůžeš se přidat do skupiny, protože již ve skupině jsi. Jestli chceš k jiné skupině, popros vedoucí*ho o odepnutí"
 login:
     registrationFor: "Registrace pro "
     email: "E-mail"
@@ -41,26 +28,9 @@ role:
 detail:
     patrolName: "Název skupiny"
     patrolNamePlaceholder: "Jméno vaší skupiny"
-    language: "jednotka, se kterou na Obrok jedeš"
-    language-placeholder: "možnosti: SOS, SZT, Uši pro duši, Radio Tým "
-    foodHeader: "dietní omezení"
-    contingentTitle: "Pozice"
-    contingent:
-        volunteer: "💪 Dobrovolkyně nebo dobrovolník"
-        org: "⛏️ Organizační tým - pokud si nejsi jistý, nejspíš nejsi (:"
     foodLactoseFree: "bez laktózy (může obsahovat stopové množství)"
     foodGlutenFree: "bez lepku (může obsahovat stopové množství)"
-    foodOther: "mám jiné požadavky - jídlo si zajistím sám*sama"
 
-dashboard:
-    youWantDelete: "Opravdu chceš smazat účastníka*účastnici "
-    youWantUntie: "Opravdu chceš odepnout účastníka*účastnici "
-    youHaveTroop: "Jsi ve skupině %troopName% s vedoucí*m skupiny %troopLeaderFullName%"
-    listOfParticipants: "Seznam účastníků*účastnic"
-    addParticipant: "Přidej účastníka*účastnici"
-    tieTroopParticipant: "Připni účastníka*účastnici"
-    tieCodeLabel: "Kód pro připnutí účastníka*účastnice"
-    pForValidReg: "účastníků*účastnic pro validní registraci"
 deal:
     sfh: "Safe From Harm"
     sfh-missing: "Chybí Safe From Harm, prosím vyplň ho"

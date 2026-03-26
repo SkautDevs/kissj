@@ -7,6 +7,7 @@ namespace kissj\Payment;
 use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\Repository;
+use kissj\Participant\Participant;
 use RuntimeException;
 
 class PaymentRepository extends Repository
@@ -67,6 +68,17 @@ class PaymentRepository extends Repository
             $waitingEventPayments,
             fn (Payment $payment) => $payment->isPaymentOverdue(),
         );
+    }
+
+    /**
+     * @return Payment[]
+     */
+    public function findByParticipant(Participant $participant): array
+    {
+        /** @var Payment[] $payments */
+        $payments = $this->findBy(['participant' => $participant]);
+
+        return $payments;
     }
 
     /**
