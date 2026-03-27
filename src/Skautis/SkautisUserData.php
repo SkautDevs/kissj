@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Skautis;
 
 use DateTimeImmutable;
+use kissj\Participant\Gender;
 
 readonly class SkautisUserData
 {
@@ -23,6 +24,7 @@ readonly class SkautisUserData
         public string $postCode,
         public bool $hasMembership,
         public string $unitName,
+        public Gender $gender = Gender::Other,
     ) {
     }
 
