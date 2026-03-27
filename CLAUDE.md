@@ -13,7 +13,9 @@ Trunk-based with a staging branch.
 Feature branches are rebased into `staging` for testing, then rebased into `master` for release.
 PRs target `staging` unless explicitly told otherwise.
 Git commit messages should be concise and starts with non-capitalized past tense verb (e.g., "added", "fixed", "refactor"), followed by a brief description of the change.
-Do not include your signature. 
+Do not include your signature.
+Never commit or push anything — the user handles all git operations manually.
+Allow adding new files to git staging area.
 
 ## Commands
 

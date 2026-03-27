@@ -8,6 +8,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Logging\Sentry\SentryCollector;
+use kissj\Participant\Gender;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -77,6 +78,10 @@ class SkautisService
                 $skautisUnitName = '';
             }
 
+            $gender = is_numeric($idPersonFromSkautis)
+                ? $this->requestGenderFromPerson((int)$idPersonFromSkautis)
+                : Gender::Other;
+
             return new SkautisUserData(
                 $skautisUserDetailExternal->ID,
                 $skautisUserDetailExternal->UserName,
@@ -92,6 +97,7 @@ class SkautisService
                 $skautisUserDetailExternal->PostCode ?? '',
                 $skautisUserDetail->HasMembership,
                 $skautisUnitName,
+                $gender,
             );
         } catch (Throwable $t) {
             $this->sentryCollector->collect($t);
@@ -137,6 +143,7 @@ class SkautisService
         $participant->telephoneNumber = $skautisUserData->phone;
         $participant->permanentResidence = $skautisUserData->getPermanentResidence();
         $participant->scoutUnit = $skautisUserData->unitName;
+        $participant->gender = $skautisUserData->gender->value;
         $this->participantRepository->persist($participant);
 
         $this->flashMessages->info('flash.info.skautisDataPrefilled');
@@ -150,6 +157,22 @@ class SkautisService
         $this->userRepository->persist($user);
 
         return $user;
+    }
+
+    private function requestGenderFromPerson(int $idPersonFromSkautis): Gender
+    {
+        try {
+            /** @var object{PersonAllOutput: object{ID_Sex?: string, Sex?: string}} $personResult */
+            $personResult = $this->skautis->OrganizationUnit->PersonAll([
+                'ID' => $idPersonFromSkautis,
+            ]);
+
+            $sexDisplayName = $personResult->PersonAllOutput->Sex ?? null;
+
+            return Gender::fromSkautisDisplayName($sexDisplayName);
+        } catch (Throwable) {
+            return Gender::Other;
+        }
     }
 
     private function requestForUnitNameFromActiveMembership(int $idPersonFromSkautis): string
