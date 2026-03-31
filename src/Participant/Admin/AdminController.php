@@ -954,7 +954,7 @@ class AdminController extends AbstractController
         $otRegistrationUrl = null;
         if ($event->allowOrganizingTeam) {
             $otToken = $event->organizingTeamRegistrationToken
-                ?? $this->eventRepository->generateOrganizingTeamRegistrationToken($event);
+                ?? $this->eventRepository->generateNewOrganizingTeamRegistrationToken($event);
 
             $routeParser = RouteContext::fromRequest($request)->getRouteParser();
             $otRegistrationUrl = $routeParser->fullUrlFor(
@@ -976,7 +976,7 @@ class AdminController extends AbstractController
         Response $response,
         Event $event,
     ): Response {
-        $this->eventRepository->generateOrganizingTeamRegistrationToken($event);
+        $this->eventRepository->generateNewOrganizingTeamRegistrationToken($event);
 
         $this->flashMessages->success('flash.success.otTokenRegenerated');
         $this->logger->info('OT registration token regenerated for event ' . $event->slug);

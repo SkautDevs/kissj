@@ -70,4 +70,12 @@ class EventRepository extends Repository
     {
         return $this->findOneBy(['api_key_vendor' => $apiKey]);
     }
+
+    public function generateNewOrganizingTeamRegistrationToken(Event $event): string
+    {
+        $event->organizingTeamRegistrationToken = bin2hex(random_bytes(16));
+        $this->persist($event);
+
+        return $event->organizingTeamRegistrationToken;
+    }
 }
