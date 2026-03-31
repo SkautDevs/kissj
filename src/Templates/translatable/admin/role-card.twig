@@ -1,0 +1,96 @@
+{% set role = config.role %}
+{% set roleValue = role.value %}
+
+<form method="POST" action="{{ url_for('admin-save-role-management', {'eventSlug': event.slug}) }}">
+    <input type="hidden" name="role" value="{{ roleValue }}">
+
+    <h3{% if not config.enabled %} class="role-disabled"{% endif %}>{{ ('role.' ~ roleValue)|trans }}</h3>
+    <p{% if not config.enabled %} class="role-disabled"{% endif %}><em>{{ ('chooseRole.advice' ~ roleValue|capitalize ~ 'Text')|trans }}</em></p>
+
+    {% set allowField = config.allowField %}
+
+    {% if roleValue not in ['pp', 'tp'] %}
+        <label>
+            <input type="checkbox" name="{{ allowField }}" value="1"
+                   {% if config.enabled %}checked{% endif %}>
+            {% trans %}roleManagement.enabled{% endtrans %}
+        </label>
+        <br/>
+    {% else %}
+        <p>
+            {% if config.enabled %}
+                <strong>{% trans %}roleManagement.enabled{% endtrans %}</strong>
+            {% else %}
+                {% trans %}roleManagement.disabled{% endtrans %}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    <p>{% trans %}roleManagement.actualMaxCount{% endtrans %}: <strong>{{ config.eventTypeMax }}</strong></p>
+    <p>{% trans %}roleManagement.dbMaxCount{% endtrans %}: <strong>{{ config.dbMax }}</strong></p>
+
+    {% set maxField = config.maxField %}
+
+    {% if config.hasDifference %}
+        <p style="color: var(--color-accent);">
+            <strong>{% trans %}roleManagement.overrideWarning{% endtrans %}</strong>
+        </p>
+    {% endif %}
+
+    {% if roleValue != 'pp' %}
+        {% if config.hasDifference %}
+            <input type="hidden" name="{{ maxField }}" value="{{ config.dbMax }}">
+        {% else %}
+            <label class="form-group">
+                {% trans %}roleManagement.maxCount{% endtrans %}:<br/>
+                <input class="form-control form-wide" type="number" name="{{ maxField }}"
+                       value="{{ config.dbMax > 0 ? config.dbMax : '' }}" min="0">
+            </label>
+        {% endif %}
+    {% endif %}
+
+    {% if roleValue == 'pp' %}
+        <label class="form-group">
+            {% trans %}roleManagement.minPerPatrol{% endtrans %}:<br/>
+            <input class="form-control form-wide" type="number" name="minimalPatrolParticipantsCount"
+                   value="{{ minimalPatrolParticipantsCount ?? 0 }}" min="0">
+        </label><br/>
+        <label class="form-group">
+            {% trans %}roleManagement.maxPerPatrol{% endtrans %}:<br/>
+            <input class="form-control form-wide" type="number" name="maximalPatrolParticipantsCount"
+                   value="{{ maximalPatrolParticipantsCount ?? 0 }}" min="0">
+        </label>
+    {% endif %}
+
+    {% if roleValue == 'tp' %}
+        <label class="form-group">
+            {% trans %}roleManagement.minPerTroop{% endtrans %}:<br/>
+            <input class="form-control form-wide" type="number" name="minimalTroopParticipantsCount"
+                   value="{{ minimalTroopParticipantsCount ?? 0 }}" min="0">
+        </label>
+        <label class="form-group">
+            {% trans %}roleManagement.maxPerTroop{% endtrans %}:<br/>
+            <input class="form-control form-wide" type="number" name="maximalTroopParticipantsCount"
+                   value="{{ maximalTroopParticipantsCount ?? 0 }}" min="0">
+        </label>
+    {% endif %}
+
+    <br/>
+
+    <details>
+        <summary>{% trans %}roleManagement.registrationFields{% endtrans %} ({{ config.allowedItems|length }})</summary>
+        <ul style="text-align: left;">
+            {% for item in config.allowedItems %}
+                <li>
+                    {{ item.label|trans }}
+                    {% if item.required %}
+                        <strong>({% trans %}roleManagement.required{% endtrans %})</strong>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </details>
+
+    <br/>
+    <input type="submit" class="btn btn-small" value="{% trans %}roleManagement.save{% endtrans %}">
+</form>

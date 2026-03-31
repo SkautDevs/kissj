@@ -17,6 +17,10 @@ Do not include your signature.
 Never commit or push anything — the user handles all git operations manually.
 Allow adding new files to git staging area.
 
+## Plan Execution
+
+When executing implementation plans, use subagent-driven development (superpowers:subagent-driven-development skill).
+
 ## Commands
 
 All commands run inside the Docker container:

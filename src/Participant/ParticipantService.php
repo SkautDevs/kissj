@@ -405,18 +405,11 @@ readonly class ParticipantService
     public function getContentArbiterForParticipant(
         Participant $participant,
     ): AbstractContentArbiter {
-        $eventType = $participant->getUserButNotNull()->event->eventType;
+        if ($participant->role === null) { // TODO remove nullable from role
+            throw new \LogicException('Missing role for participant ID: ' . $participant->id);
+        }
 
-        return match ($participant->role) {
-            ParticipantRole::PatrolLeader => $eventType->getContentArbiterPatrolLeader(),
-            ParticipantRole::PatrolParticipant => $eventType->getContentArbiterPatrolParticipant(),
-            ParticipantRole::TroopLeader => $eventType->getContentArbiterTroopLeader(),
-            ParticipantRole::TroopParticipant => $eventType->getContentArbiterTroopParticipant(),
-            ParticipantRole::Ist => $eventType->getContentArbiterIst(),
-            ParticipantRole::Guest => $eventType->getContentArbiterGuest(),
-            ParticipantRole::OrganizingTeam => $eventType->getContentArbiterOrganizingTeam(),
-            null => throw new \LogicException('Missing role for participant ID: ' . $participant->id),
-        };
+        return $participant->getUserButNotNull()->event->eventType->getContentArbiterForRole($participant->role);
     }
 
     public function setAsEntered(Participant $participant): Participant
