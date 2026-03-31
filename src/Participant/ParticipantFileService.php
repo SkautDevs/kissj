@@ -13,7 +13,6 @@ use Slim\Psr7\UploadedFile;
 readonly class ParticipantFileService
 {
     public function __construct(
-        private ParticipantService $participantService,
         private SaveFileHandler $saveFileHandler,
         private UploadFileHandler $uploadFileHandler,
     ) {
@@ -21,7 +20,9 @@ readonly class ParticipantFileService
 
     public function handleUploadedFiles(Participant $participant, Request $request): void
     {
-        $contentArbiter = $this->participantService->getContentArbiterForParticipant($participant);
+        $contentArbiter = $participant->getUserButNotNull()->event->eventType->getContentArbiterForRole(
+            $participant->getRoleOrFail(),
+        );
 
         foreach ($contentArbiter->getAllowedItems() as $item) {
             if ($item->type !== ContentArbiterItemType::File) {

@@ -103,7 +103,10 @@ readonly class ParticipantService
             $result = $this->validateTroopLeaderRegistrationClose($participant, $event, $result);
         }
 
-        if (!$this->isParticipantDataValidForClose($participant, $this->getContentArbiterForParticipant($participant))) {
+        if (!$this->isParticipantDataValidForClose(
+            $participant,
+            $event->eventType->getContentArbiterForRole($participant->getRoleOrFail())
+        )) {
             $result = $result->withWarning('flash.warning.noLock');
         }
 
@@ -400,16 +403,6 @@ readonly class ParticipantService
         }
 
         return $count;
-    }
-
-    public function getContentArbiterForParticipant(
-        Participant $participant,
-    ): AbstractContentArbiter {
-        if ($participant->role === null) { // TODO remove nullable from role
-            throw new \LogicException('Missing role for participant ID: ' . $participant->id);
-        }
-
-        return $participant->getUserButNotNull()->event->eventType->getContentArbiterForRole($participant->role);
     }
 
     public function setAsEntered(Participant $participant): Participant
