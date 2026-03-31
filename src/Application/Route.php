@@ -356,6 +356,12 @@ class Route
                         $app->post('/regenerateToken', AdminController::class . '::regenerateOrganizingTeamToken')
                             ->setName('admin-organizing-team-regenerate-token');
                     });
+
+                    $app->get('/roleManagement', AdminController::class . '::showRoleManagement')
+                        ->setName('admin-role-management');
+
+                    $app->post('/roleManagement', AdminController::class . '::saveRoleManagement')
+                        ->setName('admin-save-role-management');
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });

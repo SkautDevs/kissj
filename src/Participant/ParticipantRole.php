@@ -20,12 +20,12 @@ enum ParticipantRole: string
     public static function all(): array
     {
         return [
-            self::Ist,
             self::PatrolLeader,
             self::PatrolParticipant,
-            self::Guest,
             self::TroopLeader,
             self::TroopParticipant,
+            self::Ist,
+            self::Guest,
             self::OrganizingTeam,
         ];
     }

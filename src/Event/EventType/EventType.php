@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType;
 
 use kissj\Application\StringUtils;
+use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterOrganizingTeam;
@@ -14,13 +15,9 @@ use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\Event;
 use kissj\Participant\Guest\Guest;
-use kissj\Participant\Ist\Ist;
 use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
-use kissj\Participant\Patrol\PatrolLeader;
-use kissj\Participant\Troop\TroopLeader;
-use kissj\Participant\Troop\TroopParticipant;
 use kissj\Deal\EventDeal;
 use kissj\Payment\Payment;
 use kissj\User\UserRole;
@@ -54,17 +51,12 @@ abstract class EventType
         Participant $participant,
         int $closedSameRoleSameContingentParticipantsCount,
     ): bool {
-        $event = $participant->getUserButNotNull()->event;
+        if ($participant->role === null) {
+            throw new \LogicException('Unexpected participant without role, ID: ' . $participant->id);
+        }
 
-        $maximumParticipants = match ($participant::class) {
-            PatrolLeader::class => $event->maximalClosedPatrolsCount ?? 0,
-            TroopLeader::class => $event->maximalClosedTroopLeadersCount ?? 0,
-            TroopParticipant::class => $event->maximalClosedTroopParticipantsCount ?? 0,
-            Ist::class => $event->maximalClosedIstsCount ?? 0,
-            Guest::class => $event->maximalClosedGuestsCount ?? 0,
-            OrganizingTeam::class => $event->maximalClosedOrganizingTeamCount ?? 0,
-            default => throw new \RuntimeException('Unexpected participant class: ' . $participant::class),
-        };
+        $event = $participant->getUserButNotNull()->event;
+        $maximumParticipants = $this->getMaximalCountForRole($event, $participant->role);
 
         return $maximumParticipants <= $closedSameRoleSameContingentParticipantsCount;
     }
@@ -102,6 +94,32 @@ abstract class EventType
     public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
     {
         return new ContentArbiterOrganizingTeam();
+    }
+
+    public function getContentArbiterForRole(ParticipantRole $role): AbstractContentArbiter
+    {
+        return match ($role) {
+            ParticipantRole::PatrolLeader => $this->getContentArbiterPatrolLeader(),
+            ParticipantRole::PatrolParticipant => $this->getContentArbiterPatrolParticipant(),
+            ParticipantRole::TroopLeader => $this->getContentArbiterTroopLeader(),
+            ParticipantRole::TroopParticipant => $this->getContentArbiterTroopParticipant(),
+            ParticipantRole::Ist => $this->getContentArbiterIst(),
+            ParticipantRole::Guest => $this->getContentArbiterGuest(),
+            ParticipantRole::OrganizingTeam => $this->getContentArbiterOrganizingTeam(),
+        };
+    }
+
+    public function getMaximalCountForRole(Event $event, ParticipantRole $role): int
+    {
+        return match ($role) {
+            ParticipantRole::PatrolLeader => $event->maximalClosedPatrolsCount ?? 0,
+            ParticipantRole::TroopLeader => $event->maximalClosedTroopLeadersCount ?? 0,
+            ParticipantRole::TroopParticipant => $event->maximalClosedTroopParticipantsCount ?? 0,
+            ParticipantRole::Ist => $event->maximalClosedIstsCount ?? 0,
+            ParticipantRole::Guest => $event->maximalClosedGuestsCount ?? 0,
+            ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount ?? 0,
+            ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount ?? 0,
+        };
     }
 
     /**

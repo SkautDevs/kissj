@@ -324,6 +324,11 @@ li.step.is-active::after {
 	box-shadow: 2px 2px 2px #a21f16;
 }
 
+.role-disabled {
+	color: var(--color-grey);
+	text-decoration: line-through;
+}
+
 .form-wide {
 	width: 100%;
 }
