@@ -12,6 +12,7 @@ use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use LeanMapper\Exception\MemberAccessException;
+use LogicException;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -113,7 +114,7 @@ class Participant extends EntityDatetime
         try {
             return $this->__get($field);
         } catch (MemberAccessException $e) {
-            throw new \LogicException('Unknown participant field: ' . $field, 0, $e);
+            throw new LogicException('Unknown participant field: ' . $field, 0, $e);
         }
     }
 
@@ -134,7 +135,7 @@ class Participant extends EntityDatetime
     public function getUploadedFilename(string $fileItemId): ?string
     {
         if (!in_array($fileItemId, self::FILE_ITEM_IDS, true)) {
-            throw new \LogicException('Unknown file item id: ' . $fileItemId);
+            throw new LogicException('Unknown file item id: ' . $fileItemId);
         }
 
         /** @var string|null $filename */
@@ -150,7 +151,7 @@ class Participant extends EntityDatetime
         ?string $contentType,
     ): void {
         if (!in_array($fileItemId, self::FILE_ITEM_IDS, true)) {
-            throw new \LogicException('Unknown file item id: ' . $fileItemId);
+            throw new LogicException('Unknown file item id: ' . $fileItemId);
         }
 
         $prefix = 'uploaded' . ucfirst($fileItemId);
@@ -172,17 +173,26 @@ class Participant extends EntityDatetime
         if ($this instanceof PatrolParticipant) {
             $patrolLeaderUser = $this->patrolLeader->user;
             if ($patrolLeaderUser === null) {
-                throw new \RuntimeException('Missing user for patrol leader ID ' . $this->patrolLeader->id);
+                throw new LogicException('Missing user for patrol leader ID ' . $this->patrolLeader->id);
             }
 
             return $patrolLeaderUser;
         }
 
         if ($this->user === null) {
-            throw new \RuntimeException('Missing user for participant ID ' . $this->id);
+            throw new LogicException('Missing user for participant ID ' . $this->id);
         }
 
         return $this->user;
+    }
+
+    public function getRoleOrFail(): ParticipantRole
+    {
+        if ($this->role === null) {
+            throw new LogicException('Missing role for participant ID: ' . $this->id);
+        }
+
+        return $this->role;
     }
 
     public function getTshirt(): ?string

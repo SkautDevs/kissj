@@ -166,7 +166,7 @@ class ParticipantController extends AbstractController
             'user' => $user,
             'person' => $participant,
             'participants' => $participants,
-            'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+            'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
         ];
     }

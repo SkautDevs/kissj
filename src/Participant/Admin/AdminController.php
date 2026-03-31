@@ -633,7 +633,7 @@ class AdminController extends AbstractController
             'admin/mendParticipant.twig',
             [
 				'participant' => $participant,
-				'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+				'ca' => $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
 			],
         );
     }
@@ -651,7 +651,7 @@ class AdminController extends AbstractController
             'admin/changeParticipantDetails.twig',
             [
                 'person' => $participant,
-                'ca' => $this->participantService->getContentArbiterForParticipant($participant),
+                'ca' => $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
                 'caPp' => $eventType->getContentArbiterPatrolParticipant(),
                 'caTp' => $eventType->getContentArbiterTroopParticipant(),
             ],
