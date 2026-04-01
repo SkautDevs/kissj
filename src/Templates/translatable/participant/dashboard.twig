@@ -1,7 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
-<div class="card {{ userStatus }}-theme">{# TODO remove different themes #}
+<div class="card">
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
         {% if person is Leader %}{{ person.getPatrolName }}{% endif %}
@@ -27,7 +27,7 @@
 
 {% include('widgets/deals.twig') with { person: person } %}
 
-<div class="card {{ userStatus }}-theme">
+<div class="card">
     {% if person is Leader %}
         <div class="card-divide">
             {#  Patrol/Troop Leader #}

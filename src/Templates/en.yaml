@@ -315,6 +315,9 @@ email:
         requirements: ", as you hadn't met all the requirements."
         reason: "Reason:"
         editRegistration: ". Please, add or edit missing details in registration system and don't forget to send your registration for approval."
+    due-payment-denied:
+        subject: "payment not received - registration cancelled"
+        reason: "we did not receive your payment within the payment deadline"
     payment-info:
         subject: "payment information"
         approved: "We have just approved your registration for"

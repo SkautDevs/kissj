@@ -315,6 +315,9 @@ email:
         requirements: ", nesplňoval/a jsi podmínky pro přijetí."
         reason: "Z důvodu:"
         editRegistration: ". Prosím uprav nebo doplň své informace v systému. Nezapomeň nám přihlášku opětovně poslat ke schválení."
+    due-payment-denied:
+        subject: "platba neobdržena - registrace zrušena"
+        reason: "neobdrželi jsme tvou platbu v termínu pro zaplacení"
     payment-info:
         subject: "platební informace"
         approved: "právě jsme potvrdili tvou přihlášku na"

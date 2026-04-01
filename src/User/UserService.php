@@ -76,9 +76,9 @@ readonly class UserService
         return $token;
     }
 
-    public function generateTokenString(): string
+    private function generateTokenString(): string
     {
-        return md5((string)random_int(PHP_INT_MIN, PHP_INT_MAX));
+        return bin2hex(random_bytes(16));
     }
 
     public function isLoginTokenValid(string $loginToken): bool
@@ -129,31 +129,10 @@ readonly class UserService
         $participant->role = $participantRole;
         $this->participantRepository->persist($participant);
 
-        $user->role = UserRole::Participant; // TODO move into entity creation (simple)
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
 
         return $participant;
-    }
-
-    public function createSkautisUser(
-        Event $event,
-        int $skautisId,
-        string $email,
-        UserStatus $userStatus,
-    ): User {
-        $user = new User();
-        $user->email = $email;
-        $user->skautisId = $skautisId;
-        $user->skautisHasMembership = true;
-        $user->role = UserRole::Participant;
-        $user->event = $event;
-        $user->status = $userStatus;
-        $user->loginType = UserLoginType::Skautis;
-
-        $this->userRepository->persist($user);
-
-        return $user;
     }
 
     public function setUserOpen(User $user): User

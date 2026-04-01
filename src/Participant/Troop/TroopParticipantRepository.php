@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Troop;
 
+use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
@@ -58,8 +59,10 @@ class TroopParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('participant.patrol_leader_id IS NULL');
 
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
         /** @var TroopParticipant[] $troopParticipants */
-        $troopParticipants = $this->createEntities($qb->fetchAll());
+        $troopParticipants = $this->createEntities($rows);
 
         return $troopParticipants;
     }

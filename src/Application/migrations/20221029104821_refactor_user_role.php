@@ -13,7 +13,7 @@ final class RefactorUserRole extends AbstractMigration
             return "'" . $role->value . "'";
         }, UserRole::adminRoles()));
 
-        $this->execute("UPDATE public.user SET role = 'participant' WHERE role NOT IN (" . $adminRoles . ")");
+        $this->execute("UPDATE \"user\" SET role = 'participant' WHERE role NOT IN (" . $adminRoles . ")");
     }
 
     public function down(): void

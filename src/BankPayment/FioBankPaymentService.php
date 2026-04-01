@@ -28,17 +28,18 @@ readonly class FioBankPaymentService implements IBankPaymentService
         /** @var iterable<Transaction> $freshPayments */
         $freshPayments = $fioRead->lastDownload();
 
-        $savedBankPaymentsCount = 0;
-        foreach ($freshPayments as $freshPayment) {
-            if ($freshPayment->amount > 0) { // get only incomes
-                $bankPayment = new BankPayment();
-                $bankPayment = $bankPayment->mapTransactionInto($freshPayment, $event);
-                // TODO optimize
-                $this->bankPaymentRepository->persist($bankPayment);
-                $savedBankPaymentsCount++;
+        return $this->bankPaymentRepository->transactional(function () use ($freshPayments, $event): int {
+            $savedBankPaymentsCount = 0;
+            foreach ($freshPayments as $freshPayment) {
+                if ($freshPayment->amount > 0) { // get only incomes
+                    $bankPayment = new BankPayment();
+                    $bankPayment->mapTransactionInto($freshPayment, $event);
+                    $this->bankPaymentRepository->persist($bankPayment);
+                    $savedBankPaymentsCount++;
+                }
             }
-        }
 
-        return $savedBankPaymentsCount;
+            return $savedBankPaymentsCount;
+        });
     }
 }

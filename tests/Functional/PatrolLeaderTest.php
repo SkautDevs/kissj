@@ -3,8 +3,11 @@
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\User\UserRole;
 use kissj\User\UserService;
+use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
 
@@ -29,9 +32,9 @@ class PatrolLeaderTest extends AppTestCase
         $user = $userService->registerEmailUser($email, $testEvent);
         $patrolLeader = $patrolService->getPatrolLeader($user);
 
-        $this->assertEquals($patrolLeader->getUserButNotNull()->id, $user->id);
-        // $this->assertEquals('pl', $patrolLeader->role); // TODO need to fix
-        // $this->assertEquals(User::ROLE_PATROL_LEADER, $patrolLeader->getUserButNotNull()->role); // TODO need to fix
-        // this->assertEquals(User::STATUS_OPEN, $patrolLeader->getUserButNotNull()->status); // TODO need to fix
+        self::assertEquals($user->id, $patrolLeader->getUserButNotNull()->id);
+        self::assertEquals(ParticipantRole::PatrolLeader, $patrolLeader->role);
+        self::assertEquals(UserRole::Participant, $patrolLeader->getUserButNotNull()->role);
+        self::assertEquals(UserStatus::WithoutRole, $patrolLeader->getUserButNotNull()->status);
     }
 }

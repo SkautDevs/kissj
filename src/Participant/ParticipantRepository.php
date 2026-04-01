@@ -67,6 +67,7 @@ class ParticipantRepository extends Repository
             $qb->limit($limit);
         }
 
+        /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
         /** @var Participant[] $participants */
         $participants = $this->createEntities($rows);
@@ -86,6 +87,7 @@ class ParticipantRepository extends Repository
             if ($adminUser instanceof User) {
                 $this->addFilterAdminParticipants($qb, $adminUser);
             }
+            /** @var list<Row> $rows */
             $rows = $qb->fetchAll();
             /** @var Participant[] $participants */
             $participants = [...$participants, ...$this->createEntities($rows)];
@@ -461,10 +463,8 @@ class ParticipantRepository extends Repository
     }
 
     /**
-     * @param Event $event
      * @param array<ParticipantRole> $participantRoles
      * @return list<Row>
-     * /
      */
     private function getRowsForEntryParticipant(Event $event, array $participantRoles, bool $paidOnly): array
     {
@@ -497,13 +497,14 @@ class ParticipantRepository extends Repository
 
         $this->addOrdersBy($qb, [new Order('id')]);
 
-        return $qb->fetchAll();
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+
+        return $rows;
     }
 
     /**
-     * @param Event $event
      * @return list<Row>
-     * /
      */
     private function getRowsForEntryPatrolParticipant(Event $event, bool $paidOnly): array
     {
@@ -537,7 +538,10 @@ class ParticipantRepository extends Repository
 
         $this->addOrdersBy($qb, [new Order('id')]);
 
-        return $qb->fetchAll();
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+
+        return $rows;
     }
 
     private function mapDataToEntryParticipant(Row $row): EntryParticipant
@@ -711,8 +715,6 @@ class ParticipantRepository extends Repository
     }
 
     /**
-     * retrieve absolute count of diets for event
-     *
      * @return array<string, int>
      */
     public function getDigestFoodStatistic(
