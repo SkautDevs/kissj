@@ -49,7 +49,9 @@ readonly class ParticipantService
      */
     private function addParamsIntoPerson(array $params, Participant $p): Participant
     {
-        $p->patrolName = $params['patrolName'] ?? null;
+        if ($p instanceof PatrolLeader || $p instanceof TroopLeader) {
+            $p->patrolName = $params['patrolName'] ?? null;
+        }
         $p->contingent = $params['contingent'] ?? null;
         $p->firstName = $params['firstName'] ?? null;
         $p->lastName = $params['lastName'] ?? null;
