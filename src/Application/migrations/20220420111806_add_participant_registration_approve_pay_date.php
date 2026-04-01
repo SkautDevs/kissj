@@ -15,19 +15,19 @@ final class AddParticipantRegistrationApprovePayDate extends AbstractMigration
             ->save();
 
         $this->execute('
-            UPDATE public.participant
+            UPDATE participant
             SET registration_approve_date = participant.updated_at
-            FROM public.user
-            WHERE public.user.id = public.participant.user_id
-            AND public.user.status IN (\'approved\', \'paid\');
+            FROM "user"
+            WHERE "user".id = participant.user_id
+            AND "user".status IN (\'approved\', \'paid\');
         ');
 
         $this->execute('
-            UPDATE public.participant
+            UPDATE participant
             SET registration_pay_date = participant.updated_at
-            FROM public.user
-            WHERE public.user.id = public.participant.user_id
-            AND public.user.status IN (\'paid\');
+            FROM "user"
+            WHERE "user".id = participant.user_id
+            AND "user".status IN (\'paid\');
         ');
     }
 

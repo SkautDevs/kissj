@@ -52,7 +52,6 @@ class EntryController extends AbstractController
         Response $response,
         string $entryCode,
     ): Response {
-        // TODO solve code ABCDEFGH - default code for DB - block or generate better data in DB
         $participant = $this->participantRepository->findOneByEntryCode($entryCode);
         if ($participant === null) {
             return $this->createErrorEntryResponse($response, 'participant not found');

@@ -214,14 +214,14 @@ readonly class Mailer
     }
 
     public function sendDuePaymentDenied(Participant $participant): void
-    {// TODO improve
+    {
         $user = $participant->getUserButNotNull();
         $this->sendMailFromTemplate(
             $user->email,
-            'platba neobdržena -> registrace zrušena', // TODO make translatable
+            $this->translator->trans('email.due-payment-denied.subject'),
             'cancel-payment',
             [
-                'reason' => 'neobdrželi jsme tvou platbu v termínu pro zaplacení',
+                'reason' => $this->translator->trans('email.due-payment-denied.reason'),
             ],
         );
     }

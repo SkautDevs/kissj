@@ -20,7 +20,6 @@ class EventTypeAqua extends EventType
     /**
      * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
      * discount 40€ for self-eating participant (not for ISTs)
-     * TODO update
      */
     public function getPrice(Participant $participant): int
     {

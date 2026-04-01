@@ -92,8 +92,10 @@ class PaymentRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('payment.status = %s', PaymentStatus::Waiting);
 
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
         /** @var Payment[] $waitingEventPayments */
-        $waitingEventPayments = $this->createEntities($qb->fetchAll());
+        $waitingEventPayments = $this->createEntities($rows);
 
         return $waitingEventPayments;
     }

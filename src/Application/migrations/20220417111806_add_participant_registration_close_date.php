@@ -12,13 +12,13 @@ final class AddParticipantRegistrationCloseDate extends AbstractMigration
         $participant
             ->addColumn('registration_close_date', 'datetime', ['default' => null, 'null' => true])
             ->save();
-        // TODO remove "public." string from query
+
         $this->execute('
-            UPDATE public.participant
+            UPDATE participant
             SET registration_close_date = participant.updated_at
-            FROM public.user
-            WHERE public.user.id = participant.user_id
-            AND public.user.status IN (\'closed\', \'approved\', \'paid\');
+            FROM "user"
+            WHERE "user".id = participant.user_id
+            AND "user".status IN (\'closed\', \'approved\', \'paid\');
         ');
     }
 
