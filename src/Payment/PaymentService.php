@@ -300,6 +300,7 @@ class PaymentService
             : DateTimeImmutable::createFromInterface($eventStartDate);
     }
 
+    // TroopLeader intentionally excluded — troop name is not needed in payment note
     private function composeNote(Participant $participant, Event $event): string
     {
         if ($participant instanceof PatrolLeader) {

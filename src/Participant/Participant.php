@@ -23,7 +23,6 @@ use Ramsey\Uuid\Uuid;
  * @property User|null              $user m:hasOne
  * @property ParticipantRole|null   $role m:passThru(roleFromString|roleToString) #needed for DB working (see Mapper.php)
  *
- * @property string|null            $patrolName #used for troops too # TODO move to PatrolLeader + TroopLeader
  * @property string|null            $contingent
  * @property string|null            $firstName
  * @property string|null            $lastName

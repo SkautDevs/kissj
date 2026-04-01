@@ -177,11 +177,10 @@ readonly class TroopService
         $troopParticipantId = $troopParticipant->id;
         $troopLeaderId = $troopLeader->id;
 
-        // Role mutation via cross-type persist is safe here: LeanMapper's persist only writes
-        // modified columns (role, patrolName, troopLeader) and does not validate entity class vs role
+        $patrolName = $troopLeader->patrolName;
+
         $troopParticipant->troopLeader = null;
         $troopParticipant->role = ParticipantRole::TroopLeader;
-        $troopParticipant->patrolName = $troopLeader->patrolName;
         $this->troopParticipantRepository->persist($troopParticipant);
 
         $troopLeader->role = ParticipantRole::TroopParticipant;
@@ -193,6 +192,9 @@ readonly class TroopService
         if (!$newLeader instanceof TroopLeader) {
             throw new LogicException('refetched entity is not TroopLeader after role mutation');
         }
+        $newLeader->patrolName = $patrolName;
+        $this->troopLeaderRepository->persist($newLeader);
+
         $demotedParticipant = $this->troopParticipantRepository->get($troopLeaderId);
         if (!$demotedParticipant instanceof TroopParticipant) {
             throw new LogicException('refetched entity is not TroopParticipant after role mutation');
