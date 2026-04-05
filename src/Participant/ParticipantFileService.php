@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FileHandler\UploadFileHandler;
@@ -18,13 +19,12 @@ readonly class ParticipantFileService
     ) {
     }
 
-    public function handleUploadedFiles(Participant $participant, Request $request): void
+    /**
+     * @param list<ContentArbiterItem> $items
+     */
+    public function handleUploadedFiles(Participant $participant, Request $request, array $items): void
     {
-        $contentArbiter = $participant->getUserButNotNull()->event->eventType->getContentArbiterForRole(
-            $participant->getRoleOrFail(),
-        );
-
-        foreach ($contentArbiter->getAllowedItems() as $item) {
+        foreach ($items as $item) {
             if ($item->type !== ContentArbiterItemType::File) {
                 continue;
             }

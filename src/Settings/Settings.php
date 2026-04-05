@@ -37,6 +37,7 @@ use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
+use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
@@ -186,6 +187,7 @@ class Settings
             IstRepository::class => autowire(),
             LanguageNegotiator::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
+            LockedStatusOnlyMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
             MonologContextMiddleware::class => autowire(),
             NonChoosedRoleOnlyMiddleware::class => autowire(),

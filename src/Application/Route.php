@@ -24,6 +24,7 @@ use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\NotGuestMiddleware;
+use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
@@ -192,6 +193,14 @@ class Route
                             $app->post('/closeRegistration', ParticipantController::class . '::closeRegistration')
                                 ->setName('confirmCloseRegistration');
                         })->add(OpenStatusOnlyMiddleware::class);
+
+                        $app->group('', function (RouteCollectorProxy $app) {
+                            $app->get('/showChangeDetailsAfterLock', ParticipantController::class . '::showDetailsChangeableAfterLock')
+                                ->setName('showDetailsChangeableAfterLock');
+
+                            $app->post('/changeDetailsAfterLock', ParticipantController::class . '::changeDetailsAfterLock')
+                                ->setName('changeDetailsAfterLock');
+                        })->add(LockedStatusOnlyMiddleware::class);
                     });
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 

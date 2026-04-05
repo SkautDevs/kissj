@@ -8,6 +8,7 @@ use Exception;
 use kissj\AbstractController;
 use kissj\Deal\Deal;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
@@ -53,14 +54,51 @@ class ParticipantController extends AbstractController
         );
     }
 
+    public function showDetailsChangeableAfterLock(Response $response, User $user): Response
+    {
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+        $ca = $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail());
+
+        return $this->view->render(
+            $response,
+            'participant/changeDetailsAfterLock.twig',
+            [
+                'user' => $user,
+                'person' => $participant,
+                'ca' => $ca,
+            ],
+        );
+    }
+
+    public function changeDetailsAfterLock(Request $request, Response $response, User $user): Response
+    {
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+        $ca = $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail());
+        $editableItems = $ca->getEditableAfterLockItems();
+
+        /** @var array<string, string|null> $parsed */
+        $parsed = $request->getParsedBody();
+        $this->participantService->updateEditableAfterLockFields($participant, $parsed, $editableItems);
+        $this->participantFileService->handleUploadedFiles($participant, $request, $editableItems);
+
+        $editedSlugs = array_map(fn (ContentArbiterItem $item) => $item->slug, $editableItems);
+        $this->logger->info('Changed details after lock for participant ID ' . $participant->id
+            . ', user ID ' . $user->id . ', fields: ' . implode(', ', $editedSlugs));
+
+        $this->flashMessages->success('flash.success.detailsSaved');
+
+        return $this->redirect($request, $response, 'getDashboard');
+    }
+
     public function changeDetails(Request $request, Response $response, User $user): Response
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
 
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
+        $ca = $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail());
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
-        $this->participantFileService->handleUploadedFiles($participant, $request);
+        $this->participantFileService->handleUploadedFiles($participant, $request, $ca->getAllowedItems());
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');

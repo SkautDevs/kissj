@@ -103,7 +103,8 @@ class PatrolController extends AbstractController
             $this->patrolService->getPatrolParticipant($participantId),
             $params
         );
-        $this->participantFileService->handleUploadedFiles($patrolParticipant, $request);
+        $ca = $patrolParticipant->getUserButNotNull()->event->eventType->getContentArbiterPatrolParticipant();
+        $this->participantFileService->handleUploadedFiles($patrolParticipant, $request, $ca->getAllowedItems());
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
         $this->flashMessages->success('flash.success.detailsSaved');

@@ -5,7 +5,7 @@
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST" action="{{ url_for('changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
-            {% include 'widgets/changeDetails.twig' with {'personDetails': plDetails} %}
+            {% include 'widgets/changeDetails.twig' with {'personDetails': plDetails, 'editableItems': ca.getAllowedItems()} %}
             <div class="text-center">
                 <br/>
                 <input class="btn btn-small" type="submit" value="{% trans %}changeDetails.save{% endtrans %}">

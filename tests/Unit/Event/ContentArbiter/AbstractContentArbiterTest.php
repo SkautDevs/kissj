@@ -158,4 +158,60 @@ class AbstractContentArbiterTest extends TestCase
         self::assertSame(['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'], $ca->driver->options);
         self::assertSame(['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'], $ca->scarf->options);
     }
+
+    public function testEditableAfterLockDefaultsToFalseForAllFields(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        foreach ($ca->getAllItems() as $item) {
+            self::assertFalse($item->editableAfterLock, 'Field ' . $item->slug . ' should default to editableAfterLock=false');
+        }
+    }
+
+    public function testGetEditableAfterLockItemsReturnsEmptyByDefault(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertEmpty($ca->getEditableAfterLockItems());
+    }
+
+    public function testGetEditableAfterLockItemsReturnsOnlyAllowedAndEditableAfterLock(): void
+    {
+        $ca = new ContentArbiterIst();
+        $ca->health->editableAfterLock = true;
+        $ca->notes->editableAfterLock = true;
+
+        $items = $ca->getEditableAfterLockItems();
+        $slugs = array_map(fn (ContentArbiterItem $item) => $item->slug, $items);
+
+        self::assertCount(2, $items);
+        self::assertContains('healthProblems', $slugs);
+        self::assertContains('notes', $slugs);
+    }
+
+    public function testGetEditableAfterLockItemsExcludesDisallowedFields(): void
+    {
+        $ca = new ContentArbiterIst();
+        // phone is allowed=false by default
+        $ca->phone->editableAfterLock = true;
+
+        $items = $ca->getEditableAfterLockItems();
+        $slugs = array_map(fn (ContentArbiterItem $item) => $item->slug, $items);
+
+        self::assertNotContains('telephoneNumber', $slugs);
+    }
+
+    public function testGetEditableAfterLockItemsSortedByOrder(): void
+    {
+        $ca = new ContentArbiterIst();
+        $ca->notes->editableAfterLock = true; // order 500
+        $ca->health->editableAfterLock = true; // order 190
+
+        $items = $ca->getEditableAfterLockItems();
+        $orders = array_map(fn (ContentArbiterItem $item) => $item->order, $items);
+
+        $sorted = $orders;
+        sort($sorted);
+        self::assertSame($sorted, $orders);
+    }
 }

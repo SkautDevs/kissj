@@ -22,4 +22,9 @@ enum UserStatus: string
     {
         return in_array($this, [self::Approved, self::Paid], true) === false;
     }
+
+    public function isLocked(): bool
+    {
+        return in_array($this, [self::Closed, self::Approved, self::Paid], true);
+    }
 }

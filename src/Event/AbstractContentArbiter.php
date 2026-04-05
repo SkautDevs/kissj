@@ -404,4 +404,19 @@ abstract class AbstractContentArbiter
 
         return $items;
     }
+
+    /**
+     * @return list<ContentArbiterItem>
+     */
+    public function getEditableAfterLockItems(): array
+    {
+        $items = array_filter(
+            $this->getAllItems(),
+            fn (ContentArbiterItem $item) => $item->allowed && $item->editableAfterLock,
+        );
+
+        usort($items, fn (ContentArbiterItem $a, ContentArbiterItem $b) => $a->order <=> $b->order);
+
+        return $items;
+    }
 }

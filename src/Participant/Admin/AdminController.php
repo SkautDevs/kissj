@@ -669,8 +669,9 @@ class AdminController extends AbstractController
 
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
+        $ca = $event->eventType->getContentArbiterForRole($participant->getRoleOrFail());
         $this->participantService->addParamsIntoParticipant($participant, $parsed);
-        $this->participantFileService->handleUploadedFiles($participant, $request);
+        $this->participantFileService->handleUploadedFiles($participant, $request, $ca->getAllowedItems());
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');

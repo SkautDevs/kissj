@@ -21,6 +21,7 @@ userCustomHelp:
 dashboard:
     personalInfo: "Osobné údaje"
     editDetails: "Vyplniť svoje údaje"
+    editDetailsAfterLock: "Upraviť údaje po uzamknutí"
     delete: "Zmazať"
     youWantDelete: "Naozaj chceš zmazať účastníka "
     withoutName: "(zatiaľ bez mena)"
@@ -68,6 +69,7 @@ dashboard:
     downloadReceipt: "Stiahnuť potvrdenie o zaplatení v PDF"
 changeDetails:
     editDetails: "Upraviť údaje"
+    editDetailsAfterLock: "Upraviť údaje"
     back: "Späť"
     save: "Uložiť"
 detail:

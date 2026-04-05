@@ -21,6 +21,7 @@ userCustomHelp:
 dashboard:
     personalInfo: "Personal Information"
     editDetails: "Fill in details"
+    editDetailsAfterLock: "Edit details after lock"
     delete: "Delete"
     youWantDelete: "Do you really want to delete participant "
     withoutName: "(without a name yet)"
@@ -68,6 +69,7 @@ dashboard:
     downloadReceipt: "Download receipt in PDF"
 changeDetails:
     editDetails: "Edit details"
+    editDetailsAfterLock: "Edit details"
     back: "Back"
     save: "Save"
 detail:

@@ -1,6 +1,6 @@
 {% import 'widgets/formFields.twig' as forms %}
 
-{% for item in ca.getAllowedItems() %}
+{% for item in editableItems %}
     {% if item.type.value == 'tshirtComposite' %}
         {{ forms.renderField(item, null, personDetails, event, user) }}
     {% else %}

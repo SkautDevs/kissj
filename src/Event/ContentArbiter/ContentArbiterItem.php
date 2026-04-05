@@ -24,6 +24,7 @@ class ContentArbiterItem
         public array $extraClasses = [],
         public ?string $helpText = null,
         public ?AgeGroup $ageGroup = null,
+        public bool $editableAfterLock = false,
     ) {
     }
 

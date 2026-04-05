@@ -36,6 +36,9 @@
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
+                {% elseif userStatus != 'cancelled' and ca.getEditableAfterLockItems() is not empty %}
+                    <a class="btn btn-small" href="{{ url_for('showDetailsChangeableAfterLock', {'eventSlug': event.slug}) }}">
+                        {% trans %}dashboard.editDetailsAfterLock{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}
@@ -157,6 +160,9 @@
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
                         {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
+                {% elseif userStatus != 'cancelled' and ca.getEditableAfterLockItems() is not empty %}
+                    <a class="btn btn-small" href="{{ url_for('showDetailsChangeableAfterLock', {'eventSlug': event.slug}) }}">
+                        {% trans %}dashboard.editDetailsAfterLock{% endtrans %}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}

@@ -6,6 +6,7 @@ namespace kissj\Participant;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\Event;
 use kissj\Mailer\Mailer;
@@ -38,6 +39,59 @@ readonly class ParticipantService
     public function addParamsIntoParticipant(Participant $participant, array $params): Participant
     {
         $participant = $this->addParamsIntoPerson($params, $participant);
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
+
+    /**
+     * @param array<string, string|null> $params
+     * @param list<ContentArbiterItem> $editableItems
+     */
+    public function updateEditableAfterLockFields(
+        Participant $participant,
+        array $params,
+        array $editableItems,
+    ): Participant {
+        foreach ($editableItems as $item) {
+            $slug = $item->slug;
+
+            match ($slug) {
+                'birthDate' => (function () use ($params, $participant): void {
+                    if (array_key_exists('birthDate', $params) && $params['birthDate'] !== null) {
+                        $participant->birthDate = DateTimeUtils::getDateTime($params['birthDate']);
+                    }
+                })(),
+                'arrivalDate' => (function () use ($params, $participant): void {
+                    if (array_key_exists('arrivalDate', $params) && $params['arrivalDate'] !== null) {
+                        $participant->arrivalDate = DateTimeUtils::getDateTime($params['arrivalDate']);
+                    }
+                })(),
+                'departureDate' => (function () use ($params, $participant): void {
+                    if (array_key_exists('departureDate', $params) && $params['departureDate'] !== null) {
+                        $participant->departureDate = DateTimeUtils::getDateTime($params['departureDate']);
+                    }
+                })(),
+                'tshirt' => (function () use ($params, $participant): void {
+                    $participant->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
+                })(),
+                'preferredPosition' => (function () use ($params, $participant): void {
+                    $rawPreferredPosition = $params['preferredPosition'] ?? [];
+                    /** @var list<string> $preferredPosition */
+                    $preferredPosition = is_array($rawPreferredPosition) ? $rawPreferredPosition : [];
+                    $participant->preferredPosition = $preferredPosition;
+                })(),
+                'printedHandbook' => (function () use ($params, $participant): void {
+                    $participant->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
+                })(),
+                default => (function () use ($slug, $params, $participant): void {
+                    if (array_key_exists($slug, $params)) {
+                        $participant->__set($slug, $params[$slug] ?? null);
+                    }
+                })(),
+            };
+        }
+
         $this->participantRepository->persist($participant);
 
         return $participant;
