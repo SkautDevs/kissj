@@ -11,7 +11,6 @@ use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
-use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Deal\EventDeal;
@@ -20,9 +19,6 @@ use kissj\Participant\Troop\TroopParticipant;
 class EventTypeObrok extends EventType
 {
     public const string SLUG_PROGRAMME = 'programme';
-
-    public const string CONTINGENT_VOLUNTEER = 'detail.contingent.volunteer';
-    public const string CONTINGENT_ORG = 'detail.contingent.org';
 
     #[\Override]
     public function getPrice(Participant $participant): int
@@ -47,6 +43,7 @@ class EventTypeObrok extends EventType
         $ca->food->allowed = true;
         $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->arrivalDate->allowed = true;
+        $ca->arrivalDate->editableAfterLock = true;
         $ca->parentalConsent->allowed = true;
         $ca->hospitalConsent->allowed = true;
         $ca->childWorkCert->allowed = true;
@@ -180,7 +177,7 @@ class EventTypeObrok extends EventType
             new EventDeal(
                 self::SLUG_SFH,
                 sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSezG__WHx4N8Jdq3Lj626bbYHgPMovwcFT_97DS4WdCPQBQgA/viewform?usp=pp_url&entry.68270341=%s',
+                    'TODO %s',
                     $participant->tieCode,
                 ),
             ),
@@ -190,7 +187,7 @@ class EventTypeObrok extends EventType
             $eventDeals[] = new EventDeal(
                 self::SLUG_PROGRAMME,
                 sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLScHeou_NyNKNmUOjpGaBLMlhMy0gB6xoal6xcMTyc84EpJcNw/viewform?usp=pp_url&entry.2082059253=%s&entry.797747193=%s',
+                    'TODO %s %s',
                     $participant->tieCode,
                     $participant->getFullName(),
                 ),
