@@ -48,7 +48,7 @@ spec:
                   value: postgresql
 
                 - name: DATABASE_HOST
-                  value: {{ .Release.Name }}-pgbouncer
+                  value: {{ default .Values.postgres.host .Values.postgres.poolerhost }}
 
                 - name: POSTGRES_DB
                   value: {{ .Values.postgres.dbname }}

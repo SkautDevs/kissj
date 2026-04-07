@@ -3,6 +3,7 @@ postgres:
   password: PostgresPassword
   host: PostgresHost
   dbname: PostgresDB
+  poolerhost:
 
 caddy:
   image:
@@ -16,7 +17,7 @@ caddy:
   tls:
     enabled: true
     issuer: letsencrypt-production
-  metrics: 
+  metrics:
     enabled: false
 
 php:
@@ -25,7 +26,7 @@ php:
     tag: latest
   metrics:
     enabled: false
-  
+
   replicas: 2
   hpa:
     enabled: false
@@ -33,7 +34,6 @@ php:
     maxReplicas: 20
 
 app:
-
   url: example.net
   locale: cs
 

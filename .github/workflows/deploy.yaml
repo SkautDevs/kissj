@@ -1,124 +1,123 @@
 # .github/workflows/deploy.yml
-name: Deploy to Kubernetes 
-on: 
+name: Deploy to Kubernetes
+on:
   workflow_call:
     inputs:
       envName:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
         type: string
         default: staging
-      
+
       envUrl:
-        description: 'URL of the environment'
+        description: "URL of the environment"
         required: true
         type: string
-        default: 'https://staging.kissj.net'
-    
+        default: "https://staging.kissj.net"
+
     secrets:
       KUBECONFIG:
-        description: 'KUBECONFIG for the cluster'
+        description: "KUBECONFIG for the cluster"
         required: true
 
   workflow_dispatch:
     inputs:
       envName:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
         type: string
         default: staging
       envUrl:
-        description: 'URL of the environment'
+        description: "URL of the environment"
         required: true
         type: string
-        default: 'https://staging.kissj.net'
+        default: "https://staging.kissj.net"
 
 jobs:
   deploy:
     name: Deploy to Kubernetes
-    runs-on: 'ubuntu-latest'
-    environment: 
+    runs-on: "ubuntu-latest"
+    environment:
       name: ${{ inputs.envName }}
       url: ${{ inputs.envUrl }}
-    
+
     steps:
+      - name: split url
+        uses: bhowell2/github-substring-action@v1
+        id: url
+        with:
+          value: ${{ inputs.envUrl }}
+          index_of_str: "https://"
 
-    - name: split url
-      uses: bhowell2/github-substring-action@v1
-      id: url
-      with:
-       value: ${{ inputs.envUrl }}
-       index_of_str: 'https://'
-    
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: 'Deploy'
-      uses: 'vimeda/helm@v1.7.0'
-      with:
-        release: kissj-${{ inputs.envName }}
-        namespace: 'kissj-${{ inputs.envName }}'
-        chart: 'deploy/helm/charts/kissj'
-        helm: 'helm3'
-        atomic: true
-        token: '${{ github.token }}'
-        values: |
-          
-          postgres:
-            username: ${{ secrets.POSTGRES_USERNAME }}
-            password: ${{ secrets.POSTGRES_PASSWORD }}
-            host: ${{ secrets.POSTGRES_HOST }}
-            dbname: ${{ secrets.POSTGRES_DBNAME }}
-          
-          caddy:
-            replicas: 2
-            hpa:
-              enabled: false
-            
-            image:
-              name: quay.io/kissj/caddy-ubi
-              tag: ${{ inputs.envName}}-${{ github.sha }}
-            tls: 
-              enabled: true
-              issuer: ${{ secrets.CERT_ISSUER}}
+      - name: "Deploy"
+        uses: "vimeda/helm@v1.7.0"
+        with:
+          release: kissj-${{ inputs.envName }}
+          namespace: "kissj-${{ inputs.envName }}"
+          chart: "deploy/helm/charts/kissj"
+          helm: "helm3"
+          atomic: true
+          token: "${{ github.token }}"
+          values: |
 
-          php:
-            replicas: 3
-            hpa:
-              enabled: false
-              maxReplicas: 3
-              minReplicas: 3
-              
-            image:
-              name: quay.io/kissj/php-ubi
-              tag: ${{ inputs.envName}}-${{ github.sha }}
-          
-          app:
-            url: ${{ steps.url.outputs.substring }}
-            
-            s3:
-              bucket: ${{ secrets.S3_BUCKET }}
-              region: ${{ secrets.S3_REGION }}
-              endpoint: ${{ secrets.S3_ENDPOINT }}
-              key: ${{ secrets.S3_KEY }}
-              secret: ${{ secrets.S3_SECRET }}
+            postgres:
+              username: ${{ secrets.POSTGRES_USERNAME }}
+              password: ${{ secrets.POSTGRES_PASSWORD }}
+              host: ${{ secrets.POSTGRES_HOST }}
+              poolerhost: ${{ secrets.POSTGRES_POOLERHOST }}
+              dbname: ${{ secrets.POSTGRES_DBNAME }}
 
-            mail:
-              server: ${{ secrets.MAIL_SERVER }}
-              username:  ${{ secrets.MAIL_USERNAME }}
-              password: ${{ secrets.MAIL_PASSWORD }}
-              port: ${{ secrets.MAIL_PORT }}
-              dsn: ${{ secrets.MAIL_DSN }}
-            
-            sentry:
-              dsn: ${{ secrets.SENTRY_DSN }}
-            
-            skautis:
-              appId: ${{ secrets.SKAUTIS_APP_ID }}
-              useTest: ${{ secrets.SKAUTIS_USE_TEST }}
-            redis: 
-              host: ${{ secrets.REDIS_HOST }}
-              password: ${{ secrets.REDIS_PASSWORD }}
+            caddy:
+              replicas: 2
+              hpa:
+                enabled: false
 
-      env:
-        KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+              image:
+                name: quay.io/kissj/caddy-ubi
+                tag: ${{ inputs.envName}}-${{ github.sha }}
+              tls:
+                enabled: true
+                issuer: ${{ secrets.CERT_ISSUER}}
 
+            php:
+              replicas: 3
+              hpa:
+                enabled: false
+                maxReplicas: 3
+                minReplicas: 3
+
+              image:
+                name: quay.io/kissj/php-ubi
+                tag: ${{ inputs.envName}}-${{ github.sha }}
+
+            app:
+              url: ${{ steps.url.outputs.substring }}
+
+              s3:
+                bucket: ${{ secrets.S3_BUCKET }}
+                region: ${{ secrets.S3_REGION }}
+                endpoint: ${{ secrets.S3_ENDPOINT }}
+                key: ${{ secrets.S3_KEY }}
+                secret: ${{ secrets.S3_SECRET }}
+
+              mail:
+                server: ${{ secrets.MAIL_SERVER }}
+                username:  ${{ secrets.MAIL_USERNAME }}
+                password: ${{ secrets.MAIL_PASSWORD }}
+                port: ${{ secrets.MAIL_PORT }}
+                dsn: ${{ secrets.MAIL_DSN }}
+
+              sentry:
+                dsn: ${{ secrets.SENTRY_DSN }}
+
+              skautis:
+                appId: ${{ secrets.SKAUTIS_APP_ID }}
+                useTest: ${{ secrets.SKAUTIS_USE_TEST }}
+              redis:
+                host: ${{ secrets.REDIS_HOST }}
+                password: ${{ secrets.REDIS_PASSWORD }}
+
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}

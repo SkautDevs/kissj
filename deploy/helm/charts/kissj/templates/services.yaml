@@ -10,7 +10,7 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-    
+
 spec:
   type: ClusterIP
   selector:
@@ -22,7 +22,7 @@ spec:
     - protocol: TCP
       port: 9253
       name: metrics
-      
+
 ---
 apiVersion: v1
 kind: Service
@@ -36,7 +36,7 @@ metadata:
       helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-    
+
 spec:
   type: ClusterIP
   selector:
@@ -48,26 +48,3 @@ spec:
     - protocol: TCP
       port: 9253
       name: metrics
-      
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: {{ .Release.Name }}-pgbouncer
-    labels:
-      app.kubernetes.io/name: {{ .Chart.Name}}
-      app.kubernetes.io/version: {{ .Chart.AppVersion }}
-      app.kubernetes.io/component: pgbouncer
-      app.kubernetes.io/part-of: {{ .Chart.Name }}
-      helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-      app.kubernetes.io/managed-by: {{ .Release.Service }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-    
-spec:
-  type: ClusterIP
-  selector:
-    app.kubernetes.io/component: pgbouncer
-  ports:
-    - protocol: TCP
-      port: 5432
-      name: psql
