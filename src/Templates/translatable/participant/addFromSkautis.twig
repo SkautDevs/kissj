@@ -1,0 +1,37 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+<div class="card">
+    <h2>{% trans %}skautisImport.title{% endtrans %}</h2>
+
+    {% if members is empty %}
+        <p>{% trans %}skautisImport.emptyState{% endtrans %}</p>
+    {% else %}
+        <form method="POST" action="{{ url_for('pl-addFromSkautis', {'eventSlug': event.slug}) }}">
+            {% for member in members %}
+                {% set matchStatus = matches[member.id] ?? null %}
+                <label for="member-{{ member.id }}"{% if matchStatus == 'added' %} class="text-muted"{% endif %}>
+                    <input type="checkbox"
+                           id="member-{{ member.id }}"
+                           name="selectedMembers[]"
+                           value="{{ member.id }}"
+                           {% if matchStatus is not null %}disabled{% endif %}
+                           {% if matchStatus == 'added' %}checked{% endif %}>
+                    {{ member.fullName }}, {{ member.birthday|date('d. m. Y') }}
+                    {% if matchStatus == 'leader' %}
+                        <span class="badge">{% trans %}skautisImport.badgeLeader{% endtrans %}</span>
+                    {% endif %}
+                </label><br/>
+            {% endfor %}
+
+            <br/>
+            <input type="submit" value="{% trans %}skautisImport.addSelected{% endtrans %}" class="btn btn-small">
+        </form>
+    {% endif %}
+
+    <br/>
+    <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}" class="btn btn-small btn-grey">
+        {% trans %}skautisImport.backToDashboard{% endtrans %}
+    </a>
+</div>
+{% endblock %}

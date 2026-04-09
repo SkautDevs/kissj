@@ -9,6 +9,7 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\RegistrationCloseResult;
+use kissj\Skautis\SkautisMemberData;
 use kissj\User\User;
 use kissj\User\UserService;
 
@@ -42,6 +43,25 @@ readonly class PatrolService
     {
         $patrolParticipant = new PatrolParticipant();
         $patrolParticipant->patrolLeader = $patrolLeader;
+
+        $this->patrolParticipantRepository->persist($patrolParticipant);
+
+        return $patrolParticipant;
+    }
+
+    public function addPatrolParticipantFromSkautis(
+        PatrolLeader $patrolLeader,
+        SkautisMemberData $memberData,
+    ): PatrolParticipant {
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->patrolLeader = $patrolLeader;
+        $patrolParticipant->firstName = $memberData->firstName;
+        $patrolParticipant->lastName = $memberData->lastName;
+        $patrolParticipant->nickname = $memberData->nickName;
+        $patrolParticipant->birthDate = $memberData->birthday;
+        $patrolParticipant->gender = $memberData->getGender()->value;
+        $patrolParticipant->permanentResidence = $memberData->getPermanentResidence();
+        $patrolParticipant->country = $memberData->getCountry()->value;
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
 
@@ -110,5 +130,50 @@ readonly class PatrolService
         }
 
         return $patrolLeader;
+    }
+
+    /**
+     * @param list<SkautisMemberData> $members
+     * @param list<array{firstName: string|null, lastName: string|null, birthDate: \DateTimeInterface|null}> $existingParticipantsData
+     * @return array<int, string|null>
+     */
+    public static function matchMembersAgainstExisting(
+        array $members,
+        string $leaderFirstName,
+        string $leaderLastName,
+        \DateTimeInterface $leaderBirthDate,
+        array $existingParticipantsData,
+    ): array {
+        $matches = [];
+        foreach ($members as $member) {
+            if (
+                $member->firstName === $leaderFirstName
+                && $member->lastName === $leaderLastName
+                && $member->birthday->format('Y-m-d') === $leaderBirthDate->format('Y-m-d')
+            ) {
+                $matches[$member->id] = 'leader';
+                continue;
+            }
+
+            $found = false;
+            foreach ($existingParticipantsData as $existing) {
+                if (
+                    $member->firstName === ($existing['firstName'] ?? '')
+                    && $member->lastName === ($existing['lastName'] ?? '')
+                    && $existing['birthDate'] !== null
+                    && $member->birthday->format('Y-m-d') === $existing['birthDate']->format('Y-m-d')
+                ) {
+                    $matches[$member->id] = 'added';
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $matches[$member->id] = null;
+            }
+        }
+
+        return $matches;
     }
 }

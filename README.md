@@ -72,6 +72,10 @@ Backlog is in project GitHub issues, roadmap is in project GitHub milestones
 
  - use Mailhog at `http://localhost:8025/`
 
+### Local Skatuis login service
+
+ - put AppID into database in the `event` table
+ - use command like `socat TCP-LISTEN:80,fork,reuseaddr TCP:127.0.0.1:8080` to reroute from :80 into :8080 locally if needed
 
 # HOWTOs
 

@@ -120,6 +120,19 @@
                             <input type="submit" value="{% trans %}dashboard.addParticipant{% endtrans %}"
                                    class="btn btn-small">
                         </form>
+                        {% if event.eventType.isLoginSkautisAllowed %}
+                            <br/>
+                            {% if user.loginType.value == 'skautis' %}
+                                <a href="{{ url_for('pl-showAddFromSkautis', {'eventSlug': event.slug}) }}" class="btn btn-small">
+                                    {% trans %}dashboard.addFromSkautis{% endtrans %}
+                                </a>
+                            {% else %}
+                                <button class="btn btn-small" disabled title="{% trans %}dashboard.addFromSkautisDisabled{% endtrans %}">
+                                    {% trans %}dashboard.addFromSkautis{% endtrans %}
+                                </button>
+                                <small>{% trans %}dashboard.addFromSkautisDisabled{% endtrans %}</small>
+                            {% endif %}
+                        {% endif %}
                     {% elseif person is TroopLeader %}
                         {% include('widgets/troopTieForm.twig') with {
                             formUrl: url_for('tie-tp-by-tl', {'eventSlug': event.slug}),

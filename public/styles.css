@@ -472,6 +472,7 @@ tr:nth-child(even) {
 
 .text-muted {
 	color: var(--color-grey);
+	font-weight: bold;
 }
 
 .m-0 {
