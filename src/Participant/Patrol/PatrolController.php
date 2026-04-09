@@ -9,7 +9,10 @@ use kissj\Event\Event;
 use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Skautis\SkautisService;
 use kissj\User\User;
+use Throwable;
+use kissj\User\UserLoginType;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -21,6 +24,7 @@ class PatrolController extends AbstractController
         private readonly ParticipantService $participantService,
         private readonly ParticipantFileService $participantFileService,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
+        private readonly SkautisService $skautisService,
     ) {
     }
 
@@ -68,6 +72,91 @@ class PatrolController extends AbstractController
             'p-showChangeDetails',
             ['participantId' => (string)$patrolParticipant->id]
         );
+    }
+
+    public function showAddFromSkautis(Request $request, Response $response, User $user): Response
+    {
+        if ($user->loginType !== UserLoginType::Skautis) {
+            $this->flashMessages->error('flash.error.skautisLoginRequired');
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        if (!$this->skautisService->isUserLoggedIn()) {
+            $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        try {
+            $personId = $this->skautisService->getLeaderPersonId();
+            $unitIds = $this->skautisService->getLeaderUnitIds($personId);
+            $members = $this->skautisService->getUnitMembers($unitIds);
+        } catch (Throwable $e) {
+            $this->sentryCollector->collect($e);
+            $this->logger->error('Skautis API error while fetching unit members: ' . $e->getMessage());
+            $this->flashMessages->error('flash.error.skautisApiError');
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        $patrolLeader = $this->patrolService->getPatrolLeader($user);
+
+        return $this->view->render(
+            $response,
+            'participant/addFromSkautis.twig',
+            [
+                'members' => $members,
+                'matches' => $this->patrolService->buildMemberMatches($patrolLeader, $members),
+            ],
+        );
+    }
+
+    public function addFromSkautis(Request $request, Response $response, User $user): Response
+    {
+        if ($user->loginType !== UserLoginType::Skautis || !$this->skautisService->isUserLoggedIn()) {
+            $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        /** @var array<string, mixed> $parsedBody */
+        $parsedBody = $request->getParsedBody() ?? [];
+        /** @var list<string> $selectedIds */
+        $selectedIds = $parsedBody['selectedMembers'] ?? [];
+
+        if ($selectedIds === []) {
+            $this->flashMessages->warning('flash.warning.noMembersSelected');
+
+            return $this->redirect($request, $response, 'pl-showAddFromSkautis');
+        }
+
+        $selectedIdsInt = array_map('intval', $selectedIds);
+
+        try {
+            $personId = $this->skautisService->getLeaderPersonId();
+            $unitIds = $this->skautisService->getLeaderUnitIds($personId);
+            $members = $this->skautisService->getUnitMembers($unitIds);
+        } catch (Throwable $e) {
+            $this->sentryCollector->collect($e);
+            $this->logger->error('Skautis API error while fetching unit members: ' . $e->getMessage());
+            $this->flashMessages->error('flash.error.skautisApiError');
+
+            return $this->redirect($request, $response, 'dashboard');
+        }
+
+        $patrolLeader = $this->patrolService->getPatrolLeader($user);
+        $importedCount = $this->patrolService->importParticipantsFromSkautis($patrolLeader, $members, $selectedIdsInt);
+
+        if ($importedCount === 0) {
+            $this->flashMessages->warning('flash.warning.noMembersImported');
+        } else {
+            $this->flashMessages->success('flash.success.skautisImported', [
+                '%count%' => (string)$importedCount,
+            ]);
+        }
+
+        return $this->redirect($request, $response, 'dashboard');
     }
 
     public function showChangeDetailsPatrolParticipant(

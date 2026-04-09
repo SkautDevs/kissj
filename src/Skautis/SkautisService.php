@@ -20,6 +20,10 @@ use Skautis\Exception as SkautisException;
 use Skautis\Skautis;
 use Throwable;
 
+/**
+ * uses library for communication with Skautis service, library uses SOAP internally
+ * docs: https://test-is.skaut.cz/JunakWebservice/
+ */
 class SkautisService
 {
     private Skautis $skautis;
@@ -39,6 +43,19 @@ class SkautisService
     public function initSkautis(string $appId): void
     {
         $this->skautis = $this->skautisFactory->getSkautis($appId);
+
+        // should call LoginUpdateRefresh to refresh 30 minutes granted for Skautis login
+        // docs: https://napoveda.skaut.cz/programatori/uzivatel#obnoveni-aktivity-uzivatele-ve-skautisu
+        $loginId = $this->skautis->getUser()->getLoginId();
+        if ($loginId !== null) {
+            try {
+                $this->skautis->UserManagement->LoginUpdateRefresh([
+                    'ID' => $loginId,
+                ]);
+            } catch (SkautisException $t) {
+                $this->logger->warning('Failed to refresh Skautis login: ' . $t->getMessage());
+            }
+        }
     }
 
     public function getLoginUri(string $backlink): string
@@ -157,6 +174,86 @@ class SkautisService
         $this->userRepository->persist($user);
 
         return $user;
+    }
+
+    public function getLeaderPersonId(): int
+    {
+        /** @var object{ID_Person: int|string} $userDetail */
+        $userDetail = $this->skautis->UserManagement->UserDetail();
+
+        return (int)$userDetail->ID_Person;
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function getLeaderUnitIds(int $idPerson): array
+    {
+        /** @var object{MembershipAllOutput?: object{ID_Unit: int}|array<object{ID_Unit: int}>} $membershipResult */
+        $membershipResult = $this->skautis->OrganizationUnit->MembershipAllPerson([
+            'ID_Person' => $idPerson,
+            'ID_MembershipType' => 'radne',
+            'IsValid' => true,
+        ]);
+
+        if (!isset($membershipResult->MembershipAllOutput)) {
+            return [];
+        }
+
+        $membershipRaw = $membershipResult->MembershipAllOutput;
+        /** @var array<object{ID_Unit: int}> $memberships */
+        $memberships = is_array($membershipRaw) ? $membershipRaw : [$membershipRaw];
+
+        $unitIds = [];
+        foreach ($memberships as $membership) {
+            $unitIds[] = (int)$membership->ID_Unit;
+        }
+
+        return array_slice(array_unique($unitIds), 0, 3);
+    }
+
+    /**
+     * @param list<int> $unitIds
+     * @return list<SkautisMemberData>
+     */
+    public function getUnitMembers(array $unitIds): array
+    {
+        $members = [];
+        foreach ($unitIds as $unitId) {
+            /** @var list<object{ID: int, FirstName: string, LastName: string, NickName: string, Birthday: string, Street: string, City: string, Postcode: string, State: string, ID_Sex: string}> $persons */
+            $persons = $this->skautis->OrganizationUnit->PersonAll([
+                'ID_Unit' => $unitId,
+                'OnlyDirectMember' => true,
+            ]);
+
+            if (!is_iterable($persons)) {
+                continue;
+            }
+
+            foreach ($persons as $person) {
+                $members[] = new SkautisMemberData(
+                    id: $person->ID,
+                    firstName: $person->FirstName,
+                    lastName: $person->LastName,
+                    nickName: $person->NickName,
+                    birthday: DateTimeUtils::getDateTime($person->Birthday),
+                    street: $person->Street,
+                    city: $person->City,
+                    postcode: $person->Postcode,
+                    state: $person->State,
+                    sex: $person->ID_Sex,
+                );
+            }
+
+            if (count($members) >= 100) {
+                break;
+            }
+        }
+
+        $members = array_slice($members, 0, 100);
+        usort($members, fn (SkautisMemberData $a, SkautisMemberData $b) => $a->lastName <=> $b->lastName);
+
+        return $members;
     }
 
     private function requestGenderFromPerson(int $idPersonFromSkautis): Gender

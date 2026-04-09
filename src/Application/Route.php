@@ -128,6 +128,12 @@ class Route
                             $app->post('/addParticipant', PatrolController::class . '::addParticipant')
                                 ->setName('pl-addParticipant');
 
+                            $app->get('/addFromSkautis', PatrolController::class . '::showAddFromSkautis')
+                                ->setName('pl-showAddFromSkautis');
+
+                            $app->post('/addFromSkautis', PatrolController::class . '::addFromSkautis')
+                                ->setName('pl-addFromSkautis');
+
                             $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
                                 $app->get(
                                     '/showChangeDetails',

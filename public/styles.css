@@ -474,6 +474,11 @@ tr:nth-child(even) {
 	color: var(--color-grey);
 }
 
+.skautis-member-disabled {
+	color: var(--color-grey);
+	font-weight: bold;
+}
+
 .m-0 {
 	margin: 0;
 }
