@@ -116,10 +116,9 @@
                 {# adding new participants into group #}
                 {% if userStatus == 'open' %}
                     {% if person is PatrolLeader %}
-                        <form method="POST" action="{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}">
-                            <input type="submit" value="{% trans %}dashboard.addParticipant{% endtrans %}"
-                                   class="btn btn-small">
-                        </form>
+                        <a href="{{ url_for('pl-showAddParticipant', {'eventSlug': event.slug}) }}" class="btn btn-small">
+                            {% trans %}dashboard.addParticipant{% endtrans %}
+                        </a>
                         {% if event.eventType.isLoginSkautisAllowed %}
                             <br/>
                             {% if user.loginType.value == 'skautis' %}

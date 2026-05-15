@@ -13,6 +13,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopLeader;
@@ -184,7 +185,8 @@ class ParticipantJourneyTest extends AppTestCase
         /** @var PatrolParticipantRepository $patrolParticipantRepository */
         $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
         
-        $participant1 = $patrolService->addPatrolParticipant($patrolLeader);
+        $participant1 = new PatrolParticipant();
+        $participant1->patrolLeader = $patrolLeader;
         $participant1->firstName = 'Participant';
         $participant1->lastName = 'One';
         $participant1->nickname = 'P1';
@@ -206,7 +208,8 @@ class ParticipantJourneyTest extends AppTestCase
         $participant1->setTshirt('male', 'M');
         $patrolParticipantRepository->persist($participant1);
         
-        $participant2 = $patrolService->addPatrolParticipant($patrolLeader);
+        $participant2 = new PatrolParticipant();
+        $participant2->patrolLeader = $patrolLeader;
         $participant2->firstName = 'Participant';
         $participant2->lastName = 'Two';
         $participant2->nickname = 'P2';

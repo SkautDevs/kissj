@@ -4,7 +4,7 @@
     <div class="card text-left">
         <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
         <form method="POST"
-              action="{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}"
+              action="{% if pDetails.isDetached %}{{ url_for('pl-addParticipant', {'eventSlug': event.slug}) }}{% else %}{{ url_for('p-changeDetails', {'participantId': pDetails.id, 'eventSlug': event.slug}) }}{% endif %}"
               enctype="multipart/form-data">
             {% include 'widgets/changeDetails.twig' with {'personDetails': pDetails, 'editableItems': ca.getAllowedItems()} %}
             <div class="text-center">

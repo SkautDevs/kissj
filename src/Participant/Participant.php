@@ -11,6 +11,7 @@ use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
+use LeanMapper\Exception\Exception as LeanMapperException;
 use LeanMapper\Exception\MemberAccessException;
 use LogicException;
 use Ramsey\Uuid\Uuid;
@@ -107,13 +108,18 @@ class Participant extends EntityDatetime
     public function getValueForField(string $field): mixed
     {
         if (in_array($field, self::FILE_ITEM_IDS, true)) {
-            return $this->__get('uploaded' . ucfirst($field) . 'OriginalFilename');
+            $field = 'uploaded' . ucfirst($field) . 'OriginalFilename';
         }
 
         try {
             return $this->__get($field);
         } catch (MemberAccessException $e) {
             throw new LogicException('Unknown participant field: ' . $field, 0, $e);
+        } catch (LeanMapperException $e) {
+            if ($this->isDetached()) {
+                return null;
+            }
+            throw $e;
         }
     }
 
@@ -196,6 +202,10 @@ class Participant extends EntityDatetime
 
     public function getTshirt(): ?string
     {
+        if ($this->row->hasColumn('tshirt') === false) {
+            return null;
+        }
+
         /** @var string|null $tshirt */
         $tshirt = $this->row->tshirt;
 
@@ -225,8 +235,11 @@ class Participant extends EntityDatetime
     protected function getTshirtParsed(): array
     {
         $tshirtFromDb = $this->getTshirt();
+        if ($tshirtFromDb === null || $tshirtFromDb === '') {
+            return [];
+        }
 
-        return explode(self::TSHIRT_DELIMITER, $tshirtFromDb ?? '');
+        return explode(self::TSHIRT_DELIMITER, $tshirtFromDb);
     }
 
     public function getFullName(): string
@@ -312,6 +325,10 @@ class Participant extends EntityDatetime
      */
     protected function getPreferredPosition(): array
     {
+        if ($this->row->hasColumn('preferred_position') === false) {
+            return [];
+        }
+
         /** @var ?string $prefferedPositionFromDb */
         $prefferedPositionFromDb = $this->row->preferred_position;
         if ($prefferedPositionFromDb === null || $prefferedPositionFromDb === '') {

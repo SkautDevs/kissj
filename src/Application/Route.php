@@ -125,6 +125,9 @@ class Route
                             $app->post('/closeRegistration', PatrolController::class . '::closeRegistration')
                                 ->setName('pl-closeRegistration');
 
+                            $app->get('/addParticipant', PatrolController::class . '::showAddParticipant')
+                                ->setName('pl-showAddParticipant');
+
                             $app->post('/addParticipant', PatrolController::class . '::addParticipant')
                                 ->setName('pl-addParticipant');
 

@@ -40,16 +40,6 @@ readonly class PatrolService
         return $patrolLeader;
     }
 
-    public function addPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant
-    {
-        $patrolParticipant = new PatrolParticipant();
-        $patrolParticipant->patrolLeader = $patrolLeader;
-
-        $this->patrolParticipantRepository->persist($patrolParticipant);
-
-        return $patrolParticipant;
-    }
-
     public function addPatrolParticipantFromSkautis(
         PatrolLeader $patrolLeader,
         SkautisMemberData $memberData,

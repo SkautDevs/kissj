@@ -62,16 +62,40 @@ class PatrolController extends AbstractController
         return $this->redirect($request, $response, 'dashboard');
     }
 
+    public function showAddParticipant(Response $response, User $user): Response
+    {
+        $patrolLeader = $this->patrolService->getPatrolLeader($user);
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->patrolLeader = $patrolLeader;
+
+        return $this->view->render(
+            $response,
+            'changeDetails-p.twig',
+            [
+                'pDetails' => $patrolParticipant,
+                'plDetails' => $patrolLeader,
+                'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
+            ]
+        );
+    }
+
     public function addParticipant(Request $request, Response $response, User $user): Response
     {
-        $patrolParticipant = $this->patrolService->addPatrolParticipant($this->patrolService->getPatrolLeader($user));
+        $patrolLeader = $this->patrolService->getPatrolLeader($user);
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->patrolLeader = $patrolLeader;
 
-        return $this->redirect(
-            $request,
-            $response,
-            'p-showChangeDetails',
-            ['participantId' => (string)$patrolParticipant->id]
-        );
+        /** @var array<string, string> $params */
+        $params = $request->getParsedBody();
+        $this->participantService->addParamsIntoParticipant($patrolParticipant, $params);
+
+        $ca = $user->event->eventType->getContentArbiterPatrolParticipant();
+        $this->participantFileService->handleUploadedFiles($patrolParticipant, $request, $ca->getAllowedItems());
+
+        $this->patrolParticipantRepository->persist($patrolParticipant);
+        $this->flashMessages->success('flash.success.detailsSaved');
+
+        return $this->redirect($request, $response, 'dashboard');
     }
 
     public function showAddFromSkautis(Request $request, Response $response, User $user): Response
