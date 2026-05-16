@@ -91,12 +91,17 @@ readonly class UserService
         /** @var \DateTimeInterface $createdAt */
         $createdAt = $lastToken->createdAt;
 
-        return $createdAt > DateTimeUtils::getDateTime('now - 24 hours');
+        return $createdAt > DateTimeUtils::getDateTime('now - 1 hour');
     }
 
     public function getLoginTokenFromStringToken(string $token): LoginToken
     {
         return $this->loginTokenRepository->getOneBy(['token' => $token]);
+    }
+
+    public function findLoginTokenByStringToken(string $token): ?LoginToken
+    {
+        return $this->loginTokenRepository->findOneBy(['token' => $token]);
     }
 
     public function getTokenForEmail(string $email, Event $event): string

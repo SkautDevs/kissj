@@ -223,9 +223,6 @@ landing:
 404:
     pardon: "Ups! Tu nič nie je... možno zlý odkaz?"
     button: "Späť na začiatok!"
-singupSuccess:
-    buttonSent: "Na zadaný e-mail sme Ti poslali prihlasovací odkaz."
-    buttonClick: "Použi ho pre prihlásenie do registračného systému do 15 minút."
 skautisImport:
     addSelected: "Pridaj vybraných"
     backToDashboard: "Späť"
@@ -234,12 +231,27 @@ skautisImport:
     emptyState: "V jednotke neboli nájdení žiadni členovia"
     title: "Pridanie účastníkov zo Skautisu"
 login-help:
-    text: "<h2>Prihlasovanie do kissj systému</h2> <h3>Ako to vlastne funguje?</h3><p>Prihlasovanie do kissj registračného systému sa robí cez e-mailovú adresu bez potreby zadávať heslo.</p><p>Pre vstup zadáš svoj e-mail. Obratom naň obdržíš prihlasovací link a keď naň klikneš, si prihlásený do systému a hneď môžeš vypĺňať potrebné údaje. </p><p>Ostávaš prihlásený, až kým sa zo systému neodhlásiš. </p><p>Po odhlásení sa k Tvojim údajom nikto nemôže dostať, ani z toho istého zariadenia. </p><p>Aby si sa k údajom opäť dostal/a, musíš znovu zadať príslušný mail a prihlásiť sa do registračného systému cez link v novom maile. </p><h3>Vypršanie prihlasovacieho linku/link</h3><p>Prihlasovací link, ktorý obdržíš mailom je platný len 15 minút. Po tejto dobe už nie je funkčný a je potrebné zadať mail znova, aby bolo umožnené prihlásenie. To je na ochranu pred tým, keby niekto získal prístup k Tvojim starým mailom - údaje v kissj registračnom systéme nebudú prístupné skrz vypršaný prihlasovací link. </p><p>Prihlasovací link sa taktiež stane nefunkčný po tom, čo naň prvýkrát klikneš. Čiže ak sa v krátkom čase prihlásiš a zase odhlásiš z kissj, nemôžeš použiť ten istý link na opätovné prihlásenie a musíš si nechať poslať nový. </p><p>Všetky tieto ochranné prvky majú za úlohu jediné - chrániť Tvoje osobné údaje ako sa len dá, podobne, ako sa o to snažia banky a iné portály. </p><h3>Otázky?</h3><p>Ak máš akékoľvek problémy s registračným systémom, napíš mail organizátorom akcie, na ktorú sa prihlasuješ, posnažia sa Ti pomôcť ako len budú vedieť. </p>"
+    title: "Prihlasovanie do kissj systému"
+    howItWorks:
+        title: "Ako to vlastne funguje?"
+        p1: "Prihlasovanie do kissj registračného systému sa robí cez e-mailovú adresu bez potreby zadávať heslo."
+        p2: "Pre vstup zadáš svoj e-mail. Obratom naň obdržíš prihlasovací link a keď naň klikneš, si prihlásený do systému a hneď môžeš vypĺňať potrebné údaje."
+        p3: "Ostávaš prihlásený, až kým sa zo systému neodhlásiš."
+        p4: "Po odhlásení sa k Tvojim údajom nikto nemôže dostať, ani z toho istého zariadenia."
+        p5: "Aby si sa k údajom opäť dostal/a, musíš znovu zadať príslušný mail a prihlásiť sa do registračného systému cez link v novom maile."
+    expiration:
+        title: "Vypršanie prihlasovacieho linku/link"
+        p1: "Prihlasovací link, ktorý obdržíš mailom je platný len 1 hodinu. Po tejto dobe už nie je funkčný a je potrebné zadať mail znova, aby bolo umožnené prihlásenie. To je na ochranu pred tým, keby niekto získal prístup k Tvojim starým mailom - údaje v kissj registračnom systéme nebudú prístupné skrz vypršaný prihlasovací link."
+        p2: "Prihlasovací link sa taktiež stane nefunkčný po tom, čo naň prvýkrát klikneš. Čiže ak sa v krátkom čase prihlásiš a zase odhlásiš z kissj, nemôžeš použiť ten istý link na opätovné prihlásenie a musíš si nechať poslať nový."
+        p3: "Všetky tieto ochranné prvky majú za úlohu jediné - chrániť Tvoje osobné údaje ako sa len dá, podobne, ako sa o to snažia banky a iné portály."
+    questions:
+        title: "Otázky?"
+        p1: "Ak máš akékoľvek problémy s registračným systémom, napíš mail organizátorom akcie, na ktorú sa prihlasuješ, posnažia sa Ti pomôcť ako len budú vedieť."
     backToLogin: "Späť na prihlasovaciu stránku"
 login-link-sent:
     accessToSystem: "Prístup do registračného systému"
     linkSent: "Na zadaný e-mail sme Ti poslali prihlasovací odkaz."
-    followLink: "Použi ho pre prihlásenie do registračného systému do 15 minút."
+    followLink: "Použi ho pre prihlásenie do registračného systému do 1 hodiny."
 role:
     pl: "Patrol líder"
     ist: "Staff"

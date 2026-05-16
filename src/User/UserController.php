@@ -46,9 +46,13 @@ class UserController extends AbstractController
         $queryParams = $request->getQueryParams();
         $otToken = $queryParams['ot_token'] ?? null;
 
+        $prefillEmail = $_SESSION['prefill_email'] ?? null;
+        unset($_SESSION['prefill_email']);
+
         $data = [
             'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
             'otToken' => $otToken,
+            'prefillEmail' => $prefillEmail,
         ];
         if ($event->getEventType()->isLoginSkautisAllowed()) {
             $data['skautisLoginUri'] = $this->skautisService->getLoginUri($event->slug);
@@ -112,6 +116,10 @@ class UserController extends AbstractController
             return $this->redirect($request, $response, 'getDashboard');
         }
 
+        $loginToken = $this->userService->findLoginTokenByStringToken($token);
+        if ($loginToken !== null) {
+            $_SESSION['prefill_email'] = $loginToken->user->email;
+        }
         $this->flashMessages->warning('flash.warning.invalidLogin');
 
         return $this->redirect($request, $response, 'loginAskEmail');

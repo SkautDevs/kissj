@@ -223,9 +223,6 @@ landing:
 404:
     pardon: "Ups! Tady nic není... možná špatný odkaz?"
     button: "Zpátky na začátek!"
-singupSuccess:
-    buttonSent: "Přihlašovací tlačítko ti bylo posláno na e-mail."
-    buttonClick: "Klikni na něj do 15 minut k přihlášení do registračního systému."
 skautisImport:
     addSelected: "Přidej vybrané"
     backToDashboard: "Zpět"
@@ -234,12 +231,27 @@ skautisImport:
     emptyState: "V jednotce nebyli nalezeni žádní členové"
     title: "Přidání účastníků ze Skautisu"
 login-help:
-    text: "<h2>Přihlašovací systém kissj</h2><h3>Jak to vlastně funguje?</h3><p>Přihlašování do registračního systému kissj se provádí přes e-mailovou adresu přihlašujícího, bez hesla. </p><p>Pro první přihlášení se do systému, zadáš svojí e-mailovou adresu. Následně dostaneš e-mail s přihlašovacím tlačítkem a odkazem, který když následuješ, tak budeš moci okamžitě vyplnit svou registraci. </p><p>Zůstávaš přihlášen/a dokud se ručně neodhlásíš. </p><p>Po odhlášení nemá nikdo přístum k tvým informacím, dokonce ani ze stejného zařízení. </p><p>Pro opětovné přihlášení a přistup k tvým informacím, musíš zadat svou E.mailovou adresu v přihlašovacím okně. Obdržíš na svůj e-mail přihlašovací tlačítko/odkaz a musíš jej následovat, stejně jako když jsi se přihlašoval/a poprvé.</p><h3>Expirace přihlašovácího tlačítka/odkazu</h3><p>Přihlašovací tlačítko/odkaz je použitelné pouze 15 minut po příchodu e-mailu. Po vypršení 15 minut by jsi musel/a znovu zadat e-mail a nechat si poslat nové přihlašovací tlačítko/odkaz. Toto je opatření proti komukoliv, kdo by mohl jakkoliv získat přístup k tvým starým e-mailům - takto tvé informace vyplněné při registraci nemohou být zpřístupněny pomocí starého odkazu. </p><p>Po následování přihlašovacího tlačítka/odkazu se stavají neplatnými. Tím pádem v případě přihlášení a odhlášení v krátkém čase se nemůžeš do registrace znovu přihlásit přes stejný odkaz a musíš si získat další. </p><p>Všechny tato opatření mají jeden jediný účel - udržet tvé informace tak v bezpečí, jak jen je to možné, stejně jako se o to snaží banky či jiné veliké portály. </p><h3>Otázky?</h3><p>Pokud by se měl vyskytnout problém s přihlašováním, napiš e-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou. </p>"
+    title: "Přihlašovací systém kissj"
+    howItWorks:
+        title: "Jak to vlastně funguje?"
+        p1: "Přihlašování do registračního systému kissj se provádí přes e-mailovou adresu přihlašujícího, bez hesla."
+        p2: "Pro první přihlášení se do systému, zadáš svojí e-mailovou adresu. Následně dostaneš e-mail s přihlašovacím tlačítkem a odkazem, který když následuješ, tak budeš moci okamžitě vyplnit svou registraci."
+        p3: "Zůstávaš přihlášen/a dokud se ručně neodhlásíš."
+        p4: "Po odhlášení nemá nikdo přístum k tvým informacím, dokonce ani ze stejného zařízení."
+        p5: "Pro opětovné přihlášení a přistup k tvým informacím, musíš zadat svou E.mailovou adresu v přihlašovacím okně. Obdržíš na svůj e-mail přihlašovací tlačítko/odkaz a musíš jej následovat, stejně jako když jsi se přihlašoval/a poprvé."
+    expiration:
+        title: "Expirace přihlašovácího tlačítka/odkazu"
+        p1: "Přihlašovací tlačítko/odkaz je použitelné pouze 1 hodinu po příchodu e-mailu. Po vypršení 1 hodiny by jsi musel/a znovu zadat e-mail a nechat si poslat nové přihlašovací tlačítko/odkaz. Toto je opatření proti komukoliv, kdo by mohl jakkoliv získat přístup k tvým starým e-mailům - takto tvé informace vyplněné při registraci nemohou být zpřístupněny pomocí starého odkazu."
+        p2: "Po následování přihlašovacího tlačítka/odkazu se stavají neplatnými. Tím pádem v případě přihlášení a odhlášení v krátkém čase se nemůžeš do registrace znovu přihlásit přes stejný odkaz a musíš si získat další."
+        p3: "Všechny tato opatření mají jeden jediný účel - udržet tvé informace tak v bezpečí, jak jen je to možné, stejně jako se o to snaží banky či jiné veliké portály."
+    questions:
+        title: "Otázky?"
+        p1: "Pokud by se měl vyskytnout problém s přihlašováním, napiš e-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou."
     backToLogin: "Zpět k přihlášení"
 login-link-sent:
     accessToSystem: "Přístup do registračního systému"
     linkSent: "Přihlašovací odkaz by odeslán na tvůj e-mail."
-    followLink: "Následuj odkaz do 15 minut k přihlášení se do registračního systému."
+    followLink: "Následuj odkaz do 1 hodiny k přihlášení se do registračního systému."
 role:
     pl: "vedoucí patroly"
     ist: "servis tým"
