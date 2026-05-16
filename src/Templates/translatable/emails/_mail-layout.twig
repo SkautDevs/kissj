@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>{% trans %}email.layout.registration{% endtrans %} {{ event.getReadableName }}</title>
+    <title>{{ 'email.layout.registration' | trans }} {{ event.getReadableName }}</title>
     <style>
         :root {
             --border-radius: 6px;
@@ -62,20 +62,20 @@
 </head>
 <body class="email-body">
 <main role="main" class="container">
-    <p>{% trans %}email.layout.welcome{% endtrans %}</p>
+    <p>{{ 'email.layout.welcome' | trans }}</p>
 
     {% block content %}{% endblock %}
 
     <p>
-        {% trans %}email.layout.yourRegistration{% endtrans %} 
+        {{ 'email.layout.yourRegistration' | trans }} 
         <a href="{{ baseHostScheme }}{{ fullRegistrationLink }}">{{ baseHostScheme }}{{ fullRegistrationLink }}</a><span class="noselect">.</span>
         {{ 'email.layout.ifQuestion' | transGendered(genderSuffix) }}
         <a href="{{ event.webUrl }}">{{ event.webUrl }}</a>
-        {% trans %}email.layout.sendEmail{% endtrans %}
+        {{ 'email.layout.sendEmail' | trans }}
         <a href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a><span class="noselect">.</span>
     </p>
 
-    <p>{% trans %}email.layout.farewell{% endtrans %}<br/>
+    <p>{{ 'email.layout.farewell' | trans }}<br/>
         {{ event.getReadableName }}</p>
 </main>
 <footer>
