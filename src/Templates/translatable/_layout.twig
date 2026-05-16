@@ -14,7 +14,7 @@
     <meta name="theme-color" content="#872e4e" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{% trans %}_layout.title{% endtrans %} - {{ event.readableName }} - kissj</title>
+    <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
 
     <link rel="shortcut icon" href="/favicon-16x16.png" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -37,7 +37,7 @@
 </head>
 
 <body class="wrapper">
-<h1 class="text-center">{% trans %}_layout.title{% endtrans %} - {{ event.readableName }}</h1>
+<h1 class="text-center">{{ '_layout.title' | trans }} - {{ event.readableName }}</h1>
 <div class="user text-right">
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
@@ -46,13 +46,13 @@
         | {% if user.loginType.value == 'skautis' %}
             <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
             {%  if not user.skautisHasMembership %}    
-                {% trans %}_layout.skautisAccountNotConnected{% endtrans %} ❌
+                {{ '_layout.skautisAccountNotConnected' | trans }} ❌
             {% endif %}
         {% else %}
             📧
         {% endif %}
         {{ user.email }}
-        | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{% trans %}_layout.logOut{% endtrans %}</a>
+        | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{{ '_layout.logOut' | trans }}</a>
         {% set userStatus = user.status.value %}
     {% else %}
         {% set userStatus = "unregistred" %}
@@ -60,17 +60,17 @@
 </div>
 <ul class="steps">
     <li class="step is-active">
-        {% trans %}_layout.titleBar{% endtrans %}
+        {{ '_layout.titleBar' | trans }}
     </li>
-    <li class="step {% if userStatus == 'open' or userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.editingBar{% endtrans %}</li>
-    <li class="step {% if userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.lockedBar{% endtrans %}</li>
-    <li class="step {% if userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.approvedBar{% endtrans %}</li>
-    <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{% trans %}_layout.payedBar{% endtrans %}</li>
+    <li class="step {% if userStatus == 'open' or userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.editingBar' | trans }}</li>
+    <li class="step {% if userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.lockedBar' | trans }}</li>
+    <li class="step {% if userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.approvedBar' | trans }}</li>
+    <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.payedBar' | trans }}</li>
 </ul>
 <div class="flash-wrapper">
     {% if event.testingSite %}
         <div class="alert alert-info">
-            {% trans %}flash.warning.testingSite{% endtrans %}
+            {{ 'flash.warning.testingSite' | trans }}
         </div>
     {% endif %}
     {% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
@@ -87,12 +87,12 @@
     TODO: Add Privacy policy site to disclose analytics properly
     Right now, we prefere deployment to get the data ASAP
     <p class="text-center text-small text-muted m-0">
-        {% trans %}_layout.analytics{% endtrans %}
+        {{ '_layout.analytics' | trans }}
     </p>
     #}
     <span class="footer-item">
         <a href="{{ event.webUrl }}" target="_blank">{{ event.readableName }}</a>
-        | <a href="https://devs.skauting.cz/" target="_blank">{% trans %}_layout.creator{% endtrans %}</a>
+        | <a href="https://devs.skauting.cz/" target="_blank">{{ '_layout.creator' | trans }}</a>
         | <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a>
     </span>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">

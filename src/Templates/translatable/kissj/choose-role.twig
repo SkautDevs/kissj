@@ -3,23 +3,23 @@
 {% block content %}
     <div class="two-cards">
         <div class="card">
-            <h2>{% trans %}chooseRole.chooseRole{% endtrans %}</h2>
+            <h2>{{ 'chooseRole.chooseRole' | trans }}</h2>
             {% if event.allowPatrols %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="pl">
-                    <input type="submit" class="btn form-wide" value="{% trans %}chooseRole.registerAsPl{% endtrans %}">
+                    <input type="submit" class="btn form-wide" value="{{ 'chooseRole.registerAsPl' | trans }}">
                 </form>
                 <br/>
             {% endif %}
             {% if event.allowTroops %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="tl">
-                    <input type="submit" class="btn form-wide" value="{% trans %}chooseRole.registerAsTl{% endtrans %}">
+                    <input type="submit" class="btn form-wide" value="{{ 'chooseRole.registerAsTl' | trans }}">
                 </form>
                 <br/>
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="tp">
-                    <input type="submit" class="btn form-wide" value="{% trans %}chooseRole.registerAsTp{% endtrans %}">
+                    <input type="submit" class="btn form-wide" value="{{ 'chooseRole.registerAsTp' | trans }}">
                 </form>
                 <br/>
             {% endif %}
@@ -27,7 +27,7 @@
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="ist">
                     <input type="submit" class="btn form-wide"
-                           value="{% trans %}chooseRole.registerAsIst{% endtrans %}">
+                           value="{{ 'chooseRole.registerAsIst' | trans }}">
                 </form>
                 <br/>
             {% endif %}
@@ -35,7 +35,7 @@
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="guest">
                     <input type="submit" class="btn form-wide"
-                           value="{% trans %}chooseRole.registerAsGuest{% endtrans %}">
+                           value="{{ 'chooseRole.registerAsGuest' | trans }}">
                 </form>
                 <br/>
             {% endif %}
@@ -43,29 +43,29 @@
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="ot">
                     <input type="submit" class="btn form-wide"
-                           value="{% trans %}chooseRole.registerAsOt{% endtrans %}">
+                           value="{{ 'chooseRole.registerAsOt' | trans }}">
                 </form>
                 <br/>
             {% endif %}
         </div>
 
         <div class="card">
-            <h2>{% trans %}chooseRole.rolesAdvice{% endtrans %}</h2>
+            <h2>{{ 'chooseRole.rolesAdvice' | trans }}</h2>
             {% if event.allowPatrols %}
-                <p><b>{% trans %}role.pl{% endtrans %}</b> {% trans %}chooseRole.advicePlText{% endtrans %}</p>
+                <p><b>{{ 'role.pl' | trans }}</b> {{ 'chooseRole.advicePlText' | trans }}</p>
             {% endif %}
             {% if event.allowTroops %}
-                <p><b>{% trans %}role.tl{% endtrans %}</b> {% trans %}chooseRole.adviceTlText{% endtrans %}</p>
-                <p><b>{% trans %}role.tp{% endtrans %}</b> {% trans %}chooseRole.adviceTpText{% endtrans %}</p>
+                <p><b>{{ 'role.tl' | trans }}</b> {{ 'chooseRole.adviceTlText' | trans }}</p>
+                <p><b>{{ 'role.tp' | trans }}</b> {{ 'chooseRole.adviceTpText' | trans }}</p>
             {% endif %}
             {% if event.allowIsts %}
-                <p><b>{% trans %}role.ist{% endtrans %}</b> {% trans %}chooseRole.adviceIstText{% endtrans %}</p>
+                <p><b>{{ 'role.ist' | trans }}</b> {{ 'chooseRole.adviceIstText' | trans }}</p>
             {% endif %}
             {% if event.allowGuests %}
-                <p><b>{% trans %}role.guest{% endtrans %}</b> {% trans %}chooseRole.adviceGuestText{% endtrans %}</p>
+                <p><b>{{ 'role.guest' | trans }}</b> {{ 'chooseRole.adviceGuestText' | trans }}</p>
             {% endif %}
             {% if otAccessGranted %}
-                <p><b>{% trans %}role.ot{% endtrans %}</b> {% trans %}chooseRole.adviceOtText{% endtrans %}</p>
+                <p><b>{{ 'role.ot' | trans }}</b> {{ 'chooseRole.adviceOtText' | trans }}</p>
             {% endif %}
         </div>
     </div>

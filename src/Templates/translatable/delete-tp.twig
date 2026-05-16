@@ -2,17 +2,17 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}dashboard.untie{% endtrans %} - {% trans %}role.tp{% endtrans %}</h2>
+        <h2>{{ 'dashboard.untie' | trans }} - {{ 'role.tp' | trans }}</h2>
         <p>
-            {% trans %}dashboard.youWantUntie{% endtrans %}
+            {{ 'dashboard.youWantUntie' | trans }}
             {% if pDetail.getFirstName is not empty %}<b>{{ pDetail.getFullName }}</b>{% else %}
-                <i>{% trans %}dashboard.withoutName{% endtrans %}</i>{% endif %}?
+                <i>{{ 'dashboard.withoutName' | trans }}</i>{% endif %}?
         </p>
         <form method="POST"
               action="{{ url_for('tp-untie', {'participantId': pDetail.getId, 'eventSlug': event.slug}) }}">
-            <input class="btn btn-small" type="submit" value="{% trans %}dashboard.untie{% endtrans %}">
+            <input class="btn btn-small" type="submit" value="{{ 'dashboard.untie' | trans }}">
             <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
-               class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+               class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
         </form>
     </div>
 {% endblock %}

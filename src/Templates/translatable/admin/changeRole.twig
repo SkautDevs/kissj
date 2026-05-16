@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="card card-half">
-    <h2>{% trans %}stats-admin.changeRole{% endtrans %}</h2>
+    <h2>{{ 'stats-admin.changeRole' | trans }}</h2>
     <div>
         <h4>{{ person.getFullName }}</h4>
-        {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
-        {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+        {{ 'detail.email' | trans }}: <b>{{ person.getEmail }}</b><br/>
+        {{ 'detail.notice' | trans }}: <b>{{ person.getNotes }}</b><br/>
         {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
     </div>
     <form 
@@ -15,7 +15,7 @@
         class="form-group"
     >
         <div class="form-group">
-            <label for="role">{% trans %}stats-admin.role{% endtrans %}:</label>
+            <label for="role">{{ 'stats-admin.role' | trans }}:</label>
             <select
                     id="role"
                     class="form-control form-wide"
@@ -31,9 +31,9 @@
                 {% endfor %}
             </select>
         </div>
-        <input class="btn" type="submit" value="{% trans %}stats-admin.changeRole{% endtrans %}">
+        <input class="btn" type="submit" value="{{ 'stats-admin.changeRole' | trans }}">
     </form>
     <a href="{{ url_for('admin-show-open', {'eventSlug': event.slug}) }}"
-       class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+       class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
 </div>
 {% endblock %}

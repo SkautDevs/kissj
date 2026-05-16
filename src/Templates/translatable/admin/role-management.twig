@@ -2,25 +2,25 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}roleManagement.title{% endtrans %}</h2>
-        <p>{% trans %}roleManagement.description{% endtrans %}</p>
+        <h2>{{ 'roleManagement.title' | trans }}</h2>
+        <p>{{ 'roleManagement.description' | trans }}</p>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
-           class="btn btn-grey btn-small">{% trans %}roleManagement.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'roleManagement.back' | trans }}</a>
     </div>
 
     <div class="card card-half">
         <form method="POST" action="{{ url_for('admin-save-role-management', {'eventSlug': event.slug}) }}">
             <input type="hidden" name="role" value="total">
-            <h3>{% trans %}roleManagement.totalMax{% endtrans %}</h3>
-            <p>{% trans %}roleManagement.actualMaxCount{% endtrans %}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
-            <p>{% trans %}roleManagement.dbMaxCount{% endtrans %}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
+            <h3>{{ 'roleManagement.totalMax' | trans }}</h3>
+            <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
+            <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
             <label class="form-group">
-                {% trans %}roleManagement.maxParticipantsTotal{% endtrans %}:<br/>
+                {{ 'roleManagement.maxParticipantsTotal' | trans }}:<br/>
                 <input class="form-control form-wide" type="number" name="maximalClosedParticipantsCount"
                        value="{{ maximalClosedParticipantsCount }}" min="0">
             </label>
             <br/>
-            <input type="submit" class="btn" value="{% trans %}roleManagement.save{% endtrans %}">
+            <input type="submit" class="btn" value="{{ 'roleManagement.save' | trans }}">
         </form>
     </div>
 

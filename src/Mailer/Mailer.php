@@ -44,7 +44,7 @@ readonly class Mailer
         );
     }
 
-    public function sendRegistrationClosed(User $user, ?Participant $participant = null): void
+    public function sendRegistrationClosed(User $user, Participant $participant): void
     {
         $this->sendMailFromTemplate(
             $user->email,
@@ -332,6 +332,16 @@ readonly class Mailer
             return '';
         }
 
-        return Gender::tryFrom($participant->gender)?->toEmailSuffix() ?? '';
+        $gender = Gender::tryFrom($participant->gender);
+        if ($gender === null) {
+            $this->logger->warning(sprintf(
+                'Participant %d has invalid gender value "%s" — falling back to gender-neutral email text',
+                $participant->id,
+                $participant->gender,
+            ));
+            return '';
+        }
+
+        return $gender->toEmailSuffix();
     }
 }

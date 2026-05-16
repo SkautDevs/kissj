@@ -2,25 +2,25 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}payments-admin.confirmText{% endtrans %} {{ event.readableName }}</h2>
+        <h2>{{ 'payments-admin.confirmText' | trans }} {{ event.readableName }}</h2>
         {% if event.getEventType.isUnlockExpiredButtonAllowed %}
             <form method="POST" action="{{ url_for('admin-cancel-due-payments', {'eventSlug': event.slug} ) }}">
-                <input type="submit" class="btn btn-small" value="{% trans %}payments-admin.openDuePayments{% endtrans %}">
+                <input type="submit" class="btn btn-small" value="{{ 'payments-admin.openDuePayments' | trans }}">
             </form><br/>
         {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
-           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
     <br/>
 
     {% if event.allowIsts %}
         {% if approvedIsts is empty %}
             <div class="card">
-                <h2>{% trans %}payments-admin.allIstsPaid{% endtrans %}</h2>
+                <h2>{{ 'payments-admin.allIstsPaid' | trans }}</h2>
             </div>
         {% else %}
             <div class="card">
-                <h2>{% trans %}role.ist{% endtrans %}</h2>
+                <h2>{{ 'role.ist' | trans }}</h2>
             </div>
             <br/>
             {% for ist in approvedIsts %}
@@ -39,11 +39,11 @@
     {% if event.allowPatrols %}
         {% if approvedPatrolLeaders is empty %}
             <div class="card">
-                <h2>{% trans %}payments-admin.allPatrolsPaid{% endtrans %}</h2>
+                <h2>{{ 'payments-admin.allPatrolsPaid' | trans }}</h2>
             </div>
         {% else %}
             <div class="card">
-                <h2>{% trans %}role.pl{% endtrans %}</h2>
+                <h2>{{ 'role.pl' | trans }}</h2>
             </div>
             <br/>
             {% for pl in approvedPatrolLeaders %}
@@ -62,11 +62,11 @@
     {% if event.allowTroops %}
         {% if approvedTroopLeaders is empty %}
             <div class="card">
-                <h2>{% trans %}payments-admin.allTroopLeadersPaid{% endtrans %}</h2>
+                <h2>{{ 'payments-admin.allTroopLeadersPaid' | trans }}</h2>
             </div>
         {% else %}
             <div class="card">
-                <h2>{% trans %}role.tl{% endtrans %}</h2>
+                <h2>{{ 'role.tl' | trans }}</h2>
             </div>
             <br/>
             {% for tl in approvedTroopLeaders %}

@@ -1,7 +1,7 @@
 {% import 'widgets/formFields.twig' as forms %}
 
 {% if useShortNaming %}
-    {% if person.getFullName == " " %}<i>{% trans %}dashboard.withoutFullName {% endtrans %}</i>{% else %}<b>{{ person.getFullName }}</b>{% endif %}<br/>
+    {% if person.getFullName == " " %}<i>{{ 'dashboard.withoutFullName ' | trans }}</i>{% else %}<b>{{ person.getFullName }}</b>{% endif %}<br/>
 {% endif %}
 
 {% for item in ca.getAllowedItems() %}

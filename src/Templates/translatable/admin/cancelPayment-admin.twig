@@ -2,21 +2,21 @@
 
 {% block content %}
     <div class="card card-half">
-        <h2>{% trans %}cancelPayment-admin.cancel{% endtrans %}</h2>
-        <p>{% trans %}cancelPayment-admin.wantCancel{% endtrans %}<b> {{ payment.participant.getFullName }}</b>
-            {% trans %}cancelPayment-admin.inRole{% endtrans %} {{ payment.participant.role.value }}?</p>
-        <p>{% trans %}cancelPayment-admin.participantNeedsToKnow{% endtrans %}</p>
+        <h2>{{ 'cancelPayment-admin.cancel' | trans }}</h2>
+        <p>{{ 'cancelPayment-admin.wantCancel' | trans }}<b> {{ payment.participant.getFullName }}</b>
+            {{ 'cancelPayment-admin.inRole' | trans }} {{ payment.participant.role.value }}?</p>
+        <p>{{ 'cancelPayment-admin.participantNeedsToKnow' | trans }}</p>
         <form method="post" action="{{ url_for('admin-cancel-payment',
             {'paymentId' : payment.id, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>{% trans %}cancelPayment-admin.reason{% endtrans %}<br/><br/>
+                <label>{{ 'cancelPayment-admin.reason' | trans }}<br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
             <br/>
             <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
-               class="btn btn-small btn-grey">{% trans %}cancelPayment-admin.back{% endtrans %}</a><br/><br/>
-            <input type="submit" value="{% trans %}cancelPayment-admin.cancelPayment{% endtrans %}"
+               class="btn btn-small btn-grey">{{ 'cancelPayment-admin.back' | trans }}</a><br/><br/>
+            <input type="submit" value="{{ 'cancelPayment-admin.cancelPayment' | trans }}"
                    class="btn btn-small">
         </form>
     </div>

@@ -2,15 +2,15 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}approve-admin.approving{% endtrans %} {{ event.readableName }}</h2>
+        <h2>{{ 'approve-admin.approving' | trans }} {{ event.readableName }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
-           class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'approve-admin.back' | trans }}</a>
     </div>
     <br/>
     {% if event.allowIsts %}
         {% if closedIsts is not empty %}
             <div class="card">
-                <h2>{% trans %}role.ist{% endtrans %}</h2>
+                <h2>{{ 'role.ist' | trans }}</h2>
             </div>
             <br/>
             {% for ist in closedIsts %}
@@ -19,13 +19,13 @@
                     {% include 'widgets/detailsForAdmin.twig' with {'person': ist, 'ca': caIst} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': ist.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit"
-                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
                     </form>
                 </div>
@@ -33,7 +33,7 @@
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.ist{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.ist' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}
@@ -42,7 +42,7 @@
     {% if event.allowPatrols %}
         {% if closedPatrolLeaders is not empty %}
             <div class="card">
-                <h2>{% trans %}role.pl{% endtrans %}</h2>
+                <h2>{{ 'role.pl' | trans }}</h2>
             </div>
             <br/>
             {% for pl in closedPatrolLeaders %}
@@ -53,19 +53,19 @@
                     {% include 'widgets/detailsForAdmin.twig' with {'person': pl, 'ca': caPl} %}
                     <br/>
     
-                    <h4>{% trans %}role.pp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
+                    <h4>{{ 'role.pp' | trans }} {{ 'dashboard.details' | trans }}</h4>
                     {% for pp in pl.patrolParticipants %}
                         {% include 'widgets/detailsForAdmin.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': pl.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': pl.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit"
-                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
                     </form>
                 </div>
@@ -73,7 +73,7 @@
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.pl{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.pl' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}
@@ -82,7 +82,7 @@
     {% if event.allowTroops %}
         {% if closedTroopLeaders is not empty %}
             <div class="card">
-                <h2>{% trans %}role.tl{% endtrans %}</h2>
+                <h2>{{ 'role.tl' | trans }}</h2>
             </div>
             <br/>
             {% for tl in closedTroopLeaders %}
@@ -93,19 +93,19 @@
                     {% include 'widgets/detailsForAdmin.twig' with {'person': tl, 'ca': caTl} %}
                     <br/>
     
-                    <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
+                    <h4>{{ 'role.tp' | trans }} {{ 'dashboard.details' | trans }}</h4>
                     {% for tp in tl.troopParticipants %}
                         {% include 'widgets/detailsForAdmin.twig' with {'person': tp, 'ca': caTp, 'useShortNaming': true} %}
                         <br/>
                     {% endfor %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': tl.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit"
-                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
                     </form>
                 </div>
@@ -113,14 +113,14 @@
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tl{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.tl' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}
 
         {% if closedTroopParticipants is not empty %}
             <div class="card">
-                <h2>{% trans %}role.tp{% endtrans %}</h2>
+                <h2>{{ 'role.tp' | trans }}</h2>
             </div>
             <br/>
             {% for tp in closedTroopParticipants %}
@@ -130,13 +130,13 @@
                     <br/>
                     
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': tp.getId, 'eventSlug': event.slug}) }}">
                         <input type="submit"
-                               value="{% trans %}approve-admin.approveAndSend{% endtrans %}"
+                               value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
                     </form>
                 </div>
@@ -144,7 +144,7 @@
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.tp{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.tp' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}
@@ -153,7 +153,7 @@
     {% if event.allowGuests %}
         {% if closedGuests is not empty %}
             <div class="card">
-                <h2>{% trans %}role.guest{% endtrans %}</h2>
+                <h2>{{ 'role.guest' | trans }}</h2>
             </div>
             <br/>
             {% for guest in closedGuests %}
@@ -162,19 +162,19 @@
                     {% include 'widgets/detailsForAdmin.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': guest.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="{% trans %}approve-admin.approveAndSend{% endtrans %}" class="btn btn-small">
+                        <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>
                 <br/>
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.guest{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.guest' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}
@@ -183,7 +183,7 @@
     {% if event.allowOrganizingTeam %}
         {% if closedOrganizingTeam is not empty %}
             <div class="card">
-                <h2>{% trans %}role.ot{% endtrans %}</h2>
+                <h2>{{ 'role.ot' | trans }}</h2>
             </div>
             <br/>
             {% for ot in closedOrganizingTeam %}
@@ -192,19 +192,19 @@
                     {% include 'widgets/detailsForAdmin.twig' with {'person': ot, 'ca': caOt} %}
                     <br/>
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': ot.getId, 'eventSlug': event.slug}) }}"
-                       class="btn btn-grey btn-small">{% trans %}approve-admin.deny{% endtrans %}</a>
+                       class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
                     <br/>
                     <form method="post"
                           action="{{ url_for('admin-approve', {'participantId': ot.getId, 'eventSlug': event.slug}) }}">
-                        <input type="submit" value="{% trans %}approve-admin.approveAndSend{% endtrans %}" class="btn btn-small">
+                        <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>
                 <br/>
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{% trans %}approve-admin.none{% endtrans %} {% trans %}role.ot{% endtrans %} {% trans %}approve-admin.need{% endtrans %}</h2>
+                <h2>{{ 'approve-admin.none' | trans }} {{ 'role.ot' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
             <br/>
         {% endif %}

@@ -2,32 +2,32 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}organizingTeam-admin.title{% endtrans %} {{ event.readableName }}</h2>
+        <h2>{{ 'organizingTeam-admin.title' | trans }} {{ event.readableName }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
-           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
     <br/>
     {% if otRegistrationUrl %}
         <div class="card">
-            <h3>{% trans %}organizingTeam-admin.registrationUrl{% endtrans %}</h3>
-            <p>{% trans %}organizingTeam-admin.registrationUrlDescription{% endtrans %}</p>
+            <h3>{{ 'organizingTeam-admin.registrationUrl' | trans }}</h3>
+            <p>{{ 'organizingTeam-admin.registrationUrlDescription' | trans }}</p>
             <input type="text" class="form-control form-wide" value="{{ otRegistrationUrl }}" readonly onclick="this.select()">
             <br/>
             <form method="POST" action="{{ url_for('admin-organizing-team-regenerate-token', {'eventSlug': event.slug}) }}">
-                <input type="submit" class="btn btn-grey btn-small" value="{% trans %}organizingTeam-admin.regenerateToken{% endtrans %}">
+                <input type="submit" class="btn btn-grey btn-small" value="{{ 'organizingTeam-admin.regenerateToken' | trans }}">
             </form>
         </div>
         <br/>
     {% endif %}
     <div class="card">
-        <h3>{% trans %}organizingTeam-admin.participants{% endtrans %}</h3>
+        <h3>{{ 'organizingTeam-admin.participants' | trans }}</h3>
         {% if organizingTeamParticipants %}
             <table>
                 <thead>
                 <tr>
-                    <th>{% trans %}organizingTeam-admin.name{% endtrans %}</th>
-                    <th>{% trans %}organizingTeam-admin.email{% endtrans %}</th>
-                    <th>{% trans %}organizingTeam-admin.status{% endtrans %}</th>
+                    <th>{{ 'organizingTeam-admin.name' | trans }}</th>
+                    <th>{{ 'organizingTeam-admin.email' | trans }}</th>
+                    <th>{{ 'organizingTeam-admin.status' | trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,7 +41,7 @@
                 </tbody>
             </table>
         {% else %}
-            <p>{% trans %}organizingTeam-admin.noParticipants{% endtrans %}</p>
+            <p>{{ 'organizingTeam-admin.noParticipants' | trans }}</p>
         {% endif %}
     </div>
 {% endblock %}

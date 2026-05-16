@@ -2,17 +2,17 @@
 
 {% block content %}
     <div class="card text-left">
-        <h2>{% trans %}changeDetails.editDetails{% endtrans %}</h2>
+        <h2>{{ 'changeDetails.editDetails' | trans }}</h2>
         <form method="POST" action="{{ url_for('changeDetails', {'eventSlug': event.slug}) }}"
               enctype="multipart/form-data">
             {% include 'widgets/changeDetails.twig' with {'personDetails': person, 'editableItems': ca.getAllowedItems()} %}
             <div class="text-center">
                 <br/>
-                <input class="btn btn-small" type="submit" value="{% trans %}changeDetails.save{% endtrans %}">
+                <input class="btn btn-small" type="submit" value="{{ 'changeDetails.save' | trans }}">
                 <br/>
                 <br/>
                 <a class="btn btn-small btn-grey"
-                   href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}">{% trans %}changeDetails.back{% endtrans %}</a>
+                   href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}">{{ 'changeDetails.back' | trans }}</a>
             </div>
         </form>
     </div>

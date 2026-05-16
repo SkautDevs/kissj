@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}dashboard-admin.dashboard{% endtrans %} {{ event.readableName }}
+        <h2>{{ 'dashboard-admin.dashboard' | trans }} {{ event.readableName }}
             {% if user.role.value == 'contingentAdminCs' %} - {{ 'detail.contingent.czechia'|trans }}
             {% elseif user.role.value == 'contingentAdminSk' %} - {{ 'detail.contingent.slovakia'|trans }}
             {% elseif user.role.value == 'contingentAdminPl' %} - {{ 'detail.contingent.poland'|trans }}
@@ -11,84 +11,84 @@
             {% elseif user.role.value == 'contingentAdminRo' %} - {{ 'detail.contingent.romania'|trans }}
             {% endif %}
         </h2>
-        <h3>{% trans %}dashboard-admin.stats{% endtrans %}</h3>
+        <h3>{{ 'dashboard-admin.stats' | trans }}</h3>
         <div class="card-divide">
             <div>
                 {% if event.allowPatrols %}
-                    <h3>{% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitPatrol{% endtrans %}: {{ event.maximalClosedPatrolsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ patrols.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ patrols.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ patrols.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ patrols.paidCount }}</p>
+                    <h3>{{ 'role.pl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitPatrol' | trans }}: {{ event.maximalClosedPatrolsCount }}</p>
+                    <p>{{ 'dashboard-admin.openPatrol' | trans }}: {{ patrols.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedPatrol' | trans }}: {{ patrols.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedPatrol' | trans }}: {{ patrols.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidPatrol' | trans }}: {{ patrols.paidCount }}</p>
                 {% endif %}
                 {% if event.allowTroops %}
-                    <h3>{% trans %}role.tl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitTroop{% endtrans %}: {{ event.getMaximalClosedTroopLeadersCount }}</p>
-                    <p>{% trans %}dashboard-admin.openTroop{% endtrans %}: {{ troopLeaders.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedTroop{% endtrans %}: {{ troopLeaders.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedTroop{% endtrans %}: {{ troopLeaders.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidTroop{% endtrans %}: {{ troopLeaders.paidCount }}</p>
+                    <h3>{{ 'role.tl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitTroop' | trans }}: {{ event.getMaximalClosedTroopLeadersCount }}</p>
+                    <p>{{ 'dashboard-admin.openTroop' | trans }}: {{ troopLeaders.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedTroop' | trans }}: {{ troopLeaders.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedTroop' | trans }}: {{ troopLeaders.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidTroop' | trans }}: {{ troopLeaders.paidCount }}</p>
                     <br>
 
-                    <h3>{% trans %}role.tp{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitTp{% endtrans %}: {{ event.getMaximalClosedTroopParticipantsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openTp{% endtrans %}: {{ troopParticipants.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedTp{% endtrans %}: {{ troopParticipants.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedTp{% endtrans %}: {{ troopParticipants.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidTp{% endtrans %}: {{ troopParticipants.paidCount }}</p>
+                    <h3>{{ 'role.tp' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitTp' | trans }}: {{ event.getMaximalClosedTroopParticipantsCount }}</p>
+                    <p>{{ 'dashboard-admin.openTp' | trans }}: {{ troopParticipants.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedTp' | trans }}: {{ troopParticipants.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedTp' | trans }}: {{ troopParticipants.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidTp' | trans }}: {{ troopParticipants.paidCount }}</p>
                 {% endif %}
             </div>
             <div>
                 {% if event.allowIsts %}
-                    <h3>{% trans %}role.ist{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitIst{% endtrans %}: {{ event.maximalClosedIstsCount }}</p>
-                    <p>{% trans %}dashboard-admin.openIst{% endtrans %}: {{ ists.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedIst{% endtrans %}: {{ ists.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedIst{% endtrans %}: {{ ists.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidIst{% endtrans %}: {{ ists.paidCount }}</p>
+                    <h3>{{ 'role.ist' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitIst' | trans }}: {{ event.maximalClosedIstsCount }}</p>
+                    <p>{{ 'dashboard-admin.openIst' | trans }}: {{ ists.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedIst' | trans }}: {{ ists.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedIst' | trans }}: {{ ists.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidIst' | trans }}: {{ ists.paidCount }}</p>
                     <br>
                 {% endif %}
                 {% if event.allowGuests %}
-                    <h3>{% trans %}role.guest{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitGuest{% endtrans %}
+                    <h3>{{ 'role.guest' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitGuest' | trans }}
                         : {{ event.getMaximalClosedGuestsCount() }}</p>
-                    <p>{% trans %}dashboard-admin.openGuest{% endtrans %}: {{ guests.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedGuest{% endtrans %}: {{ guests.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedGuest{% endtrans %}: {{ guests.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidGuest{% endtrans %}: {{ guests.paidCount }}</p>
+                    <p>{{ 'dashboard-admin.openGuest' | trans }}: {{ guests.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedGuest' | trans }}: {{ guests.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedGuest' | trans }}: {{ guests.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidGuest' | trans }}: {{ guests.paidCount }}</p>
                 {% endif %}
                 {% if event.allowOrganizingTeam %}
-                    <h3>{% trans %}role.ot{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                    <p>{% trans %}dashboard-admin.limitOt{% endtrans %}
+                    <h3>{{ 'role.ot' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.limitOt' | trans }}
                         : {{ event.getMaximalClosedOrganizingTeamCount() }}</p>
-                    <p>{% trans %}dashboard-admin.openOt{% endtrans %}: {{ organizingTeam.openCount }}</p>
-                    <p>{% trans %}dashboard-admin.lockedOt{% endtrans %}: {{ organizingTeam.closedCount }}</p>
-                    <p>{% trans %}dashboard-admin.approvedOt{% endtrans %}: {{ organizingTeam.approvedCount }}</p>
-                    <p>{% trans %}dashboard-admin.paidOt{% endtrans %}: {{ organizingTeam.paidCount }}</p>
+                    <p>{{ 'dashboard-admin.openOt' | trans }}: {{ organizingTeam.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedOt' | trans }}: {{ organizingTeam.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedOt' | trans }}: {{ organizingTeam.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidOt' | trans }}: {{ organizingTeam.paidCount }}</p>
                 {% endif %}
             </div>
         </div>
         <div class="card-divide">
             <div>
-                <h3>{% trans %}dashboard-admin.entryCount{% endtrans %}</h3>
-                <p>{% trans %}dashboard-admin.entryComing{% endtrans %}: {{ entryStatistic.coming }}</p>
-                <p>{% trans %}dashboard-admin.entryArrived{% endtrans %}: {{ entryStatistic.arrived }}</p>
-                <p>{% trans %}dashboard-admin.entryLeave{% endtrans %}: {{ entryStatistic.leave }}</p>
+                <h3>{{ 'dashboard-admin.entryCount' | trans }}</h3>
+                <p>{{ 'dashboard-admin.entryComing' | trans }}: {{ entryStatistic.coming }}</p>
+                <p>{{ 'dashboard-admin.entryArrived' | trans }}: {{ entryStatistic.arrived }}</p>
+                <p>{{ 'dashboard-admin.entryLeave' | trans }}: {{ entryStatistic.leave }}</p>
                 
-                <h3>{% trans %}dashboard-admin.entryCountPerRole{% endtrans %}</h3>
+                <h3>{{ 'dashboard-admin.entryCountPerRole' | trans }}</h3>
                 {% for role, entryData in entryStatisticRoles %}
                     <p>
                         <b>{{ ('role.'~role)|trans }}</b>:
-                        {% trans %}dashboard-admin.entryComing{% endtrans %}: {{ entryData.coming }}, 
-                        {% trans %}dashboard-admin.entryArrived{% endtrans %}: {{ entryData.arrived }}, 
-                        {% trans %}dashboard-admin.entryLeave{% endtrans %}: {{ entryData.leave }}
+                        {{ 'dashboard-admin.entryComing' | trans }}: {{ entryData.coming }}, 
+                        {{ 'dashboard-admin.entryArrived' | trans }}: {{ entryData.arrived }}, 
+                        {{ 'dashboard-admin.entryLeave' | trans }}: {{ entryData.leave }}
                     </p>
                 {% endfor %}
             </div>
             <div>
                 {% if event.eventType.showFoodStats() %}
-                    <h3>{% trans %}dashboard-admin.foodCount{% endtrans %}</h3>
+                    <h3>{{ 'dashboard-admin.foodCount' | trans }}</h3>
                     {% for food, count in foodStatistic %}
                         <p>{{ food|trans }}: <b>{{ count }}</b></p>
                     {% endfor %}
@@ -96,34 +96,34 @@
             </div>
         </div>
         {% if event.eventType.showContingentPatrolStats %}
-            <h3>{% trans %}dashboard-admin.contingentPatrolStats{% endtrans %}</h3>
+            <h3>{{ 'dashboard-admin.contingentPatrolStats' | trans }}</h3>
             <div class="card-divide">
                 <div>
                     {% for contingent in event.eventType.getContingentsForAdmin(user.role) %}
                         {% if loop.index is odd %}
-                            <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                            <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
-                            <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
-                            <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
-                            <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
+                            <h3>{{ contingent|trans }} {{ 'role.pl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                            <p>{{ 'dashboard-admin.openPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
+                            <p>{{ 'dashboard-admin.lockedPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
+                            <p>{{ 'dashboard-admin.approvedPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
+                            <p>{{ 'dashboard-admin.paidPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
                         {% endif %}
                     {% endfor %}
                 </div>
                 <div>
                     {% for contingent in event.eventType.getContingentsForAdmin(user.role) %}
                         {% if loop.index is even %}
-                            <h3>{{ contingent|trans }} {% trans %}role.pl{% endtrans %} {% trans %}dashboard-admin.count{% endtrans %}</h3>
-                            <p>{% trans %}dashboard-admin.openPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
-                            <p>{% trans %}dashboard-admin.lockedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
-                            <p>{% trans %}dashboard-admin.approvedPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
-                            <p>{% trans %}dashboard-admin.paidPatrol{% endtrans %}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
+                            <h3>{{ contingent|trans }} {{ 'role.pl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                            <p>{{ 'dashboard-admin.openPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].openCount }}</p>
+                            <p>{{ 'dashboard-admin.lockedPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].closedCount }}</p>
+                            <p>{{ 'dashboard-admin.approvedPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].approvedCount }}</p>
+                            <p>{{ 'dashboard-admin.paidPatrol' | trans }}: {{ contingentsPatrolStatistic[contingent].paidCount }}</p>
                         {% endif %}
                     {% endfor %}
                 </div>
             </div>
         {% endif %}
         {% if event.eventType.getContentArbiterIst().arrivalDate.allowed %}
-            <h3>{% trans %}dashboard-admin.istArrivalStats{% endtrans %} {% trans %}role.ist{% endtrans %}</h3>
+            <h3>{{ 'dashboard-admin.istArrivalStats' | trans }} {{ 'role.ist' | trans }}</h3>
             {% for date, count in istArrivalStatistic %}
                 <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
             {% endfor %}
@@ -131,49 +131,49 @@
     </div>
     <br>
     <div class="card">
-        <h3>{% trans %}dashboard-admin.adminActions{% endtrans %}</h3>
+        <h3>{{ 'dashboard-admin.adminActions' | trans }}</h3>
         <div class="card-divide">
             <div>
                 <a href="{{ url_for('admin-show-open', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.open{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.open' | trans }}</a><br/>
                 <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.approving{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.approving' | trans }}</a><br/>
                 {% if user.role.isEligibleToHandlePayments and event.automaticPaymentPairing %}
                     <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
-                       class="btn">{% trans %}dashboard-admin.newPayments{% endtrans %}</a><br/>
+                       class="btn">{{ 'dashboard-admin.newPayments' | trans }}</a><br/>
                 {% endif %}
                 {% if user.role.isEligibleToHandlePayments %}
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
-                       class="btn">{% trans %}dashboard-admin.confirmPayments{% endtrans %}</a><br/>
+                       class="btn">{{ 'dashboard-admin.confirmPayments' | trans }}</a><br/>
                 {% endif %}
                 <a href="{{ url_for('admin-show-stats', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.showPaid{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.showPaid' | trans }}</a><br/>
             </div>
             <div>
                 {% if event.allowTroops and user.role.isEligibleToManageTroops %}
                     <a href="{{ url_for('admin-troop-management', {'eventSlug': event.slug}) }}"
-                       class="btn">{% trans %}dashboard-admin.troopManagement{% endtrans %}</a><br/>    
+                       class="btn">{{ 'dashboard-admin.troopManagement' | trans }}</a><br/>    
                 {% endif %}
                 {% if event.eventType.showFoodStats() %}
                     <a href="{{ url_for('admin-food-stats', {'eventSlug': event.slug}) }}"
-                       class="btn">{% trans %}dashboard-admin.foodCount{% endtrans %}</a><br/>
+                       class="btn">{{ 'dashboard-admin.foodCount' | trans }}</a><br/>
                 {% endif %}
                 {% if event.allowOrganizingTeam %}
                     <a href="{{ url_for('admin-organizing-team', {'eventSlug': event.slug}) }}"
-                       class="btn">{% trans %}dashboard-admin.organizingTeam{% endtrans %}</a><br/>
+                       class="btn">{{ 'dashboard-admin.organizingTeam' | trans }}</a><br/>
                 {% endif %}
                 <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.roleManagement{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>
                 <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.exportMedData{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.exportMedData' | trans }}</a><br/>
                 <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.exportEmailsPaid{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.exportEmailsPaid' | trans }}</a><br/>
                 <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"
-                   class="btn">{% trans %}dashboard-admin.exportFullData{% endtrans %}</a><br/>
+                   class="btn">{{ 'dashboard-admin.exportFullData' | trans }}</a><br/>
                 {% if event.allowPatrols %}
                     <a href="{{ url_for('admin-export-patrols-roster', {'eventSlug': event.slug}) }}"
                        target="_blank"
-                       class="btn">{% trans %}dashboard-admin.exportPatrolsRoster{% endtrans %}</a><br/>
+                       class="btn">{{ 'dashboard-admin.exportPatrolsRoster' | trans }}</a><br/>
                 {% endif %}
             </div>
         </div>
@@ -181,15 +181,15 @@
     {% if user.role.isEligibleToHandlePayments %}
         <div class="card card-half">
             <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}" class="form-group">
-                <label class="form-group">{% trans %}dashboard-admin.emailFrom{% endtrans %}:<br/>
+                <label class="form-group">{{ 'dashboard-admin.emailFrom' | trans }}:<br/>
                     <input class="form-control form-wide" name="emailFrom" type="email" required></label>
                 <br/>
-                <label class="form-group">{% trans %}dashboard-admin.emailTo{% endtrans %}:<br/>
+                <label class="form-group">{{ 'dashboard-admin.emailTo' | trans }}:<br/>
                     <input class="form-control form-wide" name="emailTo" type="email" required></label>
                 <br/>
                 <input class="btn btn-small"
                        type="submit"
-                       value="{% trans %}dashboard-admin.checkMovePayments{% endtrans %}">
+                       value="{{ 'dashboard-admin.checkMovePayments' | trans }}">
             </form>
         </div>
     {% endif %}

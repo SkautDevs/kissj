@@ -5,9 +5,9 @@
         action="{{ url_for('admin-change-note', {'participantId': participantId, 'eventSlug': event.slug}) }}"
 >
     <label for="adminNote-{{ participantId }}">
-        <i>{% trans %}detail.adminNotice{% endtrans %}:</i>
+        <i>{{ 'detail.adminNotice' | trans }}:</i>
     </label>
     <input type="text" id="adminNote-{{ participantId }}" name="adminNote" value="{{ person.adminNote }}">
-    <input type="submit" class="btn btn-small btn-mini" value="{% trans %}dashboard-admin.changeNotice{% endtrans %}">
+    <input type="submit" class="btn btn-small btn-mini" value="{{ 'dashboard-admin.changeNotice' | trans }}">
     <span class="formResult">✔</span>
 </form>

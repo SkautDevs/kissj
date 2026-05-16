@@ -2,24 +2,24 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}login-help.title{% endtrans %}</h2>
+        <h2>{{ 'login-help.title' | trans }}</h2>
 
-        <h3>{% trans %}login-help.howItWorks.title{% endtrans %}</h3>
-        <p>{% trans %}login-help.howItWorks.p1{% endtrans %}</p>
-        <p>{% trans %}login-help.howItWorks.p2{% endtrans %}</p>
-        <p>{% trans %}login-help.howItWorks.p3{% endtrans %}</p>
-        <p>{% trans %}login-help.howItWorks.p4{% endtrans %}</p>
-        <p>{% trans %}login-help.howItWorks.p5{% endtrans %}</p>
+        <h3>{{ 'login-help.howItWorks.title' | trans }}</h3>
+        <p>{{ 'login-help.howItWorks.p1' | trans }}</p>
+        <p>{{ 'login-help.howItWorks.p2' | trans }}</p>
+        <p>{{ 'login-help.howItWorks.p3' | trans }}</p>
+        <p>{{ 'login-help.howItWorks.p4' | trans }}</p>
+        <p>{{ 'login-help.howItWorks.p5' | trans }}</p>
 
-        <h3>{% trans %}login-help.expiration.title{% endtrans %}</h3>
-        <p>{% trans %}login-help.expiration.p1{% endtrans %}</p>
-        <p>{% trans %}login-help.expiration.p2{% endtrans %}</p>
-        <p>{% trans %}login-help.expiration.p3{% endtrans %}</p>
+        <h3>{{ 'login-help.expiration.title' | trans }}</h3>
+        <p>{{ 'login-help.expiration.p1' | trans }}</p>
+        <p>{{ 'login-help.expiration.p2' | trans }}</p>
+        <p>{{ 'login-help.expiration.p3' | trans }}</p>
 
-        <h3>{% trans %}login-help.questions.title{% endtrans %}</h3>
-        <p>{% trans %}login-help.questions.p1{% endtrans %}</p>
+        <h3>{{ 'login-help.questions.title' | trans }}</h3>
+        <p>{{ 'login-help.questions.p1' | trans }}</p>
 
         <a href="{{ url_for('landing', {'eventSlug': event.slug}) }}"
-           class="btn btn-small btn-grey btn">{% trans %}login-help.backToLogin{% endtrans %}</a>
+           class="btn btn-small btn-grey btn">{{ 'login-help.backToLogin' | trans }}</a>
     </div>
 {% endblock %}

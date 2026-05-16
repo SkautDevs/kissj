@@ -1,8 +1,8 @@
 <b>{{ person.getFullName }}</b>
 {% if person is PatrolLeader %}
-    - {{ person.getPatrolParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %} <b>{{ person.getPatrolName }}</b>
+    - {{ person.getPatrolParticipantsCount }} {{ 'stats-admin.numberPatrolParticipantsTotal' | trans }} <b>{{ person.getPatrolName }}</b>
 {% elseif person is TroopLeader %}
-    - {{ person.getTroopParticipantsCount }} {% trans %}stats-admin.numberPatrolParticipantsTotal{% endtrans %} <b>{{ person.getPatrolName }}</b>
+    - {{ person.getTroopParticipantsCount }} {{ 'stats-admin.numberPatrolParticipantsTotal' | trans }} <b>{{ person.getPatrolName }}</b>
 {% endif %}
 {% if ca.contingent.allowed %}
     - <b>{{ person.getContingent|trans }}</b>
@@ -14,7 +14,7 @@
 <a
     href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': person.id}) }}"
     class="btn btn-mini">
-    {% trans %}dashboard-admin.mendParticipant{% endtrans %}
+    {{ 'dashboard-admin.mendParticipant' | trans }}
 </a>
 
 {# draw all patrol or troop participants on their separate rows #}

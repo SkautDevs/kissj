@@ -98,15 +98,15 @@
                     <a target="_blank" href="{{ url_for('show-file', {'filename': storedFilename, 'eventSlug': event.slug}) }}">
                         {{ value }}
                     </a>
-                    {% trans %}detail.uploadedFileSuccessful{% endtrans %}
+                    {{ 'detail.uploadedFileSuccessful' | trans }}
                 </b>
             {% endif %}
-            {% trans %}detail.uploadedFileNote{% endtrans %}
+            {{ 'detail.uploadedFileNote' | trans | raw }}
         </div>
     {% elseif item.type.value == 'checkbox' %}
         {% if item.slug == 'preferredPosition' %}
             <div class="form-group">
-                <label for="position">{% trans %}detail.position-title{% endtrans %}:</label>
+                <label for="position">{{ 'detail.position-title' | trans }}:</label>
                 {% for dbValue, transKey in item.options %}
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="{{ dbValue }}"
@@ -115,11 +115,11 @@
                     </label>
                 {% endfor %}
             </div>
-            {% trans %}detail.position-placeholder{% endtrans %}
+            {{ 'detail.position-placeholder' | trans }}
             <br>
         {% elseif item.slug == 'printedHandbook' %}
             <div class="form-group">
-                <label for="{{ item.slug }}">{% trans %}detail.printedHandbook-detail{% endtrans %}: </label>
+                <label for="{{ item.slug }}">{{ 'detail.printedHandbook-detail' | trans }}: </label>
                 <input
                         id="{{ item.slug }}"
                         type="checkbox"
@@ -142,20 +142,20 @@
         {% endif %}
     {% elseif item.type.value == 'tshirtComposite' %}
         <div class="form-group">
-            <label for="tshirtShape">{% trans %}detail.tshirtGender{% endtrans %}:</label>
+            <label for="tshirtShape">{{ 'detail.tshirtGender' | trans }}:</label>
             <select id="tshirtShape" class="form-control form-wide" name="tshirtShape" required="required">
                 <option value="detail.tshirtGenderFemale"
                         {% if personDetails.getTshirtShape == 'detail.tshirtGenderFemale' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtGenderFemale{% endtrans %}
+                    {{ 'detail.tshirtGenderFemale' | trans }}
                 </option>
                 <option value="detail.tshirtGenderMale"
                         {% if personDetails.getTshirtShape == 'detail.tshirtGenderMale' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtGenderMale{% endtrans %}
+                    {{ 'detail.tshirtGenderMale' | trans }}
                 </option>
             </select>
         </div>
         <div class="form-group">
-            <label for="tshirtSize">{% trans %}detail.tshirtSize{% endtrans %}:</label>
+            <label for="tshirtSize">{{ 'detail.tshirtSize' | trans }}:</label>
             <select
                 id="tshirtSize"
                 class="form-control form-wide"
@@ -163,22 +163,22 @@
                 required="required"
             >
                 <option value="detail.tshirtXS" {% if personDetails.getTshirtSize == 'detail.tshirtXS' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtXS{% endtrans %}
+                    {{ 'detail.tshirtXS' | trans }}
                 </option>
                 <option value="detail.tshirtS" {% if personDetails.getTshirtSize == 'detail.tshirtS' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtS{% endtrans %}
+                    {{ 'detail.tshirtS' | trans }}
                 </option>
                 <option value="detail.tshirtM" {% if personDetails.getTshirtSize == 'detail.tshirtM' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtM{% endtrans %}
+                    {{ 'detail.tshirtM' | trans }}
                 </option>
                 <option value="detail.tshirtL" {% if personDetails.getTshirtSize == 'detail.tshirtL' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtL{% endtrans %}
+                    {{ 'detail.tshirtL' | trans }}
                 </option>
                 <option value="detail.tshirtXL" {% if personDetails.getTshirtSize == 'detail.tshirtXL' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtXL{% endtrans %}
+                    {{ 'detail.tshirtXL' | trans }}
                 </option>
                 <option value="detail.tshirtXXL" {% if personDetails.getTshirtSize == 'detail.tshirtXXL' %}selected="selected"{% endif %}>
-                    {% trans %}detail.tshirtXXL{% endtrans %}
+                    {{ 'detail.tshirtXXL' | trans }}
                 </option>
             </select>
         </div>
@@ -201,19 +201,19 @@
     {% elseif item.slug == 'birthDate' %}
         {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b>
             {% if value %}
-                ({{ person.getAgeAtStartOfEvent }} {% trans %}detail.birthDateYearsAtEvent{% endtrans %})
+                ({{ person.getAgeAtStartOfEvent }} {{ 'detail.birthDateYearsAtEvent' | trans }})
             {% endif %}<br/>
     {% elseif item.slug == 'arrivalDate' or item.slug == 'departureDate' %}
         {{ item.label|trans }}: <b>{% if value %}{{ value.format('d. m. Y') }}{% endif %}</b><br/>
     {% elseif item.slug == 'preferredPosition' %}
-        {% trans %}detail.position-title{% endtrans %}: <b>
+        {{ 'detail.position-title' | trans }}: <b>
             {% for preferredPosition in person.preferredPosition %}
                 {{ preferredPosition|trans }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         </b><br/>
     {% elseif item.slug == 'printedHandbook' %}
         {{ item.label|trans }}: <b>
-            {% if value %}{% trans %}detail.handbook-yes{% endtrans %}{% else %}{% trans %}detail.handbook-no{% endtrans %}{% endif %}</b><br/>
+            {% if value %}{{ 'detail.handbook-yes' | trans }}{% else %}{{ 'detail.handbook-no' | trans }}{% endif %}</b><br/>
     {% elseif item.type.value == 'file' %}
         {{ item.label|trans }}:
         {% set filename = person.getUploadedFilename(item.slug) %}

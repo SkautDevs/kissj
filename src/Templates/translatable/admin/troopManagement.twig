@@ -2,18 +2,18 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}troopManagement-admin.troopManagement{% endtrans %}</h2>
+        <h2>{{ 'troopManagement-admin.troopManagement' | trans }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
-           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
     <div class="card">
-        <h2>{% trans %}troopManagement-admin.tieTogether{% endtrans %}</h2>
+        <h2>{{ 'troopManagement-admin.tieTogether' | trans }}</h2>
         <form
                 method="POST"
                 action="{{ url_for('admin-troop-tie-together', {'eventSlug': event.slug}) }}"
                 class="form-group form-group-middle"
         >
-            <label for="tieCodeLeader">{% trans %}dashboard.codeForTieToTroop{% endtrans %}:</label>
+            <label for="tieCodeLeader">{{ 'dashboard.codeForTieToTroop' | trans }}:</label>
             <input
                     id="tieCodeLeader"
                     name="tieCodeLeader"
@@ -21,10 +21,10 @@
                     required="required"
                     class="form-control"
                     pattern="[a-zA-Z]{6}"
-                    title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+                    title="{{ 'dashboard.tieCodeFormat' | trans }}"
                     placeholder="ABCDEF"
             >
-            <label for="tieCodeParticipant">{% trans %}dashboard.tieCodeLabel{% endtrans %}:</label>
+            <label for="tieCodeParticipant">{{ 'dashboard.tieCodeLabel' | trans }}:</label>
             <input
                     id="tieCodeParticipant"
                     name="tieCodeParticipant"
@@ -32,32 +32,32 @@
                     required="required"
                     class="form-control"
                     pattern="[a-zA-Z]{6}"
-                    title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+                    title="{{ 'dashboard.tieCodeFormat' | trans }}"
                     placeholder="ABCDEF"
             >
-            <input type="submit" value="{% trans %}dashboard.tie{% endtrans %}"
+            <input type="submit" value="{{ 'dashboard.tie' | trans }}"
                    class="btn btn-small">
         </form>
     </div>
 
     {% if troopLeaders is empty %}
         <div class="card">
-            <h2>{% trans %}troopManagement-admin.noTroopLeaders{% endtrans %}</h2>
+            <h2>{{ 'troopManagement-admin.noTroopLeaders' | trans }}</h2>
         </div>
     {% else %}
         <div class="card">
-            <h2>{% trans %}troopManagement-admin.openTroopLeaders{% endtrans %}</h2>
+            <h2>{{ 'troopManagement-admin.openTroopLeaders' | trans }}</h2>
         </div>
         <div class="card-double-layout">
             {% for tl in troopLeaders %}
                 <div class="card card-double">
-                    {% trans %}dashboard.tieCode{% endtrans %}: <b>{{ tl.tieCode }}</b><br/>
+                    {{ 'dashboard.tieCode' | trans }}: <b>{{ tl.tieCode }}</b><br/>
                     {% include 'widgets/detailsForAdmin.twig' with {
                         'person': tl,
                         'ca': event.getEventType.getContentArbiterTroopLeader,
                     } %}
 
-                    <h4>{% trans %}role.tp{% endtrans %} {% trans %}dashboard.details{% endtrans %}</h4>
+                    <h4>{{ 'role.tp' | trans }} {{ 'dashboard.details' | trans }}</h4>
                     {% for tp in tl.troopParticipants %}
                         <hr/>
                         {% include 'widgets/detailsForAdmin.twig' with {
@@ -67,7 +67,7 @@
                         } %}<br/>
                         <form method="POST" action="{{ url_for('admin-troop-untie', {eventSlug: event.slug}) }}">
                             <input type="hidden" name="tieCodeParticipant" value="{{ tp.tieCode }}">
-                            <input type="submit" class="btn btn-small btn-mini" value="{% trans %}troopManagement-admin.untie{% endtrans %}">
+                            <input type="submit" class="btn btn-small btn-mini" value="{{ 'troopManagement-admin.untie' | trans }}">
                         </form>
                         <br/>
                     {% endfor %}
@@ -79,17 +79,17 @@
 
     {% if troopParticipants is empty %}
         <div class="card">
-            <h2>{% trans %}troopManagement-admin.noTroopParticipants{% endtrans %}</h2>
+            <h2>{{ 'troopManagement-admin.noTroopParticipants' | trans }}</h2>
         </div>
         <br/>
     {% else %}
         <div class="card">
-            <h2>{% trans %}troopManagement-admin.troopParticipantsWithoutLeader{% endtrans %}</h2>
+            <h2>{{ 'troopManagement-admin.troopParticipantsWithoutLeader' | trans }}</h2>
         </div>
         <div class="card-double-layout">
             {% for tp in troopParticipants %}
                 <div class="card card-double">
-                    {% trans %}dashboard.tieCode{% endtrans %}: <b>{{ tp.tieCode }}</b><br/>
+                    {{ 'dashboard.tieCode' | trans }}: <b>{{ tp.tieCode }}</b><br/>
                     {% include 'widgets/detailsForAdmin.twig' with {
                         'person': tp,
                         'ca': caTp,
@@ -103,6 +103,6 @@
     {% endif %}
     <div class="card">
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
-           class="btn btn-grey btn-small">{% trans %}payments-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
 {% endblock %}

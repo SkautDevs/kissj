@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="text-center">
-        <p>{% trans %}email.finished-tp.approved{% endtrans %} {{ event.readableName }}{% trans %}email.finished-tp.thanks{% endtrans %}</p>
+        <p>{{ 'email.finished-tp.approved' | trans }} {{ event.readableName }}{{ 'email.finished-tp.thanks' | trans }}</p>
 
-        <p>{% trans %}email.finished-tp.enjoy{% endtrans %}</p>
+        <p>{{ 'email.finished-tp.enjoy' | trans }}</p>
     </div>
 {% endblock %}

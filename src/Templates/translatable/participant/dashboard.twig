@@ -6,22 +6,22 @@
         {{ ('role.' ~ person.role.value)|trans }}
         {% if person is Leader %}{{ person.getPatrolName }}{% endif %}
         -
-        {% trans %}dashboard.details{% endtrans %}
+        {{ 'dashboard.details' | trans }}
     </h2>
     {% include('widgets/userCustomHelp.twig') %}
     
     {% if person is eligibleForShowTieCode %}
         <h2>
             {% if userStatus == 'paid' and  person.role.value == 'tl'%}
-                {% trans %}dashboard.pairCode{% endtrans %} - {{ person.tieCode }}
+                {{ 'dashboard.pairCode' | trans }} - {{ person.tieCode }}
             {% else %}
-                {% trans %}dashboard.tieCode{% endtrans %} - {{ person.tieCode }}
+                {{ 'dashboard.tieCode' | trans }} - {{ person.tieCode }}
             {% endif %}
         </h2>
     {% endif %}
 
     {% if event.eventtype.showReceiptToParticipant(person) %}
-        <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{% trans %}dashboard.downloadReceipt{% endtrans %}</a><br/>
+        <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{{ 'dashboard.downloadReceipt' | trans }}</a><br/>
     {% endif %}
 </div>
 
@@ -35,10 +35,10 @@
                 <h2>{{ ('role.' ~ person.role.value)|trans }} {{ person.getFullName }}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
-                        {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
+                        {{ 'dashboard.editDetails' | trans }}</a><br/><br/>
                 {% elseif userStatus != 'cancelled' and ca.getEditableAfterLockItems() is not empty %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeableAfterLock', {'eventSlug': event.slug}) }}">
-                        {% trans %}dashboard.editDetailsAfterLock{% endtrans %}</a><br/><br/>
+                        {{ 'dashboard.editDetailsAfterLock' | trans }}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}
@@ -47,14 +47,14 @@
             </div>
             {# Participants #}
             <div>
-                <h2>{% trans %}dashboard.listOfParticipants{% endtrans %}</h2>
+                <h2>{{ 'dashboard.listOfParticipants' | trans }}</h2>
                 {# list of participants in group #}
                 {% set count = 1 %}
                 <ol class="text-center">
                     {% for p in participants %}
                         <li>
                             {% if person is PatrolLeader %}
-                                {% trans %}role.p{% endtrans %} <b>{{ p.getFullName }}</b>
+                                {{ 'role.p' | trans }} <b>{{ p.getFullName }}</b>
                                 {% if userStatus == 'open' %}
                                     <a href="{{ url_for('p-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                                 class="material-icons">edit</i></a>
@@ -69,12 +69,12 @@
                                 <span class="{% if participantUserStatus == 'open' %}highlight{% endif %}">
                                     {% if p.user.loginType.value == 'skautis' and p.user.skautisHasMembership == false %}
                                         <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
-                                        {% trans %}_layout.skautisAccountNotConnected{% endtrans %} ❌
+                                        {{ '_layout.skautisAccountNotConnected' | trans }} ❌
                                     {% endif %}
                                     {% if p.isFullNameNotEmpty %}
                                         <b>{{ p.getFullName }}</b>
                                     {% else %}
-                                        <i>{% trans %}dashboard.withoutFullName{% endtrans %}</i>
+                                        <i>{{ 'dashboard.withoutFullName' | trans }}</i>
                                     {% endif %}
                                     - {{ ('dashboard.userStatus.' ~ participantUserStatus)|trans }}
                                 </span>
@@ -93,23 +93,23 @@
                 {# help text how many participants is needed #}
                 {% if userStatus == 'open' %}
                     <p>
-                        {% trans %}dashboard.youNeed {% endtrans %}
+                        {{ 'dashboard.youNeed ' | trans }}
                             {% if person is PatrolLeader %}
                             {% if event.getMinimalPpCount(person) == event.getMaximalPpCount(person) %}
-                                {% trans %}dashboard.exactly {% endtrans %} {{ event.getMinimalPpCount(person) }}
+                                {{ 'dashboard.exactly ' | trans }} {{ event.getMinimalPpCount(person) }}
                             {% else %}
-                                {% trans %}dashboard.minimally {% endtrans %} {{ event.getMinimalPpCount(person) }}
-                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.getMaximalPpCount(person) }}
+                                {{ 'dashboard.minimally ' | trans }} {{ event.getMinimalPpCount(person) }}
+                                {{ 'dashboard.andMaximally ' | trans }} {{ event.getMaximalPpCount(person) }}
                             {% endif %}
                         {% elseif person is TroopLeader %}
                             {% if event.getMinimalTroopParticipantsCount == event.getMaximalTroopParticipantsCount %}
-                                {% trans %}dashboard.exactly {% endtrans %} {{ event.getMinimalTroopParticipantsCount }}
+                                {{ 'dashboard.exactly ' | trans }} {{ event.getMinimalTroopParticipantsCount }}
                             {% else %}
-                                {% trans %}dashboard.minimally {% endtrans %} {{ event.getMinimalTroopParticipantsCount }}
-                                {% trans %}dashboard.andMaximally {% endtrans %} {{ event.getMaximalTroopParticipantsCount }}
+                                {{ 'dashboard.minimally ' | trans }} {{ event.getMinimalTroopParticipantsCount }}
+                                {{ 'dashboard.andMaximally ' | trans }} {{ event.getMaximalTroopParticipantsCount }}
                             {% endif %}
                         {% endif %}
-                        {% trans %}dashboard.pForValidReg {% endtrans %}
+                        {{ 'dashboard.pForValidReg ' | trans }}
                     </p>
                 {% endif %}
 
@@ -117,19 +117,19 @@
                 {% if userStatus == 'open' %}
                     {% if person is PatrolLeader %}
                         <a href="{{ url_for('pl-showAddParticipant', {'eventSlug': event.slug}) }}" class="btn btn-small">
-                            {% trans %}dashboard.addParticipant{% endtrans %}
+                            {{ 'dashboard.addParticipant' | trans }}
                         </a>
                         {% if event.eventType.isLoginSkautisAllowed %}
                             <br/>
                             {% if user.loginType.value == 'skautis' %}
                                 <a href="{{ url_for('pl-showAddFromSkautis', {'eventSlug': event.slug}) }}" class="btn btn-small">
-                                    {% trans %}dashboard.addFromSkautis{% endtrans %}
+                                    {{ 'dashboard.addFromSkautis' | trans }}
                                 </a>
                             {% else %}
-                                <button class="btn btn-small" disabled title="{% trans %}dashboard.addFromSkautisDisabled{% endtrans %}">
-                                    {% trans %}dashboard.addFromSkautis{% endtrans %}
+                                <button class="btn btn-small" disabled title="{{ 'dashboard.addFromSkautisDisabled' | trans }}">
+                                    {{ 'dashboard.addFromSkautis' | trans }}
                                 </button>
-                                <small>{% trans %}dashboard.addFromSkautisDisabled{% endtrans %}</small>
+                                <small>{{ 'dashboard.addFromSkautisDisabled' | trans }}</small>
                             {% endif %}
                         {% endif %}
                     {% elseif person is TroopLeader %}
@@ -151,7 +151,7 @@
                 {% set linkLeaderLock = url_for('showCloseRegistration', {'eventSlug': event.slug}) %}
             {% endif %}                
             <a class="btn btn-small" href="{{ linkLeaderLock }}">
-                {% trans %}dashboard.lockRegistration{% endtrans %}
+                {{ 'dashboard.lockRegistration' | trans }}
             </a>
         {% endif %}
     
@@ -165,16 +165,16 @@
                             buttonLabel: 'dashboard.tieToTroopLeader'
                         } %}<br/>
                     {% else %}
-                        <h2>{% trans with {'%troopName%': person.troopLeader.getPatrolName(), '%troopLeaderFullName%': person.troopLeader.getFullName()} %}dashboard.youHaveTroop{% endtrans %}</h2>
+                        <h2>{{ 'dashboard.youHaveTroop' | trans({'%troopName%': person.troopLeader.getPatrolName(), '%troopLeaderFullName%': person.troopLeader.getFullName()}) }}</h2>
                     {% endif %}
                 {% endif %}
-                <h2>{% trans %}dashboard.personalInfo{% endtrans %}</h2>
+                <h2>{{ 'dashboard.personalInfo' | trans }}</h2>
                 {% if userStatus == 'open' %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeable', {'eventSlug': event.slug}) }}">
-                        {% trans %}dashboard.editDetails{% endtrans %}</a><br/><br/>
+                        {{ 'dashboard.editDetails' | trans }}</a><br/><br/>
                 {% elseif userStatus != 'cancelled' and ca.getEditableAfterLockItems() is not empty %}
                     <a class="btn btn-small" href="{{ url_for('showDetailsChangeableAfterLock', {'eventSlug': event.slug}) }}">
-                        {% trans %}dashboard.editDetailsAfterLock{% endtrans %}</a><br/><br/>
+                        {{ 'dashboard.editDetailsAfterLock' | trans }}</a><br/><br/>
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}
@@ -184,7 +184,7 @@
     
             {% if userStatus == 'open' %}
                 <a class="btn btn-small" href="{{ url_for('showCloseRegistration', {'eventSlug': event.slug}) }}">
-                    {% trans %}dashboard.lockRegistration{% endtrans %}</a>
+                    {{ 'dashboard.lockRegistration' | trans }}</a>
             {% endif %}
         </div>
 

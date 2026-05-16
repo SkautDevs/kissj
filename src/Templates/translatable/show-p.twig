@@ -2,11 +2,11 @@
 
 {% block content %}
     <div class="card card-half">
-        <h2>{% trans %}role.p{% endtrans %} - {% trans %}dashboard.details{% endtrans %}</h2>
+        <h2>{{ 'role.p' | trans }} - {{ 'dashboard.details' | trans }}</h2>
         {% include 'widgets/details.twig' with {'person': pDetail} %}
         <br/>
         <a class="btn btn-grey btn-small" href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}">
-            {% trans %}changeDetails.back{% endtrans %}
+            {{ 'changeDetails.back' | trans }}
         </a>
     </div>
 {% endblock %}

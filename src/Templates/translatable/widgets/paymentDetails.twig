@@ -1,13 +1,13 @@
 <h4>{{ person.getFullName }}</h4>
-{% trans %}payments-admin.email{% endtrans %}: <b>{{ person.user.getEmail }}</b><br/>
+{{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b><br/>
 <a
     href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
     class="btn btn-small btn-mini"
->{% trans %}mend-admin.addPayment{% endtrans %}</a></br>
+>{{ 'mend-admin.addPayment' | trans }}</a></br>
 {% if ca.contingent.allowed %}
-    {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
+    {{ 'detail.contingentTitle' | trans }}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}{% if ca.notes.allowed %}
-    {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+    {{ 'detail.notice' | trans }}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}
 <br>

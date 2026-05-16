@@ -3,18 +3,18 @@
 {% block content %}
     <div class="two-cards">
         <div class="card">
-            <h2>{% trans %}landing.features.title{% endtrans %}</h2>
+            <h2>{{ 'landing.features.title' | trans }}</h2>
             <ul>
-                <li>{% trans %}landing.features.setup{% endtrans %}</li>
-                <li>{% trans %}landing.features.emails{% endtrans %}</li>
-                <li>{% trans %}landing.features.payments{% endtrans %}</li>
-                <li>{% trans %}landing.features.export{% endtrans %}</li>
+                <li>{{ 'landing.features.setup' | trans }}</li>
+                <li>{{ 'landing.features.emails' | trans }}</li>
+                <li>{{ 'landing.features.payments' | trans }}</li>
+                <li>{{ 'landing.features.export' | trans }}</li>
             </ul>
         </div>
         <div class="card">
-            <h2>{% trans %}landing.cta.title{% endtrans %}</h2>
-            <p>{% trans %}landing.cta.description{% endtrans %}</p>
-            <a target="_blank" href="https://github.com/SkautDevs/kissj">{% trans %}landing.cta.github{% endtrans %}</a>
+            <h2>{{ 'landing.cta.title' | trans }}</h2>
+            <p>{{ 'landing.cta.description' | trans }}</p>
+            <a target="_blank" href="https://github.com/SkautDevs/kissj">{{ 'landing.cta.github' | trans }}</a>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="card">
-        <h2>{% trans %}landing.events.title{% endtrans %}</h2>
+        <h2>{{ 'landing.events.title' | trans }}</h2>
         {% for event in events %}
             <p><a href="{{ url_for('landing', {'eventSlug': event.slug}) }}" class="btn">{{ event.readableName }}</a></p>
         {% endfor %}

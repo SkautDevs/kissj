@@ -2,20 +2,20 @@
 
 {% block content %}
     <div class="card card-half">
-        <h2>{% trans %}deny-admin.deny{% endtrans %} {{ ('role.' ~ participant.role.value)|trans }}</h2>
+        <h2>{{ 'deny-admin.deny' | trans }} {{ ('role.' ~ participant.role.value)|trans }}</h2>
         <p></p>
         <form method="post"
               action="{{ url_for('admin-deny-participant', {'participantId' : participant.getId, 'eventSlug': event.slug}) }}">
             <div class="form-group">
-                <label>{% trans %}deny-admin.wantDeny{% endtrans %} <b>{{ participant.getFullName }}</b>
-                    {% trans %}deny-admin.reason{% endtrans %}:<br/><br/>
+                <label>{{ 'deny-admin.wantDeny' | trans }} <b>{{ participant.getFullName }}</b>
+                    {{ 'deny-admin.reason' | trans }}:<br/><br/>
                     <input type="text" name="reason" id="form-reason" class="form-control form-wide"
                            required="required"></label>
             </div>
             <br/>
             <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
-               class="btn btn-small btn-grey">{% trans %}deny-admin.back{% endtrans %}</a><br/><br/>
-            <input type="submit" value="{% trans %}deny-admin.denyAndSend{% endtrans %}" class="btn btn-small">
+               class="btn btn-small btn-grey">{{ 'deny-admin.back' | trans }}</a><br/><br/>
+            <input type="submit" value="{{ 'deny-admin.denyAndSend' | trans }}" class="btn btn-small">
         </form>
     </div>
 {% endblock %}

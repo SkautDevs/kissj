@@ -2,29 +2,29 @@
 
 {% block content %}
     <p>
-        {% trans with {'%event.getReadableName%': event.getReadableName} %}email.payment-price-changed.changed{% endtrans %}
-        {% trans %}email.payment-price-changed.reason{% endtrans %}: {{ reason }}.
+        {{ 'email.payment-price-changed.changed' | trans({'%event.getReadableName%': event.getReadableName}) }}
+        {{ 'email.payment-price-changed.reason' | trans }}: {{ reason }}.
     </p>
     <p>
-        <b>{% trans %}email.payment-price-changed.dontPay{% endtrans %}</b>
+        <b>{{ 'email.payment-price-changed.dontPay' | trans }}</b>
     </p>
-    <p>{% trans %}email.payment-price-changed.newPaymentDetails{% endtrans %}</p>
-    <h3><u>{% trans %}email.payment-info.paymentDetails{% endtrans %}</u></h3>
+    <p>{{ 'email.payment-price-changed.newPaymentDetails' | trans }}</p>
+    <h3><u>{{ 'email.payment-info.paymentDetails' | trans }}</u></h3>
     {% if showIban %}
-        <h4>{% trans %}email.payment-info.iban{% endtrans %}: {{ payment.iban }}</h4>
+        <h4>{{ 'email.payment-info.iban' | trans }}: {{ payment.iban }}</h4>
     {% endif %}
     {% if payment.swift %}
-        <h4>{% trans %}email.payment-info.swift{% endtrans %}: {{ payment.swift }}</h4>
+        <h4>{{ 'email.payment-info.swift' | trans }}: {{ payment.swift }}</h4>
     {% endif %}
-    <h4>{% trans %}email.payment-info.accountNumber{% endtrans %}: {{ payment.accountNumber }}</h4>
-    <h4>{% trans %}email.payment-info.amount{% endtrans %}: {{ payment.price }} {{ payment.currency }}</h4>
-    <h4>{% trans %}email.payment-info.variableSymbol{% endtrans %}: {{ payment.getVariableSymbol }}</h4>
+    <h4>{{ 'email.payment-info.accountNumber' | trans }}: {{ payment.accountNumber }}</h4>
+    <h4>{{ 'email.payment-info.amount' | trans }}: {{ payment.price }} {{ payment.currency }}</h4>
+    <h4>{{ 'email.payment-info.variableSymbol' | trans }}: {{ payment.getVariableSymbol }}</h4>
     {% if payment.constantSymbol %}
-        <h4>{% trans %}email.payment-info.constantSymbol{% endtrans %}: {{ payment.constantSymbol }}</h4>
+        <h4>{{ 'email.payment-info.constantSymbol' | trans }}: {{ payment.constantSymbol }}</h4>
     {% endif %}
-    <h4>{% trans %}email.payment-info.paymentNote{% endtrans %}: {{ payment.note }}</h4>
+    <h4>{{ 'email.payment-info.paymentNote' | trans }}: {{ payment.note }}</h4>
     {% if showPaymentQrCode %}
-        <h3><u>{% trans %}email.payment-info.qrCode{% endtrans %}</u></h3>
+        <h3><u>{{ 'email.payment-info.qrCode' | trans }}</u></h3>
         <img src="cid:qr_payment" alt="QR payment code"/>
     {% endif %}
 {% endblock %}

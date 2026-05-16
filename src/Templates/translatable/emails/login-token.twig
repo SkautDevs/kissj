@@ -1,11 +1,11 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans %}email.login-token.logging{% endtrans %}{{ event.readableName }}.</p>
+    <p>{{ 'email.login-token.logging' | trans }}{{ event.readableName }}.</p>
     <a class="btn btn-small" href="{{ baseHostScheme }}{{ link }}">
-        {% trans %}email.login-token.logIn{% endtrans %}
+        {{ 'email.login-token.logIn' | trans }}
     </a>
-    <p>{% trans %}email.login-token.buttonNotWorking{% endtrans %}
+    <p>{{ 'email.login-token.buttonNotWorking' | trans }}
         <a href="{{ baseHostScheme }}{{ link }}">
             {{ baseHostScheme }}{{ link }}
         </a>

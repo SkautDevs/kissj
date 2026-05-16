@@ -11,7 +11,7 @@
             required="required"
             class="form-control"
             pattern="[a-zA-Z]{6}"
-            title="{% trans %}dashboard.tieCodeFormat{% endtrans %}"
+            title="{{ 'dashboard.tieCodeFormat' | trans }}"
             placeholder="ABCDEF"
     ><br>
     <input type="submit" value="{{ buttonLabel|trans }}"

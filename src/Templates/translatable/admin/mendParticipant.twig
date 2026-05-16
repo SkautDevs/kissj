@@ -2,27 +2,27 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}mend-admin.headline{% endtrans %}</h2>
+        <h2>{{ 'mend-admin.headline' | trans }}</h2>
         <div>
             {% set userStatus = participant.getUserButNotNull().status.value %}
-            {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ userStatus)|trans }}</b><br/>
-            {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  participant.role.value)|trans }}</b>
+            {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ userStatus)|trans }}</b><br/>
+            {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~  participant.role.value)|trans }}</b>
             {% if participant is TroopLeader %}
-                ({{ participant.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+                ({{ participant.getTroopParticipantsCount() }}x {{ 'role.tp' | trans }})
             {% elseif participant is PatrolLeader %}
-                ({{ participant.getPatrolParticipantsCount() }}x {% trans %}role.pp{% endtrans %})
+                ({{ participant.getPatrolParticipantsCount() }}x {{ 'role.pp' | trans }})
             {% endif %}<br/>
-            {% trans %}mend-admin.tieCode{% endtrans %}: <b>{{ participant.tieCode }}</b>
+            {{ 'mend-admin.tieCode' | trans }}: <b>{{ participant.tieCode }}</b>
             <br/>
             <br/>
             {{ include('widgets/detailsForAdmin.twig', {person: participant, ca: ca}) }}
             <br/>
-            {% trans %}mend-admin.enter{% endtrans %}:
+            {{ 'mend-admin.enter' | trans }}:
             {% set entryDate = participant.getEntryDate() %}
             {% if entryDate %}
                 <b>🎪 {{ entryDate|date('d. m. Y - H:i:s') }}</b>
             {% else %}
-                ⌛ <i>{% trans %}mend-admin.didNotEnterYet{% endtrans %}</i>
+                ⌛ <i>{{ 'mend-admin.didNotEnterYet' | trans }}</i>
             {% endif %}
             <br/>
             <br/>
@@ -35,7 +35,7 @@
                             method="POST"
                             action="{{ url_for('admin-set-deal-as-done', {'eventSlug': event.slug, 'participantId': participant.id, 'dealSlug': participantDeal.slug}) }}"
                     >
-                        <input type="submit" class="btn btn-mini" value="{% trans %}mend-admin.setDealAsDone{% endtrans %}">
+                        <input type="submit" class="btn btn-mini" value="{{ 'mend-admin.setDealAsDone' | trans }}">
                     </form>
                 {% else %} ✅{% endif %}{{ not loop.last ? ' | ' }}
                 {% endfor %}
@@ -47,7 +47,7 @@
                             method="POST"
                             action="{{ url_for('admin-set-deal-as-done', {'eventSlug': event.slug, 'participantId': participant.id, 'dealSlug': eventDeal.slug}) }}"
                     >
-                        <input type="submit" class="btn btn-mini" value="{% trans %}mend-admin.setDealAsDone{% endtrans %}">
+                        <input type="submit" class="btn btn-mini" value="{{ 'mend-admin.setDealAsDone' | trans }}">
                     </form>
                     {{ not loop.last ? ' | ' }}
                 {% endfor %}
@@ -60,14 +60,14 @@
                     method="POST"
                     action="{{ url_for('admin-uncancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
             >
-                <input type="submit" class="btn" value="{% trans %}mend-admin.uncancelParticipant{% endtrans %}">
+                <input type="submit" class="btn" value="{{ 'mend-admin.uncancelParticipant' | trans }}">
             </form>
             <br/>
         {% endif %}
 
         {% if participant is TroopParticipant and participant.troopLeader is not null and participant.userButNotNull.status == participant.troopLeader.userButNotNull.status %}
             <form method="POST" action="{{ url_for('admin-swap-troop-leader', {eventSlug: event.slug, participantId: participant.id}) }}" style="display:inline">
-                <input type="submit" class="btn" value="{% trans %}mend-admin.swapLeader{% endtrans %}">
+                <input type="submit" class="btn" value="{{ 'mend-admin.swapLeader' | trans }}">
             </form>
             <br/>
         {% endif %}
@@ -76,7 +76,7 @@
             <a
                     href="{{ url_for('admin-show-participant-details-changeable', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                     class="btn">
-                {% trans %}mend-admin.editParticipant{% endtrans %}
+                {{ 'mend-admin.editParticipant' | trans }}
             </a>
             <br/>
             {% if participant is not PatrolParticipant %}
@@ -84,7 +84,7 @@
                     href="{{ url_for('admin-show-add-new-payment', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                     class="btn"
                 >
-                    {% trans %}mend-admin.addPayment{% endtrans %}
+                    {{ 'mend-admin.addPayment' | trans }}
                 </a>
                 <br/>
             {% endif %}
@@ -94,7 +94,7 @@
                         method="POST"
                         action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                 >
-                    <input type="submit" class="btn" value="{% trans %}mend-admin.cancelParticipant{% endtrans %}">
+                    <input type="submit" class="btn" value="{{ 'mend-admin.cancelParticipant' | trans }}">
                 </form>
                 <br/>
             {% endif %}
@@ -103,7 +103,7 @@
                         method="POST"
                         action="{{ url_for('admin-entry-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                 >
-                    <input type="submit" class="btn" value="{% trans %}mend-admin.entryParticipant{% endtrans %}">
+                    <input type="submit" class="btn" value="{{ 'mend-admin.entryParticipant' | trans }}">
                 </form>
                 <br/>
             {% else %}
@@ -111,13 +111,13 @@
                         method="POST"
                         action="{{ url_for('admin-unentry-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                 >
-                    <input type="submit" class="btn" value="{% trans %}mend-admin.unentryParticipant{% endtrans %}">
+                    <input type="submit" class="btn" value="{{ 'mend-admin.unentryParticipant' | trans }}">
                 </form>
                 <br/>
             {% endif %}
         {% endif %}
 
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
-           class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
     </div>
 {% endblock %}

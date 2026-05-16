@@ -1,11 +1,11 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans with {'%event.getReadableName%': event.getReadableName} %}email.cancel-payment.denied{% endtrans %}
-    {% trans %}email.cancel-payment.reason{% endtrans %}: {{ reason }}.</p>
+    <p>{{ 'email.cancel-payment.denied' | trans({'%event.getReadableName%': event.getReadableName}) }}
+    {{ 'email.cancel-payment.reason' | trans }}: {{ reason }}.</p>
     <p>
-        <b>{% trans %}email.cancel-payment.dontPay{% endtrans %} </b>
-        {% trans %}email.cancel-payment.registerAgain{% endtrans %}
-        {% trans %}email.cancel-payment.newPayment{% endtrans %}
+        <b>{{ 'email.cancel-payment.dontPay' | trans }} </b>
+        {{ 'email.cancel-payment.registerAgain' | trans }}
+        {{ 'email.cancel-payment.newPayment' | trans }}
     </p>
 {% endblock %}

@@ -2,20 +2,20 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}closeRegistration.titlePatrol{% endtrans %}</h2>
-        <p>{% trans %}closeRegistration.lockRegistration{% endtrans %}
-            <b>{% trans %}closeRegistration.lockRegistrationBold{% endtrans %}</b></p>
+        <h2>{{ 'closeRegistration.titlePatrol' | trans }}</h2>
+        <p>{{ 'closeRegistration.lockRegistration' | trans }}
+            <b>{{ 'closeRegistration.lockRegistrationBold' | trans }}</b></p>
         <form method="POST" action="{{ url_for('pl-closeRegistration', {'eventSlug': event.slug}) }}">
             <label><input type="checkbox"
-                          required="required">{% trans %}closeRegistration.protectionAgree{% endtrans %}
+                          required="required">{{ 'closeRegistration.protectionAgree' | trans }}
                 <a target="_blank" href="{{ dataProtectionUrl }}">{{ dataProtectionUrl }}</a>.
             </label><br/>
             <br/>
             <div class="text-center">
                 <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
-                   class="btn btn-grey btn-small">{% trans %}closeRegistration.back{% endtrans %}</a>
+                   class="btn btn-grey btn-small">{{ 'closeRegistration.back' | trans }}</a>
                 <input class="btn btn-small" type="submit"
-                       value="{% trans %}closeRegistration.lockRegistrationButton{% endtrans %}">
+                       value="{{ 'closeRegistration.lockRegistrationButton' | trans }}">
             </div>
         </form>
     </div>

@@ -1,25 +1,25 @@
 <h4>{{ person.getFullName }}</h4>
 {% if person is PatrolLeader %}
-    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getPatrolParticipantsCount + 1}}</b><br/>
+    {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getPatrolParticipantsCount + 1}}</b><br/>
 {% endif %}{% if person is TroopLeader %}
-    {% trans %}stats-admin.numberPatrolParticipants{% endtrans %}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
+    {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
 {% endif %}{% if ca.contingent.allowed %}
-    {% trans %}detail.contingentTitle{% endtrans %}: <b>{{ person.getContingent|trans }}</b><br/>
+    {{ 'detail.contingentTitle' | trans }}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}{% if ca.email.allowed %}
-    {% trans %}detail.email{% endtrans %}: <b>{{ person.getEmail }}</b><br/>
+    {{ 'detail.email' | trans }}: <b>{{ person.getEmail }}</b><br/>
 {% elseif person.getUser is not null %}
-    {% trans %}detail.email{% endtrans %}: <b>{{ person.getUser.email }}</b><br/>
+    {{ 'detail.email' | trans }}: <b>{{ person.getUser.email }}</b><br/>
 {% endif %}{% if ca.phone.allowed %}
-    {% trans %}detail.phone{% endtrans %}: <b>{{ person.getTelephoneNumber }}</b><br/>
+    {{ 'detail.phone' | trans }}: <b>{{ person.getTelephoneNumber }}</b><br/>
 {% endif %}{% if ca.unit.allowed %}
-    {% trans %}detail.unit{% endtrans %}: <b>{{ person.getScoutUnit }}</b><br/>
+    {{ 'detail.unit' | trans }}: <b>{{ person.getScoutUnit }}</b><br/>
 {% endif %}{% if ca.notes.allowed %}
-    {% trans %}detail.notice{% endtrans %}: <b>{{ person.getNotes }}</b><br/>
+    {{ 'detail.notice' | trans }}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
 <a 
     href="{{ url_for('admin-show-role', {'participantId' : person.id, 'eventSlug': event.slug}) }}"
     class="btn btn-small btn-mini"
 >
-    {% trans %}stats-admin.changeRole{% endtrans %}
+    {{ 'stats-admin.changeRole' | trans }}
 </a>

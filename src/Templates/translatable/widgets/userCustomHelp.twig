@@ -2,56 +2,56 @@
     {% set userRole = person.getRole.value %}
     {% if userStatus == 'open' %}
         {% if userRole == 'pl' %}
-            {% trans %}userCustomHelp.statusOpenPl{% endtrans %}
+            {{ 'userCustomHelp.statusOpenPl' | trans }}
         {% elseif userRole == 'tl' %}
-            {% trans %}userCustomHelp.statusOpenTl{% endtrans %}
+            {{ 'userCustomHelp.statusOpenTl' | trans }}
         {% elseif userRole == 'tp' %}
-            {% trans %}userCustomHelp.statusOpenTp{% endtrans %}
+            {{ 'userCustomHelp.statusOpenTp' | trans }}
         {% endif %}
     {% elseif userStatus == 'closed' %}
         {% if userRole == 'guest' %}
-            {% trans %}userCustomHelp.statusClosedGuest{% endtrans %} <a
+            {{ 'userCustomHelp.statusClosedGuest' | trans }} <a
                 href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
         {% else %}
-            {% trans %}userCustomHelp.statusClosed{% endtrans %} <a
+            {{ 'userCustomHelp.statusClosed' | trans }} <a
                 href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
         {% endif %}
     {% elseif userStatus == 'approved' %}
         {% if userRole == 'tp' %}
-            {% trans %}userCustomHelp.statusApprovedTp{% endtrans %}
+            {{ 'userCustomHelp.statusApprovedTp' | trans }}
         {% else %}
-            {% trans %}userCustomHelp.statusApproved{% endtrans %}
+            {{ 'userCustomHelp.statusApproved' | trans }}
         {% endif %}
     {% elseif userStatus == 'paid' %}
         {% if userRole == 'guest' %}
-            {% trans with {'%event.getReadableName%': event.getReadableName} %}userCustomHelp.statusPaidGuest{% endtrans %}
+            {{ 'userCustomHelp.statusPaidGuest' | trans({'%event.getReadableName%': event.getReadableName}) }}
         {% else %}
-            {% trans with {'%event.getReadableName%': event.getReadableName} %}userCustomHelp.statusPaid{% endtrans %}
+            {{ 'userCustomHelp.statusPaid' | trans({'%event.getReadableName%': event.getReadableName}) }}
         {% endif %}
     {% endif %}
 </h4>
 
 {% if person.getPayments %}
-    <h2>{% trans %}dashboard.paymentInfo{% endtrans %}</h2>
+    <h2>{{ 'dashboard.paymentInfo' | trans }}</h2>
     {% for payment in person.getPayments %}
         <div class="payment{% if payment.status.value == 'canceled' %} payment-cancelled{% endif %}">
-            {% trans %}dashboard.paymentStatusTitle{% endtrans %}: <b>
+            {{ 'dashboard.paymentStatusTitle' | trans }}: <b>
                 {{ ('dashboard.paymentStatus.' ~ payment.status.value)|trans }}
             </b><br/>
             {% if event.eventtype.showIban %}
-                {% trans %}dashboard.iban{% endtrans %}: <b>{{ payment.getIban }}</b><br/>
+                {{ 'dashboard.iban' | trans }}: <b>{{ payment.getIban }}</b><br/>
             {% endif %}
             {% if payment.swift %}
-                {% trans %}dashboard.swift{% endtrans %}: <b>{{ payment.swift }}</b><br/>
+                {{ 'dashboard.swift' | trans }}: <b>{{ payment.swift }}</b><br/>
             {% endif %}
-            {% trans %}dashboard.accountNumber{% endtrans %}: <b>{{ payment.getAccountNumber }}</b><br/>
-            {% trans %}dashboard.amount{% endtrans %}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
+            {{ 'dashboard.accountNumber' | trans }}: <b>{{ payment.getAccountNumber }}</b><br/>
+            {{ 'dashboard.amount' | trans }}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
             <br/>
-            {% trans %}dashboard.variableSymbol{% endtrans %}: <b>{{ payment.getVariableSymbol }}</b><br/>
+            {{ 'dashboard.variableSymbol' | trans }}: <b>{{ payment.getVariableSymbol }}</b><br/>
             {% if payment.constantSymbol %}
-                {% trans %}dashboard.constantSymbol{% endtrans %}: <b>{{ payment.constantSymbol }}</b><br/>
+                {{ 'dashboard.constantSymbol' | trans }}: <b>{{ payment.constantSymbol }}</b><br/>
             {% endif %}
-            {% trans %}dashboard.paymentNote{% endtrans %}: <b>{{ payment.getNote }}</b><br/>
+            {{ 'dashboard.paymentNote' | trans }}: <b>{{ payment.getNote }}</b><br/>
             <br/>
         </div>
     {% endfor %}

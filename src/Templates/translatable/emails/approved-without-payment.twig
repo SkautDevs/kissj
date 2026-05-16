@@ -2,14 +2,14 @@
 
 {% block content %}
     <div class="text-center">
-        <p>{% trans %}email.approved-without-payment.approved{% endtrans %} {{ event.readableName }}!</p>
-        <p>{% trans %}email.approved-without-payment.noPayment{% endtrans %}</p>
+        <p>{{ 'email.approved-without-payment.approved' | trans }} {{ event.readableName }}!</p>
+        <p>{{ 'email.approved-without-payment.noPayment' | trans }}</p>
 
         {% if event.getEventType.showParticipantInfoInMail %}
-            <p>{% trans %}email.payment-successful.qrInfo{% endtrans %}</p>
+            <p>{{ 'email.payment-successful.qrInfo' | trans }}</p>
             <img src="cid:qr_info" alt="QR participant info"/>
         {% endif %}
 
-        <p>{% trans %}email.approved-without-payment.enjoy{% endtrans %}</p>
+        <p>{{ 'email.approved-without-payment.enjoy' | trans }}</p>
     </div>
 {% endblock %}

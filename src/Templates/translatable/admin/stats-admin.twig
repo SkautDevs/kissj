@@ -2,51 +2,51 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}stats-admin.stats{% endtrans %} {{ event.readableName }}</h2>
+        <h2>{{ 'stats-admin.stats' | trans }} {{ event.readableName }}</h2>
         {% if event.eventType.isMultiplePaymentsAllowed %}
             <form method="POST" action="{{ url_for('admin-generate-more-payments', {'eventSlug': event.slug} ) }}">
                 <input class="btn btn-small" type="submit" 
-                       value="{% trans %}stats-admin.generate-more-payments{% endtrans %}">
+                       value="{{ 'stats-admin.generate-more-payments' | trans }}">
             </form>
         {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
-           class="btn btn-grey btn-small">{% trans %}approve-admin.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'approve-admin.back' | trans }}</a>
     </div>
     <br/>
 
     <div class="card">
-        <h2>{% trans %}stats-admin.paid{% endtrans %} {{ event.readableName }}</h2>
+        <h2>{{ 'stats-admin.paid' | trans }} {{ event.readableName }}</h2>
 
         {% if event.allowIsts %}
-            <h4>{% trans %}role.ist{% endtrans %}</h4>
+            <h4>{{ 'role.ist' | trans }}</h4>
             {% for ist in paidIsts %}
                 {% include 'widgets/participantRow.twig' with {'person': ist, 'ca': caIst} %}<br/>
             {% endfor %}
         {% endif %}
 
         {% if event.allowPatrols %}
-            <h4>{% trans %}role.pl{% endtrans %}</h4>
+            <h4>{{ 'role.pl' | trans }}</h4>
             {% for pl in paidPatrolLeaders %}
                 {% include 'widgets/participantRow.twig' with {'person': pl, 'ca': caPl} %}<br/>
             {% endfor %}
         {% endif %}
 
         {% if event.allowTroops %}
-            <h4>{% trans %}role.tl{% endtrans %}</h4>
+            <h4>{{ 'role.tl' | trans }}</h4>
             {% for tl in paidTroopLeaders %}
                 {% include 'widgets/participantRow.twig' with {'person': tl, 'ca': caTl} %}<br/>
             {% endfor %}
         {% endif %}
 
         {% if event.allowGuests %}
-            <h4>{% trans %}role.guest{% endtrans %}</h4>
+            <h4>{{ 'role.guest' | trans }}</h4>
             {% for guest in paidGuests %}
                 {% include 'widgets/participantRow.twig' with {'person': guest, 'ca': caGuest} %}<br/>
             {% endfor %}
         {% endif %}
 
         {% if event.allowOrganizingTeam %}
-            <h4>{% trans %}role.ot{% endtrans %}</h4>
+            <h4>{{ 'role.ot' | trans }}</h4>
             {% for ot in paidOrganizingTeam %}
                 {% include 'widgets/participantRow.twig' with {'person': ot, 'ca': caOt} %}<br/>
             {% endfor %}

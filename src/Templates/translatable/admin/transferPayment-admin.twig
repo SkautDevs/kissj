@@ -2,36 +2,36 @@
 
 {% block content %}
     <div class="card">
-        <h2>{% trans %}transferPayment-admin.headline{% endtrans %}</h2>
+        <h2>{{ 'transferPayment-admin.headline' | trans }}</h2>
         <div class="card-divide">
             <div>
-                <h2>{% trans %}transferPayment-admin.seller{% endtrans %}</h2>
-                <p>{% trans %}transferPayment-admin.sellerInfo{% endtrans %}</p>
+                <h2>{{ 'transferPayment-admin.seller' | trans }}</h2>
+                <p>{{ 'transferPayment-admin.sellerInfo' | trans }}</p>
                 {% if from %}
                     {{ include('widgets/details.twig', {person: from, ca: event.eventType.getContentArbiterIst}) }}
-                    {% trans %}detail.email{% endtrans %}: <b>{{ emailFrom }}</b><br/>
-                    {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ from.user.status.value)|trans }}</b><br/>
-                    {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  from.role.value)|trans }}</b>
+                    {{ 'detail.email' | trans }}: <b>{{ emailFrom }}</b><br/>
+                    {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ from.user.status.value)|trans }}</b><br/>
+                    {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~  from.role.value)|trans }}</b>
                     {% if to is TroopLeader %}
-                        ({{ from.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+                        ({{ from.getTroopParticipantsCount() }}x {{ 'role.tp' | trans }})
                     {% endif %}
                 {% else %}
-                    <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailFrom }}</h4>
+                    <h4>{{ 'transferPayment-admin.participantNotFound' | trans }} {{ emailFrom }}</h4>
                 {% endif %}
             </div>
             <div>
-                <h2>{% trans %}transferPayment-admin.buyer{% endtrans %}</h2>
-                <p>{% trans %}transferPayment-admin.buyerInfo{% endtrans %}</p>
+                <h2>{{ 'transferPayment-admin.buyer' | trans }}</h2>
+                <p>{{ 'transferPayment-admin.buyerInfo' | trans }}</p>
                 {% if to %}
                     {{ include('widgets/details.twig', {person: to, ca: event.eventType.getContentArbiterIst}) }}
-                    {% trans %}detail.email{% endtrans %}: <b>{{ emailTo }}</b><br/>
-                    {% trans %}payments-admin.status{% endtrans %}: <b>{{ ('dashboard.userStatus.' ~ to.user.status.value)|trans }}</b><br/>
-                    {% trans %}stats-admin.role{% endtrans %}: <b>{{ ('role.' ~  to.role.value)|trans }}</b>
+                    {{ 'detail.email' | trans }}: <b>{{ emailTo }}</b><br/>
+                    {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ to.user.status.value)|trans }}</b><br/>
+                    {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~  to.role.value)|trans }}</b>
                     {% if to is TroopLeader %}
-                        ({{ to.getTroopParticipantsCount() }}x {% trans %}role.tp{% endtrans %})
+                        ({{ to.getTroopParticipantsCount() }}x {{ 'role.tp' | trans }})
                     {% endif %}
                 {% else %}
-                    <h4>{% trans %}transferPayment-admin.participantNotFound{% endtrans %} {{ emailTo }}</h4>
+                    <h4>{{ 'transferPayment-admin.participantNotFound' | trans }} {{ emailTo }}</h4>
                 {% endif %}
             </div>
         </div>
@@ -40,12 +40,12 @@
                 <input name="emailFrom" type="hidden" value="{{ emailFrom }}" required>
                 <input name="emailTo" type="hidden" value="{{ emailTo }}" required>
                 <input class="btn btn-small" type="submit"
-                       value="{% trans %}transferPayment-admin.transfer{% endtrans %}">
+                       value="{{ 'transferPayment-admin.transfer' | trans }}">
             </form><br/>
         {% else %}
-            <h2>{% trans %}transferPayment-admin.notPossible{% endtrans %}</h2>
+            <h2>{{ 'transferPayment-admin.notPossible' | trans }}</h2>
         {% endif %}
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
-           class="btn btn-grey btn-small">{% trans %}changeDetails.back{% endtrans %}</a>
+           class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
     </div>
 {% endblock %}
