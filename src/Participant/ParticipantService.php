@@ -322,7 +322,7 @@ readonly class ParticipantService
             $participant->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->participantRepository->persist($participant);
             $this->userService->setUserClosed($user);
-            $this->mailer->sendRegistrationClosed($user);
+            $this->mailer->sendRegistrationClosed($user, $participant);
         }
 
         return $participant;

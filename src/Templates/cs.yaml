@@ -322,6 +322,8 @@ email:
         registration: "Registrace"
         yourRegistration: "Svou registraci můžeš nalézt na adrese"
         ifQuestion: "Pokud máš otázky, můžeš odpovědi na ně najít na našem webu"
+        ifQuestion.man: "Pokud máš otázky, mohl bys odpovědi na ně najít na našem webu"
+        ifQuestion.woman: "Pokud máš otázky, mohla bys odpovědi na ně najít na našem webu"
         sendEmail: "nebo nám pošli e-mail na"
         farewell: "S přáním všeho dobrého od týmu akce"
     login-token:
@@ -331,11 +333,15 @@ email:
         buttonNotWorking: "Pokud přihlašovací tlačítko nefunguje nebo není vidět, zkopíruj a vlož tento odkaz do vyhledávacího řádku svého prohlížeče: "
     closed:
         subject: "uzamčeno"
-        successfullySent: "Úspěšně jsi poslal/a svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)"
+        successfullySent: "Tvá přihláška na %event.getReadableName% byla úspěšně odeslána. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, prosíme tedy o trpělivost. :)"
+        successfullySent.man: "Úspěšně jsi poslal svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý, prosím. :)"
+        successfullySent.woman: "Úspěšně jsi poslala svou přihlášku na %event.getReadableName%. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivá, prosím. :)"
     denial:
         subject: "odemknuto"
         denied: "bohužel jsme museli odemknout tvou přihlášku pro"
-        requirements: ", nesplňoval/a jsi podmínky pro přijetí."
+        requirements: ", protože nebyly splněny podmínky pro přijetí."
+        requirements.man: ", nesplňoval jsi podmínky pro přijetí."
+        requirements.woman: ", nesplňovala jsi podmínky pro přijetí."
         reason: "Z důvodu:"
         editRegistration: ". Prosím uprav nebo doplň své informace v systému. Nezapomeň nám přihlášku opětovně poslat ke schválení."
     due-payment-denied:
@@ -378,6 +384,8 @@ email:
         thanks: ". Děkujeme!"
         qrInfo: "Tady je QR kód, který budou chtít organizátoři při vstupu na akci:"
         enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+        enjoy.man: "Děkujeme, že ses přihlásil a zaplatil registrační poplatek. Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se, že tvůj stan je připraven, buď trpělivý a očekávej další informace. ;)"
+        enjoy.woman: "Děkujeme, že ses přihlásila a zaplatila registrační poplatek. Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se, že tvůj stan je připraven, buď trpělivá a očekávej další informace. ;)"
     payment-successful-pay-more:
         subject: "platba obdržena, čekáme na dokončení plateb"
         received: "Obdrželi jsme tvou platbu na"

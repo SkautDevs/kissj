@@ -109,6 +109,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
+use Twig\TwigFilter;
 
 use function DI\autowire;
 use function DI\get;
@@ -341,6 +342,17 @@ class Settings
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));
             $view->addExtension(new TwigExtension());
+
+            $view->getEnvironment()->addFilter(new TwigFilter(
+                'transGendered',
+                static function (string $key, string $suffix, array $params = []) use ($translator): string {
+                    if ($suffix !== '' && $translator->getCatalogue()->defines($key . $suffix)) {
+                        return $translator->trans($key . $suffix, $params);
+                    }
+
+                    return $translator->trans($key, $params);
+                },
+            ));
 
             return $view;
         };

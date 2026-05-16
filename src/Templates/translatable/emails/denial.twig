@@ -1,7 +1,7 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans %}email.denial.denied{% endtrans %} {{ event.readableName }}{% trans %}email.denial.requirements{% endtrans %}</p>
+    <p>{{ 'email.denial.denied' | trans }} {{ event.readableName }}{{ 'email.denial.requirements' | transGendered(genderSuffix) }}</p>
 
-    <p>{% trans %}email.denial.reason{% endtrans %} <b>{{ reason }}</b>{% trans %}email.denial.editRegistration{% endtrans %}</p>
+    <p>{{ 'email.denial.reason' | trans }} <b>{{ reason }}</b>{{ 'email.denial.editRegistration' | trans }}</p>
 {% endblock %}

@@ -18,4 +18,13 @@ enum Gender: string
             default => self::Other,
         };
     }
+
+    public function toEmailSuffix(): string
+    {
+        return match ($this) {
+            self::Man => '.man',
+            self::Woman => '.woman',
+            self::Other => '',
+        };
+    }
 }

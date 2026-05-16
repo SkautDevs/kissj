@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class="text-center">
-        <p>{% trans %}email.payment-successful.received{% endtrans %} {{ event.readableName }}{% trans %}email.payment-successful.thanks{% endtrans %}</p>
+        <p>{{ 'email.payment-successful.received' | trans }} {{ event.readableName }}{{ 'email.payment-successful.thanks' | trans }}</p>
 
         {% if event.getEventType.showParticipantInfoInMail %}
-            <p>{% trans %}email.payment-successful.qrInfo{% endtrans %}</p>
+            <p>{{ 'email.payment-successful.qrInfo' | trans }}</p>
             <img src="cid:qr_info" alt="QR participant info"/>
         {% endif %}
 
-        <p>{% trans %}email.payment-successful.enjoy{% endtrans %}</p>
+        <p>{{ 'email.payment-successful.enjoy' | transGendered(genderSuffix) | raw }}</p>
     </div>
 {% endblock %}

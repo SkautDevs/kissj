@@ -117,7 +117,7 @@ readonly class PatrolService
             $patrolLeader->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->patrolLeaderRepository->persist($patrolLeader);
             $this->userService->setUserClosed($user);
-            $this->mailer->sendRegistrationClosed($user);
+            $this->mailer->sendRegistrationClosed($user, $patrolLeader);
         }
 
         return $patrolLeader;

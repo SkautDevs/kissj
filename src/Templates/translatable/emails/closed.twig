@@ -1,5 +1,5 @@
 {% extends "emails/_mail-layout.twig" %}
 
 {% block content %}
-    <p>{% trans with {'%event.getReadableName%': event.getReadableName} %}email.closed.successfullySent{% endtrans %}</p>
+    <p>{{ 'email.closed.successfullySent' | transGendered(genderSuffix, {'%event.getReadableName%': event.getReadableName}) | raw }}</p>
 {% endblock %}

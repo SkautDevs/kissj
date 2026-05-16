@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Mailer;
 
 use kissj\Event\EventType\Cej\EventTypeCej;
+use kissj\Participant\Gender;
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Payment\QrCodeService;
@@ -43,12 +44,13 @@ readonly class Mailer
         );
     }
 
-    public function sendRegistrationClosed(User $user): void
+    public function sendRegistrationClosed(User $user, ?Participant $participant = null): void
     {
         $this->sendMailFromTemplate(
             $user->email,
             $this->translator->trans('email.closed.subject'),
             'closed',
+            participant: $participant,
         );
     }
 
@@ -62,6 +64,7 @@ readonly class Mailer
             [
                 'reason' => $reason,
             ],
+            participant: $participant,
         );
     }
 
@@ -117,6 +120,7 @@ readonly class Mailer
                 'showPaymentQrCode' => $eventType->showPaymentQrCode($participant),
             ], $extraParameters),
             $embeds,
+            participant: $participant,
         );
     }
 
@@ -127,6 +131,7 @@ readonly class Mailer
             $user->email,
             $this->translator->trans('email.payment-info.subject'),
             'payment-info-contingents',
+            participant: $participant,
         );
     }
 
@@ -140,6 +145,7 @@ readonly class Mailer
             [
                 'reason' => $reason,
             ],
+            participant: $participant,
         );
     }
 
@@ -162,6 +168,7 @@ readonly class Mailer
             $user->email,
             $this->translator->trans('email.payment-successful-pay-more.subject'),
             'payment-successful-pay-more',
+            participant: $participant,
         );
     }
 
@@ -174,6 +181,7 @@ readonly class Mailer
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
             embeds: $this->getEmbeddedQr($participant),
+            participant: $participant,
         );
     }
 
@@ -188,6 +196,7 @@ readonly class Mailer
                 'participant' => $participant,
             ],
             $this->getEmbeddedQr($participant),
+            participant: $participant,
         );
     }
 
@@ -201,6 +210,7 @@ readonly class Mailer
             [
                 'participant' => $participant,
             ],
+            participant: $participant,
         );
     }
 
@@ -210,6 +220,7 @@ readonly class Mailer
             $participant->getUserButNotNull()->email,
             $this->translator->trans('email.payment-transfered-from-you.subject'),
             'payment-transfered-from-you',
+            participant: $participant,
         );
     }
 
@@ -223,6 +234,7 @@ readonly class Mailer
             [
                 'reason' => $this->translator->trans('email.due-payment-denied.reason'),
             ],
+            participant: $participant,
         );
     }
 
@@ -238,6 +250,7 @@ readonly class Mailer
         array $parameters = [],
         array $embeds = [],
         array $attachments = [],
+        ?Participant $participant = null,
     ): void {
         $event = $this->settings->getEvent();
 
@@ -268,6 +281,7 @@ readonly class Mailer
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
             'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->logoUrl),
+            'genderSuffix' => $this->resolveGenderSuffix($participant),
         ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
         foreach ($embeds as $embed) {
@@ -310,5 +324,14 @@ readonly class Mailer
         }
 
         return $embeds;
+    }
+
+    private function resolveGenderSuffix(?Participant $participant): string
+    {
+        if ($participant === null || $participant->gender === null) {
+            return '';
+        }
+
+        return Gender::tryFrom($participant->gender)?->toEmailSuffix() ?? '';
     }
 }

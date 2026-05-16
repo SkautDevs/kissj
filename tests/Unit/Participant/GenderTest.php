@@ -43,4 +43,22 @@ class GenderTest extends TestCase
         self::assertSame('woman', Gender::Woman->value);
         self::assertSame('other', Gender::Other->value);
     }
+
+    #[DataProvider('emailSuffixProvider')]
+    public function testToEmailSuffix(Gender $gender, string $expected): void
+    {
+        self::assertSame($expected, $gender->toEmailSuffix());
+    }
+
+    /**
+     * @return array<string, array{Gender, string}>
+     */
+    public static function emailSuffixProvider(): array
+    {
+        return [
+            'man'   => [Gender::Man,   '.man'],
+            'woman' => [Gender::Woman, '.woman'],
+            'other' => [Gender::Other, ''],
+        ];
+    }
 }

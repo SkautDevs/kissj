@@ -33,18 +33,56 @@ chooseRole:
     adviceGuestText: 'je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:'
 email:
     layout:
-        ifQuestion: 'Pokud máš otázky, odpověď bys mohl/a najít na naší webové stránce '
+        ifQuestion: 'Pokud máš otázky, odpověď lze najít na naší webové stránce '
+        ifQuestion.man: 'Pokud máš otázky, odpověď bys mohl najít na naší webové stránce '
+        ifQuestion.woman: 'Pokud máš otázky, odpověď bys mohla najít na naší webové stránce '
         farewell: 'Hezký zbytek dne ti přeje tým akce'
     closed:
         successfullySent: |
-            Úspěšně jsi poslal/a svou přihlášku na KORBO 2025. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý/á, prosím. :)
+            Tvá přihláška na KORBO 2025 byla úspěšně odeslána. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, prosíme tedy o trpělivost. :)
+            <br/>
+            Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/ZXW1AXiyMyR9R4Vh9">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
+        successfullySent.man: |
+            Úspěšně jsi poslal svou přihlášku na KORBO 2025. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivý, prosím. :)
+            <br/>
+            Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/ZXW1AXiyMyR9R4Vh9">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
+        successfullySent.woman: |
+            Úspěšně jsi poslala svou přihlášku na KORBO 2025. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, buď tedy trpělivá, prosím. :)
             <br/>
             Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/ZXW1AXiyMyR9R4Vh9">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
     cancel-payment:
         registerAgain: 'Chceš se stále zúčastnit akce? Uprav a uzamkni svou přihlášku znovu'
     payment-successful:
         enjoy: |
-            Jsme rádi, že ses přihlásil/a a zaplatil/a registrační poplatek, teď už Ti nic nebrání přijet na KORBO 2025 (hurá, hurá!), čerpat možnosti, které nabízí a třeba jich i pár přidat.<br/>
+            Jsme rádi, že máme tvou registraci a platbu registračního poplatku, teď už Ti nic nebrání přijet na KORBO 2025 (hurá, hurá!), čerpat možnosti, které nabízí a třeba jich i pár přidat.<br/>
+            <br/>
+            <b>Tento e-mail obsahuje důležité údaje, a tak ho rozhodně nemaž.</b> Máme pro tebe totiž pár užitečných odkazů a informací, které Ti usnadní přípravu.<br/>
+            <br/>
+            <b>1) Na co se podívat před KORBEM?</b> | Ať jsi tu poprvé, nebo jsi zkušený veterán, doporučujeme projít si sekce <a href="https://korbo.skauting.cz/fungovani-korba/">Fungování Korba</a> (třeba <a href="https://korbo.skauting.cz/obecne-principy/">Obecné principy</a>, mrk mrk).<br/>
+            <b>2) Aktivity a Místa</b> | Na KORBO se sice můžeš přijet flákat, ale ti praví frajeři si připraví i něco víc. To něco mohou být právě <a href="https://korbo.skauting.cz/aktivity/">Aktivity</a> a <a href="https://korbo.skauting.cz/mista/">Místa</a> (odkazy na web ti mohou pomoci s inspirací i realizací) a to je také to, co se na Korbu děje a z čeho Korbo žije.<br/>
+            <br/>
+            Své Aktivity zapisuj do Tabulky aktivit (v průběhu léta ji pošleme do světa, tak sleduj naše sítě), kde později najdeš i již vzniklá Místa a Aktivity v nich probíhající. Když si budeš zařizovat Místo, dej nám vědět v <a href="https://forms.gle/QYVw5gXvk4U3vwnZ7">tomto formuláři</a>.<br/>
+            Pokud budeš na svoje Místo či Aktivitu potřebovat nějaké materiální či finanční prostředky, ozvi se na e-mail korbo@skaut.cz. Čím dříve to uděláš, tím zvýšíš pravděpodobnost, že ti budeme moct pomoci. Jak financování Aktivit a Míst funguje se dozvíš <a href="https://korbo.skauting.cz/finance-pro-mista-a-aktivity/">tady</a>.<br/>
+            <br/>
+            <b>4) Chybí ti nějaké informace?</b> | Zkus se podívat do <a href="https://korbo.skauting.cz/faq/">FAQ</a> na webu a rozhodně sleduj <a href="https://www.instagram.com/korboskaut/">Instagram</a> a <a href="https://www.facebook.com/skautkorbo/">Facebook</a>! | Nezapomeň též sledovat svoji emailovou schránku!<br/>
+            <br/>
+            Korbo - svět, který si uděláš sám, ale užiješ si ho se všemi. #udelejsisam<br/>
+        enjoy.man: |
+            Jsme rádi, že ses přihlásil a zaplatil registrační poplatek, teď už Ti nic nebrání přijet na KORBO 2025 (hurá, hurá!), čerpat možnosti, které nabízí a třeba jich i pár přidat.<br/>
+            <br/>
+            <b>Tento e-mail obsahuje důležité údaje, a tak ho rozhodně nemaž.</b> Máme pro tebe totiž pár užitečných odkazů a informací, které Ti usnadní přípravu.<br/>
+            <br/>
+            <b>1) Na co se podívat před KORBEM?</b> | Ať jsi tu poprvé, nebo jsi zkušený veterán, doporučujeme projít si sekce <a href="https://korbo.skauting.cz/fungovani-korba/">Fungování Korba</a> (třeba <a href="https://korbo.skauting.cz/obecne-principy/">Obecné principy</a>, mrk mrk).<br/>
+            <b>2) Aktivity a Místa</b> | Na KORBO se sice můžeš přijet flákat, ale ti praví frajeři si připraví i něco víc. To něco mohou být právě <a href="https://korbo.skauting.cz/aktivity/">Aktivity</a> a <a href="https://korbo.skauting.cz/mista/">Místa</a> (odkazy na web ti mohou pomoci s inspirací i realizací) a to je také to, co se na Korbu děje a z čeho Korbo žije.<br/>
+            <br/>
+            Své Aktivity zapisuj do Tabulky aktivit (v průběhu léta ji pošleme do světa, tak sleduj naše sítě), kde později najdeš i již vzniklá Místa a Aktivity v nich probíhající. Když si budeš zařizovat Místo, dej nám vědět v <a href="https://forms.gle/QYVw5gXvk4U3vwnZ7">tomto formuláři</a>.<br/>
+            Pokud budeš na svoje Místo či Aktivitu potřebovat nějaké materiální či finanční prostředky, ozvi se na e-mail korbo@skaut.cz. Čím dříve to uděláš, tím zvýšíš pravděpodobnost, že ti budeme moct pomoci. Jak financování Aktivit a Míst funguje se dozvíš <a href="https://korbo.skauting.cz/finance-pro-mista-a-aktivity/">tady</a>.<br/>
+            <br/>
+            <b>4) Chybí ti nějaké informace?</b> | Zkus se podívat do <a href="https://korbo.skauting.cz/faq/">FAQ</a> na webu a rozhodně sleduj <a href="https://www.instagram.com/korboskaut/">Instagram</a> a <a href="https://www.facebook.com/skautkorbo/">Facebook</a>! | Nezapomeň též sledovat svoji emailovou schránku!<br/>
+            <br/>
+            Korbo - svět, který si uděláš sám, ale užiješ si ho se všemi. #udelejsisam<br/>
+        enjoy.woman: |
+            Jsme rádi, že ses přihlásila a zaplatila registrační poplatek, teď už Ti nic nebrání přijet na KORBO 2025 (hurá, hurá!), čerpat možnosti, které nabízí a třeba jich i pár přidat.<br/>
             <br/>
             <b>Tento e-mail obsahuje důležité údaje, a tak ho rozhodně nemaž.</b> Máme pro tebe totiž pár užitečných odkazů a informací, které Ti usnadní přípravu.<br/>
             <br/>
