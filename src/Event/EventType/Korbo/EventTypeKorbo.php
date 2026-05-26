@@ -12,7 +12,7 @@ use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType
 {
-    private const int SCARF_PRICE = 100;
+    private const int SCARF_PRICE = 150;
 
     #[\Override]
     public function getPrice(Participant $participant): int
@@ -21,7 +21,7 @@ class EventTypeKorbo extends EventType
             return parent::getPrice($participant);
         }
 
-        $price = 650;
+        $price = 450;
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
         }
