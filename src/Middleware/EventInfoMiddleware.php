@@ -6,7 +6,6 @@ namespace kissj\Middleware;
 
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use kissj\Event\EventType\EventType;
 use kissj\Mailer\MailerSettings;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,8 +14,6 @@ use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
-use Symfony\Component\Translation\Translator;
 
 class EventInfoMiddleware extends BaseMiddleware
 {
@@ -42,7 +39,6 @@ class EventInfoMiddleware extends BaseMiddleware
             $eventType = $event->getEventType();
 
             $this->enrichTemplatesWithEvent($event);
-            $this->addEventSpecificTranslations($eventType);
             $this->enrichMailerSettingsWithEvent($event, $request);
 
             if ($eventType->isLoginSkautisAllowed()) {
@@ -56,21 +52,6 @@ class EventInfoMiddleware extends BaseMiddleware
     public function enrichTemplatesWithEvent(Event $event): void
     {
         $this->view->getEnvironment()->addGlobal('event', $event);
-    }
-
-    public function addEventSpecificTranslations(EventType $eventType): void
-    {
-        $translationFilePaths = $eventType->getTranslationFilePaths();
-        if ($translationFilePaths !== []) {
-            /** @var TranslationExtension $translatorExtension */
-            $translatorExtension = $this->view->getEnvironment()->getExtension(TranslationExtension::class);
-            /** @var Translator $translator */
-            $translator = $translatorExtension->getTranslator();
-
-            foreach ($translationFilePaths as $locale => $path) {
-                $translator->addResource('yaml', $path, $locale);
-            }
-        }
     }
 
     public function enrichMailerSettingsWithEvent(Event $event, Request $request): void

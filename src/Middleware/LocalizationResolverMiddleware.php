@@ -7,6 +7,8 @@ namespace kissj\Middleware;
 use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Event\EventType\EventTypeDefault;
+use kissj\Translation\CurrentTranslator;
+use kissj\Translation\TranslatorFactory;
 use Negotiation\AcceptLanguage;
 use Negotiation\LanguageNegotiator;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -21,7 +23,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware
 
     public function __construct(
         private readonly Twig $view,
-        private readonly Translator $translator,
+        private readonly CurrentTranslator $translator,
+        private readonly TranslatorFactory $translatorFactory,
         private readonly CookieHandler $cookieHandler,
         private readonly LanguageNegotiator $negotiator,
     ) {
@@ -29,6 +32,8 @@ class LocalizationResolverMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
+        $this->translator->setDelegate($this->buildDelegate($request));
+
         $bestLanguage = $this->getBestLanguage($request);
 
         $this->translator->setLocale($bestLanguage);
@@ -45,6 +50,16 @@ class LocalizationResolverMiddleware extends BaseMiddleware
         }
 
         return $response;
+    }
+
+    private function buildDelegate(Request $request): Translator
+    {
+        $event = $this->tryGetEvent($request);
+        if ($event instanceof Event) {
+            return $this->translatorFactory->createForEventType($event->getEventType());
+        }
+
+        return $this->translatorFactory->createBase();
     }
 
     private function getBestLanguage(Request $request): string

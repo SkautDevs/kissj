@@ -81,6 +81,8 @@ use kissj\Session\RedisSessionHandler;
 use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
 use kissj\Skautis\SkautisService;
+use kissj\Translation\CurrentTranslator;
+use kissj\Translation\TranslatorFactory;
 use kissj\User\UserRegeneration;
 use LeanMapper\Connection;
 use LeanMapper\DefaultEntityFactory;
@@ -105,8 +107,6 @@ use Sentry\State\Hub as SentryHub;
 use SessionHandlerInterface;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
 use Twig\TwigFilter;
@@ -301,24 +301,19 @@ class Settings
             $_ENV['SKAUTIS_USE_TEST'] !== 'false',
         );
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
-        $container[Translator::class] = function () {
+        $container[TranslatorFactory::class] = function () {
             /** @var array<string, string> $_ENV */
-            $defLocale = $_ENV['DEFAULT_LOCALE'];
-            // https://symfony.com/doc/current/components/translation.html
-            $translator = new Translator($defLocale);
-            $translator->setFallbackLocales([$defLocale]);
-
-            $translator->addLoader('yaml', new YamlFileLoader());
-            $translator->addResource('yaml', __DIR__ . '/../Templates/cs.yaml', 'cs');
-            $translator->addResource('yaml', __DIR__ . '/../Templates/sk.yaml', 'sk');
-            $translator->addResource('yaml', __DIR__ . '/../Templates/en.yaml', 'en');
-
-            return $translator;
+            return new TranslatorFactory(
+                $_ENV['DEFAULT_LOCALE'],
+                $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/translations' : null,
+                $_ENV['DEBUG'] === 'true',
+            );
         };
-        $container[TranslatorInterface::class] = get(Translator::class);
+        $container[CurrentTranslator::class] = autowire(CurrentTranslator::class);
+        $container[TranslatorInterface::class] = get(CurrentTranslator::class);
         $container[Twig::class] = function (
             UserRegeneration $userRegeneration,
-            Translator $translator,
+            CurrentTranslator $translator,
             FlashMessagesBySession $flashMessages,
         ) {
             $view = Twig::create(
@@ -336,6 +331,12 @@ class Settings
             $view->getEnvironment()->addGlobal('flashMessages', $flashMessages);
 
             $user = $userRegeneration->getCurrentUser();
+            // Twig is a DI singleton; these globals are per-request state mutated on a
+            // shared instance. Safe under PHP-FPM (fresh container per request), unsafe
+            // under long-lived workers (FrankenPHP/RoadRunner): user/event/flashMessages/
+            // locale will leak across requests. Worker-readiness fix: wrap each global in
+            // a request-scoped resolver (proxy pattern, like CurrentTranslator) or move
+            // registration into middleware that runs per request and resets on the way out.
             $view->getEnvironment()->addGlobal('user', $user);
             $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG'] === "true");
 
@@ -346,10 +347,19 @@ class Settings
             $view->getEnvironment()->addFilter(new TwigFilter(
                 'transGendered',
                 static function (string $key, string $suffix, array $params = []) use ($translator): string {
-                    if ($suffix !== '' && $translator->getCatalogue()->defines($key . $suffix)) {
-                        return $translator->trans($key . $suffix, $params);
+                    if ($suffix === '') {
+                        return $translator->trans($key, $params);
                     }
 
+                    // first try to translate genderized trans
+                    $gendered = $key . $suffix;
+                    $result = $translator->trans($gendered, $params);
+
+                    if ($result !== $gendered) {
+                        return $result;
+                    }
+
+                    // when result is the same, genderized translation is not found and trans key is returned
                     return $translator->trans($key, $params);
                 },
             ));
