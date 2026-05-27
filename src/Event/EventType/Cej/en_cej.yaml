@@ -62,3 +62,8 @@ deal:
     sfh-button: "Fill Safe From Harm Quiz questionnaire"
     sfh-doneBadly: "Safe From Harm Quiz is filled in, but unfortunately it was not filled on maximum points (%date%). Please try to fill it in again"
     sfh-done: "Safe From Harm Quiz is filled in, thank you!"
+    ist-roles: "IST roles"
+    ist-roles-missing: "You are missing to fill IST roles"
+    ist-roles-button: "Fill IST roles"
+    ist-roles-doneBadly: "Please try to fill it in again"
+    ist-roles-done: "IST roles are filled in, thank you!"
