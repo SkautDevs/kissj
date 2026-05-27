@@ -135,6 +135,11 @@ abstract class EventType
         return null;
     }
 
+    public function getCelebrationTemplate(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return list<string>
      */

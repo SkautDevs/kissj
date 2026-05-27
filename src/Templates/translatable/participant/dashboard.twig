@@ -1,6 +1,10 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+{% set celebrationTemplate = event.eventType.getCelebrationTemplate() %}
+{% if (celebrate ?? false) and celebrationTemplate %}
+    {% include celebrationTemplate %}
+{% endif %}
 <div class="card">
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
