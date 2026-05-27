@@ -77,6 +77,12 @@ Backlog is in project GitHub issues, roadmap is in project GitHub milestones
  - put AppID into database in the `event` table
  - use command like `socat TCP-LISTEN:80,fork,reuseaddr TCP:127.0.0.1:8080` to reroute from :80 into :8080 locally if needed
 
+### Reroute ports for Skautis
+
+ - if you want to use local Skautis login service, you need to reroute port 80 into 8080
+ - Skautis after login is returning to local :80 port on `http://localhost/` and you need `http://localhost:8080/`
+ - command: `sudo socat TCP-LISTEN:80,fork,reuseaddr TCP:127.0.0.1:8080`
+
 # HOWTOs
 
 ### How to change docker image
