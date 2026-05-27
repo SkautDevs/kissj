@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Cej;
 
+use kissj\Deal\EventDeal;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
@@ -26,6 +27,8 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_EUROPEAN = 'detail.contingent.european';
     public const string CONTINGENT_ROMANIA = 'detail.contingent.romania';
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
+
+    public const string SLUG_IST_ROLE = 'ist-roles';
 
     public function transformPaymentPrice(Payment $payment, Participant $participant): Payment
     {
@@ -371,5 +374,22 @@ class EventTypeCej extends EventType
             self::CONTINGENT_CZECHIA => parent::getSkautStampSignPath($participant),
             default => '/SkSkautingSignStamp.png',
         };
+    }
+    #[\Override]
+    public function getEventDeals(Participant $participant): array
+    {
+        $eventDeals = [];
+
+        if ($participant instanceof Ist) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_IST_ROLE,
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLSelT2FEy29-nnS5ebkuphPkuPNjVL-zLxiorFrpdTazE-q8zQ/viewform?pli=1&usp=pp_url&entry.1385658419=%s',
+                    $participant->tieCode,
+                ),
+            );
+        }
+
+        return $eventDeals;
     }
 }
