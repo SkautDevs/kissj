@@ -7,6 +7,7 @@ namespace kissj\Deal;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
+use kissj\Logging\Sentry\SentryCollector;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 
@@ -54,20 +55,36 @@ class DealRepository extends Repository
      */
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
-        Event $authorizedEvent
+        Event $authorizedEvent,
+        SentryCollector $sentryCollector
     ): ?Deal {
         $tieCode = $jsonFromBody['TIE code'] ?? null;
         $dealSlug = $jsonFromBody['slug'] ?? null;
         if (!is_string($tieCode) || !is_string($dealSlug)) {
+            $sentryCollector->collect(new \Exception(sprintf(
+                'Not string. $dealSlug, $tieCode: %s',
+                serialize([$dealSlug, $tieCode]),
+            )));
+
             return null;
         }
 
         $deal = $this->findDeal($dealSlug, $tieCode);
         if ($deal === null) {
+            $sentryCollector->collect(new \Exception(sprintf(
+                'Found no deal. $dealSlug, $tieCode: %s',
+                serialize([$dealSlug, $tieCode]),
+            )));
+
             return null;
         }
 
         if ($authorizedEvent->id !== $deal->participant->getUserButNotNull()->event->id) {
+            $sentryCollector->collect(new \Exception(sprintf(
+                'No authorized event. $authorizedEvent->id: %s',
+                serialize($authorizedEvent->id),
+            )));
+
             return null;
         }
 
