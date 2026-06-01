@@ -11,7 +11,7 @@ detail:
   issues-placeholder: "alergie, pravidelně užívané léky, zdravotní a stravovací omezení"
   idNumber-placeholder: ""
   scarfYes: "Ano, chci jeden za 150 Kč!"
-  uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1Ub2oM4N7zVtxHNgViEXYhR-n3sVa5Bh4/view?usp=sharing">webu Korba</a>.'
+  uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1j2SoWE1PqCWCTECb7Y_Cu1ZYhXzKEjQ1/view?">webu Korba</a>.'
   notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci (povinné pokud jsi pod 18 let) a jakékoliv další poznámky"
   position:
     security: "Hlídání areálu, kontrola vstupenek"
