@@ -5,7 +5,6 @@ dashboard:
     youWantDelete: 'Opravdu chcete smazat účastníka '
     addParticipant: 'Přidat účastníka'
 detail:
-    patrolNamePlaceholder: ''
     phonePlaceholder: 'číslice včetně mezinárodního předčíslí'
     tshirtGender: 'Tričko - tvar'
     issues-placeholder: 'alergie, pravidelně užívané léky, zdravotní a stravovací omezení'
@@ -13,14 +12,11 @@ detail:
     scarfYes: 'Ano, chci jeden za 100 Kč!'
     uploadFile: 'Souhlas rodičů v PDF'
     uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1A5HeULxyUcUMZ6_KLXWDKPkSv-9kl25t/view">webu Korba</a>.'
+    emergencyContact: 'Dospělý dozor'
     notice-placeholder: 'další poznámky'
-    position:
-        security: 'Hlídání areálu, kontrola vstupenek'
-        programme: 'Pomoc s programem'
     adminNotice: 'Poznámka od admina'
 role:
-    ist: účastník
-    tl: 'vedoucí patroly'
+    ist: 'účastník'
 chooseRole:
     chooseRole: 'Registruj se!'
     registerAsIst: 'Registrovat se!'

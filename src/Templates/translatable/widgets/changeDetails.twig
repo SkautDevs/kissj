@@ -8,31 +8,4 @@
     {% endif %}
 {% endfor %}
 
-<script>
-    function showField(field, show) {
-        field.style.display = show ? '' : 'none'
-        let input = field.querySelector('input[type="file"]')
-        if (input) {
-            if (show) input.setAttribute("required", "true")
-            else input.removeAttribute("required")
-        }
-    }
-
-    function OnBirthDateChange(element) {
-        let under18Fields = document.querySelectorAll('[data-age-group="under18"]');
-        let over18Fields = document.querySelectorAll('[data-age-group="over18"]');
-        if (under18Fields.length === 0 && over18Fields.length === 0) return;
-        if (element && element.value) {
-            let eighteenYearsAt = new Date(element.value)
-            eighteenYearsAt.setFullYear(eighteenYearsAt.getFullYear() + 18)
-            let isUnder18 = eighteenYearsAt.getTime() / 1000 > {{ event.startDay.getTimestamp() }}
-            under18Fields.forEach(f => showField(f, isUnder18))
-            over18Fields.forEach(f => showField(f, !isUnder18))
-        } else {
-            under18Fields.forEach(f => showField(f, true))
-            over18Fields.forEach(f => showField(f, true))
-        }
-    }
-
-    OnBirthDateChange(document.getElementById("birthDate"))
-</script>
+<script src="{{ base_path() }}/js/age-group-toggle.js" defer></script>

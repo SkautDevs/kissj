@@ -5,7 +5,9 @@
 {% endif %}
 
 {% for item in ca.getAllowedItems() %}
-    {% if item.slug == 'firstName' or item.slug == 'lastName' or item.slug == 'nickname' %}
+    {% if not item.appliesToAge(person.getAgeAtStartOfEvent) %}
+        {# hidden by ageGroup #}
+    {% elseif item.slug == 'firstName' or item.slug == 'lastName' or item.slug == 'nickname' %}
         {% if not useShortNaming %}
             {{ forms.renderDetail(item, person.getValueForField(item.slug), person, event) }}
         {% endif %}

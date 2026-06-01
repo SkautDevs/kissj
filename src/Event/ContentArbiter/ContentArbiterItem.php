@@ -36,4 +36,16 @@ class ContentArbiterItem
     {
         return array_combine($translationKeys, $translationKeys);
     }
+
+    public function appliesToAge(?int $age): bool
+    {
+        if ($this->ageGroup === null || $age === null) {
+            return true;
+        }
+
+        return match ($this->ageGroup) {
+            AgeGroup::Under18 => $age < 18,
+            AgeGroup::Over18 => $age >= 18,
+        };
+    }
 }
