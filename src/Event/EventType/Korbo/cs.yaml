@@ -11,14 +11,12 @@ detail:
   issues-placeholder: "alergie, pravidelně užívané léky, zdravotní a stravovací omezení"
   idNumber-placeholder: ""
   scarfYes: "Ano, chci jeden za 150 Kč!"
-  uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1j2SoWE1PqCWCTECb7Y_Cu1ZYhXzKEjQ1/view?">webu Korba</a>.'
-  notice-placeholder: "Sem patří celé jméno tvého dospělého dozoru na akci (povinné pokud jsi pod 18 let) a jakékoliv další poznámky"
+  uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1fLX38yd633R7fQpQ0BShpctiNHyQjRbh/view">webu Korba</a>.'
+  notice-placeholder: "jakékoliv další poznámky"
   position:
     security: "Hlídání areálu, kontrola vstupenek"
     programme: "Pomoc s programem"
   adminNotice: "Poznámka od admina"
-  skills: "Telefonní číslo na zákoného zástupce"
-  skills-placeholder: "telefonní číslo na zákoného zástupce"
 role:
   ist: účastník
   tl: "vedoucí patroly"

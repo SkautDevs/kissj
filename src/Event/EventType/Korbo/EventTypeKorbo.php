@@ -46,7 +46,6 @@ class EventTypeKorbo extends EventType
         $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->unit->allowed = true;
         $ca->scarf->allowed = true;
-        $ca->skills->allowed = true;
         $ca->parentalConsent->allowed = true;
         $ca->gender->allowed = false;
 
