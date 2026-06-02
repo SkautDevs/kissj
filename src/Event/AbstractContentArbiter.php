@@ -299,7 +299,6 @@ abstract class AbstractContentArbiter
             order: 400,
             label: 'detail.parentalConsent',
             placeholder: 'detail.parentalConsentPlaceholder',
-            required: false,
             ageGroup: AgeGroup::Under18,
         );
         $this->hospitalConsent = new ContentArbiterItem(
@@ -309,7 +308,6 @@ abstract class AbstractContentArbiter
             order: 410,
             label: 'detail.hospitalConsent',
             placeholder: 'detail.hospitalConsentPlaceholder',
-            required: false,
             ageGroup: AgeGroup::Under18,
         );
         $this->childWorkCert = new ContentArbiterItem(
@@ -319,7 +317,6 @@ abstract class AbstractContentArbiter
             order: 420,
             label: 'detail.childWorkCert',
             placeholder: 'detail.childWorkCertPlaceholder',
-            required: false,
             ageGroup: AgeGroup::Over18,
         );
         $this->adultEventCert = new ContentArbiterItem(
@@ -329,7 +326,6 @@ abstract class AbstractContentArbiter
             order: 430,
             label: 'detail.adultEventCert',
             placeholder: 'detail.adultEventCertPlaceholder',
-            required: false,
             ageGroup: AgeGroup::Over18,
         );
         $this->notes = new ContentArbiterItem(

@@ -1,0 +1,21 @@
+{#
+    Obrok27 post-registration celebration overlay.
+    Decorative only - aria-hidden and pointer-events:none.
+    Bricks/hats fall from the top, then Josef II rides across the bottom.
+#}
+<div class="celebration" aria-hidden="true">
+    {% for i in 0..24 %}
+        {% set isHat = (i % 2 == 0) %}
+        <img
+            alt=""
+            src="/obrok27/{{ isHat ? 'hat.jpg' : 'brick.jpg' }}"
+            class="falling"
+            style="--x:{{ random(95) + 2 }}vw;--delay:{{ random(20) / 10 }}s;--rot:{{ random(720) - 360 }}deg"
+        >
+    {% endfor %}
+    <img
+        alt=""
+        src="/obrok27/horse.jpg"
+        class="horse"
+    >
+</div>

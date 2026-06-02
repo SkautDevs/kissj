@@ -66,12 +66,14 @@ abstract class AbstractController
 
     /**
      * @param array<string, string> $arguments
+     * @param array<string, string> $queryParams
      */
     protected function redirect(
         Request $request,
         Response $response,
         string $routeName,
-        array $arguments = []
+        array $arguments = [],
+        array $queryParams = []
     ): Response {
         $event = $this->tryGetEvent($request);
         if ($event instanceof Event) {
@@ -80,7 +82,7 @@ abstract class AbstractController
 
         if (array_key_exists('eventSlug', $arguments)) {
             return $response
-                ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments))
+                ->withHeader('Location', $this->getRouter($request)->urlFor($routeName, $arguments, $queryParams))
                 ->withStatus(302);
         }
 

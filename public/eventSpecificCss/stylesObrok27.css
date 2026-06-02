@@ -2,3 +2,54 @@
     margin: 20px;
     width: 200px;
  }
+
+.celebration {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.celebration .falling {
+    position: absolute;
+    top: -10vh;
+    left: var(--x);
+    width: clamp(28px, 6vw, 48px);
+    height: clamp(20px, 4.4vw, 35px);
+    animation-name: celebration-fall;
+    animation-duration: 2.5s;
+    animation-timing-function: linear;
+    animation-delay: var(--delay);
+    animation-fill-mode: forwards;
+}
+
+@keyframes celebration-fall {
+    from {
+        transform: translateY(0) rotate(0deg);
+    }
+    to {
+        transform: translateY(120vh) rotate(var(--rot));
+    }
+}
+
+.celebration .horse {
+    position: absolute;
+    bottom: 5vh;
+    left: 0;
+    height: clamp(80px, 18vw, 160px);
+    width: auto;
+    transform: translateX(-300px);
+    animation: celebration-ride 4s linear 3s forwards;
+}
+
+@keyframes celebration-ride {
+    from { transform: translateX(-300px); }
+    to   { transform: translateX(110vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .celebration {
+        display: none;
+    }
+}

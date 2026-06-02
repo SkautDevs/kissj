@@ -9,7 +9,12 @@
 #}
 {% macro renderField(item, value, personDetails, event, user) %}
     {% if item.type.value == 'text' or item.type.value == 'phone' %}
-        <div class="form-group">
+        <div class="form-group"
+            {% if item.ageGroup %}
+                data-age-group="{{ item.ageGroup.value }}"
+                {% if not item.appliesToAge(personDetails.getAgeAtStartOfEvent) %}style="display:none"{% endif %}
+            {% endif %}
+        >
             <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
             <input
                 id="{{ item.slug }}"
@@ -45,7 +50,7 @@
                 name="{{ item.slug }}"
                 value="{% if value %}{{ value|date('Y-m-d') }}{% elseif item.slug == 'arrivalDate' %}{{ event.startDay|date('Y-m-d') }}{% elseif item.slug == 'departureDate' %}{{ event.endDay|date('Y-m-d') }}{% elseif item.defaultValue %}{{ item.defaultValue }}{% endif %}"
                 {% if item.required %}required="required"{% endif %}
-                {% if item.slug == 'birthDate' %}onchange="OnBirthDateChange(this)"{% endif %}
+                {% if item.slug == 'birthDate' %}data-event-start-day="{{ event.startDay.getTimestamp() }}"{% endif %}
             >
         </div>
     {% elseif item.type.value == 'select' %}
@@ -85,7 +90,8 @@
     {% elseif item.type.value == 'file' %}
         <div id="{{ item.slug }}Form" class="form-group"
             {% if item.ageGroup %}
-                data-age-group="{{ item.ageGroup.value }}" style="display:none"
+                data-age-group="{{ item.ageGroup.value }}"
+                {% if not item.appliesToAge(personDetails.getAgeAtStartOfEvent) %}style="display:none"{% endif %}
             {% endif %}
         >
             <label>{{ item.label|trans }}:

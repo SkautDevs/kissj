@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Korbo;
 
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
@@ -45,11 +46,14 @@ class EventTypeKorbo extends EventType
         $ca->country->allowed = true;
         $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->unit->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->emergencyContact->ageGroup = AgeGroup::Under18;
+        $ca->parentalConsent->allowed = true;
+        $ca->parentalConsent->required = true;
         $ca->scarf->allowed = true;
         $ca->parentalConsent->allowed = true;
         $ca->gender->allowed = false;
-
-        
+        $ca->scarf->order = 410;
 
         return $ca;
     }

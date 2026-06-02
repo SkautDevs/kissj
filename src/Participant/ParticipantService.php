@@ -239,12 +239,22 @@ readonly class ParticipantService
 
     public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
     {
+        $age = $p->getAgeAtStartOfEvent();
+
         foreach ($ca->getAllowedItems() as $item) {
             if (!$item->required) {
                 continue;
             }
 
+            if (!$item->appliesToAge($age)) {
+                continue;
+            }
+
             if ($item->type === ContentArbiterItemType::File) {
+                if ($p->getUploadedFilename($item->slug) === null) {
+                    return false;
+                }
+
                 continue;
             }
 

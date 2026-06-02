@@ -13,12 +13,11 @@ detail:
   scarfYes: "Ano, chci jeden za 150 Kč!"
   uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1fLX38yd633R7fQpQ0BShpctiNHyQjRbh/view">webu Korba</a>.'
   notice-placeholder: "jakékoliv další poznámky"
-  position:
-    security: "Hlídání areálu, kontrola vstupenek"
-    programme: "Pomoc s programem"
   adminNotice: "Poznámka od admina"
+  emergencyContact: 'Dospělý dozor'
+  emergencyContact-placeholder: "Vyplň jméno a telefon. Dospělý dozor musí být také účastník Korba"
 role:
-  ist: účastník
+  ist: "účastník"
   tl: "vedoucí patroly"
 chooseRole:
   chooseRole: "Registruj se!"

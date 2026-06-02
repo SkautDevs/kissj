@@ -36,12 +36,15 @@ class ParticipantController extends AbstractController
     ) {
     }
 
-    public function showDashboard(Response $response, User $user): Response
+    public function showDashboard(Request $request, Response $response, User $user): Response
     {
+        $templateData = $this->getTemplateData($this->participantRepository->getParticipantFromUser($user));
+        $templateData['celebrate'] = ($request->getQueryParams()['celebrate'] ?? null) === '1';
+
         return $this->view->render(
             $response,
             'participant/dashboard.twig',
-            $this->getTemplateData($this->participantRepository->getParticipantFromUser($user)),
+            $templateData,
         );
     }
 
@@ -133,9 +136,11 @@ class ParticipantController extends AbstractController
             $this->flashMessages->success('flash.success.locked');
             $this->logger->info('Locked registration for IST with ID ' . $participant->id
                 . ', user ID ' . $participant->id);
-        } else {
-            $this->flashMessages->error('flash.error.wrongData');
+
+            return $this->redirect($request, $response, 'dashboard', queryParams: ['celebrate' => '1']);
         }
+
+        $this->flashMessages->error('flash.error.wrongData');
 
         return $this->redirect($request, $response, 'dashboard');
     }
