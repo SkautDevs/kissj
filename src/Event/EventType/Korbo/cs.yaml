@@ -1,40 +1,40 @@
 userCustomHelp:
-  statusOpen: "Vyplň všechny potřebné informace a poté uzamkni přihlášku tlačítkem dole."
-  statusClosedGuest: "Tvá přihláška čeká na schválení. Dáme Ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na e-mail "
+  statusOpen: 'Vyplň všechny potřebné informace a poté uzamkni přihlášku tlačítkem dole.'
+  statusClosedGuest: 'Tvá přihláška čeká na schválení. Dáme Ti vědět až bude připravena. Pokud schvalování trvá moc dlouho, napiš nám na e-mail '
 dashboard:
-  youWantDelete: "Opravdu chcete smazat účastníka "
-  addParticipant: "Přidat účastníka"
+  youWantDelete: 'Opravdu chcete smazat účastníka '
+  addParticipant: 'Přidat účastníka'
 detail:
-  patrolNamePlaceholder: ""
-  phonePlaceholder: "číslice včetně mezinárodního předčíslí"
-  tshirtGender: "Tričko - tvar"
-  issues-placeholder: "alergie, pravidelně užívané léky, zdravotní a stravovací omezení"
-  idNumber-placeholder: ""
-  scarfYes: "Ano, chci jeden za 150 Kč!"
+  patrolNamePlaceholder: ''
+  phonePlaceholder: 'číslice včetně mezinárodního předčíslí'
+  tshirtGender: 'Tričko - tvar'
+  issues-placeholder: 'alergie, pravidelně užívané léky, zdravotní a stravovací omezení'
+  idNumber-placeholder: ''
+  scarfYes: 'Ano, chci jeden za 150 Kč!'
   uploadedFileNote: 'PDF s potvrzením najdeš na <a target="_blank" href="https://drive.google.com/file/d/1fLX38yd633R7fQpQ0BShpctiNHyQjRbh/view">webu Korba</a>.'
-  notice-placeholder: "jakékoliv další poznámky"
-  adminNotice: "Poznámka od admina"
+  notice-placeholder: 'jakékoliv další poznámky'
+  adminNotice: 'Poznámka od admina'
   emergencyContact: 'Dospělý dozor'
-  emergencyContact-placeholder: "Vyplň jméno a telefon. Dospělý dozor musí být také účastník Korba"
+  emergencyContact-placeholder: 'Vyplň jméno a telefon. Dospělý dozor musí být také účastník Korba'
 role:
-  ist: "účastník"
-  tl: "vedoucí patroly"
+  ist: 'účastník'
+  tl: 'vedoucí patroly'
 chooseRole:
-  chooseRole: "Registruj se!"
-  registerAsIst: "Registrovat se!"
-  registerAsTl: "Registrovat se jako vedoucí patroly!"
-  registerAsTp: "Registrovat se jako účastník!"
+  chooseRole: 'Registruj se!'
+  registerAsIst: 'Registrovat se!'
+  registerAsTl: 'Registrovat se jako vedoucí patroly!'
+  registerAsTp: 'Registrovat se jako účastník!'
   rolesAdvice: Účastníci
-  adviceTlText: "je vedoucí skupiny účastníků. Účastníci se registrují samostatně. Patrol leader je odpovědný za svoji patrolu v průběhu celé akce. Registrační poplatek platí sám za sebe."
-  adviceTpText: "jede na akci se svým vedoucím patroly. Registruje se samostatně a platí sám za sebe."
-  adviceIstText: "Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. "
-  adviceGuestText: "je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:"
+  adviceTlText: 'je vedoucí skupiny účastníků. Účastníci se registrují samostatně. Patrol leader je odpovědný za svoji patrolu v průběhu celé akce. Registrační poplatek platí sám za sebe.'
+  adviceTpText: 'jede na akci se svým vedoucím patroly. Registruje se samostatně a platí sám za sebe.'
+  adviceIstText: 'Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. '
+  adviceGuestText: 'je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:'
 email:
   layout:
-    ifQuestion: "Pokud máš otázky, odpověď lze najít na naší webové stránce "
-    ifQuestion.man: "Pokud máš otázky, odpověď bys mohl najít na naší webové stránce "
-    ifQuestion.woman: "Pokud máš otázky, odpověď bys mohla najít na naší webové stránce "
-    farewell: "Hezký zbytek dne ti přeje tým akce"
+    ifQuestion: 'Pokud máš otázky, odpověď lze najít na naší webové stránce '
+    ifQuestion.man: 'Pokud máš otázky, odpověď bys mohl najít na naší webové stránce '
+    ifQuestion.woman: 'Pokud máš otázky, odpověď bys mohla najít na naší webové stránce '
+    farewell: 'Hezký zbytek dne ti přeje tým akce'
   closed:
     successfullySent: |
       Odeslání tvé přihlášky na KORBO 2026 proběhlo úspěšně. Nyní musíme zkontrolovat, zda je všechno v pořádku, a pokud je, pošleme ti platební údaje. Mohlo by to trvat i několik dní, prosíme tedy o trpělivost. :)
@@ -49,7 +49,7 @@ email:
       <br/>
       Mezitím budeme rádi, pokud nám vyplníš <a href="https://forms.gle/ZXW1AXiyMyR9R4Vh9">tento krátký dotazník</a>, který nezabere více jak 3 minuty a pomůže nám v přípravách akce.
   cancel-payment:
-    registerAgain: "Chceš se stále zúčastnit akce? Uprav a uzamkni svou přihlášku znovu"
+    registerAgain: 'Chceš se stále zúčastnit akce? Uprav a uzamkni svou přihlášku znovu'
   payment-successful:
         enjoy: |
             Milý Korbáčku,<br/>
@@ -80,23 +80,23 @@ email:
             #udelejsisam
   finished:
     subject: schváleno
-    approved: "Schválili jsme tvou přihlášku pro"
-    thanks: ". Děkujeme!"
-    enjoy: "Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)"
+    approved: 'Schválili jsme tvou přihlášku pro'
+    thanks: '. Děkujeme!'
+    enjoy: 'Nyní si můžeš plně užít čekání na nadcházející akci! Taky si nic neudělej, ujisti se že tvůj stan je připraven a očekávej další informace. ;)'
 deny-admin:
-  reason: "z důvodu (bude posláno mailem, tak nějak mile)"
+  reason: 'z důvodu (bude posláno mailem, tak nějak mile)'
 dashboard-admin:
-  afterPayment: "po splatnosti"
+  afterPayment: 'po splatnosti'
 flash:
   info:
-    adminPaymentsUnrecognized: "Nerozeznáno bankovních transakcí: "
-    newPayments: "Nových plateb z banky: "
-    duePaymentDenied: "Kvůli nezaplacení emaily odemknuto účastníků"
+    adminPaymentsUnrecognized: 'Nerozeznáno bankovních transakcí: '
+    newPayments: 'Nových plateb z banky: '
+    duePaymentDenied: 'Kvůli nezaplacení emaily odemknuto účastníků'
   success:
-    adminPairedPayments: "Spárováno bankovních transakcí: "
+    adminPairedPayments: 'Spárováno bankovních transakcí: '
   warning:
-    plTooFewParticipants: "Nemůžeme uzamknout registraci - v patrole je příliš málo účastníků. Je jich potřeba nejméně %minimalPatrolParticipantsCount%."
-    plTooManyParticipants: "Nemůžeme uzamknout registraci - v patrole je příliš účastníků. Může jich být nejvíce %maximalPatrolParticipantsCount%."
-    differentParticipants: "Účastníci jsou různých rolí"
+    plTooFewParticipants: 'Nemůžeme uzamknout registraci - v patrole je příliš málo účastníků. Je jich potřeba nejméně %minimalPatrolParticipantsCount%.'
+    plTooManyParticipants: 'Nemůžeme uzamknout registraci - v patrole je příliš účastníků. Může jich být nejvíce %maximalPatrolParticipantsCount%.'
+    differentParticipants: 'Účastníci jsou různých rolí'
   error:
-    wrongPatrol: "Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou patrolu."
+    wrongPatrol: 'Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou patrolu.'
