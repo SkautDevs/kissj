@@ -51,6 +51,8 @@ class EventTypeKorbo extends EventType
         $ca->parentalConsent->allowed = true;
         $ca->parentalConsent->required = true;
         $ca->scarf->allowed = true;
+        $ca->parentalConsent->allowed = true;
+        $ca->gender->allowed = false;
         $ca->scarf->order = 410;
 
         return $ca;
