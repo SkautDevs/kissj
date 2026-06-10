@@ -7,13 +7,11 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{{ 'approve-admin.back' | trans }}</a>
     </div>
-    <br/>
     {% if event.allowIsts %}
         {% if closedIsts is not empty %}
             <div class="card">
                 <h2>{{ 'role.ist' | trans }}</h2>
             </div>
-            <br/>
             {% for ist in closedIsts %}
                 <div class="card">
                     <h4>{{ ist.getFullName }}</h4>
@@ -34,13 +32,11 @@
                                class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.ist' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -49,7 +45,6 @@
             <div class="card">
                 <h2>{{ 'role.pl' | trans }}</h2>
             </div>
-            <br/>
             {% for pl in closedPatrolLeaders %}
                 <div class="card">
                     <h3>{{ pl.getPatrolName }}</h3>
@@ -78,13 +73,11 @@
                                class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.pl' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
     
@@ -93,7 +86,6 @@
             <div class="card">
                 <h2>{{ 'role.tl' | trans }}</h2>
             </div>
-            <br/>
             {% for tl in closedTroopLeaders %}
                 <div class="card">
                     <h3>{{ tl.getPatrolName }}</h3>
@@ -122,20 +114,17 @@
                                class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.tl' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
 
         {% if closedTroopParticipants is not empty %}
             <div class="card">
                 <h2>{{ 'role.tp' | trans }}</h2>
             </div>
-            <br/>
             {% for tp in closedTroopParticipants %}
                 <div class="card">
                     <h4>{{ tp.getFullName }}</h4>
@@ -157,13 +146,11 @@
                                class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.tp' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -172,7 +159,6 @@
             <div class="card">
                 <h2>{{ 'role.guest' | trans }}</h2>
             </div>
-            <br/>
             {% for guest in closedGuests %}
                 <div class="card">
                     <h4>{{ guest.getFullName }}</h4>
@@ -191,13 +177,11 @@
                         <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.guest' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -206,7 +190,6 @@
             <div class="card">
                 <h2>{{ 'role.ot' | trans }}</h2>
             </div>
-            <br/>
             {% for ot in closedOrganizingTeam %}
                 <div class="card">
                     <h4>{{ ot.getFullName }}</h4>
@@ -225,13 +208,11 @@
                         <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'approve-admin.none' | trans }} {{ 'role.ot' | trans }} {{ 'approve-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 {% endblock %}

@@ -11,7 +11,6 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
-    <br/>
     <div class="card">
         <h3>{{ 'paymentsAuto-admin.needToSolve' | trans }}</h3>
         {% if bankPaymentsTodo %}
@@ -55,7 +54,6 @@
         <p>{{ 'paymentsAuto-admin.allPaymenntsDone' | trans }}</p>
         {% endif %}
     </div>
-    <br/>
     <div class="card">
         <h3>{{ 'paymentsAuto-admin.paymentsOnAccount' | trans }} {{ event.accountNumber }}</h3>
         {% if bankPayments %}

@@ -12,7 +12,6 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
-    <br/>
 
     {% if event.allowIsts %}
         {% if approvedIsts is empty %}
@@ -23,7 +22,6 @@
             <div class="card">
                 <h2>{{ 'role.ist' | trans }}</h2>
             </div>
-            <br/>
             {% for ist in approvedIsts %}
                 <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
@@ -31,7 +29,6 @@
                         'ca': event.getEventType.getContentArbiterIst,
                     } %}
                 </div>
-                <br/>
             {% endfor %}
         {% endif %}
         <br/>
@@ -46,7 +43,6 @@
             <div class="card">
                 <h2>{{ 'role.pl' | trans }}</h2>
             </div>
-            <br/>
             {% for pl in approvedPatrolLeaders %}
                 <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
@@ -54,7 +50,6 @@
                         'ca': event.getEventType.getContentArbiterPatrolLeader,
                     } %}
                 </div>
-                <br/>
             {% endfor %}
         {% endif %}
         <br/>
@@ -69,7 +64,6 @@
             <div class="card">
                 <h2>{{ 'role.tl' | trans }}</h2>
             </div>
-            <br/>
             {% for tl in approvedTroopLeaders %}
                 <div class="card">
                     {% include 'widgets/paymentDetails.twig' with {
@@ -77,7 +71,6 @@
                         'ca': event.getEventType.getContentArbiterTroopLeader,
                     } %}
                 </div>
-                <br/>
             {% endfor %}
         {% endif %}
         <br/>

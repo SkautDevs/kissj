@@ -20,6 +20,14 @@ if (!window._adminAjaxSubmitInitialized) {
             submitButton.disabled = true;
         }
 
+        const collapseAndRemove = (el) => {
+            el.style.setProperty('--collapse-height', el.offsetHeight + 'px');
+            el.classList.add('js-collapsing');
+            void el.offsetHeight;
+            el.classList.add('is-collapsed');
+            el.addEventListener('transitionend', () => el.remove(), { once: true });
+        };
+
         const showError = (message) => {
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-warning js-ajax-error';
@@ -42,7 +50,7 @@ if (!window._adminAjaxSubmitInitialized) {
                 if (removeTargetSelector) {
                     const target = form.closest(removeTargetSelector);
                     if (target) {
-                        target.remove();
+                        collapseAndRemove(target);
                     }
                 }
                 return;

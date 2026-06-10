@@ -6,7 +6,6 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
            class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
     </div>
-    <br/>
     {% if otRegistrationUrl %}
         <div class="card">
             <h3>{{ 'organizingTeam-admin.registrationUrl' | trans }}</h3>
@@ -17,7 +16,6 @@
                 <input type="submit" class="btn btn-grey btn-small" value="{{ 'organizingTeam-admin.regenerateToken' | trans }}">
             </form>
         </div>
-        <br/>
     {% endif %}
     <div class="card">
         <h3>{{ 'organizingTeam-admin.participants' | trans }}</h3>

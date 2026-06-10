@@ -74,14 +74,12 @@
                 </div>
             {% endfor %}
         </div>
-        <br/>
     {% endif %}
 
     {% if troopParticipants is empty %}
         <div class="card">
             <h2>{{ 'troopManagement-admin.noTroopParticipants' | trans }}</h2>
         </div>
-        <br/>
     {% else %}
         <div class="card">
             <h2>{{ 'troopManagement-admin.troopParticipantsWithoutLeader' | trans }}</h2>
@@ -97,7 +95,6 @@
                     } %}
                     <br/>
                 </div>
-                <br/>
             {% endfor %}
         </div>
     {% endif %}

@@ -6,13 +6,11 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{{ 'approve-admin.back' | trans }}</a>
     </div>
-    <br/>
     {% if event.allowIsts %}
         {% if openIsts is not empty %}
             <div class="card">
                 <h2>{{ 'role.ist' | trans }}</h2>
             </div>
-            <br/>
             {% for ist in openIsts %}
                 <div class="card">
                     {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
@@ -23,7 +21,6 @@
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.ist' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -32,7 +29,6 @@
             <div class="card">
                 <h2>{{ 'role.pl' | trans }}</h2>
             </div>
-            <br/>
             {% for pl in openPatrolLeaders %}
                 <div class="card">
                     <h3>{{ pl.getPatrolName }}</h3>
@@ -48,13 +44,11 @@
                         <br/>
                     {% endfor %}
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.pl' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
     
@@ -63,7 +57,6 @@
             <div class="card">
                 <h2>{{ 'role.tl' | trans }}</h2>
             </div>
-            <br/>
             {% for tl in openTroopLeaders %}
                 <div class="card">
                     <h3>{{ tl.getPatrolName }}</h3>
@@ -72,32 +65,27 @@
                     <h4>{{ tl.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': tl, 'ca': caTl} %}
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.tl' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
 
         {% if openTroopParticipants is not empty %}
             <div class="card">
                 <h2>{{ 'role.tp' | trans }}</h2>
             </div>
-            <br/>
             {% for tp in openTroopParticipants %}
                 <div class="card">
                     {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
                     <br/>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.tp' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -106,20 +94,17 @@
             <div class="card">
                 <h2>{{ 'role.guest' | trans }}</h2>
             </div>
-            <br/>
             {% for guest in openGuests %}
                 <div class="card">
                     <h4>{{ guest.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': guest, 'ca': caGuest} %}
                     <br/>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.guest' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 
@@ -128,20 +113,17 @@
             <div class="card">
                 <h2>{{ 'role.ot' | trans }}</h2>
             </div>
-            <br/>
             {% for ot in openOrganizingTeam %}
                 <div class="card">
                     <h4>{{ ot.getFullName }}</h4>
                     {% include 'widgets/detailsMinimal.twig' with {'person': ot, 'ca': caOt} %}
                     <br/>
                 </div>
-                <br/>
             {% endfor %}
         {% else %}
             <div class="card">
                 <h2>{{ 'open-admin.none' | trans }} {{ 'role.ot' | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
-            <br/>
         {% endif %}
     {% endif %}
 {% endblock %}
