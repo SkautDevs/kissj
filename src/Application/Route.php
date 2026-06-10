@@ -445,6 +445,11 @@ class Route
                         $app->post('/approveParticipant/{participantId}', AdminJsonController::class . '::approveParticipant')
                             ->setName('admin-approve-json');
                     });
+
+                    $app->group('/payments', function (RouteCollectorProxy $app) {
+                        $app->post('/confirmPayment/{paymentId}', AdminJsonController::class . '::confirmPayment')
+                            ->setName('admin-confirm-payment-json');
+                    })->add(AdminPaymentsOnlyMiddleware::class);
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });

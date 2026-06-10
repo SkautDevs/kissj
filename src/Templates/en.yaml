@@ -711,9 +711,11 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Participant is not in approved or paid status, therefore is uneligible for new payment"
         paymentAlreadyPaid: "Payment cannot be marked as paid, because it is already paid"
         paymentAlreadyCanceled: "Payment cannot be marked as cancelled, because it is already cancelled"
+        paymentNotWaiting: "Payment cannot be confirmed because it is no longer in waiting status"
         paymentNotWaitingCannotChangePrice: "Payment is not in waiting status, price cannot be changed"
         foodStatsNotAllowed: "You are not allowed to see food stats for this event."
     error:
+        actionFailed: "Action failed. Please try again."
         adminOnly: "Sorry bro, admins only"
         adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"
         plOnly: "Sorry, you are not logged as Patrol Leader"

@@ -711,9 +711,11 @@ flash:
         participantNotInCorrectStatusForAddPayment: "Účastník nie je schválený ani zaplatený, teda mu nemôže byť pridaná platba"
         paymentAlreadyPaid: "Platbu nie je možné označiť ako zaplatenú, pretože už zaplatená je"
         paymentAlreadyCanceled: "Platbu nie je možné označiť ako zrušenú, pretože už zrušená je"
+        paymentNotWaiting: "Platbu nemožno potvrdiť, pretože už nie je v stave čakajúca"
         paymentNotWaitingCannotChangePrice: "Platba nie je v stave čakania, cenu nemožno zmeniť"
         foodStatsNotAllowed: "Nemáš oprávnenie vidieť štatistiky jedla pre túto akciu."
     error:
+        actionFailed: "Akcia zlyhala. Skúste to prosím znova."
         adminOnly: "Sorry bro, sem môžu len admini"
         adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"

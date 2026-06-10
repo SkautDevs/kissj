@@ -1,6 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+    <script src="{{ base_path() }}/js/admin-ajax-submit.js" defer></script>
     <div class="card">
         <h2>{{ 'approve-admin.approving' | trans }} {{ event.readableName }}</h2>
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
@@ -23,7 +24,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': ist.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': ist.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit"
                                value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
@@ -63,7 +68,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': pl.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': pl.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': pl.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit"
                                value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
@@ -103,7 +112,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': tl.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': tl.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit"
                                value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
@@ -134,7 +147,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': tp.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': tp.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit"
                                value="{{ 'approve-admin.approveAndSend' | trans }}"
                                class="btn btn-small">
@@ -166,7 +183,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': guest.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': guest.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>
@@ -196,7 +217,11 @@
                     <br/>
                     <br/>
                     <form method="post"
-                          action="{{ url_for('admin-approve', {'participantId': ot.getId, 'eventSlug': event.slug}) }}">
+                          action="{{ url_for('admin-approve', {'participantId': ot.getId, 'eventSlug': event.slug}) }}"
+                          class="js-ajax-submit"
+                          data-ajax-action="{{ url_for('admin-approve-json', {'participantId': ot.getId, 'eventSlug': event.slug}) }}"
+                          data-remove-target=".card"
+                          data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit" value="{{ 'approve-admin.approveAndSend' | trans }}" class="btn btn-small">
                     </form>
                 </div>

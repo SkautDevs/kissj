@@ -1,6 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+    <script src="{{ base_path() }}/js/admin-ajax-submit.js" defer></script>
     <div class="card">
         <h2>{{ 'payments-admin.confirmText' | trans }} {{ event.readableName }}</h2>
         {% if event.getEventType.isUnlockExpiredButtonAllowed %}

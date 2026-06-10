@@ -8,6 +8,9 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
@@ -372,6 +375,111 @@ class ApiTest extends AppTestCase
 
         // Should redirect (302) because user is not admin
         self::assertEquals(302, $response->getStatusCode());
+    }
+
+    public function testConfirmPayment(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug');
+        self::assertNotNull($event);
+
+        // Create admin user
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $adminUser = new User();
+        $adminUser->event = $event;
+        $adminUser->role = UserRole::Admin;
+        $adminUser->email = 'admin-confirm-payment-test@example.com';
+        $adminUser->loginType = UserLoginType::Email;
+        $adminUser->status = UserStatus::Open;
+        $userRepository->persist($adminUser);
+
+        // Create participant and a waiting payment for that participant
+        $participant = $this->createPaidParticipant($container);
+        /** @var PaymentService $paymentService */
+        $paymentService = $container->get(PaymentService::class);
+        $payment = $paymentService->createAndPersistNewEventPayment($participant);
+        self::assertEquals(PaymentStatus::Waiting, $payment->status);
+
+        // Log in as admin BEFORE creating new app instance
+        $_SESSION['user']['id'] = $adminUser->id;
+        session_write_close();
+
+        $app = $this->getTestApp(false);
+        $container = $this->getContainer($app);
+
+        $request = $this->createFormRequest(
+            '/v3/event/test-event-slug/admin/payments/confirmPayment/' . $payment->id,
+            'POST',
+            [],
+        );
+        $response = $app->handle($request);
+
+        self::assertEquals(200, $response->getStatusCode());
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertSame([], $body);
+
+        // Verify payment status flipped to Paid
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = $container->get(PaymentRepository::class);
+        $updatedPayment = $paymentRepository->getById($payment->id, $event);
+        self::assertEquals(PaymentStatus::Paid, $updatedPayment->status);
+    }
+
+    public function testConfirmPaymentAlreadyPaid(): void
+    {
+        $app = $this->getTestApp();
+        $container = $this->getContainer($app);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug');
+        self::assertNotNull($event);
+
+        // Create admin user
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $adminUser = new User();
+        $adminUser->event = $event;
+        $adminUser->role = UserRole::Admin;
+        $adminUser->email = 'admin-confirm-payment-warning-test@example.com';
+        $adminUser->loginType = UserLoginType::Email;
+        $adminUser->status = UserStatus::Open;
+        $userRepository->persist($adminUser);
+
+        // Create participant + payment, then mark payment as Paid via repository to avoid
+        // triggering the mailer (MailerSettings.event is only initialized by middleware on a real request)
+        $participant = $this->createPaidParticipant($container);
+        /** @var PaymentService $paymentService */
+        $paymentService = $container->get(PaymentService::class);
+        $payment = $paymentService->createAndPersistNewEventPayment($participant);
+        $payment->status = PaymentStatus::Paid;
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository->persist($payment);
+
+        $_SESSION['user']['id'] = $adminUser->id;
+        session_write_close();
+
+        $app = $this->getTestApp(false);
+
+        $request = $this->createFormRequest(
+            '/v3/event/test-event-slug/admin/payments/confirmPayment/' . $payment->id,
+            'POST',
+            [],
+        );
+        $response = $app->handle($request);
+
+        self::assertEquals(409, $response->getStatusCode());
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
+        self::assertArrayHasKey('translationKey', $body);
+        self::assertArrayHasKey('translationMessage', $body);
+        self::assertSame('flash.warning.paymentAlreadyPaid', $body['translationKey']);
     }
 
     private function createBearerRequest(string $path, string $method, ?string $token): Request

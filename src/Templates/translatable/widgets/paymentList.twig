@@ -25,7 +25,11 @@
             <br/>
             <br/>
             <form method="post"
-                  action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}">
+                  action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                  class="js-ajax-submit"
+                  data-ajax-action="{{ url_for('admin-confirm-payment-json', {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                  data-remove-target=".payment"
+                  data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                 <input type="submit"
                        value="{{ 'payments-admin.confirm' | trans }}"
                        class="btn btn-small">
