@@ -186,6 +186,8 @@ readonly class ExportService
             'istSkills', // 45
             'istPreferredPosition',
             'driverLicense',
+            'tieCode',
+            'deals',
         ]];
 
         foreach ($participants as $participant) {
@@ -278,7 +280,11 @@ readonly class ExportService
                     $participant->leaveDate !== null ? $participant->leaveDate->format('d. m. Y H:i:s') : '',
                 ],
                 $ptPart,
-                $istPart
+                $istPart,
+                [
+                    $participant->tieCode,
+                    $this->formatDeals($participant),
+                ],
             );
         }
 
@@ -309,5 +315,24 @@ readonly class ExportService
         }
 
         return implode(' | ', $translated);
+    }
+
+    public function formatDeals(Participant $participant): string
+    {
+        $parts = [];
+        foreach ($participant->deals as $deal) {
+            if ($deal->isDone) {
+                $date = $deal->doneAt?->format('Y-m-d') ?? '';
+                $part = sprintf('%s=done@%s', $deal->slug, $date);
+                if ($deal->data !== '') {
+                    $part .= ' ' . $deal->data;
+                }
+            } else {
+                $part = sprintf('%s=pending', $deal->slug);
+            }
+            $parts[] = $part;
+        }
+
+        return implode(' | ', $parts);
     }
 }
