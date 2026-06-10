@@ -1,6 +1,11 @@
 userCustomHelp:
     statusApproved: "Tvá přihláška byla schválena. Nyní už musíš jen zaplatit registrační poplatek za skupinu."
     statusApprovedTp: "Tvá přihláška byla schválena. Nyní už musí jen tvůj vedoucí skupiny zaplatit registrační poplatek."
+email:
+    payment-successful:
+        enjoy: "Děkujeme za přihlášku na Obrok a uhrazení registračního poplatku. Užij si čekání na akci — a hlavně si připrav stan, batoh a dobrou náladu!"
+        enjoy.man: "Děkujeme, že ses přihlásil na Obrok a zaplatil registrační poplatek. Užij si čekání na akci — a hlavně si připrav stan, batoh a dobrou náladu!"
+        enjoy.woman: "Děkujeme, že ses přihlásila na Obrok a zaplatila registrační poplatek. Užij si čekání na akci — a hlavně si připrav stan, batoh a dobrou náladu!"
 flash:
     warning:
         fullRegistration: "Už máme plno a ty jsi pod čarou, takže tě zatím nemůžeme registrovat. Zkus to později, třeba někdo nezaplatí registrační poplatek v termínu."
