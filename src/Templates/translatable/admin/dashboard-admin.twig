@@ -124,9 +124,13 @@
         {% endif %}
         {% if event.eventType.getContentArbiterIst().arrivalDate.allowed %}
             <h3>{{ 'dashboard-admin.istArrivalStats' | trans }} {{ 'role.ist' | trans }}</h3>
-            {% for date, count in istArrivalStatistic %}
-                <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
-            {% endfor %}
+            {% if istArrivalStatistic is empty %}
+                <p>{{ 'dashboard-admin.istArrivalStatsEmpty' | trans }}</p>
+            {% else %}
+                {% for date, count in istArrivalStatistic %}
+                    <p>{{ date|date('d. m. Y') }}: <b>{{ count }}</b></p>
+                {% endfor %}
+            {% endif %}
         {% endif %}
     </div>
     <div class="card">

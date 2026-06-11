@@ -434,6 +434,7 @@ dashboard-admin:
     count: " počty"
     contingentPatrolStats: "Štatistiky kontingentov"
     istArrivalStats: "Príchody"
+    istArrivalStatsEmpty: "Zatiaľ nikto neuviedol dátum príchodu"
     foodCount: "Počty jedál"
     limitIst: "limit servisákov"
     limitOt: "Limit pre organizacny tim"

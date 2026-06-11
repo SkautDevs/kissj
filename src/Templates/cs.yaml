@@ -442,6 +442,7 @@ dashboard-admin:
     count: " počty"
     contingentPatrolStats: "Statistiky kontingentů"
     istArrivalStats: "Příjezdy"
+    istArrivalStatsEmpty: "Zatím nikdo neuvedl datum příjezdu"
     foodCount: "Počty jídel"
     limitIst: "limit servisáků"
     limitOt: "Limit organizátorů"
