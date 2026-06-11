@@ -91,6 +91,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function showParticipantInfoInMail(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
     public function isLoginEmailAllowed(): bool
     {
         return false;
