@@ -67,3 +67,8 @@ deal:
     ist-roles-button: "Fill IST roles"
     ist-roles-doneBadly: "Please try to fill it in again"
     ist-roles-done: "IST roles are filled in, thank you!"
+    pl-programme: "Patrol programme"
+    pl-programme-missing: "You are missing to choose Patrol programme"
+    pl-programme-button: "Choose Patrol programme"
+    pl-programme-doneBadly: "Please try to fill it in again"
+    pl-programme-done: "Patrol programme are filled in, thank you!"
