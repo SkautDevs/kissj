@@ -29,6 +29,7 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
     public const string SLUG_IST_ROLE = 'ist-roles';
+    public const string SLUG_PL_PROGRAMME = 'pl-programme';
 
     public function transformPaymentPrice(Payment $payment, Participant $participant): Payment
     {
@@ -385,6 +386,16 @@ class EventTypeCej extends EventType
                 self::SLUG_IST_ROLE,
                 sprintf(
                     'https://docs.google.com/forms/d/e/1FAIpQLSelT2FEy29-nnS5ebkuphPkuPNjVL-zLxiorFrpdTazE-q8zQ/viewform?pli=1&usp=pp_url&entry.1385658419=%s',
+                    $participant->tieCode,
+                ),
+            );
+        }
+
+        if ($participant instanceof PatrolLeader) {
+            $eventDeals[] = new EventDeal(
+                self::SLUG_PL_PROGRAMME,
+                sprintf(
+                    'https://docs.google.com/forms/d/e/1FAIpQLSe9qayDocu0ZFEbH7z_pXr5H892k80rYpCfGNoigdnfrFQTIA/viewform?usp=pp_url&entry.577027413=%s',
                     $participant->tieCode,
                 ),
             );
