@@ -18,16 +18,19 @@ detail:
     emergencyContact-placeholder: 'Vyplň jméno a telefon. Dospělý dozor musí být také účastník Korba'
 role:
     ist: 'účastník'
+    ot: 'Uši pro duši'
     tl: 'vedoucí patroly'
 chooseRole:
     chooseRole: 'Registruj se!'
     registerAsIst: 'Registrovat se!'
+    registerAsOt: 'Registrovat se do Uší pro duši!'
     registerAsTl: 'Registrovat se jako vedoucí patroly!'
     registerAsTp: 'Registrovat se jako účastník!'
     rolesAdvice: Účastníci
     adviceTlText: 'je vedoucí skupiny účastníků. Účastníci se registrují samostatně. Patrol leader je odpovědný za svoji patrolu v průběhu celé akce. Registrační poplatek platí sám za sebe.'
     adviceTpText: 'jede na akci se svým vedoucím patroly. Registruje se samostatně a platí sám za sebe.'
     adviceIstText: 'Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. '
+    adviceOtText: 'jsou Uši pro duši — tým, který na Korbu naslouchá a pomáhá. Tuto roli použij pouze pokud víš, do čeho jdeš!'
     adviceGuestText: 'je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:'
 email:
     layout:
@@ -87,6 +90,16 @@ deny-admin:
     reason: 'z důvodu (bude posláno mailem, tak nějak mile)'
 dashboard-admin:
     afterPayment: 'po splatnosti'
+    approvedOt: 'schválení Uši pro duši'
+    lockedOt: 'Uši pro duši s uzamčenou přihláškou'
+    openOt: 'nezamčení Uši pro duši'
+    organizingTeam: 'Uši pro duši'
+    paidOt: 'zaplacení Uši pro duši'
+organizingTeam-admin:
+    noParticipants: 'Zatím žádní členové Uší pro duši nejsou registrovaní'
+    participants: 'Členové Uší pro duši'
+    registrationUrlDescription: 'Sdílej tento odkaz s ostatními členy Uší pro duši, aby se mohli přihlásit'
+    title: 'Uši pro duši'
 flash:
     info:
         adminPaymentsUnrecognized: 'Nerozeznáno bankovních transakcí: '

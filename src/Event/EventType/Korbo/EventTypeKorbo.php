@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Korbo;
 
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
+use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType
@@ -18,11 +20,8 @@ class EventTypeKorbo extends EventType
     #[\Override]
     public function getPrice(Participant $participant): int
     {
-        if (!$participant instanceof Ist) {
-            return parent::getPrice($participant);
-        }
+        $price = parent::getPrice($participant);
 
-        $price = 450;
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
         }
@@ -52,6 +51,27 @@ class EventTypeKorbo extends EventType
         $ca->parentalConsent->required = true;
         $ca->scarf->allowed = true;
         $ca->parentalConsent->allowed = true;
+        $ca->gender->allowed = false;
+        $ca->scarf->order = 410;
+
+        return $ca;
+    }
+
+    #[\Override]
+    public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
+    {
+        $ca = parent::getContentArbiterOrganizingTeam();
+
+        $ca->phone->allowed = true;
+        $ca->email->allowed = true;
+        $ca->country->allowed = true;
+        $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
+        $ca->unit->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->emergencyContact->ageGroup = AgeGroup::Under18;
+        $ca->parentalConsent->allowed = true;
+        $ca->parentalConsent->required = true;
+        $ca->scarf->allowed = true;
         $ca->gender->allowed = false;
         $ca->scarf->order = 410;
 

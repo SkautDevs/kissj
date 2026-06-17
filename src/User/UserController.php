@@ -46,6 +46,14 @@ class UserController extends AbstractController
         $queryParams = $request->getQueryParams();
         $otToken = $queryParams['ot_token'] ?? null;
 
+        if (
+            is_string($otToken)
+            && $event->organizingTeamRegistrationToken !== null
+            && $otToken === $event->organizingTeamRegistrationToken
+        ) {
+            $_SESSION['ot_access_granted'] = true;
+        }
+
         $prefillEmail = $_SESSION['prefill_email'] ?? null;
         unset($_SESSION['prefill_email']);
 
