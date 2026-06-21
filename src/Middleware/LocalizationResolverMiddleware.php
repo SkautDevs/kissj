@@ -6,16 +6,15 @@ namespace kissj\Middleware;
 
 use kissj\Application\CookieHandler;
 use kissj\Event\Event;
+use kissj\Event\EventScope;
 use kissj\Event\EventType\EventTypeDefault;
 use kissj\Translation\CurrentTranslator;
-use kissj\Translation\TranslatorFactory;
 use Negotiation\AcceptLanguage;
 use Negotiation\LanguageNegotiator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Slim\Views\Twig;
-use Symfony\Component\Translation\Translator;
 
 class LocalizationResolverMiddleware extends BaseMiddleware
 {
@@ -24,7 +23,7 @@ class LocalizationResolverMiddleware extends BaseMiddleware
     public function __construct(
         private readonly Twig $view,
         private readonly CurrentTranslator $translator,
-        private readonly TranslatorFactory $translatorFactory,
+        private readonly EventScope $eventScope,
         private readonly CookieHandler $cookieHandler,
         private readonly LanguageNegotiator $negotiator,
     ) {
@@ -32,7 +31,10 @@ class LocalizationResolverMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $this->translator->setDelegate($this->buildDelegate($request));
+        // EventInfoMiddleware sets the event-scoped translator delegate for an event if present
+        if (!$this->tryGetEvent($request) instanceof Event) {
+            $this->eventScope->resetToBase();
+        }
 
         $bestLanguage = $this->getBestLanguage($request);
 
@@ -50,16 +52,6 @@ class LocalizationResolverMiddleware extends BaseMiddleware
         }
 
         return $response;
-    }
-
-    private function buildDelegate(Request $request): Translator
-    {
-        $event = $this->tryGetEvent($request);
-        if ($event instanceof Event) {
-            return $this->translatorFactory->createForEventType($event->getEventType());
-        }
-
-        return $this->translatorFactory->createBase();
     }
 
     private function getBestLanguage(Request $request): string

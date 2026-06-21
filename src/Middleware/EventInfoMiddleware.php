@@ -6,21 +6,19 @@ namespace kissj\Middleware;
 
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use kissj\Mailer\MailerSettings;
+use kissj\Event\EventScope;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteContext;
-use Slim\Views\Twig;
 
 class EventInfoMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
-        private readonly Twig $view,
-        private readonly MailerSettings $mailerSettings,
+        private readonly EventScope $eventScope,
         private readonly SkautisService $skautisService,
         private readonly LoggerInterface $logger,
     ) {
@@ -36,12 +34,9 @@ class EventInfoMiddleware extends BaseMiddleware
         $request = $request->withAttribute('event', $event);
 
         if ($event instanceof Event) {
-            $eventType = $event->getEventType();
+            $this->eventScope->apply($event, $this->buildFullUrlLink($request, $event));
 
-            $this->enrichTemplatesWithEvent($event);
-            $this->enrichMailerSettingsWithEvent($event, $request);
-
-            if ($eventType->isLoginSkautisAllowed()) {
+            if ($event->getEventType()->isLoginSkautisAllowed()) {
                 $this->initSkautis($event);
             }
         }
@@ -49,20 +44,12 @@ class EventInfoMiddleware extends BaseMiddleware
         return $handler->handle($request);
     }
 
-    public function enrichTemplatesWithEvent(Event $event): void
+    private function buildFullUrlLink(Request $request, Event $event): string
     {
-        $this->view->getEnvironment()->addGlobal('event', $event);
-    }
-
-    public function enrichMailerSettingsWithEvent(Event $event, Request $request): void
-    {
-        $this->mailerSettings->setEvent($event);
-        $this->mailerSettings->setFullUrlLink(
-            $this->getRouter($request)->fullUrlFor(
-                $request->getUri(),
-                'landingPrettyUrl',
-                ['eventSlug' => $event->slug],
-            )
+        return $this->getRouter($request)->fullUrlFor(
+            $request->getUri(),
+            'landingPrettyUrl',
+            ['eventSlug' => $event->slug],
         );
     }
 

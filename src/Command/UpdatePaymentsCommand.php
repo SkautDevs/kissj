@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace kissj\Command;
 
 use kissj\Event\EventRepository;
+use kissj\Event\EventScope;
 use kissj\Logging\Sentry\SentryCollector;
-use kissj\Mailer\MailerSettings;
 use kissj\Payment\PaymentService;
-use Slim\Views\Twig;
+use kissj\Translation\CurrentTranslator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,9 +23,9 @@ class UpdatePaymentsCommand extends Command
     public function __construct(
         private readonly PaymentService $paymentService,
         private readonly EventRepository $eventRepository,
-        private readonly MailerSettings $mailerSettings,
+        private readonly EventScope $eventScope,
+        private readonly CurrentTranslator $translator,
         private readonly SentryCollector $sentryCollector,
-        private readonly Twig $view,
     ) {
         parent::__construct();
     }
@@ -37,13 +37,17 @@ class UpdatePaymentsCommand extends Command
             $output->writeln('Updating payments for ' . count($events) . ' events...');
 
             foreach ($events as $event) {
-                // deduplicate same code in class EventInfoMiddleware:36
-                $this->view->getEnvironment()->addGlobal('event', $event); // used in templates
-                $this->mailerSettings->setEvent($event);
-                $this->mailerSettings->setFullUrlLink(
+                $this->eventScope->apply(
+                    $event,
                     // ugly hack, but it is complicated to get RouterCollector in command
-                    sprintf("https://kissj.net/%s", $event->slug), // production address
+                    sprintf('https://kissj.net/%s', $event->slug), // production address
                 );
+
+                // No Accept-Language to negotiate in CLI - use the event's primary language.
+                $languages = array_keys($event->getEventType()->getLanguages());
+                if ($languages !== []) {
+                    $this->translator->setLocale($languages[0]);
+                }
 
                 $result = $this->paymentService->updatePayments($event);
                 foreach ($result->messages as $message) {

@@ -19,6 +19,7 @@ use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\EventController;
 use kissj\Event\EventRepository;
+use kissj\Event\EventScope;
 use kissj\Event\EventService;
 use kissj\Export\ExportController;
 use kissj\Export\ExportService;
@@ -179,6 +180,7 @@ class Settings
             EventController::class => autowire(),
             EventInfoMiddleware::class => autowire(),
             EventRepository::class => autowire(),
+            EventScope::class => autowire(),
             EventService::class => autowire(),
             ExportController::class => autowire(),
             ExportService::class => autowire(),
