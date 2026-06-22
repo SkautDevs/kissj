@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj;
 
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +18,7 @@ readonly class ErrorHandlerGetter
 {
     private LoggerInterface $logger;
     private Twig $twig;
-    private SentryCollector $sentryCollector;
+    private Collector $sentryCollector;
 
     public function __construct(
         ContainerInterface $container
@@ -31,8 +31,8 @@ readonly class ErrorHandlerGetter
         $twig = $container->get(Twig::class);
         $this->twig = $twig;
 
-        /** @var SentryCollector $sentryCollector */
-        $sentryCollector = $container->get(SentryCollector::class);
+        /** @var Collector $sentryCollector */
+        $sentryCollector = $container->get(Collector::class);
         $this->sentryCollector = $sentryCollector;
     }
 

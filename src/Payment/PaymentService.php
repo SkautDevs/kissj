@@ -13,12 +13,14 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\BankServiceProvider;
 use kissj\Event\Event;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\UserService;
 use Psr\Log\LoggerInterface;
 
@@ -32,7 +34,8 @@ class PaymentService
         private readonly UserService $userService,
         private readonly Mailer $mailer,
         private readonly LoggerInterface $logger,
-        private readonly SentryCollector $sentryCollector,
+        private readonly Collector $sentryCollector,
+        private readonly Metrics $metrics,
     ) {
     }
 
@@ -80,7 +83,7 @@ class PaymentService
         return $payment;
     }
 
-    public function cancelPayment(Payment $payment): PaymentResult
+    public function cancelPayment(Payment $payment, PaymentSource $source = PaymentSource::Unknown): PaymentResult
     {
         if ($payment->status === PaymentStatus::Canceled) {
             return PaymentResult::warning($payment, 'flash.warning.paymentAlreadyCanceled');
@@ -93,6 +96,7 @@ class PaymentService
 
         $payment->status = PaymentStatus::Canceled;
         $this->paymentRepository->persist($payment);
+        $this->metrics->count(MetricName::PaymentsCancelled, 1, ['source' => $source->value]);
 
         return new PaymentResult($payment);
     }
@@ -107,7 +111,7 @@ class PaymentService
         $deniedPaymentsCount = 0;
 
         foreach (array_slice($singleDuePayments, 0, $limit) as $payment) {
-            $this->cancelPayment($payment);
+            $this->cancelPayment($payment, PaymentSource::AutoDue);
 
             $this->userService->setUserOpen($payment->participant->getUserButNotNull());
             $this->mailer->sendDuePaymentDenied($payment->participant);
@@ -124,7 +128,7 @@ class PaymentService
         ]);
     }
 
-    public function confirmPayment(Payment $payment): PaymentResult
+    public function confirmPayment(Payment $payment, PaymentSource $source = PaymentSource::Unknown): PaymentResult
     {
         if ($payment->status === PaymentStatus::Paid) {
             return PaymentResult::warning($payment, 'flash.warning.paymentAlreadyPaid');
@@ -140,6 +144,7 @@ class PaymentService
         $payment->status = PaymentStatus::Paid;
         $payment->paidAt = $now;
         $this->paymentRepository->persist($payment);
+        $this->metrics->count(MetricName::PaymentsConfirmed, 1, ['source' => $source->value]);
 
         $participant = $payment->participant;
         if ($participant->countWaitingPayments() > 1) {
@@ -203,6 +208,7 @@ class PaymentService
             } catch (ServiceUnavailable $e) {
                 $this->sentryCollector->collect($e);
                 $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
+                $this->metrics->count(MetricName::PaymentsBankFetchFailed, 1);
 
                 return PaymentResult::withMessages([
                     new PaymentResultMessage(PaymentMessageSeverity::Error, 'flash.error.fioConnectionFailed'),
@@ -221,7 +227,8 @@ class PaymentService
                 $payment = $participantKeydPayments[$bankPayment->variableSymbol ?? ''];
                 if ($payment->price === $bankPayment->price) {
                     // match!
-                    $this->confirmPayment($payment);
+                    $this->confirmPayment($payment, PaymentSource::AutoBankMatch);
+                    $this->metrics->count(MetricName::PaymentsMatched, 1);
                     $this->logger->info('Payment ID ' . $payment->id
                         . ' automatically set to status ' . $payment->status->value);
 

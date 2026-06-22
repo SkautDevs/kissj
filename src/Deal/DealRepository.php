@@ -7,7 +7,7 @@ namespace kissj\Deal;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 
@@ -56,7 +56,7 @@ class DealRepository extends Repository
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
         Event $authorizedEvent,
-        SentryCollector $sentryCollector
+        Collector $sentryCollector
     ): ?Deal {
         $tieCode = $jsonFromBody['TIE code'] ?? null;
         $dealSlug = $jsonFromBody['slug'] ?? null;

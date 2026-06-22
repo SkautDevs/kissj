@@ -5,12 +5,13 @@ namespace Tests\Unit\Payment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\Banks;
 use kissj\BankPayment\BankServiceProvider;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\Mailer;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\QrCodeService;
+use kissj\Telemetry\Metrics;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -26,12 +27,14 @@ class PaymentServiceTest extends TestCase
 {
     public function testGenerateVariableNumber(): void
     {
+        $metrics = new Metrics();
         $mailerMock = new Mailer(
             Mockery::mock(Twig::class),
             Mockery::mock(MailerSettings::class),
             Mockery::mock(QrCodeService::class),
             Mockery::mock(TranslatorInterface::class),
             Mockery::mock(Logger::class),
+            $metrics,
         );
         $paymentService = new PaymentServiceExposed(
             new BankServiceProvider(
@@ -46,12 +49,14 @@ class PaymentServiceTest extends TestCase
                 Mockery::mock(ParticipantRepository::class),
                 Mockery::mock(UserRepository::class),
                 $mailerMock,
+                $metrics,
             ),
             $mailerMock,
             Mockery::mock(Logger::class),
-            new SentryCollector(
+            new Collector(
                 Mockery::mock(Hub::class),
             ),
+            $metrics,
         );
 
         for ($i = 0; $i < 100; $i++) {

@@ -178,11 +178,17 @@ spec:
                 name: {{ .Release.Name }}-sentry-dsn
                 key: dsn
 
-          - name: SENTRY_PROFILING_RATE
+          - name: SENTRY_TRACES_SAMPLE_RATE
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-sentry-dsn
-                key: profiling_rate
+                key: traces_sample_rate
+
+          - name: SENTRY_PROFILES_SAMPLE_RATE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-sentry-dsn
+                key: profiles_sample_rate
 
           - name: SKAUTIS_USE_TEST
             value: {{ .Values.app.skautis.useTest | quote }}

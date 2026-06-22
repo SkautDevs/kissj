@@ -11,6 +11,8 @@ use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\RegistrationCloseResult;
 use kissj\Skautis\SkautisMemberData;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserService;
 
@@ -22,6 +24,7 @@ readonly class PatrolService
         private UserService $userService,
         private ParticipantService $participantService,
         private Mailer $mailer,
+        private Metrics $metrics,
     ) {
     }
 
@@ -118,6 +121,11 @@ readonly class PatrolService
             $this->patrolLeaderRepository->persist($patrolLeader);
             $this->userService->setUserClosed($user);
             $this->mailer->sendRegistrationClosed($user, $patrolLeader);
+            $this->metrics->count(
+                MetricName::RegistrationsLocked,
+                1,
+                ['role' => $patrolLeader->role->value ?? 'unknown'],
+            );
         }
 
         return $patrolLeader;

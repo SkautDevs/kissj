@@ -17,6 +17,8 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -33,6 +35,7 @@ class ParticipantController extends AbstractController
         private readonly TroopParticipantRepository $troopParticipantRepository,
         private readonly DealRepository $dealRepository,
         private readonly PdfGenerator $pdfGenerator,
+        private readonly Metrics $metrics,
     ) {
     }
 
@@ -87,6 +90,11 @@ class ParticipantController extends AbstractController
         $editedSlugs = array_map(fn (ContentArbiterItem $item) => $item->slug, $editableItems);
         $this->logger->info('Changed details after lock for participant ID ' . $participant->id
             . ', user ID ' . $user->id . ', fields: ' . implode(', ', $editedSlugs));
+        $this->metrics->count(
+            MetricName::RegistrationsEditedAfterLock,
+            1,
+            ['role' => $participant->getRoleOrFail()->value],
+        );
 
         $this->flashMessages->success('flash.success.detailsSaved');
 

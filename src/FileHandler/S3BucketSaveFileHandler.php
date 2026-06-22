@@ -5,7 +5,7 @@ namespace kissj\FileHandler;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use Slim\Psr7\UploadedFile;
 
 class S3BucketSaveFileHandler extends SaveFileHandler
@@ -13,7 +13,7 @@ class S3BucketSaveFileHandler extends SaveFileHandler
     public function __construct(
         private readonly S3Client $s3client,
         private readonly string $s3bucket,
-        private readonly SentryCollector $sentryCollector,
+        private readonly Collector $sentryCollector,
     ) {
     }
 

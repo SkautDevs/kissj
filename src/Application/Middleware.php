@@ -8,8 +8,9 @@ use kissj\ErrorHandlerGetter;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
-use kissj\Middleware\SentryContextMiddleware;
-use kissj\Middleware\SentryHttpContextMiddleware;
+use kissj\Telemetry\Sentry\ContextMiddleware;
+use kissj\Telemetry\Sentry\HttpContextMiddleware;
+use kissj\Telemetry\Sentry\TransactionMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use Middlewares\TrailingSlash;
 use Psr\Container\ContainerInterface;
@@ -41,8 +42,8 @@ class Middleware
         // Monolog additional context
         $app->add(MonologContextMiddleware::class);
 
-        // Sentry additional context
-        $app->add(SentryContextMiddleware::class);
+        // additional context for telemetry
+        $app->add(ContextMiddleware::class);
 
         // USER AUTHENTICATION
         $app->add(UserAuthenticationMiddleware::class);
@@ -50,8 +51,8 @@ class Middleware
         // EVENT INFO
         $app->add(EventInfoMiddleware::class);
 
-        // Sentry HTTP request context
-        $app->add(SentryHttpContextMiddleware::class);
+        // HTTP request context for telemetry
+        $app->add(HttpContextMiddleware::class);
 
         // ROUTING
         $app->addRoutingMiddleware();
@@ -63,8 +64,7 @@ class Middleware
         // TRAILING SLASH REMOVER
         $app->add(new TrailingSlash(false)); // remove trailing slash
 
-        // DEBUGGER
-        // keep last to execute first
+        // DEBUGGER - keep as last as possible to execute as soon as possible
         $errorHandlers = [];
         if ($_ENV['DEBUG'] !== 'true') {
             $container = $app->getContainer();
@@ -74,6 +74,9 @@ class Middleware
             $errorHandlers = [(new ErrorHandlerGetter($container))->getErrorHandler()];
         }
         $app->add(new WhoopsMiddleware([], $errorHandlers));
+
+        // TELEMETRY - must be the absolute outermost middleware so that
+        $app->add(TransactionMiddleware::class);
 
         return $app;
     }

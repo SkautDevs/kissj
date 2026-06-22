@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace kissj\Middleware;
+namespace kissj\Telemetry\Sentry;
 
-use kissj\User\User;
 use kissj\Event\Event;
+use kissj\Middleware\BaseMiddleware;
+use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 use Sentry\State\Hub;
 use Sentry\State\Scope;
 
-final class SentryContextMiddleware extends BaseMiddleware
+class ContextMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly Hub $hub,

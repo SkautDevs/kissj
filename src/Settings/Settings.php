@@ -28,7 +28,7 @@ use kissj\FileHandler\LocalSaveFileHandler;
 use kissj\FileHandler\S3BucketSaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\MailerSettings;
 use kissj\Mailer\Mailer;
 use kissj\Middleware\AdminsOnlyMiddleware;
@@ -46,8 +46,9 @@ use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
-use kissj\Middleware\SentryContextMiddleware;
-use kissj\Middleware\SentryHttpContextMiddleware;
+use kissj\Telemetry\Sentry\ContextMiddleware;
+use kissj\Telemetry\Sentry\HttpContextMiddleware;
+use kissj\Telemetry\Sentry\TransactionMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
@@ -82,6 +83,8 @@ use kissj\Session\RedisSessionHandler;
 use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
 use kissj\Skautis\SkautisService;
+use kissj\Telemetry\Sentry\DibiSpanListener;
+use kissj\Telemetry\Metrics;
 use kissj\Translation\CurrentTranslator;
 use kissj\Translation\TranslatorFactory;
 use kissj\User\UserRegeneration;
@@ -139,7 +142,8 @@ class Settings
         $sentryClient = ClientBuilder::create([
             'dsn' => $_ENV['SENTRY_DSN'],
             'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
-            'traces_sample_rate' => (float)$_ENV['SENTRY_PROFILING_RATE'],
+            'traces_sample_rate' => (float)($_ENV['SENTRY_TRACES_SAMPLE_RATE'] ?? '1'),
+            'profiles_sample_rate' => (float)($_ENV['SENTRY_PROFILES_SAMPLE_RATE'] ?? '1'),
             'release' => 'kissj@' . $_ENV['GIT_HASH'],
             'before_send' => function (SentryEvent $event): ?SentryEvent {
                 // Check if error is from middleware exception capturer
@@ -156,6 +160,9 @@ class Settings
 
         $sentryHub = new SentryHub($sentryClient);
         SentrySdk::setCurrentHub($sentryHub);
+        register_shutdown_function(static function (): void {
+            (new Metrics())->flush();
+        });
 
         // autowired classes are not compiled automatically, hence here we about to tell them to DI
         // https://php-di.org/doc/performances.html#optimizing-for-compilation
@@ -211,9 +218,11 @@ class Settings
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
             Mailer::class => autowire(),
+            Metrics::class => autowire(),
             QrCodeService::class => autowire(),
-            SentryContextMiddleware::class => autowire(),
-            SentryHttpContextMiddleware::class => autowire(),
+            ContextMiddleware::class => autowire(),
+            HttpContextMiddleware::class => autowire(),
+            TransactionMiddleware::class => autowire(),
             SkautisController::class => autowire(),
             SkautisService::class => autowire(),
             TatraBankPaymentService::class => autowire(),
@@ -227,13 +236,18 @@ class Settings
             VendorApiKeyMiddleware::class => autowire(),
         ];
 
-        $container[Connection::class] = fn () => new Connection([
-            'driver' => 'postgre',
-            'host' => $_ENV['DATABASE_HOST'],
-            'username' => $_ENV['POSTGRES_USER'],
-            'password' => $_ENV['POSTGRES_PASSWORD'],
-            'database' => $_ENV['POSTGRES_DB'],
-        ]);
+        $container[Connection::class] = function () {
+            $connection = new Connection([
+                'driver' => 'postgre',
+                'host' => $_ENV['DATABASE_HOST'],
+                'username' => $_ENV['POSTGRES_USER'],
+                'password' => $_ENV['POSTGRES_PASSWORD'],
+                'database' => $_ENV['POSTGRES_DB'],
+            ]);
+            $connection->onEvent[] = new DibiSpanListener();
+
+            return $connection;
+        };
         $container[SaveFileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
             'local' => new LocalSaveFileHandler(),
             's3bucket' => get(S3BucketSaveFileHandler::class),
@@ -283,7 +297,7 @@ class Settings
         );
         $container[S3BucketSaveFileHandler::class] = fn (
             S3Client $s3Client,
-            SentryCollector $sentryCollector,
+            Collector $sentryCollector,
         ) => new S3BucketSaveFileHandler(
             $s3Client,
             $_ENV['S3_BUCKET'],
@@ -394,7 +408,6 @@ class Settings
         $dotenv->required('POSTGRES_PASSWORD');
         $dotenv->required('POSTGRES_DB');
         $dotenv->required('SENTRY_DSN');
-        $dotenv->required('SENTRY_PROFILING_RATE')->notEmpty();
         $dotenv->required('SKAUTIS_USE_TEST')->isBoolean();
         $dotenv->required('GIT_HASH');
         $dotenv->required('REDIS_HOST')->notEmpty();

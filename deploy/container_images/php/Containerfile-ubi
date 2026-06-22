@@ -13,8 +13,12 @@ RUN /usr/bin/crb enable
 RUN dnf module enable php:remi-8.3 -y
 RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y
 
-#cleanup dnf cache
-RUN dnf clean all
+#build deps for Excimer (Sentry profiling)
+RUN dnf install -y gcc make php-devel php-pear \
+ && pecl install excimer \
+ && echo "extension=excimer.so" > /etc/php.d/40-excimer.ini \
+ && dnf remove -y gcc make php-devel php-pear \
+ && dnf clean all
 
 #copy app
 COPY ./composer.json /var/www/html/composer.json

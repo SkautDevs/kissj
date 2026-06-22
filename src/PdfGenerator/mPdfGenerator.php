@@ -11,6 +11,8 @@ use kissj\Payment\Payment;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use Mpdf\Mpdf;
 use Slim\Views\Twig;
 
@@ -19,6 +21,7 @@ class mPdfGenerator extends PdfGenerator
     public function __construct(
         private readonly Mpdf $mpdf,
         private readonly Twig $twig,
+        private readonly Metrics $metrics,
     ) {
         $this->mpdf->shrink_tables_to_fit = 1;
     }
@@ -44,11 +47,27 @@ class mPdfGenerator extends PdfGenerator
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
         ];
 
-        $html = $this->twig->fetch($templateName, $templateData);
-        $this->mpdf->WriteHTML($html);
-
-        /** @var string $output */
-        $output = $this->mpdf->Output(dest: 'S');
+        $start = microtime(true);
+        $outcome = 'failed';
+        try {
+            $html = $this->twig->fetch($templateName, $templateData);
+            $this->mpdf->WriteHTML($html);
+            /** @var string $output */
+            $output = $this->mpdf->Output(dest: 'S');
+            $outcome = 'success';
+        } finally {
+            $durationMs = (microtime(true) - $start) * 1000.0;
+            $this->metrics->count(
+                MetricName::PdfsGenerated,
+                1,
+                ['type' => 'receipt', 'outcome' => $outcome],
+            );
+            $this->metrics->distributionMs(
+                MetricName::PdfsGenerationTime,
+                $durationMs,
+                ['type' => 'receipt', 'outcome' => $outcome],
+            );
+        }
 
         return $output;
     }
@@ -85,11 +104,27 @@ class mPdfGenerator extends PdfGenerator
             'patrolsRoster' => $patrolsRoster,
         ];
 
-        $html = $this->twig->fetch($templateName, $templateData);
-        $this->mpdf->WriteHTML($html);
-
-        /** @var string $output */
-        $output = $this->mpdf->Output(dest: 'S');
+        $start = microtime(true);
+        $outcome = 'failed';
+        try {
+            $html = $this->twig->fetch($templateName, $templateData);
+            $this->mpdf->WriteHTML($html);
+            /** @var string $output */
+            $output = $this->mpdf->Output(dest: 'S');
+            $outcome = 'success';
+        } finally {
+            $durationMs = (microtime(true) - $start) * 1000.0;
+            $this->metrics->count(
+                MetricName::PdfsGenerated,
+                1,
+                ['type' => 'roster', 'outcome' => $outcome],
+            );
+            $this->metrics->distributionMs(
+                MetricName::PdfsGenerationTime,
+                $durationMs,
+                ['type' => 'roster', 'outcome' => $outcome],
+            );
+        }
 
         return $output;
     }

@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantService;
 use kissj\Payment\PaymentMessageSeverity;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentSource;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -49,7 +50,7 @@ class AdminJsonController extends AbstractController
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
         try {
-            $result = $this->paymentService->confirmPayment($payment);
+            $result = $this->paymentService->confirmPayment($payment, PaymentSource::ManualAdminApi);
         } catch (\RuntimeException) {
             return $this->warningJsonResponse($response, 'flash.warning.paymentNotWaiting');
         }

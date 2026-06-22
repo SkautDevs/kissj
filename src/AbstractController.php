@@ -10,7 +10,7 @@ use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
 use kissj\Participant\RegistrationCloseResult;
 use kissj\Payment\PaymentMessageSeverity;
 use kissj\Payment\PaymentResult;
@@ -43,7 +43,7 @@ abstract class AbstractController
     protected SaveFileHandler $fileHandler;
 
     #[Inject]
-    protected SentryCollector $sentryCollector;
+    protected Collector $sentryCollector;
 
     protected function flashRegistrationCloseResult(RegistrationCloseResult $result): void
     {

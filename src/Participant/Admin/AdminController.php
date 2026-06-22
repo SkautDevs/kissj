@@ -27,16 +27,16 @@ use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class AdminController extends AbstractController
 {
@@ -54,6 +54,7 @@ class AdminController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly EventRepository $eventRepository,
         private readonly EventService $eventService,
+        private readonly Metrics $metrics,
     ) {
     }
 
@@ -338,6 +339,7 @@ class AdminController extends AbstractController
         $this->flashMessages->info('flash.info.denied');
         $this->logger->info('Denied registration for participant with ID '
             . $participantId . ' and role ' . ($participant->role->value ?? 'missing') . ' with reason: ' . $reason);
+        $this->metrics->count(MetricName::RegistrationsDenied, 1, ['role' => $participant->role->value ?? 'unknown role']);
 
         return $this->redirect($request, $response, 'admin-show-approving');
     }
@@ -394,7 +396,7 @@ class AdminController extends AbstractController
         $reason = $this->getParameterFromBody($request, 'reason', true);
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
-        $this->participantService->cancelPayment($payment, $reason);
+        $this->participantService->cancelPayment($payment, $reason, PaymentSource::ManualAdmin);
         $this->flashMessages->info('flash.info.paymentCanceled');
         $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
 
@@ -447,6 +449,7 @@ class AdminController extends AbstractController
         $this->participantService->changePaymentPrice($payment, $newPrice, $reason);
         $this->flashMessages->success('flash.success.paymentPriceChanged');
         $this->logger->info('Payment ID ' . $paymentId . ' price changed to ' . $newPrice . ' with reason: ' . $reason);
+        $this->metrics->count(MetricName::PaymentsPriceChanged, 1);
 
         return $this->redirect($request, $response, 'admin-show-payments');
     }
@@ -473,7 +476,7 @@ class AdminController extends AbstractController
     ): Response {
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
-        $this->flashPaymentResult($this->paymentService->confirmPayment($payment));
+        $this->flashPaymentResult($this->paymentService->confirmPayment($payment, PaymentSource::ManualAdmin));
         $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
 
         return $this->redirect(
@@ -522,6 +525,7 @@ class AdminController extends AbstractController
         $notice = $this->getParameterFromBody($request, 'notice', true);
         $this->paymentService->setBankPaymentPaired($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
+        $this->metrics->count(MetricName::PaymentsMarkedPaired, 1);
         $this->flashMessages->info('flash.info.markedAsPaired');
 
         return $this->redirect(
@@ -538,6 +542,7 @@ class AdminController extends AbstractController
     ): Response {
         $this->paymentService->setBankPaymentUnrelated($paymentId);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
+        $this->metrics->count(MetricName::PaymentsMarkedUnrelated, 1);
         $this->flashMessages->info('flash.info.markedAsUnrelated');
 
         return $this->redirect(
@@ -682,6 +687,7 @@ class AdminController extends AbstractController
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');
         $this->logger->info('Participant with ID ' . $participantId . ' details changed by user with ID ' . $user->id);
+        $this->metrics->count(MetricName::ParticipantsAdminEdited, 1);
 
         return $this->redirect(
             $request,

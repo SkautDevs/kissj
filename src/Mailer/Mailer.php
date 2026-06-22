@@ -9,6 +9,8 @@ use kissj\Participant\Gender;
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Payment\QrCodeService;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
@@ -29,6 +31,7 @@ readonly class Mailer
         private QrCodeService $qrCodeService,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
+        private Metrics $metrics,
     ) {
     }
 
@@ -297,6 +300,7 @@ readonly class Mailer
         $mailer = new SymfonyMailer($transport, dispatcher: $eventDispatcher);
 
         $mailer->send($email);
+        $this->metrics->count(MetricName::EmailsSent, 1, ['template' => $templateName]);
 
         $this->logger->info(sprintf(
             'Sent email to %s with subject %s from template name %s',

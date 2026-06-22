@@ -10,6 +10,8 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
@@ -20,6 +22,7 @@ readonly class UserService
         private ParticipantRepository $participantRepository,
         private UserRepository $userRepository,
         private Mailer $mailer,
+        private Metrics $metrics,
     ) {
     }
 
@@ -133,6 +136,7 @@ readonly class UserService
         $participant->user = $user;
         $participant->role = $participantRole;
         $this->participantRepository->persist($participant);
+        $this->metrics->count(MetricName::RegistrationsCreated, 1, ['role' => $role]);
 
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);

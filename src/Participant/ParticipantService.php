@@ -17,7 +17,10 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
@@ -25,11 +28,12 @@ use kissj\User\UserStatus;
 readonly class ParticipantService
 {
     public function __construct(
-        private ParticipantRepository      $participantRepository,
+        private ParticipantRepository $participantRepository,
         private TroopParticipantRepository $troopParticipantRepository,
-        private PaymentService             $paymentService,
-        private UserService                $userService,
-        private Mailer                     $mailer,
+        private PaymentService $paymentService,
+        private UserService $userService,
+        private Mailer $mailer,
+        private Metrics $metrics,
     ) {
     }
 
@@ -46,12 +50,12 @@ readonly class ParticipantService
 
     /**
      * @param array<string, string|null> $params
-     * @param list<ContentArbiterItem> $editableItems
+     * @param list<ContentArbiterItem>   $editableItems
      */
     public function updateEditableAfterLockFields(
         Participant $participant,
-        array $params,
-        array $editableItems,
+        array       $params,
+        array       $editableItems,
     ): Participant {
         foreach ($editableItems as $item) {
             $slug = $item->slug;
@@ -199,8 +203,8 @@ readonly class ParticipantService
     }
 
     private function validateTroopLeaderRegistrationClose(
-        TroopLeader $troopLeader,
-        Event $event,
+        TroopLeader             $troopLeader,
+        Event                   $event,
         RegistrationCloseResult $result,
     ): RegistrationCloseResult {
         $troopParticipants = $troopLeader->troopParticipants;
@@ -333,6 +337,11 @@ readonly class ParticipantService
             $this->participantRepository->persist($participant);
             $this->userService->setUserClosed($user);
             $this->mailer->sendRegistrationClosed($user, $participant);
+            $this->metrics->count(
+                MetricName::RegistrationsLocked,
+                1,
+                ['role' => $participant->role->value ?? 'unknown'],
+            );
         }
 
         return $participant;
@@ -347,9 +356,12 @@ readonly class ParticipantService
         return $payment;
     }
 
-    public function cancelPayment(Payment $payment, string $reason): Payment
-    {
-        $this->paymentService->cancelPayment($payment);
+    public function cancelPayment(
+        Payment $payment,
+        string $reason,
+        PaymentSource $source = PaymentSource::Unknown,
+    ): Payment {
+        $this->paymentService->cancelPayment($payment, $source);
         $participant = $payment->participant;
 
         if ($participant->countWaitingPayments() === 0) {
@@ -383,12 +395,12 @@ readonly class ParticipantService
 
         $participant = $oldPayment->participant;
 
-        $this->paymentService->cancelPayment($oldPayment);
+        $this->paymentService->cancelPayment($oldPayment, PaymentSource::ChangePrice);
 
         $newPayment = $this->paymentService->createAndPersistNewCustomPayment($participant, $newPrice, $reason);
 
         if ($newPrice === 0) {
-            $this->paymentService->confirmPayment($newPayment);
+            $this->paymentService->confirmPayment($newPayment, PaymentSource::ChangePrice);
         } else {
             $this->mailer->sendPaymentPriceChanged($participant, $newPayment, $reason);
         }

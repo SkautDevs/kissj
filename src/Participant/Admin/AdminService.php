@@ -14,7 +14,10 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
@@ -30,6 +33,7 @@ readonly class AdminService
         private Mailer $mailer,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
+        private Metrics $metrics,
     ) {
     }
 
@@ -97,7 +101,7 @@ readonly class AdminService
 
         foreach ($participantTo->payment as $payment) {
             if ($payment->status === PaymentStatus::Waiting) {
-                $this->paymentService->cancelPayment($payment);
+                $this->paymentService->cancelPayment($payment, PaymentSource::Transfer);
                 $this->mailer->sendCancelledPayment(
                     $participantTo,
                     $this->translator->trans(
@@ -160,6 +164,7 @@ readonly class AdminService
             $userFrom->id,
             $userTo->id,
         ));
+        $this->metrics->count(MetricName::PaymentsTransferred, 1);
     }
 
     private function handlePayments(

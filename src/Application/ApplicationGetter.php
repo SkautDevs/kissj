@@ -7,10 +7,12 @@ use DI\Container;
 use DI\ContainerBuilder;
 use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
+use kissj\Telemetry\Sentry\ConsoleSubscriber;
 use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 use Slim\App;
 use Symfony\Component\Console\Application as ConsoleApp;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ApplicationGetter
 {
@@ -53,6 +55,10 @@ class ApplicationGetter
 
         $consoleApp = new ConsoleApp();
         $consoleApp = (new Command())->addCommandsInto($consoleApp, $container);
+
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber(new ConsoleSubscriber());
+        $consoleApp->setDispatcher($dispatcher);
 
         return $consoleApp;
     }
