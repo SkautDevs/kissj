@@ -7,7 +7,8 @@ namespace kissj\Skautis;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Logging\Sentry\SentryCollector;
+use kissj\Telemetry\Sentry\Collector;
+use kissj\Participant\Country;
 use kissj\Participant\Gender;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -36,7 +37,7 @@ class SkautisService
         private readonly UserRepository $userRepository,
         private readonly FlashMessagesInterface $flashMessages,
         private readonly LoggerInterface $logger,
-        private readonly SentryCollector $sentryCollector,
+        private readonly Collector $sentryCollector,
     ) {
     }
 
@@ -95,9 +96,9 @@ class SkautisService
                 $skautisUnitName = '';
             }
 
-            $gender = is_numeric($idPersonFromSkautis)
-                ? $this->requestGenderFromPerson((int)$idPersonFromSkautis)
-                : Gender::Other;
+            $additionalDetails = is_numeric($idPersonFromSkautis)
+                ? $this->requestAdditionalDetailsFromPerson((int)$idPersonFromSkautis)
+                : new SkautisPersonAdditionalDetails(Gender::Other, Country::Other);
 
             return new SkautisUserData(
                 $skautisUserDetailExternal->ID,
@@ -114,7 +115,8 @@ class SkautisService
                 $skautisUserDetailExternal->PostCode ?? '',
                 $skautisUserDetail->HasMembership,
                 $skautisUnitName,
-                $gender,
+                $additionalDetails->gender,
+                $additionalDetails->country,
             );
         } catch (Throwable $t) {
             $this->sentryCollector->collect($t);
@@ -160,7 +162,12 @@ class SkautisService
         $participant->telephoneNumber = $skautisUserData->phone;
         $participant->permanentResidence = $skautisUserData->getPermanentResidence();
         $participant->scoutUnit = $skautisUserData->unitName;
-        $participant->gender = $skautisUserData->gender->value;
+        if ($skautisUserData->gender !== Gender::Other) {
+            $participant->gender = $skautisUserData->gender->value;
+        }
+        if ($skautisUserData->country !== Country::Other) {
+            $participant->country = $skautisUserData->country->value;
+        }
         $this->participantRepository->persist($participant);
 
         $this->flashMessages->info('flash.info.skautisDataPrefilled');
@@ -256,19 +263,20 @@ class SkautisService
         return $members;
     }
 
-    private function requestGenderFromPerson(int $idPersonFromSkautis): Gender
+    private function requestAdditionalDetailsFromPerson(int $idPersonFromSkautis): SkautisPersonAdditionalDetails
     {
         try {
-            /** @var object{PersonAllOutput: object{ID_Sex?: string, Sex?: string}} $personResult */
+            /** @var object{PersonAllOutput: object{ID_Sex?: string, Sex?: string, State?: string}} $personResult */
             $personResult = $this->skautis->OrganizationUnit->PersonAll([
                 'ID' => $idPersonFromSkautis,
             ]);
 
-            $sexDisplayName = $personResult->PersonAllOutput->Sex ?? null;
-
-            return Gender::fromSkautisDisplayName($sexDisplayName);
+            return new SkautisPersonAdditionalDetails(
+                Gender::fromSkautisDisplayName($personResult->PersonAllOutput->Sex ?? null),
+                Country::fromSkautisState($personResult->PersonAllOutput->State ?? null),
+            );
         } catch (Throwable) {
-            return Gender::Other;
+            return new SkautisPersonAdditionalDetails(Gender::Other, Country::Other);
         }
     }
 
