@@ -24,10 +24,9 @@ class UpdatePaymentsCommandTranslationScopingTest extends AppTestCase
         /** @var Connection $connection */
         $connection = $container->get(Connection::class);
         $connection->query(
-            'UPDATE event SET event_type = %s, testing_site = %b, automatic_payment_pairing = %b,
+            'UPDATE event SET event_type = %s, automatic_payment_pairing = %b,
                  start_registration = %s, end_day = %s WHERE slug = %s',
             'wsj',
-            false,
             true,
             (new DateTimeImmutable('2000-01-01'))->format(DATE_ATOM),
             (new DateTimeImmutable('2099-01-01'))->format(DATE_ATOM),

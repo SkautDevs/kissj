@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'app:update-payments',
-    description: 'Update all payments for active non-test autopayments on events',
+    description: 'Update all payments for active autopayments on events',
 )]
 class UpdatePaymentsCommand extends Command
 {
@@ -30,7 +30,7 @@ class UpdatePaymentsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $events = $this->eventRepository->findActiveNontestAutopaymentsOnEvents();
+        $events = $this->eventRepository->findActiveAutopaymentsOnEvents();
         $output->writeln('Updating payments for ' . count($events) . ' events...');
 
         foreach ($events as $event) {

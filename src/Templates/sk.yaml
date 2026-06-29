@@ -687,7 +687,6 @@ flash:
         nonexistentEvent: "Táto akcia pravdepodobne neexistuje. Asi zlý odkaz?"
         noMembersImported: "Žiadni noví účastníci neboli pridaní – všetci vybraní už boli importovaní"
         noMembersSelected: "Neboli vybraní žiadni účastníci"
-        testingSite: "Táto stránka je určená len na testovacie účely - nezadávaj žiadne reálne osobné ani citlivé údaje!"
         multiplePaymentsNotAllowed: "Pardon, ale generovanie viacerých platieb pre účastníka nie je pre túto akciu povolené."
         cannotTieYourself: "Pripnúť sa ku svojej vlastnej skupine nedáva zmysel"
         wrongTieCodeForTroopParticipant: "S týmto kódom na pripnutie neevidujeme žiadneho účastníka. Skontroluj prosím kód na pripnutie, či je správne"

@@ -687,7 +687,6 @@ flash:
         nonexistentEvent: "This event do not exist. Bad link maybe?"
         noMembersImported: "No new participants were added – all selected members were already imported"
         noMembersSelected: "No members were selected"
-        testingSite: "This site is for testing purposes only - do not enter any real personal or sensitive data!"
         multiplePaymentsNotAllowed: "Sorry, but generating multiple payments is not allowed."
         cannotTieYourself: "It doesn’t make sense to join your own group"
         wrongTieCodeForTroopParticipant: "With this join code, we don’t have any registered participants. Please check the join code to make sure it is correct"

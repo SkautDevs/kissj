@@ -20,10 +20,9 @@ class EventRepository extends Repository
     /**
      * @return list<Event>
      */
-    public function findActiveNontestEvents(): array
+    public function findActiveEvents(): array
     {
         return $this->findBy([
-            'testing_site' => false,
             'end_day' => new Relation(DateTimeUtils::getDateTime('-1 month')->format(DATE_ATOM), '>'),
         ]);
     }
@@ -31,10 +30,9 @@ class EventRepository extends Repository
     /**
      * @return list<Event>
      */
-    public function findActiveNontestAutopaymentsOnEvents(): array
+    public function findActiveAutopaymentsOnEvents(): array
     {
         return $this->findBy([
-            'testing_site' => false,
             'automatic_payment_pairing' => true,
             'start_registration' => new Relation(DateTimeUtils::getDateTime()->format(DATE_ATOM), '<'),
             'end_day' => new Relation(DateTimeUtils::getDateTime('-3 month')->format(DATE_ATOM), '>'),
@@ -44,11 +42,9 @@ class EventRepository extends Repository
     /**
      * @return list<Event>
      */
-    public function findAllNontestEvents(): array
+    public function findAll(): array
     {
-        return $this->findBy([
-            'testing_site' => false,
-        ], [new Order('start_day')]);
+        return $this->findBy([], [new Order('start_day')]);
     }
 
     public function findBySlug(string $eventSlug): ?Event

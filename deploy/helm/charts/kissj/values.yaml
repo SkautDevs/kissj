@@ -37,7 +37,6 @@ app:
   url: example.net
   locale: cs
 
-  test_site: false
   log_level: DEBUG
   debug: false
 

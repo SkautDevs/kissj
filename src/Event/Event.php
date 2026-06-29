@@ -32,7 +32,6 @@ use kissj\Participant\ParticipantRole;
  * @property string            $contactEmail
  * @property EventType         $eventType m:useMethods(getEventType|)
  * @property string            $logoUrl
- * @property bool              $testingSite
  *
  * @property string            $accountNumber with bank code after slash
  * @property string            $iban

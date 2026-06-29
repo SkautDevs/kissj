@@ -92,9 +92,6 @@ spec:
                 - name: TEMPLATE_CACHE
                   value: "true"
 
-                - name: TESTING_SITE
-                  value: {{ .Values.app.test_site | quote }}
-
                 - name: BASEPATH
                   value: ""
 

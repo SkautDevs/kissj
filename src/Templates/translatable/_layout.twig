@@ -69,11 +69,6 @@
     <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.payedBar' | trans }}</li>
 </ul>
 <div class="flash-wrapper">
-    {% if event.testingSite %}
-        <div class="alert alert-info">
-            {{ 'flash.warning.testingSite' | trans }}
-        </div>
-    {% endif %}
     {% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
         <div class="alert alert-{{ flashMessage['type'] }}">
             {{ flashMessage['message'] }}
