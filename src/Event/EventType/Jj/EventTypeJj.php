@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Jj;
 
-use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;

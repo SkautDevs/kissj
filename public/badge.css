@@ -1,0 +1,220 @@
+/* the four badges are the inner cells of a 4x4 table; the empty outer ring of cells carries
+   the thin solid cutting guides so they extend through the margin to every paper edge */
+@page {
+    margin: 0;
+}
+
+.badge-sheet {
+    width: 210mm; /* full A4 so the outer ring reaches the paper edges */
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* Scout brand font; set on the outer table because mPDF inherits font-family from a table into
+       nested cells, but not from a td */
+    font-family: 'themix', sans-serif;
+}
+
+.badge-sheet td {
+    padding: 0;
+}
+
+.badge-sheet td.badge {
+    width: 95mm;
+    height: 138mm;
+    border: 0.1mm solid #999; /* cutting guides around each badge */
+    vertical-align: top;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-align: center;
+}
+
+.badge-sheet td.badge-margin-corner {
+    width: 10mm;
+    height: 10.5mm;
+}
+
+.badge-sheet td.badge-margin-top,
+.badge-sheet td.badge-margin-bottom {
+    width: 95mm;
+    height: 10.5mm;
+    border-left: 0.1mm solid #999;
+    border-right: 0.1mm solid #999;
+}
+
+.badge-sheet td.badge-margin-left,
+.badge-sheet td.badge-margin-right {
+    width: 10mm;
+    border-top: 0.1mm solid #999;
+    border-bottom: 0.1mm solid #999;
+}
+
+.badge-block {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* transparent image spacer — mPDF honours image height reliably (unlike padding/cell height),
+   so this creates the blank space from the top cut line down to the first content */
+.badge-topspace {
+    display: block;
+    width: 1mm;
+    height: 15mm;
+}
+
+.badge-gap {
+    display: block;
+    width: 1mm;
+    height: 10mm;
+}
+
+.badge-crisis-gap {
+    display: block;
+    width: 1mm;
+    height: 3mm;
+}
+
+.badge-role-label {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    font-size: 9pt;
+    font-weight: bold;
+    color: #2f3a4a;
+    padding: 2mm 3mm 0;
+}
+
+.badge-title {
+    text-align: center;
+    font-family: 'skautbold', sans-serif;
+    font-size: 20pt;
+    font-weight: bold;
+    color: #1a1a1a;
+    line-height: 1.1;
+    padding: 1mm 4mm 2mm;
+}
+
+.badge-top {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.badge-top .badge-logo-cell {
+    width: 48%;
+    text-align: center;
+    vertical-align: middle;
+    padding: 2mm;
+}
+
+.badge-logo {
+    max-width: 32mm;
+    max-height: 32mm;
+}
+
+.badge-top .badge-photo-cell {
+    width: 52%;
+    height: 42mm;
+    border: 0.3mm solid #999;
+}
+
+.badge-name-band {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1mm 0;
+}
+
+.badge-name-band td {
+    background-color: #4363d8;
+    color: #ffffff;
+    text-align: center;
+    padding: 3mm 4mm;
+}
+
+.badge-nick {
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.badge-fullname {
+    font-size: 10pt;
+    margin-top: 1mm;
+}
+
+.badge-lower {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 3mm;
+}
+
+.badge-lower .badge-lower-info {
+    width: 60%;
+    vertical-align: middle;
+}
+
+.badge-lower .badge-lower-qr {
+    width: 40%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.badge-info {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.badge-info .badge-info-cell {
+    width: 50%;
+    text-align: center;
+    vertical-align: top;
+    padding: 2mm;
+}
+
+.badge-info .badge-info-cell--left {
+    border-right: 0.2mm solid #cccccc;
+}
+
+.badge-info-label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+    color: #888888;
+}
+
+.badge-info-value {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin-top: 1mm;
+}
+
+.badge-qr {
+    width: 26mm;
+    height: 26mm;
+}
+
+.badge-footer {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2mm;
+}
+
+.badge-crisis {
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #2f3a4a;
+    padding: 2.5mm 3mm;
+    border-top: 0.2mm solid #cccccc;
+}
+
+.badge--blank .badge-blank-label {
+    padding: 3mm 6mm 0;
+    font-size: 10pt;
+    color: #555555;
+    text-align: left;
+}
+
+.badge--blank .badge-blank-line {
+    border-bottom: 0.3mm solid #000000;
+    height: 12mm;
+    padding: 0 6mm;
+}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant;
 
-use DateTime;
+use Collator;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
@@ -18,6 +18,7 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Patrol\SinglePatrolRoster;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
 use kissj\User\UserRole;
@@ -102,6 +103,79 @@ class ParticipantRepository extends Repository
         }
 
         return $participants;
+    }
+
+    /**
+     * @param list<ParticipantRole> $roles
+     * @return list<Participant>
+     */
+    public function getParticipantsForBadges(Event $event, array $roles): array
+    {
+        $participants = $this->getAllParticipantsWithStatus(
+            $roles,
+            [UserStatus::Approved, UserStatus::Paid],
+            $event,
+        );
+
+        // PatrolParticipants may be returned twice by the leader-status expansion, so dedupe by id.
+        $sortable = [];
+        foreach ($participants as $participant) {
+            $sortable[$participant->id] = [
+                'groupKey' => $this->badgeGroupKey($participant),
+                'displayedName' => $this->getSortableDisplayName($participant),
+                'participant' => $participant,
+            ];
+        }
+        $sortable = array_values($sortable);
+
+        // sorts names case-insensitive and diacritics in order
+        $collator = new Collator('cs_CZ');
+
+        // group each patrol/troop together, then order by displayed name within the group
+        usort($sortable, function (array $a, array $b) use ($collator): int {
+            $groupComparison = strcmp($a['groupKey'], $b['groupKey']);
+
+            return $groupComparison !== 0
+                ? $groupComparison
+                : (int)$collator->compare($a['displayedName'], $b['displayedName']);
+        });
+
+        return array_map(fn (array $row): Participant => $row['participant'], $sortable);
+    }
+
+    private function badgeGroupKey(Participant $participant): string
+    {
+        if ($participant instanceof PatrolParticipant) {
+            return 'patrol-' . $this->padId($participant->patrolLeader->id);
+        }
+        if ($participant instanceof PatrolLeader) {
+            return 'patrol-' . $this->padId($participant->id);
+        }
+        if ($participant instanceof TroopParticipant) {
+            return 'troop-' . $this->padId($participant->troopLeader->id ?? $participant->id);
+        }
+        if ($participant instanceof TroopLeader) {
+            return 'troop-' . $this->padId($participant->id);
+        }
+
+        $role = $participant->role;
+
+        return 'role-' . ($role instanceof ParticipantRole ? $role->value : '');
+    }
+
+    // zero-pad the id so the string group keys sort numerically instead of lexicographically
+    private function padId(int $id): string
+    {
+        return sprintf('%010d', $id);
+    }
+
+    private function getSortableDisplayName(Participant $participant): string
+    {
+        if ($participant->nickname !== null && $participant->nickname !== '') {
+            return $participant->nickname;
+        }
+
+        return trim(($participant->firstName ?? '') . ' ' . ($participant->lastName ?? ''));
     }
 
     /**

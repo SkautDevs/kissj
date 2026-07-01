@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 
-class ShowFoodStatsAllowedOnly extends BaseMiddleware
+class BadgesAllowedOnlyMiddleware extends BaseMiddleware
 {
     public function __construct(
         private readonly FlashMessagesInterface $flashMessages,
@@ -16,8 +16,8 @@ class ShowFoodStatsAllowedOnly extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        if ($this->tryGetEvent($request)?->getEventType()->showFoodStats() === false) {
-            $this->flashMessages->warning('flash.warning.food-stats-not-allowed');
+        if ($this->tryGetEvent($request)?->getEventType()->isBadgeGenerationAllowed() === false) {
+            $this->flashMessages->error('flash.error.badgesNotAllowed');
 
             return $this->createRedirectResponse($request, 'admin-dashboard');
         }

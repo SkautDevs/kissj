@@ -20,4 +20,18 @@ abstract class PdfGenerator
         PatrolsRoster $patrolsRoster,
         string $templateName,
     ): string;
+
+    /**
+     * @param Participant[] $participants
+     */
+    abstract public function buildBadgesHtml(Event $event, array $participants): string;
+
+    /**
+     * @param Participant[] $participants
+     */
+    abstract public function generateBadges(Event $event, array $participants): string;
+
+    abstract public function buildBlankBadgesHtml(Event $event, int $count): string;
+
+    abstract public function generateBlankBadges(Event $event, int $count): string;
 }

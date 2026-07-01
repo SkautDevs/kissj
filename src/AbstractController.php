@@ -23,8 +23,6 @@ use Slim\Views\Twig;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 
-use function GuzzleHttp\json_encode as guzzleJsonEncode;
-
 abstract class AbstractController
 {
     #[Inject]

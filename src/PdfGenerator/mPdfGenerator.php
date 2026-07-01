@@ -11,6 +11,7 @@ use kissj\Payment\Payment;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Payment\QrCodeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use Mpdf\Mpdf;
@@ -22,6 +23,7 @@ class mPdfGenerator extends PdfGenerator
         private readonly Mpdf $mpdf,
         private readonly Twig $twig,
         private readonly Metrics $metrics,
+        private readonly QrCodeService $qrCodeService,
     ) {
         $this->mpdf->shrink_tables_to_fit = 1;
     }
@@ -47,29 +49,7 @@ class mPdfGenerator extends PdfGenerator
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
         ];
 
-        $start = microtime(true);
-        $outcome = 'failed';
-        try {
-            $html = $this->twig->fetch($templateName, $templateData);
-            $this->mpdf->WriteHTML($html);
-            /** @var string $output */
-            $output = $this->mpdf->Output(dest: 'S');
-            $outcome = 'success';
-        } finally {
-            $durationMs = (microtime(true) - $start) * 1000.0;
-            $this->metrics->count(
-                MetricName::PdfsGenerated,
-                1,
-                ['type' => 'receipt', 'outcome' => $outcome],
-            );
-            $this->metrics->distributionMs(
-                MetricName::PdfsGenerationTime,
-                $durationMs,
-                ['type' => 'receipt', 'outcome' => $outcome],
-            );
-        }
-
-        return $output;
+        return $this->writeHtmlToPdf($templateName, $templateData, 'receipt');
     }
 
     private function getOtherParticipantsIfNeeded(Participant $participant): ?string
@@ -104,11 +84,109 @@ class mPdfGenerator extends PdfGenerator
             'patrolsRoster' => $patrolsRoster,
         ];
 
+        return $this->writeHtmlToPdf($templateName, $templateData, 'roster');
+    }
+
+    /**
+     * @param Participant[] $participants
+     * @return array<string, mixed>
+     */
+    private function buildBadgesTemplateData(Event $event, array $participants): array
+    {
+        $badges = array_map(function (Participant $participant) use ($event): array {
+            return [
+                'participant' => $participant,
+                'ca' => $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
+                'qr' => $this->qrCodeService->generateQrBase64FromString(
+                    $participant->getQrParticipantInfoString(),
+                ),
+            ];
+        }, array_values($participants));
+
+        return [
+            'event' => $event,
+            'badges' => $badges,
+            'badgeCss' => $this->getBadgeFullCss($event),
+        ];
+    }
+
+    /**
+     * @param Participant[] $participants
+     */
+    public function buildBadgesHtml(Event $event, array $participants): string
+    {
+        return $this->twig->fetch(
+            $event->eventType->getBadgeTemplateName(),
+            $this->buildBadgesTemplateData($event, $participants),
+        );
+    }
+
+    /**
+     * @param Participant[] $participants
+     */
+    public function generateBadges(Event $event, array $participants): string
+    {
+        return $this->writeHtmlToPdf(
+            $event->eventType->getBadgeTemplateName(),
+            $this->buildBadgesTemplateData($event, $participants),
+            'badge',
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildBlankBadgesTemplateData(Event $event, int $count): array
+    {
+        return [
+            'event' => $event,
+            'count' => range(1, max(1, $count)),
+            'badgeCss' => $this->getBadgeFullCss($event),
+        ];
+    }
+
+    public function buildBlankBadgesHtml(Event $event, int $count): string
+    {
+        return $this->twig->fetch(
+            $event->eventType->getBlankBadgeTemplateName(),
+            $this->buildBlankBadgesTemplateData($event, $count),
+        );
+    }
+
+    private function getBadgeFullCss(Event $event): string
+    {
+        $css = file_get_contents(__DIR__ . '/../../public/badge.css');
+        $css = $css === false ? '' : $css;
+
+        $override = $event->eventType->getBadgeStylesheetNameWithoutLeadingSlash();
+        if ($override !== null) {
+            $overrideCss = file_get_contents(__DIR__ . '/../../public/' . $override);
+            if ($overrideCss !== false) {
+                $css .= "\n" . $overrideCss;
+            }
+        }
+
+        return $css;
+    }
+
+    public function generateBlankBadges(Event $event, int $count): string
+    {
+        return $this->writeHtmlToPdf(
+            $event->eventType->getBlankBadgeTemplateName(),
+            $this->buildBlankBadgesTemplateData($event, $count),
+            'badge_blank',
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $templateData rendered inside the timed block so render failures are counted too
+     */
+    private function writeHtmlToPdf(string $templateName, array $templateData, string $metricType): string
+    {
         $start = microtime(true);
         $outcome = 'failed';
         try {
-            $html = $this->twig->fetch($templateName, $templateData);
-            $this->mpdf->WriteHTML($html);
+            $this->mpdf->WriteHTML($this->twig->fetch($templateName, $templateData));
             /** @var string $output */
             $output = $this->mpdf->Output(dest: 'S');
             $outcome = 'success';
@@ -117,12 +195,12 @@ class mPdfGenerator extends PdfGenerator
             $this->metrics->count(
                 MetricName::PdfsGenerated,
                 1,
-                ['type' => 'roster', 'outcome' => $outcome],
+                ['type' => $metricType, 'outcome' => $outcome],
             );
             $this->metrics->distributionMs(
                 MetricName::PdfsGenerationTime,
                 $durationMs,
-                ['type' => 'roster', 'outcome' => $outcome],
+                ['type' => $metricType, 'outcome' => $outcome],
             );
         }
 

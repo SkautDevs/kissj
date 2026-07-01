@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Application;
 
-use DI\Container;
 use kissj\Deal\DealController;
 use kissj\Entry\EntryController;
 use kissj\Middleware\ShowFoodStatsAllowedOnly;
@@ -15,6 +14,8 @@ use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
+use kissj\Middleware\BadgesAllowedOnlyMiddleware;
+use kissj\Middleware\TopAdminsOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\VendorApiKeyMiddleware;
@@ -358,6 +359,16 @@ class Route
 
                         $app->get('/patrolsRoster', ExportController::class . '::exportPatrolsRoster')
                             ->setName('admin-export-patrols-roster');
+
+                        $app->group('/badges', function (RouteCollectorProxy $app) {
+                            $app->get('', ExportController::class . '::showBadgesForm')
+                                ->setName('admin-badges-form');
+                            $app->get('/generate-full', ExportController::class . '::exportBadges')
+                                ->setName('admin-export-full-badges');
+                            $app->get('/generate-blank', ExportController::class . '::exportBlankBadges')
+                                ->setName('admin-export-blank-badges');
+                        })->add(BadgesAllowedOnlyMiddleware::class)->add(TopAdminsOnlyMiddleware::class);
+
                         $app->group('/food', function (RouteCollectorProxy $app) {
                             $app->get('/summary', ExportController::class . '::exportFoodSummary')
                                 ->setName('admin-export-food');

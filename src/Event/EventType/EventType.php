@@ -319,4 +319,24 @@ abstract class EventType
     {
         return 'roster/roster.twig';
     }
+
+    public function isBadgeGenerationAllowed(): bool
+    {
+        return true;
+    }
+
+    public function getBadgeTemplateName(): string
+    {
+        return 'badge/badges.twig';
+    }
+
+    public function getBlankBadgeTemplateName(): string
+    {
+        return 'badge/badgeBlank.twig';
+    }
+
+    public function getBadgeStylesheetNameWithoutLeadingSlash(): ?string
+    {
+        return null;
+    }
 }

@@ -495,6 +495,7 @@ dashboard-admin:
     uncancelParticipant: "Označiť účastníka, že opäť dorazí, zo stavu, keď nedorazí"
     changeNotice: "Upraviť"
     exportPatrolsRoster: "Export sprievodok patrol"
+    generateBadges: "Generovať badges"
 stats-admin:
     stats: "Štatistiky akcie"
     numberPatrolParticipants: "Účastníkov v patrole celkom"
@@ -615,6 +616,16 @@ roster:
     perex: "Týmto dokumentom potvrdzujem, že súhlasím s pravidlami akcie."
     name: "Meno účastníka"
     signature: "Podpis účastníka"
+badges:
+    back: "Späť"
+    blankCount: "Počet prázdnych badges pre hostí"
+    blankName: "Meno"
+    crisisPhone: ""
+    crisisPhoneLabel: "Krízová linka"
+    generate: "Vygenerovať badges"
+    generateBlank: "Vygenerovať prázdne badges"
+    selectRoles: "Vyber role, pre ktoré sa majú badges vygenerovať"
+    title: "Generovanie badges"
 flash:
     info:
         participantDeleted: "Účastník bol vymazaný"
@@ -678,6 +689,7 @@ flash:
         missingSkautisMembership: "Ak chcete zablokovať svoju registráciu, vaše konto ScoutIs musí byť prepojené so skutočnou osobou. Ak ste ho prepojili nedávno, skúste sa odhlásiť a znova prihlásiť."
         nullParticipants: "Jedného alebo viacerých účastníkov sa nepodarilo nájsť v systéme"
         differentParticipants: "Účastníci musia byť rôzni (:"
+        noRolesSelected: "Neboli vybrané žiadne role pre generovanie badges"
         sameRole: "Účastníci musia mať rovnakú rolu"
         notPaid: "Predávajúci nedokončil svoju platbu."
         isPaid: "Kupujúci dokončil svoju platbu."
@@ -745,3 +757,4 @@ flash:
         transferFailed: "Presun platby sa nepodaril"
         participantNotCancelled: "Účastník nemôže byť označený, že nejde, pravdepodobne pretože nebol nájdený"
         patrolsNotAllowed: "Patroly nie sú pre túto akciu povolené"
+        badgesNotAllowed: "Generovanie badges nie je pre túto akciu povolené"

@@ -503,6 +503,7 @@ dashboard-admin:
     uncancelParticipant: "Označit účastníka že opět dorazí, ze stavu, kdy nedorazí"
     changeNotice: "Upravit"
     exportPatrolsRoster: "Export průvodek patrol"
+    generateBadges: "Generovat badges"
 stats-admin:
     stats: "Statistiky akce"
     numberPatrolParticipants: "Účastníků v patrole celkem"
@@ -623,6 +624,16 @@ roster:
     perex: "Tímto dokumentem potvrzuji, že souhlasím s pravidly akce."
     name: "Jméno účastníka"
     signature: "Podpis účastníka"
+badges:
+    back: "Zpět"
+    blankCount: "Počet prázdných badges pro hosty"
+    blankName: "Jméno"
+    crisisPhone: ""
+    crisisPhoneLabel: "Krizová linka"
+    generate: "Vygenerovat badges"
+    generateBlank: "Vygenerovat prázdné badges"
+    selectRoles: "Vyber role, pro které se mají badges vygenerovat"
+    title: "Generování badges"
 flash:
     info:
         participantDeleted: "Účastník byl smazán"
@@ -686,6 +697,7 @@ flash:
         missingSkautisMembership: "Pro uzamčení registrace musí být tvůj skautIs účet propojený s reálnou osobou. Pokud jsi ho propojil v nedávné době, zkus se prosím odhlásit a zase přihlásit."
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
         differentParticipants: "Účastníci musí být různí (:"
+        noRolesSelected: "Nebyly vybrány žádné role pro generování badges"
         sameRole: "Účastníci musí mít stejné role"
         notPaid: "Prodávající nemá žádnou zaplacenou platbu"
         isPaid: "Kupující již má zaplacenou platbu"
@@ -753,3 +765,4 @@ flash:
         transferFailed: "Přesun platby se nepovedl"
         participantNotCancelled: "Účastník nemůže být označen, že nejede, pravděpodobně protože nebyl nalezen"
         patrolsNotAllowed: "Patroly nejsou pro tuto akci povoleny"
+        badgesNotAllowed: "Generování badges není pro tuto akci povoleno"

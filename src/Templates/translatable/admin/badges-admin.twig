@@ -1,0 +1,35 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card text-center">
+        <h2>{{ 'badges.title' | trans }} {{ event.readableName }}</h2>
+
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'badges.back' | trans }}</a>
+        <br/><br/>
+
+        <form method="GET" action="{{ url_for('admin-export-full-badges', {'eventSlug': event.slug}) }}"
+              target="_blank" class="form-group">
+            <p>{{ 'badges.selectRoles' | trans }}:</p>
+            {% for role in availableRoles %}
+                <label class="form-group">
+                    <input type="checkbox" name="roles[]" value="{{ role.value }}">
+                    {{ ('role.' ~ role.value) | trans }}
+                </label><br/>
+            {% endfor %}
+            <br/>
+            <input class="btn btn-small" type="submit" value="{{ 'badges.generate' | trans }}">
+        </form>
+
+        <hr/>
+
+        <form method="GET" action="{{ url_for('admin-export-blank-badges', {'eventSlug': event.slug}) }}"
+              target="_blank" class="form-group">
+            <label class="form-group">{{ 'badges.blankCount' | trans }}:<br/>
+                <input class="form-control" name="count" type="number" value="4" min="1" max="200">
+            </label>
+            <br/>
+            <input class="btn btn-small" type="submit" value="{{ 'badges.generateBlank' | trans }}">
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+.badge-name-band td {
+    background-color: #f77413;
+}
+
+.badge-role-label {
+    color: #f77413;
+}
+
+.badge-crisis {
+    color: #f77413;
+    border-top: 0.2mm solid #f77413;
+}
+
+.badge-info .badge-info-cell--left {
+    border-right: 0.2mm solid #f9c28c;
+}

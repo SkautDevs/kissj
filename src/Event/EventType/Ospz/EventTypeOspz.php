@@ -10,7 +10,6 @@ use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
-use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeOspz extends EventType

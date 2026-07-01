@@ -9,8 +9,6 @@ use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\EventType\EventType;
-use kissj\Participant\Ist\Ist;
-use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 
 class EventTypeKorbo extends EventType
@@ -87,6 +85,18 @@ class EventTypeKorbo extends EventType
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/stylesKorbo.css';
+    }
+
+    #[\Override]
+    public function isBadgeGenerationAllowed(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    public function getBadgeStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/badgeKorbo.css';
     }
 
     #[\Override]

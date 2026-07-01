@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ locale|default('cs') }}">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
+
+    <style>{{ badgeCss|default('')|raw }}</style>
+</head>
+
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>

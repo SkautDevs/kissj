@@ -98,6 +98,8 @@ use Monolog\Logger;
 use Monolog\Processor\GitProcessor;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 use Negotiation\LanguageNegotiator;
 use Psr\Log\LoggerInterface;
@@ -286,9 +288,22 @@ class Settings
         $container[MailerSettings::class] = fn () => new MailerSettings(
             $_ENV['MAIL_DSN'],
         );
-        $container[Mpdf::class] = fn () => new Mpdf([
-            'tempDir' => __DIR__ . '/../../temp/mpdf',
-        ]);
+        $container[Mpdf::class] = function () {
+            /** @var array{fontDir: list<string>} $configDefaults */
+            $configDefaults = (new ConfigVariables())->getDefaults();
+            /** @var array{fontdata: array<string, array<string, string>>} $fontDefaults */
+            $fontDefaults = (new FontVariables())->getDefaults();
+
+            return new Mpdf([
+                'tempDir' => __DIR__ . '/../../temp/mpdf',
+                // badges can use only included ttf fonts
+                'fontDir' => array_merge($configDefaults['fontDir'], [__DIR__ . '/../../public/fonts']),
+                'fontdata' => $fontDefaults['fontdata'] + [
+                    'themix' => ['R' => 'TheMixLT.ttf', 'B' => 'TheMixLT-Bold.ttf'],
+                    'skautbold' => ['R' => 'SkautBold.ttf', 'B' => 'SkautBold.ttf'],
+                ],
+            ]);
+        };
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),
             $_ENV['REDIS_HOST'],

@@ -178,6 +178,10 @@
                        target="_blank"
                        class="btn">{{ 'dashboard-admin.exportPatrolsRoster' | trans }}</a><br/>
                 {% endif %}
+                {% if user.isTopAdmin and event.eventType.isBadgeGenerationAllowed %}
+                    <a href="{{ url_for('admin-badges-form', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.generateBadges' | trans }}</a><br/>
+                {% endif %}
             </div>
         </div>
     </div>

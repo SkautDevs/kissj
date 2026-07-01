@@ -14,12 +14,15 @@ use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use League\Csv\ByteSequence;
 use League\Csv\Writer;
+use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\Stream;
 
 class ExportController extends AbstractController
 {
+    private const int BLANK_BADGES_MAX_COUNT = 200;
+
     public function __construct(
         private readonly ExportService $exportService,
         private readonly ParticipantRepository $participantRepository,
@@ -131,21 +134,75 @@ class ExportController extends AbstractController
             return $this->redirect($request, $response, 'dashboard');
         }
 
-        $stream = fopen('php://temp', 'rb+');
-        if ($stream === false) {
-            $this->flashMessages->error('flash.error.cannotAccessTemp');
-            $this->sentryCollector->collect(new Exception('Cannot access temp file'));
-
-            return $this->redirect($request, $response, 'dashboard');
-        }
-
         $patrolsRoster = $this->participantRepository->getPatrolsRoster($event);
 
-        fwrite($stream, $this->pdfGenerator->generatePatrolRoster(
+        return $this->streamPdf($response, $this->pdfGenerator->generatePatrolRoster(
             $event,
             $patrolsRoster,
             $event->eventType->getRosterTemplateName(),
         ));
+    }
+
+    public function showBadgesForm(Response $response, Event $event): Response
+    {
+        return $this->view->render($response, 'admin/badges-admin.twig', [
+            'event' => $event,
+            'availableRoles' => $event->getAvailableRoles(),
+        ]);
+    }
+
+    public function exportBadges(Request $request, Response $response, Event $event, User $user): Response
+    {
+        $allowedRoles = $event->getAvailableRoles();
+        $rawRoles = $request->getQueryParams()['roles'] ?? [];
+        if (!is_array($rawRoles)) {
+            $rawRoles = [];
+        }
+
+        $selectedRoles = [];
+        foreach ($rawRoles as $rawRole) {
+            if (!is_string($rawRole)) {
+                continue;
+            }
+
+            $role = ParticipantRole::tryFrom($rawRole);
+            if ($role instanceof ParticipantRole && in_array($role, $allowedRoles, true)) {
+                $selectedRoles[] = $role;
+            }
+        }
+
+        if ($selectedRoles === []) {
+            $this->flashMessages->warning('flash.warning.noRolesSelected');
+
+            return $this->redirect($request, $response, 'admin-badges-form', ['eventSlug' => $event->slug]);
+        }
+
+        $participants = $this->participantRepository->getParticipantsForBadges($event, $selectedRoles);
+        $this->logger->info('Generated badges for event ' . $event->slug . ' by user with ID ' . $user->id);
+
+        return $this->streamPdf($response, $this->pdfGenerator->generateBadges($event, $participants));
+    }
+
+    public function exportBlankBadges(Request $request, Response $response, Event $event): Response
+    {
+        $rawCount = $request->getQueryParams()['count'] ?? 0;
+        $count = is_numeric($rawCount) ? (int)$rawCount : 0;
+        $count = max(1, min($count, self::BLANK_BADGES_MAX_COUNT));
+
+        return $this->streamPdf($response, $this->pdfGenerator->generateBlankBadges($event, $count));
+    }
+
+    private function streamPdf(Response $response, string $pdf): Response
+    {
+        $stream = fopen('php://temp', 'rb+');
+        if ($stream === false) {
+            $exception = new LogicException('Cannot access temp stream for PDF export');
+            $this->sentryCollector->collect($exception);
+
+            throw $exception;
+        }
+
+        fwrite($stream, $pdf);
         rewind($stream);
 
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));

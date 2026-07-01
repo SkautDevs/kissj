@@ -1,0 +1,100 @@
+{% extends '_layoutPdfBadge.twig' %}
+
+{% block content %}
+    {# inner 2x2 cells hold the badges; the outer ring of cells carries the cutting guides to the paper edges #}
+    {% for sheet in badges|batch(4, false, false) %}
+        <table class="badge-sheet">
+            <tr>
+                <td class="badge-margin-corner"></td>
+                <td class="badge-margin-top"></td>
+                <td class="badge-margin-top"></td>
+                <td class="badge-margin-corner"></td>
+            </tr>
+            <tr>
+                <td class="badge-margin-left"></td>
+                {{ _self.cell(sheet[0], event) }}
+                {{ _self.cell(sheet[1], event) }}
+                <td class="badge-margin-right"></td>
+            </tr>
+            <tr>
+                <td class="badge-margin-left"></td>
+                {{ _self.cell(sheet[2], event) }}
+                {{ _self.cell(sheet[3], event) }}
+                <td class="badge-margin-right"></td>
+            </tr>
+            <tr>
+                <td class="badge-margin-corner"></td>
+                <td class="badge-margin-bottom"></td>
+                <td class="badge-margin-bottom"></td>
+                <td class="badge-margin-corner"></td>
+            </tr>
+        </table>
+        {% if not loop.last %}<pagebreak />{% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% macro cell(badge, event) %}
+    <td class="badge">
+        {% if badge %}
+            {% set participant = badge.participant %}
+            {% set fullName = (participant.firstName ~ ' ' ~ participant.lastName) | trim %}
+            {% set logo = event.getLogoInBase64 %}
+            {% set foodValue = participant.getValueForField('foodPreferences') %}
+            {% set crisisPhone = 'badges.crisisPhone' | trans %}
+            {% set spacer = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' %}
+
+            <img class="badge-topspace" src="{{ spacer }}" alt=""/>
+            <table class="badge-block"><tr><td class="badge-role-label">{{ ('role.' ~ participant.role.value) | trans }}</td></tr></table>
+
+            <table class="badge-block"><tr><td class="badge-title">{{ event.readableName }}</td></tr></table>
+            <img class="badge-gap" src="{{ spacer }}" alt=""/>
+
+            <table class="badge-top">
+                <tr>
+                    <td class="badge-logo-cell">
+                        {% if logo %}<img class="badge-logo" src="data:image/png;base64,{{ logo }}" alt=""/>{% endif %}
+                    </td>
+                    <td class="badge-photo-cell"></td>
+                </tr>
+            </table>
+
+            <table class="badge-name-band">
+                <tr>
+                    <td>
+                        <div class="badge-nick">{{ participant.nickname ?: fullName }}</div>
+                        {# second line always renders so the color band keeps the same height with or without a nickname #}
+                        <div class="badge-fullname">{% if participant.nickname and fullName %}{{ fullName }}{% else %}&nbsp;{% endif %}</div>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="badge-lower">
+                <tr>
+                    <td class="badge-lower-info">
+                        <table class="badge-info">
+                            <tr>
+                                <td class="badge-info-cell badge-info-cell--left">
+                                    <div class="badge-info-label">ID</div>
+                                    <div class="badge-info-value">{{ participant.id }}</div>
+                                </td>
+                                <td class="badge-info-cell">
+                                    <div class="badge-info-label">{{ 'detail.foodHeader' | trans }}</div>
+                                    <div class="badge-info-value">
+                                        {%- if foodValue and badge.ca.food.options[foodValue] is defined -%}
+                                            {{ badge.ca.food.options[foodValue] | trans }}
+                                        {%- elseif foodValue -%}{{ foodValue }}{%- else -%}—{%- endif -%}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="badge-lower-qr"><img class="badge-qr" src="{{ badge.qr }}" alt="QR"/></td>
+                </tr>
+            </table>
+
+            {% if crisisPhone %}
+                <table class="badge-footer"><tr><td class="badge-crisis"><img class="badge-crisis-gap" src="{{ spacer }}" alt=""/>{{ 'badges.crisisPhoneLabel' | trans }}: {{ crisisPhone }}</td></tr></table>
+            {% endif %}
+        {% endif %}
+    </td>
+{% endmacro %}

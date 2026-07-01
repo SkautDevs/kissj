@@ -495,6 +495,7 @@ dashboard-admin:
     uncancelParticipant: "Mark participant as going, from state when he is not going"
     changeNotice: "Edit"
     exportPatrolsRoster: "Export patrols roster"
+    generateBadges: "Generate badges"
 stats-admin:
     stats: "Statistics for event"
     numberPatrolParticipants: "Patrol participants in total"
@@ -615,6 +616,16 @@ roster:
     perex: "By singing this document you hereby agree with the presented rules of the event."
     name: "Name of the participant"
     signature: "Signature of the participant"
+badges:
+    back: "Back"
+    blankCount: "Number of blank badges for guests"
+    blankName: "Name"
+    crisisPhone: ""
+    crisisPhoneLabel: "Crisis line"
+    generate: "Generate badges"
+    generateBlank: "Generate blank badges"
+    selectRoles: "Select roles to generate badges for"
+    title: "Badge generation"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -678,6 +689,7 @@ flash:
         missingSkautisMembership: "To lock your registration, your ScoutIs account must be linked to a real person. If you have linked it recently, please try logging out and back in."
         nullParticipants: "One or both participants was not found in system"
         differentParticipants: "Participants must be different (:"
+        noRolesSelected: "No roles were selected for badge generation"
         sameRole: "Participants must have same roles"
         notPaid: "Seller has not completed payment"
         isPaid: "Buyer has completed payment"
@@ -745,3 +757,4 @@ flash:
         transferFailed: "Payment transfer failed"
         participantNotCancelled: "Participant was not cancelled, probably not found"
         patrolsNotAllowed: "Patrols are not allowed for this event"
+        badgesNotAllowed: "Badge generation is not allowed for this event"
