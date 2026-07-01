@@ -366,6 +366,12 @@ class AdminController extends AbstractController
                 $event,
                 $user,
             ),
+            'approvedOrganizingTeam' => $this->participantRepository->getAllParticipantsWithStatus(
+                [ParticipantRole::OrganizingTeam],
+                [UserStatus::Approved],
+                $event,
+                $user,
+            ),
         ]);
     }
 

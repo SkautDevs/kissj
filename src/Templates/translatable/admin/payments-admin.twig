@@ -75,4 +75,25 @@
         {% endif %}
         <br/>
     {% endif %}
+
+    {% if event.allowOrganizingTeam %}
+        {% if approvedOrganizingTeam is empty %}
+            <div class="card">
+                <h2>{{ 'payments-admin.allOrganizingTeamPaid' | trans }}</h2>
+            </div>
+        {% else %}
+            <div class="card">
+                <h2>{{ 'role.ot' | trans }}</h2>
+            </div>
+            {% for ot in approvedOrganizingTeam %}
+                <div class="card">
+                    {% include 'widgets/paymentDetails.twig' with {
+                        'person': ot,
+                        'ca': event.getEventType.getContentArbiterOrganizingTeam,
+                    } %}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <br/>
+    {% endif %}
 {% endblock %}

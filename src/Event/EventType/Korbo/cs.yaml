@@ -18,15 +18,14 @@ detail:
     emergencyContact-placeholder: 'Vyplň jméno a telefon. Dospělý dozor musí být také účastník Korba'
 role:
     ist: 'účastník'
-    ot: 'Uši pro duši'
+    ot: 'organizátor'
 chooseRole:
     chooseRole: 'Registruj se!'
     registerAsIst: 'Registrovat se!'
-    registerAsOt: 'Registrovat se do Uší pro duši!'
-    rolesAdvice: Účastníci
-    adviceIstText: 'Hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. '
-    adviceOtText: 'jsou Uši pro duši — tým, který na Korbu naslouchá a pomáhá. Tuto roli použij pouze pokud víš, do čeho jdeš!'
-    adviceGuestText: 'je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:'
+    registerAsOt: 'Registrovat se jako organizátor!'
+    rolesAdvice: 'Účastník'
+    adviceIstText: ' - hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. '
+    adviceOtText: ' - lidé, kteří na Korbu zajišťují důležité podpůrné služby - například záchranáři, bezpečáci, psychycká podpora, registrace, elektrikáři, vodaři nebo radiotým. Tuto roli použij pouze pokud víš, do čeho jdeš!'
 email:
     layout:
         ifQuestion: 'Pokud máš otázky, odpověď lze najít na naší webové stránce '
@@ -85,23 +84,17 @@ deny-admin:
     reason: 'z důvodu (bude posláno mailem, tak nějak mile)'
 dashboard-admin:
     afterPayment: 'po splatnosti'
-    approvedOt: 'schválení Uši pro duši'
-    lockedOt: 'Uši pro duši s uzamčenou přihláškou'
-    openOt: 'nezamčení Uši pro duši'
-    organizingTeam: 'Uši pro duši'
-    paidOt: 'zaplacení Uši pro duši'
+    approvedOt: 'schválení organizátoři'
+    lockedOt: 'organizátoři s uzamčenou přihláškou'
+    openOt: 'nezamčení organizátoři'
+    organizingTeam: 'Organizátoři'
+    paidOt: 'zaplacení organizátoři'
 organizingTeam-admin:
-    noParticipants: 'Zatím žádní členové Uší pro duši nejsou registrovaní'
-    participants: 'Členové Uší pro duši'
-    registrationUrlDescription: 'Sdílej tento odkaz s ostatními členy Uší pro duši, aby se mohli přihlásit'
-    title: 'Uši pro duši'
+    noParticipants: 'Zatím žádní organizátoři nejsou registrovaní'
+    participants: 'Organizátoři'
+    registrationUrlDescription: 'Sdílej tento odkaz s ostatními organizátory, aby se mohli přihlásit'
+    title: 'Organizátoři'
 flash:
-    info:
-        adminPaymentsUnrecognized: 'Nerozeznáno bankovních transakcí: '
-        newPayments: 'Nových plateb z banky: '
-        duePaymentDenied: 'Kvůli nezaplacení emaily odemknuto účastníků'
-    success:
-        adminPairedPayments: 'Spárováno bankovních transakcí: '
     warning:
         plTooFewParticipants: 'Nemůžeme uzamknout registraci - v patrole je příliš málo účastníků. Je jich potřeba nejméně %minimalPatrolParticipantsCount%.'
         plTooManyParticipants: 'Nemůžeme uzamknout registraci - v patrole je příliš účastníků. Může jich být nejvíce %maximalPatrolParticipantsCount%.'

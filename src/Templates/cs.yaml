@@ -421,6 +421,7 @@ payments-admin:
     allIstsPaid: "Všichni ISTs mají zaplaceno!"
     allTroopLeadersPaid: "Všichni vedoucí mají zaplaceno!"
     allTroopParticipantsPaid: "Všichni účastníci mají zaplaceno!"
+    allOrganizingTeamPaid: "Všichni organizátoři mají zaplaceno!"
 deny-admin:
     deny: "Odemknout účastníka s rolí"
     wantDeny: "Odemykám"

@@ -4,6 +4,14 @@
     <div class="two-cards">
         <div class="card">
             <h2>{{ 'chooseRole.chooseRole' | trans }}</h2>
+            {% if otAccessGranted %}
+                <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
+                    <input type="hidden" name="role" value="ot">
+                    <input type="submit" class="btn form-wide"
+                           value="{{ 'chooseRole.registerAsOt' | trans }}">
+                </form>
+                <br/>
+            {% endif %}
             {% if event.allowPatrols %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="pl">
@@ -39,18 +47,13 @@
                 </form>
                 <br/>
             {% endif %}
-            {% if otAccessGranted %}
-                <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
-                    <input type="hidden" name="role" value="ot">
-                    <input type="submit" class="btn form-wide"
-                           value="{{ 'chooseRole.registerAsOt' | trans }}">
-                </form>
-                <br/>
-            {% endif %}
         </div>
 
         <div class="card">
             <h2>{{ 'chooseRole.rolesAdvice' | trans }}</h2>
+            {% if otAccessGranted %}
+                <p><b>{{ 'role.ot' | trans }}</b> {{ 'chooseRole.adviceOtText' | trans }}</p>
+            {% endif %}
             {% if event.allowPatrols %}
                 <p><b>{{ 'role.pl' | trans }}</b> {{ 'chooseRole.advicePlText' | trans }}</p>
             {% endif %}
@@ -63,9 +66,6 @@
             {% endif %}
             {% if event.allowGuests %}
                 <p><b>{{ 'role.guest' | trans }}</b> {{ 'chooseRole.adviceGuestText' | trans }}</p>
-            {% endif %}
-            {% if otAccessGranted %}
-                <p><b>{{ 'role.ot' | trans }}</b> {{ 'chooseRole.adviceOtText' | trans }}</p>
             {% endif %}
         </div>
     </div>

@@ -413,6 +413,7 @@ payments-admin:
     allIstPaid: "All ISTs are paid up!"
     allTroopLeadersPaid: "All troop leaders are paid up!"
     allTroopParticipantsPaid: "All troop participants are paid up!"
+    allOrganizingTeamPaid: "All organizing team members are paid up!"
 deny-admin:
     deny: "Deny participant with role"
     wantDeny: "Deny "
