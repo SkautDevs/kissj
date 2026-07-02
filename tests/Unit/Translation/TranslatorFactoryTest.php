@@ -6,6 +6,7 @@ namespace Tests\Unit\Translation;
 
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeDefault;
+use kissj\Event\EventType\Korbo\EventTypeKorbo;
 use kissj\Translation\TranslatorFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -87,6 +88,27 @@ class TranslatorFactoryTest extends TestCase
 
         // Untranslated keys resolve to the id itself — confirms isolation.
         self::assertSame('leaky.key', $base->trans('leaky.key'));
+    }
+
+    public function testKorboGenderedPaymentSuccessfulKeepsLongOverride(): void
+    {
+        $factory = new TranslatorFactory('cs', null, false);
+
+        $korbo = $factory->createForEventType(new EventTypeKorbo());
+        $base = $factory->createBase();
+
+        $neutral = $korbo->trans('email.payment-successful.enjoy');
+
+        // Korbo hides the gender field but Skautis still fills it, so the gendered
+        // keys must resolve to Korbo's long override instead of leaking the base
+        // file's short gendered text.
+        self::assertStringContainsString('Milý Korbáčku', $neutral);
+        self::assertSame($neutral, $korbo->trans('email.payment-successful.enjoy.man'));
+        self::assertSame($neutral, $korbo->trans('email.payment-successful.enjoy.woman'));
+        self::assertNotSame(
+            $base->trans('email.payment-successful.enjoy.man'),
+            $korbo->trans('email.payment-successful.enjoy.man'),
+        );
     }
 
     public function testFactoryReturnsIndependentInstancesPerCall(): void

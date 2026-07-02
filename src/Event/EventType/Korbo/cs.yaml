@@ -48,10 +48,10 @@ email:
     cancel-payment:
         registerAgain: 'Chceš se stále zúčastnit akce? Uprav a uzamkni svou přihlášku znovu'
     payment-successful:
-          enjoy: |
+          enjoy: &korboEnjoy |
               Milý Korbáčku,<br/>
               <br/>
-              díky, že ses přihlásil/a na KORBO 2026 a zaplatil/a registrační poplatek. Teď už ti nic nebrání dorazit, užít si louku, lidi, pohodu — a taky přidat něco vlastního.<br/>
+              díky za tvou přihlášku na KORBO 2026 a zaplacení registračního poplatku. Teď už ti nic nebrání dorazit, užít si louku, lidi, pohodu — a taky přidat něco vlastního.<br/>
               <br/>
               Přinášíme důležité info! Mail si schovej, ať ho později nemusíš lovit v hlubinách schránky.<br/>
               <br/>
@@ -75,6 +75,8 @@ email:
               Těšíme se na tebe! Užij si Korbo naplno, s respektem k ostatním, ke skautskému zákonu i zákonům ČR<br/>
               <br/>
               #udelejsisam
+          enjoy.man: *korboEnjoy
+          enjoy.woman: *korboEnjoy
     finished:
         subject: schváleno
         approved: 'Schválili jsme tvou přihlášku pro'

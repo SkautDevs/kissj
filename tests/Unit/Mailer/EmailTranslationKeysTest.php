@@ -4,6 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Mailer;
 
+use kissj\Event\EventType\Aqua\EventTypeAqua;
+use kissj\Event\EventType\Cej\EventTypeCej;
+use kissj\Event\EventType\EventType;
+use kissj\Event\EventType\EventTypeDefault;
+use kissj\Event\EventType\Jj\EventTypeJj;
+use kissj\Event\EventType\Korbo\EventTypeKorbo;
+use kissj\Event\EventType\Miquik\EventTypeMiquik;
+use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
+use kissj\Event\EventType\Nsj\EventTypeNsj;
+use kissj\Event\EventType\Obrok\EventTypeObrok;
+use kissj\Event\EventType\Ospz\EventTypeOspz;
+use kissj\Event\EventType\Wsj\EventTypeWsj;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -76,6 +88,86 @@ class EmailTranslationKeysTest extends TestCase
             $violations,
             "{$yamlPath} has gender-variant inconsistencies:\n  - " . implode("\n  - ", $violations),
         );
+    }
+
+    /**
+     * The bug this guards: an event overrides a neutral key with its own text, but the
+     * base catalogue still supplies the `.man`/`.woman` variants. `transGendered` then
+     * serves that stale base gendered text to participants with a gender set — silently
+     * ignoring the event override. Gender is only populated for Skautis events, so only
+     * those can hit it; an override whose text equals the base is harmless (nothing to
+     * shadow). Any Skautis event that overrides a gendered-family neutral key with
+     * different text must therefore also override both gendered variants.
+     */
+    public function testSkautisEventGenderOverridesStayConsistent(): void
+    {
+        $violations = [];
+
+        foreach (self::skautisEventTypes() as $slug => $eventType) {
+            foreach ($eventType->getTranslationFilePaths() as $locale => $path) {
+                $baseFile = self::PROJECT_ROOT . 'src/Templates/' . $locale . '.yaml';
+                if (!is_file($baseFile)) {
+                    continue;
+                }
+                $base = self::loadMessagesFromFile($baseFile);
+                $override = self::loadMessagesFromFile($path);
+
+                foreach ($base as $key => $_value) {
+                    if (!str_ends_with($key, '.man')) {
+                        continue;
+                    }
+                    $baseKey = substr($key, 0, -strlen('.man'));
+
+                    if (!array_key_exists($baseKey, $override)) {
+                        continue;
+                    }
+                    if (($base[$baseKey] ?? null) === $override[$baseKey]) {
+                        continue;
+                    }
+
+                    foreach (['.man', '.woman'] as $suffix) {
+                        if (!array_key_exists($baseKey . $suffix, $override)) {
+                            $violations[] = sprintf(
+                                '%s (%s) overrides %s but not %s%s — base gendered text leaks for gendered participants',
+                                $slug,
+                                $locale,
+                                $baseKey,
+                                $baseKey,
+                                $suffix,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        self::assertSame(
+            [],
+            $violations,
+            "Skautis event gender-override gaps:\n  - " . implode("\n  - ", $violations),
+        );
+    }
+
+    /**
+     * @return array<string, EventType>
+     */
+    private static function skautisEventTypes(): array
+    {
+        $eventTypes = [
+            'aqua' => new EventTypeAqua(),
+            'cej' => new EventTypeCej(),
+            'jj' => new EventTypeJj(),
+            'korbo' => new EventTypeKorbo(),
+            'miquik' => new EventTypeMiquik(),
+            'navigamus' => new EventTypeNavigamus(),
+            'nsj' => new EventTypeNsj(),
+            'obrok' => new EventTypeObrok(),
+            'ospz' => new EventTypeOspz(),
+            'wsj' => new EventTypeWsj(),
+            'default' => new EventTypeDefault(),
+        ];
+
+        return array_filter($eventTypes, static fn (EventType $eventType): bool => $eventType->isLoginSkautisAllowed());
     }
 
     /**
@@ -166,9 +258,17 @@ class EmailTranslationKeysTest extends TestCase
      */
     private static function loadMessages(string $relativeYamlPath): array
     {
+        return self::loadMessagesFromFile(self::PROJECT_ROOT . $relativeYamlPath);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function loadMessagesFromFile(string $absoluteYamlPath): array
+    {
         $translator = new Translator('cs');
         $translator->addLoader('yaml', new YamlFileLoader());
-        $translator->addResource('yaml', self::PROJECT_ROOT . $relativeYamlPath, 'cs');
+        $translator->addResource('yaml', $absoluteYamlPath, 'cs');
 
         /** @var array<string, string> $messages */
         $messages = $translator->getCatalogue('cs')->all('messages');
