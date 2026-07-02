@@ -19,8 +19,8 @@ readonly class SkautisMemberData
         private string $street,
         private string $city,
         private string $postcode,
-        private string $state,
-        private string $sex,
+        public Country $country,
+        public Gender $gender,
     ) {
     }
 
@@ -38,13 +38,4 @@ readonly class SkautisMemberData
         return implode(', ', array_filter($fields, $filterEmpty));
     }
 
-    public function getGender(): Gender
-    {
-        return Gender::fromSkautisDisplayName($this->sex);
-    }
-
-    public function getCountry(): Country
-    {
-        return Country::fromSkautisState($this->state);
-    }
 }

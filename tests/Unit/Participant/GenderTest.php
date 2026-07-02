@@ -10,29 +10,23 @@ use PHPUnit\Framework\TestCase;
 
 class GenderTest extends TestCase
 {
-    #[DataProvider('skautisDisplayNameProvider')]
-    public function testFromSkautisDisplayName(?string $displayName, Gender $expected): void
+    #[DataProvider('skautisIdSexProvider')]
+    public function testFromSkautisIdSex(?string $idSex, Gender $expected): void
     {
-        self::assertSame($expected, Gender::fromSkautisDisplayName($displayName));
+        self::assertSame($expected, Gender::fromSkautisIdSex($idSex));
     }
 
     /**
      * @return array<string, array{?string, Gender}>
      */
-    public static function skautisDisplayNameProvider(): array
+    public static function skautisIdSexProvider(): array
     {
         return [
-            'czech male' => ['muž', Gender::Man],
-            'czech female' => ['žena', Gender::Woman],
-            'english male' => ['male', Gender::Man],
-            'english female' => ['female', Gender::Woman],
-            'english man' => ['man', Gender::Man],
-            'english woman' => ['woman', Gender::Woman],
-            'uppercase czech male' => ['Muž', Gender::Man],
-            'uppercase czech female' => ['Žena', Gender::Woman],
-            'uppercase english' => ['Male', Gender::Man],
+            'male' => ['male', Gender::Man],
+            'female' => ['female', Gender::Woman],
             'null' => [null, Gender::Other],
             'empty string' => ['', Gender::Other],
+            'display name is not accepted' => ['Muž', Gender::Other],
             'unknown value' => ['unknown', Gender::Other],
         ];
     }

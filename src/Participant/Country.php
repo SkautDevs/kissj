@@ -12,13 +12,9 @@ enum Country: string
 
     public static function fromSkautisState(?string $state): self
     {
-        if ($state === null || $state === '') {
-            return self::Other;
-        }
-
-        return match (mb_strtolower($state)) {
-            'česká republika', 'czech republic', 'czechia' => self::CzechRepublic,
-            'slovensko', 'slovakia', 'slovak republic' => self::Slovakia,
+        return match ($state) {
+            'Česká republika' => self::CzechRepublic,
+            'Slovensko' => self::Slovakia,
             default => self::Other,
         };
     }

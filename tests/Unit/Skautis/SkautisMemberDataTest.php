@@ -25,8 +25,8 @@ class SkautisMemberDataTest extends TestCase
             street: $street,
             city: $city,
             postcode: $postcode,
-            state: 'Česká republika',
-            sex: 'muž',
+            country: Country::CzechRepublic,
+            gender: Gender::Man,
         );
 
         self::assertSame($expected, $dto->getPermanentResidence());
@@ -45,48 +45,22 @@ class SkautisMemberDataTest extends TestCase
         ];
     }
 
-    #[DataProvider('genderProvider')]
-    public function testGetGender(string $sex, Gender $expected): void
+    public function testGenderAndCountryAreExposed(): void
     {
-        $dto = new SkautisMemberData(1, 'Jan', 'Novák', '', new DateTimeImmutable('2000-01-01'), '', '', '', '', $sex);
+        $dto = new SkautisMemberData(
+            1,
+            'Jan',
+            'Novák',
+            '',
+            new DateTimeImmutable('2000-01-01'),
+            '',
+            '',
+            '',
+            Country::Slovakia,
+            Gender::Woman,
+        );
 
-        self::assertSame($expected, $dto->getGender());
-    }
-
-    /**
-     * @return array<string, array{string, Gender}>
-     */
-    public static function genderProvider(): array
-    {
-        return [
-            'czech male' => ['muž', Gender::Man],
-            'czech female' => ['žena', Gender::Woman],
-            'english male' => ['male', Gender::Man],
-            'unknown' => ['', Gender::Other],
-        ];
-    }
-
-    #[DataProvider('countryProvider')]
-    public function testGetCountry(string $state, Country $expected): void
-    {
-        $dto = new SkautisMemberData(1, 'Jan', 'Novák', '', new DateTimeImmutable('2000-01-01'), '', '', '', $state, '');
-
-        self::assertSame($expected, $dto->getCountry());
-    }
-
-    /**
-     * @return array<string, array{string, Country}>
-     */
-    public static function countryProvider(): array
-    {
-        return [
-            'czech' => ['Česká republika', Country::CzechRepublic],
-            'czech english' => ['Czech Republic', Country::CzechRepublic],
-            'czechia' => ['Czechia', Country::CzechRepublic],
-            'slovakia czech' => ['Slovensko', Country::Slovakia],
-            'slovakia english' => ['Slovakia', Country::Slovakia],
-            'other' => ['Německo', Country::Other],
-            'empty' => ['', Country::Other],
-        ];
+        self::assertSame(Gender::Woman, $dto->gender);
+        self::assertSame(Country::Slovakia, $dto->country);
     }
 }

@@ -247,8 +247,8 @@ class SkautisService
                     street: $person->Street,
                     city: $person->City,
                     postcode: $person->Postcode,
-                    state: $person->State,
-                    sex: $person->ID_Sex,
+                    country: $this->parseCountry($person->State),
+                    gender: $this->parseGender($person->ID_Sex),
                 );
             }
 
@@ -266,18 +266,42 @@ class SkautisService
     private function requestAdditionalDetailsFromPerson(int $idPersonFromSkautis): SkautisPersonAdditionalDetails
     {
         try {
-            /** @var object{PersonAllOutput: object{ID_Sex?: string, Sex?: string, State?: string}} $personResult */
-            $personResult = $this->skautis->OrganizationUnit->PersonAll([
+            /** @var object{ID_Sex?: string, State?: string} $person */
+            $person = $this->skautis->OrganizationUnit->PersonDetail([
                 'ID' => $idPersonFromSkautis,
             ]);
 
             return new SkautisPersonAdditionalDetails(
-                Gender::fromSkautisDisplayName($personResult->PersonAllOutput->Sex ?? null),
-                Country::fromSkautisState($personResult->PersonAllOutput->State ?? null),
+                $this->parseGender($person->ID_Sex ?? null),
+                $this->parseCountry($person->State ?? null),
             );
-        } catch (Throwable) {
+        } catch (Throwable $throwable) {
+            $this->logger->warning(
+                'Failed to load additional Skautis person details: ' . $throwable->getMessage(),
+            );
+
             return new SkautisPersonAdditionalDetails(Gender::Other, Country::Other);
         }
+    }
+
+    private function parseGender(?string $idSex): Gender
+    {
+        $gender = Gender::fromSkautisIdSex($idSex);
+        if ($gender === Gender::Other && $idSex !== null && $idSex !== '') {
+            $this->logger->warning('Unrecognized Skautis ID_Sex value: ' . $idSex);
+        }
+
+        return $gender;
+    }
+
+    private function parseCountry(?string $state): Country
+    {
+        $country = Country::fromSkautisState($state);
+        if ($country === Country::Other && $state !== null && $state !== '') {
+            $this->logger->warning('Unrecognized Skautis State value: ' . $state);
+        }
+
+        return $country;
     }
 
     private function requestForUnitNameFromActiveMembership(int $idPersonFromSkautis): string

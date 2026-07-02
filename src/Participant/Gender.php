@@ -10,11 +10,11 @@ enum Gender: string
     case Woman = 'woman';
     case Other = 'other';
 
-    public static function fromSkautisDisplayName(?string $displayName): self
+    public static function fromSkautisIdSex(?string $idSex): self
     {
-        return match (($displayName !== null) ? mb_strtolower($displayName) : null) {
-            'muž', 'male', 'man' => self::Man,
-            'žena', 'female', 'woman' => self::Woman,
+        return match ($idSex) {
+            'male' => self::Man,
+            'female' => self::Woman,
             default => self::Other,
         };
     }

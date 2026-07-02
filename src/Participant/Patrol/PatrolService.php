@@ -53,9 +53,9 @@ readonly class PatrolService
         $patrolParticipant->lastName = $memberData->lastName;
         $patrolParticipant->nickname = $memberData->nickName;
         $patrolParticipant->birthDate = $memberData->birthday;
-        $patrolParticipant->gender = $memberData->getGender()->value;
+        $patrolParticipant->gender = $memberData->gender->value;
         $patrolParticipant->permanentResidence = $memberData->getPermanentResidence();
-        $patrolParticipant->country = $memberData->getCountry()->value;
+        $patrolParticipant->country = $memberData->country->value;
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
 
