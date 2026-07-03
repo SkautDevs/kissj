@@ -14,7 +14,7 @@ class PaymentResultTest extends TestCase
 {
     public function testSuccessCreatesResultWithSuccessMessage(): void
     {
-        $payment = $this->createMock(Payment::class);
+        $payment = $this->createStub(Payment::class);
         $result = PaymentResult::success($payment, 'flash.success.test');
 
         self::assertSame($payment, $result->payment);
@@ -25,7 +25,7 @@ class PaymentResultTest extends TestCase
 
     public function testWarningCreatesResultWithWarningMessage(): void
     {
-        $payment = $this->createMock(Payment::class);
+        $payment = $this->createStub(Payment::class);
         $result = PaymentResult::warning($payment, 'flash.warning.test');
 
         self::assertSame(PaymentMessageSeverity::Warning, $result->messages[0]->severity);
