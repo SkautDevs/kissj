@@ -36,6 +36,14 @@ readonly class ErrorHandlerGetter
         $this->sentryCollector = $sentryCollector;
     }
 
+    public static function renderExceptionPage(string $configErrorMessage = ''): string
+    {
+        ob_start();
+        require __DIR__ . '/Templates/exception.php';
+
+        return (string) ob_get_clean();
+    }
+
     public function getErrorHandler(): callable
     {
         return function (Throwable $throwable, Inspector $inspector) {
@@ -60,7 +68,7 @@ readonly class ErrorHandlerGetter
             $this->logger->error('Throwable! ' . $title . '(' . $code . ') -> ' . $message, [ 'exception' => $throwable ]);
 
             http_response_code(500);
-            require __DIR__ . '/Templates/exception.php';
+            echo self::renderExceptionPage();
             die;
 
             // TODO add logger with mail

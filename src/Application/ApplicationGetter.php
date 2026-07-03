@@ -5,6 +5,8 @@ namespace kissj\Application;
 use DI\Bridge\Slim\Bridge;
 use DI\Container;
 use DI\ContainerBuilder;
+use Dotenv\Exception\ValidationException;
+use kissj\ErrorHandlerGetter;
 use kissj\Session\RedisSessionHandler;
 use kissj\Settings\Settings;
 use kissj\Telemetry\Sentry\ConsoleSubscriber;
@@ -13,6 +15,9 @@ use SessionHandlerInterface;
 use Slim\App;
 use Symfony\Component\Console\Application as ConsoleApp;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use function error_log;
+use function http_response_code;
 
 class ApplicationGetter
 {
@@ -24,7 +29,18 @@ class ApplicationGetter
         string $envFilename = '.env',
         string $tempPath = __DIR__.'/../../temp'
     ): App {
-        $container = $this->buildContainer($envPath, $envFilename, $tempPath);
+        try {
+            $container = $this->buildContainer($envPath, $envFilename, $tempPath);
+        } catch (ValidationException $exception) {
+            // container cannot exist here, so the full error stack (Whoops, logger, Sentry) is unavailable
+            $configErrorMessage = 'Configuration error: ' . $exception->getMessage();
+            error_log($configErrorMessage);
+            http_response_code(500);
+            echo ErrorHandlerGetter::renderExceptionPage($configErrorMessage);
+
+            exit;
+        }
+
         $app = Bridge::create($container);
         /** @var string $basePath */
         $basePath = $_ENV['BASEPATH'];

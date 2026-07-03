@@ -1,3 +1,4 @@
+<?php /** @var string $configErrorMessage */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,6 +53,7 @@
 	</p>
 	<br/>
 	<p class="error-code">/: error 500 :/</p>
+	<p class="error-code"><?= htmlspecialchars($configErrorMessage, ENT_QUOTES) ?></p>
 </div>
 </body>
 </html>
