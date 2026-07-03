@@ -114,6 +114,7 @@ class ExportController extends AbstractController
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
         $csv->setDelimiter(',');
         $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+        $csv->addFormatter(new CsvCellFlattener());
         $csv->insertAll($csvRows);
 
         $body = $response->getBody();
