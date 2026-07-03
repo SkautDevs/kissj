@@ -396,6 +396,11 @@ class Route
         });
 
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
+            $app->group('/kissj', function (RouteCollectorProxy $app) {
+                $app->get('/health', HealthController::class . '::check')
+                    ->setName('health');
+            });
+
             $app->post('/deal', DealController::class . '::catchDataFromGoogleForm')
                 ->add(DealApiKeyMiddleware::class)
                 ->setName('deal-catch-data-from-google-form');

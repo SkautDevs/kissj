@@ -6,6 +6,7 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
+use kissj\Application\HealthController;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
@@ -196,6 +197,7 @@ class Settings
             FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),
+            HealthController::class => autowire(),
             IstRepository::class => autowire(),
             LanguageNegotiator::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
