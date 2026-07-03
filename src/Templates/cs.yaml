@@ -697,6 +697,7 @@ flash:
         missingSkautisMembership: "Pro uzamčení registrace musí být tvůj skautIs účet propojený s reálnou osobou. Pokud jsi ho propojil v nedávné době, zkus se prosím odhlásit a zase přihlásit."
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
         differentParticipants: "Účastníci musí být různí (:"
+        emailCaseVariant: "Účet s e-mailem %email% už existuje - nechtěl/a jsi použít tuto adresu?"
         noRolesSelected: "Nebyly vybrány žádné role pro generování badges"
         sameRole: "Účastníci musí mít stejné role"
         notPaid: "Prodávající nemá žádnou zaplacenou platbu"

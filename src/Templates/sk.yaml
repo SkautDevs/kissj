@@ -689,6 +689,7 @@ flash:
         missingSkautisMembership: "Ak chcete zablokovať svoju registráciu, vaše konto ScoutIs musí byť prepojené so skutočnou osobou. Ak ste ho prepojili nedávno, skúste sa odhlásiť a znova prihlásiť."
         nullParticipants: "Jedného alebo viacerých účastníkov sa nepodarilo nájsť v systéme"
         differentParticipants: "Účastníci musia byť rôzni (:"
+        emailCaseVariant: "Účet s e-mailom %email% už existuje - nechceli ste použiť túto adresu?"
         noRolesSelected: "Neboli vybrané žiadne role pre generovanie badges"
         sameRole: "Účastníci musia mať rovnakú rolu"
         notPaid: "Predávajúci nedokončil svoju platbu."

@@ -689,6 +689,7 @@ flash:
         missingSkautisMembership: "To lock your registration, your ScoutIs account must be linked to a real person. If you have linked it recently, please try logging out and back in."
         nullParticipants: "One or both participants was not found in system"
         differentParticipants: "Participants must be different (:"
+        emailCaseVariant: "An account already exists for %email% - didn't you want to use that address?"
         noRolesSelected: "No roles were selected for badge generation"
         sameRole: "Participants must have same roles"
         notPaid: "Seller has not completed payment"

@@ -128,6 +128,15 @@ readonly class UserService
         }
     }
 
+    public function findCaseVariantEmail(string $email, Event $event): ?string
+    {
+        if ($this->userRepository->isEmailUserExisting($email, $event)) {
+            return null;
+        }
+
+        return $this->userRepository->findFirstCaseInsensitiveVariant($email, $event)?->email;
+    }
+
     public function createParticipantSetRole(User $user, string $role): Participant
     {
         $participantRole = ParticipantRole::from($role);

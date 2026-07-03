@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\User;
 
+use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
@@ -47,5 +48,26 @@ class UserRepository extends Repository
             'skautis_id' => $skautisId,
             'event' => $event,
         ]);
+    }
+
+    public function findFirstCaseInsensitiveVariant(string $email, Event $event): ?User
+    {
+        $qb = $this->createFluent();
+        $qb->where('LOWER(email) = LOWER(%s)', $email);
+        $qb->where('email != %s', $email);
+        $qb->where('event_id = %i', $event->id);
+        $qb->orderBy('id');
+
+        /** @var ?(Row&iterable<string, mixed>) $row */
+        $row = $qb->fetch();
+
+        if ($row === null) {
+            return null;
+        }
+
+        /** @var User $user */
+        $user = $this->createEntity($row);
+
+        return $user;
     }
 }
