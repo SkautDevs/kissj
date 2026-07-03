@@ -14,12 +14,13 @@ Feature branches are rebased into `staging` for testing, then rebased into `mast
 PRs target `staging` unless explicitly told otherwise.
 Git commit messages should be concise and starts with non-capitalized past tense verb (e.g., "added", "fixed", "refactor"), followed by a brief description of the change.
 Do not include your signature.
-Never commit or push anything — the user handles all git operations manually.
-Allow adding new files to git staging area.
+Claude may commit on feature branches only (in worktrees, and during the manual-review fix loop in the main workspace).
+Commits on `staging`/`master`, rebases into them, and all pushes are user-only.
+Adding files to the git staging area is always allowed.
 
-## Plan Execution
+## Development Cycle
 
-When executing implementation plans, use subagent-driven development (superpowers:subagent-driven-development skill).
+Every feature, bugfix, or behavior change follows the `/implement` skill (`.claude/skills/implement/SKILL.md`): brainstorm → grill (mandatory) → plan → isolate (worktree) → execute (subagent-driven, TDD) → quality gate → code review (automated + manual) → finish.
 
 ## Commands
 
@@ -29,12 +30,15 @@ All commands run inside the Docker container:
 # Full quality suite (PHPStan + CS Fixer + PHPUnit)
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer test
 
+# Same suite from a worktree
+docker exec -u 1000 -it -w /var/www/html/.worktrees/<branch> kissj-app-php-fpm-1 composer test
+
 # Individual tools
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer stan    # PHPStan (max level)
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer cs      # PHP-CS-Fixer (PSR-12)
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer unit    # PHPUnit
 
-# Database migrations
+# Database migrations — main workspace only, never from a worktree
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer phinx:migrate
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer phinx:rollback
 
