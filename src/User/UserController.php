@@ -81,6 +81,11 @@ class UserController extends AbstractController
         $otTokenRaw = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
         $otToken = is_string($otTokenRaw) ? $otTokenRaw : null;
 
+        $caseVariantEmail = $this->userService->findCaseVariantEmail($email, $event);
+        if ($caseVariantEmail !== null) {
+            $this->flashMessages->warning('flash.warning.emailCaseVariant', ['%email%' => $caseVariantEmail]);
+        }
+
         if (!$this->userRepository->isEmailUserExisting($email, $event)) {
             $this->userService->registerEmailUser($email, $event);
         }
