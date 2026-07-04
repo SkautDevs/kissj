@@ -52,6 +52,7 @@ use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\ProgrammeAdminsOnlyMiddleware;
 use kissj\Middleware\TechnicalTeamLeadersOnlyMiddleware;
 use kissj\Telemetry\Sentry\ContextMiddleware;
 use kissj\Telemetry\Sentry\HttpContextMiddleware;
@@ -95,6 +96,12 @@ use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
 use kissj\PdfGenerator\mPdfGenerator;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\ProgrammeAdminController;
+use kissj\Programme\ProgrammeController;
+use kissj\Programme\ProgrammeJsonController;
+use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeService;
 use kissj\Session\RedisSessionHandler;
 use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
@@ -261,6 +268,13 @@ class Settings
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
             PaymentTransferService::class => autowire(),
+            ProgrammeAdminController::class => autowire(),
+            ProgrammeAdminsOnlyMiddleware::class => autowire(),
+            ProgrammeController::class => autowire(),
+            ProgrammeJsonController::class => autowire(),
+            ProgrammeRegistrationRepository::class => autowire(),
+            ProgrammeRepository::class => autowire(),
+            ProgrammeService::class => autowire(),
             Mailer::class => autowire(),
             Metrics::class => autowire(),
             QrCodeService::class => autowire(),

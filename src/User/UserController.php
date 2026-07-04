@@ -237,6 +237,7 @@ class UserController extends AbstractController
 
         return match ($user->role) {
             UserRole::Participant => $this->redirect($request, $response, 'dashboard', $routerEventSlug),
+            UserRole::ProgrammeAdmin => $this->redirect($request, $response, 'admin-programmes', $routerEventSlug),
             UserRole::Admin,
             UserRole::IstAdmin,
             UserRole::ContingentAdminCs,

@@ -13,6 +13,10 @@ use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
 use League\Csv\ByteSequence;
 use League\Csv\EscapeFormula;
@@ -32,6 +36,8 @@ class ExportController extends AbstractController
         private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly PdfGenerator $pdfGenerator,
         private readonly ParticipantService $participantService,
+        private readonly ProgrammeRepository $programmeRepository,
+        private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
     ) {
     }
 
@@ -66,6 +72,13 @@ class ExportController extends AbstractController
         $this->logger->info('Exported FULL current data about participants', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_full');
+    }
+
+    public function exportProgrammes(Response $response, Event $event): Response
+    {
+        $csvRows = $this->exportService->programmeRegistrationsToCSV($event);
+
+        return $this->outputCSVresponse($response, $csvRows, $event->slug . '_programmes');
     }
 
     public function exportFoodSummary(
@@ -198,6 +211,44 @@ class ExportController extends AbstractController
         $count = max(1, min($count, self::BLANK_BADGES_MAX_COUNT));
 
         return $this->streamPdf($response, $this->pdfGenerator->generateBlankBadges($event, $count));
+    }
+
+    public function exportProgrammesPrint(Response $response, Event $event): Response
+    {
+        $sheets = $this->buildAttendanceSheets($event, null);
+
+        return $this->streamPdf($response, $this->pdfGenerator->generateProgrammeAttendance($event, $sheets));
+    }
+
+    public function printProgramme(Response $response, Event $event, int $programmeId): Response
+    {
+        $this->programmeRepository->getActiveById($programmeId, $event);
+        $sheets = $this->buildAttendanceSheets($event, $programmeId);
+
+        return $this->streamPdf($response, $this->pdfGenerator->generateProgrammeAttendance($event, $sheets));
+    }
+
+    /**
+     * @return list<array{programme: Programme, registrations: list<ProgrammeRegistration>}>
+     */
+    private function buildAttendanceSheets(Event $event, ?int $onlyProgrammeId): array
+    {
+        $registrationsByProgramme = $this->programmeRegistrationRepository->findActiveForEventGroupedByProgramme($event);
+        $sheets = [];
+        foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
+            if ($programme->isPreregistered) {
+                continue;
+            }
+            if ($onlyProgrammeId !== null && $programme->id !== $onlyProgrammeId) {
+                continue;
+            }
+            $sheets[] = [
+                'programme' => $programme,
+                'registrations' => $registrationsByProgramme[$programme->id] ?? [],
+            ];
+        }
+
+        return $sheets;
     }
 
     private function streamPdf(Response $response, string $pdf): Response

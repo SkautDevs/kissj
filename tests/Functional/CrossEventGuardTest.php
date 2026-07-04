@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
@@ -11,6 +12,9 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
+use kissj\Participant\ParticipantRole;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
@@ -51,6 +55,8 @@ class CrossEventGuardTest extends AppTestCase
         'admin-cancel-participant' => 'flash.error.participantNotCancelled',
         'admin-add-new-payment' => 'flash.warning.participantNotFoundAddPaymentNotPossible',
     ];
+
+    private const array NOT_FOUND_STATUS_ROUTE_NAMES = ['admin-programme-image'];
 
     private const array REQUEST_BODY = [
         'reason' => 'cross-event',
@@ -246,8 +252,31 @@ class CrossEventGuardTest extends AppTestCase
             participant: $participant,
         );
         $bankPayment = $this->createBankPayment($this->getService($app, BankPaymentRepository::class), $foreignEvent);
+        $programme = $this->createProgramme($app, $foreignEvent);
 
-        return new CrossEventForeignFixture($participant->id, $user->id, $payment->id, $bankPayment->id);
+        return new CrossEventForeignFixture($participant->id, $user->id, $payment->id, $bankPayment->id, $programme->id);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createProgramme(App $app, Event $event): Programme
+    {
+        $programme = new Programme();
+        $programme->name = 'cross-event';
+        $programme->description = 'cross-event';
+        $programme->place = 'cross-event';
+        $programme->imageFilename = 'abcdef0123456789abcdef0123456789';
+        $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
+        $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
+        $programme->capacity = 10;
+        $programme->isPreregistered = false;
+        $programme->exclusiveGroupName = null;
+        $programme->event = $event;
+        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+
+        return $programme;
     }
 
     /**
@@ -313,6 +342,10 @@ class CrossEventGuardTest extends AppTestCase
 
     private function classifyId(string $pattern): CrossEventIdKind
     {
+        if (str_contains($pattern, '{programmeId}')) {
+            return CrossEventIdKind::Programme;
+        }
+
         $hasParticipantId = str_contains($pattern, '{participantId}');
         $hasPaymentId = str_contains($pattern, '{paymentId}');
         if ($hasParticipantId && $hasPaymentId) {
@@ -340,6 +373,7 @@ class CrossEventGuardTest extends AppTestCase
             '{eventSlug}' => self::OWN_EVENT_SLUG,
             '{participantId}' => (string)$fixture->participantId,
             '{paymentId}' => (string)$paymentId,
+            '{programmeId}' => (string)$fixture->programmeId,
             ...self::FILLER_PLACEHOLDERS,
         ]);
         if (preg_match('/\{[^}]+\}/', $filled) === 1) {
@@ -355,6 +389,7 @@ class CrossEventGuardTest extends AppTestCase
             CrossEventIdKind::Participant => sprintf('Participant with ID %d not found', $fixture->participantId),
             CrossEventIdKind::Payment => sprintf('Payment with ID %d not found', $fixture->paymentId),
             CrossEventIdKind::BankPayment => sprintf('Bank payment with ID %d not found', $fixture->bankPaymentId),
+            CrossEventIdKind::Programme => 'Programme not found for event',
         };
     }
 
@@ -380,6 +415,7 @@ class CrossEventGuardTest extends AppTestCase
         $userBefore = $this->getUserRow($fixture);
         $paymentBefore = $this->getPaymentRow($fixture);
         $bankPaymentBefore = $this->getBankPaymentRow($fixture);
+        $programmeBefore = $this->getProgrammeRow($fixture);
 
         $rejection = $this->findRejectionFailure($route, $method, $path, $admin, $label, $fixture);
 
@@ -394,6 +430,9 @@ class CrossEventGuardTest extends AppTestCase
         }
         if ($this->getBankPaymentRow($fixture) !== $bankPaymentBefore) {
             return sprintf('%s: foreign bank payment changed', $label);
+        }
+        if ($this->getProgrammeRow($fixture) !== $programmeBefore) {
+            return sprintf('%s: foreign programme changed', $label);
         }
 
         return $rejection;
@@ -425,6 +464,10 @@ class CrossEventGuardTest extends AppTestCase
         $status = $response->getStatusCode();
         if ($status >= 200 && $status < 300) {
             return sprintf('%s: got %d', $label, $status);
+        }
+
+        if ($status === 404 && in_array($route->getName(), self::NOT_FOUND_STATUS_ROUTE_NAMES, true)) {
+            return null;
         }
 
         $flashKey = self::PARTICIPANT_NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME[$route->getName() ?? ''] ?? null;
@@ -489,5 +532,14 @@ class CrossEventGuardTest extends AppTestCase
     {
         return $this->getService($this->getTestApp(false), BankPaymentRepository::class)
             ->get($fixture->bankPaymentId)->getRowData();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getProgrammeRow(CrossEventForeignFixture $fixture): array
+    {
+        return $this->getService($this->getTestApp(false), ProgrammeRepository::class)
+            ->get($fixture->programmeId)->getRowData();
     }
 }

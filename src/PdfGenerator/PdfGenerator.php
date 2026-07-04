@@ -7,6 +7,8 @@ namespace kissj\PdfGenerator;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolsRoster;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
 
 abstract class PdfGenerator
 {
@@ -34,4 +36,14 @@ abstract class PdfGenerator
     abstract public function buildBlankBadgesHtml(Event $event, int $count): string;
 
     abstract public function generateBlankBadges(Event $event, int $count): string;
+
+    /**
+     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     */
+    abstract public function buildProgrammeAttendanceHtml(Event $event, array $sheets): string;
+
+    /**
+     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     */
+    abstract public function generateProgrammeAttendance(Event $event, array $sheets): string;
 }

@@ -1,0 +1,23 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h1>{{ programme.name }}</h1>
+
+        {% if programme.getImageFilename() %}
+            <img src="{{ url_for('programme-image', {eventSlug: event.slug, programmeId: programme.id}) }}" alt="{{ programme.name }}">
+        {% endif %}
+
+        <p>{{ programme.description|nl2br }}</p>
+        <p>{{ programme.start|date('j. n. Y H:i') }} - {{ programme.end|date('j. n. Y H:i') }}</p>
+        <p>{{ programme.place }}</p>
+
+        {% if programme.isPreregistered %}
+            <p>{{ 'programme.list.preregistered'|trans }}</p>
+        {% elseif isRegistered %}
+            <p class="programme-registered">{{ 'programme.list.registered'|trans }}</p>
+        {% endif %}
+
+        <a href="{{ url_for('programmes', {eventSlug: event.slug}) }}">{{ 'programme.detail.back'|trans }}</a>
+    </div>
+{% endblock %}

@@ -24,6 +24,7 @@ use kissj\Payment\Payment;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\UserLoginType;
@@ -44,6 +45,7 @@ readonly class ParticipantService
         private TshirtService $tshirtService,
         private EventRepository $eventRepository,
         private UserRepository $userRepository,
+        private ProgrammeService $programmeService,
     ) {
     }
 
@@ -535,6 +537,7 @@ readonly class ParticipantService
         }
 
         $this->userService->setUserCancelled($participant->getUserButNotNull());
+        $this->programmeService->freeAllProgrammes($participant);
 
         return $participant;
     }

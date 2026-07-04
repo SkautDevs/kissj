@@ -13,6 +13,8 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Payment\QrCodeService;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use Mpdf\Mpdf;
@@ -190,6 +192,41 @@ class mPdfGenerator extends PdfGenerator
             $this->buildBlankBadgesTemplateData($event, $count),
             'badge_blank',
         );
+    }
+
+    /**
+     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     */
+    public function buildProgrammeAttendanceHtml(Event $event, array $sheets): string
+    {
+        return $this->twig->fetch(
+            'pdf/programmeAttendance.twig',
+            $this->buildProgrammeAttendanceTemplateData($event, $sheets),
+        );
+    }
+
+    /**
+     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     */
+    public function generateProgrammeAttendance(Event $event, array $sheets): string
+    {
+        return $this->writeHtmlToPdf(
+            'pdf/programmeAttendance.twig',
+            $this->buildProgrammeAttendanceTemplateData($event, $sheets),
+            'programme_attendance',
+        );
+    }
+
+    /**
+     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     * @return array<string, mixed>
+     */
+    private function buildProgrammeAttendanceTemplateData(Event $event, array $sheets): array
+    {
+        return [
+            'event' => $event,
+            'sheets' => $sheets,
+        ];
     }
 
     /**

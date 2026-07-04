@@ -181,6 +181,10 @@
                     <a href="{{ url_for('admin-technical-teams', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.technicalTeams' | trans }}</a><br/>
                 {% endif %}
+                {% if user.role.isEligibleToManageProgrammes %}
+                    <a href="{{ url_for('admin-programmes', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.programmes' | trans }}</a><br/>
+                {% endif %}
                 <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
                    class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>
                 {% if event.eventType.getSubcamps() is not empty %}

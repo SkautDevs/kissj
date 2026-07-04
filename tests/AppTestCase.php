@@ -350,7 +350,7 @@ class AppTestCase extends TestCase
     }
 
     /**
-     * @param array<string,string> $body
+     * @param array<string,string|list<string>> $body
      * @param array<string,string> $serverParams
      * @param array<string,string> $cookies
      */

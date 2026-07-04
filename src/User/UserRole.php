@@ -9,6 +9,7 @@ enum UserRole: string
     case Participant = 'participant';
     case Admin = 'admin';
     case IstAdmin = 'istAdmin';
+    case ProgrammeAdmin = 'programmeAdmin';
     case ContingentAdminCs = 'contingentAdminCs';
     case ContingentAdminSk = 'contingentAdminSk';
     case ContingentAdminPl = 'contingentAdminPl';
@@ -50,6 +51,7 @@ enum UserRole: string
                 => true,
             self::Participant,
             self::IstAdmin,
+            self::ProgrammeAdmin,
             self::ContingentAdminGb,
             self::ContingentAdminSw,
                 => false,
@@ -69,6 +71,27 @@ enum UserRole: string
                 => true,
             self::Participant,
             self::IstAdmin,
+            self::ProgrammeAdmin,
+            self::ContingentAdminGb,
+            self::ContingentAdminSw,
+                => false,
+        };
+    }
+
+    public function isEligibleToManageProgrammes(): bool
+    {
+        return match ($this) {
+            self::Admin,
+            self::ProgrammeAdmin
+                => true,
+            self::Participant,
+            self::IstAdmin,
+            self::ContingentAdminCs,
+            self::ContingentAdminSk,
+            self::ContingentAdminPl,
+            self::ContingentAdminHu,
+            self::ContingentAdminEu,
+            self::ContingentAdminRo,
             self::ContingentAdminGb,
             self::ContingentAdminSw,
                 => false,

@@ -16,6 +16,8 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
+use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
 use kissj\User\UserStatus;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,6 +26,8 @@ readonly class ExportService
 {
     public function __construct(
         private ParticipantRepository $participantRepository,
+        private ProgrammeRepository $programmeRepository,
+        private ProgrammeRegistrationRepository $programmeRegistrationRepository,
         private TranslatorInterface $translator,
     ) {
     }
@@ -301,6 +305,47 @@ readonly class ExportService
                     $this->formatDeals($participant),
                 ],
             );
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @return list<array<string>>
+     */
+    public function programmeRegistrationsToCSV(Event $event): array
+    {
+        $rows = [[
+            'programme',
+            'exclusive group',
+            'start',
+            'end',
+            'place',
+            'participant',
+            'email',
+            'role',
+            'registered at',
+        ]];
+
+        $registrationsByProgramme = $this->programmeRegistrationRepository->findActiveForEventGroupedByProgramme($event);
+        foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
+            if ($programme->isPreregistered) {
+                continue;
+            }
+            foreach ($registrationsByProgramme[$programme->id] ?? [] as $registration) {
+                $participant = $registration->participant;
+                $rows[] = [
+                    $programme->name,
+                    $programme->exclusiveGroupName ?? '',
+                    $programme->start->format('Y-m-d H:i'),
+                    $programme->end->format('Y-m-d H:i'),
+                    $programme->place,
+                    $participant->getFullName(),
+                    $participant->getUserButNotNull()->email,
+                    $participant->getRoleOrFail()->value,
+                    $registration->createdAt?->format('Y-m-d H:i') ?? '',
+                ];
+            }
         }
 
         return $rows;

@@ -23,6 +23,9 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
@@ -46,6 +49,7 @@ class ParticipantController extends AbstractController
         private readonly Metrics $metrics,
         private readonly PaymentTransferService $paymentTransferService,
         private readonly TicketTransferCsrfMiddleware $csrfGuard,
+        private readonly ProgrammeService $programmeService,
     ) {
     }
 
@@ -308,7 +312,12 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|TechnicalTeamParticipant[]|Deal[]|bool>
+     * @return array<
+     *     string,
+     *     User|Participant|AbstractContentArbiter|bool
+     *     |PatrolParticipant[]|TroopParticipant[]|TechnicalTeamParticipant[]
+     *     |Deal[]|ProgrammeRegistration[]|Programme[]
+     * >
      */
     private function getTemplateData(Participant $participant): array
     {
@@ -328,10 +337,9 @@ class ParticipantController extends AbstractController
             'participants' => $participants,
             'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
-            // mirrors the transfer route gates (paid status + open transfer), so the dashboard never offers a link that bounces
-            'ownerTicketTransferAllowed' => $user->status === UserStatus::Paid
-                && $participant instanceof TechnicalTeamLeader === false
-                && $user->event->isOwnerTicketTransferOpen(),
+            'ownerTicketTransferAllowed' => $participant->canTransferOwnerTicket(),
+            'registeredProgrammes' => $this->programmeService->getDashboardRegistrations($participant),
+            'preregisteredProgrammes' => $this->programmeService->getDashboardPreregisteredProgrammes($participant),
         ];
     }
 }

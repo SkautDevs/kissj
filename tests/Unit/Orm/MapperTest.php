@@ -20,6 +20,8 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Exception\InvalidStateException;
@@ -159,5 +161,14 @@ class MapperTest extends TestCase
     {
         $this->expectException(InvalidStateException::class);
         $this->mapper->getTableByRepositoryClass('NotAValidClassName');
+    }
+
+    public function testProgrammeTables(): void
+    {
+        $mapper = new Mapper();
+
+        self::assertSame('programme', $mapper->getTable(Programme::class));
+        self::assertSame(Programme::class, $mapper->getEntityClass('programme'));
+        self::assertSame(ProgrammeRegistration::class, $mapper->getEntityClass('programme_registration'));
     }
 }

@@ -17,6 +17,7 @@ use kissj\Participant\ParticipantService;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\TshirtService;
 use kissj\Payment\PaymentService;
+use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -203,6 +204,7 @@ class ParticipantCloseRegistrationRaceTest extends AppTestCase
             $this->getService($app, TshirtService::class),
             $eventRepository,
             $this->getService($app, UserRepository::class),
+            $this->getService($app, ProgrammeService::class),
         );
     }
 }

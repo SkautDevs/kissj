@@ -19,6 +19,8 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;
@@ -98,6 +100,12 @@ class Mapper implements IMapper
 
             case 'deal':
                 return Deal::class;
+
+            case 'programme':
+                return Programme::class;
+
+            case 'programme_registration':
+                return ProgrammeRegistration::class;
 
             default:
                 throw new \UnexpectedValueException('Got unknown table name: ' . $table);

@@ -1,0 +1,97 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card text-left">
+        <h2>{{ programme ? programme.name : 'programme.admin.new'|trans }}</h2>
+
+        <form method="post" enctype="multipart/form-data"
+              action="{{ programme
+                  ? url_for('admin-programme-update', {eventSlug: event.slug, programmeId: programme.id})
+                  : url_for('admin-programme-create', {eventSlug: event.slug}) }}">
+            <div class="form-group">
+                <label for="name">{{ 'programme.admin.formName'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="text" id="name" name="name" required
+                       value="{{ programme ? programme.name : '' }}">
+            </div>
+            <div class="form-group">
+                <label for="description">{{ 'programme.admin.formDescription'|trans }}:</label>
+                <br/>
+                <textarea class="form-control form-wide" id="description"
+                          name="description">{{ programme ? programme.description : '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="place">{{ 'programme.admin.formPlace'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="text" id="place" name="place" required
+                       value="{{ programme ? programme.place : '' }}">
+            </div>
+            <div class="form-group">
+                <label for="start">{{ 'programme.admin.formStart'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="datetime-local" id="start" name="start" required
+                       value="{{ programme ? programme.start|date('Y-m-d\\TH:i') : '' }}">
+            </div>
+            <div class="form-group">
+                <label for="end">{{ 'programme.admin.formEnd'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="datetime-local" id="end" name="end" required
+                       value="{{ programme ? programme.end|date('Y-m-d\\TH:i') : '' }}">
+            </div>
+            <div class="form-group">
+                <label for="capacity">{{ 'programme.admin.formCapacity'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="number" id="capacity" name="capacity" min="1" required
+                       value="{{ programme ? programme.capacity : 10 }}">
+            </div>
+            <div class="form-group">
+                <label for="isPreregistered">{{ 'programme.admin.formPreregistered'|trans }}:</label>
+                <input id="isPreregistered" type="checkbox" name="isPreregistered" value="1"
+                       {{ programme and programme.isPreregistered ? 'checked' : '' }}>
+            </div>
+            <div class="form-group">
+                <label for="exclusiveGroupName">{{ 'programme.admin.formGroup'|trans }}:</label>
+                <br/>
+                <input class="form-control form-wide" type="text" id="exclusiveGroupName" name="exclusiveGroupName"
+                       list="groupNames" value="{{ programme ? programme.getExclusiveGroupName() : '' }}">
+                <datalist id="groupNames">
+                    {% for name in existingGroupNames %}
+                        <option value="{{ name }}"></option>
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label>{{ 'programme.admin.formRoles'|trans }}:</label>
+                {% for role in allRoles %}
+                    <label class="form-control">
+                        <input type="checkbox" name="roles[]" value="{{ role.value }}"
+                               {{ programme and role in programme.getTargetRoles() ? 'checked' : '' }}>
+                        {{ ('role.' ~ role.value)|trans }}
+                    </label>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="image">{{ 'programme.admin.formImage'|trans }}:</label>
+                <br/>
+                {% if programme and programme.getImageFilename() %}
+                    {% set imageParams = {eventSlug: event.slug, programmeId: programme.id} %}
+                    <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', imageParams) }}"
+                         alt="{{ programme.name }}">
+                    <br/>
+                {% endif %}
+                <input class="form-control form-wide" type="file" id="image" name="image"
+                       accept="image/jpeg,image/png,image/gif">
+            </div>
+            <div class="text-center">
+                <br/>
+                <input class="btn btn-small" type="submit" value="{{ 'programme.admin.formSave'|trans }}">
+                <br/>
+                <br/>
+                <a class="btn btn-small btn-grey"
+                   href="{{ url_for('admin-programmes', {eventSlug: event.slug}) }}">
+                    {{- 'programme.admin.back'|trans -}}
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

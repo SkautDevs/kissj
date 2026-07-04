@@ -33,6 +33,7 @@ use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\ProgrammeAdminsOnlyMiddleware;
 use kissj\Middleware\TechnicalTeamLeadersOnlyMiddleware;
 use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
@@ -45,6 +46,9 @@ use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
+use kissj\Programme\ProgrammeAdminController;
+use kissj\Programme\ProgrammeController;
+use kissj\Programme\ProgrammeJsonController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
 use Psr\Container\ContainerInterface;
@@ -275,6 +279,17 @@ class Route
                             ->add(PaidStatusOnlyMiddleware::class)
                             ->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
                     });
+
+                    $app->group('/programmes', function (RouteCollectorProxy $app) {
+                        $app->get('', ProgrammeController::class . '::list')
+                            ->setName('programmes');
+
+                        $app->get('/{programmeId}', ProgrammeController::class . '::detail')
+                            ->setName('programme-detail');
+
+                        $app->get('/{programmeId}/image', ProgrammeController::class . '::image')
+                            ->setName('programme-image');
+                    })->add(PaidStatusOnlyMiddleware::class);
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 
                 $app->group('/admin', function (RouteCollectorProxy $app) {
@@ -482,6 +497,52 @@ class Route
                     $app->post('/roleManagement', AdminEventController::class . '::saveRoleManagement')
                         ->setName('admin-save-role-management');
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
+
+                $app->group('/admin/export', function (RouteCollectorProxy $app) {
+                    $app->get('/programmes', ExportController::class . '::exportProgrammes')
+                        ->setName('admin-export-programmes');
+
+                    $app->get('/programmes-print', ExportController::class . '::exportProgrammesPrint')
+                        ->setName('admin-export-programmes-print');
+                })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
+
+                $app->group('/admin/programmes', function (RouteCollectorProxy $app) {
+                    $app->get('', ProgrammeAdminController::class . '::overview')
+                        ->setName('admin-programmes');
+
+                    $app->post('/window', ProgrammeAdminController::class . '::saveWindow')
+                        ->setName('admin-programme-window');
+
+                    $app->get('/new', ProgrammeAdminController::class . '::showCreate')
+                        ->setName('admin-programme-new');
+
+                    $app->post('/new', ProgrammeAdminController::class . '::create')
+                        ->setName('admin-programme-create');
+
+                    $app->get('/{programmeId}/edit', ProgrammeAdminController::class . '::showEdit')
+                        ->setName('admin-programme-edit');
+
+                    $app->post('/{programmeId}/edit', ProgrammeAdminController::class . '::update')
+                        ->setName('admin-programme-update');
+
+                    $app->post('/{programmeId}/delete', ProgrammeAdminController::class . '::delete')
+                        ->setName('admin-programme-delete');
+
+                    $app->get('/{programmeId}', ProgrammeAdminController::class . '::detail')
+                        ->setName('admin-programme-detail');
+
+                    $app->post('/{programmeId}/assign', ProgrammeAdminController::class . '::assign')
+                        ->setName('admin-programme-assign');
+
+                    $app->post('/{programmeId}/remove/{participantId}', ProgrammeAdminController::class . '::remove')
+                        ->setName('admin-programme-remove');
+
+                    $app->get('/{programmeId}/print', ExportController::class . '::printProgramme')
+                        ->setName('admin-programme-print');
+
+                    $app->get('/{programmeId}/image', ProgrammeController::class . '::adminImage')
+                        ->setName('admin-programme-image');
+                })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });
 
@@ -558,6 +619,14 @@ class Route
                             ->setName('admin-confirm-payment-json');
                     })->add(AdminPaymentsOnlyMiddleware::class);
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
+
+                $app->group('/admin/programmes', function (RouteCollectorProxy $app) {
+                    $app->post('/{programmeId}/assign/{participantId}', ProgrammeJsonController::class . '::assign')
+                        ->setName('admin-programme-assign-json');
+
+                    $app->post('/{programmeId}/remove/{participantId}', ProgrammeJsonController::class . '::remove')
+                        ->setName('admin-programme-remove-json');
+                })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });
         });
 

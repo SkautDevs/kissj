@@ -1,0 +1,34 @@
+{% extends "_layoutPdfBadge.twig" %}
+
+{% block content %}
+    {% for sheet in sheets %}
+        <h1>{{ sheet.programme.name }}</h1>
+        <p>
+            {{ sheet.programme.start|date('j. n. Y H:i') }} – {{ sheet.programme.end|date('j. n. Y H:i') }},
+            {{ sheet.programme.place }}
+            {% if sheet.programme.getExclusiveGroupName() %}({{ sheet.programme.getExclusiveGroupName() }}){% endif %}
+        </p>
+        <p>{{ sheet.registrations|length }}/{{ sheet.programme.capacity }}</p>
+
+        <table border="1" cellpadding="4" width="100%">
+            <tr>
+                <th width="8%">#</th>
+                <th width="52%">{{ 'programme.pdf.name'|trans }}</th>
+                <th width="20%">{{ 'programme.pdf.role'|trans }}</th>
+                <th width="20%">{{ 'programme.pdf.present'|trans }}</th>
+            </tr>
+            {% for registration in sheet.registrations %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ registration.participant.getFullName() }}</td>
+                    <td>{{ registration.participant.getRole() ? registration.participant.getRole().value : '?' }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        {% if not loop.last %}
+            <pagebreak />
+        {% endif %}
+    {% endfor %}
+{% endblock %}

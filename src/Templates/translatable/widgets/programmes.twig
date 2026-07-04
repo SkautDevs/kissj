@@ -1,0 +1,27 @@
+{% set hasProgrammes = registeredProgrammes is not empty or preregisteredProgrammes is not empty %}
+{% if userStatus == 'paid' and (hasProgrammes or event.isProgrammeRegistrationOpen) %}
+    <div class="card">
+        <h2>{{ 'programme.widget.title'|trans }}</h2>
+
+        <ul>
+            {% for programme in preregisteredProgrammes %}
+                <li>{{ programme.name }}, {{ programme.start|date('j. n. Y H:i') }}, {{ programme.place }}</li>
+            {% endfor %}
+            {% for registration in registeredProgrammes %}
+                <li>
+                    {{ registration.programme.name }},
+                    {{ registration.programme.start|date('j. n. Y H:i') }},
+                    {{ registration.programme.place }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if event.isProgrammeRegistrationOpen %}
+            <p class="programme-eventapp-hint">{{ 'programme.widget.eventAppHint'|trans }}</p>
+        {% endif %}
+
+        <a class="btn" href="{{ url_for('programmes', {eventSlug: event.slug}) }}">
+            {{- 'programme.widget.all'|trans -}}
+        </a>
+    </div>
+{% endif %}

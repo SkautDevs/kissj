@@ -16,6 +16,9 @@ use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\TshirtService;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
+use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
@@ -170,6 +173,10 @@ class ParticipantServicePhoneTest extends TestCase
             new TshirtService(Mockery::mock(TranslatorInterface::class)),
             Mockery::mock(EventRepository::class),
             Mockery::mock(UserRepository::class),
+            new ProgrammeService(
+                Mockery::mock(ProgrammeRepository::class),
+                Mockery::mock(ProgrammeRegistrationRepository::class),
+            ),
         );
     }
 }

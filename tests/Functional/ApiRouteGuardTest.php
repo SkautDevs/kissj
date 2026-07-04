@@ -48,6 +48,8 @@ class ApiRouteGuardTest extends AppTestCase
         'admin-change-note' => 'adminSession',
         'admin-approve-json' => 'adminSession',
         'admin-confirm-payment-json' => 'adminSession',
+        'admin-programme-assign-json' => 'adminSession',
+        'admin-programme-remove-json' => 'adminSession',
     ];
 
     public function testEveryGuardedApiRouteRejectsMissingAndWrongCredentials(): void

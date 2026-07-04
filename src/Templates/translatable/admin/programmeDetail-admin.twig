@@ -1,0 +1,64 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    {% set routeParams = {eventSlug: event.slug, programmeId: programme.id} %}
+    <div class="card">
+        <h2>{{ programme.name }}</h2>
+        {% if programme.getImageFilename() %}
+            <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', routeParams) }}"
+                 alt="{{ programme.name }}">
+            <br/>
+        {% endif %}
+        <div>
+            {{ 'programme.admin.colTime'|trans }}:
+            <b>{{ programme.start|date('j. n. Y H:i') }} – {{ programme.end|date('j. n. Y H:i') }}</b><br/>
+            {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.place }}</b><br/>
+            {{ 'programme.admin.colOccupancy'|trans }}:
+            <b>{{ (occupancy[programme.id] ?? 0) }}/{{ programme.capacity }}</b><br/>
+            <br/>
+
+            {% if programme.isPreregistered %}
+                <p>{{ 'programme.admin.preregisteredNote'|trans }}</p>
+            {% else %}
+                <h3>{{ 'programme.admin.colParticipant'|trans }}</h3>
+                {% for registration in registrations %}
+                    {% set participant = registration.participant %}
+                    {% set participantParams = {eventSlug: event.slug, participantId: participant.id} %}
+                    {% set roleLabel = participant.getRole() ? ('role.' ~ participant.getRole().value)|trans : '?' %}
+                    {% if user.isAdmin() %}
+                        <a href="{{ url_for('admin-mend-participant', participantParams) }}">
+                            {{- participant.getFullName() -}}
+                        </a>
+                    {% else %}
+                        {{ participant.getFullName() }}
+                    {% endif %}
+                    ({{ roleLabel }})
+                    {% if registration.id in irregularRegistrationIds %}
+                        ⚠ {{ 'programme.admin.irregular'|trans }}
+                    {% endif %}
+                    <form method="post"
+                          action="{{ url_for('admin-programme-remove', participantParams|merge(routeParams)) }}">
+                        <input type="submit" class="btn btn-mini"
+                               value="{{ 'programme.admin.removeParticipant'|trans }}">
+                    </form>
+                    <br/>
+                {% endfor %}
+
+                <form method="post" action="{{ url_for('admin-programme-assign', routeParams) }}">
+                    <input type="number" name="participantId" min="1" required>
+                    <input type="submit" class="btn btn-small"
+                           value="{{ 'programme.admin.assignParticipant'|trans }}">
+                </form>
+                <p>{{ 'programme.admin.participantIdHint'|trans }}</p>
+            {% endif %}
+        </div>
+
+        <a class="btn" href="{{ url_for('admin-programme-edit', routeParams) }}">{{ 'programme.admin.edit'|trans }}</a>
+        <a class="btn" href="{{ url_for('admin-programme-print', routeParams) }}">
+            {{- 'programme.admin.print'|trans -}}
+        </a>
+        <a class="btn btn-grey" href="{{ url_for('admin-programmes', {eventSlug: event.slug}) }}">
+            {{- 'programme.admin.back'|trans -}}
+        </a>
+    </div>
+{% endblock %}

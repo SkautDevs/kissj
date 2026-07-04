@@ -78,6 +78,9 @@ use kissj\Participant\ParticipantRole;
  * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $endDay m:passThru(dateFromString|dateToString)
  *
+ * @property DateTimeInterface|null $programmeRegistrationStart m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $programmeRegistrationEnd m:passThru(dateFromString|dateToString)
+ *
  * @property string            $emailFrom
  * @property string            $emailFromName
  * @property string|null       $emailBccFrom
@@ -128,6 +131,17 @@ class Event extends EntityDatetime
     {
         return $this->getEventType()->isOwnerTicketTransferAllowed()
             && DateTimeUtils::getDateTime() < $this->startDay;
+    }
+
+    public function isProgrammeRegistrationOpen(): bool
+    {
+        if ($this->programmeRegistrationStart === null || $this->programmeRegistrationEnd === null) {
+            return false;
+        }
+
+        $now = DateTimeUtils::getDateTime();
+
+        return $this->programmeRegistrationStart <= $now && $now < $this->programmeRegistrationEnd;
     }
 
     /**

@@ -1,0 +1,85 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'programme.admin.title'|trans }}</h2>
+        {% if user.isAdmin() %}
+            <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+               class="btn btn-grey btn-small">{{ 'programme.admin.backToDashboard' | trans }}</a>
+            <br/>
+            <br/>
+        {% endif %}
+
+        {# bare dot-access on a null LeanMapper magic property crashes Twig's attribute
+           resolution (isset() on the entity returns false for null, so it falls through to
+           a method-call lookup that doesn't exist) -- the explicit getter call sidesteps that #}
+        {% set windowStart = event.getProgrammeRegistrationStart() %}
+        {% set windowEnd = event.getProgrammeRegistrationEnd() %}
+        <form method="post" action="{{ url_for('admin-programme-window', {eventSlug: event.slug}) }}">
+            <label>{{ 'programme.admin.windowStart'|trans }}
+                <input type="datetime-local" name="programmeRegistrationStart"
+                       value="{{ windowStart ? windowStart|date('Y-m-d\\TH:i') : '' }}">
+            </label>
+            <label>{{ 'programme.admin.windowEnd'|trans }}
+                <input type="datetime-local" name="programmeRegistrationEnd"
+                       value="{{ windowEnd ? windowEnd|date('Y-m-d\\TH:i') : '' }}">
+            </label>
+            <input type="submit" class="btn btn-small" value="{{ 'programme.admin.windowSave'|trans }}">
+        </form>
+        <br/>
+
+        <a class="btn" href="{{ url_for('admin-programme-new', {eventSlug: event.slug}) }}">
+            {{- 'programme.admin.new'|trans -}}
+        </a>
+        <a class="btn" href="{{ url_for('admin-export-programmes', {eventSlug: event.slug}) }}">
+            {{- 'programme.admin.exportCsv'|trans -}}
+        </a>
+        <a class="btn" href="{{ url_for('admin-export-programmes-print', {eventSlug: event.slug}) }}">
+            {{- 'programme.admin.exportPrint'|trans -}}
+        </a>
+    </div>
+
+    {% set previousDay = null %}
+    {% for programme in programmes %}
+        {% set day = programme.start|date('j. n. Y') %}
+        {% if day != previousDay %}
+            <div class="card">
+                <h2>{{ day }}</h2>
+            </div>
+            {% set previousDay = day %}
+        {% endif %}
+
+        {% set taken = occupancy[programme.id] ?? 0 %}
+        {% set routeParams = {eventSlug: event.slug, programmeId: programme.id} %}
+        <div class="card">
+            <h3><a href="{{ url_for('admin-programme-detail', routeParams) }}">{{ programme.name }}</a></h3>
+            {% if programme.getImageFilename() %}
+                <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', routeParams) }}"
+                     alt="{{ programme.name }}">
+                <br/>
+            {% endif %}
+            {{ 'programme.admin.colTime'|trans }}:
+            <b>{{ programme.start|date('j. n. Y H:i') }} – {{ programme.end|date('j. n. H:i') }}</b><br/>
+            {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.place }}</b><br/>
+            {{ 'programme.admin.colGroup'|trans }}: <b>{{ programme.getExclusiveGroupName() ?: '–' }}</b><br/>
+            {{ 'programme.admin.colOccupancy'|trans }}:
+            {% if programme.isPreregistered %}
+                <b>{{ 'programme.admin.preregistered'|trans }}</b><br/>
+            {% else %}
+                <b>{{ taken }}/{{ programme.capacity }}{% if taken > programme.capacity %} ⚠{% endif %}</b><br/>
+            {% endif %}
+            {{ 'programme.admin.formRoles'|trans }}:
+            <b>{{ programme.getTargetRoles()|map(role => ('role.' ~ role.value)|trans)|join(', ') }}</b>
+            <br/>
+            <br/>
+            <a class="btn btn-small" href="{{ url_for('admin-programme-edit', routeParams) }}">
+                {{- 'programme.admin.edit'|trans -}}
+            </a>
+            <br/>
+            <br/>
+            <form method="post" action="{{ url_for('admin-programme-delete', routeParams) }}">
+                <input type="submit" class="btn btn-small btn-grey" value="{{ 'programme.admin.delete'|trans }}">
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}

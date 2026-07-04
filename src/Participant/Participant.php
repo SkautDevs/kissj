@@ -7,11 +7,13 @@ namespace kissj\Participant;
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\User\User;
+use kissj\User\UserStatus;
 use LeanMapper\Exception\Exception as LeanMapperException;
 use LeanMapper\Exception\MemberAccessException;
 use LogicException;
@@ -207,6 +209,16 @@ class Participant extends EntityDatetime
     public function hasOwnUser(): bool
     {
         return $this->getRoleOrFail()->hasOwnUser();
+    }
+
+    // mirrors the transfer route gates (paid status + open transfer), so the dashboard never offers a link that bounces
+    public function canTransferOwnerTicket(): bool
+    {
+        $user = $this->getUserButNotNull();
+
+        return $user->status === UserStatus::Paid
+            && $this instanceof TechnicalTeamLeader === false
+            && $user->event->isOwnerTicketTransferOpen();
     }
 
     public function getOwnOrLeaderContingent(): ?string

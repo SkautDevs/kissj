@@ -29,6 +29,8 @@
 
 {% include('widgets/deals.twig') with { person: person } %}
 
+{% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, registeredProgrammes: registeredProgrammes, preregisteredProgrammes: preregisteredProgrammes } %}
+
 <div class="card">
     {% if person is Leader %}
         <div class="card-divide">
