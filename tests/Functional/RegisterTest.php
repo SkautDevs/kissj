@@ -50,9 +50,7 @@ class RegisterTest extends AppTestCase
 
         $testEvent = $eventRepository->get(1);
 
-        // unique per run: the shared test database keeps users from previous runs,
-        // and duplicate emails would make getUserFromEmail resolution ambiguous
-        $email = 'login-via-email-' . bin2hex(random_bytes(8)) . '@example.com';
+        $email = 'login-via-email-test@example.com';
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $testEvent->slug . '/login',
