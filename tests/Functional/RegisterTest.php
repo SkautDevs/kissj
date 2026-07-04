@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
-use kissj\Mailer\MailerSettings;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
+use kissj\User\UserRepository;
 use kissj\User\UserService;
-use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
 
 class RegisterTest extends AppTestCase
@@ -15,16 +16,10 @@ class RegisterTest extends AppTestCase
     public function testRegisterAndLogin(): void
     {
         $app = $this->getTestApp();
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
-        
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
-        /** @var LoginTokenRepository $loginTokenRepository */
-        $loginTokenRepository = $container->get(LoginTokenRepository::class);
-        
+        $userService = $this->getService($app, UserService::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+
         $testEvent = $eventRepository->get(1);
 
         $email = 'register-test@example.com';
@@ -41,43 +36,35 @@ class RegisterTest extends AppTestCase
         $loadedToken = $userService->getLoginTokenFromStringToken($loginToken->token);
         $loadedUser = $loadedToken->user;
 
-        $this->assertEquals($user->id, $loadedUser->id);
-        $this->assertFalse($loadedToken->used);
+        self::assertEquals($user->id, $loadedUser->id);
+        self::assertFalse($loadedToken->used);
     }
 
     public function testLoginViaEmailToken(): void
     {
         $app = $this->getTestApp();
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
-        
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
-        /** @var MailerSettings $mailerSettings */
-        $mailerSettings = $container->get(MailerSettings::class);
-        
+        $userService = $this->getService($app, UserService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+
         $testEvent = $eventRepository->get(1);
-        
-        // Initialize mailer settings (required for sending email)
-        $mailerSettings->setEvent($testEvent);
-        $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $testEvent->slug);
 
-        $email = 'login-via-email-test@example.com';
-        $user = $userService->registerEmailUser($email, $testEvent);
+        // unique per run: the shared test database keeps users from previous runs,
+        // and duplicate emails would make getUserFromEmail resolution ambiguous
+        $email = 'login-via-email-' . bin2hex(random_bytes(8)) . '@example.com';
 
-        // Send login token via email - this needs a proper request with routing context
-        // We'll use the HTTP flow instead to test this properly
-        $request = $this->createRequest('/v2/event/' . $testEvent->slug . '/login');
-        
-        // Handle the request to set up routing context
-        $response = $app->handle($request);
-        $this->assertSame(200, $response->getStatusCode());
-        
-        // Now we can send the login token (the app has set up routing)
-        // But sendLoginTokenByMail needs RouteContext which requires the request to go through routing
-        // This is tested in ParticipantJourneyTest::testLoginViaHttpRequests instead
-        $this->assertTrue(true); // Placeholder - real email flow tested elsewhere
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $testEvent->slug . '/login',
+            'POST',
+            ['email' => $email],
+        ));
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('loginAfterLinkSent', $response->getHeaderLine('Location'));
+
+        $user = $userRepository->getUserFromEmail($email, $testEvent);
+        $tokens = $loginTokenRepository->findAllNonusedTokens($user);
+        self::assertCount(1, $tokens);
+        self::assertTrue($userService->isLoginTokenValid($tokens[0]->token));
     }
 }

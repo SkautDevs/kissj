@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use PHPUnit\Framework\Attributes\Group;
@@ -9,6 +12,7 @@ use kissj\Mailer\MailerSettings;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Ist\IstRepository;
+use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -21,6 +25,7 @@ use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
+use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
@@ -32,6 +37,7 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Slim\App;
+use Slim\Views\Twig;
 use Tests\AppTestCase;
 
 class ParticipantJourneyTest extends AppTestCase
@@ -46,77 +52,72 @@ class ParticipantJourneyTest extends AppTestCase
     public function testIstFullRegistrationJourney(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+
         $email = 'ist-test@example.com';
-        
+
         // Step 1: Register and get login token
-        $user = $this->registerUser($container, $email);
-        $loginToken = $this->createLoginToken($container, $user);
-        
+        $user = $this->registerUser($app, $email);
+        $loginToken = $this->createLoginToken($app, $user);
+
         // Step 2: Login with token
         $responseLogin = $app->handle($this->createRequest(
             self::BASE_URL . '/tryLogin/' . $loginToken->token
         ));
-        $this->assertSame(302, $responseLogin->getStatusCode());
-        
+        self::assertSame(302, $responseLogin->getStatusCode());
+
         // Step 3: User should be redirected to choose role
         // Simulate session by creating participant with IST role
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
-        
+
         // Refresh user to get updated status
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $user = $userRepository->get($user->id);
-        $this->assertSame(UserStatus::Open, $user->status);
-        
+        self::assertSame(UserStatus::Open, $user->status);
+
         // Step 4: Fill IST details
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
-        
+
         $ist->firstName = 'Test';
         $ist->lastName = 'IST';
         $ist->nickname = 'Tester';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
-        
+
         // Step 5: Lock registration (update user status)
         $user->status = UserStatus::Closed;
         $userRepository->persist($user);
-        
-        $this->assertSame(UserStatus::Closed, $user->status);
-        
+
+        self::assertSame(UserStatus::Closed, $user->status);
+
         // Step 6: Admin approves
         $user->status = UserStatus::Approved;
         $userRepository->persist($user);
-        
+
         // Step 7: Generate payment
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $ist = $istRepository->get($ist->id); // Refresh
         $payment = $paymentService->createAndPersistNewEventPayment($ist);
-        
-        $this->assertSame(PaymentStatus::Waiting, $payment->status);
-        
+
+        self::assertSame(PaymentStatus::Waiting, $payment->status);
+
         // Step 8: Confirm payment
         $paymentService->confirmPayment($payment);
-        
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
         $updatedPayment = $paymentRepository->get($payment->id);
-        
-        $this->assertSame(PaymentStatus::Paid, $updatedPayment->status);
-        
+        self::assertInstanceOf(Payment::class, $updatedPayment);
+
+        self::assertSame(PaymentStatus::Paid, $updatedPayment->status);
+
         // Verify final user status
         $finalUser = $userRepository->get($user->id);
-        $this->assertSame(UserStatus::Paid, $finalUser->status);
+        self::assertSame(UserStatus::Paid, $finalUser->status);
     }
 
     /**
@@ -127,42 +128,38 @@ class ParticipantJourneyTest extends AppTestCase
     public function testPatrolLeaderWithParticipantsJourney(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+
         // Ensure event has enough capacity for new registrations
         // Note: PostgreSQL accumulates data across test runs, so use high limits
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
-        $this->assertNotNull($event);
+        self::assertNotNull($event);
         $event->maximalClosedPatrolsCount = 10000;  // High limit for accumulated test data
         // Set min/max participants per patrol (null defaults to 0 which fails validation)
         $event->minimalPatrolParticipantsCount = 1;
         $event->maximalPatrolParticipantsCount = 10;
         $eventRepository->persist($event);
-        
+
         $leaderEmail = 'patrol-leader@example.com';
-        
+
         // Step 1: Register patrol leader
-        $leaderUser = $this->registerUser($container, $leaderEmail);
-        
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $leaderUser = $this->registerUser($app, $leaderEmail);
+
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($leaderUser, 'pl');
-        
+
         // Step 2: Fill ALL required leader details (based on AbstractContentArbiter defaults)
-        /** @var PatrolLeaderRepository $patrolLeaderRepository */
-        $patrolLeaderRepository = $container->get(PatrolLeaderRepository::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
         /** @var PatrolLeader $patrolLeader */
         $patrolLeader = $patrolLeaderRepository->get($participant->id);
-        
+
         $patrolLeader->patrolName = 'Test Patrol';
         $patrolLeader->firstName = 'Leader';
         $patrolLeader->lastName = 'Test';
         $patrolLeader->nickname = 'LeaderNick';
         $patrolLeader->permanentResidence = '123 Test Street, Test City';
         $patrolLeader->gender = 'female';
-        $patrolLeader->birthDate = new \DateTimeImmutable('1995-05-15');
+        $patrolLeader->birthDate = DateTimeUtils::getDateTime('1995-05-15');
         $patrolLeader->healthProblems = 'None';
         $patrolLeader->psychicalHealthProblems = 'None';
         $patrolLeader->notes = 'Test notes';
@@ -178,13 +175,11 @@ class ParticipantJourneyTest extends AppTestCase
         $patrolLeader->swimming = 'good';
         $patrolLeader->setTshirt('male', 'L');
         $patrolLeaderRepository->persist($patrolLeader);
-        
+
         // Step 3: Add patrol participants with ALL required fields
-        /** @var PatrolService $patrolService */
-        $patrolService = $container->get(PatrolService::class);
-        /** @var PatrolParticipantRepository $patrolParticipantRepository */
-        $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
-        
+        $patrolService = $this->getService($app, PatrolService::class);
+        $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
+
         $participant1 = new PatrolParticipant();
         $participant1->patrolLeader = $patrolLeader;
         $participant1->firstName = 'Participant';
@@ -192,7 +187,7 @@ class ParticipantJourneyTest extends AppTestCase
         $participant1->nickname = 'P1';
         $participant1->permanentResidence = '456 Test Ave, Test Town';
         $participant1->gender = 'male';
-        $participant1->birthDate = new \DateTimeImmutable('2005-03-20');
+        $participant1->birthDate = DateTimeUtils::getDateTime('2005-03-20');
         $participant1->healthProblems = 'None';
         $participant1->psychicalHealthProblems = 'None';
         $participant1->notes = '';
@@ -207,7 +202,7 @@ class ParticipantJourneyTest extends AppTestCase
         $participant1->swimming = 'good';
         $participant1->setTshirt('male', 'M');
         $patrolParticipantRepository->persist($participant1);
-        
+
         $participant2 = new PatrolParticipant();
         $participant2->patrolLeader = $patrolLeader;
         $participant2->firstName = 'Participant';
@@ -215,7 +210,7 @@ class ParticipantJourneyTest extends AppTestCase
         $participant2->nickname = 'P2';
         $participant2->permanentResidence = '789 Test Blvd, Test Village';
         $participant2->gender = 'female';
-        $participant2->birthDate = new \DateTimeImmutable('2006-07-10');
+        $participant2->birthDate = DateTimeUtils::getDateTime('2006-07-10');
         $participant2->healthProblems = 'None';
         $participant2->psychicalHealthProblems = 'None';
         $participant2->notes = '';
@@ -230,36 +225,34 @@ class ParticipantJourneyTest extends AppTestCase
         $participant2->swimming = 'average';
         $participant2->setTshirt('female', 'S');
         $patrolParticipantRepository->persist($participant2);
-        
+
         // Verify participants are linked (need minimum 2 for test event)
         $patrolLeader = $patrolLeaderRepository->get($patrolLeader->id); // Refresh
-        $this->assertSame(2, $patrolLeader->getPatrolParticipantsCount());
-        
+        self::assertSame(2, $patrolLeader->getPatrolParticipantsCount());
+
         // Initialize mailer settings (normally done by middleware)
-        $this->initializeMailerSettings($container, $leaderUser->event);
-        
+        $this->initializeMailerSettings($app, $leaderUser->event);
+
         // Step 4: Lock patrol registration
         $patrolService->closeRegistration($patrolLeader);
-        
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+
+        $userRepository = $this->getService($app, UserRepository::class);
         $leaderUser = $userRepository->get($leaderUser->id);
-        $this->assertSame(UserStatus::Closed, $leaderUser->status);
-        
+        self::assertSame(UserStatus::Closed, $leaderUser->status);
+
         // Step 5: Admin approves
         $leaderUser->status = UserStatus::Approved;
         $userRepository->persist($leaderUser);
-        
+
         // Step 6: Generate and confirm payment
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $patrolLeader = $patrolLeaderRepository->get($patrolLeader->id); // Refresh
         $payment = $paymentService->createAndPersistNewEventPayment($patrolLeader);
         $paymentService->confirmPayment($payment);
-        
+
         // Verify final status
         $finalUser = $userRepository->get($leaderUser->id);
-        $this->assertSame(UserStatus::Paid, $finalUser->status);
+        self::assertSame(UserStatus::Paid, $finalUser->status);
     }
 
     /**
@@ -269,19 +262,19 @@ class ParticipantJourneyTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $email = 'http-test@example.com';
-        
+
         // Step 1: Request login page (may redirect if event not found)
         $responseLoginPage = $app->handle($this->createRequest(self::BASE_URL . '/login'));
         // Accept either 200 (login page shown) or 302 (redirect to event list if event not configured)
-        $this->assertTrue(
+        self::assertTrue(
             in_array($responseLoginPage->getStatusCode(), [200, 302], true),
             'Expected 200 or 302, got ' . $responseLoginPage->getStatusCode()
         );
-        
+
         // If we got the login page, test the full flow
         if ($responseLoginPage->getStatusCode() === 200) {
-            $this->assertStringContainsString('form-email', (string)$responseLoginPage->getBody());
-            
+            self::assertStringContainsString('form-email', (string)$responseLoginPage->getBody());
+
             // Step 2: Submit email
             $app = $this->getTestApp(false);
             $responseSubmitEmail = $app->handle($this->createRequest(
@@ -289,13 +282,13 @@ class ParticipantJourneyTest extends AppTestCase
                 'POST',
                 ['email' => $email]
             ));
-            $this->assertSame(302, $responseSubmitEmail->getStatusCode());
-            
+            self::assertSame(302, $responseSubmitEmail->getStatusCode());
+
             // Step 3: Follow redirect to "link sent" page
             $app = $this->getTestApp(false);
             $linkSentUrl = $responseSubmitEmail->getHeaderLine('Location');
             $responseLinkSent = $app->handle($this->createRequest($linkSentUrl));
-            $this->assertSame(200, $responseLinkSent->getStatusCode());
+            self::assertSame(200, $responseLinkSent->getStatusCode());
         }
     }
 
@@ -305,17 +298,15 @@ class ParticipantJourneyTest extends AppTestCase
     public function testDashboardRendersForIstWithoutDetails(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
         $email = 'dashboard-empty-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $userService->createParticipantSetRole($user, 'ist');
 
-        $_SESSION['user']['id'] = $user->id;
+        $_SESSION['user'] = ['id' => $user->id];
 
         $app = $this->getTestApp(false);
 
@@ -332,23 +323,20 @@ class ParticipantJourneyTest extends AppTestCase
     public function testDashboardRendersForIstWithDetails(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
         $email = 'dashboard-render-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
         $ist->firstName = 'Test';
         $ist->lastName = 'IST';
         $ist->nickname = 'Tester';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
@@ -364,7 +352,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->notes = '';
         $istRepository->persist($ist);
 
-        $_SESSION['user']['id'] = $user->id;
+        $_SESSION['user'] = ['id' => $user->id];
 
         $app = $this->getTestApp(false);
 
@@ -388,35 +376,30 @@ class ParticipantJourneyTest extends AppTestCase
     public function testGuestRegistrationJourney(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $guestEmail = 'guest-test@example.com';
 
         // Step 1: Register guest user
-        $guestUser = $this->registerUser($container, $guestEmail);
+        $guestUser = $this->registerUser($app, $guestEmail);
         self::assertSame(UserStatus::WithoutRole, $guestUser->status);
 
         // Ensure guestPrice is null (defaults to 0) for this test
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($guestUser->event->id);
         $event->guestPrice = null;
         $eventRepository->persist($event);
 
         // Step 2: Choose guest role
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($guestUser, 'guest');
 
         // Verify role is set and status is Open
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $guestUser = $userRepository->get($guestUser->id);
         self::assertSame(UserStatus::Open, $guestUser->status);
 
         // Step 3: Fill guest details
-        /** @var GuestRepository $guestRepository */
-        $guestRepository = $container->get(GuestRepository::class);
+        $guestRepository = $this->getService($app, GuestRepository::class);
         /** @var Guest $guest */
         $guest = $guestRepository->get($participant->id);
 
@@ -425,10 +408,10 @@ class ParticipantJourneyTest extends AppTestCase
         $guest->nickname = 'Visitor';
         $guest->permanentResidence = '123 Guest Street, Guest City';
         $guest->gender = 'other';
-        $guest->birthDate = new \DateTimeImmutable('1985-08-20');
+        $guest->birthDate = DateTimeUtils::getDateTime('1985-08-20');
         $guest->telephoneNumber = '+420123456789';
-        $guest->arrivalDate = new \DateTimeImmutable('2026-07-01');
-        $guest->departureDate = new \DateTimeImmutable('2026-07-10');
+        $guest->arrivalDate = DateTimeUtils::getDateTime('2026-07-01');
+        $guest->departureDate = DateTimeUtils::getDateTime('2026-07-10');
         $guest->healthProblems = 'None';
         $guest->psychicalHealthProblems = 'None';
         $guest->notes = 'VIP guest';
@@ -436,11 +419,10 @@ class ParticipantJourneyTest extends AppTestCase
         $guestRepository->persist($guest);
 
         // Initialize mailer settings (normally done by middleware)
-        $this->initializeMailerSettings($container, $guestUser->event);
+        $this->initializeMailerSettings($app, $guestUser->event);
 
         // Step 4: Close registration
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($guest);
 
         // Step 5: Admin approves (Guest price is 0, so goes directly to Paid)
@@ -461,7 +443,7 @@ class ParticipantJourneyTest extends AppTestCase
      * 4. Participants close their registration
      * 5. Leader closes registration (must have minimum participants who are closed)
      * 6. Admin approves → Payment
-     * 
+     *
      * Key difference from Patrol: Troop participants register independently and use
      * tie codes to join a leader, rather than being added by the leader.
      */
@@ -469,32 +451,28 @@ class ParticipantJourneyTest extends AppTestCase
     public function testTroopLeaderWithParticipantsJourney(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
         // Enable troop registrations for test event (limits are null by default = full)
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
-        $this->assertNotNull($event);
-        $this->enableTroopForEvent($container, $event);
-        
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($app, $event);
+
         $leaderEmail = 'troop-leader@example.com';
         $participant1Email = 'troop-participant1@example.com';
         $participant2Email = 'troop-participant2@example.com';
-        
+
         // Step 1: Register and setup Troop Leader
-        $leaderUser = $this->registerUser($container, $leaderEmail);
-        
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $leaderUser = $this->registerUser($app, $leaderEmail);
+
+        $userService = $this->getService($app, UserService::class);
         $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'tl');
-        
-        /** @var TroopLeaderRepository $troopLeaderRepository */
-        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
+
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
         /** @var TroopLeader $troopLeader */
         $troopLeader = $troopLeaderRepository->get($leaderParticipant->id);
-        
+
         // Fill leader details (required fields from AbstractContentArbiter + patrolName for TroopLeader)
         $troopLeader->patrolName = 'Test Troop';  // Required for TroopLeader (reused as troop name)
         $troopLeader->firstName = 'Troop';
@@ -502,128 +480,123 @@ class ParticipantJourneyTest extends AppTestCase
         $troopLeader->nickname = 'Chief';
         $troopLeader->permanentResidence = '123 Leader Ave, Leader City';
         $troopLeader->gender = 'male';
-        $troopLeader->birthDate = new \DateTimeImmutable('1990-01-15');
+        $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-15');
         $troopLeader->healthProblems = 'None';
         $troopLeader->psychicalHealthProblems = 'None';
         $troopLeader->notes = 'Troop leader notes';
         $troopLeader->email = $leaderEmail;
         $troopLeaderRepository->persist($troopLeader);
-        
+
         // Store the leader's tie code for verification
         $leaderTieCode = $troopLeader->tieCode;
-        $this->assertNotEmpty($leaderTieCode, 'Leader should have a tie code');
-        
+        self::assertNotEmpty($leaderTieCode, 'Leader should have a tie code');
+
         // Step 2: Register Troop Participant 1
-        $participant1User = $this->registerUser($container, $participant1Email);
+        $participant1User = $this->registerUser($app, $participant1Email);
         $participant1Data = $userService->createParticipantSetRole($participant1User, 'tp');
-        
-        /** @var TroopParticipantRepository $troopParticipantRepository */
-        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
         /** @var TroopParticipant $troopParticipant1 */
         $troopParticipant1 = $troopParticipantRepository->get($participant1Data->id);
-        
+
         // Fill participant 1 details
         $troopParticipant1->firstName = 'Scout';
         $troopParticipant1->lastName = 'One';
         $troopParticipant1->nickname = 'S1';
         $troopParticipant1->permanentResidence = '456 Scout Street, Scout Town';
         $troopParticipant1->gender = 'male';
-        $troopParticipant1->birthDate = new \DateTimeImmutable('2005-06-20');
+        $troopParticipant1->birthDate = DateTimeUtils::getDateTime('2005-06-20');
         $troopParticipant1->healthProblems = 'None';
         $troopParticipant1->psychicalHealthProblems = 'None';
         $troopParticipant1->notes = '';
         $troopParticipant1->email = $participant1Email;
         $troopParticipantRepository->persist($troopParticipant1);
-        
+
         $participant1TieCode = $troopParticipant1->tieCode;
-        $this->assertNotEmpty($participant1TieCode, 'Participant 1 should have a tie code');
-        
+        self::assertNotEmpty($participant1TieCode, 'Participant 1 should have a tie code');
+
         // Step 3: Register Troop Participant 2
-        $participant2User = $this->registerUser($container, $participant2Email);
+        $participant2User = $this->registerUser($app, $participant2Email);
         $participant2Data = $userService->createParticipantSetRole($participant2User, 'tp');
-        
+
         /** @var TroopParticipant $troopParticipant2 */
         $troopParticipant2 = $troopParticipantRepository->get($participant2Data->id);
-        
+
         // Fill participant 2 details
         $troopParticipant2->firstName = 'Scout';
         $troopParticipant2->lastName = 'Two';
         $troopParticipant2->nickname = 'S2';
         $troopParticipant2->permanentResidence = '789 Scout Blvd, Scout Village';
         $troopParticipant2->gender = 'female';
-        $troopParticipant2->birthDate = new \DateTimeImmutable('2006-09-10');
+        $troopParticipant2->birthDate = DateTimeUtils::getDateTime('2006-09-10');
         $troopParticipant2->healthProblems = 'None';
         $troopParticipant2->psychicalHealthProblems = 'None';
         $troopParticipant2->notes = '';
         $troopParticipant2->email = $participant2Email;
         $troopParticipantRepository->persist($troopParticipant2);
-        
+
         $participant2TieCode = $troopParticipant2->tieCode;
-        $this->assertNotEmpty($participant2TieCode, 'Participant 2 should have a tie code');
-        
+        self::assertNotEmpty($participant2TieCode, 'Participant 2 should have a tie code');
+
         // Step 4: Tie participants to leader
-        /** @var TroopService $troopService */
-        $troopService = $container->get(TroopService::class);
-        
+        $troopService = $this->getService($app, TroopService::class);
+
         // Refresh leader to ensure status is current
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $leaderUser = $userRepository->get($leaderUser->id);
-        $this->assertSame(UserStatus::Open, $leaderUser->status, 'Leader must be in Open status to accept ties');
-        
+        self::assertSame(UserStatus::Open, $leaderUser->status, 'Leader must be in Open status to accept ties');
+
         // Tie participant 1 to leader
         $troopParticipant1 = $troopService->tieTroopParticipantToTroopLeader($troopParticipant1, $troopLeader);
-        $this->assertNotNull($troopParticipant1->troopLeader, 'Participant 1 should be tied to leader');
-        $this->assertSame($troopLeader->id, $troopParticipant1->troopLeader->id);
-        
+        self::assertNotNull($troopParticipant1->troopLeader, 'Participant 1 should be tied to leader');
+        self::assertSame($troopLeader->id, $troopParticipant1->troopLeader->id);
+
         // Tie participant 2 to leader
         $troopParticipant2 = $troopService->tieTroopParticipantToTroopLeader($troopParticipant2, $troopLeader);
-        $this->assertNotNull($troopParticipant2->troopLeader, 'Participant 2 should be tied to leader');
-        $this->assertSame($troopLeader->id, $troopParticipant2->troopLeader->id);
-        
+        self::assertNotNull($troopParticipant2->troopLeader, 'Participant 2 should be tied to leader');
+        self::assertSame($troopLeader->id, $troopParticipant2->troopLeader->id);
+
         // Verify leader has 2 participants
         $troopLeader = $troopLeaderRepository->get($troopLeader->id);
-        $this->assertSame(2, $troopLeader->getTroopParticipantsCount());
-        
+        self::assertSame(2, $troopLeader->getTroopParticipantsCount());
+
         // Step 5: Participants close their registration
         // Initialize mailer settings (normally done by middleware)
-        $this->initializeMailerSettings($container, $leaderUser->event);
-        
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
-        
+        $this->initializeMailerSettings($app, $leaderUser->event);
+
+        $participantService = $this->getService($app, ParticipantService::class);
+
         // Participant 1 closes registration
         $troopParticipant1 = $troopParticipantRepository->get($troopParticipant1->id);
         $participantService->closeRegistration($troopParticipant1);
         $participant1User = $userRepository->get($participant1User->id);
-        $this->assertSame(UserStatus::Closed, $participant1User->status, 'Participant 1 should be Closed');
-        
+        self::assertSame(UserStatus::Closed, $participant1User->status, 'Participant 1 should be Closed');
+
         // Participant 2 closes registration
         $troopParticipant2 = $troopParticipantRepository->get($troopParticipant2->id);
         $participantService->closeRegistration($troopParticipant2);
         $participant2User = $userRepository->get($participant2User->id);
-        $this->assertSame(UserStatus::Closed, $participant2User->status, 'Participant 2 should be Closed');
-        
+        self::assertSame(UserStatus::Closed, $participant2User->status, 'Participant 2 should be Closed');
+
         // Step 6: Leader closes registration
         $troopLeader = $troopLeaderRepository->get($troopLeader->id);
         $participantService->closeRegistration($troopLeader);
         $leaderUser = $userRepository->get($leaderUser->id);
-        $this->assertSame(UserStatus::Closed, $leaderUser->status, 'Leader should be Closed');
-        
+        self::assertSame(UserStatus::Closed, $leaderUser->status, 'Leader should be Closed');
+
         // Step 7: Admin approves leader
         $leaderUser->status = UserStatus::Approved;
         $userRepository->persist($leaderUser);
-        
+
         // Step 8: Payment
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $troopLeader = $troopLeaderRepository->get($troopLeader->id);
         $payment = $paymentService->createAndPersistNewEventPayment($troopLeader);
         $paymentService->confirmPayment($payment);
-        
+
         // Verify final status
         $finalLeaderUser = $userRepository->get($leaderUser->id);
-        $this->assertSame(UserStatus::Paid, $finalLeaderUser->status);
+        self::assertSame(UserStatus::Paid, $finalLeaderUser->status);
     }
 
     /**
@@ -634,88 +607,75 @@ class ParticipantJourneyTest extends AppTestCase
     public function testTroopTieWithTieCodes(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+
         // Enable troop registrations for test event
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
-        $this->assertNotNull($event);
-        $this->enableTroopForEvent($container, $event);
-        
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($app, $event);
+
         // Create leader
-        $leaderUser = $this->registerUser($container, 'tie-test-leader@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $leaderUser = $this->registerUser($app, 'tie-test-leader@example.com');
+        $userService = $this->getService($app, UserService::class);
         $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'tl');
-        
-        /** @var TroopLeaderRepository $troopLeaderRepository */
-        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
+
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
         /** @var TroopLeader $troopLeader */
         $troopLeader = $troopLeaderRepository->get($leaderParticipant->id);
         $leaderTieCode = $troopLeader->tieCode;
-        
+
         // Create participant
-        $participantUser = $this->registerUser($container, 'tie-test-participant@example.com');
+        $participantUser = $this->registerUser($app, 'tie-test-participant@example.com');
         $participantData = $userService->createParticipantSetRole($participantUser, 'tp');
-        
-        /** @var TroopParticipantRepository $troopParticipantRepository */
-        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
         /** @var TroopParticipant $troopParticipant */
         $troopParticipant = $troopParticipantRepository->get($participantData->id);
         $participantTieCode = $troopParticipant->tieCode;
-        
+
         // Verify not tied yet
-        $this->assertNull($troopParticipant->troopLeader, 'Should not be tied initially');
-        
+        self::assertNull($troopParticipant->troopLeader, 'Should not be tied initially');
+
         // Tie using tie codes
-        /** @var TroopService $troopService */
-        $troopService = $container->get(TroopService::class);
+        $troopService = $this->getService($app, TroopService::class);
         $result = $troopService->tryTieTogetherWithMessages(
             $leaderTieCode,
             $participantTieCode,
             $leaderUser->event
         );
-        
-        $this->assertTrue($result, 'Tying should succeed');
-        
+
+        self::assertTrue($result, 'Tying should succeed');
+
         // Verify tied
         $troopParticipant = $troopParticipantRepository->get($troopParticipant->id);
-        $this->assertNotNull($troopParticipant->troopLeader, 'Should be tied after operation');
-        $this->assertSame($troopLeader->id, $troopParticipant->troopLeader->id);
+        self::assertNotNull($troopParticipant->troopLeader, 'Should be tied after operation');
+        self::assertSame($troopLeader->id, $troopParticipant->troopLeader->id);
     }
 
     #[Group('troop')]
     public function testSwapTroopLeaderWithParticipant(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
-        $this->enableTroopForEvent($container, $event);
+        $this->enableTroopForEvent($app, $event);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        /** @var TroopLeaderRepository $troopLeaderRepository */
-        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
-        /** @var TroopService $troopService */
-        $troopService = $container->get(TroopService::class);
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+        $troopService = $this->getService($app, TroopService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
 
-        $troopLeader = $this->createTroopLeaderWithDetails($container, 'swap-leader@example.com', 'Swap Test Troop');
+        $troopLeader = $this->createTroopLeaderWithDetails($app, 'swap-leader@example.com', 'Swap Test Troop');
         $oldLeaderId = $troopLeader->id;
 
-        $tp1 = $this->createTroopParticipantWithDetails($container, 'swap-tp1@example.com');
+        $tp1 = $this->createTroopParticipantWithDetails($app, 'swap-tp1@example.com');
         $newLeaderId = $tp1->id;
 
-        $tp2 = $this->createTroopParticipantWithDetails($container, 'swap-tp2@example.com');
+        $tp2 = $this->createTroopParticipantWithDetails($app, 'swap-tp2@example.com');
         $tp2Id = $tp2->id;
 
         $troopService->tieTroopParticipantToTroopLeader($tp1, $troopLeader);
@@ -733,8 +693,7 @@ class ParticipantJourneyTest extends AppTestCase
         $leaderPayment = $paymentService->createAndPersistNewEventPayment($troopLeader);
         $leaderPaymentId = $leaderPayment->id;
 
-        /** @var TroopParticipantRepository $troopParticipantRepository */
-        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
         $tp1Refetched = $troopParticipantRepository->get($newLeaderId);
         /** @var TroopParticipant $tp1Refetched */
         $participantPayment = $paymentService->createAndPersistNewEventPayment($tp1Refetched);
@@ -742,8 +701,7 @@ class ParticipantJourneyTest extends AppTestCase
 
         $troopService->swapTroopLeaderWithParticipant($tp1Refetched);
 
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
         // Verify: new leader has role 'tl' and troop name
         $newLeaderAfterSwap = $participantRepository->findParticipantById($newLeaderId, $event);
@@ -755,12 +713,14 @@ class ParticipantJourneyTest extends AppTestCase
         $oldLeaderAfterSwap = $participantRepository->findParticipantById($oldLeaderId, $event);
         self::assertNotNull($oldLeaderAfterSwap);
         self::assertInstanceOf(TroopParticipant::class, $oldLeaderAfterSwap);
+        self::assertNotNull($oldLeaderAfterSwap->troopLeader);
         self::assertSame($newLeaderId, $oldLeaderAfterSwap->troopLeader->id);
 
         // Verify: tp2 is now tied to new leader
         $tp2AfterSwap = $participantRepository->findParticipantById($tp2Id, $event);
         self::assertNotNull($tp2AfterSwap);
         self::assertInstanceOf(TroopParticipant::class, $tp2AfterSwap);
+        self::assertNotNull($tp2AfterSwap->troopLeader);
         self::assertSame($newLeaderId, $tp2AfterSwap->troopLeader->id);
 
         // Verify: new leader has 2 participants (old leader + tp2)
@@ -781,22 +741,18 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSwapTroopLeaderRejectsStatusMismatch(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
-        $this->enableTroopForEvent($container, $event);
+        $this->enableTroopForEvent($app, $event);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        /** @var TroopService $troopService */
-        $troopService = $container->get(TroopService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $troopService = $this->getService($app, TroopService::class);
 
-        $troopLeader = $this->createTroopLeaderWithDetails($container, 'swap-mismatch-leader@example.com', 'Mismatch Troop');
-        $tp = $this->createTroopParticipantWithDetails($container, 'swap-mismatch-tp@example.com');
+        $troopLeader = $this->createTroopLeaderWithDetails($app, 'swap-mismatch-leader@example.com', 'Mismatch Troop');
+        $tp = $this->createTroopParticipantWithDetails($app, 'swap-mismatch-tp@example.com');
 
         $troopService->tieTroopParticipantToTroopLeader($tp, $troopLeader);
 
@@ -811,8 +767,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopService->swapTroopLeaderWithParticipant($tp);
 
         // Verify roles unchanged
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
         $leaderAfter = $participantRepository->findParticipantById($troopLeader->id, $event);
         self::assertInstanceOf(TroopLeader::class, $leaderAfter);
         $tpAfter = $participantRepository->findParticipantById($tp->id, $event);
@@ -823,19 +778,16 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSwapTroopLeaderRejectsNoTroopLeader(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
-        $this->enableTroopForEvent($container, $event);
+        $this->enableTroopForEvent($app, $event);
 
-        $tp = $this->createTroopParticipantWithDetails($container, 'swap-no-leader@example.com');
+        $tp = $this->createTroopParticipantWithDetails($app, 'swap-no-leader@example.com');
 
-        /** @var TroopService $troopService */
-        $troopService = $container->get(TroopService::class);
+        $troopService = $this->getService($app, TroopService::class);
 
         $this->expectException(\LogicException::class);
         $troopService->swapTroopLeaderWithParticipant($tp);
@@ -844,11 +796,10 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSetRoleRejectsOtWithoutSessionFlag(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'ot-gate-test@example.com';
-        $user = $this->registerUser($container, $email);
-        $loginToken = $this->createLoginToken($container, $user);
+        $user = $this->registerUser($app, $email);
+        $loginToken = $this->createLoginToken($app, $user);
 
         // Login via token (without ot_token param, so no session flag)
         $app->handle($this->createRequest(
@@ -876,46 +827,40 @@ class ParticipantJourneyTest extends AppTestCase
     public function testApprovalWithPriceCreatesPayment(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'ist-price-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
         // Set nonzero default price on the event
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->defaultPrice = 100;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         $ist->firstName = 'Test';
         $ist->lastName = 'IST';
         $ist->nickname = 'Tester';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
 
-        $this->initializeMailerSettings($container, $user->event);
+        $this->initializeMailerSettings($app, $user->event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($ist);
 
         $participantService->approveRegistration($ist);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $finalUser = $userRepository->get($user->id);
         self::assertSame(UserStatus::Approved, $finalUser->status);
         self::assertSame(1, $ist->countWaitingPayments());
@@ -928,13 +873,11 @@ class ParticipantJourneyTest extends AppTestCase
     public function testOrganizingTeamWithZeroPriceGoesToPaid(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'ot-zero-price@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->allowOrganizingTeam = true;
         $event->organizingTeamPrice = 0;
@@ -943,34 +886,31 @@ class ParticipantJourneyTest extends AppTestCase
 
         $_SESSION['ot_access_granted'] = true;
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ot');
 
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
         $ot = $participantRepository->get($participant->id);
+        self::assertInstanceOf(OrganizingTeam::class, $ot);
         $ot->firstName = 'Test';
         $ot->lastName = 'OT';
         $ot->nickname = 'Organizer';
         $ot->permanentResidence = '123 OT Street, OT City';
         $ot->gender = 'male';
-        $ot->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ot->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ot->healthProblems = 'None';
         $ot->psychicalHealthProblems = 'None';
         $ot->notes = '';
         $ot->email = $email;
         $participantRepository->persist($ot);
 
-        $this->initializeMailerSettings($container, $event);
+        $this->initializeMailerSettings($app, $event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($ot);
         $participantService->approveRegistration($ot);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $finalUser = $userRepository->get($user->id);
         self::assertSame(UserStatus::Paid, $finalUser->status);
         self::assertSame(0, $ot->countWaitingPayments());
@@ -984,24 +924,20 @@ class ParticipantJourneyTest extends AppTestCase
     public function testGuestWithNonzeroPriceCreatesPayment(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
         $email = 'guest-price-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->guestPrice = 500;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'guest');
 
-        /** @var GuestRepository $guestRepository */
-        $guestRepository = $container->get(GuestRepository::class);
+        $guestRepository = $this->getService($app, GuestRepository::class);
         /** @var Guest $guest */
         $guest = $guestRepository->get($participant->id);
 
@@ -1010,22 +946,20 @@ class ParticipantJourneyTest extends AppTestCase
         $guest->nickname = 'PG';
         $guest->permanentResidence = '123 Pay Street';
         $guest->gender = 'male';
-        $guest->birthDate = new \DateTimeImmutable('1990-01-01');
+        $guest->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $guest->healthProblems = 'None';
         $guest->psychicalHealthProblems = 'None';
         $guest->notes = '';
         $guest->email = $email;
         $guestRepository->persist($guest);
 
-        $this->initializeMailerSettings($container, $event);
+        $this->initializeMailerSettings($app, $event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($guest);
         $participantService->approveRegistration($guest);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $finalUser = $userRepository->get($user->id);
         self::assertSame(UserStatus::Approved, $finalUser->status);
         self::assertSame(1, $guest->countWaitingPayments());
@@ -1039,38 +973,33 @@ class ParticipantJourneyTest extends AppTestCase
     public function testChangePaymentPrice(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'change-price-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->defaultPrice = 500;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
         $ist->firstName = 'Price';
         $ist->lastName = 'Change';
         $ist->nickname = 'PC';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
 
-        $this->initializeMailerSettings($container, $event);
+        $this->initializeMailerSettings($app, $event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($ist);
         $participantService->approveRegistration($ist);
 
@@ -1088,9 +1017,9 @@ class ParticipantJourneyTest extends AppTestCase
         $ist = $istRepository->get($ist->id);
 
         // Old payment should be cancelled, new one waiting
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
         $oldPayment = $paymentRepository->get($originalPayment->id);
+        self::assertInstanceOf(Payment::class, $oldPayment);
         self::assertSame(PaymentStatus::Canceled, $oldPayment->status);
         self::assertSame(PaymentStatus::Waiting, $newPayment->status);
         self::assertSame('300', $newPayment->price);
@@ -1104,38 +1033,33 @@ class ParticipantJourneyTest extends AppTestCase
     public function testChangePaymentPriceToZeroAutoConfirms(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'zero-price-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->defaultPrice = 500;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
         $ist->firstName = 'Zero';
         $ist->lastName = 'Price';
         $ist->nickname = 'ZP';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
 
-        $this->initializeMailerSettings($container, $event);
+        $this->initializeMailerSettings($app, $event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($ist);
         $participantService->approveRegistration($ist);
 
@@ -1148,8 +1072,7 @@ class ParticipantJourneyTest extends AppTestCase
 
         self::assertSame(PaymentStatus::Paid, $newPayment->status);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $finalUser = $userRepository->get($user->id);
         self::assertSame(UserStatus::Paid, $finalUser->status);
     }
@@ -1161,38 +1084,33 @@ class ParticipantJourneyTest extends AppTestCase
     public function testChangePaymentPriceRejectsNonWaitingPayment(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
         $email = 'reject-price-test@example.com';
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get($user->event->id);
         $event->defaultPrice = 500;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
         $ist->firstName = 'Reject';
         $ist->lastName = 'Test';
         $ist->nickname = 'RT';
-        $ist->birthDate = new \DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $ist->gender = 'male';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
 
-        $this->initializeMailerSettings($container, $event);
+        $this->initializeMailerSettings($app, $event);
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($ist);
         $participantService->approveRegistration($ist);
 
@@ -1200,67 +1118,61 @@ class ParticipantJourneyTest extends AppTestCase
         $payments = $ist->getNoncanceledPayments();
         $originalPayment = $payments[0];
 
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $paymentService->confirmPayment($originalPayment);
 
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
         $paidPayment = $paymentRepository->get($originalPayment->id);
+        self::assertInstanceOf(Payment::class, $paidPayment);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot change price of payment that is not in waiting status');
         $participantService->changePaymentPrice($paidPayment, 300, 'Should fail');
     }
 
-    private function getContainer(App $app): ContainerInterface
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function registerUser(App $app, string $email): User
     {
-        $container = $app->getContainer();
-        if ($container === null) {
-            throw new \RuntimeException('Container is null');
-        }
-        return $container;
-    }
+        $userService = $this->getService($app, UserService::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
-    private function registerUser(ContainerInterface $container, string $email): User
-    {
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
-        
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         if ($event === null) {
             // Fallback to first event if test-event-slug doesn't exist
             $event = $eventRepository->get(1);
         }
-        
+
         return $userService->registerEmailUser($email, $event);
     }
 
-    private function createLoginToken(ContainerInterface $container, User $user): LoginToken
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createLoginToken(App $app, User $user): LoginToken
     {
-        /** @var LoginTokenRepository $loginTokenRepository */
-        $loginTokenRepository = $container->get(LoginTokenRepository::class);
-        
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+
         $loginToken = new LoginToken();
         $loginToken->token = bin2hex(random_bytes(16));
         $loginToken->user = $user;
         $loginToken->used = false;
         $loginTokenRepository->persist($loginToken);
-        
+
         return $loginToken;
     }
 
-    private function initializeMailerSettings(ContainerInterface $container, Event $event): void
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function initializeMailerSettings(App $app, Event $event): void
     {
-        /** @var MailerSettings $mailerSettings */
-        $mailerSettings = $container->get(MailerSettings::class);
+        $mailerSettings = $this->getService($app, MailerSettings::class);
         $mailerSettings->setEvent($event);
         $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $event->slug);
 
-        /** @var \Slim\Views\Twig $view */
-        $view = $container->get(\Slim\Views\Twig::class);
+        $view = $this->getService($app, Twig::class);
         $view->getEnvironment()->addGlobal('event', $event);
     }
 
@@ -1268,11 +1180,12 @@ class ParticipantJourneyTest extends AppTestCase
      * Configure event to allow troop registrations.
      * The test event doesn't have troop limits set by default (null = 0 = full),
      * so we need to set them for troop tests to work.
+     *
+     * @param App<ContainerInterface> $app
      */
-    private function enableTroopForEvent(ContainerInterface $container, Event $event): void
+    private function enableTroopForEvent(App $app, Event $event): void
     {
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         $event->allowTroops = true;
         // Use high limits to handle accumulated test data in PostgreSQL
@@ -1285,17 +1198,18 @@ class ParticipantJourneyTest extends AppTestCase
         $eventRepository->persist($event);
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
     private function createTroopLeaderWithDetails(
-        ContainerInterface $container,
+        App $app,
         string $email,
         string $troopName,
     ): TroopLeader {
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var TroopLeaderRepository $troopLeaderRepository */
-        $troopLeaderRepository = $container->get(TroopLeaderRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
 
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
         $participant = $userService->createParticipantSetRole($user, 'tl');
         /** @var TroopLeader $troopLeader */
         $troopLeader = $troopLeaderRepository->get($participant->id);
@@ -1304,7 +1218,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopLeader->lastName = 'Leader';
         $troopLeader->email = $email;
         $troopLeader->gender = 'male';
-        $troopLeader->birthDate = new \DateTimeImmutable('1990-01-01');
+        $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $troopLeader->permanentResidence = 'Addr';
         $troopLeader->healthProblems = 'None';
         $troopLeader->psychicalHealthProblems = 'None';
@@ -1314,16 +1228,17 @@ class ParticipantJourneyTest extends AppTestCase
         return $troopLeader;
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
     private function createTroopParticipantWithDetails(
-        ContainerInterface $container,
+        App $app,
         string $email,
     ): TroopParticipant {
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var TroopParticipantRepository $troopParticipantRepository */
-        $troopParticipantRepository = $container->get(TroopParticipantRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
 
-        $user = $this->registerUser($container, $email);
+        $user = $this->registerUser($app, $email);
         $participant = $userService->createParticipantSetRole($user, 'tp');
         /** @var TroopParticipant $tp */
         $tp = $troopParticipantRepository->get($participant->id);
@@ -1331,7 +1246,7 @@ class ParticipantJourneyTest extends AppTestCase
         $tp->lastName = 'Participant';
         $tp->email = $email;
         $tp->gender = 'female';
-        $tp->birthDate = new \DateTimeImmutable('1995-01-01');
+        $tp->birthDate = DateTimeUtils::getDateTime('1995-01-01');
         $tp->permanentResidence = 'Addr';
         $tp->healthProblems = 'None';
         $tp->psychicalHealthProblems = 'None';

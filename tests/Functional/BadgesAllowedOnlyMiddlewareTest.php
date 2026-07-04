@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -7,11 +9,8 @@ use kissj\Event\EventRepository;
 use kissj\Middleware\BadgesAllowedOnlyMiddleware;
 use LeanMapper\Connection;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
-use Slim\Psr7\Response;
 use Slim\Routing\RouteContext;
 use Tests\AppTestCase;
 
@@ -20,21 +19,16 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
     public function testRedirectsToAdminDashboardWhenBadgesAreNotAllowed(): void
     {
         $app = $this->getTestApp();
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
-        /** @var Connection $connection */
-        $connection = $container->get(Connection::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $connection = $this->getService($app, Connection::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         // korbo event type has badge generation disabled
         $connection->query('UPDATE event SET event_type = %s WHERE id = %i', 'korbo', 1);
         try {
             $event = $eventRepository->get(1);
 
-            /** @var BadgesAllowedOnlyMiddleware $middleware */
-            $middleware = $container->get(BadgesAllowedOnlyMiddleware::class);
-            $handler = $this->createHandlerSpy();
+            $middleware = $this->getService($app, BadgesAllowedOnlyMiddleware::class);
+            $handler = new RequestHandlerSpy();
 
             $response = $middleware->process($this->createRequestWithRouting($app, $event), $handler);
 
@@ -44,25 +38,21 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
                 ->urlFor('admin-dashboard', ['eventSlug' => $event->slug]);
             self::assertSame($expectedLocation, $response->getHeaderLine('Location'));
         } finally {
-            $this->resetEventToDefault($container);
+            $this->resetEventToDefault($app->getContainer());
         }
     }
 
     public function testPassesThroughWhenEventTypeAllowsBadges(): void
     {
         $app = $this->getTestApp();
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         // default event type has badge generation allowed
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
         $event = $eventRepository->get(1);
 
-        /** @var BadgesAllowedOnlyMiddleware $middleware */
-        $middleware = $container->get(BadgesAllowedOnlyMiddleware::class);
-        $handler = $this->createHandlerSpy();
+        $middleware = $this->getService($app, BadgesAllowedOnlyMiddleware::class);
+        $handler = new RequestHandlerSpy();
 
         $response = $middleware->process($this->createRequestWithRouting($app, $event), $handler);
 
@@ -71,7 +61,7 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
     }
 
     /**
-     * @param App<ContainerInterface|null> $app
+     * @param App<ContainerInterface> $app
      */
     private function createRequestWithRouting(App $app, Event $event): ServerRequestInterface
     {
@@ -81,19 +71,5 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
             ->withAttribute(RouteContext::ROUTE_PARSER, $app->getRouteCollector()->getRouteParser())
             ->withAttribute(RouteContext::ROUTING_RESULTS, $app->getRouteResolver()->computeRoutingResults($path, 'GET'))
             ->withAttribute('event', $event);
-    }
-
-    private function createHandlerSpy(): RequestHandlerInterface
-    {
-        return new class implements RequestHandlerInterface {
-            public bool $called = false;
-
-            public function handle(ServerRequestInterface $request): ResponseInterface
-            {
-                $this->called = true;
-
-                return new Response();
-            }
-        };
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -12,18 +14,16 @@ class ScenarioTest extends AppTestCase
     {
         // redirect from landing to login (via middleware chain)
         $app = $this->getTestApp();
-        /** @var \Psr\Container\ContainerInterface $container */
-        $container = $app->getContainer();
-        $this->resetEventToDefault($container);
+        $this->resetEventToDefault($app->getContainer());
 
         $responseRoot = $app->handle($this->createRequest(self::TEST_EVENT_PREFIX_URL));
-        $this->assertSame(302, $responseRoot->getStatusCode());
+        self::assertSame(302, $responseRoot->getStatusCode());
         $responseLoginHeader = $responseRoot->getHeaderLine('location');
 
         // show login page
         $responseLogin = $this->getTestApp(false)->handle($this->createRequest($responseLoginHeader));
-        $this->assertSame(200, $responseLogin->getStatusCode());
-        $this->assertStringContainsStringIgnoringCase('id="form-email"', (string)$responseLogin->getBody());
+        self::assertSame(200, $responseLogin->getStatusCode());
+        self::assertStringContainsStringIgnoringCase('id="form-email"', (string)$responseLogin->getBody());
 
         // send login
         $responsePostLogin = $this->getTestApp(false)->handle($this->createRequest(
@@ -31,17 +31,17 @@ class ScenarioTest extends AppTestCase
             'POST',
             ['email' => 'test@examnple.com'],
         ));
-        $this->assertEquals(302, $responsePostLogin->getStatusCode());
+        self::assertEquals(302, $responsePostLogin->getStatusCode());
         $responsePostLoginHeader = $responsePostLogin->getHeaderLine('location');
 
         // show after login page
         $responseFinalAfterLogin = $this->getTestApp(false)->handle($this->createRequest($responsePostLoginHeader));
-        $this->assertSame(200, $responseFinalAfterLogin->getStatusCode());
-        $this->assertStringContainsString(
+        self::assertSame(200, $responseFinalAfterLogin->getStatusCode());
+        self::assertStringContainsString(
             'E-mail poslán! Přihlaš se pomocí odkazu v něm',
             (string)$responseFinalAfterLogin->getBody(),
         );
-        
+
         // TODO catch email and follow link
 
         // choose role
@@ -51,7 +51,7 @@ class ScenarioTest extends AppTestCase
         // logout
 
         // second time login
-        
+
         // lock registration
     }
 }

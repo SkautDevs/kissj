@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -6,8 +8,6 @@ use kissj\Event\EventRepository;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserService;
-use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class InvalidLoginTokenTest extends AppTestCase
@@ -18,11 +18,10 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testFindLoginTokenByStringTokenReturnsRecordWhenFound(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
 
-        $userService = $container->get(UserService::class);
-        $loginTokenRepository = $container->get(LoginTokenRepository::class);
-        $eventRepository = $container->get(EventRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         $event = $eventRepository->get(1);
         $user = $userService->registerEmailUser('find-existing@example.com', $event);
@@ -42,9 +41,8 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testFindLoginTokenByStringTokenReturnsNullWhenNotFound(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
 
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
 
         self::assertNull($userService->findLoginTokenByStringToken('does-not-exist-' . bin2hex(random_bytes(8))));
     }
@@ -52,11 +50,10 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testUsedTokenPrefillsEmailInSession(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
 
-        $userService = $container->get(UserService::class);
-        $loginTokenRepository = $container->get(LoginTokenRepository::class);
-        $eventRepository = $container->get(EventRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         $event = $eventRepository->get(1);
         $user = $userService->registerEmailUser('expired-link@example.com', $event);
@@ -93,11 +90,10 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testValidTokenLogsInWithoutSettingPrefillEmail(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
 
-        $userService = $container->get(UserService::class);
-        $loginTokenRepository = $container->get(LoginTokenRepository::class);
-        $eventRepository = $container->get(EventRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $loginTokenRepository = $this->getService($app, LoginTokenRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
 
         $event = $eventRepository->get(1);
         $user = $userService->registerEmailUser('happy-path@example.com', $event);
@@ -146,14 +142,5 @@ class InvalidLoginTokenTest extends AppTestCase
         $body = (string) $response->getBody();
         self::assertStringContainsString('id="form-email"', $body);
         self::assertStringContainsString('value=""', $body);
-    }
-
-    private function getContainerOrFail(App $app): ContainerInterface
-    {
-        $container = $app->getContainer();
-        if ($container === null) {
-            self::fail('container missing');
-        }
-        return $container;
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Dotenv\Dotenv;
 
@@ -19,7 +21,7 @@ return [
             'suffix' => '.sqlite',
             'charset' => 'utf8',
         ],
-		'postgresql' =>[
+		'postgresql' => [
 			'adapter' => 'pgsql',
 			'host' => $_ENV['DATABASE_HOST'],
 			'name' => $_ENV['POSTGRES_DB'],
@@ -28,4 +30,3 @@ return [
 		],
 	],
 ];
-

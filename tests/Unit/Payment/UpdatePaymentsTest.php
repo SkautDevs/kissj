@@ -56,7 +56,8 @@ class UpdatePaymentsTest extends TestCase
     {
         // deliberately not shouldIgnoreMissing(): an unexpected persist() must fail the test
         $this->bankPaymentRepository = Mockery::mock(BankPaymentRepository::class);
-        $this->paymentRepository = Mockery::mock(PaymentRepository::class)->shouldIgnoreMissing();
+        $this->paymentRepository = Mockery::mock(PaymentRepository::class);
+        $this->paymentRepository->shouldIgnoreMissing();
         $this->container = Mockery::mock(ContainerInterface::class);
         $this->bankServiceProvider = new BankServiceProvider(new Banks(), $this->container);
     }
@@ -72,6 +73,8 @@ class UpdatePaymentsTest extends TestCase
             Mockery::mock(Logger::class),
             $metrics,
         );
+        $hub = Mockery::mock(Hub::class);
+        $hub->shouldIgnoreMissing();
         $userService = new UserService(
             Mockery::mock(LoginTokenRepository::class),
             Mockery::mock(ParticipantRepository::class),
@@ -88,7 +91,7 @@ class UpdatePaymentsTest extends TestCase
             $userService,
             $mailer,
             Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing(),
-            new Collector(Mockery::mock(Hub::class)->shouldIgnoreMissing()),
+            new Collector($hub),
             $metrics,
         ])->makePartial();
     }

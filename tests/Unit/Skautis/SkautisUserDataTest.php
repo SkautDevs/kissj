@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Skautis;
 
-use DateTimeImmutable;
+use kissj\Application\DateTimeUtils;
 use kissj\Participant\Country;
 use kissj\Participant\Gender;
 use kissj\Skautis\SkautisUserData;
@@ -37,7 +37,7 @@ class SkautisUserDataTest extends TestCase
             firstName: 'Jan',
             lastName: 'Novák',
             nickName: '',
-            birthday: new DateTimeImmutable('2000-01-01'),
+            birthday: DateTimeUtils::getDateTime('2000-01-01'),
             email: 'jan@example.com',
             phone: '',
             street: '',

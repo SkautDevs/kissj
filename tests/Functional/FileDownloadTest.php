@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -7,11 +9,9 @@ use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserRepository;
-use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class FileDownloadTest extends AppTestCase
@@ -22,13 +22,13 @@ class FileDownloadTest extends AppTestCase
     public function testOwnerCanDownloadOwnFile(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $uniqueFilename = md5(random_bytes(16));
         $user = $this->registerUser($container, 'owner-download@example.com');
         $this->createIstWithFile($container, $user, 'parentalConsent', $uniqueFilename);
 
-        $_SESSION['user']['id'] = $user->id;
+        $_SESSION['user'] = ['id' => $user->id];
         $app = $this->getTestApp(false);
 
         // Middleware passes (owner), file doesn't exist on disk — RuntimeException from LazyOpenStream
@@ -45,7 +45,7 @@ class FileDownloadTest extends AppTestCase
     public function testAdminCanDownloadAnyFile(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $uniqueFilename = md5(random_bytes(16));
         $ownerUser = $this->registerUser($container, 'file-owner@example.com');
@@ -53,11 +53,10 @@ class FileDownloadTest extends AppTestCase
 
         $adminUser = $this->createAdminUser($app);
         $adminUser->status = UserStatus::Open;
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $userRepository->persist($adminUser);
 
-        $_SESSION['user']['id'] = $adminUser->id;
+        $_SESSION['user'] = ['id' => $adminUser->id];
         $app = $this->getTestApp(false);
 
         // Middleware passes (admin), file doesn't exist on disk — RuntimeException from LazyOpenStream
@@ -74,18 +73,17 @@ class FileDownloadTest extends AppTestCase
     public function testNonOwnerNonAdminIsDenied(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $uniqueFilename = md5(random_bytes(16));
         $ownerUser = $this->registerUser($container, 'file-owner-deny@example.com');
         $this->createIstWithFile($container, $ownerUser, 'parentalConsent', $uniqueFilename);
 
         $otherUser = $this->registerUser($container, 'other-user@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $userService->createParticipantSetRole($otherUser, 'ist');
 
-        $_SESSION['user']['id'] = $otherUser->id;
+        $_SESSION['user'] = ['id' => $otherUser->id];
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
@@ -98,14 +96,13 @@ class FileDownloadTest extends AppTestCase
     public function testFileNotFoundRedirects(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'notfound-test@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $userService->createParticipantSetRole($user, 'ist');
 
-        $_SESSION['user']['id'] = $user->id;
+        $_SESSION['user'] = ['id' => $user->id];
         $app = $this->getTestApp(false);
 
         $uniqueFilename = md5(random_bytes(16));
@@ -119,15 +116,13 @@ class FileDownloadTest extends AppTestCase
     public function testSetUploadedFileStoresAllFields(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'set-upload-test@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         $ist->setUploadedFile('parentalConsent', 'abc123.pdf', 'consent.pdf', 'application/pdf');
@@ -142,15 +137,13 @@ class FileDownloadTest extends AppTestCase
     public function testSetUploadedFileRejectsUnknownId(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'unknown-id-test@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         $this->expectException(\LogicException::class);
@@ -162,15 +155,13 @@ class FileDownloadTest extends AppTestCase
     public function testGetUploadedFilenameReturnsStoredValue(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'get-filename-test@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         self::assertNull($ist->getUploadedFilename('hospitalConsent'));
@@ -185,23 +176,20 @@ class FileDownloadTest extends AppTestCase
     public function testFindParticipantByUploadedFilename(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'find-by-file@example.com');
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         $uniqueFilename = md5(random_bytes(16));
         $ist->setUploadedFile('childWorkCert', $uniqueFilename, 'cert.pdf', 'application/pdf');
         $istRepository->persist($ist);
 
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
         $found = $participantRepository->findParticipantByUploadedFilename($uniqueFilename, $user->event);
         self::assertNotNull($found);
@@ -211,25 +199,15 @@ class FileDownloadTest extends AppTestCase
     public function testFindParticipantByUploadedFilenameReturnsNullForUnknown(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         $user = $this->registerUser($container, 'find-unknown@example.com');
 
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
         $uniqueFilename = md5(random_bytes(16));
         $found = $participantRepository->findParticipantByUploadedFilename($uniqueFilename, $user->event);
         self::assertNull($found);
-    }
-
-    private function getContainer(App $app): ContainerInterface
-    {
-        $container = $app->getContainer();
-        if ($container === null) {
-            throw new \RuntimeException('Container is null');
-        }
-        return $container;
     }
 
     private function registerUser(ContainerInterface $container, string $email): User

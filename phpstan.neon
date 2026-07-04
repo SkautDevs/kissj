@@ -2,7 +2,7 @@ parameters:
 	level: 10
 	paths:
 		- src
-		#- tests
+		- tests
 	excludePaths:
 		- tests/temp/*
 	ignoreErrors:

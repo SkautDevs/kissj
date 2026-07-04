@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -9,7 +11,6 @@ use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantService;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class UpdateEditableAfterLockFieldsTest extends AppTestCase
@@ -19,16 +20,13 @@ class UpdateEditableAfterLockFieldsTest extends AppTestCase
     public function testOnlyEditableFieldsAreUpdated(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
-        $user = $this->registerUser($container, 'after-lock-test@example.com');
+        $user = $this->registerUser($app->getContainer(), 'after-lock-test@example.com');
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        /** @var IstRepository $istRepository */
-        $istRepository = $container->get(IstRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
         $ist = $istRepository->get($participant->id);
 
         $ist->firstName = 'Original';
@@ -68,8 +66,7 @@ class UpdateEditableAfterLockFieldsTest extends AppTestCase
             'gender' => 'other',
         ];
 
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
         $participantService->updateEditableAfterLockFields($ist, $params, $editableItems);
 
         $refreshed = $istRepository->get($ist->id);
@@ -82,16 +79,6 @@ class UpdateEditableAfterLockFieldsTest extends AppTestCase
         self::assertSame('Original', $refreshed->firstName);
         self::assertSame('Name', $refreshed->lastName);
         self::assertSame('man', $refreshed->gender);
-    }
-
-    private function getContainer(App $app): ContainerInterface
-    {
-        $container = $app->getContainer();
-        if ($container === null) {
-            throw new \RuntimeException('Container is null');
-        }
-
-        return $container;
     }
 
     private function registerUser(ContainerInterface $container, string $email): \kissj\User\User

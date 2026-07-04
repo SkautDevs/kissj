@@ -28,3 +28,4 @@ deploy/prereqs
 *.swp
 *.swo
 *~
+.php-cs-fixer.cache

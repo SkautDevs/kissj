@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -10,7 +12,6 @@ use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
-use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
 
 class ExportTest extends AppTestCase
@@ -18,24 +19,16 @@ class ExportTest extends AppTestCase
     public function testExportMedicalData(): void
     {
         $app = $this->getTestApp();
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
 
-        /** @var ExportService $exportService */
-        $exportService = $container->get(ExportService::class);
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
-        /** @var PatrolLeaderRepository $patrolLeaderRepository */
-        $patrolLeaderRepository = $container->get(PatrolLeaderRepository::class);
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $exportService = $this->getService($app, ExportService::class);
+        $userService = $this->getService($app, UserService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $testEvent = $eventRepository->get(1);
-        
+
         // Increase capacity to allow new patrol leaders
         $testEvent->maximalClosedPatrolsCount = 100;
         $eventRepository->persist($testEvent);
@@ -47,7 +40,9 @@ class ExportTest extends AppTestCase
             $participant = $userService->createParticipantSetRole($user, 'pl');
             // Then get it as PatrolLeader from repository
             $patrolLeader = $patrolLeaderRepository->get($participant->id);
-            $participantService->addParamsIntoParticipant($patrolLeader, [
+            $participantService->addParamsIntoParticipant(
+                $patrolLeader,
+                [
                     'patrolName' => 'my great patrol no.' . $i,
                     'firstName' => 'leader' . $i,
                     'lastName' => 'leaderový',
@@ -63,7 +58,7 @@ class ExportTest extends AppTestCase
                     'notes' => 'some note',
                 ]
             );
-            
+
             // Set user as Paid (export only includes Paid participants)
             $user->status = UserStatus::Paid;
             $userRepository->persist($user);
@@ -74,13 +69,13 @@ class ExportTest extends AppTestCase
 
         // First row is header, rest are data rows
         // The exact count depends on existing data in the test database
-        $this->assertGreaterThanOrEqual(11, count($rows), 'Should have at least header + 10 created rows');
+        self::assertGreaterThanOrEqual(11, count($rows), 'Should have at least header + 10 created rows');
 
         // Check header row exists (columns: id, role, status, contingent, name, surname, ...)
-        $this->assertIsArray($rows[0]);
-        $this->assertSame('name', $rows[0][4]);
-        $this->assertSame('surname', $rows[0][5]);
-        
+        self::assertIsArray($rows[0]);
+        self::assertSame('name', $rows[0][4]);
+        self::assertSame('surname', $rows[0][5]);
+
         // Find our created test data by looking for 'leaderový' surname (column index 5)
         $foundLeader0 = false;
         $foundLeader1 = false;
@@ -92,7 +87,7 @@ class ExportTest extends AppTestCase
                 $foundLeader1 = true;
             }
         }
-        $this->assertTrue($foundLeader0, 'Should find leader0 in export');
-        $this->assertTrue($foundLeader1, 'Should find leader1 in export');
+        self::assertTrue($foundLeader0, 'Should find leader0 in export');
+        self::assertTrue($foundLeader1, 'Should find leader1 in export');
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -11,11 +13,11 @@ class BaseTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $responseRoot = $app->handle($this->createRequest('/'));
-        $this->assertEquals(301, $responseRoot->getStatusCode());
+        self::assertEquals(301, $responseRoot->getStatusCode());
 
         $app = $this->getTestApp();
         $responseSpecific = $app->handle($this->createRequest('/v2/event/test-event-slug/login'));
-        $this->assertEquals(200, $responseSpecific->getStatusCode());
+        self::assertEquals(200, $responseSpecific->getStatusCode());
 
         $app = $this->getTestApp();
         $this->expectException(HttpNotFoundException::class);

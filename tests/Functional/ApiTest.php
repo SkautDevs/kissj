@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use DateTimeImmutable;
+use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryStatus;
 use kissj\Event\EventRepository;
 use kissj\Participant\Ist\IstRepository;
@@ -19,7 +21,6 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
 use Slim\Psr7\Request;
@@ -34,11 +35,11 @@ class ApiTest extends AppTestCase
     public function testEntryWithInvalidEntryCode(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+        $container = $app->getContainer();
+
         // Set up event with API keys
         $this->setupEventApiKeys($container);
-        
+
         $request = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/nonexistent-code',
             'POST',
@@ -48,6 +49,7 @@ class ApiTest extends AppTestCase
 
         self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
         self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
         self::assertEquals('participant not found', $body['reason']);
     }
@@ -55,7 +57,7 @@ class ApiTest extends AppTestCase
     public function testEntryWithInvalidEventSecret(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
         // Set up event and create a participant with entry code
         $this->setupEventApiKeys($container);
@@ -70,6 +72,7 @@ class ApiTest extends AppTestCase
 
         self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
         self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
         self::assertEquals('invalid event secret', $body['reason']);
     }
@@ -77,12 +80,12 @@ class ApiTest extends AppTestCase
     public function testEntryFirstTime(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+        $container = $app->getContainer();
+
         // Set up event and create a participant
         $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
-        
+
         $request = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/' . $participant->entryCode,
             'POST',
@@ -92,6 +95,7 @@ class ApiTest extends AppTestCase
 
         self::assertEquals(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
         self::assertEquals(EntryStatus::ENTRY_STATUS_VALID->value, $body['status']);
         self::assertArrayHasKey('fullName', $body);
         self::assertArrayHasKey('email', $body);
@@ -100,12 +104,12 @@ class ApiTest extends AppTestCase
     public function testEntrySecondTime(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
-        
+        $container = $app->getContainer();
+
         // Set up event and create a participant
         $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
-        
+
         // First entry
         $request1 = $this->createJsonRequest(
             self::TEST_PREFIX_URL . '/entry/code/' . $participant->entryCode,
@@ -125,17 +129,9 @@ class ApiTest extends AppTestCase
 
         self::assertEquals(200, $response2->getStatusCode());
         $body = json_decode((string)$response2->getBody(), true);
+        self::assertIsArray($body);
         self::assertEquals(EntryStatus::ENTRY_STATUS_USED->value, $body['status']);
         self::assertArrayHasKey('entryDateTime', $body);
-    }
-
-    private function getContainer(App $app): ContainerInterface
-    {
-        $container = $app->getContainer();
-        if ($container === null) {
-            throw new RuntimeException('Container is null');
-        }
-        return $container;
     }
 
     /**
@@ -149,14 +145,14 @@ class ApiTest extends AppTestCase
         if ($handle === false) {
             throw new RuntimeException('opening php://temp failed');
         }
-        
+
         // Write JSON to the stream
         fwrite($handle, json_encode($jsonData, JSON_THROW_ON_ERROR));
         rewind($handle);
-        
+
         $stream = (new StreamFactory())->createStreamFromResource($handle);
         $headers = new Headers(['Content-Type' => 'application/json']);
-        
+
         return new Request($method, $uri, $headers, [], [], $stream);
     }
 
@@ -181,21 +177,21 @@ class ApiTest extends AppTestCase
         $eventRepository = $container->get(EventRepository::class);
         /** @var IstRepository $istRepository */
         $istRepository = $container->get(IstRepository::class);
-        
+
         $event = $eventRepository->findBySlug('test-event-slug');
         if ($event === null) {
             throw new RuntimeException('Test event not found');
         }
-        
+
         // Increase IST capacity
         $event->maximalClosedIstsCount = 100;
         $eventRepository->persist($event);
-        
+
         // Create user and IST participant
         $email = 'entry-test-' . bin2hex(random_bytes(4)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'ist');
-        
+
         // Get as IST and fill required fields
         $ist = $istRepository->get($participant->id);
         $ist->firstName = 'Entry';
@@ -203,16 +199,16 @@ class ApiTest extends AppTestCase
         $ist->nickname = 'Tester';
         $ist->permanentResidence = '123 Test St';
         $ist->gender = 'male';
-        $ist->birthDate = new DateTimeImmutable('1990-01-01');
+        $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $istRepository->persist($ist);
-        
+
         // Set user as paid (required for entry)
         $user->status = UserStatus::Paid;
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
         $userRepository->persist($user);
-        
+
         return $istRepository->get($ist->id);
     }
 
@@ -230,7 +226,7 @@ class ApiTest extends AppTestCase
     public function testEntryListWithInvalidTokenReturns401(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
         $this->setupEventApiKeys($container);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'wrong-token');
@@ -243,7 +239,7 @@ class ApiTest extends AppTestCase
     public function testEntryListWithValidTokenReturns200(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
         $this->setupEventApiKeys($container);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
@@ -251,16 +247,15 @@ class ApiTest extends AppTestCase
 
         self::assertEquals(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
         self::assertArrayHasKey('eventName', $body);
     }
 
     public function testWrongScopeKeyReturns401(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         if ($event !== null) {
             $event->apiKeyDeals = 'deals-only-key';
@@ -279,16 +274,14 @@ class ApiTest extends AppTestCase
     {
         // First app instance to set up data
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         self::assertNotNull($event);
 
         // Create admin user
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $adminUser = new User();
         $adminUser->event = $event;
         $adminUser->role = UserRole::Admin;
@@ -302,14 +295,13 @@ class ApiTest extends AppTestCase
 
         // Log in as admin (set session) BEFORE creating new app instance
         // UserRegeneration reads session at construction time
-        $_SESSION['user']['id'] = $adminUser->id;
+        $_SESSION['user'] = ['id' => $adminUser->id];
 
         // Close session so it can be re-opened by the new app instance
         session_write_close();
 
         // Get fresh app instance so UserRegeneration picks up the session
         $app = $this->getTestApp(false);
-        $container = $this->getContainer($app);
 
         // Make request to change admin note
         $noteText = 'This is a test admin note';
@@ -327,9 +319,9 @@ class ApiTest extends AppTestCase
         self::assertEquals($noteText, $body['adminNote']);
 
         // Verify note was persisted
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $container->get(ParticipantRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
         $updatedParticipant = $participantRepository->get($participant->id);
+        self::assertInstanceOf(Participant::class, $updatedParticipant);
         self::assertEquals($noteText, $updatedParticipant->adminNote);
     }
 
@@ -337,27 +329,24 @@ class ApiTest extends AppTestCase
     {
         // First app instance to set up data
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         self::assertNotNull($event);
 
         // Create regular (non-admin) user
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
+        $userService = $this->getService($app, UserService::class);
         $regularUser = $userService->registerEmailUser('regular-user@example.com', $event);
         $regularUser->role = UserRole::Participant;
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $userRepository->persist($regularUser);
 
         // Create a participant
         $participant = $this->createPaidParticipant($container);
 
         // Log in as regular user BEFORE creating new app instance
-        $_SESSION['user']['id'] = $regularUser->id;
+        $_SESSION['user'] = ['id' => $regularUser->id];
 
         // Close session so it can be re-opened by the new app instance
         session_write_close();
@@ -380,16 +369,14 @@ class ApiTest extends AppTestCase
     public function testConfirmPayment(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         self::assertNotNull($event);
 
         // Create admin user
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $adminUser = new User();
         $adminUser->event = $event;
         $adminUser->role = UserRole::Admin;
@@ -400,17 +387,15 @@ class ApiTest extends AppTestCase
 
         // Create participant and a waiting payment for that participant
         $participant = $this->createPaidParticipant($container);
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $payment = $paymentService->createAndPersistNewEventPayment($participant);
         self::assertEquals(PaymentStatus::Waiting, $payment->status);
 
         // Log in as admin BEFORE creating new app instance
-        $_SESSION['user']['id'] = $adminUser->id;
+        $_SESSION['user'] = ['id' => $adminUser->id];
         session_write_close();
 
         $app = $this->getTestApp(false);
-        $container = $this->getContainer($app);
 
         $request = $this->createFormRequest(
             '/v3/event/test-event-slug/admin/payments/confirmPayment/' . $payment->id,
@@ -424,8 +409,7 @@ class ApiTest extends AppTestCase
         self::assertSame([], $body);
 
         // Verify payment status flipped to Paid
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
         $updatedPayment = $paymentRepository->getById($payment->id, $event);
         self::assertEquals(PaymentStatus::Paid, $updatedPayment->status);
     }
@@ -433,16 +417,14 @@ class ApiTest extends AppTestCase
     public function testConfirmPaymentAlreadyPaid(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainer($app);
+        $container = $app->getContainer();
 
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug('test-event-slug');
         self::assertNotNull($event);
 
         // Create admin user
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
         $adminUser = new User();
         $adminUser->event = $event;
         $adminUser->role = UserRole::Admin;
@@ -454,15 +436,13 @@ class ApiTest extends AppTestCase
         // Create participant + payment, then mark payment as Paid via repository to avoid
         // triggering the mailer (MailerSettings.event is only initialized by middleware on a real request)
         $participant = $this->createPaidParticipant($container);
-        /** @var PaymentService $paymentService */
-        $paymentService = $container->get(PaymentService::class);
+        $paymentService = $this->getService($app, PaymentService::class);
         $payment = $paymentService->createAndPersistNewEventPayment($participant);
         $payment->status = PaymentStatus::Paid;
-        /** @var PaymentRepository $paymentRepository */
-        $paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
         $paymentRepository->persist($payment);
 
-        $_SESSION['user']['id'] = $adminUser->id;
+        $_SESSION['user'] = ['id' => $adminUser->id];
         session_write_close();
 
         $app = $this->getTestApp(false);
@@ -513,7 +493,7 @@ class ApiTest extends AppTestCase
         }
         $stream = (new StreamFactory())->createStreamFromResource($handle);
         $headers = new Headers(['Content-Type' => 'application/x-www-form-urlencoded']);
-        
+
         $request = new Request($method, $uri, $headers, [], [], $stream);
         return $request->withParsedBody($formData);
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -9,7 +11,6 @@ use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class PatrolAddParticipantTest extends AppTestCase
@@ -20,14 +21,12 @@ class PatrolAddParticipantTest extends AppTestCase
     public function testShowAddParticipantDoesNotPersist(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
-        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($container, 'pl-show-test@example.com');
+        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($app->getContainer(), 'pl-show-test@example.com');
+        $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
-        $_SESSION['user']['id'] = $leaderUser->id;
+        $_SESSION['user'] = ['id' => $leaderUser->id];
         $app = $this->getTestApp(false);
 
-        /** @var PatrolParticipantRepository $patrolParticipantRepository */
-        $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
         $initialCount = count(
             $patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader),
         );
@@ -46,14 +45,12 @@ class PatrolAddParticipantTest extends AppTestCase
     public function testAddParticipantPersistsSubmittedData(): void
     {
         $app = $this->getTestApp();
-        $container = $this->getContainerOrFail($app);
-        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($container, 'pl-post-test@example.com');
+        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($app->getContainer(), 'pl-post-test@example.com');
+        $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
-        $_SESSION['user']['id'] = $leaderUser->id;
+        $_SESSION['user'] = ['id' => $leaderUser->id];
         $app = $this->getTestApp(false);
 
-        /** @var PatrolParticipantRepository $patrolParticipantRepository */
-        $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
         $initialCount = count(
             $patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader),
         );
@@ -74,15 +71,6 @@ class PatrolAddParticipantTest extends AppTestCase
         $newParticipant = end($afterParticipants);
         self::assertSame('Alice', $newParticipant->firstName);
         self::assertSame('Anderson', $newParticipant->lastName);
-    }
-
-    private function getContainerOrFail(App $app): ContainerInterface
-    {
-        $container = $app->getContainer();
-        if ($container === null) {
-            throw new \RuntimeException('Container is null');
-        }
-        return $container;
     }
 
     /**

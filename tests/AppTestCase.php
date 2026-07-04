@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests;
 
@@ -72,6 +74,9 @@ class AppTestCase extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @return App<ContainerInterface>
+     */
     protected function getTestApp(bool $freshInit = true): App
     {
         if ($freshInit) {
@@ -82,7 +87,7 @@ class AppTestCase extends TestCase
                 session_unset();
                 session_destroy();
             }
-            
+
             // Clear session superglobal
             $_SESSION = [];
 
@@ -153,7 +158,21 @@ class AppTestCase extends TestCase
             mkdir($mpdfTempDir, 0777, true);
         }
     }
-    
+
+    /**
+     * @template T of object
+     * @param App<ContainerInterface> $app
+     * @param class-string<T> $service
+     * @return T
+     */
+    protected function getService(App $app, string $service): object
+    {
+        $instance = $app->getContainer()->get($service);
+        self::assertInstanceOf($service, $instance);
+
+        return $instance;
+    }
+
     protected function resetEventToDefault(ContainerInterface $container, string $slug = 'test-event-slug'): void
     {
         /** @var Connection $connection */
@@ -161,25 +180,22 @@ class AppTestCase extends TestCase
         $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', 'default', $slug);
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
     protected function createAdminUser(App $app): User
     {
-        /** @var ContainerInterface $container */
-        $container = $app->getContainer();
-
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $testEvent = $eventRepository->get(1);
-        
+
         $user = new User();
         $user->event = $testEvent;
         $user->role = UserRole::Admin;
         $user->email = 'admin@example.com';
         $user->loginType = UserLoginType::Email;
         $userRepository->persist($user);
-        
+
         return $user;
     }
 }

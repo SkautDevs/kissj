@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Payment;
 
@@ -62,13 +64,13 @@ class PaymentServiceTest extends TestCase
         for ($i = 0; $i < 100; $i++) {
             $prefix = random_int(1, 9999);
             $variableNumber = $paymentService->generateVariableNumber($prefix);
-            $this->assertEquals(10, strlen($variableNumber));
-            $this->assertEquals($prefix, substr($variableNumber, 0, strlen((string)$prefix)));
+            self::assertEquals(10, strlen($variableNumber));
+            self::assertEquals($prefix, substr($variableNumber, 0, strlen((string)$prefix)));
         }
 
         for ($i = 0; $i < 10; $i++) {
             $variableNumber = $paymentService->generateVariableNumber(null);
-            $this->assertEquals(10, strlen($variableNumber));
+            self::assertEquals(10, strlen($variableNumber));
         }
     }
 }

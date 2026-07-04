@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Payment;
 
@@ -15,7 +17,7 @@ class PaymentTest extends TestCase
         Payment $payment,
         string $expectedQrCode,
     ): void {
-        $this->assertSame($expectedQrCode, $payment->getQrPaymentString());
+        self::assertSame($expectedQrCode, $payment->getQrPaymentString());
     }
 
     /**

@@ -22,7 +22,8 @@ class TranslatorFactoryTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (glob($this->fixtureDir . '/*') ?: [] as $file) {
+        $files = glob($this->fixtureDir . '/*');
+        foreach ($files === false ? [] : $files as $file) {
             unlink($file);
         }
         rmdir($this->fixtureDir);

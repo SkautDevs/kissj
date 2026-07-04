@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
@@ -52,19 +55,17 @@ class BadgeTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
 
         $this->makeIst($container, $event, 'paid', 'Zebra', UserStatus::Paid);
         $this->makeIst($container, $event, 'approved', 'Alpha', UserStatus::Approved);
         $this->makeIst($container, $event, 'open', 'OpenNick', UserStatus::Open);
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
 
-        $nicknames = array_map(fn ($p) => $p->nickname, $participants);
+        $nicknames = array_map(fn (Participant $p) => $p->nickname, $participants);
         self::assertContains('Alpha', $nicknames);
         self::assertContains('Zebra', $nicknames);
         self::assertNotContains('OpenNick', $nicknames);
@@ -78,62 +79,56 @@ class BadgeTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
 
-        $this->makeIst($container, $event, 'sortZebra', 'ZebraSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortLower', 'alphaSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortCzech', 'ŠimonSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortNoNick', '', UserStatus::Paid);
+        // unique per run: the shared test database keeps participants from previous runs,
+        // and same-email leftovers would add extra elements and break the strict order assertion
+        $run = bin2hex(random_bytes(8));
+        $this->makeIst($container, $event, 'sortZebra-' . $run, 'ZebraSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortLower-' . $run, 'alphaSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortCzech-' . $run, 'ŠimonSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortNoNick-' . $run, '', UserStatus::Paid);
 
         $myEmails = [
-            'badge-sortZebra@example.com',
-            'badge-sortLower@example.com',
-            'badge-sortCzech@example.com',
-            'badge-sortNoNick@example.com',
+            'badge-sortZebra-' . $run . '@example.com',
+            'badge-sortLower-' . $run . '@example.com',
+            'badge-sortCzech-' . $run . '@example.com',
+            'badge-sortNoNick-' . $run . '@example.com',
         ];
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
-        // dedupe because the shared test database keeps participants from previous runs
-        $displayedNames = array_values(array_unique(array_map(
-            fn ($p) => $p->nickname ?: trim($p->firstName . ' ' . $p->lastName),
-            array_filter($participants, fn ($p) => in_array($p->email, $myEmails, true)),
-        )));
+        $orderedEmails = array_values(array_map(
+            fn (Participant $p) => $p->email,
+            array_filter($participants, fn (Participant $p) => in_array($p->email, $myEmails, true)),
+        ));
 
         // badges must come out in human alphabetical order of the name printed on them:
-        // case-insensitive, Czech collation (Š between S and T), nickname-less ones by full name
+        // case-insensitive, Czech collation (Š between S and T), nickname-less ones by full name —
+        // alphaSort < FirstsortNoNick... LastsortNoNick... < ŠimonSort < ZebraSort
         self::assertSame([
-            'alphaSort',
-            'FirstsortNoNick LastsortNoNick',
-            'ŠimonSort',
-            'ZebraSort',
-        ], $displayedNames);
+            'badge-sortLower-' . $run . '@example.com',
+            'badge-sortNoNick-' . $run . '@example.com',
+            'badge-sortCzech-' . $run . '@example.com',
+            'badge-sortZebra-' . $run . '@example.com',
+        ], $orderedEmails);
     }
 
     public function testBadgesIncludePatrolMemberOfPaidLeaderExactlyOnce(): void
     {
         $app = $this->getTestApp();
-        $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
         $event->maximalClosedPatrolsCount = 100;
         $event->maximalPatrolParticipantsCount = 100;
         $eventRepository->persist($event);
 
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
-        /** @var ParticipantService $participantService */
-        $participantService = $container->get(ParticipantService::class);
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        /** @var PatrolLeaderRepository $patrolLeaderRepository */
-        $patrolLeaderRepository = $container->get(PatrolLeaderRepository::class);
-        /** @var PatrolParticipantRepository $patrolParticipantRepository */
-        $patrolParticipantRepository = $container->get(PatrolParticipantRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
+        $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
         $plUser = $userService->registerEmailUser('badge-patrol-pl@example.com', $event);
         $plParticipant = $userService->createParticipantSetRole($plUser, 'pl');
@@ -167,41 +162,37 @@ class BadgeTest extends AppTestCase
         $ppUser->status = UserStatus::Paid;
         $userRepository->persist($ppUser);
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges(
             $event,
             [ParticipantRole::PatrolLeader, ParticipantRole::PatrolParticipant],
         );
-        $ids = array_map(fn ($p) => $p->id, $participants);
+        $ids = array_map(fn (Participant $p) => $p->id, $participants);
 
         // the paid leader is included, and the patrol member appears exactly once despite the
         // leader-status expansion returning them twice (dedupe by id)
         self::assertContains($plParticipant->id, $ids);
-        self::assertSame(1, count(array_keys($ids, $ppParticipant->id, true)));
+        self::assertCount(1, array_keys($ids, $ppParticipant->id, true));
     }
 
     public function testGenerateBadgesProducesPdfContainingNicknameAndQr(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
         $this->makeIst($container, $event, 'pdf', 'PdfNick', UserStatus::Paid);
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
         $mine = array_slice(
-            array_values(array_filter($participants, fn ($p) => $p->nickname === 'PdfNick')),
+            array_values(array_filter($participants, fn (Participant $p) => $p->nickname === 'PdfNick')),
             0,
             1,
         );
         self::assertCount(1, $mine);
 
-        /** @var PdfGenerator $pdf */
-        $pdf = $container->get(PdfGenerator::class);
+        $pdf = $this->getService($app, PdfGenerator::class);
 
         $html = $pdf->buildBadgesHtml($event, $mine);
         self::assertStringContainsString('PdfNick', $html); // nickname in the name band
@@ -221,23 +212,20 @@ class BadgeTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
         $this->makeIst($container, $event, 'noNick', '', UserStatus::Paid);
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
         $mine = array_slice(
-            array_values(array_filter($participants, fn ($p) => $p->firstName === 'FirstnoNick')),
+            array_values(array_filter($participants, fn (Participant $p) => $p->firstName === 'FirstnoNick')),
             0,
             1,
         );
         self::assertCount(1, $mine);
 
-        /** @var PdfGenerator $pdf */
-        $pdf = $container->get(PdfGenerator::class);
+        $pdf = $this->getService($app, PdfGenerator::class);
 
         // without a nickname the full name moves to the big line, but the second line must still
         // render (as &nbsp;) so the colored name band keeps the same height as badges with a nickname
@@ -249,13 +237,10 @@ class BadgeTest extends AppTestCase
     public function testGenerateBlankBadgesProducesRequestedCount(): void
     {
         $app = $this->getTestApp();
-        $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
 
-        /** @var PdfGenerator $pdf */
-        $pdf = $container->get(PdfGenerator::class);
+        $pdf = $this->getService($app, PdfGenerator::class);
 
         $html = $pdf->buildBlankBadgesHtml($event, 5);
         self::assertSame(5, substr_count($html, 'class="badge badge--blank"'));
@@ -268,23 +253,20 @@ class BadgeTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
         $this->makeIst($container, $event, 'crisis', 'CrisisNick', UserStatus::Paid);
 
-        /** @var ParticipantRepository $repo */
-        $repo = $container->get(ParticipantRepository::class);
+        $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
         $mine = array_slice(
-            array_values(array_filter($participants, fn ($p) => $p->nickname === 'CrisisNick')),
+            array_values(array_filter($participants, fn (Participant $p) => $p->nickname === 'CrisisNick')),
             0,
             1,
         );
         self::assertCount(1, $mine);
 
-        /** @var PdfGenerator $pdf */
-        $pdf = $container->get(PdfGenerator::class);
+        $pdf = $this->getService($app, PdfGenerator::class);
 
         $html = $pdf->buildBadgesHtml($event, $mine);
         self::assertStringNotContainsString('class="badge-crisis"', $html);
