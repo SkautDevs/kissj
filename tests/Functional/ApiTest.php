@@ -188,7 +188,7 @@ class ApiTest extends AppTestCase
         $eventRepository->persist($event);
 
         // Create user and IST participant
-        $email = 'entry-test-' . bin2hex(random_bytes(4)) . '@example.com';
+        $email = 'entry-test@example.com';
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 

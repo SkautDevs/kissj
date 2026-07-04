@@ -10,6 +10,10 @@ class ImageUtils
 {
     public static function getLocalImageInBase64(string $pathWithLeadingSlash): string
     {
+        if ($pathWithLeadingSlash === '') {
+            return '';
+        }
+
         try {
             $logo = file_get_contents(__DIR__ . '/../../public' . $pathWithLeadingSlash);
         } catch (Throwable) {

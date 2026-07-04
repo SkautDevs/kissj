@@ -24,22 +24,18 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
 
         // korbo event type has badge generation disabled
         $connection->query('UPDATE event SET event_type = %s WHERE id = %i', 'korbo', 1);
-        try {
-            $event = $eventRepository->get(1);
+        $event = $eventRepository->get(1);
 
-            $middleware = $this->getService($app, BadgesAllowedOnlyMiddleware::class);
-            $handler = new RequestHandlerSpy();
+        $middleware = $this->getService($app, BadgesAllowedOnlyMiddleware::class);
+        $handler = new RequestHandlerSpy();
 
-            $response = $middleware->process($this->createRequestWithRouting($app, $event), $handler);
+        $response = $middleware->process($this->createRequestWithRouting($app, $event), $handler);
 
-            self::assertFalse($handler->called);
-            self::assertSame(302, $response->getStatusCode());
-            $expectedLocation = $app->getRouteCollector()->getRouteParser()
-                ->urlFor('admin-dashboard', ['eventSlug' => $event->slug]);
-            self::assertSame($expectedLocation, $response->getHeaderLine('Location'));
-        } finally {
-            $this->resetEventToDefault($app->getContainer());
-        }
+        self::assertFalse($handler->called);
+        self::assertSame(302, $response->getStatusCode());
+        $expectedLocation = $app->getRouteCollector()->getRouteParser()
+            ->urlFor('admin-dashboard', ['eventSlug' => $event->slug]);
+        self::assertSame($expectedLocation, $response->getHeaderLine('Location'));
     }
 
     public function testPassesThroughWhenEventTypeAllowsBadges(): void
@@ -47,8 +43,7 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
 
-        // default event type has badge generation allowed
-        $this->resetEventToDefault($app->getContainer());
+        // fresh DB seeds event 1 with the default event type, which allows badge generation
         $event = $eventRepository->get(1);
 
         $middleware = $this->getService($app, BadgesAllowedOnlyMiddleware::class);
