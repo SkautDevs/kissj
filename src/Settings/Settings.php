@@ -6,6 +6,7 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
+use Dotenv\Exception\ValidationException;
 use kissj\Application\HealthController;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -129,7 +130,7 @@ class Settings
     /**
      * @return array<string, mixed>
      */
-    public function getContainerDefinition(string $envPath, string $envFilename): array
+    public function getContainerDefinition(string $envPath, string $envFilename, string $tempPath): array
     {
         $_ENV['APP_NAME'] = 'KISSJ'; // do not want to be changed soon (:
 
@@ -139,6 +140,14 @@ class Settings
             $dotenv->safeLoad();
         }
         $this->validateAllSettings($dotenv);
+
+        if (($_ENV['DB_TYPE'] ?? 'postgresql') === 'sqlite' && $envFilename !== 'env.testing') {
+            throw new ValidationException('DB_TYPE=sqlite is supported only for the test suite (env.testing).');
+        }
+
+        // computed here (not in the Connection closure) because compiled DI cannot capture closure vars;
+        // default only - must match the phinx target in tests/phinxConfiguration.php
+        $_ENV['DATABASE_PATH'] ??= $tempPath . '/db_tests.sqlite';
 
         // init every time for capturing performance
         /** @var array<string, string> $_ENV */
@@ -241,13 +250,22 @@ class Settings
         ];
 
         $container[Connection::class] = function () {
-            $connection = new Connection([
-                'driver' => 'postgre',
-                'host' => $_ENV['DATABASE_HOST'],
-                'username' => $_ENV['POSTGRES_USER'],
-                'password' => $_ENV['POSTGRES_PASSWORD'],
-                'database' => $_ENV['POSTGRES_DB'],
-            ]);
+            $connection = match ($_ENV['DB_TYPE'] ?? 'postgresql') {
+                'sqlite' => new Connection([
+                    'driver' => 'sqlite',
+                    'database' => $_ENV['DATABASE_PATH'],
+                    'formatDateTime' => 'Y-m-d H:i:s', // match the ISO format phinx writes so datetimes round-trip
+                    'formatDate' => 'Y-m-d',
+                    'onConnect' => ['PRAGMA foreign_keys = ON'],// parity with postgres, which always enforces FKs
+                ]),
+                default => new Connection([
+                    'driver' => 'postgre',
+                    'host' => $_ENV['DATABASE_HOST'],
+                    'username' => $_ENV['POSTGRES_USER'],
+                    'password' => $_ENV['POSTGRES_PASSWORD'],
+                    'database' => $_ENV['POSTGRES_DB'],
+                ]),
+            };
             $connection->onEvent[] = new DibiSpanListener();
 
             return $connection;
@@ -420,6 +438,7 @@ class Settings
         $dotenv->required('S3_SECRET');
         $dotenv->required('S3_REGION');
         $dotenv->required('S3_ENDPOINT');
+        $dotenv->ifPresent('DB_TYPE')->allowedValues(['postgresql', 'sqlite']);
         $dotenv->required('DATABASE_HOST');
         $dotenv->required('POSTGRES_USER');
         $dotenv->required('POSTGRES_PASSWORD');

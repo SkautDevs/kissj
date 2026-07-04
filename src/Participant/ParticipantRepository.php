@@ -249,7 +249,7 @@ class ParticipantRepository extends Repository
                 UserStatus::Paid,
             ],
             $event,
-            orders: [new Order('id')],
+            orders: [new Order('participant.id')],
             limit: $limit,
         );
 
@@ -569,7 +569,7 @@ class ParticipantRepository extends Repository
 
         $qb->where('participant.role IN %in', $participantRoles);
 
-        $this->addOrdersBy($qb, [new Order('id')]);
+        $this->addOrdersBy($qb, [new Order('participant.id')]);
 
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
@@ -610,7 +610,7 @@ class ParticipantRepository extends Repository
 
         $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
 
-        $this->addOrdersBy($qb, [new Order('id')]);
+        $this->addOrdersBy($qb, [new Order('participant.id')]);
 
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();

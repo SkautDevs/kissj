@@ -1,7 +1,0 @@
-<phpunit bootstrap="tests/bootstrap.php" backupGlobals="false">
-    <testsuites>
-        <testsuite name="kissj">
-            <directory>tests</directory>
-        </testsuite>
-    </testsuites>
-</phpunit>

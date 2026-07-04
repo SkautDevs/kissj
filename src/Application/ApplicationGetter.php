@@ -85,6 +85,7 @@ class ApplicationGetter
         $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
             $envPath,
             $envFilename,
+            $tempPath,
         ));
         $containerBuilder->useAttributes(true);
         if ($_ENV['DEBUG'] === 'false') {

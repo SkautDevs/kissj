@@ -263,33 +263,22 @@ class ParticipantJourneyTest extends AppTestCase
         $app = $this->getTestApp();
         $email = 'http-test@example.com';
 
-        // Step 1: Request login page (may redirect if event not found)
         $responseLoginPage = $app->handle($this->createRequest(self::BASE_URL . '/login'));
-        // Accept either 200 (login page shown) or 302 (redirect to event list if event not configured)
-        self::assertTrue(
-            in_array($responseLoginPage->getStatusCode(), [200, 302], true),
-            'Expected 200 or 302, got ' . $responseLoginPage->getStatusCode()
-        );
+        self::assertSame(200, $responseLoginPage->getStatusCode());
+        self::assertStringContainsString('form-email', (string)$responseLoginPage->getBody());
 
-        // If we got the login page, test the full flow
-        if ($responseLoginPage->getStatusCode() === 200) {
-            self::assertStringContainsString('form-email', (string)$responseLoginPage->getBody());
+        $app = $this->getTestApp(false);
+        $responseSubmitEmail = $app->handle($this->createRequest(
+            self::BASE_URL . '/login',
+            'POST',
+            ['email' => $email]
+        ));
+        self::assertSame(302, $responseSubmitEmail->getStatusCode());
 
-            // Step 2: Submit email
-            $app = $this->getTestApp(false);
-            $responseSubmitEmail = $app->handle($this->createRequest(
-                self::BASE_URL . '/login',
-                'POST',
-                ['email' => $email]
-            ));
-            self::assertSame(302, $responseSubmitEmail->getStatusCode());
-
-            // Step 3: Follow redirect to "link sent" page
-            $app = $this->getTestApp(false);
-            $linkSentUrl = $responseSubmitEmail->getHeaderLine('Location');
-            $responseLinkSent = $app->handle($this->createRequest($linkSentUrl));
-            self::assertSame(200, $responseLinkSent->getStatusCode());
-        }
+        $app = $this->getTestApp(false);
+        $linkSentUrl = $responseSubmitEmail->getHeaderLine('Location');
+        $responseLinkSent = $app->handle($this->createRequest($linkSentUrl));
+        self::assertSame(200, $responseLinkSent->getStatusCode());
     }
 
     /**
@@ -298,8 +287,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testDashboardRendersForIstWithoutDetails(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $email = 'dashboard-empty-test@example.com';
         $user = $this->registerUser($app, $email);
 
@@ -323,8 +310,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testDashboardRendersForIstWithDetails(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $email = 'dashboard-render-test@example.com';
         $user = $this->registerUser($app, $email);
 
@@ -451,8 +436,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testTroopLeaderWithParticipantsJourney(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         // Enable troop registrations for test event (limits are null by default = full)
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
@@ -656,8 +639,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSwapTroopLeaderWithParticipant(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
@@ -741,8 +722,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSwapTroopLeaderRejectsStatusMismatch(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
@@ -778,8 +757,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testSwapTroopLeaderRejectsNoTroopLeader(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
         self::assertNotNull($event);
@@ -924,8 +901,6 @@ class ParticipantJourneyTest extends AppTestCase
     public function testGuestWithNonzeroPriceCreatesPayment(): void
     {
         $app = $this->getTestApp();
-        $this->resetEventToDefault($app->getContainer());
-
         $email = 'guest-price-test@example.com';
         $user = $this->registerUser($app, $email);
 

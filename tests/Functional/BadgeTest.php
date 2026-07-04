@@ -51,6 +51,14 @@ class BadgeTest extends AppTestCase
         $userRepository->persist($user);
     }
 
+    // badge rendering embeds the event logo; a fresh test DB seeds logo_url as '' (unlike real
+    // events, which always have one configured), so give it a real file to encode
+    private function givePdfRenderedEventARealLogo(EventRepository $eventRepository, Event $event): void
+    {
+        $event->logoUrl = '/favicon-16x16.png';
+        $eventRepository->persist($event);
+    }
+
     public function testBadgeParticipantsIncludeOnlyApprovedAndPaidOrderedByNickname(): void
     {
         $app = $this->getTestApp();
@@ -65,14 +73,10 @@ class BadgeTest extends AppTestCase
         $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
 
-        $nicknames = array_map(fn (Participant $p) => $p->nickname, $participants);
-        self::assertContains('Alpha', $nicknames);
-        self::assertContains('Zebra', $nicknames);
-        self::assertNotContains('OpenNick', $nicknames);
-
-        $alphaIndex = array_search('Alpha', $nicknames, true);
-        $zebraIndex = array_search('Zebra', $nicknames, true);
-        self::assertLessThan($zebraIndex, $alphaIndex);
+        self::assertSame(
+            ['Alpha', 'Zebra'],
+            array_map(fn (Participant $p) => $p->nickname, $participants),
+        );
     }
 
     public function testBadgeParticipantsAreSortedNaturallyByDisplayedName(): void
@@ -82,37 +86,23 @@ class BadgeTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
 
-        // unique per run: the shared test database keeps participants from previous runs,
-        // and same-email leftovers would add extra elements and break the strict order assertion
-        $run = bin2hex(random_bytes(8));
-        $this->makeIst($container, $event, 'sortZebra-' . $run, 'ZebraSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortLower-' . $run, 'alphaSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortCzech-' . $run, 'ŠimonSort', UserStatus::Paid);
-        $this->makeIst($container, $event, 'sortNoNick-' . $run, '', UserStatus::Paid);
-
-        $myEmails = [
-            'badge-sortZebra-' . $run . '@example.com',
-            'badge-sortLower-' . $run . '@example.com',
-            'badge-sortCzech-' . $run . '@example.com',
-            'badge-sortNoNick-' . $run . '@example.com',
-        ];
+        $this->makeIst($container, $event, 'sortZebra', 'ZebraSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortLower', 'alphaSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortCzech', 'ŠimonSort', UserStatus::Paid);
+        $this->makeIst($container, $event, 'sortNoNick', '', UserStatus::Paid);
 
         $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
-        $orderedEmails = array_values(array_map(
-            fn (Participant $p) => $p->email,
-            array_filter($participants, fn (Participant $p) => in_array($p->email, $myEmails, true)),
-        ));
 
         // badges must come out in human alphabetical order of the name printed on them:
         // case-insensitive, Czech collation (Š between S and T), nickname-less ones by full name —
-        // alphaSort < FirstsortNoNick... LastsortNoNick... < ŠimonSort < ZebraSort
+        // alphaSort < FirstsortNoNick LastsortNoNick < ŠimonSort < ZebraSort
         self::assertSame([
-            'badge-sortLower-' . $run . '@example.com',
-            'badge-sortNoNick-' . $run . '@example.com',
-            'badge-sortCzech-' . $run . '@example.com',
-            'badge-sortZebra-' . $run . '@example.com',
-        ], $orderedEmails);
+            'badge-sortLower@example.com',
+            'badge-sortNoNick@example.com',
+            'badge-sortCzech@example.com',
+            'badge-sortZebra@example.com',
+        ], array_map(fn (Participant $p) => $p->email, $participants));
     }
 
     public function testBadgesIncludePatrolMemberOfPaidLeaderExactlyOnce(): void
@@ -181,6 +171,7 @@ class BadgeTest extends AppTestCase
         $container = $app->getContainer();
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
         $this->makeIst($container, $event, 'pdf', 'PdfNick', UserStatus::Paid);
 
         $repo = $this->getService($app, ParticipantRepository::class);
@@ -214,6 +205,7 @@ class BadgeTest extends AppTestCase
         $container = $app->getContainer();
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
         $this->makeIst($container, $event, 'noNick', '', UserStatus::Paid);
 
         $repo = $this->getService($app, ParticipantRepository::class);
@@ -239,6 +231,7 @@ class BadgeTest extends AppTestCase
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
 
         $pdf = $this->getService($app, PdfGenerator::class);
 
@@ -255,6 +248,7 @@ class BadgeTest extends AppTestCase
         $container = $app->getContainer();
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
         $this->makeIst($container, $event, 'crisis', 'CrisisNick', UserStatus::Paid);
 
         $repo = $this->getService($app, ParticipantRepository::class);

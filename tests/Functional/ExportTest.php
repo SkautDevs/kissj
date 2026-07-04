@@ -67,9 +67,8 @@ class ExportTest extends AppTestCase
         $admin = $this->createAdminUser($app);
         $rows = $exportService->healthDataToCSV($testEvent, $admin);
 
-        // First row is header, rest are data rows
-        // The exact count depends on existing data in the test database
-        self::assertGreaterThanOrEqual(11, count($rows), 'Should have at least header + 10 created rows');
+        // First row is header, rest are data rows; the fresh DB holds exactly the 10 created leaders
+        self::assertCount(11, $rows);
 
         // Check header row exists (columns: id, role, status, contingent, name, surname, ...)
         self::assertIsArray($rows[0]);
