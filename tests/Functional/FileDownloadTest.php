@@ -210,6 +210,41 @@ class FileDownloadTest extends AppTestCase
         self::assertNull($found);
     }
 
+    public function testDownloadResponseCarriesSecurityHeadersAndSanitizedDisposition(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+
+        $storedFilename = md5(random_bytes(16)); // 32-hex, passes the route filename guard
+        $user = $this->registerUser($container, 'secure-download@example.com');
+        $userService = $this->getService($app, UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+        $istRepository = $this->getService($app, IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+        $ist->setUploadedFile('parentalConsent', $storedFilename, 'evil"name.pdf', 'application/pdf');
+        $istRepository->persist($ist);
+
+        $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
+        file_put_contents($uploadPath, '%PDF-1.4 test');
+
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        try {
+            $response = $app->handle($this->createRequest(self::BASE_URL . '/showFile/' . $storedFilename));
+
+            self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
+            self::assertStringContainsString("script-src 'none'", $response->getHeaderLine('Content-Security-Policy'));
+            $disposition = $response->getHeaderLine('Content-Disposition');
+            // kept inline for admin preview; the quote in the client filename was stripped
+            self::assertStringStartsWith('inline;', $disposition);
+            self::assertStringContainsString('evilname.pdf', $disposition);
+            self::assertStringNotContainsString('"name', $disposition);
+        } finally {
+            @unlink($uploadPath);
+        }
+    }
+
     private function registerUser(ContainerInterface $container, string $email): User
     {
         /** @var UserService $userService */

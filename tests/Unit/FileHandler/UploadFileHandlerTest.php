@@ -6,11 +6,13 @@ namespace Tests\Unit\FileHandler;
 
 use kissj\FileHandler\UploadFileHandler;
 use kissj\FlashMessages\FlashMessagesInterface;
+use LogicException;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
+use Slim\Psr7\Stream;
 use Slim\Psr7\UploadedFile;
 
 class UploadFileHandlerTest extends TestCase
@@ -252,6 +254,51 @@ class UploadFileHandlerTest extends TestCase
         self::assertSame($uploadedFile, $result);
     }
 
+    public function testResolveUploadedImageAcceptsRealPngBytesAndRewindsStream(): void
+    {
+        $stream = $this->streamWith($this->pngBytes());
+        $uploadedFile = $this->imageUploadWithStream($stream);
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['image' => $uploadedFile]);
+
+        $result = $this->handler->resolveUploadedImage($request, 'image');
+
+        self::assertSame($uploadedFile, $result);
+        self::assertSame(0, $stream->tell());
+    }
+
+    public function testResolveUploadedImageRejectsHtmlDisguisedAsPng(): void
+    {
+        $uploadedFile = $this->imageUploadWithStream($this->streamWith('<html><script>alert(1)</script></html>'));
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['image' => $uploadedFile]);
+
+        $this->flashMessages->shouldReceive('warning')
+            ->once()
+            ->with('flash.warning.invalidFileType');
+
+        $result = $this->handler->resolveUploadedImage($request, 'image');
+
+        self::assertNull($result);
+    }
+
+    public function testResolveUploadedImageReturnsNullWhenNoFileWasUploaded(): void
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_NO_FILE);
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['image' => $uploadedFile]);
+
+        $this->flashMessages->shouldNotReceive('warning');
+
+        $result = $this->handler->resolveUploadedImage($request, 'image');
+
+        self::assertNull($result);
+    }
+
     public function testResolveByCustomKeyMissingReturnsNull(): void
     {
         $request = Mockery::mock(Request::class);
@@ -264,5 +311,41 @@ class UploadFileHandlerTest extends TestCase
         $result = $this->handler->resolveUploadedFile($request, 'parentalConsent');
 
         self::assertNull($result);
+    }
+
+    private function imageUploadWithStream(Stream $stream): UploadedFile&MockInterface
+    {
+        $uploadedFile = Mockery::mock(UploadedFile::class);
+        $uploadedFile->allows('getError')->andReturns(UPLOAD_ERR_OK);
+        $uploadedFile->allows('getSize')->andReturns($stream->getSize());
+        $uploadedFile->allows('getClientMediaType')->andReturns('image/png');
+        $uploadedFile->allows('getStream')->andReturns($stream);
+
+        return $uploadedFile;
+    }
+
+    private function streamWith(string $contents): Stream
+    {
+        $resource = fopen('php://temp', 'rb+');
+        if ($resource === false) {
+            throw new LogicException('cannot open php://temp');
+        }
+        fwrite($resource, $contents);
+        rewind($resource);
+
+        return new Stream($resource);
+    }
+
+    private function pngBytes(): string
+    {
+        $image = imagecreatetruecolor(1, 1);
+        if ($image === false) {
+            throw new LogicException('cannot create image');
+        }
+        ob_start();
+        imagepng($image);
+        imagedestroy($image);
+
+        return (string)ob_get_clean();
     }
 }

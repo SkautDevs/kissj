@@ -113,6 +113,73 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         }
     }
 
+    public function testProgrammeImageResponseCarriesSecurityHeaders(): void
+    {
+        $app = $this->getTestApp();
+        $programme = $this->createProgramme($app, 'image workshop', null, 3);
+        $storedFilename = bin2hex(random_bytes(16)); // 32-hex, passes the image route guard
+        $programme->imageFilename = $storedFilename;
+        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+
+        $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
+        $image = imagecreatetruecolor(1, 1);
+        imagepng($image, $uploadPath);
+        imagedestroy($image);
+
+        $ist = $this->createPaidIstWithEmail($app, 'image-flow-ist@example.com');
+        $app = $this->loginAs($app, $ist->getUserButNotNull());
+
+        try {
+            $response = $app->handle($this->createRequest(
+                '/v2/event/test-event-slug/programmes/' . $programme->id . '/image',
+            ));
+            self::assertSame(200, $response->getStatusCode());
+            self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
+            self::assertStringContainsString("script-src 'none'", $response->getHeaderLine('Content-Security-Policy'));
+        } finally {
+            @unlink($uploadPath);
+        }
+    }
+
+    public function testDetailOfMissingProgrammeReturns404(): void
+    {
+        $app = $this->getTestApp();
+        $ist = $this->createPaidIstWithEmail($app, 'detail-missing-ist@example.com');
+        $app = $this->loginAs($app, $ist->getUserButNotNull());
+
+        // a user-supplied id for a programme that does not exist must be a clean 404,
+        // not a 500 + Sentry event from the repository's RuntimeException
+        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes/999999'));
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testDetailOfDeletedProgrammeReturns404(): void
+    {
+        $app = $this->getTestApp();
+        $programme = $this->createProgramme($app, 'deleted workshop', null, 3);
+        $ist = $this->createPaidIstWithEmail($app, 'detail-deleted-ist@example.com');
+        $app = $this->loginAs($app, $ist->getUserButNotNull());
+
+        $this->getService($app, ProgrammeService::class)->deleteProgramme($programme);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/programmes/' . $programme->id,
+        ));
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testImageOfMissingProgrammeReturns404(): void
+    {
+        $app = $this->getTestApp();
+        $ist = $this->createPaidIstWithEmail($app, 'image-missing-ist@example.com');
+        $app = $this->loginAs($app, $ist->getUserButNotNull());
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/programmes/999999/image',
+        ));
+        self::assertSame(404, $response->getStatusCode());
+    }
+
     public function testDashboardWidgetLinksPaidParticipantToProgrammesAndHintsEventAppWhenOpen(): void
     {
         $app = $this->getTestApp();

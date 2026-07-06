@@ -304,10 +304,11 @@ class ParticipantController extends AbstractController
         /** @var Participant $participant */
         $participant = $request->getAttribute('participant');
         $originalFilename = $participant->getOriginalFilenameForStoredFile($filename) ?? $filename;
+        $safeFilename = str_replace(["\r", "\n", '"', '\\'], '', $originalFilename);
 
-        return $response
+        return $this->withUntrustedFileSecurityHeaders($response)
             ->withHeader('Content-Type', $file->mimeContentType)
-            ->withHeader('Content-Disposition', 'inline; filename="' . $originalFilename . '"')
+            ->withHeader('Content-Disposition', 'inline; filename="' . $safeFilename . '"')
             ->withBody($file->stream);
     }
 

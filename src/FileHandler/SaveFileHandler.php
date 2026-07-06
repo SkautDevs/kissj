@@ -16,8 +16,7 @@ abstract class SaveFileHandler
         UploadedFile $uploadedFile,
         string $fileItemId,
     ): Participant {
-        $newFilename = $this->getNewFilename();
-        $this->saveFile($uploadedFile, $newFilename);
+        $newFilename = $this->saveUploadedFile($uploadedFile);
 
         $participant->setUploadedFile(
             $fileItemId,
@@ -27,6 +26,14 @@ abstract class SaveFileHandler
         );
 
         return $participant;
+    }
+
+    public function saveUploadedFile(UploadedFile $uploadedFile): string
+    {
+        $newFilename = $this->getNewFilename();
+        $this->saveFile($uploadedFile, $newFilename);
+
+        return $newFilename;
     }
 
     abstract public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile;

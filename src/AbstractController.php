@@ -117,6 +117,20 @@ abstract class AbstractController
             ->withStatus($statusCode);
     }
 
+    /**
+     * Harden a response that streams back a user-uploaded file: uploaded bytes are attacker-controlled
+     * and served from our own origin, so stop content-type sniffing and block script execution if the
+     * file is opened top-level (e.g. a scripted SVG or an HTML file mislabelled as an image). `script-src
+     * 'none'` is used rather than the stronger `sandbox` so legitimate inline preview of images and PDFs
+     * keeps working (sandbox disables the browser's PDF viewer) while stored XSS is still neutralised.
+     */
+    protected function withUntrustedFileSecurityHeaders(Response $response): Response
+    {
+        return $response
+            ->withHeader('X-Content-Type-Options', 'nosniff')
+            ->withHeader('Content-Security-Policy', "script-src 'none'");
+    }
+
     protected function getRouter(Request $request): RouteParserInterface
     {
         return RouteContext::fromRequest($request)->getRouteParser();

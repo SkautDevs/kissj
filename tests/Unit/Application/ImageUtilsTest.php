@@ -29,4 +29,42 @@ class ImageUtilsTest extends TestCase
         self::assertSame('', $result);
         self::assertSame([], $warnings);
     }
+
+    public function testRealRasterImagesAreAccepted(): void
+    {
+        self::assertTrue(ImageUtils::isSupportedRasterImage($this->rasterBytes('png')));
+        self::assertTrue(ImageUtils::isSupportedRasterImage($this->rasterBytes('gif')));
+        self::assertTrue(ImageUtils::isSupportedRasterImage($this->rasterBytes('jpeg')));
+    }
+
+    public function testSpoofedAndNonRasterPayloadsAreRejected(): void
+    {
+        self::assertFalse(ImageUtils::isSupportedRasterImage(''));
+        self::assertFalse(ImageUtils::isSupportedRasterImage('not an image at all'));
+        self::assertFalse(ImageUtils::isSupportedRasterImage(
+            '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+        ));
+        self::assertFalse(ImageUtils::isSupportedRasterImage('<html><body><script>alert(1)</script></body></html>'));
+    }
+
+    private function rasterBytes(string $format): string
+    {
+        $image = imagecreatetruecolor(1, 1);
+        if ($image === false) {
+            self::fail('GD could not create a test image');
+        }
+
+        ob_start();
+        $encoded = match ($format) {
+            'png' => imagepng($image),
+            'gif' => imagegif($image),
+            'jpeg' => imagejpeg($image),
+            default => self::fail('unsupported test image format: ' . $format),
+        };
+        $bytes = (string)ob_get_clean();
+        imagedestroy($image);
+        self::assertTrue($encoded);
+
+        return $bytes;
+    }
 }

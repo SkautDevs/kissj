@@ -15,7 +15,6 @@ use kissj\Participant\ParticipantRole;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Psr7\UploadedFile;
 
 class ProgrammeAdminController extends AbstractController
 {
@@ -276,20 +275,12 @@ class ProgrammeAdminController extends AbstractController
 
     private function saveImage(Programme $programme, Request $request): void
     {
-        $uploadedFile = $this->uploadFileHandler->resolveUploadedFile($request, 'image');
-        if (!$uploadedFile instanceof UploadedFile) {
+        $uploadedImage = $this->uploadFileHandler->resolveUploadedImage($request, 'image');
+        if ($uploadedImage === null) {
             return;
         }
 
-        if (!in_array($uploadedFile->getClientMediaType(), ['image/jpeg', 'image/png', 'image/gif'], true)) {
-            $this->flashMessages->warning('flash.warning.invalidFileType');
-
-            return;
-        }
-
-        $newFilename = bin2hex(random_bytes(16));
-        $this->fileHandler->saveFile($uploadedFile, $newFilename);
-        $programme->imageFilename = $newFilename;
+        $programme->imageFilename = $this->fileHandler->saveUploadedFile($uploadedImage);
         $this->programmeRepository->persist($programme);
     }
 

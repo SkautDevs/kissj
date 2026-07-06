@@ -76,7 +76,7 @@ class ProgrammeRepository extends Repository
         return $occupancy;
     }
 
-    public function getActiveById(int $programmeId, Event $event): Programme
+    public function findActiveById(int $programmeId, Event $event): ?Programme
     {
         $programme = $this->findOneBy(['id' => $programmeId]);
         if (
@@ -84,6 +84,16 @@ class ProgrammeRepository extends Repository
             || $programme->isDeleted()
             || $programme->event->id !== $event->id
         ) {
+            return null;
+        }
+
+        return $programme;
+    }
+
+    public function getActiveById(int $programmeId, Event $event): Programme
+    {
+        $programme = $this->findActiveById($programmeId, $event);
+        if ($programme === null) {
             throw new RuntimeException('Programme not found for event');
         }
 

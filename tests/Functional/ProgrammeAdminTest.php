@@ -546,6 +546,7 @@ class ProgrammeAdminTest extends AppTestCase
                 '/v2/event/test-event-slug/admin/programmes/' . $programmeWithImage->id . '/image',
             ));
             self::assertSame(200, $response->getStatusCode());
+            self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
             self::assertStringStartsWith("\x89PNG", (string)$response->getBody());
 
             $responseWithoutImage = $app->handle($this->createRequest(

@@ -38,8 +38,8 @@ class ProgrammeController extends AbstractController
     public function detail(Response $response, Event $event, User $user, int $programmeId): Response
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
-        $programme = $this->programmeRepository->getActiveById($programmeId, $event);
-        if ($programme->isForRole($participant->getRoleOrFail()) === false) {
+        $programme = $this->programmeRepository->findActiveById($programmeId, $event);
+        if ($programme === null || $programme->isForRole($participant->getRoleOrFail()) === false) {
             return $response->withStatus(404);
         }
 
@@ -55,8 +55,8 @@ class ProgrammeController extends AbstractController
     public function image(Response $response, Event $event, User $user, int $programmeId): Response
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
-        $programme = $this->programmeRepository->getActiveById($programmeId, $event);
-        if ($programme->isForRole($participant->getRoleOrFail()) === false) {
+        $programme = $this->programmeRepository->findActiveById($programmeId, $event);
+        if ($programme !== null && $programme->isForRole($participant->getRoleOrFail()) === false) {
             return $response->withStatus(404);
         }
 
@@ -65,18 +65,22 @@ class ProgrammeController extends AbstractController
 
     public function adminImage(Response $response, Event $event, int $programmeId): Response
     {
-        return $this->serveImage($response, $this->programmeRepository->getActiveById($programmeId, $event));
+        return $this->serveImage($response, $this->programmeRepository->findActiveById($programmeId, $event));
     }
 
-    private function serveImage(Response $response, Programme $programme): Response
+    private function serveImage(Response $response, ?Programme $programme): Response
     {
-        if ($programme->imageFilename === null) {
+        if (
+            $programme === null
+            || $programme->imageFilename === null
+            || preg_match('/^[a-f0-9]{32}$/', $programme->imageFilename) !== 1
+        ) {
             return $response->withStatus(404);
         }
 
         $file = $this->fileHandler->getFile($programme->imageFilename);
 
-        return $response
+        return $this->withUntrustedFileSecurityHeaders($response)
             ->withHeader('Content-Type', $file->mimeContentType)
             ->withBody($file->stream);
     }

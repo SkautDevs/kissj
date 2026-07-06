@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\FileHandler;
 
+use kissj\Application\ImageUtils;
 use kissj\FlashMessages\FlashMessagesInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -73,4 +74,22 @@ readonly class UploadFileHandler
         }
     }
 
+    public function resolveUploadedImage(Request $request, string $slug): ?UploadedFile
+    {
+        $uploadedFile = $this->resolveUploadedFile($request, $slug);
+        if ($uploadedFile === null) {
+            return null;
+        }
+
+        $stream = $uploadedFile->getStream();
+        $isSupportedImage = ImageUtils::isSupportedRasterImage((string)$stream);
+        $stream->rewind();
+        if ($isSupportedImage === false) {
+            $this->flashMessages->warning('flash.warning.invalidFileType');
+
+            return null;
+        }
+
+        return $uploadedFile;
+    }
 }
