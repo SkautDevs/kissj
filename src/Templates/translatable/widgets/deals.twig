@@ -4,6 +4,14 @@
             <h2>{{ ('deal.' ~ deal.slug)|trans }}</h2>
             {% if deal.isDone %}
                 {{ ('deal.'~deal.slug~'-done')|trans({'%tieCode%': person.tieCode})|raw }}
+                {% if deal.getDoneAt() %}
+                    ({{ 'deal.filledAt'|trans({'%date%': deal.doneAt.format('d. m. Y, H:i:s')}) }})
+                {% endif %}
+                {% if deal.urlAddress %}
+                    <br/>
+                    <br/>
+                    <a class="btn btn-small deal-fill-again" href="{{ deal.urlAddress }}" target="_blank">{{ 'deal.fillAgain'|trans }}</a>
+                {% endif %}
             {% else %}
                 {% if deal.getDoneAt() %}
                     {{ ('deal.'~deal.slug~'-doneBadly')|trans({

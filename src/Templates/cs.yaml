@@ -69,6 +69,9 @@ dashboard:
         cancelled: "nejede ):"
     lockRegistration: "Uzamknout registraci"
     downloadReceipt: "Stáhnout potvrzení o zaplacení v PDF"
+deal:
+    fillAgain: "Vyplněno špatně? Vyplňte znovu"
+    filledAt: "vyplněno %date%"
 changeDetails:
     editDetails: "Upravit údaje"
     editDetailsAfterLock: "Upravit údaje"

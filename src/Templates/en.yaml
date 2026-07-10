@@ -69,6 +69,9 @@ dashboard:
         cancelled: "not going ):"
     lockRegistration: "Lock registration"
     downloadReceipt: "Download receipt in PDF"
+deal:
+    fillAgain: "Filled it in wrong? Fill it in again"
+    filledAt: "filled %date%"
 changeDetails:
     editDetails: "Edit details"
     editDetailsAfterLock: "Edit details"
