@@ -38,7 +38,15 @@ Ensure an isolated workspace before executing the plan.
 
 Worktrees MUST live at `.worktrees/<branch>` under the repo root — nowhere else. The dev container mounts only the repo root (`/var/www/html`); a worktree outside it is invisible to the quality gate.
 
-After creating the worktree, install its dependencies through the container:
+Operate on worktrees **by path from the main workspace — never `cd` into them.** `cd` (especially in a compound command) trips a permission prompt, and for a background agent it stalls the whole run. Address a worktree with tool-native flags instead: `git -C .worktrees/<branch> …` for git, `docker exec -w /var/www/html/.worktrees/<branch> …` for the container, and plain host paths for edits. Every command in this cycle is written to run from the repo root without `cd`.
+
+After creating the worktree, copy the main workspace's dependencies — the generated autoload files are path-relative, so a copy is a valid install and much faster than `composer install`:
+
+```bash
+cp -a vendor .worktrees/<branch>/vendor
+```
+
+Run `composer install` through the container instead only when the branch changes `composer.json`/`composer.lock`:
 
 ```bash
 docker exec -u 1000 -w /var/www/html/.worktrees/<branch> kissj-app-php-fpm-1 composer install
@@ -114,6 +122,7 @@ One session may run several /implement cycles at once — one worktree per featu
 | "One-line fix" | One-line fixes still get TDD, the quality gate, and review. |
 | "Review can wait until PR" | Phase 7 happens before finishing, every time. |
 | "The worktree can live in /tmp" | The container mounts only the repo root. Outside `.worktrees/` the quality gate cannot run. |
+| "I'll just cd into the worktree" | Address worktrees by path — `git -C .worktrees/<branch>`, `docker exec -w /var/www/html/.worktrees/<branch>`, host paths. `cd` triggers permission prompts and stalls background agents. |
 | "I can verify runtime by serving the worktree myself" | Runtime verification waits for phase 7b in the main workspace. No serving hacks. |
 | "7a was clean, manual review is a formality" | Phase 7b exits only on explicit user approval. Ask, then wait. |
 | "I'll rebase it into staging myself" | Feature-branch commits only. staging/master and all pushes are user-only. |
