@@ -8,6 +8,7 @@ use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Participant\ParticipantController;
+use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -29,7 +30,10 @@ class OwnerTransferSelfTest extends AppTestCase
         $user = $this->makePaidParticipant($app, $event);
 
         $controller = $this->getService($app, ParticipantController::class);
-        $request = $this->routedRequest($app, $event)->withParsedBody(['emailTo' => $user->email]);
+        $ownTieCode = $this->getService($app, ParticipantRepository::class)
+            ->getParticipantFromUser($user)
+            ->tieCode;
+        $request = $this->routedRequest($app, $event)->withParsedBody(['tieCode' => $ownTieCode]);
 
         $response = $controller->transferTicket($request, new Response(), $user);
 

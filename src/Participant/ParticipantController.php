@@ -21,7 +21,6 @@ use kissj\PdfGenerator\PdfGenerator;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
-use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -39,7 +38,6 @@ class ParticipantController extends AbstractController
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
         private readonly PaymentTransferService $paymentTransferService,
-        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -213,18 +211,17 @@ class ParticipantController extends AbstractController
     public function showTransferTicket(Request $request, Response $response, User $user): Response
     {
         $from = $this->participantRepository->getParticipantFromUser($user);
-        $emailToRaw = $request->getQueryParams()['emailTo'] ?? null;
-        $emailTo = is_string($emailToRaw) ? $emailToRaw : null;
+        $tieCodeRaw = $request->getQueryParams()['tieCode'] ?? null;
+        $tieCode = is_string($tieCodeRaw) ? $tieCodeRaw : null;
 
         $to = null;
         $transferPossible = false;
-        if (is_string($emailTo) && $emailTo !== '') {
-            $userTo = $this->userRepository->findUserFromEmail($emailTo, $user->event);
-            $to = $this->participantRepository->findParticipantFromUser($userTo);
+        if (is_string($tieCode) && $tieCode !== '') {
+            $to = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $user->event);
             if ($this->isTransferToSelf($from, $to)) {
                 $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
                 $to = null;
-                $emailTo = null;
+                $tieCode = null;
             } else {
                 $transferPossible = $this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages);
             }
@@ -233,7 +230,7 @@ class ParticipantController extends AbstractController
         return $this->view->render($response, 'participant/transferTicket.twig', [
             'from' => $from,
             'to' => $to,
-            'emailTo' => $emailTo,
+            'tieCode' => $tieCode,
             'transferPossible' => $transferPossible,
         ]);
     }
@@ -242,16 +239,15 @@ class ParticipantController extends AbstractController
     {
         $from = $this->participantRepository->getParticipantFromUser($user);
         $parsedBody = $request->getParsedBody();
-        $emailTo = is_array($parsedBody) ? ($parsedBody['emailTo'] ?? null) : null;
+        $tieCode = is_array($parsedBody) ? ($parsedBody['tieCode'] ?? null) : null;
 
-        if (!is_string($emailTo) || $emailTo === '') {
+        if (!is_string($tieCode) || $tieCode === '') {
             $this->flashMessages->error('flash.error.transferFailed');
 
             return $this->redirect($request, $response, 'showTransferTicket');
         }
 
-        $userTo = $this->userRepository->findUserFromEmail($emailTo, $user->event);
-        $to = $this->participantRepository->findParticipantFromUser($userTo);
+        $to = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $user->event);
 
         if ($this->isTransferToSelf($from, $to)) {
             $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
@@ -262,7 +258,7 @@ class ParticipantController extends AbstractController
         if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages)) {
             $this->flashMessages->error('flash.error.transferFailed');
 
-            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['emailTo' => $emailTo]);
+            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);
         }
 
         $this->paymentTransferService->transferPayment($from, $to);
