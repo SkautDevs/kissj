@@ -31,7 +31,7 @@ class PatrolController extends AbstractController
     public function showCloseRegistration(Request $request, Response $response, User $user): Response
     {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
-        $closeResult = $this->patrolService->isCloseRegistrationValid($patrolLeader);
+        $closeResult = $this->participantService->isCloseRegistrationValid($patrolLeader);
         $this->flashRegistrationCloseResult($closeResult);
 
         if ($closeResult->isValid) {
