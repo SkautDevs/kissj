@@ -170,20 +170,7 @@ readonly class ParticipantService
             $result = $result->withWarning('flash.warning.noLock');
         }
 
-        if ($event->eventType->isFullForParticipant(
-            $participant,
-            $this->getClosedSameRoleSameContingentParticipantsCount($participant),
-        )) {
-            // TODO fix problem with contingents
-            // - in CEJ we want to limit each contingent by its own, but
-            // - in Navigamus we want to count all contingents together
-            $result = $result->withWarning('flash.warning.fullRegistration');
-        }
-
-        if (
-            $event->maximalClosedParticipantsCount !== null
-            && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount
-        ) {
+        if ($this->isParticipantOrEventFull($participant)) {
             $result = $result->withWarning('flash.warning.fullRegistration');
         }
 
@@ -200,6 +187,24 @@ readonly class ParticipantService
         }
 
         return $result;
+    }
+
+    public function isParticipantOrEventFull(Participant $participant): bool
+    {
+        $event = $participant->getUserButNotNull()->event;
+
+        // TODO fix problem with contingents
+        // - in CEJ we want to limit each contingent by its own, but
+        // - in Navigamus we want to count all contingents together
+        if ($event->eventType->isFullForParticipant(
+            $participant,
+            $this->getClosedSameRoleSameContingentParticipantsCount($participant),
+        )) {
+            return true;
+        }
+
+        return $event->maximalClosedParticipantsCount !== null
+            && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount;
     }
 
     private function validateTroopLeaderRegistrationClose(
