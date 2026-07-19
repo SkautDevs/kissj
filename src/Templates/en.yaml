@@ -701,6 +701,7 @@ flash:
         adminValuesImported: "Internal values import applied."
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
+        noLockFields: "Cannot lock the registration – please fill in or fix: %fields%"
         plWrongData: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         plWrongDataParticipant: "Cannot lock the registration - some details are wrong or missing for participant %participantFullName% (probably email or date)"
         tlWrongDataParticipant: "Cannot lock the registration - some details are wrong or missing for participant %participantFullName% (probably email or date)"
