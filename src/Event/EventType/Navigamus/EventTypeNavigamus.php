@@ -154,4 +154,10 @@ class EventTypeNavigamus extends EventType
     {
         return true;
     }
+
+    #[\Override]
+    public function countContingentsTogetherForCapacity(): bool
+    {
+        return true;
+    }
 }

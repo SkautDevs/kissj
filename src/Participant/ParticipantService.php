@@ -198,12 +198,9 @@ readonly class ParticipantService
     {
         $event = $participant->getUserButNotNull()->event;
 
-        // TODO fix problem with contingents
-        // - in CEJ we want to limit each contingent by its own, but
-        // - in Navigamus we want to count all contingents together
         if ($event->eventType->isFullForParticipant(
             $participant,
-            $this->getClosedSameRoleSameContingentParticipantsCount($participant),
+            $this->getClosedSameRoleParticipantsCountForCapacity($participant),
         )) {
             return true;
         }
@@ -301,8 +298,10 @@ readonly class ParticipantService
         return $this->getInvalidItemsForClose($p, $ca) === [];
     }
 
-    private function getClosedSameRoleSameContingentParticipantsCount(Participant $participant): int
+    private function getClosedSameRoleParticipantsCountForCapacity(Participant $participant): int
     {
+        $event = $participant->getUserButNotNull()->event;
+
         $participants = $this->participantRepository->getAllParticipantsWithStatus(
             $participant->role === null ? [] : [$participant->role],
             [
@@ -310,8 +309,12 @@ readonly class ParticipantService
                 UserStatus::Approved,
                 UserStatus::Paid,
             ],
-            $participant->getUserButNotNull()->event,
+            $event,
         );
+
+        if ($event->eventType->countContingentsTogetherForCapacity()) {
+            return count($participants);
+        }
 
         return count($this->filterSameContingent($participants, $participant->contingent));
     }
