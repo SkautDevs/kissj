@@ -41,7 +41,13 @@ class ParticipantController extends AbstractController
 
     public function showDashboard(Request $request, Response $response, User $user): Response
     {
-        $templateData = $this->getTemplateData($this->participantRepository->getParticipantFromUser($user));
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+
+        if ($user->status === UserStatus::Open && $this->participantService->isParticipantOrEventFull($participant)) {
+            $this->flashMessages->warning('flash.warning.fullRegistration');
+        }
+
+        $templateData = $this->getTemplateData($participant);
         $templateData['celebrate'] = ($request->getQueryParams()['celebrate'] ?? null) === '1';
 
         return $this->view->render(

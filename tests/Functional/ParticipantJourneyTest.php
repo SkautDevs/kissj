@@ -351,6 +351,71 @@ class ParticipantJourneyTest extends AppTestCase
         self::assertStringContainsString('IST', $body);
     }
 
+    public function testDashboardShowsFullRegistrationFlashForOpenParticipantInFullRole(): void
+    {
+        $app = $this->getTestApp();
+
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertInstanceOf(Event::class, $event);
+
+        // no closed ISTs yet, so a zero cap already means the role is full
+        $event->maximalClosedIstsCount = 0;
+        $eventRepository->persist($event);
+
+        $email = 'dashboard-full-flash-test@example.com';
+        $user = $this->registerUser($app, $email);
+
+        $userService = $this->getService($app, UserService::class);
+        $userService->createParticipantSetRole($user, 'ist');
+
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('plno', $body);
+    }
+
+    public function testDashboardDoesNotShowFullRegistrationFlashForClosedParticipant(): void
+    {
+        $app = $this->getTestApp();
+
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertInstanceOf(Event::class, $event);
+
+        $event->maximalClosedIstsCount = 0;
+        $eventRepository->persist($event);
+
+        $email = 'dashboard-full-flash-closed-test@example.com';
+        $user = $this->registerUser($app, $email);
+
+        $userService = $this->getService($app, UserService::class);
+        $userService->createParticipantSetRole($user, 'ist');
+
+        $user->status = UserStatus::Closed;
+        $userRepository = $this->getService($app, UserRepository::class);
+        $userRepository->persist($user);
+
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringNotContainsString('plno', $body);
+    }
+
     /**
      * Test Guest registration journey:
      * Register → Choose Guest Role → Fill Details → Close → Admin Approve → Paid (no payment needed)
