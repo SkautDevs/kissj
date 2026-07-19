@@ -7,7 +7,7 @@ namespace kissj\Participant;
 readonly class RegistrationCloseResult
 {
     /**
-     * @param array<array{key: string, params: array<string, string>}> $warnings
+     * @param array<array{key: string, params: array<string, string|list<string>>}> $warnings
      */
     public function __construct(
         public bool $isValid,
@@ -21,7 +21,7 @@ readonly class RegistrationCloseResult
     }
 
     /**
-     * @param array<string, string> $params
+     * @param array<string, string|list<string>> $params
      */
     public function withWarning(string $key, array $params = []): self
     {

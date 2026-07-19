@@ -163,11 +163,16 @@ readonly class ParticipantService
             $result = $this->validateTroopLeaderRegistrationClose($participant, $event, $result);
         }
 
-        if (!$this->isParticipantDataValidForClose(
+        $invalidItems = $this->getInvalidItemsForClose(
             $participant,
             $event->eventType->getContentArbiterForRole($participant->getRoleOrFail())
-        )) {
-            $result = $result->withWarning('flash.warning.noLock');
+        );
+        if ($invalidItems !== []) {
+            $fieldLabels = array_map(
+                fn (ContentArbiterItem $item): string => $item->label,
+                $invalidItems,
+            );
+            $result = $result->withWarning('flash.warning.noLockFields', ['%fields%' => $fieldLabels]);
         }
 
         if ($this->isParticipantOrEventFull($participant)) {
@@ -246,22 +251,22 @@ readonly class ParticipantService
         return $result;
     }
 
-    public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
+    /**
+     * @return list<ContentArbiterItem>
+     */
+    public function getInvalidItemsForClose(Participant $p, AbstractContentArbiter $ca): array
     {
         $age = $p->getAgeAtStartOfEvent();
+        $invalid = [];
 
         foreach ($ca->getAllowedItems() as $item) {
-            if (!$item->required) {
-                continue;
-            }
-
-            if (!$item->appliesToAge($age)) {
+            if (!$item->required || !$item->appliesToAge($age)) {
                 continue;
             }
 
             if ($item->type === ContentArbiterItemType::File) {
                 if ($p->getUploadedFilename($item->slug) === null) {
-                    return false;
+                    $invalid[] = $item;
                 }
 
                 continue;
@@ -269,25 +274,31 @@ readonly class ParticipantService
 
             if ($item->type === ContentArbiterItemType::TshirtComposite) {
                 if ($p->getTshirtShape() === null || $p->getTshirtSize() === null) {
-                    return false;
+                    $invalid[] = $item;
                 }
+
                 continue;
             }
 
             if ($p->getValueForField($item->slug) === null) {
-                return false;
+                $invalid[] = $item;
             }
         }
 
         if ($ca->email->allowed && $p->email !== null && filter_var($p->email, FILTER_VALIDATE_EMAIL) === false) {
-            return false;
+            $invalid[] = $ca->email;
         }
 
         if ($ca->phone->allowed && $p->telephoneNumber !== null && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
-            return false;
+            $invalid[] = $ca->phone;
         }
 
-        return true;
+        return $invalid;
+    }
+
+    public function isParticipantDataValidForClose(Participant $p, AbstractContentArbiter $ca): bool
+    {
+        return $this->getInvalidItemsForClose($p, $ca) === [];
     }
 
     private function getClosedSameRoleSameContingentParticipantsCount(Participant $participant): int

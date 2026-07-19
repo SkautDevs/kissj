@@ -46,7 +46,20 @@ abstract class AbstractController
     protected function flashRegistrationCloseResult(RegistrationCloseResult $result): void
     {
         foreach ($result->warnings as $warning) {
-            $this->flashMessages->warning($warning['key'], $warning['params']);
+            $params = [];
+            foreach ($warning['params'] as $name => $value) {
+                if (is_array($value)) {
+                    $translatedLabels = array_map(
+                        fn (string $labelKey): string => $this->translator->trans($labelKey),
+                        $value,
+                    );
+
+                    $params[$name] = implode(', ', $translatedLabels);
+                } else {
+                    $params[$name] = $value;
+                }
+            }
+            $this->flashMessages->warning($warning['key'], $params);
         }
     }
 

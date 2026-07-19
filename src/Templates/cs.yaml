@@ -675,6 +675,7 @@ flash:
         skautisImported: "Úspěšně přidáno %count% účastníků ze Skautisu"
     warning:
         noLock: "Registraci nelze uzamknout - nějaké informace jsou špatně vyplněné nebo chybí (pravděpodobně nějaké datum)"
+        noLockFields: "Registraci nelze uzamknout – doplň nebo oprav: %fields%"
         plWrongData: "Nemůžeme uzamknout registraci - prosím oprav svoje údaje (nejspíš email nebo nějaké datum)"
         plWrongDataParticipant: "Nemůžeme uzamknout registraci - prosím oprav údaje účastníka %participantFullName% (nejspíš email nebo nějaké datum)"
         tlWrongDataParticipant: "Nemůžeme uzamknout registraci - prosím oprav údaje účastníka %participantFullName% (nejspíš email nebo nějaké datum)"
