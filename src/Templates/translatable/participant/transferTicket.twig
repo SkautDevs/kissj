@@ -1,0 +1,38 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'ticketTransfer.title' | trans }}</h2>
+        <p>{{ 'ticketTransfer.description' | trans }}</p>
+
+        <form method="GET" action="{{ url_for('showTransferTicket', {'eventSlug': event.slug}) }}">
+            <label for="emailTo">{{ 'ticketTransfer.recipientEmail' | trans }}</label>
+            <input id="emailTo" name="emailTo" type="email" value="{{ emailTo }}" required><br/><br/>
+            <input class="btn btn-small" type="submit" value="{{ 'ticketTransfer.preview' | trans }}">
+        </form>
+        <br/>
+
+        {% if emailTo %}
+            {% if to %}
+                <h2>{{ 'ticketTransfer.recipient' | trans }}</h2>
+                {{ 'detail.email' | trans }}: <b>{{ emailTo }}</b><br/>
+                {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ to.user.status.value)|trans }}</b><br/>
+                {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~ to.role.value)|trans }}</b>
+            {% else %}
+                <h4>{{ 'ticketTransfer.recipientNotFound' | trans }} {{ emailTo }}</h4>
+            {% endif %}
+
+            {% if transferPossible %}
+                <form method="POST" action="{{ url_for('transferTicket', {'eventSlug': event.slug}) }}">
+                    <input name="emailTo" type="hidden" value="{{ emailTo }}" required>
+                    <input class="btn btn-small" type="submit" value="{{ 'ticketTransfer.confirm' | trans }}">
+                </form><br/>
+            {% else %}
+                <h2>{{ 'ticketTransfer.notPossible' | trans }}</h2>
+            {% endif %}
+        {% endif %}
+
+        <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
+    </div>
+{% endblock %}
