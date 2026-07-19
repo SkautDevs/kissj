@@ -330,6 +330,11 @@ abstract class EventType
         return false;
     }
 
+    public function isOwnerTicketTransferAllowed(): bool
+    {
+        return false;
+    }
+
     public function getBadgeTemplateName(): string
     {
         return 'badge/badges.twig';

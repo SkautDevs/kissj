@@ -94,6 +94,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function isOwnerTicketTransferAllowed(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
     public function getBadgeStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/badgeKorbo.css';

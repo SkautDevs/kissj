@@ -50,7 +50,7 @@ class AdminController extends AbstractController
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly TroopService $troopService,
         private readonly TroopParticipantRepository $troopParticipantRepository,
-        private readonly AdminService $adminService,
+        private readonly PaymentTransferService $paymentTransferService,
         private readonly UserRepository $userRepository,
         private readonly EventRepository $eventRepository,
         private readonly EventService $eventService,
@@ -571,7 +571,7 @@ class AdminController extends AbstractController
             'emailTo' => $emailTo,
             'from' => $participantFrom,
             'to' => $participantTo,
-            'transferPossible' => $this->adminService->isPaymentTransferPossible(
+            'transferPossible' => $this->paymentTransferService->isPaymentTransferPossible(
                 $participantFrom,
                 $participantTo,
                 $this->flashMessages,
@@ -593,7 +593,7 @@ class AdminController extends AbstractController
         $participantFrom = $this->participantRepository->getParticipantFromUser($userFrom);
         $participantTo = $this->participantRepository->getParticipantFromUser($userTo);
 
-        if (!$this->adminService->isPaymentTransferPossible(
+        if (!$this->paymentTransferService->isPaymentTransferPossible(
             $participantFrom,
             $participantTo,
             $this->flashMessages,
@@ -605,7 +605,7 @@ class AdminController extends AbstractController
                 $userTo->id,
             )));
         } else {
-            $this->adminService->transferPayment($participantFrom, $participantTo);
+            $this->paymentTransferService->transferPayment($participantFrom, $participantTo);
             $this->flashMessages->success('flash.success.transfer');
         }
 

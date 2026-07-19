@@ -16,10 +16,12 @@ use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Deal\DealRepository;
+use kissj\Participant\Admin\PaymentTransferService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
+use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -36,6 +38,8 @@ class ParticipantController extends AbstractController
         private readonly DealRepository $dealRepository,
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
+        private readonly PaymentTransferService $paymentTransferService,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -206,8 +210,74 @@ class ParticipantController extends AbstractController
             ->withBody($file->stream);
     }
 
+    public function showTransferTicket(Request $request, Response $response, User $user): Response
+    {
+        $from = $this->participantRepository->getParticipantFromUser($user);
+        $emailToRaw = $request->getQueryParams()['emailTo'] ?? null;
+        $emailTo = is_string($emailToRaw) ? $emailToRaw : null;
+
+        $to = null;
+        $transferPossible = false;
+        if (is_string($emailTo) && $emailTo !== '') {
+            $userTo = $this->userRepository->findUserFromEmail($emailTo, $user->event);
+            $to = $this->participantRepository->findParticipantFromUser($userTo);
+            if ($this->isTransferToSelf($from, $to)) {
+                $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
+                $to = null;
+                $emailTo = null;
+            } else {
+                $transferPossible = $this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages);
+            }
+        }
+
+        return $this->view->render($response, 'participant/transferTicket.twig', [
+            'from' => $from,
+            'to' => $to,
+            'emailTo' => $emailTo,
+            'transferPossible' => $transferPossible,
+        ]);
+    }
+
+    public function transferTicket(Request $request, Response $response, User $user): Response
+    {
+        $from = $this->participantRepository->getParticipantFromUser($user);
+        $parsedBody = $request->getParsedBody();
+        $emailTo = is_array($parsedBody) ? ($parsedBody['emailTo'] ?? null) : null;
+
+        if (!is_string($emailTo) || $emailTo === '') {
+            $this->flashMessages->error('flash.error.transferFailed');
+
+            return $this->redirect($request, $response, 'showTransferTicket');
+        }
+
+        $userTo = $this->userRepository->findUserFromEmail($emailTo, $user->event);
+        $to = $this->participantRepository->findParticipantFromUser($userTo);
+
+        if ($this->isTransferToSelf($from, $to)) {
+            $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
+
+            return $this->redirect($request, $response, 'showTransferTicket');
+        }
+
+        if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages)) {
+            $this->flashMessages->error('flash.error.transferFailed');
+
+            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['emailTo' => $emailTo]);
+        }
+
+        $this->paymentTransferService->transferPayment($from, $to);
+        $this->flashMessages->success('flash.success.ticketTransferred');
+
+        return $this->redirect($request, $response, 'dashboard');
+    }
+
+    private function isTransferToSelf(Participant $from, ?Participant $to): bool
+    {
+        return $to !== null && $from->id === $to->id;
+    }
+
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]>
+     * @return array<string, bool|User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]>
      */
     private function getTemplateData(Participant $participant): array
     {
@@ -219,12 +289,16 @@ class ParticipantController extends AbstractController
             $participants = $this->troopParticipantRepository->findAllTroopParticipantsForTroopLeader($participant);
         }
 
+        $ownerTicketTransferAllowed = $user->status === UserStatus::Paid
+            && $user->event->eventType->isOwnerTicketTransferAllowed();
+
         return [
             'user' => $user,
             'person' => $participant,
             'participants' => $participants,
             'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
+            'ownerTicketTransferAllowed' => $ownerTicketTransferAllowed,
         ];
     }
 }

@@ -23,7 +23,7 @@ use kissj\User\UserStatus;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-readonly class AdminService
+readonly class PaymentTransferService
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -60,7 +60,7 @@ readonly class AdminService
             $isPossible = false;
         }
 
-        if (!$participantFrom->getUserButNotNull()->status->isPaidOrCancelled()) {
+        if ($participantFrom->getUserButNotNull()->status !== UserStatus::Paid) {
             $flash->warning('flash.warning.notPaid');
             $isPossible = false;
         }
