@@ -420,7 +420,7 @@ class ParticipantRepository extends Repository
 
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
     {
-        $participant = $this->findOneBy(['tie_code' => $tieCode]);
+        $participant = $this->findOneBy(['tie_code' => strtoupper($tieCode)]);
         if ($participant === null) {
             return null;
         }
