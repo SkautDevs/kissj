@@ -86,6 +86,56 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $this->getService($app, UserRepository::class)->get($giver->id)->status);
     }
 
+    public function testTransferFailsForEmptyTieCode(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+
+        $controller = $this->getService($app, ParticipantController::class);
+        $request = $this->routedRequest($app, $event)->withParsedBody(['tieCode' => '']);
+        $response = $controller->transferTicket($request, new Response(), $giver);
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertContains(
+            $this->trans($app, 'flash.error.transferFailed'),
+            $this->flashed($app),
+        );
+        self::assertSame(UserStatus::Paid, $this->getService($app, UserRepository::class)->get($giver->id)->status);
+    }
+
+    public function testFullStackPostTransferSucceedsThroughMiddleware(): void
+    {
+        $app = $this->getTestApp();
+        $this->getService($app, \LeanMapper\Connection::class)->query(
+            'UPDATE event SET event_type = %s WHERE slug = %s',
+            'korbo',
+            'test-event-slug',
+        );
+
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Approved);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/participant/transferTicket',
+            'POST',
+            ['tieCode' => $recipientCode],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('dashboard', $response->getHeaderLine('Location'));
+
+        $userRepository = $this->getService($app, UserRepository::class);
+        self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
+        self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */

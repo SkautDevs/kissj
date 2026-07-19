@@ -15,6 +15,7 @@ use kissj\User\UserStatus;
 use LeanMapper\Connection;
 use Psr\Container\ContainerInterface;
 use Slim\App;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
 
 class OwnerTransferTicketPageRenderTest extends AppTestCase
@@ -65,6 +66,55 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $body = (string) $response->getBody();
         self::assertStringContainsString('Pavel', $body);
         self::assertStringContainsString('Recipient', $body);
+    }
+
+    public function testTransferPageShowsNotFoundForUnknownCode(): void
+    {
+        $app = $this->getTestApp();
+        $this->flipEventToKorbo($app);
+
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'Three');
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/showTransferTicket'
+        )->withQueryParams(['tieCode' => 'ZZZZZZ']));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString(
+            $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.recipientNotFound'),
+            $body,
+        );
+    }
+
+    public function testTransferPageShowsNotPossibleForIneligibleRecipient(): void
+    {
+        $app = $this->getTestApp();
+        $this->flipEventToKorbo($app);
+
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'Four');
+        $recipient = $this->createIst($app, 'transfer-recipient-' . uniqid() . '@example.com', UserStatus::Paid, 'Pavel', 'Recipient');
+
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $recipientCode = $participantRepository->getParticipantFromUser($recipient)->tieCode;
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/showTransferTicket'
+        )->withQueryParams(['tieCode' => $recipientCode]));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('Pavel', $body);
+        self::assertStringContainsString(
+            $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.notPossible'),
+            $body,
+        );
     }
 
     /**
