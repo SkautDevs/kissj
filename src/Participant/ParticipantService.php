@@ -157,7 +157,9 @@ readonly class ParticipantService
         $result = RegistrationCloseResult::startChecking();
         $event = $participant->getUserButNotNull()->event;
 
-        // TODO move check for patrol leader here
+        if ($participant instanceof PatrolLeader) {
+            $result = $this->validatePatrolLeaderRegistrationClose($participant, $event, $result);
+        }
 
         if ($participant instanceof TroopLeader) {
             $result = $this->validateTroopLeaderRegistrationClose($participant, $event, $result);
@@ -207,6 +209,40 @@ readonly class ParticipantService
 
         return $event->maximalClosedParticipantsCount !== null
             && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount;
+    }
+
+    private function validatePatrolLeaderRegistrationClose(
+        PatrolLeader            $patrolLeader,
+        Event                   $event,
+        RegistrationCloseResult $result,
+    ): RegistrationCloseResult {
+        $participants = $patrolLeader->patrolParticipants;
+
+        $participantsCount = count($participants);
+        if ($participantsCount < $event->getMinimalPpCount($patrolLeader)) {
+            $result = $result->withWarning('flash.warning.plTooFewParticipants', [
+                '%minimalPatrolParticipantsCount%' => (string)$event->getMinimalPpCount($patrolLeader),
+            ]);
+        }
+        if ($participantsCount > $event->getMaximalPpCount($patrolLeader)) {
+            $result = $result->withWarning('flash.warning.plTooManyParticipants', [
+                '%maximalPatrolParticipantsCount%' => (string)$event->getMaximalPpCount($patrolLeader),
+            ]);
+        }
+
+        $contentArbiterPatrolParticipant = $event->getEventType()->getContentArbiterPatrolParticipant();
+        foreach ($participants as $participant) {
+            if (!$this->isParticipantDataValidForClose(
+                $participant,
+                $contentArbiterPatrolParticipant,
+            )) {
+                $result = $result->withWarning('flash.warning.plWrongDataParticipant', [
+                    '%participantFullName%' => $participant->getFullName(),
+                ]);
+            }
+        }
+
+        return $result;
     }
 
     private function validateTroopLeaderRegistrationClose(

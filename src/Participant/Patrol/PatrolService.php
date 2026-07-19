@@ -9,7 +9,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
-use kissj\Participant\RegistrationCloseResult;
 use kissj\Skautis\SkautisMemberData;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
@@ -80,42 +79,9 @@ readonly class PatrolService
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
     }
 
-    public function isCloseRegistrationValid(PatrolLeader $patrolLeader): RegistrationCloseResult
-    {
-        $result = $this->participantService->isCloseRegistrationValid($patrolLeader);
-        $event = $patrolLeader->getUserButNotNull()->event;
-        $participants = $patrolLeader->patrolParticipants;
-
-        $participantsCount = count($participants);
-        if ($participantsCount < $event->getMinimalPpCount($patrolLeader)) {
-            $result = $result->withWarning('flash.warning.plTooFewParticipants', [
-                '%minimalPatrolParticipantsCount%' => (string)$event->getMinimalPpCount($patrolLeader),
-            ]);
-        }
-        if ($participantsCount > $event->getMaximalPpCount($patrolLeader)) {
-            $result = $result->withWarning('flash.warning.plTooManyParticipants', [
-                '%maximalPatrolParticipantsCount%' => (string)$event->getMaximalPpCount($patrolLeader),
-            ]);
-        }
-
-        $contentArbiterPatrolParticipant = $event->getEventType()->getContentArbiterPatrolParticipant();
-        foreach ($participants as $participant) {
-            if (!$this->participantService->isParticipantDataValidForClose(
-                $participant,
-                $contentArbiterPatrolParticipant,
-            )) {
-                $result = $result->withWarning('flash.warning.plWrongDataParticipant', [
-                    '%participantFullName%' => $participant->getFullName(),
-                ]);
-            }
-        }
-
-        return $result;
-    }
-
     public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader
     {
-        if ($this->isCloseRegistrationValid($patrolLeader)->isValid) {
+        if ($this->participantService->isCloseRegistrationValid($patrolLeader)->isValid) {
             $user = $patrolLeader->getUserButNotNull();
             $patrolLeader->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->patrolLeaderRepository->persist($patrolLeader);
