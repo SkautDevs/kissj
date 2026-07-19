@@ -333,6 +333,11 @@ abstract class EventType
         return true;
     }
 
+    public function countContingentsTogetherForCapacity(): bool
+    {
+        return false;
+    }
+
     public function getBadgeTemplateName(): string
     {
         return 'badge/badges.twig';
