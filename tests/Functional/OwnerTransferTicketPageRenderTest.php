@@ -28,7 +28,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $this->flipEventToKorbo($app);
 
-        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'One');
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'One');
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -48,8 +48,8 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $this->flipEventToKorbo($app);
 
-        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'Two');
-        $recipient = $this->createIst($app, 'transfer-recipient-' . uniqid() . '@example.com', UserStatus::Approved, 'Pavel', 'Recipient');
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Two');
+        $recipient = $this->createIst($app, 'transfer-recipient-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Pavel', 'Recipient');
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $recipientParticipant = $participantRepository->getParticipantFromUser($recipient);
@@ -66,6 +66,12 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $body = (string) $response->getBody();
         self::assertStringContainsString('Pavel', $body);
         self::assertStringContainsString('Recipient', $body);
+
+        $translator = $this->getService($app, TranslatorInterface::class);
+        self::assertStringContainsString(
+            $translator->trans('dashboard.userStatus.approved'),
+            $body,
+        );
     }
 
     public function testTransferPageShowsNotFoundForUnknownCode(): void
@@ -73,7 +79,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $this->flipEventToKorbo($app);
 
-        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'Three');
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Three');
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -105,8 +111,8 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $this->flipEventToKorbo($app);
 
-        $giver = $this->createIst($app, 'transfer-giver-' . uniqid() . '@example.com', UserStatus::Paid, 'Giver', 'Four');
-        $recipient = $this->createIst($app, 'transfer-recipient-' . uniqid() . '@example.com', UserStatus::Paid, 'Pavel', 'Recipient');
+        $giver = $this->createIst($app, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Four');
+        $recipient = $this->createIst($app, 'transfer-recipient-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Pavel', 'Recipient');
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $recipientCode = $participantRepository->getParticipantFromUser($recipient)->tieCode;
@@ -132,7 +138,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $this->flipEventToKorbo($app);
 
-        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid() . '@example.com', UserStatus::Approved, 'Dashboard', 'One');
+        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Dashboard', 'One');
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $tieCode = $participantRepository->getParticipantFromUser($user)->tieCode;
@@ -153,7 +159,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
     {
         $app = $this->getTestApp();
 
-        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid() . '@example.com', UserStatus::Approved, 'Dashboard', 'Two');
+        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Dashboard', 'Two');
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $tieCode = $participantRepository->getParticipantFromUser($user)->tieCode;

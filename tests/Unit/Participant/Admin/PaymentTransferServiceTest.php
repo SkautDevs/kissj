@@ -13,7 +13,9 @@ use kissj\Participant\Admin\PaymentTransferService;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopLeaderRepository;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
@@ -214,6 +216,18 @@ class PaymentTransferServiceTest extends AppTestCase
         $from = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
         $to = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
 
+        $from->scarf = 'giver-scarf';
+        $to->scarf = 'recipient-scarf';
+        $participantRepository->persist($from);
+        $participantRepository->persist($to);
+
+        $giverPayDate = DateTimeUtils::getDateTime('2026-01-10');
+        $recipientPayDate = DateTimeUtils::getDateTime('2026-02-20');
+        $from->registrationPayDate = $giverPayDate;
+        $to->registrationPayDate = $recipientPayDate;
+        $participantRepository->persist($from);
+        $participantRepository->persist($to);
+
         $service->transferPayment($from, $to);
 
         self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
@@ -226,6 +240,13 @@ class PaymentTransferServiceTest extends AppTestCase
         $cancelledPayment = $paymentRepository->get($recipientWaitingPayment->id);
         self::assertInstanceOf(Payment::class, $cancelledPayment);
         self::assertSame(PaymentStatus::Canceled, $cancelledPayment->status);
+
+        $refetchedFrom = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
+        $refetchedTo = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
+
+        self::assertSame('giver-scarf', $refetchedTo->scarf);
+        self::assertSame($recipientPayDate->format('Y-m-d'), $refetchedFrom->registrationPayDate?->format('Y-m-d'));
+        self::assertSame($giverPayDate->format('Y-m-d'), $refetchedTo->registrationPayDate?->format('Y-m-d'));
     }
 
     public function testTransferPaymentCancelsRecipientsWaitingPayment(): void
@@ -390,6 +411,91 @@ class PaymentTransferServiceTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $userRepository->get($giver->id)->status);
     }
 
+    public function testTransferPaymentReassignsTroopParticipantsToNewLeader(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
+
+        $giverLeader = $this->createTroopLeader($app, $event);
+        $giverPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($giverLeader),
+        );
+        $paymentService->confirmPayment($giverPayment);
+
+        $giverLeaderParticipant = $troopLeaderRepository->getFromUser($userRepository->get($giverLeader->id));
+
+        $member1 = $this->createTroopParticipantTiedTo($app, $event, $giverLeaderParticipant);
+        $member2 = $this->createTroopParticipantTiedTo($app, $event, $giverLeaderParticipant);
+
+        $recipientLeader = $this->createTroopLeader($app, $event);
+        $recipientLeader->status = UserStatus::Approved;
+        $userRepository->persist($recipientLeader);
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giverLeader->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipientLeader->id));
+
+        $service->transferPayment($from, $to);
+
+        self::assertSame(UserStatus::Open, $userRepository->get($giverLeader->id)->status);
+        self::assertSame(UserStatus::Paid, $userRepository->get($recipientLeader->id)->status);
+
+        $refetchedMember1 = $troopParticipantRepository->get($member1->id);
+        self::assertNotNull($refetchedMember1->troopLeader);
+        self::assertSame($to->id, $refetchedMember1->troopLeader->id);
+
+        $refetchedMember2 = $troopParticipantRepository->get($member2->id);
+        self::assertNotNull($refetchedMember2->troopLeader);
+        self::assertSame($to->id, $refetchedMember2->troopLeader->id);
+    }
+
+    public function testTransferPaymentThrowsWhenRecipientTroopLeaderHasParticipants(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+
+        $giverLeader = $this->createTroopLeader($app, $event);
+        $giverPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($giverLeader),
+        );
+        $paymentService->confirmPayment($giverPayment);
+
+        $recipientLeader = $this->createTroopLeader($app, $event);
+        $recipientLeader->status = UserStatus::Approved;
+        $userRepository->persist($recipientLeader);
+        $recipientLeaderParticipant = $troopLeaderRepository->getFromUser($userRepository->get($recipientLeader->id));
+        $this->createTroopParticipantTiedTo($app, $event, $recipientLeaderParticipant);
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giverLeader->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipientLeader->id));
+
+        try {
+            $service->transferPayment($from, $to);
+            self::fail('Expected RuntimeException was not thrown');
+        } catch (\RuntimeException) {
+            // expected
+        }
+
+        // the in-method guard fires after the atomic status claims; the surrounding transaction
+        // must roll those claims back so neither participant is left half-transferred
+        self::assertSame(UserStatus::Paid, $userRepository->get($giverLeader->id)->status);
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipientLeader->id)->status);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */
@@ -413,6 +519,49 @@ class PaymentTransferServiceTest extends AppTestCase
         $istRepository->persist($ist);
 
         return $user;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createTroopLeader(App $app, Event $event): User
+    {
+        $userService = $this->getService($app, UserService::class);
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+
+        $user = $userService->registerEmailUser('transfer-' . uniqid('', true) . '@example.com', $event);
+        $participant = $userService->createParticipantSetRole($user, 'tl');
+
+        $troopLeader = $troopLeaderRepository->get($participant->id);
+        $troopLeader->patrolName = 'Test Troop';
+        $troopLeader->firstName = 'Transfer';
+        $troopLeader->lastName = 'Leader';
+        $troopLeader->nickname = 'TL';
+        $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-01');
+        $troopLeader->email = $user->email;
+        $troopLeader->gender = 'male';
+        $troopLeader->country = 'CZ';
+        $troopLeaderRepository->persist($troopLeader);
+
+        return $user;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createTroopParticipantTiedTo(App $app, Event $event, TroopLeader $troopLeader): TroopParticipant
+    {
+        $userService = $this->getService($app, UserService::class);
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
+
+        $user = $userService->registerEmailUser('transfer-' . uniqid('', true) . '@example.com', $event);
+        $participant = $userService->createParticipantSetRole($user, 'tp');
+
+        $troopParticipant = $troopParticipantRepository->get($participant->id);
+        $troopParticipant->troopLeader = $troopLeader;
+        $troopParticipantRepository->persist($troopParticipant);
+
+        return $troopParticipant;
     }
 
     /**
