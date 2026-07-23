@@ -605,8 +605,13 @@ class AdminController extends AbstractController
                 $userTo->id,
             )));
         } else {
-            $this->paymentTransferService->transferPayment($participantFrom, $participantTo);
-            $this->flashMessages->success('flash.success.transfer');
+            try {
+                $this->paymentTransferService->transferPayment($participantFrom, $participantTo);
+                $this->flashMessages->success('flash.success.transfer');
+            } catch (\RuntimeException $e) {
+                $this->flashMessages->error('flash.error.transferFailed');
+                $this->sentryCollector->collect($e);
+            }
         }
 
         return $this->redirect(

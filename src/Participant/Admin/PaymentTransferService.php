@@ -102,14 +102,23 @@ readonly class PaymentTransferService
     public function transferPayment(Participant $participantFrom, Participant $participantTo): void
     {
         // wrap in a transaction so any later abort (e.g. missing paid payment) rolls back the status claims,
-        // never leaving a half-transferred giver/recipient pair
-        $this->userRepository->transactional(function () use ($participantFrom, $participantTo): void {
-            $this->transferPaymentInner($participantFrom, $participantTo);
-        });
+        // never leaving a half-transferred giver/recipient pair; emails are deferred past the commit
+        // so a rolled-back transfer never notifies anyone
+        $sendDeferredEmails = $this->userRepository->transactional(
+            fn (): array => $this->transferPaymentInner($participantFrom, $participantTo),
+        );
+
+        foreach ($sendDeferredEmails as $sendDeferredEmail) {
+            $sendDeferredEmail();
+        }
     }
 
-    private function transferPaymentInner(Participant $participantFrom, Participant $participantTo): void
+    /**
+     * @return list<callable(): void>
+     */
+    private function transferPaymentInner(Participant $participantFrom, Participant $participantTo): array
     {
+        $deferredEmails = [];
         $userFrom = $participantFrom->getUserButNotNull();
         $userTo = $participantTo->getUserButNotNull();
 
@@ -131,7 +140,7 @@ readonly class PaymentTransferService
         foreach ($participantTo->payment as $payment) {
             if ($payment->status === PaymentStatus::Waiting) {
                 $this->paymentService->cancelPayment($payment, PaymentSource::Transfer);
-                $this->mailer->sendCancelledPayment(
+                $deferredEmails[] = fn () => $this->mailer->sendCancelledPayment(
                     $participantTo,
                     $this->translator->trans(
                         'email.text.paymentTransfered',
@@ -178,8 +187,8 @@ readonly class PaymentTransferService
         $this->userRepository->persist($userFrom);
         $this->userRepository->persist($userTo);
 
-        $this->mailer->sendRegistrationPaid($participantTo);
-        $this->mailer->sendPaymentTransferedFromYou($participantFrom);
+        $deferredEmails[] = fn () => $this->mailer->sendRegistrationPaid($participantTo);
+        $deferredEmails[] = fn () => $this->mailer->sendPaymentTransferedFromYou($participantFrom);
 
         $this->logger->info(sprintf(
             'Transferred payment ID %s from participant ID %s to participant ID %s',
@@ -188,6 +197,8 @@ readonly class PaymentTransferService
             $userTo->id,
         ));
         $this->metrics->count(MetricName::PaymentsTransferred, 1);
+
+        return $deferredEmails;
     }
 
     private function handlePayments(

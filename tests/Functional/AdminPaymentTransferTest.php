@@ -7,6 +7,7 @@ namespace Tests\Functional;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Admin\AdminController;
 use kissj\Participant\Ist\IstRepository;
@@ -22,6 +23,7 @@ use Slim\App;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
 
 class AdminPaymentTransferTest extends AppTestCase
@@ -57,6 +59,45 @@ class AdminPaymentTransferTest extends AppTestCase
         self::assertSame(302, $response->getStatusCode());
         self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
         self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
+    }
+
+    public function testTransferPaymentFailsGracefullyWhenGiverHasNoPaidPayment(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $userRepository = $this->getService($app, UserRepository::class);
+
+        // Paid status without a backing payment row - eligibility passes, transferPayment throws
+        $giver = $this->createIst($app, $event);
+        $giver->status = UserStatus::Paid;
+        $userRepository->persist($giver);
+
+        $recipient = $this->createIst($app, $event);
+        $recipient->status = UserStatus::Approved;
+        $userRepository->persist($recipient);
+
+        $controller = $this->getService($app, AdminController::class);
+        $request = $this->routedRequest($app, $event)->withParsedBody([
+            'emailFrom' => $giver->email,
+            'emailTo' => $recipient->email,
+        ]);
+
+        $response = $controller->transferPayment($request, new Response(), $event);
+
+        self::assertSame(302, $response->getStatusCode());
+
+        $translator = $this->getService($app, TranslatorInterface::class);
+        $flashed = array_column(
+            $this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(),
+            'message',
+        );
+        self::assertContains($translator->trans('flash.error.transferFailed'), $flashed);
+
+        // the transaction rolled the status claims back
+        self::assertSame(UserStatus::Paid, $userRepository->get($giver->id)->status);
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipient->id)->status);
     }
 
     /**
