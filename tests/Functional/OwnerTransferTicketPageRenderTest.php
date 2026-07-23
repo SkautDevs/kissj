@@ -84,8 +84,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string) $response->getBody();
+        $translator = $this->getService($app, TranslatorInterface::class);
         self::assertStringContainsString(
-            $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.recipientNotFound'),
+            $translator->trans('ticketTransfer.recipientNotFound'),
+            $body,
+        );
+        // the admin-flow "one or both participants not found" flash is misleading here
+        self::assertStringNotContainsString(
+            $translator->trans('flash.warning.nullParticipants'),
             $body,
         );
     }
