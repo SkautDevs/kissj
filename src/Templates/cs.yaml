@@ -711,6 +711,7 @@ flash:
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
         differentParticipants: "Účastníci musí být různí (:"
         cannotTransferToYourself: "Vstupenku nelze přesunout sám na sebe"
+        transferRecipientNotFound: "S tímto kódem neevidujeme žádného účastníka. Zkontroluj prosím, jestli je kód správně"
         emailCaseVariant: "Účet s e-mailem %email% už existuje - nechtěl/a jsi použít tuto adresu?"
         noRolesSelected: "Nebyly vybrány žádné role pro generování badges"
         sameRole: "Účastníci musí mít stejné role"

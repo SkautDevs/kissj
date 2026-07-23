@@ -94,6 +94,10 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
             $translator->trans('flash.warning.nullParticipants'),
             $body,
         );
+        self::assertStringContainsString(
+            $translator->trans('flash.warning.transferRecipientNotFound'),
+            $body,
+        );
     }
 
     public function testTransferPageShowsNotPossibleForIneligibleRecipient(): void

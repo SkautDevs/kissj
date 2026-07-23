@@ -222,8 +222,10 @@ class ParticipantController extends AbstractController
                 $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
                 $to = null;
                 $tieCode = null;
-            } elseif ($to !== null) {
-                // unknown code renders its own not-found message - the shared null-participant flash fits only the admin flow
+            } elseif ($to === null) {
+                // the shared null-participant flash fits only the admin flow, where both sides come from input
+                $this->flashMessages->warning('flash.warning.transferRecipientNotFound');
+            } else {
                 $transferPossible = $this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages);
             }
         }
