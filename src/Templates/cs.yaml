@@ -717,6 +717,7 @@ flash:
         sameRole: "Účastníci musí mít stejné role"
         notPaid: "Prodávající nemá žádnou zaplacenou platbu"
         isPaid: "Kupující již má zaplacenou platbu"
+        recipientNotApproved: "Kupující zatím nemá schválenou registraci"
         troopLeaderHasParticipants: "Kupující nesmí mít připnuté účastníky, aby mohl přejmout novou skupinu"
         patrolLeaderNotSupported: "Přepnutí skupiny není zatím pro patroly podporováno"
         wrongEvent: "Na tuto akci ještě nejsi registrovaný - registruj se, prosím"

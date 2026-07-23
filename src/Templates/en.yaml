@@ -709,6 +709,7 @@ flash:
         sameRole: "Participants must have same roles"
         notPaid: "Seller has not completed payment"
         isPaid: "Buyer has completed payment"
+        recipientNotApproved: "Buyer's registration is not approved yet"
         troopLeaderHasParticipants: "Buyer cannot have tied participants to be able to take over a new group"
         patrolLeaderNotSupported: "Patrol leader transfer is not yet supported"
         wrongEvent: "You are not registered on this event yet - register yourself please"

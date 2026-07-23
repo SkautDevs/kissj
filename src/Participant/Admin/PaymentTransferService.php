@@ -65,8 +65,12 @@ readonly class PaymentTransferService
             $isPossible = false;
         }
 
-        if ($participantTo->getUserButNotNull()->status->isPaidOrCancelled()) {
+        $statusTo = $participantTo->getUserButNotNull()->status;
+        if ($statusTo->isPaidOrCancelled()) {
             $flash->warning('flash.warning.isPaid');
+            $isPossible = false;
+        } elseif ($statusTo !== UserStatus::Approved) {
+            $flash->warning('flash.warning.recipientNotApproved');
             $isPossible = false;
         }
 

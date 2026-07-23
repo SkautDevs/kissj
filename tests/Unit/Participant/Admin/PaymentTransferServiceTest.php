@@ -36,7 +36,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $service = $this->getService($app, PaymentTransferService::class);
 
         $from = $this->createParticipant($app, 'ist', UserStatus::Paid);
-        $to = $this->createParticipant($app, 'guest', UserStatus::Open);
+        $to = $this->createParticipant($app, 'guest', UserStatus::Approved);
 
         self::assertFalse($service->isPaymentTransferPossible($from, $to, $this->fakeFlash()));
     }
@@ -74,6 +74,38 @@ class PaymentTransferServiceTest extends AppTestCase
         self::assertFalse($service->isPaymentTransferPossible($from, $to, $this->fakeFlash()));
     }
 
+    public function testReturnsFalseWhenRecipientNotYetApproved(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, PaymentTransferService::class);
+
+        $from = $this->createParticipant($app, 'ist', UserStatus::Paid);
+        $to = $this->createParticipant($app, 'ist', UserStatus::Open);
+
+        $flash = $this->capturingFlash();
+        self::assertFalse($service->isPaymentTransferPossible($from, $to, $flash));
+        self::assertContains(
+            'flash.warning.recipientNotApproved',
+            array_column($flash->dumpMessagesIntoArray(), 'message'),
+        );
+    }
+
+    public function testReturnsFalseWhenRecipientOnlyClosed(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, PaymentTransferService::class);
+
+        $from = $this->createParticipant($app, 'ist', UserStatus::Paid);
+        $to = $this->createParticipant($app, 'ist', UserStatus::Closed);
+
+        $flash = $this->capturingFlash();
+        self::assertFalse($service->isPaymentTransferPossible($from, $to, $flash));
+        self::assertContains(
+            'flash.warning.recipientNotApproved',
+            array_column($flash->dumpMessagesIntoArray(), 'message'),
+        );
+    }
+
     public function testReturnsFalseForNullParticipants(): void
     {
         $app = $this->getTestApp();
@@ -88,7 +120,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $service = $this->getService($app, PaymentTransferService::class);
 
         $from = $this->createParticipant($app, 'ist', UserStatus::Paid);
-        $to = $this->createParticipant($app, 'ist', UserStatus::Open);
+        $to = $this->createParticipant($app, 'ist', UserStatus::Approved);
 
         self::assertTrue($service->isPaymentTransferPossible($from, $to, $this->fakeFlash()));
     }
@@ -99,7 +131,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $service = $this->getService($app, PaymentTransferService::class);
 
         $from = $this->createParticipant($app, 'ot', UserStatus::Paid);
-        $to = $this->createParticipant($app, 'ot', UserStatus::Open);
+        $to = $this->createParticipant($app, 'ot', UserStatus::Approved);
 
         self::assertTrue($service->isPaymentTransferPossible($from, $to, $this->fakeFlash()));
     }
@@ -110,7 +142,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $service = $this->getService($app, PaymentTransferService::class);
 
         $from = $this->createParticipant($app, 'pl', UserStatus::Paid);
-        $to = $this->createParticipant($app, 'pl', UserStatus::Open);
+        $to = $this->createParticipant($app, 'pl', UserStatus::Approved);
 
         $flash = $this->capturingFlash();
         self::assertFalse($service->isPaymentTransferPossible($from, $to, $flash));
@@ -135,7 +167,7 @@ class PaymentTransferServiceTest extends AppTestCase
 
         $recipientUser = $userService->registerEmailUser('transfer-' . uniqid('', true) . '@example.com', $event);
         $recipientLeader = $userService->createParticipantSetRole($recipientUser, 'tl');
-        $recipientUser->status = UserStatus::Open;
+        $recipientUser->status = UserStatus::Approved;
         $userRepository->persist($recipientUser);
 
         $memberUser = $userService->registerEmailUser('transfer-' . uniqid('', true) . '@example.com', $event);
@@ -173,7 +205,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $paymentService->confirmPayment($giverPayment);
 
         $recipient = $this->createIst($app, $event);
-        $recipient->status = UserStatus::Open;
+        $recipient->status = UserStatus::Approved;
         $userRepository->persist($recipient);
         $recipientWaitingPayment = $paymentService->createAndPersistNewEventPayment(
             $participantRepository->getParticipantFromUser($recipient),
@@ -194,6 +226,49 @@ class PaymentTransferServiceTest extends AppTestCase
         $cancelledPayment = $paymentRepository->get($recipientWaitingPayment->id);
         self::assertInstanceOf(Payment::class, $cancelledPayment);
         self::assertSame(PaymentStatus::Canceled, $cancelledPayment->status);
+    }
+
+    public function testTransferPaymentCancelsRecipientsWaitingPayment(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+
+        $giver = $this->createIst($app, $event);
+        $giverPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($giver),
+        );
+        $paymentService->confirmPayment($giverPayment);
+
+        $recipient = $this->createIst($app, $event);
+        $recipient->status = UserStatus::Approved;
+        $userRepository->persist($recipient);
+        $recipientWaitingPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($recipient),
+        );
+        // recipient's payment is intentionally left unconfirmed, so it stays PaymentStatus::Waiting
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
+
+        $service->transferPayment($from, $to);
+
+        self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
+        self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
+
+        $cancelledPayment = $paymentRepository->get($recipientWaitingPayment->id);
+        self::assertInstanceOf(Payment::class, $cancelledPayment);
+        self::assertSame(PaymentStatus::Canceled, $cancelledPayment->status);
+
+        $transferredPayment = $paymentRepository->get($giverPayment->id);
+        self::assertInstanceOf(Payment::class, $transferredPayment);
+        self::assertSame($to->id, $transferredPayment->participant->id);
     }
 
     /**
