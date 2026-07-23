@@ -30,7 +30,7 @@ dashboard:
     youWantUntie: "Opravdu chceš odepnout účastníka "
     youHaveTroop: "Jsi ve skupině %troopName% s vedoucím skupiny %troopLeaderFullName%"
     details: "podrobnosti"
-    tieCode: "Kód pro připnutí"
+    tieCode: "Tvůj kód"
     pairCode: "kód skupiny"
     listOfParticipants: "Seznam účastníků"
     addFromSkautis: "Přidej účastníky ze Skautisu"
@@ -577,7 +577,7 @@ transferPayment-admin:
     notPossible: "Přesun nelze uskutečnit"
 ticketTransfer:
     title: "Přesun vstupenky"
-    description: "Svou zaplacenou vstupenku můžeš přenechat jinému, zatím nezaplacenému účastníkovi ve stejné roli. Zadej jeho kód pro připnutí (na šátku) pro náhled."
+    description: "Svou zaplacenou vstupenku můžeš přenechat jinému, zatím nezaplacenému účastníkovi ve stejné roli. Zadej jeho kód — najde ho po přihlášení na svém přehledu."
     recipientTieCode: "Kód příjemce"
     recipientName: "Jméno"
     preview: "Zobrazit náhled"
