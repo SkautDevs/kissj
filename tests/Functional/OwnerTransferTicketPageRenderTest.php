@@ -117,6 +117,49 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         );
     }
 
+    public function testDashboardShowsOwnTieCodeOnOwnerTransferEvent(): void
+    {
+        $app = $this->getTestApp();
+        $this->flipEventToKorbo($app);
+
+        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid() . '@example.com', UserStatus::Approved, 'Dashboard', 'One');
+
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $tieCode = $participantRepository->getParticipantFromUser($user)->tieCode;
+
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString($tieCode, $body);
+    }
+
+    public function testDashboardHidesTieCodeWhenOwnerTransferNotAllowed(): void
+    {
+        $app = $this->getTestApp();
+
+        $user = $this->createIst($app, 'transfer-dashboard-' . uniqid() . '@example.com', UserStatus::Approved, 'Dashboard', 'Two');
+
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $tieCode = $participantRepository->getParticipantFromUser($user)->tieCode;
+
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            self::BASE_URL . '/participant/dashboard'
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringNotContainsString($tieCode, $body);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */
