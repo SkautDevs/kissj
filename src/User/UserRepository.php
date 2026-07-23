@@ -17,6 +17,24 @@ use kissj\Orm\Repository;
  */
 class UserRepository extends Repository
 {
+    /**
+     * Atomic compare-and-swap on the user status.
+     * Returns true only when exactly this call moved the user from the expected to the new status,
+     * so racing callers cannot both win the transition.
+     */
+    public function claimStatusChange(User $user, UserStatus $expectedStatus, UserStatus $newStatus): bool
+    {
+        $this->connection->query(
+            'UPDATE %n SET status = %s WHERE id = %i AND status = %s',
+            $this->getTable(),
+            $newStatus->value,
+            $user->id,
+            $expectedStatus->value,
+        );
+
+        return $this->connection->getAffectedRows() === 1;
+    }
+
     public function getUserFromEmail(string $email, Event $event): User
     {
         return $this->getOneBy([

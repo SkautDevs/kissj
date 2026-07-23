@@ -52,6 +52,36 @@ class PaidStatusOnlyMiddlewareTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
     }
 
+    public function testRedirectsToLoginWhenUserIsMissing(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+
+        $middleware = $this->getService($app, PaidStatusOnlyMiddleware::class);
+        $handler = new RequestHandlerSpy();
+
+        $response = $middleware->process($this->requestWithoutUser($app, $event), $handler);
+
+        self::assertFalse($handler->called);
+        self::assertSame(302, $response->getStatusCode());
+        $expectedLocation = $app->getRouteCollector()->getRouteParser()
+            ->urlFor('loginAskEmail', ['eventSlug' => $event->slug]);
+        self::assertSame($expectedLocation, $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function requestWithoutUser(App $app, Event $event): ServerRequestInterface
+    {
+        $path = '/v2/event/' . $event->slug . '/participant/dashboard';
+
+        return $this->createRequest($path)
+            ->withAttribute(RouteContext::ROUTE_PARSER, $app->getRouteCollector()->getRouteParser())
+            ->withAttribute(RouteContext::ROUTING_RESULTS, $app->getRouteResolver()->computeRoutingResults($path, 'GET'))
+            ->withAttribute('event', $event);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */

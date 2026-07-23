@@ -9,6 +9,7 @@ use kissj\AbstractController;
 use kissj\Deal\Deal;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\FlashMessages\NullFlashMessages;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
@@ -258,13 +259,22 @@ class ParticipantController extends AbstractController
             return $this->redirect($request, $response, 'showTransferTicket');
         }
 
-        if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, $this->flashMessages)) {
+        // the detailed eligibility warnings are surfaced by the GET preview; here we need only the boolean,
+        // so discard them to avoid duplicating every warning on the redirect
+        if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, new NullFlashMessages())) {
             $this->flashMessages->error('flash.error.transferFailed');
 
             return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);
         }
 
-        $this->paymentTransferService->transferPayment($from, $to);
+        try {
+            $this->paymentTransferService->transferPayment($from, $to);
+        } catch (\RuntimeException) {
+            $this->flashMessages->error('flash.error.transferFailed');
+
+            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);
+        }
+
         $this->flashMessages->success('flash.success.ticketTransferred');
 
         return $this->redirect($request, $response, 'dashboard');

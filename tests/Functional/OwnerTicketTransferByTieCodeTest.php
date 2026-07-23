@@ -136,6 +136,68 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
     }
 
+    public function testTransferFailsGracefullyWhenGiverHasNoPaidPayment(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+
+        // a giver marked Paid but WITHOUT any payment row (inconsistent state) must not 500
+        $giver = $this->makePaidParticipantWithoutPayment($app, $event);
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Approved);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $controller = $this->getService($app, ParticipantController::class);
+        $request = $this->routedRequest($app, $event)->withParsedBody(['tieCode' => $recipientCode]);
+        $response = $controller->transferTicket($request, new Response(), $giver);
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertContains(
+            $this->trans($app, 'flash.error.transferFailed'),
+            $this->flashed($app),
+        );
+
+        $userRepository = $this->getService($app, UserRepository::class);
+        // the failed transfer must not have moved statuses
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipient->id)->status);
+    }
+
+    public function testPostFailureDoesNotDuplicateDetailedWarnings(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+        // ineligible recipient: same role but already Paid → isPaid warning would fire
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Paid);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $controller = $this->getService($app, ParticipantController::class);
+        $request = $this->routedRequest($app, $event)->withParsedBody(['tieCode' => $recipientCode]);
+        $response = $controller->transferTicket($request, new Response(), $giver);
+
+        self::assertSame(302, $response->getStatusCode());
+        $flashed = $this->flashed($app);
+        self::assertContains($this->trans($app, 'flash.error.transferFailed'), $flashed);
+        // the POST must not emit the detailed eligibility warnings (the GET preview covers them)
+        self::assertNotContains($this->trans($app, 'flash.warning.isPaid'), $flashed);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function makePaidParticipantWithoutPayment(App $app, Event $event): User
+    {
+        $userService = $this->getService($app, UserService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+
+        $user = $userService->registerEmailUser('transfer-tie-' . uniqid('', true) . '@example.com', $event);
+        $userService->createParticipantSetRole($user, 'ist');
+        $user->status = UserStatus::Paid;
+        $userRepository->persist($user);
+
+        return $user;
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */

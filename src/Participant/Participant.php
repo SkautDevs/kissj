@@ -93,7 +93,7 @@ class Participant extends EntityDatetime
     protected function initDefaults(): void
     {
         parent::initDefaults();
-        $this->tieCode = $this->generateTieCode(); // TODO check if another code exists in DB
+        $this->tieCode = $this->generateTieCode();
         $this->entryCode = Uuid::uuid4()->toString();
         $this->adminNote = '';
     }
@@ -274,7 +274,7 @@ class Participant extends EntityDatetime
 
     public function getFirstPaidPayment(): ?Payment
     {
-        return $this->getAllPaidPayment()[0] ?? null;
+        return array_values($this->getAllPaidPayment())[0] ?? null;
     }
 
     /**
@@ -354,6 +354,11 @@ class Participant extends EntityDatetime
     public function roleToString(ParticipantRole $role): string
     {
         return $role->value;
+    }
+
+    public function regenerateTieCode(): void
+    {
+        $this->tieCode = $this->generateTieCode();
     }
 
     private function generateTieCode(): string

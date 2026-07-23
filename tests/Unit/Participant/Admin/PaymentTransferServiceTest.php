@@ -271,6 +271,125 @@ class PaymentTransferServiceTest extends AppTestCase
         self::assertSame($to->id, $transferredPayment->participant->id);
     }
 
+    public function testTransferPaymentSucceedsWhenPaidPaymentIsNotFirstRow(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+
+        $giver = $this->createIst($app, $event);
+        $giverParticipant = $participantRepository->getParticipantFromUser($giver);
+        // first payment is cancelled (e.g. admin price change), second one is the real paid one
+        $cancelledPayment = $paymentService->createAndPersistNewEventPayment($giverParticipant);
+        $paymentService->cancelPayment($cancelledPayment);
+        $paidPayment = $paymentService->createAndPersistNewEventPayment($giverParticipant);
+        $paymentService->confirmPayment($paidPayment);
+
+        $recipient = $this->createIst($app, $event);
+        $recipient->status = UserStatus::Approved;
+        $userRepository->persist($recipient);
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
+
+        $service->transferPayment($from, $to);
+
+        self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
+        self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
+
+        $transferredPayment = $paymentRepository->get($paidPayment->id);
+        self::assertInstanceOf(Payment::class, $transferredPayment);
+        self::assertSame(PaymentStatus::Paid, $transferredPayment->status);
+        self::assertSame($to->id, $transferredPayment->participant->id);
+    }
+
+    public function testTransferAbortsWhenGiverAlreadyOpen(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+
+        $giver = $this->createIst($app, $event);
+        $giverPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($giver),
+        );
+        $paymentService->confirmPayment($giverPayment);
+
+        $recipient = $this->createIst($app, $event);
+        $recipient->status = UserStatus::Approved;
+        $userRepository->persist($recipient);
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
+
+        // giver slipped out of Paid before the transfer executes (e.g. concurrent action)
+        $giver->status = UserStatus::Open;
+        $userRepository->persist($giver);
+
+        try {
+            $service->transferPayment($from, $to);
+            self::fail('Expected RuntimeException was not thrown');
+        } catch (\RuntimeException) {
+            // expected
+        }
+
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipient->id)->status);
+        $payment = $paymentRepository->get($giverPayment->id);
+        self::assertInstanceOf(Payment::class, $payment);
+        self::assertSame($from->id, $payment->participant->id);
+    }
+
+    public function testTransferAbortsAndCompensatesWhenRecipientAlreadyPaid(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->get(1);
+        $this->initializeMailerSettings($app, $event);
+
+        $service = $this->getService($app, PaymentTransferService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentService = $this->getService($app, PaymentService::class);
+
+        $giver = $this->createIst($app, $event);
+        $giverPayment = $paymentService->createAndPersistNewEventPayment(
+            $participantRepository->getParticipantFromUser($giver),
+        );
+        $paymentService->confirmPayment($giverPayment);
+
+        $recipient = $this->createIst($app, $event);
+        $recipient->status = UserStatus::Approved;
+        $userRepository->persist($recipient);
+
+        $from = $participantRepository->getParticipantFromUser($userRepository->get($giver->id));
+        $to = $participantRepository->getParticipantFromUser($userRepository->get($recipient->id));
+
+        // recipient becomes Paid before the transfer executes (e.g. a racing transfer)
+        $recipient->status = UserStatus::Paid;
+        $userRepository->persist($recipient);
+
+        try {
+            $service->transferPayment($from, $to);
+            self::fail('Expected RuntimeException was not thrown');
+        } catch (\RuntimeException) {
+            // expected
+        }
+
+        // compensation must restore the giver to Paid
+        self::assertSame(UserStatus::Paid, $userRepository->get($giver->id)->status);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */

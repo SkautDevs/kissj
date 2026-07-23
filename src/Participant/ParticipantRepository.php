@@ -418,6 +418,24 @@ class ParticipantRepository extends Repository
         return $this->findOneBy(['entry_code' => $entryCode]);
     }
 
+    public function isTieCodeInUse(string $tieCode): bool
+    {
+        return $this->findOneBy(['tie_code' => $tieCode]) !== null;
+    }
+
+    // tie codes route payments on transfer, so a collision must never persist to the database
+    public function ensureUniqueTieCode(Participant $participant): void
+    {
+        $attempts = 0;
+        while ($this->isTieCodeInUse($participant->tieCode)) {
+            if (++$attempts >= 10) {
+                throw new \LogicException('Failed to generate a unique tie code after 10 attempts');
+            }
+
+            $participant->regenerateTieCode();
+        }
+    }
+
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
     {
         $participant = $this->findOneBy(['tie_code' => strtoupper($tieCode)]);

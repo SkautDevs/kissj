@@ -220,7 +220,7 @@ class Route
 
                             $app->post('/transferTicket', ParticipantController::class . '::transferTicket')
                                 ->setName('transferTicket');
-                        })->add(OwnerTicketTransferAllowedOnlyMiddleware::class)->add(PaidStatusOnlyMiddleware::class);
+                        })->add(PaidStatusOnlyMiddleware::class)->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
                     });
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 

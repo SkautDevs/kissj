@@ -18,7 +18,13 @@ class PaidStatusOnlyMiddleware extends BaseMiddleware
     public function process(Request $request, ResponseHandler $handler): Response
     {
         $user = $this->tryGetUser($request);
-        if ($user !== null && $user->status !== UserStatus::Paid) {
+        if ($user === null) {
+            $this->flashMessages->warning('flash.warning.notLogged');
+
+            return $this->createRedirectResponse($request, 'loginAskEmail');
+        }
+
+        if ($user->status !== UserStatus::Paid) {
             $this->flashMessages->error('flash.error.paidStatusRequired');
 
             return $this->createRedirectResponse($request, 'dashboard');

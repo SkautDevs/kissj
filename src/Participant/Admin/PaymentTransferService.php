@@ -101,6 +101,31 @@ readonly class PaymentTransferService
      */
     public function transferPayment(Participant $participantFrom, Participant $participantTo): void
     {
+        // wrap in a transaction so any later abort (e.g. missing paid payment) rolls back the status claims,
+        // never leaving a half-transferred giver/recipient pair
+        $this->userRepository->transactional(function () use ($participantFrom, $participantTo): void {
+            $this->transferPaymentInner($participantFrom, $participantTo);
+        });
+    }
+
+    private function transferPaymentInner(Participant $participantFrom, Participant $participantTo): void
+    {
+        $userFrom = $participantFrom->getUserButNotNull();
+        $userTo = $participantTo->getUserButNotNull();
+
+        // atomic claims so a double-fired or racing transfer cannot back two Paid recipients with one payment
+        if (!$this->userRepository->claimStatusChange($userFrom, UserStatus::Paid, UserStatus::Open)) {
+            throw new \RuntimeException('Transfer aborted - the sender is no longer in paid status');
+        }
+        if (!$this->userRepository->claimStatusChange($userTo, UserStatus::Approved, UserStatus::Paid)) {
+            $this->userRepository->claimStatusChange($userFrom, UserStatus::Open, UserStatus::Paid);
+
+            throw new \RuntimeException('Transfer aborted - the recipient is no longer in approved status');
+        }
+
+        $userFrom->status = UserStatus::Open;
+        $userTo->status = UserStatus::Paid;
+
         $transferredPayment = $this->handlePayments($participantFrom, $participantTo);
 
         foreach ($participantTo->payment as $payment) {
@@ -147,12 +172,6 @@ readonly class PaymentTransferService
         $registrationPayDateFrom = $participantFrom->registrationPayDate;
         $participantFrom->registrationPayDate = $participantTo->registrationPayDate;
         $participantTo->registrationPayDate = $registrationPayDateFrom;
-
-        $userFrom = $participantFrom->getUserButNotNull();
-        $userFrom->status = UserStatus::Open;
-
-        $userTo = $participantTo->getUserButNotNull();
-        $userTo->status = UserStatus::Paid;
 
         $this->participantRepository->persist($participantFrom);
         $this->participantRepository->persist($participantTo);
