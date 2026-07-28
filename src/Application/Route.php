@@ -405,7 +405,8 @@ class Route
                     ->add(EntryApiKeyMiddleware::class)
                     ->setName('entry-list');
 
-                $app->post('/code/{entryCode}', EntryController::class . '::entry')
+                $app->map(['POST', 'OPTIONS'], '/code/{entryCode}', EntryController::class . '::entry')
+                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry');
 
                 $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
