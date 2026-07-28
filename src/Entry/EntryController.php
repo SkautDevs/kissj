@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -66,6 +67,10 @@ class EntryController extends AbstractController
 
         if (!is_string($eventSecret) || $event->apiKeyEntry === null || !hash_equals($event->apiKeyEntry, $eventSecret)) {
             return $this->createErrorEntryResponse($response, 'invalid event secret');
+        }
+
+        if ($participant->getUserButNotNull()->status !== UserStatus::Paid) {
+            return $this->createErrorEntryResponse($response, 'participant not paid');
         }
 
         $participantInfo = [
