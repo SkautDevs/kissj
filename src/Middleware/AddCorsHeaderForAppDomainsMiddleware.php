@@ -18,9 +18,17 @@ class AddCorsHeaderForAppDomainsMiddleware extends BaseMiddleware
             $response = $handler->handle($request);
         }
 
-        return $response->withHeader('Access-Control-Allow-Origin', 'https://kissj.skauting.cz') // TODO fix for production - make dynamic or list
+        $origin = $request->getHeaderLine('Origin');
+        if ($origin === '') {
+            $origin = 'https://kissj.skauting.cz';
+        }
+
+        // no Allow-Credentials: routes carrying this middleware authenticate via API key, never cookies,
+        // and echoed origin + credentials would be an unsafe combination
+        return $response->withHeader('Access-Control-Allow-Origin', $origin)
+            ->withHeader('Vary', 'Origin')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', ['authorization', 'Allow-Health'])
-            ->withHeader('Access-Control-Allow-Credentials', 'true'); // also handle cookies
+            ->withHeader('Access-Control-Allow-Headers', ['authorization', 'Allow-Health', 'Content-Type'])
+            ->withHeader('Access-Control-Max-Age', '3600');
     }
 }
