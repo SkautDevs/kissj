@@ -576,6 +576,9 @@ transferPayment-admin:
     transfer: "Přesuň platbu"
     notPossible: "Přesun nelze uskutečnit"
 foodStats-admin:
+    presentHeader: "aktuálně přítomní na akci"
+    notSet: "nenastaveno"
+    total: "celkem"
     summary: "souhrn všech rolí"
     daySum: "denní součet"
     exportFoodData: "exportovat počty dle rolí"

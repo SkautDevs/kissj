@@ -19,6 +19,39 @@
 
     </div>
 
+    <div class="card">
+        <h3>{{ 'foodStats-admin.presentHeader' | trans }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                {% for food in presentFoodStatistic.foodTypes %}
+                    <th style="text-align: left">{{ food|trans }}</th>
+                {% endfor %}
+                <th style="text-align: left">{{ 'foodStats-admin.total' | trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for role in presentFoodStatistic.roles %}
+                <tr>
+                    <th>{{ role|trans }}</th>
+                    {% for food in presentFoodStatistic.foodTypes %}
+                        <td>{{ presentFoodStatistic.matrix[role][food] }}</td>
+                    {% endfor %}
+                    <td>{{ presentFoodStatistic.rowTotals[role] }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th>{{ 'foodStats-admin.total' | trans }}</th>
+                {% for food in presentFoodStatistic.foodTypes %}
+                    <td>{{ presentFoodStatistic.colTotals[food] }}</td>
+                {% endfor %}
+                <td>{{ presentFoodStatistic.grandTotal }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     {% for aggregator, row in foodStatistic.rows %}
         <div class="card">
                 <h3>{{aggregator|trans}}</h3>

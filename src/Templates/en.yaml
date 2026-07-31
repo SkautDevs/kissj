@@ -568,6 +568,9 @@ transferPayment-admin:
     transfer: "Transfer payment"
     notPossible: "Transfer is blocked"
 foodStats-admin:
+    presentHeader: "currently present on site"
+    notSet: "not set"
+    total: "total"
     summary: "all participants summary"
     daySum: "daily sum"
     exportFoodData: "export food statistics based on roles"

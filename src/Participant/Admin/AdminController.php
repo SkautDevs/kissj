@@ -947,9 +947,21 @@ class AdminController extends AbstractController
         Response $response,
         Event $event,
     ): Response {
+        // fetched once and shared below - the day-by-day plan and the on-site matrix both need
+        // the same paid-participant set, and hydrating it twice roughly doubles page load cost
+        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+            ParticipantRole::all(),
+            [UserStatus::Paid],
+            $event,
+        );
+
         return $this->view->render($response, 'admin/foodStats-admin.twig', [
             'event'  => $event,
-            'foodStatistic' => $this->participantStatisticsService->createParticipantFoodPlanFromEvent($event, false)->roleAggregatedToArray(),
+            'foodStatistic' => $this->participantStatisticsService
+                ->createParticipantFoodPlanFromParticipants($participants, $event, false)
+                ->roleAggregatedToArray(),
+            'presentFoodStatistic' => $this->participantStatisticsService
+                ->getPresentFoodStatisticFromParticipants($participants, ParticipantRole::all()),
         ]);
     }
 
