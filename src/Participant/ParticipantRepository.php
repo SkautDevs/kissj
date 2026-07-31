@@ -497,6 +497,7 @@ class ParticipantRepository extends Repository
             ParticipantRole::TroopLeader,
             ParticipantRole::Ist,
             ParticipantRole::Guest,
+            ParticipantRole::OrganizingTeam,
         ], $paidOnly);
 
         $participants = [];

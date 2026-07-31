@@ -213,6 +213,35 @@ class ApiTest extends AppTestCase
         return $istRepository->get($ist->id);
     }
 
+    private function createPaidOrganizer(ContainerInterface $container): Participant
+    {
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $container->get(ParticipantRepository::class);
+
+        $event = $eventRepository->findBySlug('test-event-slug');
+        if ($event === null) {
+            throw new RuntimeException('Test event not found');
+        }
+
+        $email = 'entry-ot-' . bin2hex(random_bytes(4)) . '@example.com';
+        $user = $userService->registerEmailUser($email, $event);
+        $participant = $userService->createParticipantSetRole($user, 'ot');
+        $participant->firstName = 'Orga';
+        $participant->lastName = 'Nizer';
+        $participantRepository->persist($participant);
+
+        $user->status = UserStatus::Paid;
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $userRepository->persist($user);
+
+        return $participant;
+    }
+
     public function testEntryListWithoutAuthHeaderReturns401(): void
     {
         $app = $this->getTestApp();
@@ -243,6 +272,7 @@ class ApiTest extends AppTestCase
         $container = $app->getContainer();
         $this->setupEventApiKeys($container);
         $participant = $this->createPaidParticipant($container);
+        $organizer = $this->createPaidOrganizer($container);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
         $response = $app->handle($request);
@@ -257,6 +287,10 @@ class ApiTest extends AppTestCase
         self::assertIsArray($ist);
         self::assertSame('pánské', $ist['tshirtShape']);
         self::assertSame('XL (větší)', $ist['tshirtSize']);
+        self::assertIsArray($body['roles']['ot']);
+        $ot = $body['roles']['ot'][$organizer->id];
+        self::assertIsArray($ot);
+        self::assertSame('Orga', $ot['firstname']);
     }
 
     public function testWrongScopeKeyReturns401(): void
