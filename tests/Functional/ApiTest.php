@@ -201,7 +201,7 @@ class ApiTest extends AppTestCase
         $ist->gender = 'male';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->setTshirt('unisex', 'XL');
+        $ist->setTshirt('detail.tshirtGenderMale', 'detail.tshirtXL');
         $istRepository->persist($ist);
 
         // Set user as paid (required for entry)
@@ -255,8 +255,8 @@ class ApiTest extends AppTestCase
         self::assertIsArray($body['roles']['ist']);
         $ist = $body['roles']['ist'][$participant->id];
         self::assertIsArray($ist);
-        self::assertSame('unisex', $ist['tshirtShape']);
-        self::assertSame('XL', $ist['tshirtSize']);
+        self::assertSame('pánské', $ist['tshirtShape']);
+        self::assertSame('XL (větší)', $ist['tshirtSize']);
     }
 
     public function testWrongScopeKeyReturns401(): void

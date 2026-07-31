@@ -36,7 +36,7 @@ class EntryController extends AbstractController
             $this->logger->alert("Missing data about status filtering of entry app participant list, using default \"Paid only\"");
             $filterPaidonly = true;
         }
-        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly);
+        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly, $this->translator);
 
         return $this->getResponseWithJson(
             $response,
@@ -78,8 +78,8 @@ class EntryController extends AbstractController
             'fullName' => $participant->getFullName(),
             'email' => $participant->email,
             'ageAtEventStart' => $participant->getAgeAtStartOfEvent(),
-            'tshirtShape' => $participant->getTshirtShape(),
-            'tshirtSize' => $participant->getTshirtSize(),
+            'tshirtShape' => EntryParticipant::tshirtShapeFromRaw($participant->getTshirtShape(), $this->translator),
+            'tshirtSize' => EntryParticipant::tshirtSizeFromRaw($participant->getTshirtSize(), $this->translator),
         ];
 
         if ($participant->entryDate !== null) {

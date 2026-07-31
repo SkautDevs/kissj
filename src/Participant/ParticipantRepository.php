@@ -25,6 +25,7 @@ use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use LeanMapper\Fluent;
 use RuntimeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method Participant getOneBy(mixed[] $criteria)
@@ -489,7 +490,7 @@ class ParticipantRepository extends Repository
     /**
      * @return array<string, array<EntryParticipant>>
      */
-    public function getParticipantsForEntry(Event $event, bool $paidOnly): array
+    public function getParticipantsForEntry(Event $event, bool $paidOnly, TranslatorInterface $translator): array
     {
         $rows = $this->getRowsForEntryParticipant($event, [
             ParticipantRole::PatrolLeader,
@@ -504,7 +505,7 @@ class ParticipantRepository extends Repository
             $role = $row['role'];
             /** @var string $id */
             $id = $row['id'];
-            $participants[$role][$id] = $this->mapDataToEntryParticipant($row);
+            $participants[$role][$id] = $this->mapDataToEntryParticipant($row, $translator);
         }
 
         $rowsDependableParticipants = array_merge(
@@ -529,7 +530,7 @@ class ParticipantRepository extends Repository
             $leader = $participants[$role][$dpPatrolLeaderId] ?? null;
             if ($leader instanceof EntryParticipant) {
                 $leader->participants[$dpId]
-                    = $this->mapDataToEntryParticipant($rowDependableParticipant);
+                    = $this->mapDataToEntryParticipant($rowDependableParticipant, $translator);
             }
         }
 
@@ -620,7 +621,7 @@ class ParticipantRepository extends Repository
         return $rows;
     }
 
-    private function mapDataToEntryParticipant(Row $row): EntryParticipant
+    private function mapDataToEntryParticipant(Row $row, TranslatorInterface $translator): EntryParticipant
     {
         /** @var array{
          *     id: int,
@@ -655,8 +656,8 @@ class ParticipantRepository extends Repository
                 $array['leave_date'],
             ),
             $array['sfh_done'] ?? false,
-            $tshirtParsed[0] ?? null,
-            $tshirtParsed[1] ?? null,
+            EntryParticipant::tshirtShapeFromRaw($tshirtParsed[0] ?? null, $translator),
+            EntryParticipant::tshirtSizeFromRaw($tshirtParsed[1] ?? null, $translator),
         );
     }
 
