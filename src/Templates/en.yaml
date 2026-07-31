@@ -413,7 +413,7 @@ payments-admin:
     changePrice: "Change price"
     confirm: "Confirm payment"
     allPatrolsPaid: "All patrols are paid up!"
-    allIstPaid: "All ISTs are paid up!"
+    allIstsPaid: "All ISTs are paid up!"
     allTroopLeadersPaid: "All troop leaders are paid up!"
     allTroopParticipantsPaid: "All troop participants are paid up!"
     allOrganizingTeamPaid: "All organizing team members are paid up!"

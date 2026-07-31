@@ -44,7 +44,7 @@ dashboard:
     tieCodeFormat: "šest písmen"
     withoutFullName: "bez vyplněného jména"
     youNeed: "Potřebuješ"
-    exactly: "přesne"
+    exactly: "přesně"
     minimally: "nejméně"
     andMaximally: "a nejvíce"
     pForValidReg: "účastníků pro validní registraci"

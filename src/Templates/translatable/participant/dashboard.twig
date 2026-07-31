@@ -97,23 +97,23 @@
                 {# help text how many participants is needed #}
                 {% if userStatus == 'open' %}
                     <p>
-                        {{ 'dashboard.youNeed ' | trans }}
+                        {{ 'dashboard.youNeed' | trans }}
                             {% if person is PatrolLeader %}
                             {% if event.getMinimalPpCount(person) == event.getMaximalPpCount(person) %}
-                                {{ 'dashboard.exactly ' | trans }} {{ event.getMinimalPpCount(person) }}
+                                {{ 'dashboard.exactly' | trans }} {{ event.getMinimalPpCount(person) }}
                             {% else %}
-                                {{ 'dashboard.minimally ' | trans }} {{ event.getMinimalPpCount(person) }}
-                                {{ 'dashboard.andMaximally ' | trans }} {{ event.getMaximalPpCount(person) }}
+                                {{ 'dashboard.minimally' | trans }} {{ event.getMinimalPpCount(person) }}
+                                {{ 'dashboard.andMaximally' | trans }} {{ event.getMaximalPpCount(person) }}
                             {% endif %}
                         {% elseif person is TroopLeader %}
                             {% if event.getMinimalTroopParticipantsCount == event.getMaximalTroopParticipantsCount %}
-                                {{ 'dashboard.exactly ' | trans }} {{ event.getMinimalTroopParticipantsCount }}
+                                {{ 'dashboard.exactly' | trans }} {{ event.getMinimalTroopParticipantsCount }}
                             {% else %}
-                                {{ 'dashboard.minimally ' | trans }} {{ event.getMinimalTroopParticipantsCount }}
-                                {{ 'dashboard.andMaximally ' | trans }} {{ event.getMaximalTroopParticipantsCount }}
+                                {{ 'dashboard.minimally' | trans }} {{ event.getMinimalTroopParticipantsCount }}
+                                {{ 'dashboard.andMaximally' | trans }} {{ event.getMaximalTroopParticipantsCount }}
                             {% endif %}
                         {% endif %}
-                        {{ 'dashboard.pForValidReg ' | trans }}
+                        {{ 'dashboard.pForValidReg' | trans }}
                     </p>
                 {% endif %}
 
