@@ -201,6 +201,7 @@ class ApiTest extends AppTestCase
         $ist->gender = 'male';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
+        $ist->setTshirt('unisex', 'XL');
         $istRepository->persist($ist);
 
         // Set user as paid (required for entry)
@@ -241,6 +242,7 @@ class ApiTest extends AppTestCase
         $app = $this->getTestApp();
         $container = $app->getContainer();
         $this->setupEventApiKeys($container);
+        $participant = $this->createPaidParticipant($container);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
         $response = $app->handle($request);
@@ -249,6 +251,12 @@ class ApiTest extends AppTestCase
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertArrayHasKey('eventName', $body);
+        self::assertIsArray($body['roles']);
+        self::assertIsArray($body['roles']['ist']);
+        $ist = $body['roles']['ist'][$participant->id];
+        self::assertIsArray($ist);
+        self::assertSame('unisex', $ist['tshirtShape']);
+        self::assertSame('XL', $ist['tshirtSize']);
     }
 
     public function testWrongScopeKeyReturns401(): void

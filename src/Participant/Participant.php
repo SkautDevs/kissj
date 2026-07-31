@@ -83,7 +83,7 @@ class Participant extends EntityDatetime
     protected ?string $tshirtShape = null;
 
     protected const int TIE_CODE_LENGTH = 6;
-    protected const string TSHIRT_DELIMITER = '-';
+    public const string TSHIRT_DELIMITER = '-';
     protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
     public const string FOOD_OTHER = 'other'; // refactor into ContentArbiter

@@ -78,6 +78,8 @@ class EntryController extends AbstractController
             'fullName' => $participant->getFullName(),
             'email' => $participant->email,
             'ageAtEventStart' => $participant->getAgeAtStartOfEvent(),
+            'tshirtShape' => $participant->getTshirtShape(),
+            'tshirtSize' => $participant->getTshirtSize(),
         ];
 
         if ($participant->entryDate !== null) {

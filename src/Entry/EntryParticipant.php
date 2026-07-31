@@ -19,6 +19,8 @@ class EntryParticipant
         public readonly \DateTimeInterface $birthDate,
         public readonly EntryStatus $entryStatus,
         public readonly bool $sfh,
+        public readonly ?string $tshirtShape = null,
+        public readonly ?string $tshirtSize = null,
     ) {
     }
 }

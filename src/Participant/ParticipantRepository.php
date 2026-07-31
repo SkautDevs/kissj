@@ -554,6 +554,7 @@ class ParticipantRepository extends Repository
             participant.patrol_leader_id,
             participant.entry_date,
             participant.leave_date,
+            participant.tshirt,
             d.is_done AS sfh_done
         ')->from($this->getTable());
 
@@ -594,6 +595,7 @@ class ParticipantRepository extends Repository
             participant.patrol_leader_id,
             participant.entry_date,
             participant.leave_date,
+            participant.tshirt,
             d.is_done AS sfh_done
         ')->from($this->getTable());
 
@@ -632,9 +634,13 @@ class ParticipantRepository extends Repository
          *     sfh_done: bool|null,
          *     entry_date: \DateTimeInterface|null,
          *     leave_date: \DateTimeInterface|null,
+         *     tshirt: string|null,
          *     role: string|null
          * } $array */
         $array = $row->toArray();
+
+        $tshirt = $array['tshirt'] ?? '';
+        $tshirtParsed = $tshirt === '' ? [] : explode(Participant::TSHIRT_DELIMITER, $tshirt);
 
         return new EntryParticipant(
             $array['id'],
@@ -649,6 +655,8 @@ class ParticipantRepository extends Repository
                 $array['leave_date'],
             ),
             $array['sfh_done'] ?? false,
+            $tshirtParsed[0] ?? null,
+            $tshirtParsed[1] ?? null,
         );
     }
 
