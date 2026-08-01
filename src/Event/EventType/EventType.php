@@ -204,6 +204,14 @@ abstract class EventType
     /**
      * @return list<string>
      */
+    public function getSubcamps(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<string>
+     */
     public function getContingentsForAdmin(UserRole $userRole): array
     {
         return [];

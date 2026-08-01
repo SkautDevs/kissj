@@ -31,6 +31,10 @@ detail:
         britain: "🇬🇧 British Contingent"
         sweden: "🇸🇪 Svensk kontingent"
         team: "⚜ Organizing Team"
+    subcamp:
+        theba: "Théba"
+        sparta: "Spárta"
+        athens: "Athens"
     address: "Permanent Address (street and no., city, postal code)"
 dashboard:
     lockRegistration: "Proceed to lock & submit"

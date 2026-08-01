@@ -73,6 +73,9 @@ use Ramsey\Uuid\Uuid;
  * @property DateTimeInterface|null $entryDate m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface|null $leaveDate m:passThru(dateFromString|dateToString)
  * @property string|null            $emergencyContact
+ * @property string|null            $subcamp
+ * @property string|null            $internalUniqueId
+ * @property string|null            $internalCommonId
  *
  * @property Payment[]              $payment m:belongsToMany
  * @property Deal[]                 $deals m:belongsToMany

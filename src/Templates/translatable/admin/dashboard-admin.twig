@@ -167,6 +167,10 @@
                 {% endif %}
                 <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
                    class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>
+                {% if event.eventType.getSubcamps() is not empty %}
+                    <a href="{{ url_for('admin-values-import', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'adminValues.import.headline' | trans }}</a><br/>
+                {% endif %}
                 <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
                    class="btn">{{ 'dashboard-admin.exportMedData' | trans }}</a><br/>
                 <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
