@@ -107,6 +107,89 @@ class ParticipantRepository extends Repository
     }
 
     /**
+     * Participants of the event eligible for admin values (import matching pool):
+     * closed/approved/paid registrations reached via their own user plus
+     * patrol participants reached via their patrol leader's user.
+     *
+     * @return list<Participant>
+     */
+    public function getEventParticipantsForAdminValues(Event $event): array
+    {
+        $statuses = [UserStatus::Closed, UserStatus::Approved, UserStatus::Paid];
+
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status IN %in', $statuses);
+        $qb->where('u.event_id = %i', $event->id);
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+        /** @var list<Participant> $participants */
+        $participants = $this->createEntities($rows);
+
+        $qb = $this->createFluent();
+        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
+        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.status IN %in', $statuses);
+        $qb->where('u.event_id = %i', $event->id);
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+        /** @var list<Participant> $patrolParticipants */
+        $patrolParticipants = $this->createEntities($rows);
+
+        return $this->dedupeParticipantsById([...$participants, ...$patrolParticipants]);
+    }
+
+    /**
+     * Holders of an internal unique ID within the event, regardless of registration status - admins may edit
+     * participants of any status, so uniqueness cannot be limited to the narrower admin values matching pool.
+     *
+     * @return list<Participant>
+     */
+    public function getEventParticipantsWithInternalUniqueId(Event $event): array
+    {
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.internal_unique_id IS NOT NULL');
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+        /** @var list<Participant> $participants */
+        $participants = $this->createEntities($rows);
+
+        $qb = $this->createFluent();
+        $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+        $qb->join('user')->as('u')->on('u.id = pl.user_id');
+        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+        $qb->where('u.role = %s', UserRole::Participant);
+        $qb->where('u.event_id = %i', $event->id);
+        $qb->where('participant.internal_unique_id IS NOT NULL');
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+        /** @var list<Participant> $patrolParticipants */
+        $patrolParticipants = $this->createEntities($rows);
+
+        return $this->dedupeParticipantsById([...$participants, ...$patrolParticipants]);
+    }
+
+    /**
+     * @param list<Participant> $participants
+     * @return list<Participant>
+     */
+    private function dedupeParticipantsById(array $participants): array
+    {
+        $participantsById = [];
+        foreach ($participants as $participant) {
+            $participantsById[$participant->id] = $participant;
+        }
+
+        return array_values($participantsById);
+    }
+
+    /**
      * @param list<ParticipantRole> $roles
      * @return list<Participant>
      */

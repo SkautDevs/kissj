@@ -6,10 +6,14 @@ namespace Tests;
 
 use kissj\Application\ApplicationGetter;
 use kissj\Event\EventRepository;
+use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
 use kissj\User\UserRole;
+use kissj\User\UserService;
+use kissj\User\UserStatus;
 use LeanMapper\Connection;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
@@ -178,6 +182,54 @@ class AppTestCase extends TestCase
         /** @var Connection $connection */
         $connection = $container->get(Connection::class);
         $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', 'default', $slug);
+    }
+
+    protected function setEventType(
+        ContainerInterface $container,
+        string $eventType,
+        string $slug,
+    ): void {
+        /** @var Connection $connection */
+        $connection = $container->get(Connection::class);
+        $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', $eventType, $slug);
+    }
+
+    protected function createPaidIst(ContainerInterface $container, string $firstName, string $lastName): Participant
+    {
+        return $this->createIst($container, $firstName, $lastName, UserStatus::Paid);
+    }
+
+    protected function createOpenIst(ContainerInterface $container, string $firstName, string $lastName): Participant
+    {
+        return $this->createIst($container, $firstName, $lastName, UserStatus::Open);
+    }
+
+    private function createIst(
+        ContainerInterface $container,
+        string $firstName,
+        string $lastName,
+        UserStatus $status,
+    ): Participant {
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $container->get(ParticipantRepository::class);
+
+        $event = $eventRepository->get(4);
+        $email = 'ist-' . $status->value . '-' . bin2hex(random_bytes(6)) . '@example.com';
+        $user = $userService->registerEmailUser($email, $event);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+        $participant->firstName = $firstName;
+        $participant->lastName = $lastName;
+        $participantRepository->persist($participant);
+        $user->status = $status;
+        $userRepository->persist($user);
+
+        return $participant;
     }
 
     /**

@@ -28,6 +28,10 @@ class EventTypeCej extends EventType
     public const string CONTINGENT_ROMANIA = 'detail.contingent.romania';
     public const string CONTINGENT_TEAM = 'detail.contingent.team';
 
+    public const string SUBCAMP_THEBA = 'detail.subcamp.theba';
+    public const string SUBCAMP_SPARTA = 'detail.subcamp.sparta';
+    public const string SUBCAMP_ATHENS = 'detail.subcamp.athens';
+
     public const string SLUG_IST_ROLE = 'ist-roles';
     public const string SLUG_PL_PROGRAMME = 'pl-programme';
 
@@ -279,6 +283,18 @@ class EventTypeCej extends EventType
             self::CONTINGENT_ROMANIA,
             self::CONTINGENT_EUROPEAN,
             self::CONTINGENT_TEAM,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubcamps(): array
+    {
+        return [
+            self::SUBCAMP_THEBA,
+            self::SUBCAMP_SPARTA,
+            self::SUBCAMP_ATHENS,
         ];
     }
 

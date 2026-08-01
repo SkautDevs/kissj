@@ -14,6 +14,7 @@ use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
+use kissj\Middleware\AdminValuesAllowedOnlyMiddleware;
 use kissj\Middleware\BadgesAllowedOnlyMiddleware;
 use kissj\Middleware\TopAdminsOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
@@ -218,6 +219,14 @@ class Route
                     $app->get('/dashboard', AdminController::class . '::showDashboard')
                         ->setName('admin-dashboard');
 
+                    $app->group('/adminValues', function (RouteCollectorProxy $app) {
+                        $app->get('', AdminController::class . '::showAdminValuesImport')
+                            ->setName('admin-values-import');
+
+                        $app->post('', AdminController::class . '::importAdminValues')
+                            ->setName('admin-values-import-run');
+                    })->add(AdminValuesAllowedOnlyMiddleware::class);
+
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
                         $app->get('/mend', AdminController::class . '::mendParticipant')
                             ->setName('admin-mend-participant');
@@ -239,6 +248,10 @@ class Route
 
                         $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
                             ->setName('admin-change-participant-details');
+
+                        $app->post('/adminValues', AdminController::class . '::changeAdminValues')
+                            ->setName('admin-values-change')
+                            ->add(AdminValuesAllowedOnlyMiddleware::class);
 
                         $app->post('/swapTroopLeader', AdminController::class . '::swapTroopLeader')
                             ->setName('admin-swap-troop-leader');

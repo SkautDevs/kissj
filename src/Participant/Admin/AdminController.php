@@ -699,6 +699,64 @@ class AdminController extends AbstractController
         );
     }
 
+    public function changeAdminValues(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        $subcamp = trim($this->getParameterFromBody($request, 'subcamp'));
+        $internalUniqueId = trim($this->getParameterFromBody($request, 'internalUniqueId'));
+        $internalCommonId = trim($this->getParameterFromBody($request, 'internalCommonId'));
+
+        $result = $this->adminService->setAdminValues(
+            $participant,
+            $event,
+            $subcamp === '' ? null : $subcamp,
+            $internalUniqueId === '' ? null : $internalUniqueId,
+            $internalCommonId === '' ? null : $internalCommonId,
+        );
+
+        match ($result) {
+            AdminValuesSaveResult::Saved => $this->flashMessages->success('flash.success.adminValuesSaved'),
+            AdminValuesSaveResult::UnknownSubcamp => $this->flashMessages->error('flash.error.adminValuesUnknownSubcamp'),
+            AdminValuesSaveResult::UniqueIdTaken => $this->flashMessages->error('flash.error.adminValuesUniqueIdTaken'),
+        };
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+				'participantId' => (string)$participantId,
+			],
+        );
+    }
+
+    public function showAdminValuesImport(Response $response): Response
+    {
+        return $this->renderAdminValuesImport($response, null, '', false);
+    }
+
+    public function importAdminValues(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+        $csv = $this->getParameterFromBody($request, 'csv');
+        $apply = $this->getParameterFromBody($request, 'action') === 'apply';
+
+        $report = $this->adminService->importAdminValues($event, $csv, $apply);
+
+        if ($apply && $report->okCount > 0) {
+            $this->flashMessages->success('flash.success.adminValuesImported');
+        }
+
+        return $this->renderAdminValuesImport($response, $report, $csv, $apply);
+    }
+
     public function showRole(
         Response $response,
         Event $event,
@@ -1176,6 +1234,24 @@ class AdminController extends AbstractController
             ParticipantRole::Guest => 'maximalClosedGuestsCount',
             ParticipantRole::OrganizingTeam => 'maximalClosedOrganizingTeamCount',
         };
+    }
+
+    private function renderAdminValuesImport(
+        Response $response,
+        ?AdminValuesImportReport $report,
+        string $csv,
+        bool $applied,
+    ): Response {
+        return $this->view->render(
+            $response,
+            'admin/adminValuesImport-admin.twig',
+            [
+                'report' => $report,
+                'csv' => $csv,
+                'applied' => $applied,
+                'expectedHeader' => implode(',', AdminService::IMPORT_HEADER),
+            ],
+        );
     }
 
     private function parseNullableInt(mixed $value): ?int

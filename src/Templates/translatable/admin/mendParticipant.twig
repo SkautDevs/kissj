@@ -16,6 +16,29 @@
             {{ 'mend-admin.tieCode' | trans }}: <b>{{ participant.tieCode }}</b>
             <br/>
             <br/>
+            {% if event.eventType.getSubcamps() is not empty %}
+                {% set currentSubcamp = participant.getValueForField('subcamp') %}
+                <h3>{{ 'adminValues.headline' | trans }}</h3>
+                <form method="POST"
+                      action="{{ url_for('admin-values-change', {'eventSlug': event.slug, 'participantId': participant.id}) }}">
+                    <label>{{ 'adminValues.subcamp' | trans }}:
+                        <select name="subcamp">
+                            <option value=""></option>
+                            {% for subcamp in event.eventType.getSubcamps() %}
+                                <option value="{{ subcamp }}" {{ currentSubcamp == subcamp ? 'selected' }}>{{ subcamp | trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </label><br/>
+                    <label>{{ 'adminValues.internalUniqueId' | trans }}:
+                        <input type="text" name="internalUniqueId" value="{{ participant.getValueForField('internalUniqueId') }}">
+                    </label><br/>
+                    <label>{{ 'adminValues.internalCommonId' | trans }}:
+                        <input type="text" name="internalCommonId" value="{{ participant.getValueForField('internalCommonId') }}">
+                    </label><br/>
+                    <input type="submit" class="btn btn-small" value="{{ 'adminValues.save' | trans }}">
+                </form>
+                <br/>
+            {% endif %}
             {{ include('widgets/detailsForAdmin.twig', {person: participant, ca: ca}) }}
             <br/>
             {{ 'mend-admin.enter' | trans }}:

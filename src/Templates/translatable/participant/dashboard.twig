@@ -46,6 +46,7 @@
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}
+                    {% include 'widgets/adminValues.twig' with {'person': person} %}
                     <br/>
                 </div>
             </div>
@@ -59,6 +60,12 @@
                         <li>
                             {% if person is PatrolLeader %}
                                 {{ 'role.p' | trans }} <b>{{ p.getFullName }}</b>
+                                {% if event.eventType.getSubcamps() is not empty %}
+                                    {% set participantSubcamp = p.getValueForField('subcamp') %}
+                                    {% if participantSubcamp %}
+                                        <small>({{ participantSubcamp | trans }})</small>
+                                    {% endif %}
+                                {% endif %}
                                 {% if userStatus == 'open' %}
                                     <a href="{{ url_for('p-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                                 class="material-icons">edit</i></a>
@@ -182,6 +189,7 @@
                 {% endif %}
                 <div class="text-center">
                     {% include 'widgets/details.twig' with {'person': person} %}
+                    {% include 'widgets/adminValues.twig' with {'person': person} %}
                     <br/>
                 </div>
             </div>

@@ -1,0 +1,43 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'adminValues.import.headline' | trans }}</h2>
+        <p>{{ 'adminValues.import.instructions' | trans }}</p>
+        <p><code>{{ expectedHeader }}</code></p>
+
+        {% if report is not null %}
+            {% if applied %}
+                <p><b>{{ 'adminValues.import.appliedCount' | trans }}: {{ report.okCount }}</b></p>
+            {% else %}
+                <p><b>{{ 'adminValues.import.dryRunOkCount' | trans }}: {{ report.okCount }}</b></p>
+            {% endif %}
+
+            {% if report.problems is not empty %}
+                <h3>{{ 'adminValues.import.problemsHeadline' | trans }}</h3>
+                <ul>
+                    {% for problem in report.problems %}
+                        <li>
+                            {{ 'adminValues.import.line' | trans }} {{ problem.lineNumber }} -
+                            <b>{{ problem.name }}</b>:
+                            {{ ('adminValues.import.problem.' ~ problem.type.value) | trans }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin-values-import-run', {'eventSlug': event.slug}) }}">
+            <label for="csv">{{ 'adminValues.import.csvLabel' | trans }}</label><br/>
+            <textarea id="csv" name="csv" rows="15" class="form-control">{{ csv }}</textarea><br/>
+            <button type="submit" class="btn btn-small" name="action" value="dryRun">{{ 'adminValues.import.dryRun' | trans }}</button>
+            {% if report is not null and not applied %}
+                <button type="submit" class="btn btn-small" name="action" value="apply">{{ 'adminValues.import.apply' | trans }}</button>
+            {% endif %}
+        </form>
+
+        <br/>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'changeDetails.back' | trans }}</a>
+    </div>
+{% endblock %}
