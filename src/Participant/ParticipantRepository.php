@@ -662,7 +662,7 @@ class ParticipantRepository extends Repository
         );
     }
 
-    public function getPatrolsRoster(Event $event): PatrolsRoster
+    public function getPatrolsRoster(Event $event, TranslatorInterface $translator): PatrolsRoster
     {
         $singlePatrolsRoster = [];
 
@@ -674,8 +674,12 @@ class ParticipantRepository extends Repository
                 $pl->patrolName ?? '',
                 $pl->contingent ?? '',
                 $pl->getFullName(),
+                EntryParticipant::tshirtSizeFromRaw($pl->getTshirtSize(), $translator),
                 array_map(
-                    fn (PatrolParticipant $pp): string => $pp->getFullName(),
+                    fn (PatrolParticipant $pp): array => [
+                        'name' => $pp->getFullName(),
+                        'tshirtSize' => EntryParticipant::tshirtSizeFromRaw($pp->getTshirtSize(), $translator),
+                    ],
                     $pl->patrolParticipants,
                 ),
             );
