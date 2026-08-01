@@ -134,7 +134,7 @@ class ExportController extends AbstractController
             return $this->redirect($request, $response, 'dashboard');
         }
 
-        $patrolsRoster = $this->participantRepository->getPatrolsRoster($event);
+        $patrolsRoster = $this->participantRepository->getPatrolsRoster($event, $this->translator);
 
         return $this->streamPdf($response, $this->pdfGenerator->generatePatrolRoster(
             $event,
