@@ -1,4 +1,4 @@
-{% extends "_layoutPdf.twig" %}
+{% extends "_layoutPdfRoster.twig" %}
 
 {% block content %}
     {% for patrol in patrolsRoster.patrolsRoster %}
@@ -17,22 +17,26 @@
                 <thead>
                     <tr>
                         <td class="header">{{ 'roster.name'|trans }}</td>
+                        <td class="header">{{ 'roster.tshirt'|trans }}</td>
                         <td class="header">{{ 'roster.signature'|trans }}</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>{{ patrol.patrolLeaderName }}</td>
+                        <td>{{ patrol.patrolLeaderTshirtSize }}</td>
                         <td></td>
                     </tr>
-                    {% for participantName in patrol.patrolParticipantNames %}
+                    {% for participant in patrol.patrolParticipants %}
                         <tr>
-                            <td>{{ participantName }}</td>
+                            <td>{{ participant.name }}</td>
+                            <td>{{ participant.tshirtSize }}</td>
                             <td></td>
                         </tr>
                     {% endfor %}
                     <!-- empty row for extras -->
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr>

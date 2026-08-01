@@ -9,7 +9,9 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Patrol\SinglePatrolRoster;
+use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
@@ -77,5 +79,29 @@ class PatrolRosterTest extends AppTestCase
 
         self::assertSame('M (střední)', $sizesByName['With Shirt']);
         self::assertNull($sizesByName['Without Shirt']);
+    }
+
+    public function testGeneratePatrolRosterPdfRendersWithTshirtColumn(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $pdfGenerator = $this->getService($app, PdfGenerator::class);
+
+        $event = $eventRepository->get(1);
+        $roster = new PatrolsRoster([
+            new SinglePatrolRoster('1', 'Roster pdf patrol', '', 'Roster Leader', 'XL (větší)', [
+                ['name' => 'With Shirt', 'tshirtSize' => 'M (střední)'],
+                ['name' => 'Without Shirt', 'tshirtSize' => null],
+            ]),
+            new SinglePatrolRoster('2', 'Roster pdf patrol two', '', 'Second Leader', null, []),
+        ]);
+
+        $pdfBytes = $pdfGenerator->generatePatrolRoster(
+            $event,
+            $roster,
+            $event->eventType->getRosterTemplateName(),
+        );
+
+        self::assertStringStartsWith('%PDF', $pdfBytes);
     }
 }

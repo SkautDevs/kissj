@@ -618,6 +618,7 @@ receipt:
 roster:
     perex: "By singing this document you hereby agree with the presented rules of the event."
     name: "Name of the participant"
+    tshirt: "T-shirt"
     signature: "Signature of the participant"
 badges:
     back: "Back"

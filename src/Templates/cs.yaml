@@ -626,6 +626,7 @@ receipt:
 roster:
     perex: "Tímto dokumentem potvrzuji, že souhlasím s pravidly akce."
     name: "Jméno účastníka"
+    tshirt: "Tričko"
     signature: "Podpis účastníka"
 badges:
     back: "Zpět"

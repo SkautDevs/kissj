@@ -82,6 +82,7 @@ class mPdfGenerator extends PdfGenerator
         $templateData = [
             'event' => $event,
             'patrolsRoster' => $patrolsRoster,
+            'rosterCss' => $this->getRosterFullCss(),
         ];
 
         return $this->writeHtmlToPdf($templateName, $templateData, 'roster');
@@ -164,6 +165,18 @@ class mPdfGenerator extends PdfGenerator
             if ($overrideCss !== false) {
                 $css .= "\n" . $overrideCss;
             }
+        }
+
+        return $css;
+    }
+
+    private function getRosterFullCss(): string
+    {
+        $css = '';
+
+        $pdfCss = file_get_contents(__DIR__ . '/../../public/stylesPdf.css');
+        if ($pdfCss !== false) {
+            $css = $pdfCss;
         }
 
         return $css;
