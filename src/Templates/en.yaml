@@ -752,6 +752,7 @@ flash:
         sameRoleCannotChangeRole: "Cannot change role to the same role"
         notOpenCannotChangeRole: "Registration is not unlocked, role cannot be changed"
         cancelPatrolLeaderNotSupported: "Canceling patrol leader is not supported"
+        cancelPatrolParticipantNotSupported: "Canceling patrol participant is not supported - it would cancel the whole patrol"
         participantNotInCancelledStatus: "Participant cannot be marked as going, because he is not in 'not going' status"
         participantNotFoundAddPaymentNotPossible: "Participant not found, it is not possible to add payment"
         patrolParticipantCannotHavePayment: "Patrol participant cannot have payment"

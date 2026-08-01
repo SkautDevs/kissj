@@ -112,8 +112,9 @@
                 </a>
                 <br/>
             {% endif %}
-            {% if participant is not PatrolLeader %}
+            {% if participant is not PatrolLeader and participant is not PatrolParticipant %}
                 {# TODO add placeholder for PL "not supported yet" #}
+                {# PatrolParticipant shares the leader's user - cancelling would cancel the whole patrol #}
                 <form
                         method="POST"
                         action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"

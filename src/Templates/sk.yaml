@@ -752,6 +752,7 @@ flash:
         sameRoleCannotChangeRole: "Účastník už túto rolu má, zmena roly nie je možná"
         notOpenCannotChangeRole: "Registrácia účastníka nie je odomknutá, zmena roly nie je možná"
         cancelPatrolLeaderNotSupported: "Označenie patroly, že nepríde, zatiaľ nie je podporované"
+        cancelPatrolParticipantNotSupported: "Označenie účastníka patroly, že nepríde, nie je podporované - zrušilo by to celú patrolu"
         participantNotInCancelledStatus: "Účastník nemôže byť označený, že príde, pretože nie je v stave 'nepríde'"
         participantNotFoundAddPaymentNotPossible: "Účastník nebol nájdený, pridanie platby nie je možné"
         patrolParticipantCannotHavePayment: "Účastník patroly nemôže mať pridanú platbu"

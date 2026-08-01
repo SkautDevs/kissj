@@ -815,6 +815,10 @@ class AdminController extends AbstractController
 
         if ($participant instanceof PatrolLeader) {
             $this->flashMessages->warning('flash.warning.cancelPatrolLeaderNotSupported');
+        } elseif ($participant instanceof PatrolParticipant) {
+            // a patrol participant has no own user - cancelling would flip the patrol leader's
+            // shared user to cancelled and hide the whole patrol from the entry app
+            $this->flashMessages->warning('flash.warning.cancelPatrolParticipantNotSupported');
         } elseif ($participant instanceof Participant) {
             $this->participantService->cancelParticipant($participant);
             $this->flashMessages->success('flash.success.participantCancelled');
