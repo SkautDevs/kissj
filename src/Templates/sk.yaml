@@ -569,6 +569,9 @@ transferPayment-admin:
     notPossible: "Presun nie je možné uskutočniť"
 foodStats-admin:
     presentHeader: "aktuálne prítomní na akcii"
+    otherFoodHeader: "iná strava - detail"
+    otherFoodNone: "nikto z prítomných nemá inú stravu"
+    name: "Meno"
     notSet: "nenastavené"
     total: "spolu"
     summary: "súhrn všetkých rolí"

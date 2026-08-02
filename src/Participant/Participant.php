@@ -89,7 +89,7 @@ class Participant extends EntityDatetime
     public const string TSHIRT_DELIMITER = '-';
     protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
-    public const string FOOD_OTHER = 'other'; // refactor into ContentArbiter
+    public const string FOOD_OTHER = 'detail.foodOther'; // refactor into ContentArbiter
     public const string SCARF_NO = 'no'; // refactor into ContentArbiter
     public const string SCARF_YES = 'yes'; // refactor into ContentArbiter
 

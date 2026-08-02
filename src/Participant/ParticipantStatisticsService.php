@@ -99,6 +99,8 @@ readonly class ParticipantStatisticsService
      *     rowTotals: array<string, int>,
      *     colTotals: array<string, int>,
      *     grandTotal: int,
+     *     otherFoodParticipants: list<Participant>,
+     *     showContingent: bool,
      * }
      */
     public function getPresentFoodStatisticByRole(
@@ -124,6 +126,8 @@ readonly class ParticipantStatisticsService
      *     rowTotals: array<string, int>,
      *     colTotals: array<string, int>,
      *     grandTotal: int,
+     *     otherFoodParticipants: list<Participant>,
+     *     showContingent: bool,
      * }
      */
     public function getPresentFoodStatisticFromParticipants(
@@ -150,6 +154,9 @@ readonly class ParticipantStatisticsService
         $foodTypes = [];
         $grandTotal = 0;
 
+        /** @var list<Participant> $otherFoodParticipants */
+        $otherFoodParticipants = [];
+
         foreach ($deduplicatedParticipants as $participant) {
             if (EntryStatus::entryFromDatetime($participant->entryDate, $participant->leaveDate)
                 !== EntryStatus::ENTRY_STATUS_USED) {
@@ -167,6 +174,10 @@ readonly class ParticipantStatisticsService
             $rowTotals[$roleKey]++;
             $colTotals[$foodKey] = ($colTotals[$foodKey] ?? 0) + 1;
             $grandTotal++;
+
+            if ($foodKey === Participant::FOOD_OTHER) {
+                $otherFoodParticipants[] = $participant;
+            }
         }
 
         $foodTypes = array_values(array_diff($foodTypes, [self::NOT_SET_FOOD_KEY]));
@@ -182,6 +193,16 @@ readonly class ParticipantStatisticsService
             $colTotals[$foodKey] ??= 0;
         }
 
+        $this->sortOtherFoodParticipants($otherFoodParticipants);
+
+        $showContingent = false;
+        foreach ($otherFoodParticipants as $participant) {
+            if (($participant->contingent ?? '') !== '') {
+                $showContingent = true;
+                break;
+            }
+        }
+
         return [
             'roles' => $roleKeys,
             'foodTypes' => $foodTypes,
@@ -189,7 +210,43 @@ readonly class ParticipantStatisticsService
             'rowTotals' => $rowTotals,
             'colTotals' => $colTotals,
             'grandTotal' => $grandTotal,
+            'otherFoodParticipants' => $otherFoodParticipants,
+            'showContingent' => $showContingent,
         ];
+    }
+
+    /**
+     * @param list<Participant> $otherFoodParticipants
+     */
+    private function sortOtherFoodParticipants(array &$otherFoodParticipants): void
+    {
+        usort(
+            $otherFoodParticipants,
+            static function (Participant $a, Participant $b): int {
+                $contingentA = $a->contingent ?? '';
+                $contingentB = $b->contingent ?? '';
+
+                $hasContingentA = $contingentA === '' ? 1 : 0;
+                $hasContingentB = $contingentB === '' ? 1 : 0;
+                if ($hasContingentA !== $hasContingentB) {
+                    return $hasContingentA <=> $hasContingentB;
+                }
+
+                // strcmp(), not <=>, because PHP's <=> compares numeric-looking strings
+                // numerically, which would make contingents '01' and '1' compare equal.
+                $contingentComparison = strcmp($contingentA, $contingentB);
+                if ($contingentComparison !== 0) {
+                    return $contingentComparison;
+                }
+
+                $lastNameComparison = strcmp($a->lastName ?? '', $b->lastName ?? '');
+                if ($lastNameComparison !== 0) {
+                    return $lastNameComparison;
+                }
+
+                return strcmp($a->firstName ?? '', $b->firstName ?? '');
+            },
+        );
     }
 
     /**
