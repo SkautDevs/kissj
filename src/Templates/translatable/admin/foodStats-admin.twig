@@ -79,7 +79,7 @@
                                    matches the getNotes-style idiom already used in changeRole.twig / detailsMinimal.twig.
                                    "is empty" (not ?:) so a contingent/note/issue of exactly "0" still renders, matching
                                    the PHP-side showContingent check, which uses !== '' rather than a falsy test. #}
-                                <td>{{ participant.getContingent is empty ? '—' : participant.getContingent }}</td>
+                                <td>{{ participant.getContingent is empty ? '—' : participant.getContingent|trans }}</td>
                             {% endif %}
                             <td>{{ participant.foodPreferences | trans }}</td>
                             <td>{{ participant.getNotes is empty ? '—' : participant.getNotes | nl2br }}</td>
