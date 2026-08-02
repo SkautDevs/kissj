@@ -644,7 +644,7 @@ receipt:
         "
     acceptedSign: "issued automatically on %acceptedDate%"
 roster:
-    perex: "By singing this document you hereby agree with the presented rules of the event."
+    perex: "By signing this document you hereby agree with the presented rules of the event."
     name: "Name of the participant"
     tshirt: "T-shirt"
     signature: "Signature of the participant"

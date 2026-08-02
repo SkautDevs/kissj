@@ -451,12 +451,12 @@ class Route
                 })
                     ->add(VendorApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
-                    ->setName('entry-participant-from-web-app');
+                    ->setName('vendor-bearer-check');
 
                 $app->map(['GET', 'OPTIONS'], '/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
                     ->add(VendorApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
-                    ->setName('entry-troop-from-web-app');
+                    ->setName('vendor-participant-by-tie-code');
             });
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
