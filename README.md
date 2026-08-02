@@ -29,6 +29,104 @@ kissj is scouts **registration system for national and international Scout Jambo
  - sentry: https://skautdevs.sentry.io/discover/homepage/
 
 
+# 🏕️ Never programmed before? Start here
+
+You do **not** need to know PHP, SQL or any framework to get kissj running on your computer.
+You need to copy-paste a few commands. Takes about half an hour, most of it waiting for downloads.
+
+## Step 1 - install the tools
+
+You need three things: **Docker** (runs the whole app for you), **Git** (downloads the code) and **Make** (runs the commands for you).
+
+<details>
+<summary><b>Windows</b></summary>
+
+1. Download and install **Docker Desktop**: https://www.docker.com/products/docker-desktop/
+   Keep the option *"Use WSL 2 instead of Hyper-V"* checked. Restart the computer when asked.
+2. Open the **Start menu → type "Ubuntu"** and open it. A black terminal window appears - you will type everything there.
+   *No Ubuntu in the Start menu?* Open **PowerShell as administrator**, run `wsl --install`, restart, then try again.
+3. In Docker Desktop go to **Settings → Resources → WSL Integration** and switch **Ubuntu** on.
+4. In the Ubuntu terminal, install Git and Make:
+   ```bash
+   sudo apt update && sudo apt install -y git make
+   ```
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+1. Download and install **Docker Desktop**: https://www.docker.com/products/docker-desktop/
+   (pick the *Apple Silicon* version on M1/M2/M3/M4 Macs, *Intel* on older ones)
+2. Open the **Terminal** app and install Git and Make:
+   ```bash
+   xcode-select --install
+   ```
+</details>
+
+<details>
+<summary><b>Linux (Ubuntu / Debian)</b></summary>
+
+```bash
+sudo apt update && sudo apt install -y docker.io docker-compose git make
+sudo usermod -aG docker $USER
+```
+Then log out and log back in, so the last command takes effect.
+</details>
+
+## Step 2 - download kissj and start it
+
+Copy-paste these four lines into the terminal, one by one:
+
+```bash
+git clone https://github.com/SkautDevs/kissj.git
+cd kissj
+cp deploy/dev/compose.env.example deploy/dev/compose.env
+make dev-up
+```
+
+The last one takes a few minutes the first time - it is downloading the database, PHP and everything else.
+Nothing to fill in, nothing to configure - the copied settings file already works.
+
+> **Windows tip:** run this in your Ubuntu home folder (just `cd ~` first), **not** in `/mnt/c/...` - it is many times faster there.
+
+## Step 3 - open it
+
+👉 **http://localhost:8080/v2/event/test-event-slug/**
+
+That is your own copy of kissj, running on your computer. Nothing you do here touches the real one.
+
+Two things to know:
+
+- **Logging in needs no password** - you type an email and kissj sends you a link.
+  The mail never leaves your computer, you pick it up at 👉 **http://localhost:8025/** (a fake mailbox called MailHog).
+- **`make dev-down`** stops everything, **`make dev-up`** starts it again. Your data stays.
+
+## Step 4 - your first change
+
+Start with **text**, not with code. Open the file `src/Templates/en.yaml` in any editor, change some sentence, save,
+refresh the browser - and there it is. That is the whole loop.
+
+The same texts exist in three languages, so a text change belongs in all three files:
+`src/Templates/cs.yaml` (Czech), `src/Templates/sk.yaml` (Slovak), `src/Templates/en.yaml` (English).
+
+When that feels boring, move on in this order:
+
+1. **Texts** - `src/Templates/*.yaml` (no programming at all)
+2. **Pages** - `src/Templates/translatable/*.twig` - the HTML of the pages, with `{{ placeholders }}` for the texts
+3. **Code** - the PHP in `src/` - ask someone to point you at a small first task
+
+Before you show your change to anyone, let the computer check it for you:
+
+```bash
+docker exec -u 1000 -it kissj-app-php-fpm-1 composer test
+```
+
+## If something goes wrong
+
+- **Page does not load** - is Docker Desktop running? Then `make dev-down` and `make dev-up` again.
+- **`make: command not found`** - step 1 was not finished.
+- **Anything else** - open an issue on GitHub, or ask in the Scout dev channel. Asking early is normal here.
+
 # Local development
 
 ### Prerequisites
