@@ -569,6 +569,9 @@ transferPayment-admin:
     notPossible: "Transfer is blocked"
 foodStats-admin:
     presentHeader: "currently present on site"
+    otherFoodHeader: "other diet - details"
+    otherFoodNone: "nobody present has another diet"
+    name: "Name"
     notSet: "not set"
     total: "total"
     summary: "all participants summary"

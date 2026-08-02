@@ -577,6 +577,9 @@ transferPayment-admin:
     notPossible: "Přesun nelze uskutečnit"
 foodStats-admin:
     presentHeader: "aktuálně přítomní na akci"
+    otherFoodHeader: "jiná strava - detail"
+    otherFoodNone: "nikdo z přítomných nemá jinou stravu"
+    name: "Jméno"
     notSet: "nenastaveno"
     total: "celkem"
     summary: "souhrn všech rolí"
