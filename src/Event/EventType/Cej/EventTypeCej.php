@@ -251,6 +251,7 @@ class EventTypeCej extends EventType
             'detail.foodGlutenFree',
             'detail.foodLactoseAndGlutenFree',
             'detail.foodGlutenFreeVegetarian',
+            'detail.foodKosher',
             'detail.foodOther',
         ];
     }
