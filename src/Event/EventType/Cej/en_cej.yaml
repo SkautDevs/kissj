@@ -13,6 +13,7 @@ detail:
     foodKosherPeanutAllergy: "kosher peanut allergy"
     foodNoPorkVege: "no pork / vege"
     foodGlutenFreeVegetarian: "gluten free vegetarian"
+    foodOther: "other"
     issues: "Health issues"
     issues-placeholder: "allergies - trigger, symptoms, medicine used; blood type; past serious illnesses and surgeries..."
     countryPoland: "Poland"
