@@ -47,6 +47,7 @@ class mPdfGenerator extends PdfGenerator
             'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
             'receipts' => $receipts,
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
+            'pdfCss' => $this->loadPublicCss('stylesPdf.css'),
         ];
 
         return $this->writeHtmlToPdf($templateName, $templateData, 'receipt');
@@ -82,7 +83,7 @@ class mPdfGenerator extends PdfGenerator
         $templateData = [
             'event' => $event,
             'patrolsRoster' => $patrolsRoster,
-            'rosterCss' => $this->getRosterFullCss(),
+            'pdfCss' => $this->loadPublicCss('stylesPdf.css'),
         ];
 
         return $this->writeHtmlToPdf($templateName, $templateData, 'roster');
@@ -154,29 +155,23 @@ class mPdfGenerator extends PdfGenerator
         );
     }
 
+    private function loadPublicCss(string $filename): string
+    {
+        $css = file_get_contents(__DIR__ . '/../../public/' . $filename);
+
+        return $css === false ? '' : $css;
+    }
+
     private function getBadgeFullCss(Event $event): string
     {
-        $css = file_get_contents(__DIR__ . '/../../public/badge.css');
-        $css = $css === false ? '' : $css;
+        $css = $this->loadPublicCss('badge.css');
 
         $override = $event->eventType->getBadgeStylesheetNameWithoutLeadingSlash();
         if ($override !== null) {
-            $overrideCss = file_get_contents(__DIR__ . '/../../public/' . $override);
-            if ($overrideCss !== false) {
+            $overrideCss = $this->loadPublicCss($override);
+            if ($overrideCss !== '') {
                 $css .= "\n" . $overrideCss;
             }
-        }
-
-        return $css;
-    }
-
-    private function getRosterFullCss(): string
-    {
-        $css = '';
-
-        $pdfCss = file_get_contents(__DIR__ . '/../../public/stylesPdf.css');
-        if ($pdfCss !== false) {
-            $css = $pdfCss;
         }
 
         return $css;
