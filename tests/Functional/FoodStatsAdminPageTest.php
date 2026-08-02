@@ -11,6 +11,8 @@ use kissj\Participant\ParticipantService;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use Psr\Container\ContainerInterface;
+use Slim\App;
 use Tests\AppTestCase;
 use Throwable;
 
@@ -57,6 +59,32 @@ class FoodStatsAdminPageTest extends AppTestCase
         $this->participantServiceForTeardown = $participantService;
 
         return $participant;
+    }
+
+    /** @param App<ContainerInterface> $app */
+    private function fetchOtherFoodSummaryCount(App $app, string $eventSlug): int
+    {
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $eventSlug . '/admin/foodStats',
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+
+        return $this->parseOtherFoodSummaryCount((string)$response->getBody());
+    }
+
+    // when the other-diet list is empty, the template renders a "nobody" paragraph and no
+    // table at all, so the count must always come from the <summary> text, not from counting
+    // rendered rows
+    private function parseOtherFoodSummaryCount(string $body): int
+    {
+        self::assertSame(
+            1,
+            preg_match('/jiná strava - detail \((\d+)\)/u', $body, $summaryMatches),
+            'summary does not carry a participant count',
+        );
+
+        return (int)$summaryMatches[1];
     }
 
     public function testFoodStatsPageShowsPresentOnSiteMatrix(): void
@@ -129,6 +157,21 @@ class FoodStatsAdminPageTest extends AppTestCase
         $event = $eventRepository->findBySlug('obrok37');
         self::assertNotNull($event);
 
+        // admin session must exist before the "before" snapshot below, since that request
+        // needs to reach the admin-only foodStats page too
+        $adminUser = $this->createAdminUser($app);
+        $adminUser->status = UserStatus::Open;
+        $adminUser->event = $event;
+        $userRepository->persist($adminUser);
+
+        $_SESSION['user'] = ['id' => $adminUser->id];
+        $app = $this->getTestApp(false);
+
+        // the shared dev DB may already hold other "other diet" participants, so the count is
+        // asserted as a delta across a fixture entry rather than against a fixed or
+        // self-referential number
+        $countBefore = $this->fetchOtherFoodSummaryCount($app, $event->slug);
+
         $nameSuffix = bin2hex(random_bytes(4));
         $email = 'food-stats-other-' . $nameSuffix . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
@@ -143,14 +186,6 @@ class FoodStatsAdminPageTest extends AppTestCase
         $userRepository->persist($user);
         $this->enterAndTrackForCleanup($participantService, $participant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
-
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/admin/foodStats',
         ));
@@ -158,15 +193,17 @@ class FoodStatsAdminPageTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         $body = (string)$response->getBody();
 
-        // slice out the detail table so the assertions cannot accidentally match the
-        // pre-existing day-by-day cards further down the page
+        // slice out the detail section so the assertions cannot accidentally match the
+        // pre-existing day-by-day cards further down the page. Bounded on </details> rather
+        // than </table>: an empty other-diet list renders only a <p> and no table at all, so
+        // anchoring on </table> would read past the section into the next card.
         $headerPosition = strpos($body, 'jiná strava - detail');
         self::assertNotFalse($headerPosition, 'other food detail header not found in response body');
 
-        $tableEndPosition = strpos($body, '</table>', $headerPosition);
-        self::assertNotFalse($tableEndPosition, 'other food detail table not closed in response body');
+        $sectionEndPosition = strpos($body, '</details>', $headerPosition);
+        self::assertNotFalse($sectionEndPosition, 'other food detail section not closed in response body');
 
-        $detailSection = substr($body, $headerPosition, $tableEndPosition - $headerPosition);
+        $detailSection = substr($body, $headerPosition, $sectionEndPosition - $headerPosition);
 
         self::assertStringContainsString('Tester' . $nameSuffix, $detailSection);
         self::assertStringContainsString('jen syrova strava ' . $nameSuffix, $detailSection);
@@ -181,18 +218,17 @@ class FoodStatsAdminPageTest extends AppTestCase
         self::assertStringContainsString('<summary', $summaryPrefix);
         self::assertStringNotContainsString('</details>', $summaryPrefix);
 
-        // the shared dev DB may already hold other "other diet" participants, so assert the
-        // summary count against the rows actually rendered rather than against a fixed number
-        self::assertSame(
-            1,
-            preg_match('/jiná strava - detail \((\d+)\)/u', $body, $summaryMatches),
-            'summary does not carry a participant count',
-        );
+        // the fixture participant was just entered, so the table (and its tbody) must exist;
+        // count closing </tr> inside the tbody rather than opening <tr> minus the head row -
+        // that stays correct even if the head row's own markup changes
+        $tbodyPosition = strpos($detailSection, '<tbody>');
+        self::assertNotFalse($tbodyPosition, 'other food detail table has no <tbody>');
 
-        // one <tr> belongs to the table head, the rest are participant rows
-        $renderedRows = substr_count($detailSection, '<tr>') - 1;
+        $renderedRows = substr_count($detailSection, '</tr>', $tbodyPosition);
         self::assertGreaterThanOrEqual(1, $renderedRows);
-        self::assertSame($renderedRows, (int)$summaryMatches[1]);
+
+        $countAfter = $this->parseOtherFoodSummaryCount($body);
+        self::assertSame($countBefore + 1, $countAfter);
     }
 
     public function testFoodStatsPageShowsEmDashForEmptyOtherFoodFields(): void
