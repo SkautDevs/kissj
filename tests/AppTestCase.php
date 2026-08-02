@@ -34,6 +34,12 @@ class AppTestCase extends TestCase
     /** @var callable|null */
     private $originalExceptionHandler = null;
 
+    // getTestApp() builds a brand-new DI container (and thus a new pg_connect()) every call;
+    // nothing else ever closes them, so across the whole suite that exhausts Postgres's
+    // max_connections. Track every connection a test creates and close it in tearDown().
+    /** @var Connection[] */
+    private array $connectionsToClose = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,6 +55,13 @@ class AppTestCase extends TestCase
 
     protected function tearDown(): void
     {
+        foreach ($this->connectionsToClose as $connection) {
+            if ($connection->isConnected()) {
+                $connection->disconnect();
+            }
+        }
+        $this->connectionsToClose = [];
+
         // Destroy session to ensure clean state between tests
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_unset();
@@ -110,6 +123,13 @@ class AppTestCase extends TestCase
             'env.testing',
             __DIR__ . '/temp'
         );
+
+        $container = $app->getContainer();
+        if ($container !== null) {
+            /** @var Connection $connection */
+            $connection = $container->get(Connection::class);
+            $this->connectionsToClose[] = $connection;
+        }
 
         return $app;
     }

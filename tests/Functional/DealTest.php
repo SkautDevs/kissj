@@ -130,6 +130,9 @@ class DealTest extends AppTestCase
         self::assertSame($dealAfterFirst->id, $dealAfterSecond->id);
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
     private function getContainer(App $app): ContainerInterface
     {
         $container = $app->getContainer();
@@ -199,7 +202,7 @@ class DealTest extends AppTestCase
 
     private function loadDashboardAs(Ist $ist): \Psr\Http\Message\ResponseInterface
     {
-        $_SESSION['user']['id'] = $ist->getUserButNotNull()->id;
+        $_SESSION['user'] = ['id' => $ist->getUserButNotNull()->id];
         session_write_close();
 
         $app = $this->getTestApp(false);

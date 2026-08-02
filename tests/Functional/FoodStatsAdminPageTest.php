@@ -23,7 +23,8 @@ class FoodStatsAdminPageTest extends AppTestCase
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->get(1);
+        $event = $eventRepository->findBySlug('obrok37');
+        self::assertNotNull($event);
 
         $email = 'food-stats-page-' . bin2hex(random_bytes(4)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
@@ -36,6 +37,9 @@ class FoodStatsAdminPageTest extends AppTestCase
 
         $adminUser = $this->createAdminUser($app);
         $adminUser->status = UserStatus::Open;
+        // createAdminUser() builds the admin against event 1, but LoggedOnlyMiddleware logs the
+        // user out when their event does not match the event in the URL, so it must be repointed.
+        $adminUser->event = $event;
         $userRepository->persist($adminUser);
 
         $_SESSION['user'] = ['id' => $adminUser->id];
@@ -47,9 +51,8 @@ class FoodStatsAdminPageTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string)$response->getBody();
-        // Event 1 is event_type 'wsj', whose EventTypeWsj::getLanguages() only exposes 'cs',
-        // so the localization middleware always renders Czech regardless of Accept-Language;
-        // asserting the English translation keys from the brief would never pass here.
+        // obrok37 is event type 'obrok', whose getLanguages() exposes only 'cs', so the
+        // localization middleware always renders Czech regardless of Accept-Language.
 
         // 'aktuálně přítomní na akci' and 'celkem' are static template markup that renders
         // regardless of the data passed in, so they alone can't prove data actually reached
