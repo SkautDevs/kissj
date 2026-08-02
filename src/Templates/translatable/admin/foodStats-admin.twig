@@ -51,43 +51,45 @@
             </tbody>
         </table>
 
-        <h3>{{ 'foodStats-admin.otherFoodHeader' | trans }}</h3>
-        {% if presentFoodStatistic.otherFoodParticipants is empty %}
-            <p>{{ 'foodStats-admin.otherFoodNone' | trans }}</p>
-        {% else %}
-            <table>
-                <thead>
-                <tr>
-                    <th style="text-align: left">{{ 'foodStats-admin.name' | trans }}</th>
-                    <th style="text-align: left">{{ 'stats-admin.role' | trans }}</th>
-                    {% if presentFoodStatistic.showContingent %}
-                        <th style="text-align: left">{{ 'detail.contingentTitle' | trans }}</th>
-                    {% endif %}
-                    <th style="text-align: left">{{ 'detail.foodHeader' | trans }}</th>
-                    <th style="text-align: left">{{ 'detail.notice' | trans }}</th>
-                    <th style="text-align: left">{{ 'detail.issues' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for participant in presentFoodStatistic.otherFoodParticipants %}
+        <details style="margin-top: 30px">
+            <summary><h3 style="display: inline">{{ 'foodStats-admin.otherFoodHeader' | trans }} ({{ presentFoodStatistic.otherFoodParticipants|length }})</h3></summary>
+            {% if presentFoodStatistic.otherFoodParticipants is empty %}
+                <p>{{ 'foodStats-admin.otherFoodNone' | trans }}</p>
+            {% else %}
+                <table>
+                    <thead>
                     <tr>
-                        <td>{{ participant.getFullName }}</td>
-                        <td>{{ ('role.' ~ participant.role.value) | trans }}</td>
+                        <th style="text-align: left">{{ 'foodStats-admin.name' | trans }}</th>
+                        <th style="text-align: left">{{ 'stats-admin.role' | trans }}</th>
                         {% if presentFoodStatistic.showContingent %}
-                            {# bare .contingent breaks via LeanMapper's __call whenever it's empty; getContingent
-                               matches the getNotes-style idiom already used in changeRole.twig / detailsMinimal.twig.
-                               "is empty" (not ?:) so a contingent/note/issue of exactly "0" still renders, matching
-                               the PHP-side showContingent check, which uses !== '' rather than a falsy test. #}
-                            <td>{{ participant.getContingent is empty ? '—' : participant.getContingent }}</td>
+                            <th style="text-align: left">{{ 'detail.contingentTitle' | trans }}</th>
                         {% endif %}
-                        <td>{{ participant.foodPreferences | trans }}</td>
-                        <td>{{ participant.getNotes is empty ? '—' : participant.getNotes | nl2br }}</td>
-                        <td>{{ participant.getHealthProblems is empty ? '—' : participant.getHealthProblems | nl2br }}</td>
+                        <th style="text-align: left">{{ 'detail.foodHeader' | trans }}</th>
+                        <th style="text-align: left">{{ 'detail.notice' | trans }}</th>
+                        <th style="text-align: left">{{ 'detail.issues' | trans }}</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+                    </thead>
+                    <tbody>
+                    {% for participant in presentFoodStatistic.otherFoodParticipants %}
+                        <tr>
+                            <td>{{ participant.getFullName }}</td>
+                            <td>{{ ('role.' ~ participant.role.value) | trans }}</td>
+                            {% if presentFoodStatistic.showContingent %}
+                                {# bare .contingent breaks via LeanMapper's __call whenever it's empty; getContingent
+                                   matches the getNotes-style idiom already used in changeRole.twig / detailsMinimal.twig.
+                                   "is empty" (not ?:) so a contingent/note/issue of exactly "0" still renders, matching
+                                   the PHP-side showContingent check, which uses !== '' rather than a falsy test. #}
+                                <td>{{ participant.getContingent is empty ? '—' : participant.getContingent }}</td>
+                            {% endif %}
+                            <td>{{ participant.foodPreferences | trans }}</td>
+                            <td>{{ participant.getNotes is empty ? '—' : participant.getNotes | nl2br }}</td>
+                            <td>{{ participant.getHealthProblems is empty ? '—' : participant.getHealthProblems | nl2br }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </details>
     </div>
 
     {% for aggregator, row in foodStatistic.rows %}

@@ -172,6 +172,27 @@ class FoodStatsAdminPageTest extends AppTestCase
         self::assertStringContainsString('jen syrova strava ' . $nameSuffix, $detailSection);
         self::assertStringContainsString('alergie na arasidy ' . $nameSuffix, $detailSection);
         self::assertStringContainsString('servis tým', $detailSection);
+
+        // the section must be collapsed into a <details> whose <summary> carries the header
+        $detailsPosition = strrpos(substr($body, 0, $headerPosition), '<details');
+        self::assertNotFalse($detailsPosition, 'other food detail section is not wrapped in <details>');
+
+        $summaryPrefix = substr($body, $detailsPosition, $headerPosition - $detailsPosition);
+        self::assertStringContainsString('<summary', $summaryPrefix);
+        self::assertStringNotContainsString('</details>', $summaryPrefix);
+
+        // the shared dev DB may already hold other "other diet" participants, so assert the
+        // summary count against the rows actually rendered rather than against a fixed number
+        self::assertSame(
+            1,
+            preg_match('/jiná strava - detail \((\d+)\)/u', $body, $summaryMatches),
+            'summary does not carry a participant count',
+        );
+
+        // one <tr> belongs to the table head, the rest are participant rows
+        $renderedRows = substr_count($detailSection, '<tr>') - 1;
+        self::assertGreaterThanOrEqual(1, $renderedRows);
+        self::assertSame($renderedRows, (int)$summaryMatches[1]);
     }
 
     public function testFoodStatsPageShowsEmDashForEmptyOtherFoodFields(): void
