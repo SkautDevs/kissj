@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -12,6 +13,8 @@ use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use LogicException;
+use Slim\App;
 use Tests\AppTestCase;
 
 class CancelPatrolParticipantTest extends AppTestCase
@@ -23,6 +26,60 @@ class CancelPatrolParticipantTest extends AppTestCase
     public function testAdminCancelPatrolParticipantDoesNotCancelWholePatrol(): void
     {
         $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+
+        [$patrolLeader, $patrolParticipant] = $this->makePatrol($app);
+        $event = $this->getSmallTestEvent($eventRepository);
+        $leaderUser = $patrolLeader->getUserButNotNull();
+
+        $adminUser = $this->createAdminUser($app);
+        $adminUser->event = $event;
+        $userRepository->persist($adminUser);
+        $_SESSION['user'] = ['id' => $adminUser->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $event->slug . '/admin/changeRole/' . $patrolParticipant->id . '/cancel',
+            'POST',
+        ));
+
+        self::assertLessThan(500, $response->getStatusCode());
+
+        $leaderUserAfter = $userRepository->get($leaderUser->id);
+        self::assertSame(
+            UserStatus::Paid,
+            $leaderUserAfter->status,
+            'Cancelling one patrol participant must not cancel the patrol leader\'s user (whole patrol would vanish from the entry app)',
+        );
+    }
+
+    public function testServiceRefusesCancellingPatrolParticipant(): void
+    {
+        $app = $this->getTestApp();
+        $participantService = $this->getService($app, ParticipantService::class);
+        [, $patrolParticipant] = $this->makePatrol($app);
+
+        $this->expectException(LogicException::class);
+        $participantService->cancelParticipant($patrolParticipant);
+    }
+
+    public function testServiceRefusesCancellingPatrolLeader(): void
+    {
+        $app = $this->getTestApp();
+        $participantService = $this->getService($app, ParticipantService::class);
+        [$patrolLeader] = $this->makePatrol($app);
+
+        $this->expectException(LogicException::class);
+        $participantService->cancelParticipant($patrolLeader);
+    }
+
+    /**
+     * @param App<\Psr\Container\ContainerInterface> $app
+     * @return array{0: PatrolLeader, 1: PatrolParticipant}
+     */
+    private function makePatrol(App $app): array
+    {
         $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
@@ -49,24 +106,6 @@ class CancelPatrolParticipantTest extends AppTestCase
         $patrolParticipant->lastName = 'Cancelled';
         $patrolParticipantRepository->persist($patrolParticipant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
-
-        $response = $app->handle($this->createRequest(
-            '/v2/event/' . $event->slug . '/admin/changeRole/' . $patrolParticipant->id . '/cancel',
-            'POST',
-        ));
-
-        self::assertLessThan(500, $response->getStatusCode());
-
-        $leaderUserAfter = $userRepository->get($leaderUser->id);
-        self::assertSame(
-            UserStatus::Paid,
-            $leaderUserAfter->status,
-            'Cancelling one patrol participant must not cancel the patrol leader\'s user (whole patrol would vanish from the entry app)',
-        );
+        return [$patrolLeader, $patrolParticipant];
     }
 }

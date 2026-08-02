@@ -26,6 +26,7 @@ use kissj\Telemetry\Metrics;
 use kissj\User\UserLoginType;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use LogicException;
 
 readonly class ParticipantService
 {
@@ -457,6 +458,11 @@ readonly class ParticipantService
 
     public function cancelParticipant(Participant $participant): Participant
     {
+        if ($participant instanceof PatrolLeader || $participant instanceof PatrolParticipant) {
+            // patrol members share the leader's user - cancelling would flip the whole patrol
+            throw new LogicException('Cancelling patrol roles is not supported - it would cancel the whole patrol');
+        }
+
         $this->userService->setUserCancelled($participant->getUserButNotNull());
 
         return $participant;
@@ -464,6 +470,8 @@ readonly class ParticipantService
 
     public function uncancelParticipant(Participant $participant): Participant
     {
+        // deliberately no patrol-role guard: uncancelling via a patrol participant is the
+        // admin recovery path that restores a whole accidentally cancelled patrol
         $this->userService->setUserPaid($participant->getUserButNotNull());
 
         return $participant;
