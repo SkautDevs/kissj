@@ -86,7 +86,6 @@ class Participant extends EntityDatetime
     protected ?string $tshirtShape = null;
 
     protected const int TIE_CODE_LENGTH = 6;
-    public const string TSHIRT_DELIMITER = '-';
     protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
     public const string FOOD_OTHER = 'detail.foodOther'; // refactor into ContentArbiter
@@ -222,32 +221,19 @@ class Participant extends EntityDatetime
 
     public function setTshirt(?string $shape, ?string $size): void
     {
-        $this->row->tshirt = implode(self::TSHIRT_DELIMITER, [$shape, $size]);
+        $this->row->tshirt = (new Tshirt($shape, $size))->toStored();
         $this->tshirtSize = $size;
         $this->tshirtShape = $shape;
     }
 
     public function getTshirtShape(): ?string
     {
-        return $this->getTshirtParsed()[0] ?? null;
+        return Tshirt::fromStored($this->getTshirt())->shape;
     }
 
     public function getTshirtSize(): ?string
     {
-        return $this->getTshirtParsed()[1] ?? null;
-    }
-
-    /**
-     * @return list<string>
-     */
-    protected function getTshirtParsed(): array
-    {
-        $tshirtFromDb = $this->getTshirt();
-        if ($tshirtFromDb === null || $tshirtFromDb === '') {
-            return [];
-        }
-
-        return explode(self::TSHIRT_DELIMITER, $tshirtFromDb);
+        return Tshirt::fromStored($this->getTshirt())->size;
     }
 
     public function getFullName(): string

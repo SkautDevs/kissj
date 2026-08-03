@@ -9,6 +9,7 @@ use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
@@ -28,6 +29,7 @@ class ExportController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly PdfGenerator $pdfGenerator,
+        private readonly ParticipantService $participantService,
     ) {
     }
 
@@ -134,7 +136,7 @@ class ExportController extends AbstractController
             return $this->redirect($request, $response, 'dashboard');
         }
 
-        $patrolsRoster = $this->participantRepository->getPatrolsRoster($event, $this->translator);
+        $patrolsRoster = $this->participantService->getPatrolsRoster($event);
 
         return $this->streamPdf($response, $this->pdfGenerator->generatePatrolRoster(
             $event,

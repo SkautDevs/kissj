@@ -73,6 +73,7 @@ use kissj\Participant\Troop\TroopController;
 use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
+use kissj\Participant\TshirtService;
 use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
@@ -234,6 +235,7 @@ class Settings
             TroopParticipantRepository::class => autowire(),
             TroopParticipantsOnlyMiddleware::class => autowire(),
             TroopService::class => autowire(),
+            TshirtService::class => autowire(),
             UserAuthenticationMiddleware::class => autowire(),
             VendorApiKeyMiddleware::class => autowire(),
         ];

@@ -16,8 +16,6 @@ use kissj\Orm\Repository;
 use kissj\Participant\Admin\StatisticUserValueObject;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
-use kissj\Participant\Patrol\PatrolsRoster;
-use kissj\Participant\Patrol\SinglePatrolRoster;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
@@ -25,7 +23,6 @@ use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use LeanMapper\Fluent;
 use RuntimeException;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method Participant getOneBy(mixed[] $criteria)
@@ -573,7 +570,7 @@ class ParticipantRepository extends Repository
     /**
      * @return array<string, array<EntryParticipant>>
      */
-    public function getParticipantsForEntry(Event $event, bool $paidOnly, TranslatorInterface $translator): array
+    public function getParticipantsForEntry(Event $event, bool $paidOnly): array
     {
         $rows = $this->getRowsForEntryParticipant($event, [
             ParticipantRole::PatrolLeader,
@@ -589,7 +586,7 @@ class ParticipantRepository extends Repository
             $role = $row['role'];
             /** @var string $id */
             $id = $row['id'];
-            $participants[$role][$id] = $this->mapDataToEntryParticipant($row, $translator);
+            $participants[$role][$id] = $this->mapDataToEntryParticipant($row);
         }
 
         $rowsDependableParticipants = array_merge(
@@ -614,7 +611,7 @@ class ParticipantRepository extends Repository
             $leader = $participants[$role][$dpPatrolLeaderId] ?? null;
             if ($leader instanceof EntryParticipant) {
                 $leader->participants[$dpId]
-                    = $this->mapDataToEntryParticipant($rowDependableParticipant, $translator);
+                    = $this->mapDataToEntryParticipant($rowDependableParticipant);
             }
         }
 
@@ -705,7 +702,7 @@ class ParticipantRepository extends Repository
         return $rows;
     }
 
-    private function mapDataToEntryParticipant(Row $row, TranslatorInterface $translator): EntryParticipant
+    private function mapDataToEntryParticipant(Row $row): EntryParticipant
     {
         /** @var array{
          *     id: int,
@@ -724,8 +721,7 @@ class ParticipantRepository extends Repository
          * } $array */
         $array = $row->toArray();
 
-        $tshirt = $array['tshirt'] ?? '';
-        $tshirtParsed = $tshirt === '' ? [] : explode(Participant::TSHIRT_DELIMITER, $tshirt);
+        $tshirt = Tshirt::fromStored($array['tshirt'] ?? null);
 
         return new EntryParticipant(
             $array['id'],
@@ -740,50 +736,9 @@ class ParticipantRepository extends Repository
                 $array['leave_date'],
             ),
             $array['sfh_done'] ?? false,
-            EntryParticipant::tshirtShapeFromRaw($tshirtParsed[0] ?? null, $translator),
-            EntryParticipant::tshirtSizeFromRaw($tshirtParsed[1] ?? null, $translator),
+            $tshirt->shape,
+            $tshirt->size,
         );
-    }
-
-    public function getPatrolsRoster(Event $event, TranslatorInterface $translator): PatrolsRoster
-    {
-        $singlePatrolsRoster = [];
-
-        $patrolLeaders = $this->getAllPaidPatrolLeaders($event);
-
-        foreach ($patrolLeaders as $pl) {
-            $singlePatrolsRoster[] = new SinglePatrolRoster(
-                (string)$pl->id,
-                $pl->patrolName ?? '',
-                $pl->contingent ?? '',
-                $pl->getFullName(),
-                EntryParticipant::tshirtSizeFromRaw($pl->getTshirtSize(), $translator),
-                array_map(
-                    fn (PatrolParticipant $pp): array => [
-                        'name' => $pp->getFullName(),
-                        'tshirtSize' => EntryParticipant::tshirtSizeFromRaw($pp->getTshirtSize(), $translator),
-                    ],
-                    $pl->patrolParticipants,
-                ),
-            );
-        }
-
-        return new PatrolsRoster($singlePatrolsRoster);
-    }
-
-    /**
-     * @return array<PatrolLeader>
-     */
-    private function getAllPaidPatrolLeaders(Event $event): array
-    {
-        /** @var array<PatrolLeader> $patrolLeaders */
-        $patrolLeaders = $this->getAllParticipantsWithStatus(
-            [ParticipantRole::PatrolLeader],
-            [UserStatus::Paid],
-            $event,
-        );
-
-        return $patrolLeaders;
     }
 
     private function countEntryComing(

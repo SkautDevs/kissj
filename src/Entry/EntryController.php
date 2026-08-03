@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\TshirtService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -21,6 +22,7 @@ class EntryController extends AbstractController
     public function __construct(
         private readonly ParticipantRepository $participantRepository,
         private readonly ParticipantService $participantService,
+        private readonly TshirtService $tshirtService,
     ) {
     }
 
@@ -36,7 +38,12 @@ class EntryController extends AbstractController
             $this->logger->alert("Missing data about status filtering of entry app participant list, using default \"Paid only\"");
             $filterPaidonly = true;
         }
-        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly, $this->translator);
+        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly);
+        foreach ($participants as $role => $roleParticipants) {
+            foreach ($roleParticipants as $id => $entryParticipant) {
+                $participants[$role][$id] = $this->tshirtService->translateEntryParticipantTree($entryParticipant);
+            }
+        }
 
         return $this->getResponseWithJson(
             $response,
@@ -78,8 +85,8 @@ class EntryController extends AbstractController
             'fullName' => $participant->getFullName(),
             'email' => $participant->email,
             'ageAtEventStart' => $participant->getAgeAtStartOfEvent(),
-            'tshirtShape' => EntryParticipant::tshirtShapeFromRaw($participant->getTshirtShape(), $this->translator),
-            'tshirtSize' => EntryParticipant::tshirtSizeFromRaw($participant->getTshirtSize(), $this->translator),
+            'tshirtShape' => $this->tshirtService->displayShape($participant->getTshirtShape()),
+            'tshirtSize' => $this->tshirtService->displaySize($participant->getTshirtSize()),
         ];
 
         if ($participant->entryDate !== null) {

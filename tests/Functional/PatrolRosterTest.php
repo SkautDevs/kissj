@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
-use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
@@ -15,7 +15,6 @@ use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
 
 class PatrolRosterTest extends AppTestCase
@@ -30,8 +29,7 @@ class PatrolRosterTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
         $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
-        $participantRepository = $this->getService($app, ParticipantRepository::class);
-        $translator = $this->getService($app, TranslatorInterface::class);
+        $participantService = $this->getService($app, ParticipantService::class);
 
         $event = $this->getSmallTestEvent($eventRepository);
 
@@ -60,7 +58,7 @@ class PatrolRosterTest extends AppTestCase
         $user->status = UserStatus::Paid;
         $userRepository->persist($user);
 
-        $roster = $participantRepository->getPatrolsRoster($event, $translator);
+        $roster = $participantService->getPatrolsRoster($event);
 
         $ourPatrol = null;
         foreach ($roster->patrolsRoster as $singlePatrolRoster) {

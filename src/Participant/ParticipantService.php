@@ -12,6 +12,8 @@ use kissj\Event\Event;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Patrol\PatrolsRoster;
+use kissj\Participant\Patrol\SinglePatrolRoster;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -34,6 +36,7 @@ readonly class ParticipantService
         private UserService $userService,
         private Mailer $mailer,
         private Metrics $metrics,
+        private TshirtService $tshirtService,
     ) {
     }
 
@@ -562,5 +565,35 @@ readonly class ParticipantService
         $this->participantRepository->persist($participant);
 
         return $participant;
+    }
+
+    public function getPatrolsRoster(Event $event): PatrolsRoster
+    {
+        /** @var array<PatrolLeader> $patrolLeaders */
+        $patrolLeaders = $this->participantRepository->getAllParticipantsWithStatus(
+            [ParticipantRole::PatrolLeader],
+            [UserStatus::Paid],
+            $event,
+        );
+
+        $singlePatrolsRoster = [];
+        foreach ($patrolLeaders as $pl) {
+            $singlePatrolsRoster[] = new SinglePatrolRoster(
+                (string)$pl->id,
+                $pl->patrolName ?? '',
+                $pl->contingent ?? '',
+                $pl->getFullName(),
+                $this->tshirtService->displaySize($pl->getTshirtSize()),
+                array_map(
+                    fn (PatrolParticipant $pp): array => [
+                        'name' => $pp->getFullName(),
+                        'tshirtSize' => $this->tshirtService->displaySize($pp->getTshirtSize()),
+                    ],
+                    $pl->patrolParticipants,
+                ),
+            );
+        }
+
+        return new PatrolsRoster($singlePatrolsRoster);
     }
 }
