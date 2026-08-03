@@ -34,8 +34,7 @@ class AdminValuesTest extends AppTestCase
         $container = $app->getContainer();
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
-        self::assertSame(self::TEST_EVENT_SLUG, $event->slug);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         $participant = $this->createPaidIst($container, 'Round', 'Trip' . bin2hex(random_bytes(4)));
         $participant->subcamp = 'detail.subcamp.theba';
@@ -59,7 +58,7 @@ class AdminValuesTest extends AppTestCase
             $adminService = $this->getService($app, AdminService::class);
             $participantRepository = $this->getService($app, ParticipantRepository::class);
             $eventRepository = $this->getService($app, EventRepository::class);
-            $event = $eventRepository->get(4);
+            $event = $this->getTestSlugEvent($eventRepository);
 
             $suffix = bin2hex(random_bytes(4));
             $participant = $this->createPaidIst($container, 'Jana', 'Novakova' . $suffix);
@@ -104,7 +103,7 @@ class AdminValuesTest extends AppTestCase
         $adminService = $this->getService($app, AdminService::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         $suffix = bin2hex(random_bytes(4));
         $first = $this->createPaidIst($container, 'Prazdny', 'Prvni' . $suffix);
@@ -135,7 +134,7 @@ class AdminValuesTest extends AppTestCase
         $adminService = $this->getService($app, AdminService::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         $suffix = bin2hex(random_bytes(4));
         $openHolder = $this->createOpenIst($container, 'Otevreny', 'Drzitel' . $suffix);
@@ -171,7 +170,7 @@ class AdminValuesTest extends AppTestCase
         $container = $app->getContainer();
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         $suffix = bin2hex(random_bytes(4));
         $patrolLeader = $this->createPaidPatrolLeader($container, 'Vera', 'Vedouci' . $suffix);
@@ -203,7 +202,7 @@ class AdminValuesTest extends AppTestCase
         try {
             $participantRepository = $this->getService($app, ParticipantRepository::class);
             $eventRepository = $this->getService($app, EventRepository::class);
-            $event = $eventRepository->get(4);
+            $event = $this->getTestSlugEvent($eventRepository);
 
             $adminUser = $this->createEventAdmin($container);
             $_SESSION['user'] = ['id' => $adminUser->id];
@@ -238,7 +237,7 @@ class AdminValuesTest extends AppTestCase
         // event 4 stays 'default' - no subcamps
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         $adminUser = $this->createEventAdmin($container);
         $_SESSION['user'] = ['id' => $adminUser->id];
@@ -416,7 +415,7 @@ class AdminValuesTest extends AppTestCase
         $eventRepository = $container->get(EventRepository::class);
 
         $user = new User();
-        $user->event = $eventRepository->get(4);
+        $user->event = $this->getTestSlugEvent($eventRepository);
         $user->role = UserRole::Admin;
         $user->email = 'admin-values-admin-' . bin2hex(random_bytes(6)) . '@example.com';
         $user->loginType = UserLoginType::Email;
@@ -442,7 +441,7 @@ class AdminValuesTest extends AppTestCase
         /** @var PatrolLeaderRepository $patrolLeaderRepository */
         $patrolLeaderRepository = $container->get(PatrolLeaderRepository::class);
 
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
         $email = 'admin-values-pl-' . bin2hex(random_bytes(6)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'pl');

@@ -33,7 +33,7 @@ class PatrolRosterTest extends AppTestCase
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $translator = $this->getService($app, TranslatorInterface::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
 
         $user = $userService->registerEmailUser('roster-tshirt-test@example.com', $event);
         $participant = $userService->createParticipantSetRole($user, 'pl');
@@ -87,7 +87,7 @@ class PatrolRosterTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         $pdfGenerator = $this->getService($app, PdfGenerator::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
         $roster = new PatrolsRoster([
             new SinglePatrolRoster('1', 'Roster pdf patrol', '', 'Roster Leader', 'XL (větší)', [
                 ['name' => 'With Shirt', 'tshirtSize' => 'M (střední)'],

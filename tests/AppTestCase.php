@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests;
 
 use kissj\Application\ApplicationGetter;
+use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use LogicException;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -40,6 +42,9 @@ class AppTestCase extends TestCase
     /** @var Connection[] */
     private array $connectionsToClose = [];
 
+    /** @var array{container: ContainerInterface, eventId: int, originals: array<string, mixed>}|null */
+    private ?array $mutatedEventRestore = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -55,18 +60,13 @@ class AppTestCase extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ($this->connectionsToClose as $connection) {
-            if ($connection->isConnected()) {
-                $connection->disconnect();
-            }
-        }
-        $this->connectionsToClose = [];
-
         // Destroy session to ensure clean state between tests
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_unset();
             session_destroy();
         }
+
+        $this->restoreMutatedEventFields();
 
         // Restore original handlers after test completes
         // This cleans up any handlers registered by Whoops or other middleware
@@ -87,6 +87,13 @@ class AppTestCase extends TestCase
             }
             restore_exception_handler();
         }
+
+        foreach ($this->connectionsToClose as $connection) {
+            if ($connection->isConnected()) {
+                $connection->disconnect();
+            }
+        }
+        $this->connectionsToClose = [];
 
         parent::tearDown();
     }
@@ -197,6 +204,26 @@ class AppTestCase extends TestCase
         return $instance;
     }
 
+    protected function getSmallTestEvent(EventRepository $eventRepository): Event
+    {
+        $event = $eventRepository->findBySlug('test-event-small');
+        if ($event === null) {
+            throw new \RuntimeException('Event test-event-small not found - create it in the dev database first');
+        }
+
+        return $event;
+    }
+
+    protected function getTestSlugEvent(EventRepository $eventRepository): Event
+    {
+        $event = $eventRepository->findBySlug('test-slug');
+        if ($event === null) {
+            throw new \RuntimeException('Event test-slug not found - create it in the dev database first');
+        }
+
+        return $event;
+    }
+
     protected function resetEventToDefault(ContainerInterface $container, string $slug = 'test-event-slug'): void
     {
         /** @var Connection $connection */
@@ -212,6 +239,52 @@ class AppTestCase extends TestCase
         /** @var Connection $connection */
         $connection = $container->get(Connection::class);
         $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', $eventType, $slug);
+    }
+
+    /**
+     * Mutates event fields for one test and remembers the originals; tearDown() reverts them,
+     * so the shared dev database keeps its state between runs.
+     *
+     * @param array<string, mixed> $fields field name => new value
+     */
+    protected function mutateEventForTest(ContainerInterface $container, Event $event, array $fields): void
+    {
+        if ($this->mutatedEventRestore !== null && $this->mutatedEventRestore['eventId'] !== $event->id) {
+            throw new LogicException('mutateEventForTest supports only one event per test');
+        }
+
+        $originals = $this->mutatedEventRestore['originals'] ?? [];
+        $currentData = $event->getData();
+        foreach (array_keys($fields) as $field) {
+            if (!array_key_exists($field, $originals)) {
+                $originals[$field] = $currentData[$field] ?? null;
+            }
+        }
+        $event->assign($fields);
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        $eventRepository->persist($event);
+
+        $this->mutatedEventRestore = [
+            'container' => $container,
+            'eventId' => $event->id,
+            'originals' => $originals,
+        ];
+    }
+
+    protected function restoreMutatedEventFields(): void
+    {
+        if ($this->mutatedEventRestore === null) {
+            return;
+        }
+
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->mutatedEventRestore['container']->get(EventRepository::class);
+        $event = $eventRepository->get($this->mutatedEventRestore['eventId']);
+        $event->assign($this->mutatedEventRestore['originals']);
+        $eventRepository->persist($event);
+        $this->mutatedEventRestore = null;
     }
 
     protected function createPaidIst(ContainerInterface $container, string $firstName, string $lastName): Participant
@@ -239,7 +312,7 @@ class AppTestCase extends TestCase
         /** @var ParticipantRepository $participantRepository */
         $participantRepository = $container->get(ParticipantRepository::class);
 
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
         $email = 'ist-' . $status->value . '-' . bin2hex(random_bytes(6)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'ist');

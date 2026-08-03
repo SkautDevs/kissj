@@ -75,7 +75,7 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $userRepository = $this->getService($app, UserRepository::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
 
         $email = 'ot-food-plan-' . bin2hex(random_bytes(4)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
@@ -95,9 +95,8 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
 
     // Functional tests on this branch share a single, non-isolated dev database (each
     // getTestApp() migrate is a no-op against the real Postgres instance, not a fresh
-    // per-test DB). Event 1 already holds thousands of seeded on-site participants,
-    // so this test can't assert absolute counts; it snapshots the matrix before and
-    // after creating its own fixtures and asserts on the deltas instead.
+    // per-test DB), so this test can't assert absolute counts; it snapshots the matrix
+    // before and after creating its own fixtures and asserts on the deltas instead.
     public function testPresentFoodStatisticCountsOnlyCheckedInPaidParticipants(): void
     {
         $app = $this->getTestApp();
@@ -108,7 +107,7 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
         $roles = ParticipantRole::all();
 
         $before = $statisticsService->getPresentFoodStatisticByRole($event, $roles);
@@ -188,7 +187,7 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
         $roles = ParticipantRole::all();
 
         $before = $statisticsService->getPresentFoodStatisticByRole($event, $roles);

@@ -111,9 +111,10 @@ class EntryCodeCorsTest extends AppTestCase
             throw new RuntimeException('Test event not found');
         }
 
-        $event->apiKeyEntry = self::TEST_EVENT_SECRET;
-        $event->maximalClosedIstsCount = 100;
-        $eventRepository->persist($event);
+        $this->mutateEventForTest($container, $event, [
+            'apiKeyEntry' => self::TEST_EVENT_SECRET,
+            'maximalClosedIstsCount' => 100,
+        ]);
 
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);

@@ -29,7 +29,7 @@ class CancelPatrolParticipantTest extends AppTestCase
         $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
         $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
-        $event = $eventRepository->get(1);
+        $event = $this->getSmallTestEvent($eventRepository);
 
         $leaderEmail = 'cancel-pp-leader-' . bin2hex(random_bytes(4)) . '@example.com';
         $leaderUser = $userService->registerEmailUser($leaderEmail, $event);
@@ -50,6 +50,8 @@ class CancelPatrolParticipantTest extends AppTestCase
         $patrolParticipantRepository->persist($patrolParticipant);
 
         $adminUser = $this->createAdminUser($app);
+        $adminUser->event = $event;
+        $userRepository->persist($adminUser);
         $_SESSION['user'] = ['id' => $adminUser->id];
         $app = $this->getTestApp(false);
 

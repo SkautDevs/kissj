@@ -295,7 +295,7 @@ class AdminValuesImportTest extends AppTestCase
         try {
             $participantRepository = $this->getService($app, ParticipantRepository::class);
             $eventRepository = $this->getService($app, EventRepository::class);
-            $event = $eventRepository->get(4);
+            $event = $this->getTestSlugEvent($eventRepository);
 
             $adminUser = $this->createEventAdmin($container);
             $_SESSION['user'] = ['id' => $adminUser->id];
@@ -370,7 +370,7 @@ class AdminValuesImportTest extends AppTestCase
         $eventRepository = $container->get(EventRepository::class);
 
         $user = new User();
-        $user->event = $eventRepository->get(4);
+        $user->event = $this->getTestSlugEvent($eventRepository);
         $user->role = UserRole::Admin;
         $user->email = 'admin-values-import-admin-' . bin2hex(random_bytes(6)) . '@example.com';
         $user->loginType = UserLoginType::Email;
@@ -401,7 +401,7 @@ class AdminValuesImportTest extends AppTestCase
         $adminService = $this->getService($app, AdminService::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->get(4);
+        $event = $this->getTestSlugEvent($eventRepository);
 
         // subcamp names are matched through the translator - middleware scopes it per request, here we do it by hand
         $this->getService($app, EventScope::class)->apply($event, 'http://localhost');
