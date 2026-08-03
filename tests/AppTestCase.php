@@ -7,7 +7,6 @@ namespace Tests;
 use kissj\Application\ApplicationGetter;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use LogicException;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -17,9 +16,11 @@ use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LeanMapper\Connection;
+use LogicException;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
@@ -30,6 +31,16 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class AppTestCase extends TestCase
 {
+    public const string DB_FILENAME = 'db_tests.sqlite';
+    public const string DB_TEMPLATE_FILENAME = 'db_template.sqlite';
+
+    // full clearTempFolder() wipe happens once per process: it clears stale same-pid
+    // leftovers (pid reuse after a crash) before the first template snapshot exists;
+    // later fresh inits must keep the template and the compiled DI container.
+    // a process leading with getTestApp(false) migrates before the wipe, so its first
+    // fresh init re-migrates once - accepted waste, semantics unharmed
+    private static bool $runDirInitialized = false;
+
     /** @var callable|null */
     private $originalErrorHandler = null;
 
@@ -103,8 +114,13 @@ class AppTestCase extends TestCase
      */
     protected function getTestApp(bool $freshInit = true): App
     {
+        $this->forceSqliteDbType();
+
         if ($freshInit) {
-            $this->clearTempFolder();
+            if (!self::$runDirInitialized) {
+                $this->clearTempFolder();
+                self::$runDirInitialized = true;
+            }
 
             // Properly destroy any active session before starting fresh
             if (session_status() === PHP_SESSION_ACTIVE) {
@@ -114,31 +130,97 @@ class AppTestCase extends TestCase
 
             // Clear session superglobal
             $_SESSION = [];
+        }
 
-            $arguments = [
-                'command' => 'migrate',
-                '--configuration' => __DIR__ . '/phinxConfiguration.php',
-            ];
+        $runTempPath = $this->getRunTempPath();
+        if (!is_dir($runTempPath)) {
+            mkdir($runTempPath, 0777, true);
+        }
 
-            $phinx = new PhinxApplication();
-            $phinx->setAutoExit(false);
-            $phinx->run(new ArrayInput($arguments), new BufferedOutput());
+        // provide the db also when getTestApp(false) is a process's first call - the
+        // per-process database does not exist yet
+        if ($freshInit || !file_exists($runTempPath . '/' . self::DB_FILENAME)) {
+            $this->provideCleanDatabase($runTempPath);
         }
 
         $app = (new ApplicationGetter())->getApp(
             __DIR__ . '/',
             'env.testing',
-            __DIR__ . '/temp'
+            $this->getRunTempPath()
         );
 
-        $container = $app->getContainer();
-        if ($container !== null) {
-            /** @var Connection $connection */
-            $connection = $container->get(Connection::class);
-            $this->connectionsToClose[] = $connection;
+        $connection = $this->getService($app, Connection::class);
+        if ($connection->getConfig('driver') !== 'sqlite') {
+            throw new LogicException(
+                'Functional tests must run on the per-test sqlite database — refusing to touch a real database.',
+            );
         }
+        $this->connectionsToClose[] = $connection;
 
         return $app;
+    }
+
+    // clean database per init without paying the migration chain each time:
+    // migrate once per process, snapshot, then clone the snapshot
+    private function provideCleanDatabase(string $runTempPath): void
+    {
+        $dbPath = $runTempPath . '/' . self::DB_FILENAME;
+        $templatePath = $runTempPath . '/' . self::DB_TEMPLATE_FILENAME;
+
+        // unlink instead of overwriting in place, so connections still open in a
+        // previously booted app keep their own (old) inode
+        if (!@unlink($dbPath) && file_exists($dbPath)) {
+            throw new RuntimeException('unlink failed on ' . $dbPath);
+        }
+
+        // @: the template may vanish in a concurrent-prune race - fall through to migrating
+        if (is_file($templatePath) && @copy($templatePath, $dbPath)) {
+            return;
+        }
+
+        $arguments = [
+            'command' => 'migrate',
+            '--configuration' => __DIR__ . '/phinxConfiguration.php',
+        ];
+
+        // tripwire: if the DB_TYPE force-set above is ever removed or reordered,
+        // fail before phinx applies DDL to a real database; under a config-driven
+        // phpunit run the phpunit.xml env force makes this unreachable - it guards
+        // config-less invocations (custom -c, IDE runners)
+        if ($_ENV['DB_TYPE'] !== 'sqlite') {
+            throw new LogicException('Test migrations must run on sqlite — refusing to migrate a real database.');
+        }
+
+        $phinx = new PhinxApplication();
+        $phinx->setAutoExit(false);
+        $phinxOutput = new BufferedOutput();
+        if ($phinx->run(new ArrayInput($arguments), $phinxOutput) !== 0) {
+            throw new RuntimeException('test database migration failed: ' . $phinxOutput->fetch());
+        }
+
+        if (!copy($dbPath, $templatePath)) {
+            throw new RuntimeException('snapshotting the template database failed');
+        }
+    }
+
+    // the container env pins DB_TYPE=postgresql and phpdotenv never overrides
+    // existing vars - force sqlite for both phinx and the app connection;
+    // DATABASE_PATH keeps Settings.php and tests/phinxConfiguration.php pointed
+    // at the same per-process file instead of deriving it twice.
+    // do not inline into getTestApp(): the pre-migration tripwire relies on this
+    // assignment being statically opaque, or PHPStan flags it as dead code
+    private function forceSqliteDbType(): void
+    {
+        $_ENV['DB_TYPE'] = 'sqlite';
+        $_ENV['DATABASE_PATH'] = $this->getRunTempPath() . '/' . self::DB_FILENAME;
+    }
+
+    // per-process dir so concurrent suite runs in one checkout cannot clobber
+    // each other's sqlite database or compiled DI container;
+    // tests/phinxConfiguration.php derives the same path from getmypid()
+    protected function getRunTempPath(): string
+    {
+        return __DIR__ . '/temp/run_' . (int)getmypid();
     }
 
     /**
@@ -156,7 +238,7 @@ class AppTestCase extends TestCase
         $uri = new Uri('', '', 80, $path);
         $handle = fopen('php://temp', 'wb+');
         if ($handle === false) {
-            throw new \RuntimeException('opening php://temp failed');
+            throw new RuntimeException('opening php://temp failed');
         }
 
         $stream = (new StreamFactory())->createStreamFromResource($handle);
@@ -174,19 +256,75 @@ class AppTestCase extends TestCase
     {
         $files = glob(__DIR__ . '/temp/*'); // skipping hidden files
         if ($files === false) {
-            throw new \RuntimeException('glob function fails');
+            throw new RuntimeException('glob function fails');
         }
 
         foreach ($files as $file) {
             if (is_file($file)) {
-                unlink($file);
+                // tolerant: a concurrent suite run may have deleted it already
+                if (!@unlink($file) && file_exists($file)) {
+                    throw new RuntimeException('unlink failed on ' . $file);
+                }
             }
+            // prune run dirs left by crashed suites; live pids mark concurrent runs
+            // (Linux-only /proc check - tests always run in the Linux dev container)
+            if (is_dir($file) && str_starts_with(basename($file), 'run_')) {
+                $pid = (int)substr(basename($file), 4);
+                // /proc pids are namespace-local (host vs container runs), so a dead-looking
+                // pid may belong to a live foreign run - also require the dir to look abandoned
+                // @: the dir may vanish between glob() and here in a concurrent prune
+                $mtime = @filemtime($file);
+                $looksAbandoned = $mtime !== false && $mtime < time() - 3600;
+                if ($pid !== (int)getmypid() && !file_exists('/proc/' . $pid) && $looksAbandoned) {
+                    $this->removeDirWithFiles($file);
+                }
+            }
+        }
+
+        // recreation happens in getTestApp, which ensures the dir on both init paths
+        $runTempPath = $this->getRunTempPath();
+        if (is_dir($runTempPath)) {
+            $this->removeDirWithFiles($runTempPath);
         }
 
         // Ensure mpdf temp directory exists (required by mpdf library)
         $mpdfTempDir = __DIR__ . '/temp/mpdf/mpdf';
         if (!is_dir($mpdfTempDir)) {
             mkdir($mpdfTempDir, 0777, true);
+        }
+    }
+
+    // tolerant deletion: two concurrent suites may prune the same stale dir at once;
+    // scandir instead of glob because glob skips dotfiles
+    protected function removeDirWithFiles(string $dir): void
+    {
+        $entries = @scandir($dir);
+        if ($entries === false) {
+            if (!is_dir($dir)) {
+                return; // pruned by a concurrent suite run
+            }
+
+            throw new RuntimeException('scandir failed on ' . $dir);
+        }
+
+        foreach ($entries as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            $path = $dir . '/' . $entry;
+            if (is_dir($path) && !is_link($path)) {
+                $this->removeDirWithFiles($path);
+                continue;
+            }
+
+            if (!@unlink($path) && file_exists($path)) {
+                throw new RuntimeException('unlink failed on ' . $path);
+            }
+        }
+
+        if (!@rmdir($dir) && is_dir($dir)) {
+            throw new RuntimeException('rmdir failed on ' . $dir);
         }
     }
 
@@ -206,26 +344,96 @@ class AppTestCase extends TestCase
 
     protected function getSmallTestEvent(EventRepository $eventRepository): Event
     {
-        $event = $eventRepository->findBySlug('test-event-small');
-        if ($event === null) {
-            throw new \RuntimeException('Event test-event-small not found - create it in the dev database first');
-        }
-
-        return $event;
+        return $eventRepository->findBySlug('test-event-small')
+            ?? $this->createTestEventFromDefault($eventRepository, 'test-event-small');
     }
 
     protected function getTestSlugEvent(EventRepository $eventRepository): Event
     {
-        $event = $eventRepository->findBySlug('test-slug');
-        if ($event === null) {
-            throw new \RuntimeException('Event test-slug not found - create it in the dev database first');
+        return $eventRepository->findBySlug('test-slug')
+            ?? $this->createTestEventFromDefault($eventRepository, 'test-slug');
+    }
+
+    /**
+     * Several food-stats/export tests were written against the shared dev database's
+     * 'obrok37' fixture and pin its event type (EventTypeObrok::getLanguages() returns only
+     * 'cs', which those tests rely on for locale-independent assertions). Clone-and-relabel
+     * like the helpers above, but also flip event_type - it has no entity setter (see
+     * createTestEventFromDefault) so that needs the same raw-SQL route as setEventType().
+     *
+     * @param App<ContainerInterface> $app
+     */
+    protected function getObrokTestEvent(App $app): Event
+    {
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug('obrok37');
+        if ($event !== null) {
+            return $event;
         }
 
-        return $event;
+        $newEvent = $this->createTestEventFromDefault($eventRepository, 'obrok37');
+        $this->setEventType($app->getContainer(), 'obrok', 'obrok37');
+
+        return $eventRepository->get($newEvent->id);
+    }
+
+    // Event::getData() also picks up computed pseudo-properties (eventType, availableRoles,
+    // logoInBase64, ...) that are derived by a getter method with no matching setter -
+    // assigning those back to a new Event throws. Whitelist to the columns Event actually
+    // stores, mirrored from the class's @property list (minus id, which is auto-assigned).
+    private const array CLONABLE_EVENT_FIELDS = [
+        'slug', 'readableName', 'webUrl', 'dataProtectionUrl', 'contactEmail', 'logoUrl',
+        'accountNumber', 'iban', 'swift', 'prefixVariableSymbol', 'constantSymbol',
+        'automaticPaymentPairing', 'bankSlug', 'bankApiKey', 'defaultPrice', 'currency',
+        'allowPatrols', 'maximalClosedPatrolsCount', 'minimalPatrolParticipantsCount',
+        'maximalPatrolParticipantsCount',
+        'allowIsts', 'maximalClosedIstsCount',
+        'allowGuests', 'maximalClosedGuestsCount', 'guestPrice',
+        'allowOrganizingTeam', 'maximalClosedOrganizingTeamCount', 'organizingTeamPrice',
+        'organizingTeamRegistrationToken',
+        'allowTroops', 'maximalClosedTroopLeadersCount', 'maximalClosedTroopParticipantsCount',
+        'minimalTroopParticipantsCount', 'maximalTroopParticipantsCount',
+        'maximalClosedParticipantsCount',
+        'startRegistration', 'startDay', 'endDay',
+        'emailFrom', 'emailFromName',
+        // emailBccFrom is deliberately excluded: Event's naming convention maps it to column
+        // email_bcc_from, but the migration that added it actually named the column
+        // email_from_bcc - a pre-existing mismatch (see Mailer.php:263) that breaks any write
+        // to this property. Out of scope for the test harness; every clone leaves it null,
+        // which is fine since none of these fixtures exercise bcc mail.
+        'apiKeyDeals', 'apiKeyEntry', 'apiKeyVendor', 'apiKeyVendorHealth',
+        'skautisAppId',
+    ];
+
+    // migrations only ever seed one event (slug test-event-slug, id 1); under the
+    // shared dev postgres, extra slugs like test-event-small/test-slug were created
+    // by hand once. Per-process sqlite starts from a bare migration, so clone the
+    // seeded event's fields instead of requiring manual fixture setup per process.
+    private function createTestEventFromDefault(EventRepository $eventRepository, string $slug): Event
+    {
+        $defaultEvent = $eventRepository->findBySlug('test-event-slug');
+        if ($defaultEvent === null) {
+            throw new RuntimeException('Seed event test-event-slug not found - did migrations run?');
+        }
+
+        $data = $defaultEvent->getData(self::CLONABLE_EVENT_FIELDS);
+        $data['slug'] = $slug;
+        $data['readableName'] = $slug;
+
+        $newEvent = new Event($data);
+        $eventRepository->persist($newEvent);
+
+        // persist() does not backfill columns the entity never touched (like event_type,
+        // left to its DB default) into the in-memory row - later code reading them via
+        // getEventType()/getData() then hits "Missing 'event_type' column". Re-fetching
+        // forces a real row read so every column is materialised.
+        return $eventRepository->get($newEvent->id);
     }
 
     protected function resetEventToDefault(ContainerInterface $container, string $slug = 'test-event-slug'): void
     {
+        $this->ensureEventExists($container, $slug);
+
         /** @var Connection $connection */
         $connection = $container->get(Connection::class);
         $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', 'default', $slug);
@@ -236,9 +444,25 @@ class AppTestCase extends TestCase
         string $eventType,
         string $slug,
     ): void {
+        $this->ensureEventExists($container, $slug);
+
         /** @var Connection $connection */
         $connection = $container->get(Connection::class);
         $connection->query('UPDATE event SET event_type = %s WHERE slug = %s', $eventType, $slug);
+    }
+
+    // under the shared dev postgres, slugs like test-slug were long-lived fixtures created
+    // by hand, so tests could freely flip their event_type before ever fetching the event.
+    // Per-process sqlite starts empty, so that same call order would silently update zero
+    // rows and then have getTestSlugEvent()/getSmallTestEvent() clone a fresh 'default' one
+    // over it - create the row first so the UPDATE has something to land on.
+    private function ensureEventExists(ContainerInterface $container, string $slug): void
+    {
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+        if ($eventRepository->findBySlug($slug) === null) {
+            $this->createTestEventFromDefault($eventRepository, $slug);
+        }
     }
 
     /**

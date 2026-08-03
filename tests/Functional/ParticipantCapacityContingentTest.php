@@ -27,7 +27,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->seedTwoClosedContingentIsts($app, 2);
 
-        $istThird = $this->createOpenIst($app, $event, 'capacity-third-a@example.com', 'contingent-a');
+        $istThird = $this->createOpenIstWithContingent($app, $event, 'capacity-third-a@example.com', 'contingent-a');
 
         $participantService = $this->getService($app, ParticipantService::class);
         self::assertFalse($participantService->isParticipantOrEventFull($istThird));
@@ -45,7 +45,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
 
         $event = $this->seedTwoClosedContingentIsts($app, 2);
 
-        $istThird = $this->createOpenIst($app, $event, 'capacity-third-a-navigamus@example.com', 'contingent-a');
+        $istThird = $this->createOpenIstWithContingent($app, $event, 'capacity-third-a-navigamus@example.com', 'contingent-a');
 
         $participantService = $this->getService($app, ParticipantService::class);
         self::assertTrue($participantService->isParticipantOrEventFull($istThird));
@@ -76,7 +76,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
      */
     private function createClosedIst(App $app, Event $event, string $email, string $contingent): void
     {
-        $ist = $this->createOpenIst($app, $event, $email, $contingent);
+        $ist = $this->createOpenIstWithContingent($app, $event, $email, $contingent);
 
         $userRepository = $this->getService($app, UserRepository::class);
         $user = $ist->getUserButNotNull();
@@ -87,7 +87,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createOpenIst(App $app, Event $event, string $email, string $contingent): Ist
+    private function createOpenIstWithContingent(App $app, Event $event, string $email, string $contingent): Ist
     {
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser($email, $event);

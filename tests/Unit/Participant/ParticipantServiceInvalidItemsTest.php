@@ -13,6 +13,7 @@ use kissj\Participant\Guest\Guest;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Troop\TroopParticipantRepository;
+use kissj\Participant\TshirtService;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
 use kissj\Telemetry\Metrics;
@@ -104,6 +105,8 @@ class ParticipantServiceInvalidItemsTest extends TestCase
             ),
             $mailerMock,
             $metrics,
+            // TshirtService is readonly too - same reason as Mailer/UserService above
+            new TshirtService(Mockery::mock(TranslatorInterface::class)),
         );
     }
 }
