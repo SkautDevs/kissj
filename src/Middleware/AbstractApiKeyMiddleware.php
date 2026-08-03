@@ -20,6 +20,14 @@ abstract class AbstractApiKeyMiddleware extends BaseMiddleware
 
     abstract protected function findEventByApiKey(string $apiKey): ?Event;
 
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getAdditionalAttributes(string $apiKey, Event $authorizedEvent): array
+    {
+        return [];
+    }
+
     public function process(Request $request, ResponseHandler $handler): Response
     {
         $authorizationHeader = $request->getHeader('Authorization');
@@ -32,14 +40,22 @@ abstract class AbstractApiKeyMiddleware extends BaseMiddleware
             return $this->getUnauthorizedResponse('missing "Bearer " in Authorization header');
         }
 
-        $authorizedEvent = $this->findEventByApiKey(substr($secret, 7));
+        $apiKey = substr($secret, 7);
+        if ($apiKey === '') {
+            return $this->getUnauthorizedResponse('empty API key');
+        }
+
+        $authorizedEvent = $this->findEventByApiKey($apiKey);
         if ($authorizedEvent === null) {
             return $this->getUnauthorizedResponse('no event exists with this authorization');
         }
 
-        return $handler->handle(
-            $request->withAttribute('authorizedEvent', $authorizedEvent),
-        );
+        $request = $request->withAttribute('authorizedEvent', $authorizedEvent);
+        foreach ($this->getAdditionalAttributes($apiKey, $authorizedEvent) as $name => $value) {
+            $request = $request->withAttribute($name, $value);
+        }
+
+        return $handler->handle($request);
     }
 
     private function getUnauthorizedResponse(string $reason): ResponsePsr7

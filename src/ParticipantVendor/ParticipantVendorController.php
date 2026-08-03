@@ -9,7 +9,6 @@ use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Troop\TroopParticipant;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ParticipantVendorController extends AbstractController
 {
@@ -19,9 +18,9 @@ class ParticipantVendorController extends AbstractController
     }
 
     public function retrieveParticipantByTieCode(
-        Request $request,
         Response $response,
         Event $authorizedEvent,
+        bool $allowHealthData,
         string $tieCode,
     ): Response {
         $participant = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $authorizedEvent);
@@ -30,10 +29,8 @@ class ParticipantVendorController extends AbstractController
             return $response->withStatus(404);
         }
 
-        $allowHealthData = (bool)$request->getHeader('Allow-Health')[0];
-
         $vendoredParticipant = new VendoredParticipantType(
-            $participant->role -> value ?? 'norole',
+            $participant->role->value ?? 'norole',
             $participant->firstName,
             $participant->lastName,
             $participant->birthDate?->format('Y-m-d'),
