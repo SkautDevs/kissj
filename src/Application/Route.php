@@ -118,7 +118,8 @@ class Route
 
                     $app->group('/patrol', function (RouteCollectorProxy $app) {
                         $app->get('/participant/{participantId}/show', PatrolController::class . '::showParticipant')
-                            ->setName('p-show'); // TODO check if CheckLeaderParticipants is needed here
+                            ->setName('p-show')
+                            ->add(CheckLeaderParticipants::class);
 
                         $app->group('', function (RouteCollectorProxy $app) {
                             $app->get('/closeRegistration', PatrolController::class . '::showCloseRegistration')
