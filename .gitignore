@@ -20,7 +20,9 @@
 /uploads/*
 
 deploy/prereqs
+deploy/dev/*.tgz
 .worktrees
+/src/logs/
 
 # editor and IDE paraphernalia
 .idea
