@@ -11,4 +11,9 @@ use kissj\Participant\Participant;
  */
 class TroopParticipant extends Participant
 {
+    #[\Override]
+    public function getOwnOrLeaderContingent(): ?string
+    {
+        return $this->contingent ?? $this->troopLeader?->contingent;
+    }
 }

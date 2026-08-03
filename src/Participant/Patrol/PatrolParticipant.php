@@ -15,4 +15,10 @@ class PatrolParticipant extends Participant
         parent::initDefaults();
         $this->role = ParticipantRole::PatrolParticipant;
     }
+
+    #[\Override]
+    public function getOwnOrLeaderContingent(): ?string
+    {
+        return $this->contingent ?? $this->patrolLeader->contingent;
+    }
 }

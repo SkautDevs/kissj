@@ -293,16 +293,7 @@ readonly class ExportService
 
     public function getContingentTranslated(Participant $participant): string
     {
-        $contingent = $participant->contingent;
-        if ($contingent === null) {
-            if ($participant instanceof PatrolParticipant) {
-                $contingent = $participant->patrolLeader->contingent;
-            } elseif ($participant instanceof TroopParticipant) {
-                $contingent = $participant->troopLeader?->contingent;
-            }
-        }
-
-        return $this->translator->trans($contingent ?? '');
+        return $this->translator->trans($participant->getOwnOrLeaderContingent() ?? '');
     }
 
     public function getPreferredPositionTranslated(Ist $participant): string

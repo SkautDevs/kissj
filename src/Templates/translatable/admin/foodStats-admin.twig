@@ -75,11 +75,13 @@
                             <td>{{ participant.getFullName }}</td>
                             <td>{{ ('role.' ~ participant.role.value) | trans }}</td>
                             {% if presentFoodStatistic.showContingent %}
-                                {# bare .contingent breaks via LeanMapper's __call whenever it's empty; getContingent
-                                   matches the getNotes-style idiom already used in changeRole.twig / detailsMinimal.twig.
-                                   "is empty" (not ?:) so a contingent/note/issue of exactly "0" still renders, matching
-                                   the PHP-side showContingent check, which uses !== '' rather than a falsy test. #}
-                                <td>{{ participant.getContingent is empty ? '—' : participant.getContingent|trans }}</td>
+                                {# getOwnOrLeaderContingent, not the raw column: a patrol participant has no contingent
+                                   of its own and inherits the patrol leader's, exactly as the exports do. Bare
+                                   .contingent / .notes / .healthProblems breaks via LeanMapper's __call whenever
+                                   empty, hence the getX() calls used here and in the notes/issues cells below.
+                                   "is empty" (not ?:) so a contingent of exactly "0" still renders, matching the
+                                   PHP-side showContingent check, which uses !== '' rather than a falsy test. #}
+                                <td>{{ participant.getOwnOrLeaderContingent is empty ? '—' : participant.getOwnOrLeaderContingent|trans }}</td>
                             {% endif %}
                             <td>{{ participant.foodPreferences | trans }}</td>
                             <td>{{ participant.getNotes is empty ? '—' : participant.getNotes | nl2br }}</td>

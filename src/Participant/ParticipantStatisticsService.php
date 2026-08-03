@@ -197,7 +197,7 @@ readonly class ParticipantStatisticsService
 
         $showContingent = false;
         foreach ($otherFoodParticipants as $participant) {
-            if (($participant->contingent ?? '') !== '') {
+            if (($participant->getOwnOrLeaderContingent() ?? '') !== '') {
                 $showContingent = true;
                 break;
             }
@@ -223,8 +223,8 @@ readonly class ParticipantStatisticsService
         usort(
             $otherFoodParticipants,
             static function (Participant $a, Participant $b): int {
-                $contingentA = $a->contingent ?? '';
-                $contingentB = $b->contingent ?? '';
+                $contingentA = $a->getOwnOrLeaderContingent() ?? '';
+                $contingentB = $b->getOwnOrLeaderContingent() ?? '';
 
                 $hasContingentA = $contingentA === '' ? 1 : 0;
                 $hasContingentB = $contingentB === '' ? 1 : 0;

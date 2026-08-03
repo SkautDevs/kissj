@@ -8,6 +8,9 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
+use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
@@ -372,5 +375,85 @@ class FoodStatsAdminPageTest extends AppTestCase
         $row = substr($detailSection, $rowStart, $rowEnd - $rowStart);
 
         self::assertSame(5, substr_count($row, '<td>'));
+    }
+
+    public function testFoodStatsPageShowsPatrolParticipantContingentFromLeader(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $userService = $this->getService($app, UserService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+
+        $event = $eventRepository->findBySlug('obrok37');
+        self::assertNotNull($event);
+
+        $nameSuffix = bin2hex(random_bytes(4));
+
+        $leaderUser = $userService->registerEmailUser('food-stats-pl-' . $nameSuffix . '@example.com', $event);
+        $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'pl');
+
+        /** @var PatrolLeader $patrolLeader */
+        $patrolLeader = $patrolLeaderRepository->get($leaderParticipant->id);
+        // an untranslated value renders through |trans unchanged, which makes it findable in the body
+        $patrolLeader->contingent = 'kontingent' . $nameSuffix;
+        $patrolLeaderRepository->persist($patrolLeader);
+        $leaderUser->status = UserStatus::Paid;
+        $userRepository->persist($leaderUser);
+
+        // the patrol participant has no contingent column of its own - this is the row under test
+        $ppUser = $userService->registerEmailUser('food-stats-pp-' . $nameSuffix . '@example.com', $event);
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->user = $ppUser;
+        $patrolParticipant->patrolLeader = $patrolLeader;
+        $patrolParticipant->firstName = 'Otherfoodpatrol';
+        $patrolParticipant->lastName = 'Member' . $nameSuffix;
+        $patrolParticipant->foodPreferences = 'detail.foodOther';
+        $participantRepository->persist($patrolParticipant);
+        $ppUser->status = UserStatus::Paid;
+        $userRepository->persist($ppUser);
+        $this->enterAndTrackForCleanup($participantService, $patrolParticipant);
+
+        $adminUser = $this->createAdminUser($app);
+        $adminUser->status = UserStatus::Open;
+        $adminUser->event = $event;
+        $userRepository->persist($adminUser);
+
+        $_SESSION['user'] = ['id' => $adminUser->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $event->slug . '/admin/foodStats',
+        ));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string)$response->getBody();
+
+        $headerPosition = strpos($body, 'jiná strava - detail');
+        self::assertNotFalse($headerPosition, 'other food detail header not found in response body');
+
+        $tableEndPosition = strpos($body, '</table>', $headerPosition);
+        self::assertNotFalse($tableEndPosition, 'other food detail table not closed in response body');
+
+        $detailSection = substr($body, $headerPosition, $tableEndPosition - $headerPosition);
+
+        // an inherited contingent must switch the whole column on
+        self::assertStringContainsString('Kontingent', $detailSection);
+
+        // isolate this fixture's own row - the shared dev DB holds other 'other food' participants
+        $namePosition = strpos($detailSection, 'Member' . $nameSuffix);
+        self::assertNotFalse($namePosition, 'patrol participant not found in detail section');
+
+        $rowStart = strrpos(substr($detailSection, 0, $namePosition), '<tr>');
+        self::assertNotFalse($rowStart, 'opening <tr> not found for patrol participant row');
+
+        $rowEnd = strpos($detailSection, '</tr>', $namePosition);
+        self::assertNotFalse($rowEnd, 'closing </tr> not found for patrol participant row');
+
+        $row = substr($detailSection, $rowStart, $rowEnd - $rowStart);
+
+        self::assertStringContainsString('kontingent' . $nameSuffix, $row);
     }
 }

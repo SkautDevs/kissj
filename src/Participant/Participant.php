@@ -194,6 +194,11 @@ class Participant extends EntityDatetime
         return $this->user;
     }
 
+    public function getOwnOrLeaderContingent(): ?string
+    {
+        return $this->contingent;
+    }
+
     public function getRoleOrFail(): ParticipantRole
     {
         if ($this->role === null) {

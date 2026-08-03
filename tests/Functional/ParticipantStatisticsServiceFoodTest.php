@@ -350,6 +350,81 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         self::assertFalse($emptyStatistic['showContingent']);
     }
 
+    public function testOtherFoodDetailsShowContingentInheritedFromPatrolLeader(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
+
+        $event = $eventRepository->findBySlug('obrok37');
+        self::assertNotNull($event);
+
+        $patrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', null, 'Dvorak', 'Emil');
+
+        $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
+            [$patrolParticipant],
+            ParticipantRole::all(),
+        );
+
+        self::assertCount(1, $statistic['otherFoodParticipants']);
+        self::assertNull($statistic['otherFoodParticipants'][0]->contingent);
+        self::assertSame('alfa', $statistic['otherFoodParticipants'][0]->getOwnOrLeaderContingent());
+        self::assertTrue($statistic['showContingent']);
+    }
+
+    public function testOtherFoodDetailsSortPatrolParticipantByInheritedContingent(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
+
+        $event = $eventRepository->findBySlug('obrok37');
+        self::assertNotNull($event);
+
+        $bravoIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'bravo', 'Adamova', 'Bara');
+        $alfaPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', null, 'Zeman', 'Adam');
+
+        $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
+            [$bravoIst, $alfaPatrolParticipant],
+            ParticipantRole::all(),
+        );
+
+        $orderedIds = array_map(
+            static fn (Participant $participant): int => $participant->id,
+            $statistic['otherFoodParticipants'],
+        );
+
+        // sorted on the inherited 'alfa', even though the row's own contingent column is null -
+        // by last name alone the order would be reversed
+        self::assertSame([$alfaPatrolParticipant->id, $bravoIst->id], $orderedIds);
+    }
+
+    public function testOtherFoodDetailsPreferOwnContingentOverPatrolLeaders(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
+
+        $event = $eventRepository->findBySlug('obrok37');
+        self::assertNotNull($event);
+
+        $mikeIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'mike', 'Adamova', 'Bara');
+        $zuluPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', 'zulu', 'Zeman', 'Adam');
+
+        $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
+            [$mikeIst, $zuluPatrolParticipant],
+            ParticipantRole::all(),
+        );
+
+        $orderedIds = array_map(
+            static fn (Participant $participant): int => $participant->id,
+            $statistic['otherFoodParticipants'],
+        );
+
+        // the leader's 'alfa' would sort the patrol participant first; its own 'zulu' must win
+        self::assertSame([$mikeIst->id, $zuluPatrolParticipant->id], $orderedIds);
+    }
+
     /**
      * @param array{matrix: array<string, array<string, int>>, ...} $result
      */
@@ -387,6 +462,60 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $userRepository->persist($user);
 
         return $participant;
+    }
+
+    /**
+     * A patrol participant is the only role that has no contingent field of its own, so its value
+     * has to come from the patrol leader.
+     *
+     * @param App<ContainerInterface> $app
+     */
+    private function makeEnteredOtherFoodPatrolParticipant(
+        App $app,
+        Event $event,
+        ?string $leaderContingent,
+        ?string $ownContingent,
+        string $lastName,
+        string $firstName,
+    ): PatrolParticipant {
+        $userService = $this->getService($app, UserService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+
+        $suffix = bin2hex(random_bytes(4));
+
+        $leaderUser = $userService->registerEmailUser('present-food-pl-' . $suffix . '@example.com', $event);
+        $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'pl');
+
+        /** @var PatrolLeader $patrolLeader */
+        $patrolLeader = $patrolLeaderRepository->get($leaderParticipant->id);
+        $patrolLeader->contingent = $leaderContingent;
+        $patrolLeaderRepository->persist($patrolLeader);
+        $leaderUser->status = UserStatus::Paid;
+        $userRepository->persist($leaderUser);
+
+        $ppUser = $userService->registerEmailUser('present-food-pp-' . $suffix . '@example.com', $event);
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->user = $ppUser;
+        $patrolParticipant->patrolLeader = $patrolLeader;
+        $patrolParticipant->contingent = $ownContingent;
+        $patrolParticipant->firstName = $firstName;
+        $patrolParticipant->lastName = $lastName;
+        $patrolParticipant->foodPreferences = 'detail.foodOther';
+        $participantRepository->persist($patrolParticipant);
+        $ppUser->status = UserStatus::Paid;
+        $userRepository->persist($ppUser);
+
+        $this->enterAndTrackForCleanup($participantService, $patrolParticipant);
+
+        // same reason as in makeEnteredOtherFoodParticipant(): a hand-built entity is missing the
+        // columns the statistics service reads, so hand back a freshly selected one
+        $reloaded = $participantRepository->getParticipantById($patrolParticipant->id, $event);
+        self::assertInstanceOf(PatrolParticipant::class, $reloaded);
+
+        return $reloaded;
     }
 
     /**
