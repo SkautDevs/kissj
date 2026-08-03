@@ -235,15 +235,13 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsListOnlyEnteredParticipants(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $enteredOther = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodOther');
         $this->enterAndTrackForCleanup($participantService, $enteredOther);
@@ -267,15 +265,13 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsAreSortedByContingentThenName(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $noContingent = $this->makeEnteredOtherFoodParticipant($app, $event, null, 'Zeman', 'Adam');
         $bravoYoung = $this->makeEnteredOtherFoodParticipant($app, $event, 'bravo', 'Adamova', 'Bara');
@@ -301,11 +297,9 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsSortSharedContingentByLastName(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $zeman = $this->makeEnteredOtherFoodParticipant($app, $event, 'gama', 'Zeman', 'Adam');
         $king = $this->makeEnteredOtherFoodParticipant($app, $event, 'gama', 'King', 'Filip');
@@ -326,12 +320,10 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsHideContingentWhenNobodyHasOne(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $withoutContingent = $this->makeEnteredOtherFoodParticipant($app, $event, null, 'Svoboda', 'Dan');
 
@@ -352,11 +344,9 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsShowContingentInheritedFromPatrolLeader(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $patrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', null, 'Dvorak', 'Emil');
 
@@ -374,11 +364,9 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsSortPatrolParticipantByInheritedContingent(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $bravoIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'bravo', 'Adamova', 'Bara');
         $alfaPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', null, 'Zeman', 'Adam');
@@ -401,11 +389,9 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsPreferOwnContingentOverPatrolLeaders(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $mikeIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'mike', 'Adamova', 'Bara');
         $zuluPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', 'zulu', 'Zeman', 'Adam');

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
@@ -93,14 +92,12 @@ class FoodStatsAdminPageTest extends AppTestCase
     public function testFoodStatsPageShowsPresentOnSiteMatrix(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $email = 'food-stats-page-' . bin2hex(random_bytes(4)) . '@example.com';
         $user = $userService->registerEmailUser($email, $event);
@@ -151,14 +148,12 @@ class FoodStatsAdminPageTest extends AppTestCase
     public function testFoodStatsPageShowsOtherFoodDetailRows(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         // admin session must exist before the "before" snapshot below, since that request
         // needs to reach the admin-only foodStats page too
@@ -237,14 +232,12 @@ class FoodStatsAdminPageTest extends AppTestCase
     public function testFoodStatsPageShowsEmDashForEmptyOtherFoodFields(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $nameSuffix = bin2hex(random_bytes(4));
         $email = 'food-stats-other-empty-' . $nameSuffix . '@example.com';
@@ -310,14 +303,12 @@ class FoodStatsAdminPageTest extends AppTestCase
     public function testFoodStatsPageOmitsContingentColumnWhenNobodyHasOne(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $nameSuffix = bin2hex(random_bytes(4));
         $email = 'food-stats-other-nocontingent-' . $nameSuffix . '@example.com';
@@ -380,15 +371,13 @@ class FoodStatsAdminPageTest extends AppTestCase
     public function testFoodStatsPageShowsPatrolParticipantContingentFromLeader(): void
     {
         $app = $this->getTestApp();
-        $eventRepository = $this->getService($app, EventRepository::class);
         $userService = $this->getService($app, UserService::class);
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
         $participantService = $this->getService($app, ParticipantService::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $nameSuffix = bin2hex(random_bytes(4));
 

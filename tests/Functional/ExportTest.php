@@ -105,10 +105,8 @@ class ExportTest extends AppTestCase
         $userRepository = $this->getService($app, UserRepository::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
-        $eventRepository = $this->getService($app, EventRepository::class);
 
-        $event = $eventRepository->findBySlug('obrok37');
-        self::assertNotNull($event);
+        $event = $this->getObrokTestEvent($app);
 
         $suffix = bin2hex(random_bytes(4));
 

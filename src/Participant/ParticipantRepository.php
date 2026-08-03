@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant;
 
 use Collator;
+use DateTimeInterface;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
@@ -384,7 +385,10 @@ class ParticipantRepository extends Repository
     public function getIstArrivalStatistic(
         Event $event,
     ): array {
-        $qb = $this->connection->select('date(participant.arrival_date) as ad, COUNT(*)')->from($this->getTable());
+        // COUNT(*) needs an explicit alias: postgres names an unaliased aggregate column
+        // "count" implicitly, sqlite does not, and fetchPairs() below needs the same name
+        // on both drivers
+        $qb = $this->connection->select('date(participant.arrival_date) as ad, COUNT(*) as count')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('participant.role = %s', ParticipantRole::Ist);
@@ -457,7 +461,10 @@ class ParticipantRepository extends Repository
         ParticipantRole $role,
         ?string $contingent = null,
     ): StatisticUserValueObject {
-        $qb = $this->connection->select('u.status, COUNT(*)')->from($this->getTable());
+        // COUNT(*) needs an explicit alias: postgres names an unaliased aggregate column
+        // "count" implicitly, sqlite does not, and fetchPairs() below needs the same name
+        // on both drivers
+        $qb = $this->connection->select('u.status, COUNT(*) as count')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('u.event_id = %i', $event->id);
@@ -711,11 +718,11 @@ class ParticipantRepository extends Repository
          *     nickname: string|null,
          *     patrol_name: string|null,
          *     tie_code: string,
-         *     birth_date: \DateTimeInterface|null,
+         *     birth_date: DateTimeInterface|string|null,
          *     patrol_leader_id: int|null,
          *     sfh_done: bool|null,
-         *     entry_date: \DateTimeInterface|null,
-         *     leave_date: \DateTimeInterface|null,
+         *     entry_date: DateTimeInterface|string|null,
+         *     leave_date: DateTimeInterface|string|null,
          *     tshirt: string|null,
          *     role: string|null
          * } $array */
@@ -730,15 +737,30 @@ class ParticipantRepository extends Repository
             $array['nickname'] ?? '',
             $array['patrol_name'] ?? '',
             $array['tie_code'],
-            $array['birth_date'] ?? DateTimeUtils::getDateTime(),
+            $this->toDateTimeOrNull($array['birth_date']) ?? DateTimeUtils::getDateTime(),
             EntryStatus::entryFromDatetime(
-                $array['entry_date'],
-                $array['leave_date'],
+                $this->toDateTimeOrNull($array['entry_date']),
+                $this->toDateTimeOrNull($array['leave_date']),
             ),
             $array['sfh_done'] ?? false,
             $tshirt->shape,
             $tshirt->size,
         );
+    }
+
+    // the pgsql dibi driver casts datetime columns to DateTimeInterface, the sqlite driver
+    // returns the raw stored string - normalize here so callers don't care which driver ran
+    private function toDateTimeOrNull(DateTimeInterface|string|null $rawValue): ?DateTimeInterface
+    {
+        if ($rawValue instanceof DateTimeInterface) {
+            return $rawValue;
+        }
+
+        if ($rawValue !== null && $rawValue !== '') {
+            return DateTimeUtils::getDateTime($rawValue);
+        }
+
+        return null;
     }
 
     private function countEntryComing(
@@ -846,7 +868,10 @@ class ParticipantRepository extends Repository
     public function getDigestFoodStatistic(
         Event $event,
     ): array {
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        // COUNT(*) needs an explicit alias: postgres names an unaliased aggregate column
+        // "count" implicitly, sqlite does not, and fetchPairs() below needs the same name
+        // on both drivers
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*) as count')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('u.role = %s', UserRole::Participant);
@@ -860,7 +885,7 @@ class ParticipantRepository extends Repository
         $rows = $qb->fetchPairs('f', 'count');
 
         // count patrol participants and merge
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*)')->from($this->getTable());
+        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*) as count')->from($this->getTable());
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
 
