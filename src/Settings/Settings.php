@@ -31,6 +31,7 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\MailerSettings;
 use kissj\Mailer\Mailer;
+use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
@@ -112,6 +113,7 @@ use Sentry\Monolog\Handler as SentryHandler;
 use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
 use SessionHandlerInterface;
+use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -333,6 +335,21 @@ class Settings
         $container[SkautisFactory::class] = fn () => new SkautisFactory(
             $_ENV['SKAUTIS_USE_TEST'] !== 'false',
         );
+        $container[AddCorsHeaderForAppDomainsMiddleware::class] = function () {
+            /** @var array<string, string> $_ENV */
+            $origins = array_values(array_filter(
+                array_map(
+                    static fn (string $origin): string => trim($origin),
+                    explode(',', $_ENV['CORS_ALLOWED_ORIGINS'] ?? ''),
+                ),
+                static fn (string $origin): bool => $origin !== '',
+            ));
+
+            return new AddCorsHeaderForAppDomainsMiddleware(
+                $origins === [] ? AddCorsHeaderForAppDomainsMiddleware::DEFAULT_ALLOWED_ORIGINS : $origins,
+                new ResponseFactory(),
+            );
+        };
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
         $container[TranslatorFactory::class] = function () {
             /** @var array<string, string> $_ENV */

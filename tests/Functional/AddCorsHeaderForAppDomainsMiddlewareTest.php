@@ -27,7 +27,7 @@ class AddCorsHeaderForAppDomainsMiddlewareTest extends AppTestCase
         self::assertFalse($response->hasHeader('Access-Control-Allow-Credentials'));
     }
 
-    public function testFallsBackToProductionOriginWithoutOriginHeader(): void
+    public function testMissingOriginHeaderGetsNoAllowOriginHeader(): void
     {
         $app = $this->getTestApp();
         $middleware = $this->getService($app, AddCorsHeaderForAppDomainsMiddleware::class);
@@ -36,7 +36,8 @@ class AddCorsHeaderForAppDomainsMiddlewareTest extends AppTestCase
 
         $response = $middleware->process($request, $handler);
 
-        self::assertSame('https://kissj.skauting.cz', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertFalse($response->hasHeader('Access-Control-Allow-Origin'));
+        self::assertSame('Origin', $response->getHeaderLine('Vary'));
     }
 
     public function testOptionsPreflightShortCircuits(): void
@@ -52,5 +53,19 @@ class AddCorsHeaderForAppDomainsMiddlewareTest extends AppTestCase
         self::assertFalse($handler->called);
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('https://entry.example.org', $response->getHeaderLine('Access-Control-Allow-Origin'));
+    }
+
+    public function testNonAllowlistedOriginGetsNoAllowOriginHeader(): void
+    {
+        $app = $this->getTestApp();
+        $middleware = $this->getService($app, AddCorsHeaderForAppDomainsMiddleware::class);
+        $handler = new RequestHandlerSpy();
+        $request = $this->createRequest('/v3/entry/code/abc', 'POST')
+            ->withHeader('Origin', 'https://evil.example.com');
+
+        $response = $middleware->process($request, $handler);
+
+        self::assertFalse($response->hasHeader('Access-Control-Allow-Origin'));
+        self::assertSame('Origin', $response->getHeaderLine('Vary'));
     }
 }
