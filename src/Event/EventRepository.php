@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Orm\Order;
 use kissj\Orm\Relation;
@@ -62,9 +63,31 @@ class EventRepository extends Repository
         return $this->findOneBy(['api_key_entry' => $apiKey]);
     }
 
-    public function findByVendorApiKey(string $apiKey): ?Event
+    /**
+     * Matches either scoped vendor key column. Returns every event that matches so the
+     * caller can detect ambiguity (a key accidentally reused across events/columns) instead
+     * of silently picking one - see VendorApiKeyMiddleware.
+     *
+     * @return list<Event>
+     */
+    public function findAllByVendorApiKey(string $apiKey): array
     {
-        return $this->findOneBy(['api_key_vendor' => $apiKey]);
+        $qb = $this->createFluent();
+        $qb->where('api_key_vendor = %s OR api_key_vendor_health = %s', $apiKey, $apiKey);
+
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+
+        $events = [];
+        foreach ($rows as $row) {
+            /** @var Row&iterable<string, mixed> $row */
+            $entity = $this->createEntity($row);
+            if ($entity instanceof Event) {
+                $events[] = $entity;
+            }
+        }
+
+        return $events;
     }
 
     public function generateNewOrganizingTeamRegistrationToken(Event $event): string
