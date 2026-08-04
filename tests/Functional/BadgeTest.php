@@ -227,6 +227,40 @@ class BadgeTest extends AppTestCase
         self::assertStringContainsString('FirstnoNick LastnoNick', $html);
     }
 
+    public function testBadgeRendersWhenNameFieldsAreNull(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        // distinct event so this nameless fixture cannot affect the event-1 list/sort assertions above
+        $event = $this->getObrokTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+
+        // deliberately skip addParamsIntoParticipant so firstName/lastName/nickname stay NULL
+        $user = $userService->registerEmailUser('badge-nullname@example.com', $event);
+        $userService->createParticipantSetRole($user, 'ist');
+        $user->status = UserStatus::Paid;
+        $userRepository->persist($user);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
+        self::assertNotEmpty($participants);
+
+        $pdf = $this->getService($app, PdfGenerator::class);
+
+        $html = $pdf->buildBadgesHtml($event, $participants);
+        self::assertStringContainsString('badge-name-band', $html);
+        self::assertStringNotContainsString('null', $html);
+
+        $bytes = $pdf->generateBadges($event, $participants);
+        self::assertStringStartsWith('%PDF', $bytes);
+    }
+
     public function testGenerateBlankBadgesProducesRequestedCount(): void
     {
         $app = $this->getTestApp();
