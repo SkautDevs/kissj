@@ -96,6 +96,7 @@ use LeanMapper\Connection;
 use LeanMapper\DefaultEntityFactory;
 use LeanMapper\IEntityFactory;
 use LeanMapper\IMapper;
+use LogicException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -318,7 +319,7 @@ class Settings
             /** @var array{fontdata: array<string, array<string, string>>} $fontDefaults */
             $fontDefaults = (new FontVariables())->getDefaults();
 
-            return new Mpdf([
+            $mpdf = new Mpdf([
                 'tempDir' => __DIR__ . '/../../temp/mpdf',
                 // badges can use only included ttf fonts
                 'fontDir' => array_merge($configDefaults['fontDir'], [__DIR__ . '/../../public/fonts']),
@@ -327,6 +328,14 @@ class Settings
                     'skautbold' => ['R' => 'SkautBold.ttf', 'B' => 'SkautBold.ttf'],
                 ],
             ]);
+
+            $publicDir = realpath(__DIR__ . '/../../public');
+            if ($publicDir === false) {
+                throw new LogicException('public directory is missing');
+            }
+            $mpdf->SetBasePath($publicDir);
+
+            return $mpdf;
         };
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),

@@ -1,7 +1,131 @@
- .footer-logo {
+/* Obrok 27 palette: lime field, black content, purple accent - taken from docs/obrok_design_0.jpg.
+   background-image is cleared because the base shapes tiles are opaque and would hide the field. */
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-background: #c2ea3a;
+        --color-card-background: #f9f9f9;
+        --color-input-background: #ffffff;
+        --color-main: #101010;
+        --color-accent: #6122eb;
+        --color-fading: #e4f7a8;
+        --color-light: #8fb52c;
+        --color-dark: #101010;
+        --color-grey: #636363;
+        --color-link: #6122eb;
+        --color-link-visited: #4a18b0;
+        background-image: none;
+    }
+
+    h1 {
+        background-color: #101010;
+        color: #ffffff;
+    }
+
+    body::after {
+        background-image: url('/obrok27/ghost.png');
+    }
+
+    .alert-info {
+        --color: #6122eb;
+        color: #ffffff;
+    }
+
+    .alert-success {
+        --color: #4d7c0f;
+        color: #ffffff;
+    }
+
+    .alert-warning {
+        --color: #d9a404;
+        color: #101010;
+    }
+
+    .alert-error {
+        --color: #c81e2d;
+        color: #ffffff;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #101010;
+        --color-card-background: #1c1c1c;
+        --color-input-background: #252525;
+        --color-main: #c2ea3a;
+        --color-accent: #8b5cf6;
+        --color-fading: #2a3312;
+        --color-light: #a8cc33;
+        --color-dark: #e4f7a8;
+        --color-grey: #909090;
+        --color-link: #8b5cf6;
+        --color-link-visited: #a78bfa;
+        background-image: none;
+    }
+
+    h1 {
+        background-color: #c2ea3a;
+        color: #101010;
+    }
+
+    body::after {
+        background-image: url('/obrok27/ghostLime.png');
+    }
+
+    .alert-info {
+        --color: #4a18b0;
+        color: #ffffff;
+    }
+
+    .alert-success {
+        --color: #3f5d0c;
+        color: #ffffff;
+    }
+
+    .alert-warning {
+        --color: #7a5c05;
+        color: #f5f5f5;
+    }
+
+    .alert-error {
+        --color: #8f1520;
+        color: #ffffff;
+    }
+}
+
+/* headings echo the design's label bar; inline-block keeps the stripe as wide as its text */
+h1 {
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: var(--border-radius);
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    width: 110px;
+    height: 143px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: contain;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@media (width < 900px) {
+    body::after {
+        display: none;
+    }
+}
+
+/* the ghost mark is portrait, so cap its height - the shared 200px width rule makes it tower */
+.footer-logo {
     margin: 20px;
-    width: 200px;
- }
+    width: auto;
+    height: 160px;
+}
 
 .celebration {
     position: fixed;
