@@ -140,6 +140,17 @@ class Event extends EntityDatetime
         return $roles;
     }
 
+    public function isRoleEnabled(ParticipantRole $role): bool
+    {
+        return match ($role) {
+            ParticipantRole::PatrolLeader, ParticipantRole::PatrolParticipant => $this->allowPatrols,
+            ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant => $this->allowTroops,
+            ParticipantRole::Ist => $this->allowIsts,
+            ParticipantRole::Guest => $this->allowGuests,
+            ParticipantRole::OrganizingTeam => $this->allowOrganizingTeam,
+        };
+    }
+
     public function getLogoInBase64(): string
     {
         return ImageUtils::getLocalImageInBase64($this->logoUrl);

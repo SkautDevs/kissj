@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
+use kissj\Event\AbstractContentArbiter;
 use kissj\Event\Event;
+use kissj\Event\EventType\EventType;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Mailer\Mailer;
+use kissj\Orm\Order;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
@@ -19,6 +23,7 @@ use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
+use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use LogicException;
@@ -41,6 +46,63 @@ readonly class AdminService
         private LoggerInterface $logger,
         private Metrics $metrics,
     ) {
+    }
+
+    /**
+     * @param array<string, string|null> $roleEmptyTitleKeys role value => empty-state translation key
+     * @return list<ParticipantListSection>
+     */
+    public function getParticipantSections(
+        Event $event,
+        User $user,
+        UserStatus $status,
+        array $roleEmptyTitleKeys,
+        bool $orderByUpdatedAt = false,
+        bool $filterEmpty = false,
+    ): array {
+        $eventType = $event->getEventType();
+        $orders = $orderByUpdatedAt
+            ? [new Order(Order::COLUMN_UPDATED_AT, Order::DIRECTION_DESC)]
+            : [];
+
+        $sections = [];
+        foreach ($roleEmptyTitleKeys as $roleValue => $emptyTitleKey) {
+            $role = ParticipantRole::from($roleValue);
+            if (!$event->isRoleEnabled($role)) {
+                continue;
+            }
+
+            $sections[] = new ParticipantListSection(
+                $role,
+                'role.' . $role->value,
+                $this->participantRepository->getAllParticipantsWithStatus(
+                    [$role],
+                    [$status],
+                    $event,
+                    $user,
+                    $orders,
+                    $filterEmpty,
+                ),
+                $eventType->getContentArbiterForRole($role),
+                $this->getChildContentArbiter($eventType, $role),
+                $emptyTitleKey,
+            );
+        }
+
+        return $sections;
+    }
+
+    private function getChildContentArbiter(EventType $eventType, ParticipantRole $role): ?AbstractContentArbiter
+    {
+        return match ($role) {
+            ParticipantRole::PatrolLeader => $eventType->getContentArbiterForRole(ParticipantRole::PatrolParticipant),
+            ParticipantRole::TroopLeader => $eventType->getContentArbiterForRole(ParticipantRole::TroopParticipant),
+            ParticipantRole::PatrolParticipant,
+            ParticipantRole::TroopParticipant,
+            ParticipantRole::Ist,
+            ParticipantRole::Guest,
+            ParticipantRole::OrganizingTeam => null,
+        };
     }
 
     public function isPaymentTransferPossible(

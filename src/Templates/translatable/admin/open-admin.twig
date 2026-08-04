@@ -6,124 +6,46 @@
         <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug} ) }}"
            class="btn btn-grey btn-small">{{ 'approve-admin.back' | trans }}</a>
     </div>
-    {% if event.allowIsts %}
-        {% if openIsts is not empty %}
+    {% for section in sections %}
+        {% if section.participants is not empty %}
             <div class="card">
-                <h2>{{ 'role.ist' | trans }}</h2>
+                <h2>{{ section.titleKey | trans }}</h2>
             </div>
-            {% for ist in openIsts %}
+            {% for person in section.participants %}
                 <div class="card">
-                    {% include 'widgets/detailsMinimal.twig' with {'person': ist, 'ca': caIst} %}
-                    <br/>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.ist' | trans }} {{ 'open-admin.need' | trans }}</h2>
-            </div>
-        {% endif %}
-    {% endif %}
-
-    {% if event.allowPatrols %}
-        {% if openPatrolLeaders is not empty %}
-            <div class="card">
-                <h2>{{ 'role.pl' | trans }}</h2>
-            </div>
-            {% for pl in openPatrolLeaders %}
-                <div class="card">
-                    <h3>{{ pl.getPatrolName }}</h3>
-                    {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ pl.getPatrolParticipantsCount + 1}}</b><br/>
-                    <br/>
-                    <h4>{{ pl.getFullName }}</h4>
-                    {% include 'widgets/detailsMinimal.twig' with {'person': pl, 'ca': caPl} %}
-                    <br/>
-    
-                    <h4>{{ 'role.pp' | trans }} {{ 'dashboard.details' | trans }}</h4>
-                    {% for pp in pl.patrolParticipants %}
-                        {% include 'widgets/detailsMinimal.twig' with {'person': pp, 'ca': caPp, 'useShortNaming': true} %}
+                    {% if section.role.value == 'pl' %}
+                        <h3>{{ person.getPatrolName }}</h3>
+                        {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getPatrolParticipantsCount + 1}}</b><br/>
                         <br/>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.pl' | trans }} {{ 'open-admin.need' | trans }}</h2>
-            </div>
-        {% endif %}
-    {% endif %}
-    
-    {% if event.allowTroops %}
-        {% if openTroopLeaders is not empty %}
-            <div class="card">
-                <h2>{{ 'role.tl' | trans }}</h2>
-            </div>
-            {% for tl in openTroopLeaders %}
-                <div class="card">
-                    <h3>{{ tl.getPatrolName }}</h3>
-                    {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ tl.getTroopParticipantsCount + 1}}</b><br/>
-                    <br/>
-                    <h4>{{ tl.getFullName }}</h4>
-                    {% include 'widgets/detailsMinimal.twig' with {'person': tl, 'ca': caTl} %}
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.tl' | trans }} {{ 'open-admin.need' | trans }}</h2>
-            </div>
-        {% endif %}
+                        <h4>{{ person.getFullName }}</h4>
+                        {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
+                        <br/>
 
-        {% if openTroopParticipants is not empty %}
-            <div class="card">
-                <h2>{{ 'role.tp' | trans }}</h2>
-            </div>
-            {% for tp in openTroopParticipants %}
-                <div class="card">
-                    {% include 'widgets/detailsMinimal.twig' with {'person': tp, 'ca': caTp} %}
-                    <br/>
+                        <h4>{{ 'role.pp' | trans }} {{ 'dashboard.details' | trans }}</h4>
+                        {% for pp in person.patrolParticipants %}
+                            {% include 'widgets/detailsMinimal.twig' with {'person': pp, 'ca': section.childContentArbiter, 'useShortNaming': true} %}
+                            <br/>
+                        {% endfor %}
+                    {% elseif section.role.value == 'tl' %}
+                        <h3>{{ person.getPatrolName }}</h3>
+                        {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
+                        <br/>
+                        <h4>{{ person.getFullName }}</h4>
+                        {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
+                    {% elseif section.role.value == 'guest' or section.role.value == 'ot' %}
+                        <h4>{{ person.getFullName }}</h4>
+                        {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
+                        <br/>
+                    {% else %}
+                        {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
+                        <br/>
+                    {% endif %}
                 </div>
             {% endfor %}
         {% else %}
             <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.tp' | trans }} {{ 'open-admin.need' | trans }}</h2>
+                <h2>{{ 'open-admin.none' | trans }} {{ section.titleKey | trans }} {{ 'open-admin.need' | trans }}</h2>
             </div>
         {% endif %}
-    {% endif %}
-
-    {% if event.allowGuests %}
-        {% if openGuests is not empty %}
-            <div class="card">
-                <h2>{{ 'role.guest' | trans }}</h2>
-            </div>
-            {% for guest in openGuests %}
-                <div class="card">
-                    <h4>{{ guest.getFullName }}</h4>
-                    {% include 'widgets/detailsMinimal.twig' with {'person': guest, 'ca': caGuest} %}
-                    <br/>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.guest' | trans }} {{ 'open-admin.need' | trans }}</h2>
-            </div>
-        {% endif %}
-    {% endif %}
-
-    {% if event.allowOrganizingTeam %}
-        {% if openOrganizingTeam is not empty %}
-            <div class="card">
-                <h2>{{ 'role.ot' | trans }}</h2>
-            </div>
-            {% for ot in openOrganizingTeam %}
-                <div class="card">
-                    <h4>{{ ot.getFullName }}</h4>
-                    {% include 'widgets/detailsMinimal.twig' with {'person': ot, 'ca': caOt} %}
-                    <br/>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <h2>{{ 'open-admin.none' | trans }} {{ 'role.ot' | trans }} {{ 'open-admin.need' | trans }}</h2>
-            </div>
-        {% endif %}
-    {% endif %}
+    {% endfor %}
 {% endblock %}

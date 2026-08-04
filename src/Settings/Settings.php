@@ -57,10 +57,13 @@ use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
 use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Orm\Mapper;
-use kissj\Participant\Admin\AdminController;
+use kissj\Participant\Admin\AdminEventController;
 use kissj\Participant\Admin\AdminJsonController;
+use kissj\Participant\Admin\AdminParticipantController;
+use kissj\Participant\Admin\AdminPaymentController;
 use kissj\Participant\Admin\AdminRepository;
 use kissj\Participant\Admin\AdminService;
+use kissj\Participant\Admin\AdminTroopController;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantController;
@@ -183,11 +186,14 @@ class Settings
         // autowired classes are not compiled automatically, hence here we about to tell them to DI
         // https://php-di.org/doc/performances.html#optimizing-for-compilation
         $container = [
-            AdminController::class => autowire(),
+            AdminEventController::class => autowire(),
             AdminJsonController::class => autowire(),
+            AdminParticipantController::class => autowire(),
+            AdminPaymentController::class => autowire(),
             AdminRepository::class => autowire(),
             AdminService::class => autowire(),
             AdminsOnlyMiddleware::class => autowire(),
+            AdminTroopController::class => autowire(),
             BankPaymentRepository::class => autowire(),
             CheckLeaderParticipants::class => autowire(),
             ChoosedRoleOnlyMiddleware::class => autowire(),

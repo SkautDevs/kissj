@@ -19,7 +19,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
-use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipant;
@@ -177,7 +176,6 @@ class ParticipantJourneyTest extends AppTestCase
         $patrolLeaderRepository->persist($patrolLeader);
 
         // Step 3: Add patrol participants with ALL required fields
-        $patrolService = $this->getService($app, PatrolService::class);
         $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
         $participant1 = new PatrolParticipant();
@@ -234,7 +232,8 @@ class ParticipantJourneyTest extends AppTestCase
         $this->initializeMailerSettings($app, $leaderUser->event);
 
         // Step 4: Lock patrol registration
-        $patrolService->closeRegistration($patrolLeader);
+        $participantService = $this->getService($app, ParticipantService::class);
+        $participantService->closeRegistration($patrolLeader);
 
         $userRepository = $this->getService($app, UserRepository::class);
         $leaderUser = $userRepository->get($leaderUser->id);

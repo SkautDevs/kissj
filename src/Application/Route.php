@@ -33,7 +33,10 @@ use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
-use kissj\Participant\Admin\AdminController;
+use kissj\Participant\Admin\AdminEventController;
+use kissj\Participant\Admin\AdminParticipantController;
+use kissj\Participant\Admin\AdminPaymentController;
+use kissj\Participant\Admin\AdminTroopController;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Troop\TroopController;
@@ -217,22 +220,22 @@ class Route
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 
                 $app->group('/admin', function (RouteCollectorProxy $app) {
-                    $app->get('/dashboard', AdminController::class . '::showDashboard')
+                    $app->get('/dashboard', AdminEventController::class . '::showDashboard')
                         ->setName('admin-dashboard');
 
                     $app->group('/adminValues', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showAdminValuesImport')
+                        $app->get('', AdminParticipantController::class . '::showAdminValuesImport')
                             ->setName('admin-values-import');
 
-                        $app->post('', AdminController::class . '::importAdminValues')
+                        $app->post('', AdminParticipantController::class . '::importAdminValues')
                             ->setName('admin-values-import-run');
                     })->add(AdminValuesAllowedOnlyMiddleware::class);
 
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
-                        $app->get('/mend', AdminController::class . '::mendParticipant')
+                        $app->get('/mend', AdminParticipantController::class . '::mendParticipant')
                             ->setName('admin-mend-participant');
 
-                        $app->post('/uncancel', AdminController::class . '::uncancel')
+                        $app->post('/uncancel', AdminParticipantController::class . '::uncancel')
                             ->setName('admin-uncancel-participant');
 
                         $app->post('/entry', EntryController::class . '::entryFromAdmin')
@@ -244,120 +247,120 @@ class Route
                         $app->post('/setDealAsDone/{dealSlug}', DealController::class . '::setDealAsDone')
                             ->setName('admin-set-deal-as-done');
 
-                        $app->get('/showDetails', AdminController::class . '::showParticipantDetails')
+                        $app->get('/showDetails', AdminParticipantController::class . '::showParticipantDetails')
                             ->setName('admin-show-participant-details-changeable');
 
-                        $app->post('/changeDetails', AdminController::class . '::changeParticipantDetails')
+                        $app->post('/changeDetails', AdminParticipantController::class . '::changeParticipantDetails')
                             ->setName('admin-change-participant-details');
 
-                        $app->post('/adminValues', AdminController::class . '::changeAdminValues')
+                        $app->post('/adminValues', AdminParticipantController::class . '::changeAdminValues')
                             ->setName('admin-values-change')
                             ->add(AdminValuesAllowedOnlyMiddleware::class);
 
-                        $app->post('/swapTroopLeader', AdminController::class . '::swapTroopLeader')
+                        $app->post('/swapTroopLeader', AdminTroopController::class . '::swapTroopLeader')
                             ->setName('admin-swap-troop-leader');
                     });
 
                     $app->group('/changeRole/{participantId}', function (RouteCollectorProxy $app) {
-                        $app->get('/show', AdminController::class . '::showRole')
+                        $app->get('/show', AdminParticipantController::class . '::showRole')
                             ->setName('admin-show-role');
 
-                        $app->post('/change', AdminController::class . '::changeRole')
+                        $app->post('/change', AdminParticipantController::class . '::changeRole')
                             ->setName('admin-change-role');
 
-                        $app->post('/cancel', AdminController::class . '::cancel')
+                        $app->post('/cancel', AdminParticipantController::class . '::cancel')
                             ->setName('admin-cancel-participant');
                     });
 
-                    $app->get('/showPaid', AdminController::class . '::showPaid')
+                    $app->get('/showPaid', AdminParticipantController::class . '::showPaid')
                         ->setName('admin-show-stats');
 
-                    $app->get('/showOpen', AdminController::class . '::showOpen')
+                    $app->get('/showOpen', AdminParticipantController::class . '::showOpen')
                         ->setName('admin-show-open');
 
                     $app->group('/approving', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showApproving')
+                        $app->get('', AdminParticipantController::class . '::showApproving')
                             ->setName('admin-show-approving');
 
-                        $app->post('/approveParticipant/{participantId}', AdminController::class . '::approveParticipant')
+                        $app->post('/approveParticipant/{participantId}', AdminParticipantController::class . '::approveParticipant')
                             ->setName('admin-approve');
 
-                        $app->get('/denyParticipant/{participantId}', AdminController::class . '::showDenyParticipant')
+                        $app->get('/denyParticipant/{participantId}', AdminParticipantController::class . '::showDenyParticipant')
                             ->setName('admin-deny-participant-show');
 
-                        $app->post('/denyParticipant/{participantId}', AdminController::class . '::denyParticipant')
+                        $app->post('/denyParticipant/{participantId}', AdminParticipantController::class . '::denyParticipant')
                             ->setName('admin-deny-participant');
                     });
 
                     $app->group('/payments', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showPayments')
+                        $app->get('', AdminPaymentController::class . '::showPayments')
                             ->setName('admin-show-payments');
 
-                        $app->get('/cancelPayment/{paymentId}', AdminController::class . '::showCancelPayment')
+                        $app->get('/cancelPayment/{paymentId}', AdminPaymentController::class . '::showCancelPayment')
                             ->setName('admin-cancel-payment-show');
 
-                        $app->post('/cancelPayment/{paymentId}', AdminController::class . '::cancelPayment')
+                        $app->post('/cancelPayment/{paymentId}', AdminPaymentController::class . '::cancelPayment')
                             ->setName('admin-cancel-payment');
 
-                        $app->get('/changePrice/{paymentId}', AdminController::class . '::showChangePaymentPrice')
+                        $app->get('/changePrice/{paymentId}', AdminPaymentController::class . '::showChangePaymentPrice')
                             ->setName('admin-show-change-payment-price');
 
-                        $app->post('/changePrice/{paymentId}', AdminController::class . '::changePaymentPrice')
+                        $app->post('/changePrice/{paymentId}', AdminPaymentController::class . '::changePaymentPrice')
                             ->setName('admin-change-payment-price');
 
-                        $app->post('/cancelDuePayments', AdminController::class . '::cancelAllDuePayments')
+                        $app->post('/cancelDuePayments', AdminPaymentController::class . '::cancelAllDuePayments')
                             ->setName('admin-cancel-due-payments');
 
-                        $app->post('/confirmPayment/{paymentId}', AdminController::class . '::confirmPayment')
+                        $app->post('/confirmPayment/{paymentId}', AdminPaymentController::class . '::confirmPayment')
                             ->setName('admin-confirm-payment');
 
                         $app->group('/auto', function (RouteCollectorProxy $app) {
-                            $app->get('', AdminController::class . '::showAutoPayments')
+                            $app->get('', AdminPaymentController::class . '::showAutoPayments')
                                 ->setName('admin-show-auto-payments');
 
-                            $app->post('/updatePayments', AdminController::class . '::updatePayments')
+                            $app->post('/updatePayments', AdminPaymentController::class . '::updatePayments')
                                 ->setName('admin-update-payments');
 
                             $app->post(
                                 '/setPaymentPaired/{paymentId}',
-                                AdminController::class . '::markBankPaymentPaired',
+                                AdminPaymentController::class . '::markBankPaymentPaired',
                             )->setName('admin-set-payment-paired');
 
                             $app->post(
                                 '/setPaymentUnrelated/{paymentId}',
-                                AdminController::class . '::markBankPaymentUnrelated',
+                                AdminPaymentController::class . '::markBankPaymentUnrelated',
                             )->setName('admin-set-payment-unrelated');
                         });
 
-                        $app->get('/showTransferPayment', AdminController::class . '::showTransferPayment')
+                        $app->get('/showTransferPayment', AdminPaymentController::class . '::showTransferPayment')
                             ->setName('admin-show-transfer-payment');
 
-                        $app->post('/transferPayment', AdminController::class . '::transferPayment')
+                        $app->post('/transferPayment', AdminPaymentController::class . '::transferPayment')
                             ->setName('admin-transfer-payment');
 
-                        $app->get('/addNewPayment/{participantId}', AdminController::class . '::showAddNewPayment')
+                        $app->get('/addNewPayment/{participantId}', AdminPaymentController::class . '::showAddNewPayment')
                             ->setName('admin-show-add-new-payment');
 
-                        $app->post('/addNewPayment/{participantId}', AdminController::class . '::addNewPayment')
+                        $app->post('/addNewPayment/{participantId}', AdminPaymentController::class . '::addNewPayment')
                             ->setName('admin-add-new-payment');
 
-                        $app->post('/generateMorePayments', AdminController::class . '::generateMorePayments')
+                        $app->post('/generateMorePayments', AdminPaymentController::class . '::generateMorePayments')
                             ->setName('admin-generate-more-payments');
                     })->add(AdminPaymentsOnlyMiddleware::class);
 
                     $app->group('/troopManagement', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showTroopManagement')
+                        $app->get('', AdminTroopController::class . '::showTroopManagement')
                             ->setName('admin-troop-management');
 
-                        $app->post('/tieTogether', AdminController::class . '::tieTogether')
+                        $app->post('/tieTogether', AdminTroopController::class . '::tieTogether')
                             ->setName('admin-troop-tie-together');
 
-                        $app->post('/untie', AdminController::class . '::untie')
+                        $app->post('/untie', AdminTroopController::class . '::untie')
                             ->setName('admin-troop-untie');
                     });
 
                     $app->group('/foodStats', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showDetailedFoodStats')
+                        $app->get('', AdminEventController::class . '::showDetailedFoodStats')
                              ->setName('admin-food-stats');
                     })->add(ShowFoodStatsAllowedOnly::class);
 
@@ -393,17 +396,17 @@ class Route
                     });
 
                     $app->group('/organizing-team', function (RouteCollectorProxy $app) {
-                        $app->get('', AdminController::class . '::showOrganizingTeam')
+                        $app->get('', AdminEventController::class . '::showOrganizingTeam')
                             ->setName('admin-organizing-team');
 
-                        $app->post('/regenerateToken', AdminController::class . '::regenerateOrganizingTeamToken')
+                        $app->post('/regenerateToken', AdminEventController::class . '::regenerateOrganizingTeamToken')
                             ->setName('admin-organizing-team-regenerate-token');
                     });
 
-                    $app->get('/roleManagement', AdminController::class . '::showRoleManagement')
+                    $app->get('/roleManagement', AdminEventController::class . '::showRoleManagement')
                         ->setName('admin-role-management');
 
-                    $app->post('/roleManagement', AdminController::class . '::saveRoleManagement')
+                    $app->post('/roleManagement', AdminEventController::class . '::saveRoleManagement')
                         ->setName('admin-save-role-management');
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             });

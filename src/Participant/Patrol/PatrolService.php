@@ -6,24 +6,15 @@ namespace kissj\Participant\Patrol;
 
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
-use kissj\Mailer\Mailer;
 use kissj\Participant\ParticipantRole;
-use kissj\Participant\ParticipantService;
 use kissj\Skautis\SkautisMemberData;
-use kissj\Telemetry\MetricName;
-use kissj\Telemetry\Metrics;
 use kissj\User\User;
-use kissj\User\UserService;
 
 readonly class PatrolService
 {
     public function __construct(
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
-        private UserService $userService,
-        private ParticipantService $participantService,
-        private Mailer $mailer,
-        private Metrics $metrics,
     ) {
     }
 
@@ -77,24 +68,6 @@ readonly class PatrolService
         PatrolLeader $patrolLeader
     ): bool {
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
-    }
-
-    public function closeRegistration(PatrolLeader $patrolLeader): PatrolLeader
-    {
-        if ($this->participantService->isCloseRegistrationValid($patrolLeader)->isValid) {
-            $user = $patrolLeader->getUserButNotNull();
-            $patrolLeader->registrationCloseDate = DateTimeUtils::getDateTime();
-            $this->patrolLeaderRepository->persist($patrolLeader);
-            $this->userService->setUserClosed($user);
-            $this->mailer->sendRegistrationClosed($user, $patrolLeader);
-            $this->metrics->count(
-                MetricName::RegistrationsLocked,
-                1,
-                ['role' => $patrolLeader->role->value ?? 'unknown'],
-            );
-        }
-
-        return $patrolLeader;
     }
 
     /**

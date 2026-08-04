@@ -16,39 +16,11 @@
     <div class="card">
         <h2>{{ 'stats-admin.paid' | trans }} {{ event.readableName }}</h2>
 
-        {% if event.allowIsts %}
-            <h4>{{ 'role.ist' | trans }}</h4>
-            {% for ist in paidIsts %}
-                {% include 'widgets/participantRow.twig' with {'person': ist, 'ca': caIst} %}<br/>
+        {% for section in sections %}
+            <h4>{{ section.titleKey | trans }}</h4>
+            {% for person in section.participants %}
+                {% include 'widgets/participantRow.twig' with {'person': person, 'ca': section.contentArbiter} %}<br/>
             {% endfor %}
-        {% endif %}
-
-        {% if event.allowPatrols %}
-            <h4>{{ 'role.pl' | trans }}</h4>
-            {% for pl in paidPatrolLeaders %}
-                {% include 'widgets/participantRow.twig' with {'person': pl, 'ca': caPl} %}<br/>
-            {% endfor %}
-        {% endif %}
-
-        {% if event.allowTroops %}
-            <h4>{{ 'role.tl' | trans }}</h4>
-            {% for tl in paidTroopLeaders %}
-                {% include 'widgets/participantRow.twig' with {'person': tl, 'ca': caTl} %}<br/>
-            {% endfor %}
-        {% endif %}
-
-        {% if event.allowGuests %}
-            <h4>{{ 'role.guest' | trans }}</h4>
-            {% for guest in paidGuests %}
-                {% include 'widgets/participantRow.twig' with {'person': guest, 'ca': caGuest} %}<br/>
-            {% endfor %}
-        {% endif %}
-
-        {% if event.allowOrganizingTeam %}
-            <h4>{{ 'role.ot' | trans }}</h4>
-            {% for ot in paidOrganizingTeam %}
-                {% include 'widgets/participantRow.twig' with {'person': ot, 'ca': caOt} %}<br/>
-            {% endfor %}
-        {% endif %}
+        {% endfor %}
     </div>
 {% endblock %}
