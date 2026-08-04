@@ -48,4 +48,30 @@ class DetachedParticipantTest extends TestCase
         self::assertNull($participant->getValueForField('birthDate'));
         self::assertNull($participant->getValueForField('arrivalDate'));
     }
+
+    public function testFirstAndLastNameIsEmptyOnDetachedEntity(): void
+    {
+        $participant = new PatrolParticipant();
+
+        self::assertSame('', $participant->getFirstAndLastName());
+    }
+
+    public function testFirstAndLastNameIsTrimmedWhenOneHalfIsMissing(): void
+    {
+        $participant = new PatrolParticipant();
+        $participant->lastName = 'Šusta';
+
+        self::assertSame('Šusta', $participant->getFirstAndLastName());
+    }
+
+    public function testFirstAndLastNameOmitsTheNickname(): void
+    {
+        $participant = new PatrolParticipant();
+        $participant->firstName = 'Josef';
+        $participant->lastName = 'Šusta';
+        $participant->nickname = 'Pepa';
+
+        self::assertSame('Josef Šusta', $participant->getFirstAndLastName());
+        self::assertSame('Josef Šusta - Pepa', $participant->getFullName());
+    }
 }

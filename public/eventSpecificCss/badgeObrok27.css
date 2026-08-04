@@ -1,6 +1,5 @@
 /* Obrok 27 badge: lime card, notched black name stripe, purple accents. */
 
-/* mPDF resolves these against its base path - a leading slash silently fails to load */
 .badge-sheet td.badge {
     background-color: #c2ea3a;
     background-image: url('obrok27/ghostBadge.png');
