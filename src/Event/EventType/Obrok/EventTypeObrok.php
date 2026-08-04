@@ -121,6 +121,12 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
+    public function getBadgeStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/badgeObrok27.css';
+    }
+
+    #[\Override]
     public function getCelebrationTemplate(): ?string
     {
         return 'widgets/obrok27Celebration.twig';

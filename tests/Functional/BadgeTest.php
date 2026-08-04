@@ -17,6 +17,7 @@ use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use Mpdf\Mpdf;
 use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
 
@@ -267,5 +268,65 @@ class BadgeTest extends AppTestCase
 
         $blankHtml = $pdf->buildBlankBadgesHtml($event, 2);
         self::assertStringNotContainsString('class="badge-crisis"', $blankHtml);
+    }
+
+    public function testObrokBadgeCssAssetUrlsResolveThroughMpdfBasePath(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $this->getObrokTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+
+        $pdf = $this->getService($app, PdfGenerator::class);
+        $html = $pdf->buildBlankBadgesHtml($event, 1);
+
+        // a root-relative url() does NOT resolve against mPDF's base path - that form must never come back
+        self::assertStringNotContainsString("url('/obrok27/", $html);
+
+        $mpdf = $this->getService($app, Mpdf::class);
+        $publicDir = realpath(__DIR__ . '/../../public');
+        self::assertIsString($publicDir);
+        self::assertSame($publicDir . '/', $mpdf->basepath);
+
+        // every relative url() found must actually exist once joined to the base path -
+        // this is what proves the images load, not merely that the CSS text looks right
+        preg_match_all('~url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)~i', $html, $matches);
+        self::assertNotEmpty($matches[1]);
+        foreach ($matches[1] as $url) {
+            self::assertFileExists($mpdf->basepath . $url);
+        }
+
+        $bytes = $pdf->generateBlankBadges($event, 1);
+        self::assertStringStartsWith('%PDF', $bytes);
+    }
+
+    public function testObrokRealBadgeRendersNameStripeAssetThroughMpdf(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $this->getObrokTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+        $this->makeIst($container, $event, 'obrokReal', 'ObrokNick', UserStatus::Paid);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
+        $mine = array_slice(
+            array_values(array_filter($participants, fn (Participant $p) => $p->nickname === 'ObrokNick')),
+            0,
+            1,
+        );
+        self::assertCount(1, $mine);
+
+        $pdf = $this->getService($app, PdfGenerator::class);
+
+        // a real (non-blank) badge carries .badge-name-band, unlike the blank template, so this
+        // exercises the name-stripe asset through mPDF's actual image loader
+        $html = $pdf->buildBadgesHtml($event, $mine);
+        self::assertStringContainsString('badge-name-band', $html);
+        self::assertStringContainsString("url('obrok27/nameStripe.png')", $html);
+
+        $bytes = $pdf->generateBadges($event, $mine);
+        self::assertStringStartsWith('%PDF', $bytes);
     }
 }

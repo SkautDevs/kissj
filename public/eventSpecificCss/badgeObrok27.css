@@ -1,0 +1,44 @@
+/* Obrok 27 badge: lime card, notched black name stripe, purple accents. */
+
+/* mPDF resolves these against its base path - a leading slash silently fails to load */
+.badge-sheet td.badge {
+    background-color: #c2ea3a;
+    background-image: url('obrok27/ghostBadge.png');
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    border-color: #101010; /* grey cutting guides vanish where lime cards meet */
+}
+
+/* the stripe carries its own silhouette in alpha, so the notches show the lime card through;
+   mPDF ignores background-size on this nested (width: 100%) table, so its own
+   background-image-resize property drives the stretch instead */
+.badge-name-band {
+    background-image: url('obrok27/nameStripe.png');
+    background-repeat: no-repeat;
+    background-image-resize: 6;
+}
+
+.badge-name-band td {
+    background-color: transparent;
+}
+
+.badge-role-label {
+    color: #6122eb;
+}
+
+.badge-info-label {
+    color: #3a3a3a;
+}
+
+.badge-info .badge-info-cell--left {
+    border-right: 0.2mm solid #101010;
+}
+
+.badge-crisis {
+    color: #6122eb;
+    border-top: 0.2mm solid #101010;
+}
+
+.badge--blank .badge-blank-label {
+    color: #101010;
+}
