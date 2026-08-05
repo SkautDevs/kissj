@@ -10,6 +10,7 @@ use kissj\Event\EventRepository;
 use kissj\Event\EventService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -20,6 +21,7 @@ class AdminEventController extends AbstractController
 {
     public function __construct(
         private readonly ParticipantRepository $participantRepository,
+        private readonly ParticipantService $participantService,
         private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly EventRepository $eventRepository,
         private readonly EventService $eventService,
@@ -54,6 +56,8 @@ class AdminEventController extends AbstractController
             $response,
             'admin/dashboard-admin.twig',
             [
+                'participantsComingCount' => $this->participantService->getParticipantsComingToEventCount($event),
+                'maximalClosedParticipantsCount' => $event->maximalClosedParticipantsCount,
                 'patrols' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::PatrolLeader),
                 'ists' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Ist),
                 'troopLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopLeader),

@@ -12,6 +12,7 @@
             {% endif %}
         </h2>
         <h3>{{ 'dashboard-admin.stats' | trans }}</h3>
+        <p>{{ 'dashboard-admin.comingToEvent' | trans }}: {{ participantsComingCount }}{% if maximalClosedParticipantsCount is not null %} / {{ maximalClosedParticipantsCount }}{% endif %}</p>
         <div class="card-divide">
             <div>
                 {% if event.allowPatrols %}

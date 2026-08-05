@@ -443,6 +443,7 @@ dashboard-admin:
     dashboard: "Administrátorský přehled akce"
     admin: "Administrátor"
     stats: "Statistiky"
+    comingToEvent: "Celkem přijede na akci"
     count: " počty"
     contingentPatrolStats: "Statistiky kontingentů"
     istArrivalStats: "Příjezdy"

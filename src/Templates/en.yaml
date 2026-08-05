@@ -435,6 +435,7 @@ dashboard-admin:
     dashboard: "Administrator dashboard of event"
     admin: "Administrator"
     stats: "Statistics"
+    comingToEvent: "Total coming to the event"
     count: "counts"
     contingentPatrolStats: "Contingent patrol statistics"
     istArrivalStats: "Arrivals of"

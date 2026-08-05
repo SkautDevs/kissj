@@ -435,6 +435,7 @@ dashboard-admin:
     dashboard: "Administrátorský prehľad akcie"
     admin: "Administrátor"
     stats: "Štatistiky"
+    comingToEvent: "Celkovo príde na akciu"
     count: " počty"
     contingentPatrolStats: "Štatistiky kontingentov"
     istArrivalStats: "Príchody"

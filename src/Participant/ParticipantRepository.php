@@ -278,10 +278,27 @@ class ParticipantRepository extends Repository
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
 
-        /** @var int $row */
-        $row = $qb->fetchSingle();
+        /** @var int $count */
+        $count = $qb->fetchSingle();
 
-        return $row;
+        // patrol participants have no own user - counted through their leader, mirroring getAllParticipantsWithStatus()
+        if (in_array(ParticipantRole::PatrolParticipant, $roles, true)) {
+            $qb = $this->connection->select('COUNT(*)')->from($this->getTable());
+
+            $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
+            $qb->join('user')->as('u')->on('u.id = pl.user_id');
+
+            $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+            $qb->where('u.status IN %in', $statuses);
+            $qb->where('u.event_id = %i', $event->id);
+
+            /** @var int $patrolParticipantsCount */
+            $patrolParticipantsCount = $qb->fetchSingle();
+
+            $count += $patrolParticipantsCount;
+        }
+
+        return $count;
     }
 
     private function addFilterAdminParticipants(Fluent $qb, User $adminUser): void
