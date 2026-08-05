@@ -99,11 +99,11 @@ class UpdatePaymentsTest extends TestCase
         ])->makePartial();
     }
 
-    private function mockLoggerExpectingWarning(): LoggerInterface&MockInterface
+    private function mockLoggerExpectingWarning(string $messagePattern): LoggerInterface&MockInterface
     {
         $loggerMock = Mockery::mock(LoggerInterface::class);
         $loggerMock->shouldIgnoreMissing();
-        $loggerMock->shouldReceive('warning')->once();
+        $loggerMock->shouldReceive('warning')->once()->with(Mockery::pattern($messagePattern));
         assert($loggerMock instanceof LoggerInterface);
 
         return $loggerMock;
@@ -122,15 +122,13 @@ class UpdatePaymentsTest extends TestCase
         return $bankPayment;
     }
 
-    private function waitingPayment(string $variableSymbol, string $price, ?string $currency = 'CZK'): Payment
+    private function waitingPayment(string $variableSymbol, string $price, string $currency = 'CZK'): Payment
     {
         $payment = new Payment();
         $payment->id = 1;
         $payment->variableSymbol = $variableSymbol;
         $payment->price = $price;
-        if ($currency !== null) {
-            $payment->currency = $currency;
-        }
+        $payment->currency = $currency;
         $payment->status = PaymentStatus::Waiting;
 
         return $payment;
@@ -315,7 +313,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning());
+        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*Kč.*EUR/u'));
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -354,7 +352,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning());
+        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*Kc\$.*CZK/u'));
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -374,7 +372,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning());
+        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*EUR.*CZK/u'));
         $service->shouldReceive('confirmPayment')->never();
 
         $service->updatePayments($event);

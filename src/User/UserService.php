@@ -107,13 +107,6 @@ readonly class UserService
         return $this->loginTokenRepository->findOneBy(['token' => $token]);
     }
 
-    public function getTokenForEmail(string $email, Event $event): string
-    {
-        return $this->loginTokenRepository->getTokenForUser(
-            $this->userRepository->getUserFromEmail($email, $event),
-        );
-    }
-
     public function logoutUser(): void
     {
         unset($_SESSION['user']);

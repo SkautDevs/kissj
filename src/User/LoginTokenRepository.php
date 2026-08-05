@@ -22,9 +22,4 @@ class LoginTokenRepository extends Repository
     {
         return $this->findBy(['u' => $user, 'used' => false]);
     }
-
-    public function getTokenForUser(User $user): string
-    {
-        return $this->getOneBy(['user' => $user])->token;
-    }
 }

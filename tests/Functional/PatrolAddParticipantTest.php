@@ -73,6 +73,43 @@ class PatrolAddParticipantTest extends AppTestCase
         self::assertSame('Anderson', $newParticipant->lastName);
     }
 
+    public function testAddParticipantIgnoresArbiterDisallowedFields(): void
+    {
+        $app = $this->getTestApp();
+        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($app->getContainer(), 'pl-disallowed-test@example.com');
+        $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
+
+        $_SESSION['user'] = ['id' => $leaderUser->id];
+        $app = $this->getTestApp(false);
+
+        $initialCount = count(
+            $patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader),
+        );
+
+        $response = $app->handle(
+            $this->createRequest(
+                self::BASE_URL . '/patrol/addParticipant',
+                'POST',
+                [
+                    'firstName' => 'Alice',
+                    'lastName' => 'Anderson',
+                    'contingent' => 'InjectedContingent',
+                    'scarf' => 'yes',
+                ],
+            ),
+        );
+
+        self::assertSame(302, $response->getStatusCode());
+
+        $afterParticipants = $patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($patrolLeader);
+        self::assertCount($initialCount + 1, $afterParticipants);
+
+        $newParticipant = end($afterParticipants);
+        self::assertSame('Alice', $newParticipant->firstName);
+        self::assertNull($newParticipant->contingent);
+        self::assertNull($newParticipant->scarf);
+    }
+
     /**
      * @return array{0: PatrolLeader, 1: User}
      */
