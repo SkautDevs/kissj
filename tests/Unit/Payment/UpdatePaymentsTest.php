@@ -62,7 +62,7 @@ class UpdatePaymentsTest extends TestCase
         $this->bankServiceProvider = new BankServiceProvider(new Banks(), $this->container);
     }
 
-    private function service(): PaymentService&MockInterface
+    private function service(?LoggerInterface $logger = null): PaymentService&MockInterface
     {
         $metrics = new Metrics();
         $mailer = new Mailer(
@@ -83,6 +83,9 @@ class UpdatePaymentsTest extends TestCase
             $metrics,
         );
 
+        $loggerToUse = $logger ?? (Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing());
+        assert($loggerToUse instanceof LoggerInterface);
+
         return Mockery::mock(PaymentService::class, [
             $this->bankServiceProvider,
             $this->bankPaymentRepository,
@@ -90,30 +93,34 @@ class UpdatePaymentsTest extends TestCase
             Mockery::mock(ParticipantRepository::class)->shouldIgnoreMissing(),
             $userService,
             $mailer,
-            Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing(),
+            $loggerToUse,
             new Collector($hub),
             $metrics,
         ])->makePartial();
     }
 
-    private function bankPayment(string $variableSymbol, string $price, string $currency = 'CZK'): BankPayment
+    private function bankPayment(string $variableSymbol, string $price, ?string $currency = 'CZK'): BankPayment
     {
         $bankPayment = new BankPayment();
         $bankPayment->variableSymbol = $variableSymbol;
         $bankPayment->price = $price;
-        $bankPayment->currency = $currency;
+        if ($currency !== null) {
+            $bankPayment->currency = $currency;
+        }
         $bankPayment->status = BankPayment::STATUS_FRESH;
 
         return $bankPayment;
     }
 
-    private function waitingPayment(string $variableSymbol, string $price, string $currency = 'CZK'): Payment
+    private function waitingPayment(string $variableSymbol, string $price, ?string $currency = 'CZK'): Payment
     {
         $payment = new Payment();
         $payment->id = 1;
         $payment->variableSymbol = $variableSymbol;
         $payment->price = $price;
-        $payment->currency = $currency;
+        if ($currency !== null) {
+            $payment->currency = $currency;
+        }
         $payment->status = PaymentStatus::Waiting;
 
         return $payment;
@@ -265,8 +272,92 @@ class UpdatePaymentsTest extends TestCase
         $this->assertHasMessage($result, PaymentMessageSeverity::Error, 'flash.error.fioConnectionFailed');
     }
 
-    // pins the current buggy behavior (PAY-3); the CZK/EUR mix is paired on purpose, do not "fix" this test
-    public function testCurrencyIsIgnoredWhenMatching_currentBehavior(): void
+    public function testNormalizedCurrencyMatchConfirms(): void
+    {
+        $event = new Event();
+        $bankPayment = $this->bankPayment('1234567890', '7700', 'CZK');
+        $payment = $this->waitingPayment('1234567890', '7700', 'Kč');
+
+        $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([$bankPayment]);
+        $this->bankPaymentRepository->shouldReceive('persist')->once()->with($bankPayment);
+        $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
+            ->andReturn(['1234567890' => $payment]);
+
+        $service = $this->service();
+        $service->shouldReceive('confirmPayment')->once()
+            ->with($payment, PaymentSource::AutoBankMatch)
+            ->andReturn(new PaymentResult());
+
+        $result = $service->updatePayments($event);
+
+        self::assertSame(BankPayment::STATUS_PAIRED, $bankPayment->status);
+        $this->assertHasMessage($result, PaymentMessageSeverity::Success, 'flash.success.adminPairedPayments', '1');
+    }
+
+    public function testCurrencyMismatchMarksUnknownAndLogsWarning(): void
+    {
+        $event = new Event();
+        $bankPayment = $this->bankPayment('1234567890', '7700', 'EUR');
+        $payment = $this->waitingPayment('1234567890', '7700', 'Kč');
+
+        $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([$bankPayment]);
+        $this->bankPaymentRepository->shouldReceive('persist')->once()->with($bankPayment);
+        $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
+            ->andReturn(['1234567890' => $payment]);
+
+        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $loggerMock->shouldReceive('warning')->once();
+        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service->shouldReceive('confirmPayment')->never();
+
+        $result = $service->updatePayments($event);
+
+        self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
+        $this->assertHasMessage($result, PaymentMessageSeverity::Info, 'flash.info.adminPaymentsUnrecognized', '1');
+    }
+
+    public function testNullBankCurrencyMarksUnknown(): void
+    {
+        $event = new Event();
+        $bankPayment = $this->bankPayment('1234567890', '7700', null);
+        $payment = $this->waitingPayment('1234567890', '7700', 'Kč');
+
+        $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([$bankPayment]);
+        $this->bankPaymentRepository->shouldReceive('persist')->once()->with($bankPayment);
+        $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
+            ->andReturn(['1234567890' => $payment]);
+
+        $service = $this->service();
+        $service->shouldReceive('confirmPayment')->never();
+
+        $result = $service->updatePayments($event);
+
+        self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
+    }
+
+    public function testUnnormalizablePaymentCurrencyMarksUnknownAndLogsWarning(): void
+    {
+        $event = new Event();
+        $bankPayment = $this->bankPayment('1234567890', '7700', 'CZK');
+        $payment = $this->waitingPayment('1234567890', '7700', 'Kc$');
+
+        $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([$bankPayment]);
+        $this->bankPaymentRepository->shouldReceive('persist')->once()->with($bankPayment);
+        $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
+            ->andReturn(['1234567890' => $payment]);
+
+        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $loggerMock->shouldReceive('warning')->once();
+        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service->shouldReceive('confirmPayment')->never();
+
+        $result = $service->updatePayments($event);
+
+        self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
+    }
+
+    // previously pinned buggy behavior (PAY-3); now fixed to require currency match
+    public function testCurrencyMismatchPreventsAutoPairing(): void
     {
         $event = new Event();
         $bankPayment = $this->bankPayment('1234567890', '350', 'CZK');
@@ -277,11 +368,13 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service();
-        $service->shouldReceive('confirmPayment')->once()->andReturn(new PaymentResult());
+        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $loggerMock->shouldReceive('warning')->once();
+        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service->shouldReceive('confirmPayment')->never();
 
         $service->updatePayments($event);
 
-        self::assertSame(BankPayment::STATUS_PAIRED, $bankPayment->status);
+        self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
     }
 }

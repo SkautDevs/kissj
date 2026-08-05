@@ -83,9 +83,24 @@ class Payment extends EntityDatetime
 
     private function mapDbCurrencyToIban(string $currency): string
     {
-        return match ($currency) {
-            'EUR', '€', 'euro' => 'EUR',
-            default => 'CZK',
+        return self::normalizeCurrency($currency) ?? 'CZK';
+    }
+
+    // event.currency holds free-form text ('Kč', '€', 'euro'), banks send ISO codes -
+    // both sides of any comparison must go through this table
+    public static function normalizeCurrency(?string $currency): ?string
+    {
+        if ($currency === null) {
+            return null;
+        }
+
+        $normalized = mb_strtoupper(trim($currency));
+
+        return match (true) {
+            $normalized === 'KČ', $normalized === 'CZK' => 'CZK',
+            $normalized === '€', $normalized === 'EURO', $normalized === 'EUR' => 'EUR',
+            preg_match('/^[A-Z]{3}$/', $normalized) === 1 => $normalized,
+            default => null,
         };
     }
 }

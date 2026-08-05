@@ -225,7 +225,12 @@ class PaymentService
         foreach (array_slice($freshBankPayments, 0, $limit) as $bankPayment) {
             if (array_key_exists($bankPayment->variableSymbol ?? '', $participantKeydPayments)) {
                 $payment = $participantKeydPayments[$bankPayment->variableSymbol ?? ''];
-                if ($payment->price === $bankPayment->price) {
+                $paymentCurrency = Payment::normalizeCurrency($payment->currency);
+                $bankCurrency = Payment::normalizeCurrency($bankPayment->currency);
+                if ($payment->price === $bankPayment->price
+                    && $paymentCurrency !== null
+                    && $paymentCurrency === $bankCurrency
+                ) {
                     // match!
                     $this->confirmPayment($payment, PaymentSource::AutoBankMatch);
                     $this->metrics->count(MetricName::PaymentsMatched, 1);
@@ -235,7 +240,14 @@ class PaymentService
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;
                 } else {
-                    // matching VS, not matching price
+                    if ($payment->price === $bankPayment->price) {
+                        $this->logger->warning('Payment ID ' . $payment->id
+                            . ' matches variable symbol and price, but not currency (payment "'
+                            . $payment->currency . '", bank "' . ($bankPayment->currency ?? 'null')
+                            . '") - left for manual pairing');
+                    }
+
+                    // matching VS, not matching price or currency
                     $bankPayment->status = BankPayment::STATUS_UNKNOWN;
                     $counterUnknownPayment++;
                 }
