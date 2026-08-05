@@ -46,7 +46,7 @@ class BadgeTest extends AppTestCase
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
             'gender' => 'male',
             'email' => 'badge-' . $suffix . '@example.com',
-        ]);
+        ], $event->eventType->getContentArbiterIst()->getAllItems());
 
         $user->status = $status;
         $userRepository->persist($user);
@@ -132,7 +132,7 @@ class BadgeTest extends AppTestCase
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
             'gender' => 'male',
             'email' => 'badge-patrol-pl@example.com',
-        ]);
+        ], $event->eventType->getContentArbiterPatrolLeader()->getAllItems());
         $plUser->status = UserStatus::Paid;
         $userRepository->persist($plUser);
 
@@ -149,7 +149,7 @@ class BadgeTest extends AppTestCase
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
             'gender' => 'male',
             'email' => 'badge-patrol-pp@example.com',
-        ]);
+        ], $event->eventType->getContentArbiterPatrolParticipant()->getAllItems());
         $ppUser->status = UserStatus::Paid;
         $userRepository->persist($ppUser);
 

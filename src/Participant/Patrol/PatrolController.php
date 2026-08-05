@@ -87,9 +87,9 @@ class PatrolController extends AbstractController
 
         /** @var array<string, string> $params */
         $params = $request->getParsedBody();
-        $this->participantService->addParamsIntoParticipant($patrolParticipant, $params);
-
         $ca = $user->event->eventType->getContentArbiterPatrolParticipant();
+        $this->participantService->addParamsIntoParticipant($patrolParticipant, $params, $ca->getAllowedItems());
+
         $this->participantFileService->handleUploadedFiles($patrolParticipant, $request, $ca->getAllowedItems());
 
         $this->patrolParticipantRepository->persist($patrolParticipant);
@@ -211,12 +211,13 @@ class PatrolController extends AbstractController
     ): Response {
         /** @var array<string, string> $params */
         $params = $request->getParsedBody();
-        /** @var PatrolParticipant $patrolParticipant */
-        $patrolParticipant = $this->participantService->addParamsIntoParticipant(
-            $this->patrolService->getPatrolParticipant($participantId),
-            $params
-        );
+        $patrolParticipant = $this->patrolService->getPatrolParticipant($participantId);
         $ca = $patrolParticipant->getUserButNotNull()->event->eventType->getContentArbiterPatrolParticipant();
+        $patrolParticipant = $this->participantService->addParamsIntoParticipant(
+            $patrolParticipant,
+            $params,
+            $ca->getAllowedItems(),
+        );
         $this->participantFileService->handleUploadedFiles($patrolParticipant, $request, $ca->getAllowedItems());
 
         $this->patrolParticipantRepository->persist($patrolParticipant);

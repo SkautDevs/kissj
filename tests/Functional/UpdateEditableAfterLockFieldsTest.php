@@ -81,6 +81,47 @@ class UpdateEditableAfterLockFieldsTest extends AppTestCase
         self::assertSame('man', $refreshed->gender);
     }
 
+    public function testOmittedEditableFieldIsNulled(): void
+    {
+        $app = $this->getTestApp();
+
+        $user = $this->registerUser($app->getContainer(), 'after-lock-omitted-test@example.com');
+
+        $userService = $this->getService($app, UserService::class);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        $istRepository = $this->getService($app, IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+
+        $ist->notes = 'original note';
+        $istRepository->persist($ist);
+
+        $editableItems = [
+            new ContentArbiterItem(
+                slug: 'notes',
+                allowed: true,
+                type: ContentArbiterItemType::Textarea,
+                order: 500,
+                label: 'detail.notice',
+                required: false,
+                editableAfterLock: true,
+            ),
+        ];
+
+        // 'notes' key is omitted entirely from params - the default arm treats an absent key
+        // the same as an explicit null, so the previously stored value must be wiped out.
+        $params = [
+            'healthProblems' => 'updated health',
+        ];
+
+        $participantService = $this->getService($app, ParticipantService::class);
+        $participantService->updateEditableAfterLockFields($ist, $params, $editableItems);
+
+        $refreshed = $istRepository->get($ist->id);
+
+        self::assertNull($refreshed->notes);
+    }
+
     private function registerUser(ContainerInterface $container, string $email): \kissj\User\User
     {
         /** @var UserService $userService */

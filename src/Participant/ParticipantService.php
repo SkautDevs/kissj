@@ -43,10 +43,11 @@ readonly class ParticipantService
 
     /**
      * @param array<string, string|null> $params
+     * @param list<ContentArbiterItem>   $allowedItems
      */
-    public function addParamsIntoParticipant(Participant $participant, array $params): Participant
+    public function addParamsIntoParticipant(Participant $participant, array $params, array $allowedItems): Participant
     {
-        $participant = $this->addParamsIntoPerson($params, $participant);
+        $this->applyItemsFromParams($participant, $params, $allowedItems);
         $this->participantRepository->persist($participant);
 
         return $participant;
@@ -61,7 +62,23 @@ readonly class ParticipantService
         array       $params,
         array       $editableItems,
     ): Participant {
-        foreach ($editableItems as $item) {
+        $this->applyItemsFromParams($participant, $params, $editableItems);
+        $this->participantRepository->persist($participant);
+
+        return $participant;
+    }
+
+    /**
+     * @param array<string, string|null> $params
+     * @param list<ContentArbiterItem>   $items
+     */
+    private function applyItemsFromParams(Participant $participant, array $params, array $items): void
+    {
+        foreach ($items as $item) {
+            if ($item->type === ContentArbiterItemType::File) {
+                continue; // uploads go through ParticipantFileService::handleUploadedFiles
+            }
+
             $slug = $item->slug;
 
             match ($slug) {
@@ -92,68 +109,16 @@ readonly class ParticipantService
                 'printedHandbook' => (function () use ($params, $participant): void {
                     $participant->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
                 })(),
-                default => (function () use ($slug, $params, $participant): void {
-                    if (array_key_exists($slug, $params)) {
-                        $participant->__set($slug, $params[$slug] ?? null);
+                'patrolName' => (function () use ($params, $participant): void {
+                    if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
+                        $participant->patrolName = $params['patrolName'] ?? null;
                     }
+                })(),
+                default => (function () use ($slug, $params, $participant): void {
+                    $participant->__set($slug, $params[$slug] ?? null);
                 })(),
             };
         }
-
-        $this->participantRepository->persist($participant);
-
-        return $participant;
-    }
-
-    /**
-     * @param array<string, string|null> $params
-     * @throws \Exception
-     */
-    private function addParamsIntoPerson(array $params, Participant $p): Participant
-    {
-        if ($p instanceof PatrolLeader || $p instanceof TroopLeader) {
-            $p->patrolName = $params['patrolName'] ?? null;
-        }
-        $p->contingent = $params['contingent'] ?? null;
-        $p->firstName = $params['firstName'] ?? null;
-        $p->lastName = $params['lastName'] ?? null;
-        $p->nickname = $params['nickname'] ?? null;
-        $p->permanentResidence = $params['permanentResidence'] ?? null;
-        $p->telephoneNumber = $params['telephoneNumber'] ?? null;
-        $p->gender = $params['gender'] ?? null;
-        $p->country = $params['country'] ?? null;
-        $p->email = $params['email'] ?? null;
-        $p->scoutUnit = $params['scoutUnit'] ?? null;
-        $p->languages = $params['languages'] ?? null;
-        if (array_key_exists('birthDate', $params) && $params['birthDate'] !== null) {
-            $p->birthDate = DateTimeUtils::getDateTime($params['birthDate']);
-        }
-        $p->birthPlace = $params['birthPlace'] ?? null;
-        $p->healthProblems = $params['healthProblems'] ?? null;
-        $p->medicaments = $params['medicaments'] ?? null;
-        $p->psychicalHealthProblems = $params['psychicalHealthProblems'] ?? null;
-        $p->emergencyContact = $params['emergencyContact'] ?? null;
-        $p->foodPreferences = $params['foodPreferences'] ?? null;
-        $p->idNumber = $params['idNumber'] ?? null;
-        $p->scarf = $params['scarf'] ?? null;
-        $p->swimming = $params['swimming'] ?? null;
-        $p->setTshirt($params['tshirtShape'] ?? null, $params['tshirtSize'] ?? null);
-        if (array_key_exists('arrivalDate', $params) && $params['arrivalDate'] !== null) {
-            $p->arrivalDate = DateTimeUtils::getDateTime($params['arrivalDate']);
-        }
-        if (array_key_exists('departureDate', $params) && $params['departureDate'] !== null) {
-            $p->departureDate = DateTimeUtils::getDateTime($params['departureDate']);
-        }
-        $p->skills = $params['skills'] ?? null;
-        $rawPreferredPosition = $params['preferredPosition'] ?? [];
-        /** @var list<string> $preferredPosition */
-        $preferredPosition = is_array($rawPreferredPosition) ? $rawPreferredPosition : [];
-        $p->preferredPosition = $preferredPosition;
-        $p->driversLicense = $params['driversLicense'] ?? null;
-        $p->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
-        $p->notes = $params['notes'] ?? null;
-
-        return $p;
     }
 
     public function isCloseRegistrationValid(Participant $participant): RegistrationCloseResult

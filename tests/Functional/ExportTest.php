@@ -59,7 +59,8 @@ class ExportTest extends AppTestCase
                     'foodPreferences' => 'trolls',
                     'healthProblems' => 'some',
                     'notes' => 'some note',
-                ]
+                ],
+                $testEvent->eventType->getContentArbiterPatrolLeader()->getAllItems(),
             );
 
             // Set user as Paid (export only includes Paid participants)

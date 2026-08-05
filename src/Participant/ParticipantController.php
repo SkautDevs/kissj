@@ -114,7 +114,7 @@ class ParticipantController extends AbstractController
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $ca = $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail());
-        $this->participantService->addParamsIntoParticipant($participant, $parsed);
+        $this->participantService->addParamsIntoParticipant($participant, $parsed, $ca->getAllowedItems());
         $this->participantFileService->handleUploadedFiles($participant, $request, $ca->getAllowedItems());
 
         $this->participantRepository->persist($participant);

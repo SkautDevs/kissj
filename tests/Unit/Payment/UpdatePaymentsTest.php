@@ -99,6 +99,16 @@ class UpdatePaymentsTest extends TestCase
         ])->makePartial();
     }
 
+    private function mockLoggerExpectingWarning(): LoggerInterface&MockInterface
+    {
+        $loggerMock = Mockery::mock(LoggerInterface::class);
+        $loggerMock->shouldIgnoreMissing();
+        $loggerMock->shouldReceive('warning')->once();
+        assert($loggerMock instanceof LoggerInterface);
+
+        return $loggerMock;
+    }
+
     private function bankPayment(string $variableSymbol, string $price, ?string $currency = 'CZK'): BankPayment
     {
         $bankPayment = new BankPayment();
@@ -305,9 +315,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $loggerMock->shouldReceive('warning')->once();
-        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service = $this->service($this->mockLoggerExpectingWarning());
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -346,9 +354,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $loggerMock->shouldReceive('warning')->once();
-        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service = $this->service($this->mockLoggerExpectingWarning());
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -368,9 +374,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $loggerMock = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $loggerMock->shouldReceive('warning')->once();
-        $service = $this->service($loggerMock instanceof LoggerInterface ? $loggerMock : null);
+        $service = $this->service($this->mockLoggerExpectingWarning());
         $service->shouldReceive('confirmPayment')->never();
 
         $service->updatePayments($event);
