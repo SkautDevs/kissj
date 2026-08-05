@@ -14,6 +14,7 @@ use kissj\Participant\ParticipantStatisticsService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\User\User;
 use League\Csv\ByteSequence;
+use League\Csv\EscapeFormula;
 use League\Csv\Writer;
 use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -117,6 +118,7 @@ class ExportController extends AbstractController
         $csv->setDelimiter(',');
         $csv->setOutputBOM(ByteSequence::BOM_UTF8);
         $csv->addFormatter(new CsvCellFlattener());
+        $csv->addFormatter(new EscapeFormula());
         $csv->insertAll($csvRows);
 
         $body = $response->getBody();
