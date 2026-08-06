@@ -104,18 +104,6 @@ abstract class AbstractController
             ->withStatus(302);
     }
 
-    protected function getJsonResponseFromException(Response $response, TranslatableException $e): Response
-    {
-        return $this->getResponseWithJson(
-            $response,
-            [
-                'translationKey' => $e->translationKey,
-                'translationMessage' => $this->translator->trans($e->translationKey),
-            ],
-            $e->httpStatus,
-        );
-    }
-
     /**
      * @param array<string,int|string|EntryStatus|null|array<mixed>>|\stdClass $json
      */

@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Ist;
 
-use Dibi\Row;
-use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
-use kissj\Participant\ParticipantRole;
 
 /**
  * @table participant
@@ -20,18 +17,4 @@ use kissj\Participant\ParticipantRole;
  */
 class IstRepository extends Repository
 {
-    public function isIstExisting(string $email, Event $event): bool
-    {
-        $qb = $this->createFluent();
-
-        $qb->where('participant.email = %s', $email);
-        $qb->where('participant.role = %s', ParticipantRole::Ist);
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
-        $qb->where('u.event_id = %i', $event->id);
-
-        /** @var ?Row $row */
-        $row = $qb->fetch();
-
-        return $row instanceof Row;
-    }
 }

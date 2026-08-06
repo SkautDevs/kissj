@@ -61,7 +61,6 @@ use kissj\Participant\Admin\AdminEventController;
 use kissj\Participant\Admin\AdminJsonController;
 use kissj\Participant\Admin\AdminParticipantController;
 use kissj\Participant\Admin\AdminPaymentController;
-use kissj\Participant\Admin\AdminRepository;
 use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\AdminTroopController;
 use kissj\Participant\Guest\GuestRepository;
@@ -190,7 +189,6 @@ class Settings
             AdminJsonController::class => autowire(),
             AdminParticipantController::class => autowire(),
             AdminPaymentController::class => autowire(),
-            AdminRepository::class => autowire(),
             AdminService::class => autowire(),
             AdminsOnlyMiddleware::class => autowire(),
             AdminTroopController::class => autowire(),
