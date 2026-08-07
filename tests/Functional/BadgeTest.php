@@ -220,11 +220,12 @@ class BadgeTest extends AppTestCase
 
         $pdf = $this->getService($app, PdfGenerator::class);
 
-        // without a nickname the full name moves to the big line, but the second line must still
-        // render (as &nbsp;) so the colored name band keeps the same height as badges with a nickname
+        // without a nickname the first name takes the big line and the full name stays on the second
+        // one, which always renders (as &nbsp; at worst) so the colored name band keeps its height
         $html = $pdf->buildBadgesHtml($event, $mine);
-        self::assertStringContainsString('class="badge-fullname"', $html);
-        self::assertStringContainsString('FirstnoNick LastnoNick', $html);
+        self::assertStringContainsString('<div class="badge-nick">FirstnoNick</div>', $html);
+        self::assertStringNotContainsString('<div class="badge-nick">FirstnoNick LastnoNick</div>', $html);
+        self::assertStringContainsString('<div class="badge-fullname">FirstnoNick LastnoNick</div>', $html);
     }
 
     public function testBadgeRendersWhenNameFieldsAreNull(): void

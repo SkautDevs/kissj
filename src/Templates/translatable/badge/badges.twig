@@ -38,7 +38,7 @@
         {% if badge %}
             {% set participant = badge.participant %}
             {% set fullName = participant.getFirstAndLastName %}
-            {% set nickname = participant.getNickname %}
+            {% set preferredName = participant.getPreferredName %}
             {% set logo = event.getLogoInBase64 %}
             {% set foodValue = participant.getValueForField('foodPreferences') %}
             {% set crisisPhone = 'badges.crisisPhone' | trans %}
@@ -62,9 +62,9 @@
             <table class="badge-name-band">
                 <tr>
                     <td>
-                        <div class="badge-nick">{{ nickname ?: fullName }}</div>
+                        <div class="badge-nick">{{ preferredName }}</div>
                         {# second line always renders so the color band keeps the same height with or without a nickname #}
-                        <div class="badge-fullname">{% if nickname and fullName %}{{ fullName }}{% else %}&nbsp;{% endif %}</div>
+                        <div class="badge-fullname">{% if fullName %}{{ fullName }}{% else %}&nbsp;{% endif %}</div>
                     </td>
                 </tr>
             </table>

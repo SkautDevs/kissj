@@ -248,6 +248,19 @@ class Participant extends EntityDatetime
         return trim(($this->firstName ?? '') . ' ' . ($this->lastName ?? ''));
     }
 
+    public function getPreferredName(): string
+    {
+        if ($this->nickname !== null && $this->nickname !== '') {
+            return $this->nickname;
+        }
+
+        if ($this->firstName !== null && $this->firstName !== '') {
+            return $this->firstName;
+        }
+
+        return $this->getFirstAndLastName();
+    }
+
     public function isFullNameNotEmpty(): bool
     {
         return $this->getFullName() !== ' ';
