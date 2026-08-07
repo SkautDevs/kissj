@@ -19,7 +19,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Slim\Views\Twig;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserServiceTest extends TestCase
@@ -68,7 +68,7 @@ class UserServiceTest extends TestCase
     {
         $metrics = new Metrics();
         $mailer = new Mailer(
-            Mockery::mock(Twig::class),
+            Mockery::mock(MailerInterface::class),
             Mockery::mock(MailerSettings::class),
             Mockery::mock(QrCodeService::class),
             Mockery::mock(TranslatorInterface::class),

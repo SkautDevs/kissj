@@ -23,7 +23,7 @@ use kissj\User\UserService;
 use Mockery;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Slim\Views\Twig;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ParticipantServiceInvalidItemsTest extends TestCase
@@ -84,7 +84,7 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         // build real instances from mocked constructor dependencies instead, mirroring
         // the pattern used in tests/Unit/Payment/PaymentServiceTest.php.
         $mailerMock = new Mailer(
-            Mockery::mock(Twig::class),
+            Mockery::mock(MailerInterface::class),
             Mockery::mock(MailerSettings::class),
             Mockery::mock(QrCodeService::class),
             Mockery::mock(TranslatorInterface::class),

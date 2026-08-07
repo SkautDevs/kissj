@@ -121,6 +121,13 @@ use SessionHandlerInterface;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mailer\EventListener\MessageListener;
+use Symfony\Component\Mailer\Mailer as SymfonyMailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
 use Twig\TwigFilter;
@@ -316,6 +323,22 @@ class Settings
         $container[LoggerInterface::class] = get(Logger::class);
         $container[MailerSettings::class] = fn () => new MailerSettings(
             $_ENV['MAIL_DSN'],
+        );
+        $container[EventDispatcherInterface::class] = function (Twig $twig): EventDispatcherInterface {
+            $dispatcher = new EventDispatcher();
+            $dispatcher->addSubscriber(
+                new MessageListener(renderer: new BodyRenderer($twig->getEnvironment())),
+            );
+
+            return $dispatcher;
+        };
+        $container[MailerInterface::class] = fn (
+            MailerSettings $mailerSettings,
+            EventDispatcherInterface $eventDispatcher,
+            LoggerInterface $logger,
+        ): MailerInterface => new SymfonyMailer(
+            Transport::fromDsn($mailerSettings->mailDsn, $eventDispatcher, logger: $logger),
+            dispatcher: $eventDispatcher,
         );
         $container[Mpdf::class] = function () {
             /** @var array{fontDir: list<string>} $configDefaults */

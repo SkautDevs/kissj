@@ -13,20 +13,15 @@ use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use Psr\Log\LoggerInterface;
-use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Mailer\EventListener\MessageListener;
-use Symfony\Component\Mailer\Mailer as SymfonyMailer;
-use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class Mailer
 {
     public function __construct(
-        private Twig $renderer,
+        private MailerInterface $mailer,
         private MailerSettings $settings,
         private QrCodeService $qrCodeService,
         private TranslatorInterface $translator,
@@ -291,15 +286,7 @@ readonly class Mailer
             $email->embed($embed->resource, $embed->name, $embed->contentType);
         }
 
-        $eventDispatcher = new EventDispatcher();
-        $eventDispatcher->addSubscriber(
-            new MessageListener(renderer: new BodyRenderer($this->renderer->getEnvironment())),
-        );
-
-        $transport = Transport::fromDsn($this->settings->mailDsn, $eventDispatcher, logger: $this->logger);
-        $mailer = new SymfonyMailer($transport, dispatcher: $eventDispatcher);
-
-        $mailer->send($email);
+        $this->mailer->send($email);
         $this->metrics->count(MetricName::EmailsSent, 1, ['template' => $templateName]);
 
         $this->logger->info(sprintf(

@@ -22,7 +22,7 @@ use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Sentry\State\Hub;
-use Slim\Views\Twig;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentServiceTest extends TestCase
@@ -31,7 +31,7 @@ class PaymentServiceTest extends TestCase
     {
         $metrics = new Metrics();
         $mailerMock = new Mailer(
-            Mockery::mock(Twig::class),
+            Mockery::mock(MailerInterface::class),
             Mockery::mock(MailerSettings::class),
             Mockery::mock(QrCodeService::class),
             Mockery::mock(TranslatorInterface::class),
