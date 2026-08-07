@@ -167,7 +167,7 @@ class Event extends EntityDatetime
         return $this->eventType->getMinimalPpCount($this, $participant);
     }
 
-    public function getMaximalPpCount(Participant $participant): int
+    public function getMaximalPpCount(Participant $participant): ?int
     {
         return $this->eventType->getMaximalPpCount($this, $participant);
     }

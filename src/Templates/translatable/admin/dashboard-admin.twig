@@ -17,7 +17,7 @@
             <div>
                 {% if event.allowPatrols %}
                     <h3>{{ 'role.pl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
-                    <p>{{ 'dashboard-admin.limitPatrol' | trans }}: {{ event.maximalClosedPatrolsCount }}</p>
+                    <p>{{ 'dashboard-admin.limitPatrol' | trans }}: {{ patrolsCap }}</p>
                     <p>{{ 'dashboard-admin.openPatrol' | trans }}: {{ patrols.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedPatrol' | trans }}: {{ patrols.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedPatrol' | trans }}: {{ patrols.approvedCount }}</p>
@@ -25,7 +25,7 @@
                 {% endif %}
                 {% if event.allowTroops %}
                     <h3>{{ 'role.tl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
-                    <p>{{ 'dashboard-admin.limitTroop' | trans }}: {{ event.getMaximalClosedTroopLeadersCount }}</p>
+                    <p>{{ 'dashboard-admin.limitTroop' | trans }}: {{ troopLeadersCap }}</p>
                     <p>{{ 'dashboard-admin.openTroop' | trans }}: {{ troopLeaders.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedTroop' | trans }}: {{ troopLeaders.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedTroop' | trans }}: {{ troopLeaders.approvedCount }}</p>
@@ -33,7 +33,7 @@
                     <br>
 
                     <h3>{{ 'role.tp' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
-                    <p>{{ 'dashboard-admin.limitTp' | trans }}: {{ event.getMaximalClosedTroopParticipantsCount }}</p>
+                    <p>{{ 'dashboard-admin.limitTp' | trans }}: {{ troopParticipantsCap }}</p>
                     <p>{{ 'dashboard-admin.openTp' | trans }}: {{ troopParticipants.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedTp' | trans }}: {{ troopParticipants.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedTp' | trans }}: {{ troopParticipants.approvedCount }}</p>
@@ -43,7 +43,7 @@
             <div>
                 {% if event.allowIsts %}
                     <h3>{{ 'role.ist' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
-                    <p>{{ 'dashboard-admin.limitIst' | trans }}: {{ event.maximalClosedIstsCount }}</p>
+                    <p>{{ 'dashboard-admin.limitIst' | trans }}: {{ istsCap }}</p>
                     <p>{{ 'dashboard-admin.openIst' | trans }}: {{ ists.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedIst' | trans }}: {{ ists.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedIst' | trans }}: {{ ists.approvedCount }}</p>
@@ -53,7 +53,7 @@
                 {% if event.allowGuests %}
                     <h3>{{ 'role.guest' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
                     <p>{{ 'dashboard-admin.limitGuest' | trans }}
-                        : {{ event.getMaximalClosedGuestsCount() }}</p>
+                        : {{ guestsCap }}</p>
                     <p>{{ 'dashboard-admin.openGuest' | trans }}: {{ guests.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedGuest' | trans }}: {{ guests.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedGuest' | trans }}: {{ guests.approvedCount }}</p>
@@ -62,7 +62,7 @@
                 {% if event.allowOrganizingTeam %}
                     <h3>{{ 'role.ot' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
                     <p>{{ 'dashboard-admin.limitOt' | trans }}
-                        : {{ event.getMaximalClosedOrganizingTeamCount() }}</p>
+                        : {{ organizingTeamCap }}</p>
                     <p>{{ 'dashboard-admin.openOt' | trans }}: {{ organizingTeam.openCount }}</p>
                     <p>{{ 'dashboard-admin.lockedOt' | trans }}: {{ organizingTeam.closedCount }}</p>
                     <p>{{ 'dashboard-admin.approvedOt' | trans }}: {{ organizingTeam.approvedCount }}</p>

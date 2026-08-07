@@ -447,6 +447,7 @@ dashboard-admin:
     limitTroop: "limit skupín"
     limitTp: "limit účastníkov"
     limitGuest: "limit hostí"
+    limitUnlimited: "neobmedzené"
     openIst: "nezamknutí servisáci"
     openOt: "Otvoreny OT"
     openPatrol: "nezamknuté patroly"

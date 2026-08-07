@@ -49,6 +49,12 @@ class ParticipantController extends AbstractController
 
         $templateData = $this->getTemplateData($participant);
         $templateData['celebrate'] = ($request->getQueryParams()['celebrate'] ?? null) === '1';
+        $templateData['minimalPpCount'] = $participant instanceof PatrolLeader
+            ? $user->event->getMinimalPpCount($participant)
+            : null;
+        $templateData['maximalPpCount'] = $participant instanceof PatrolLeader
+            ? $user->event->getMaximalPpCount($participant)
+            : null;
 
         return $this->view->render(
             $response,

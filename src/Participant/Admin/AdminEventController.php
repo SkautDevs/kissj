@@ -60,6 +60,12 @@ class AdminEventController extends AbstractController
             [
                 'participantsComingCount' => $this->participantService->getParticipantsComingToEventCount($event),
                 'maximalClosedParticipantsCount' => $event->maximalClosedParticipantsCount,
+                'patrolsCap' => $this->formatCap($event->maximalClosedPatrolsCount),
+                'troopLeadersCap' => $this->formatCap($event->maximalClosedTroopLeadersCount),
+                'troopParticipantsCap' => $this->formatCap($event->maximalClosedTroopParticipantsCount),
+                'istsCap' => $this->formatCap($event->maximalClosedIstsCount),
+                'guestsCap' => $this->formatCap($event->maximalClosedGuestsCount),
+                'organizingTeamCap' => $this->formatCap($event->maximalClosedOrganizingTeamCount),
                 'patrols' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::PatrolLeader),
                 'ists' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Ist),
                 'troopLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopLeader),
@@ -160,7 +166,9 @@ class AdminEventController extends AbstractController
                 'maxField' => $this->getMaxFieldForRole($role),
                 'allowedItems' => $allowedItems,
                 'dbMax' => $dbMax,
+                'dbMaxLabel' => $this->formatCap($dbMax),
                 'eventTypeMax' => $maxFromEventType,
+                'eventTypeMaxLabel' => $this->formatCap($maxFromEventType),
                 'hasDifference' => $dbMax !== $maxFromEventType,
             ];
         }
@@ -171,6 +179,7 @@ class AdminEventController extends AbstractController
             [
                 'roleConfigurations' => $roleConfigurations,
                 'maximalClosedParticipantsCount' => $event->maximalClosedParticipantsCount,
+                'totalCapLabel' => $this->formatCap($event->maximalClosedParticipantsCount),
                 'minimalPatrolParticipantsCount' => $event->minimalPatrolParticipantsCount,
                 'maximalPatrolParticipantsCount' => $event->maximalPatrolParticipantsCount,
                 'minimalTroopParticipantsCount' => $event->minimalTroopParticipantsCount,
@@ -346,6 +355,11 @@ class AdminEventController extends AbstractController
         $event->maximalClosedOrganizingTeamCount = $this->parseNullableInt($maximalOrganizingTeam);
 
         return true;
+    }
+
+    private function formatCap(?int $cap): string
+    {
+        return $cap === null ? $this->translator->trans('dashboard-admin.limitUnlimited') : (string)$cap;
     }
 
     private function getAllowFieldForRole(ParticipantRole $role): string

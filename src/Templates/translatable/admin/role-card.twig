@@ -26,8 +26,8 @@
         </p>
     {% endif %}
 
-    <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ config.eventTypeMax }}</strong></p>
-    <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ config.dbMax }}</strong></p>
+    <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ config.eventTypeMaxLabel }}</strong></p>
+    <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ config.dbMaxLabel }}</strong></p>
 
     {% set maxField = config.maxField %}
 
@@ -44,7 +44,7 @@
             <label class="form-group">
                 {{ 'roleManagement.maxCount' | trans }}:<br/>
                 <input class="form-control form-wide" type="number" name="{{ maxField }}"
-                       value="{{ config.dbMax > 0 ? config.dbMax : '' }}" min="0" max="1000000">
+                       value="{{ config.dbMax is null ? '' : config.dbMax }}" min="0" max="1000000">
             </label>
         {% endif %}
     {% endif %}
@@ -53,12 +53,12 @@
         <label class="form-group">
             {{ 'roleManagement.minPerPatrol' | trans }}:<br/>
             <input class="form-control form-wide" type="number" name="minimalPatrolParticipantsCount"
-                   value="{{ minimalPatrolParticipantsCount ?? 0 }}" min="0" max="1000000">
+                   value="{{ minimalPatrolParticipantsCount is null ? '' : minimalPatrolParticipantsCount }}" min="0" max="1000000">
         </label><br/>
         <label class="form-group">
             {{ 'roleManagement.maxPerPatrol' | trans }}:<br/>
             <input class="form-control form-wide" type="number" name="maximalPatrolParticipantsCount"
-                   value="{{ maximalPatrolParticipantsCount ?? 0 }}" min="0" max="1000000">
+                   value="{{ maximalPatrolParticipantsCount is null ? '' : maximalPatrolParticipantsCount }}" min="0" max="1000000">
         </label>
     {% endif %}
 
@@ -66,12 +66,12 @@
         <label class="form-group">
             {{ 'roleManagement.minPerTroop' | trans }}:<br/>
             <input class="form-control form-wide" type="number" name="minimalTroopParticipantsCount"
-                   value="{{ minimalTroopParticipantsCount ?? 0 }}" min="0" max="1000000">
+                   value="{{ minimalTroopParticipantsCount is null ? '' : minimalTroopParticipantsCount }}" min="0" max="1000000">
         </label>
         <label class="form-group">
             {{ 'roleManagement.maxPerTroop' | trans }}:<br/>
             <input class="form-control form-wide" type="number" name="maximalTroopParticipantsCount"
-                   value="{{ maximalTroopParticipantsCount ?? 0 }}" min="0" max="1000000">
+                   value="{{ maximalTroopParticipantsCount is null ? '' : maximalTroopParticipantsCount }}" min="0" max="1000000">
         </label>
     {% endif %}
 

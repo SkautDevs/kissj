@@ -57,6 +57,9 @@ abstract class EventType
 
         $event = $participant->getUserButNotNull()->event;
         $maximumParticipants = $this->getMaximalCountForRole($event, $participant->role);
+        if ($maximumParticipants === null) {
+            return false;
+        }
 
         return $maximumParticipants <= $closedSameRoleSameContingentParticipantsCount;
     }
@@ -109,16 +112,16 @@ abstract class EventType
         };
     }
 
-    public function getMaximalCountForRole(Event $event, ParticipantRole $role): int
+    public function getMaximalCountForRole(Event $event, ParticipantRole $role): ?int
     {
         return match ($role) {
-            ParticipantRole::PatrolLeader => $event->maximalClosedPatrolsCount ?? 0,
-            ParticipantRole::TroopLeader => $event->maximalClosedTroopLeadersCount ?? 0,
-            ParticipantRole::TroopParticipant => $event->maximalClosedTroopParticipantsCount ?? 0,
-            ParticipantRole::Ist => $event->maximalClosedIstsCount ?? 0,
-            ParticipantRole::Guest => $event->maximalClosedGuestsCount ?? 0,
-            ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount ?? 0,
-            ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount ?? 0,
+            ParticipantRole::PatrolLeader => $event->maximalClosedPatrolsCount,
+            ParticipantRole::TroopLeader => $event->maximalClosedTroopLeadersCount,
+            ParticipantRole::TroopParticipant => $event->maximalClosedTroopParticipantsCount,
+            ParticipantRole::Ist => $event->maximalClosedIstsCount,
+            ParticipantRole::Guest => $event->maximalClosedGuestsCount,
+            ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount,
+            ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount,
         };
     }
 
@@ -290,9 +293,9 @@ abstract class EventType
         return $event->minimalPatrolParticipantsCount ?? 0;
     }
 
-    public function getMaximalPpCount(Event $param, Participant $participant): int
+    public function getMaximalPpCount(Event $param, Participant $participant): ?int
     {
-        return $param->maximalPatrolParticipantsCount ?? 0;
+        return $param->maximalPatrolParticipantsCount;
     }
 
     public function showIban(): bool

@@ -8,16 +8,18 @@ use kissj\Participant\ParticipantRole;
 
 class EventService
 {
-    public function getDbMaxForRole(Event $event, ParticipantRole $role): int
+    // deliberately not delegating to EventType::getMaximalCountForRole - this is the raw DB
+    // value, and showRoleManagement compares the two to detect an event-type override
+    public function getDbMaxForRole(Event $event, ParticipantRole $role): ?int
     {
         return match ($role) {
-            ParticipantRole::PatrolLeader => $event->maximalClosedPatrolsCount ?? 0,
-            ParticipantRole::TroopLeader => $event->maximalClosedTroopLeadersCount ?? 0,
-            ParticipantRole::TroopParticipant => $event->maximalClosedTroopParticipantsCount ?? 0,
-            ParticipantRole::Ist => $event->maximalClosedIstsCount ?? 0,
-            ParticipantRole::Guest => $event->maximalClosedGuestsCount ?? 0,
-            ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount ?? 0,
-            ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount ?? 0,
+            ParticipantRole::PatrolLeader => $event->maximalClosedPatrolsCount,
+            ParticipantRole::TroopLeader => $event->maximalClosedTroopLeadersCount,
+            ParticipantRole::TroopParticipant => $event->maximalClosedTroopParticipantsCount,
+            ParticipantRole::Ist => $event->maximalClosedIstsCount,
+            ParticipantRole::Guest => $event->maximalClosedGuestsCount,
+            ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount,
+            ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount,
         };
     }
 }

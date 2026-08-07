@@ -71,10 +71,25 @@ class PatrolLeaderCloseValidationTest extends AppTestCase
         self::assertNotContains('flash.warning.plWrongDataParticipant', $keys);
     }
 
+    public function testNullMaximalPatrolCountAllowsAnyPatrolSize(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->configurePatrolCounts($app, 0, null);
+        $patrolLeader = $this->createPatrolLeader($app, $event, 'patrol-null-max@example.com');
+        $this->addPatrolParticipant($app, $patrolLeader);
+
+        $result = $this->closeResultFor($app, $patrolLeader);
+
+        self::assertNotContains(
+            'flash.warning.plTooManyParticipants',
+            array_column($result->warnings, 'key'),
+        );
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */
-    private function configurePatrolCounts(App $app, int $min, int $max): Event
+    private function configurePatrolCounts(App $app, int $min, ?int $max): Event
     {
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->get(1);

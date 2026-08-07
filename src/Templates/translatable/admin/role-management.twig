@@ -12,8 +12,8 @@
         <form method="POST" action="{{ url_for('admin-save-role-management', {'eventSlug': event.slug}) }}">
             <input type="hidden" name="role" value="total">
             <h3>{{ 'roleManagement.totalMax' | trans }}</h3>
-            <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
-            <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ maximalClosedParticipantsCount ?? 0 }}</strong></p>
+            <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ totalCapLabel }}</strong></p>
+            <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ totalCapLabel }}</strong></p>
             <label class="form-group">
                 {{ 'roleManagement.maxParticipantsTotal' | trans }}:<br/>
                 <input class="form-control form-wide" type="number" name="maximalClosedParticipantsCount"

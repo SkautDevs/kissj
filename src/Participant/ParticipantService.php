@@ -193,9 +193,10 @@ readonly class ParticipantService
                 '%minimalPatrolParticipantsCount%' => (string)$event->getMinimalPpCount($patrolLeader),
             ]);
         }
-        if ($participantsCount > $event->getMaximalPpCount($patrolLeader)) {
+        $maximalPpCount = $event->getMaximalPpCount($patrolLeader);
+        if ($maximalPpCount !== null && $participantsCount > $maximalPpCount) {
             $result = $result->withWarning('flash.warning.plTooManyParticipants', [
-                '%maximalPatrolParticipantsCount%' => (string)$event->getMaximalPpCount($patrolLeader),
+                '%maximalPatrolParticipantsCount%' => (string)$maximalPpCount,
             ]);
         }
 
@@ -227,9 +228,10 @@ readonly class ParticipantService
                 '%minimalTroopParticipantsCount%' => (string)$event->getMinimalPpCount($troopLeader),
             ]);
         }
-        if ($participantsCount > $event->getMaximalPpCount($troopLeader)) {
+        $maximalTpCount = $event->getMaximalPpCount($troopLeader);
+        if ($maximalTpCount !== null && $participantsCount > $maximalTpCount) {
             $result = $result->withWarning('flash.warning.tlTooManyParticipantsTroop', [
-                '%maximalTroopParticipantsCount%' => (string)$event->getMaximalPpCount($troopLeader),
+                '%maximalTroopParticipantsCount%' => (string)$maximalTpCount,
             ]);
         }
 

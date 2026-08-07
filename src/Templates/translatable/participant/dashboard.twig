@@ -103,14 +103,17 @@
 
                 {# help text how many participants is needed #}
                 {% if userStatus == 'open' %}
+                    {% if not (person is PatrolLeader and maximalPpCount is null and minimalPpCount == 0) %}
                     <p>
                         {{ 'dashboard.youNeed' | trans }}
                             {% if person is PatrolLeader %}
-                            {% if event.getMinimalPpCount(person) == event.getMaximalPpCount(person) %}
-                                {{ 'dashboard.exactly' | trans }} {{ event.getMinimalPpCount(person) }}
+                            {% if maximalPpCount is null %}
+                                {{ 'dashboard.minimally' | trans }} {{ minimalPpCount }}
+                            {% elseif minimalPpCount == maximalPpCount %}
+                                {{ 'dashboard.exactly' | trans }} {{ minimalPpCount }}
                             {% else %}
-                                {{ 'dashboard.minimally' | trans }} {{ event.getMinimalPpCount(person) }}
-                                {{ 'dashboard.andMaximally' | trans }} {{ event.getMaximalPpCount(person) }}
+                                {{ 'dashboard.minimally' | trans }} {{ minimalPpCount }}
+                                {{ 'dashboard.andMaximally' | trans }} {{ maximalPpCount }}
                             {% endif %}
                         {% elseif person is TroopLeader %}
                             {% if event.getMinimalTroopParticipantsCount == event.getMaximalTroopParticipantsCount %}
@@ -122,6 +125,7 @@
                         {% endif %}
                         {{ 'dashboard.pForValidReg' | trans }}
                     </p>
+                    {% endif %}
                 {% endif %}
 
                 {# adding new participants into group #}

@@ -46,6 +46,30 @@ class ParticipantServiceFullTest extends AppTestCase
         self::assertTrue($participantService->isParticipantOrEventFull($ist));
     }
 
+    public function testNullRoleCapMeansUnlimited(): void
+    {
+        $app = $this->getTestApp();
+
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug');
+        if ($event === null) {
+            throw new RuntimeException('Test event not found');
+        }
+
+        // a NULL cap must not behave like the zero cap in testRoleFullReturnsTrue
+        $this->mutateEventForTest($app->getContainer(), $event, ['maximalClosedIstsCount' => null]);
+
+        $userService = $this->getService($app, UserService::class);
+        $user = $userService->registerEmailUser('null-role-cap-test@example.com', $event);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+
+        $istRepository = $this->getService($app, IstRepository::class);
+        $ist = $istRepository->get($participant->id);
+
+        $participantService = $this->getService($app, ParticipantService::class);
+        self::assertFalse($participantService->isParticipantOrEventFull($ist));
+    }
+
     public function testEventCapReachedReturnsTrue(): void
     {
         $app = $this->getTestApp();

@@ -447,6 +447,7 @@ dashboard-admin:
     limitTroop: "Limit for Troops"
     limitTp: "Limit for Participants"
     limitGuest: "Limit for Guests"
+    limitUnlimited: "unlimited"
     openIst: "Open IST"
     openOt: "Open OT"
     openPatrol: "Open Patrols"
