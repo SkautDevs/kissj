@@ -244,6 +244,9 @@ class Route
                         $app->post('/unentry', EntryController::class . '::unentryFromAdmin')
                             ->setName('admin-unentry-participant');
 
+                        $app->post('/unleave', EntryController::class . '::unleaveFromAdmin')
+                            ->setName('admin-unleave-participant');
+
                         $app->post('/setDealAsDone/{dealSlug}', DealController::class . '::setDealAsDone')
                             ->setName('admin-set-deal-as-done');
 

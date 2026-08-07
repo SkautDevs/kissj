@@ -207,6 +207,22 @@ class EntryController extends AbstractController
         );
     }
 
+    public function unleaveFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
+    {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        $this->participantService->setAsUnleaved($participant);
+        $this->logger->info('Participant with ID ' . $participantId . ' set as NOT leaved from admin');
+
+        return $this->redirect(
+            $request,
+            $response,
+            'admin-mend-participant',
+            [
+                'participantId' => (string) $participantId,
+            ],
+        );
+    }
+
     /**
      * @return Participant[]|null
      */

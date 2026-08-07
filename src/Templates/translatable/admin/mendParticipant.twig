@@ -49,6 +49,20 @@
                 ⌛ <i>{{ 'mend-admin.didNotEnterYet' | trans }}</i>
             {% endif %}
             <br/>
+            {{ 'mend-admin.leave' | trans }}:
+            {% set leaveDate = participant.getLeaveDate() %}
+            {% if leaveDate %}
+                <b>🚪 {{ leaveDate|date('d. m. Y - H:i:s') }}</b>
+                <form
+                        method="POST"
+                        action="{{ url_for('admin-unleave-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                >
+                    <input type="submit" class="btn btn-small" value="{{ 'mend-admin.unleaveParticipant' | trans }}">
+                </form>
+            {% else %}
+                ⌛ <i>{{ 'mend-admin.didNotLeaveYet' | trans }}</i>
+            {% endif %}
+            <br/>
             <br/>
             {% if participant.deals %}
                 -
