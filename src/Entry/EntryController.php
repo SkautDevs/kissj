@@ -160,6 +160,10 @@ class EntryController extends AbstractController
             );
         }
 
+        if ($participant->entryDate === null) {
+            return $this->createErrorEntryResponse($response, 'participant not entered');
+        }
+
         $this->participantService->setAsLeaved($participant);
 
         return $this->getResponseWithJson(
@@ -264,7 +268,7 @@ class EntryController extends AbstractController
         $alteredParticipantIds = [];
 
         foreach ($groupParticipants as $groupParticipant) {
-            if ($groupParticipant->leaveDate === null) {
+            if ($groupParticipant->entryDate !== null && $groupParticipant->leaveDate === null) {
                 $alteredParticipantIds[] = $groupParticipant->id;
                 $this->participantService->setAsLeaved($groupParticipant);
             }
