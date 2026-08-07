@@ -12,7 +12,9 @@
     {% if payment.swift %}
         <h4>{{ 'email.payment-info.swift' | trans }}: {{ payment.swift }}</h4>
     {% endif %}
-    <h4>{{ 'email.payment-info.accountNumber' | trans }}: {{ payment.accountNumber }}</h4>
+    {% if payment.accountNumber %}
+        <h4>{{ 'email.payment-info.accountNumber' | trans }}: {{ payment.accountNumber }}</h4>
+    {% endif %}
     <h4>{{ 'email.payment-info.amount' | trans }}: {{ payment.price }} {{ payment.currency }}</h4>
     <h4>{{ 'email.payment-info.variableSymbol' | trans }}: {{ payment.getVariableSymbol }}</h4>
     {% if payment.constantSymbol %}

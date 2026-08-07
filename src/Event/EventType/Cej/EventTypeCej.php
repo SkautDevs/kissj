@@ -94,7 +94,7 @@ class EventTypeCej extends EventType
 
         $payment->price = (string)$price;
         $payment->currency = 'PLN';
-        $payment->accountNumber = 'TODO';
+        $payment->accountNumber = '';
         $payment->iban = 'PL44 1140 1010 0000 5392 2900 1106';
         $payment->swift = 'BREXPLPWXXX';
         $payment->note = $payment->variableSymbol . ' ' . $payment->note;
@@ -130,7 +130,7 @@ class EventTypeCej extends EventType
 
         $payment->price = (string)$price;
         $payment->currency = 'RON';
-        $payment->accountNumber = 'TODO';
+        $payment->accountNumber = '';
         $payment->iban = 'RO49BTRLRONCRT033228121B';
         $payment->swift = 'BTRLRO22';
         $payment->note = $payment->variableSymbol . ' ' . $payment->note;

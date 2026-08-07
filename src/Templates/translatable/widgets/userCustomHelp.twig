@@ -44,7 +44,9 @@
             {% if payment.swift %}
                 {{ 'dashboard.swift' | trans }}: <b>{{ payment.swift }}</b><br/>
             {% endif %}
-            {{ 'dashboard.accountNumber' | trans }}: <b>{{ payment.getAccountNumber }}</b><br/>
+            {% if payment.accountNumber %}
+                {{ 'dashboard.accountNumber' | trans }}: <b>{{ payment.getAccountNumber }}</b><br/>
+            {% endif %}
             {{ 'dashboard.amount' | trans }}: <b>{{ payment.getPrice }} {{ payment.currency }}</b>
             <br/>
             {{ 'dashboard.variableSymbol' | trans }}: <b>{{ payment.getVariableSymbol }}</b><br/>
