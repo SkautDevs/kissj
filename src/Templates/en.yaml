@@ -771,6 +771,7 @@ flash:
         paymentNotWaiting: "Payment cannot be confirmed because it is no longer in waiting status"
         paymentNotWaitingCannotChangePrice: "Payment is not in waiting status, price cannot be changed"
         foodStatsNotAllowed: "You are not allowed to see food stats for this event."
+        capacityOutOfRange: "Capacity must be a whole number between 0 and 1,000,000, or empty for unlimited"
     error:
         actionFailed: "Action failed. Please try again."
         adminOnly: "Sorry bro, admins only"

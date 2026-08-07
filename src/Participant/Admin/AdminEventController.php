@@ -19,6 +19,8 @@ use Slim\Routing\RouteContext;
 
 class AdminEventController extends AbstractController
 {
+    public const int MAXIMAL_ALLOWED_CAPACITY = 1000000;
+
     public function __construct(
         private readonly ParticipantRepository $participantRepository,
         private readonly ParticipantService $participantService,
@@ -190,8 +192,8 @@ class AdminEventController extends AbstractController
         /** @var string $roleValue */
         $roleValue = $body['role'] ?? '';
 
-        match ($roleValue) {
-            'total' => $event->maximalClosedParticipantsCount = $this->parseNullableInt($body['maximalClosedParticipantsCount'] ?? ''),
+        $saved = match ($roleValue) {
+            'total' => $this->saveTotal($event, $body),
             'pl' => $this->savePatrolLeader($event, $body),
             'pp' => $this->savePatrolParticipant($event, $body),
             'tl' => $this->saveTroopLeader($event, $body),
@@ -201,6 +203,12 @@ class AdminEventController extends AbstractController
             'ot' => $this->saveOrganizingTeam($event, $body),
             default => throw new \RuntimeException('Unknown role: ' . $roleValue),
         };
+
+        if (!$saved) {
+            $this->flashMessages->warning('flash.warning.capacityOutOfRange');
+
+            return $this->redirect($request, $response, 'admin-role-management');
+        }
 
         $this->eventRepository->persist($event);
 
@@ -212,65 +220,132 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function savePatrolLeader(Event $event, array $body): void
+    private function saveTotal(Event $event, array $body): bool
     {
+        $maximalParticipants = $body['maximalClosedParticipantsCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalParticipants)) {
+            return false;
+        }
+
+        $event->maximalClosedParticipantsCount = $this->parseNullableInt($maximalParticipants);
+
+        return true;
+    }
+
+    /**
+     * @param array<mixed> $body
+     */
+    private function savePatrolLeader(Event $event, array $body): bool
+    {
+        $maximalPatrols = $body['maximalClosedPatrolsCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalPatrols)) {
+            return false;
+        }
+
         $event->allowPatrols = isset($body['allowPatrols']);
-        $event->maximalClosedPatrolsCount = $this->parseNullableInt($body['maximalClosedPatrolsCount'] ?? '');
+        $event->maximalClosedPatrolsCount = $this->parseNullableInt($maximalPatrols);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function savePatrolParticipant(Event $event, array $body): void
+    private function savePatrolParticipant(Event $event, array $body): bool
     {
-        $event->minimalPatrolParticipantsCount = $this->parseNullableInt($body['minimalPatrolParticipantsCount'] ?? '');
-        $event->maximalPatrolParticipantsCount = $this->parseNullableInt($body['maximalPatrolParticipantsCount'] ?? '');
+        $minimalParticipants = $body['minimalPatrolParticipantsCount'] ?? '';
+        $maximalParticipants = $body['maximalPatrolParticipantsCount'] ?? '';
+        if (!$this->areCapacitiesValid($minimalParticipants, $maximalParticipants)) {
+            return false;
+        }
+
+        $event->minimalPatrolParticipantsCount = $this->parseNullableInt($minimalParticipants);
+        $event->maximalPatrolParticipantsCount = $this->parseNullableInt($maximalParticipants);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function saveTroopLeader(Event $event, array $body): void
+    private function saveTroopLeader(Event $event, array $body): bool
     {
+        $maximalTroopLeaders = $body['maximalClosedTroopLeadersCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalTroopLeaders)) {
+            return false;
+        }
+
         $event->allowTroops = isset($body['allowTroops']);
-        $event->maximalClosedTroopLeadersCount = $this->parseNullableInt($body['maximalClosedTroopLeadersCount'] ?? '');
+        $event->maximalClosedTroopLeadersCount = $this->parseNullableInt($maximalTroopLeaders);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function saveTroopParticipant(Event $event, array $body): void
+    private function saveTroopParticipant(Event $event, array $body): bool
     {
-        $event->maximalClosedTroopParticipantsCount = $this->parseNullableInt($body['maximalClosedTroopParticipantsCount'] ?? '');
-        $event->minimalTroopParticipantsCount = $this->parseNullableInt($body['minimalTroopParticipantsCount'] ?? '');
-        $event->maximalTroopParticipantsCount = $this->parseNullableInt($body['maximalTroopParticipantsCount'] ?? '');
+        $maximalClosedParticipants = $body['maximalClosedTroopParticipantsCount'] ?? '';
+        $minimalParticipants = $body['minimalTroopParticipantsCount'] ?? '';
+        $maximalParticipants = $body['maximalTroopParticipantsCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalClosedParticipants, $minimalParticipants, $maximalParticipants)) {
+            return false;
+        }
+
+        $event->maximalClosedTroopParticipantsCount = $this->parseNullableInt($maximalClosedParticipants);
+        $event->minimalTroopParticipantsCount = $this->parseNullableInt($minimalParticipants);
+        $event->maximalTroopParticipantsCount = $this->parseNullableInt($maximalParticipants);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function saveIst(Event $event, array $body): void
+    private function saveIst(Event $event, array $body): bool
     {
+        $maximalIsts = $body['maximalClosedIstsCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalIsts)) {
+            return false;
+        }
+
         $event->allowIsts = isset($body['allowIsts']);
-        $event->maximalClosedIstsCount = $this->parseNullableInt($body['maximalClosedIstsCount'] ?? '');
+        $event->maximalClosedIstsCount = $this->parseNullableInt($maximalIsts);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function saveGuest(Event $event, array $body): void
+    private function saveGuest(Event $event, array $body): bool
     {
+        $maximalGuests = $body['maximalClosedGuestsCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalGuests)) {
+            return false;
+        }
+
         $event->allowGuests = isset($body['allowGuests']);
-        $event->maximalClosedGuestsCount = $this->parseNullableInt($body['maximalClosedGuestsCount'] ?? '');
+        $event->maximalClosedGuestsCount = $this->parseNullableInt($maximalGuests);
+
+        return true;
     }
 
     /**
      * @param array<mixed> $body
      */
-    private function saveOrganizingTeam(Event $event, array $body): void
+    private function saveOrganizingTeam(Event $event, array $body): bool
     {
+        $maximalOrganizingTeam = $body['maximalClosedOrganizingTeamCount'] ?? '';
+        if (!$this->areCapacitiesValid($maximalOrganizingTeam)) {
+            return false;
+        }
+
         $event->allowOrganizingTeam = isset($body['allowOrganizingTeam']);
-        $event->maximalClosedOrganizingTeamCount = $this->parseNullableInt($body['maximalClosedOrganizingTeamCount'] ?? '');
+        $event->maximalClosedOrganizingTeamCount = $this->parseNullableInt($maximalOrganizingTeam);
+
+        return true;
     }
 
     private function getAllowFieldForRole(ParticipantRole $role): string
@@ -295,6 +370,35 @@ class AdminEventController extends AbstractController
             ParticipantRole::Guest => 'maximalClosedGuestsCount',
             ParticipantRole::OrganizingTeam => 'maximalClosedOrganizingTeamCount',
         };
+    }
+
+    private function areCapacitiesValid(mixed ...$values): bool
+    {
+        foreach ($values as $value) {
+            if (!$this->isCapacityValid($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isCapacityValid(mixed $value): bool
+    {
+        if (!is_string($value) && !is_int($value)) {
+            return false;
+        }
+
+        $trimmed = trim((string)$value);
+        if ($trimmed === '') {
+            return true; // empty means unlimited
+        }
+
+        if (preg_match('~^\d+$~', $trimmed) !== 1) {
+            return false;
+        }
+
+        return (int)$trimmed <= self::MAXIMAL_ALLOWED_CAPACITY;
     }
 
     private function parseNullableInt(mixed $value): ?int

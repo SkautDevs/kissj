@@ -17,7 +17,7 @@
             <label class="form-group">
                 {{ 'roleManagement.maxParticipantsTotal' | trans }}:<br/>
                 <input class="form-control form-wide" type="number" name="maximalClosedParticipantsCount"
-                       value="{{ maximalClosedParticipantsCount }}" min="0">
+                       value="{{ maximalClosedParticipantsCount }}" min="0" max="1000000">
             </label>
             <br/>
             <input type="submit" class="btn" value="{{ 'roleManagement.save' | trans }}">

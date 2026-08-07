@@ -779,6 +779,7 @@ flash:
         paymentNotWaiting: "Platbu nelze potvrdit, protože už není ve stavu čekající"
         paymentNotWaitingCannotChangePrice: "Platba není ve stavu čekání, cenu nelze změnit"
         foodStatsNotAllowed: "Nemáš oprávnění vidět statistiky jídla pro tuto akci."
+        capacityOutOfRange: "Kapacita musí být celé číslo od 0 do 1 000 000, nebo prázdná pro neomezeno"
     error:
         actionFailed: "Akce se nezdařila. Zkuste to prosím znovu."
         adminOnly: "Sorry bro, pouze pro administrátory"
