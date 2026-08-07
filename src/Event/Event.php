@@ -86,8 +86,14 @@ use kissj\Participant\ParticipantRole;
  */
 class Event extends EntityDatetime
 {
+    private ?EventType $eventTypeInstance = null;
+
     public function getEventType(): EventType
     {
+        if ($this->eventTypeInstance !== null) {
+            return $this->eventTypeInstance;
+        }
+
         /** @var string $eventTypeValue */
         $eventTypeValue = $this->row->event_type;
         $eventTypeClass = match ($eventTypeValue) {
@@ -105,7 +111,7 @@ class Event extends EntityDatetime
             default => throw new \RuntimeException('unknown event type: ' . $eventTypeValue),
         };
 
-        return new $eventTypeClass();
+        return $this->eventTypeInstance = new $eventTypeClass();
     }
 
     public function canRegistrationBeLocked(): bool

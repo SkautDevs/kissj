@@ -16,13 +16,17 @@ use kissj\Participant\Patrol\PatrolLeader;
 
 class EventTypeNavigamus extends EventType
 {
+    private const PRICE_TIER_1_END = '2025-03-05 23:59:59';
+    private const PRICE_TIER_2_END = '2025-03-31 23:59:59';
+    private const PRICE_TIER_3_END = '2025-04-30 23:59:59';
+
     public function getPrice(Participant $participant): int
     {
         $now = DateTimeUtils::getDateTime();
         $patrolPrice = match (true) {
-            $now < DateTimeUtils::getDateTime('2025-03-05 23:59:59') => 1300,
-            $now < DateTimeUtils::getDateTime('2025-03-31 23:59:59') => 1500,
-            $now < DateTimeUtils::getDateTime('2025-04-30 23:59:59') => 1800,
+            $now < DateTimeUtils::getDateTime(self::PRICE_TIER_1_END) => 1300,
+            $now < DateTimeUtils::getDateTime(self::PRICE_TIER_2_END) => 1500,
+            $now < DateTimeUtils::getDateTime(self::PRICE_TIER_3_END) => 1800,
             default => 2800,
         };
 

@@ -17,9 +17,11 @@ use kissj\Participant\Patrol\PatrolParticipant;
 
 class EventTypeAqua extends EventType
 {
+    private const FULL_PRICE_TIER_END = '2022-12-20';
+
     /**
-     * Participants pays 150€ till 15/3/20, 160€ from 16/3/20, staff 50€
-     * discount 40€ for self-eating participant (not for ISTs)
+     * Patrol members pay 150€ until FULL_PRICE_TIER_END, 160€ after, ISTs 60€,
+     * discount 40€ per self-eating patrol member (not for ISTs)
      */
     public function getPrice(Participant $participant): int
     {
@@ -47,7 +49,7 @@ class EventTypeAqua extends EventType
 
     private function getFullPriceForToday(): int
     {
-        if (DateTimeUtils::getDateTime() <= DateTimeUtils::getDateTime('2022-12-20')) {
+        if (DateTimeUtils::getDateTime() <= DateTimeUtils::getDateTime(self::FULL_PRICE_TIER_END)) {
             return 150;
         }
 
