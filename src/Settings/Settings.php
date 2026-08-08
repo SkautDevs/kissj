@@ -90,6 +90,7 @@ use kissj\Skautis\SkautisController;
 use kissj\Skautis\SkautisFactory;
 use kissj\Skautis\SkautisService;
 use kissj\Telemetry\Sentry\DibiSpanListener;
+use kissj\Telemetry\Sentry\UrlRedactor;
 use kissj\Telemetry\Metrics;
 use kissj\Translation\CurrentTranslator;
 use kissj\Translation\TranslatorFactory;
@@ -162,6 +163,17 @@ class Settings
         // default only - must match the phinx target in tests/phinxConfiguration.php
         $_ENV['DATABASE_PATH'] ??= $tempPath . '/db_tests.sqlite';
 
+        $beforeSend = function (SentryEvent $event): ?SentryEvent {
+            // Check if error is from middleware exception capturer
+            // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
+            if ($event->getLogger() === "monolog.KISSJ"
+                && str_contains($event->getMessage() ?? '', 'Exception!')) {
+                return null;
+            }
+
+            return UrlRedactor::scrub($event);
+        };
+
         // init every time for capturing performance
         /** @var array<string, string> $_ENV */
         $sentryClient = ClientBuilder::create([
@@ -170,16 +182,9 @@ class Settings
             'traces_sample_rate' => (float)($_ENV['SENTRY_TRACES_SAMPLE_RATE'] ?? '1'),
             'profiles_sample_rate' => (float)($_ENV['SENTRY_PROFILES_SAMPLE_RATE'] ?? '1'),
             'release' => 'kissj@' . $_ENV['GIT_HASH'],
-            'before_send' => function (SentryEvent $event): ?SentryEvent {
-                // Check if error is from middleware exception capturer
-                // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
-                if ($event->getLogger() === "monolog.KISSJ"
-                    && str_contains($event->getMessage() ?? '', 'Exception!')) {
-                    return null;
-                }
-
-                return $event;
-            },
+            'before_send' => $beforeSend,
+            // transactions dispatch to their own callback and ship request data on every sampled request
+            'before_send_transaction' => $beforeSend,
         ])->getClient();
         SentrySdk::init()->bindClient($sentryClient);
 
