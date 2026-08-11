@@ -1,0 +1,211 @@
+<?php
+
+declare(strict_types=1);
+
+namespace kissj\Participant\Admin;
+
+use kissj\FlashMessages\FlashMessagesInterface;
+use kissj\Mailer\Mailer;
+use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
+use kissj\Payment\Payment;
+use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentSource;
+use kissj\Payment\PaymentStatus;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
+use kissj\User\UserRepository;
+use kissj\User\UserStatus;
+use Psr\Log\LoggerInterface;
+
+readonly class PaymentTransferService
+{
+    public function __construct(
+        private UserRepository $userRepository,
+        private ParticipantRepository $participantRepository,
+        private PaymentRepository $paymentRepository,
+        private PaymentService $paymentService,
+        private Mailer $mailer,
+        private LoggerInterface $logger,
+        private Metrics $metrics,
+    ) {
+    }
+
+    public function isPaymentTransferPossible(
+        ?Participant $participantFrom,
+        ?Participant $participantTo,
+        FlashMessagesInterface $flash,
+    ): bool {
+        $isPossible = true;
+
+        if ($participantFrom === null || $participantTo === null) {
+            $flash->warning('flash.warning.nullParticipants');
+
+            return false;
+        }
+
+        if ($participantFrom->id === $participantTo->id) {
+            $flash->warning('flash.warning.differentParticipants');
+
+            return false;
+        }
+
+        if ($participantFrom->role !== $participantTo->role) {
+            $flash->warning('flash.warning.sameRole');
+            $isPossible = false;
+        }
+
+        if ($participantFrom->getUserButNotNull()->status !== UserStatus::Paid) {
+            $flash->warning('flash.warning.notPaid');
+            $isPossible = false;
+        }
+
+        // a zero-price registration is Paid with no Payment row; without this the transfer is offered
+        // and then always fails inside handlePayments
+        if (
+            !$participantFrom instanceof TroopParticipant
+            && $participantFrom->getFirstPaidPayment() === null
+        ) {
+            $flash->warning('flash.warning.senderHasNoPayment');
+            $isPossible = false;
+        }
+
+        $statusTo = $participantTo->getUserButNotNull()->status;
+        if ($statusTo->isPaidOrCancelled()) {
+            $flash->warning('flash.warning.isPaid');
+            $isPossible = false;
+        } elseif ($statusTo !== UserStatus::Approved) {
+            $flash->warning('flash.warning.recipientNotApproved');
+            $isPossible = false;
+        }
+
+        if ($participantTo instanceof TroopLeader && $participantTo->getTroopParticipantsCount() > 0) {
+            $flash->warning('flash.warning.troopLeaderHasParticipants');
+            $isPossible = false;
+        }
+
+        if ($participantTo instanceof TroopParticipant && $participantTo->troopLeader !== null) {
+            $flash->warning('flash.warning.recipientHasTroop');
+            $isPossible = false;
+        }
+
+        if ($participantFrom instanceof PatrolLeader || $participantTo instanceof PatrolLeader) {
+            $flash->warning('flash.warning.patrolLeaderNotSupported');
+            $isPossible = false;
+        }
+
+        if ($participantFrom->scarf !== $participantTo->scarf) {
+            $flash->info('flash.info.differentScarfs');
+        }
+
+        return $isPossible;
+    }
+
+    public function transferPayment(Participant $participantFrom, Participant $participantTo): void
+    {
+        // wrap in a transaction so any later abort (e.g. missing paid payment) rolls back the status claims,
+        // never leaving a half-transferred giver/recipient pair;
+        $this->userRepository->transactional(
+            fn () => $this->transferPaymentAtomically($participantFrom, $participantTo),
+        );
+
+        $this->mailer->sendPaymentTransferedToYou($participantTo);
+        $this->mailer->sendPaymentTransferedFromYou($participantFrom);
+    }
+
+    /**
+     *  - Move the paid payment From To
+     *  - Cancel all waiting payments To (the ticket-transfer email covers it, no separate cancel email)
+     *  - Set From as open (his payment-transfer email is sent after commit)
+     *  - Set To as paid (his ticket-transfer email carrying the entry QR code is sent after commit)
+     *  - Handle scarf correction on To
+     */
+    private function transferPaymentAtomically(Participant $participantFrom, Participant $participantTo): void
+    {
+        $userFrom = $participantFrom->getUserButNotNull();
+        $userTo = $participantTo->getUserButNotNull();
+
+        if (!$this->userRepository->claimStatusChange($userFrom, UserStatus::Paid, UserStatus::Open)) {
+            throw new \RuntimeException('Transfer aborted - the sender is no longer in paid status');
+        }
+
+        if (!$this->userRepository->claimStatusChange($userTo, UserStatus::Approved, UserStatus::Paid)) {
+            throw new \RuntimeException('Transfer aborted - the recipient is no longer in approved status');
+        }
+
+        $transferredPayment = $this->handlePayments($participantFrom, $participantTo);
+
+        foreach ($participantTo->payment as $payment) {
+            if ($payment->status === PaymentStatus::Waiting) {
+                $this->paymentService->cancelPayment($payment, PaymentSource::Transfer);
+            }
+        }
+
+        if ($participantFrom->scarf !== $participantTo->scarf) {
+            $participantTo->scarf = $participantFrom->scarf;
+        }
+
+        if (
+            $participantFrom instanceof TroopParticipant
+            && $participantTo instanceof TroopParticipant
+        ) {
+            $participantTo->troopLeader = $participantFrom->troopLeader;
+            $participantFrom->troopLeader = null;
+        }
+
+        if (
+            $participantFrom instanceof TroopLeader
+            && $participantTo instanceof TroopLeader
+        ) {
+            if ($participantTo->getTroopParticipantsCount() > 0) {
+                throw new \RuntimeException('Troop leader has participants');
+            }
+
+            foreach ($participantFrom->troopParticipants as $troopParticipant) {
+                $troopParticipant->troopLeader = $participantTo;
+                $this->participantRepository->persist($troopParticipant);
+            }
+        }
+
+        $registrationPayDateFrom = $participantFrom->registrationPayDate;
+        $participantFrom->registrationPayDate = $participantTo->registrationPayDate;
+        $participantTo->registrationPayDate = $registrationPayDateFrom;
+
+        $this->participantRepository->persist($participantFrom);
+        $this->participantRepository->persist($participantTo);
+        $this->userRepository->persist($userFrom);
+        $this->userRepository->persist($userTo);
+
+        $this->logger->info(sprintf(
+            'Transferred payment ID %s from participant ID %s to participant ID %s',
+            $transferredPayment !== null ? (string)$transferredPayment->id : 'N/A',
+            $userFrom->id,
+            $userTo->id,
+        ));
+        $this->metrics->count(MetricName::PaymentsTransferred, 1);
+    }
+
+    private function handlePayments(
+        Participant $participantFrom,
+        Participant $participantTo,
+    ): ?Payment {
+        if ($participantFrom instanceof TroopParticipant) {
+            // Troop Participant has no payments by itself, it is handled by Troop Leader
+            return null;
+        }
+
+        $correctPayment = $participantFrom->getFirstPaidPayment();
+        if ($correctPayment === null) {
+            throw new \RuntimeException('Payment marked as paid was not found with participant marked as paid');
+        }
+
+        $correctPayment->participant = $participantTo;
+        $this->paymentRepository->persist($correctPayment);
+
+        return $correctPayment;
+    }
+}

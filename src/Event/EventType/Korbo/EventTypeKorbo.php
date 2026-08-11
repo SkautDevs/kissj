@@ -137,4 +137,10 @@ class EventTypeKorbo extends EventType
     {
         return false;
     }
+
+    #[\Override]
+    public function isOwnerTicketTransferAllowed(): bool
+    {
+        return true;
+    }
 }

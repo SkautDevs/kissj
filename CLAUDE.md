@@ -99,7 +99,7 @@ Always write tests for new features and bugfixes.
 ## Translations
 
 When adding user-facing strings, add translations to all three YAML files: `cs.yaml`, `en.yaml`, `sk.yaml`.
-Translations must be ordered alphabetically by key for consistency.
+Place new keys beside thematically related keys, so each block stays readable as a group. Do not sort keys alphabetically.
 
 ## Database Migrations
 

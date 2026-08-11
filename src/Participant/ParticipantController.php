@@ -9,6 +9,8 @@ use kissj\AbstractController;
 use kissj\Deal\Deal;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\FlashMessages\NullFlashMessages;
+use kissj\Participant\Admin\PaymentTransferService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
@@ -23,6 +25,7 @@ use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use RuntimeException;
 use Slim\Psr7\Stream;
 
 class ParticipantController extends AbstractController
@@ -36,6 +39,7 @@ class ParticipantController extends AbstractController
         private readonly DealRepository $dealRepository,
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
+        private readonly PaymentTransferService $paymentTransferService,
     ) {
     }
 
@@ -193,6 +197,84 @@ class ParticipantController extends AbstractController
         return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
     }
 
+    public function showTransferTicket(Request $request, Response $response, User $user): Response
+    {
+        $from = $this->participantRepository->getParticipantFromUser($user);
+        $tieCodeRaw = $request->getQueryParams()['tieCode'] ?? null;
+        $tieCode = is_string($tieCodeRaw) ? $tieCodeRaw : null;
+
+        $to = null;
+        $transferPossible = false;
+        if ($tieCode !== null && $tieCode !== '') {
+            $to = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $user->event);
+            if ($this->isTransferToSelf($from, $to)) {
+                $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
+                $to = null;
+                $tieCode = null;
+            } elseif ($to === null) {
+                $this->flashMessages->warning('flash.warning.transferRecipientNotFound');
+            } else {
+                $transferPossible = $this->paymentTransferService->isPaymentTransferPossible(
+                    $from,
+                    $to,
+                    $this->flashMessages,
+                );
+            }
+        }
+
+        return $this->view->render($response, 'participant/transferTicket.twig', [
+            'from' => $from,
+            'to' => $to,
+            'tieCode' => $tieCode,
+            'transferPossible' => $transferPossible,
+        ]);
+    }
+
+    public function transferTicket(Request $request, Response $response, User $user): Response
+    {
+        $from = $this->participantRepository->getParticipantFromUser($user);
+        $parsedBody = $request->getParsedBody();
+        $tieCode = is_array($parsedBody) ? ($parsedBody['tieCode'] ?? null) : null;
+
+        if (!is_string($tieCode) || $tieCode === '') {
+            $this->flashMessages->error('flash.error.transferFailed');
+
+            return $this->redirect($request, $response, 'showTransferTicket');
+        }
+
+        $to = $this->participantRepository->findOneByTieCodeAndEvent($tieCode, $user->event);
+
+        if ($this->isTransferToSelf($from, $to)) {
+            $this->flashMessages->warning('flash.warning.cannotTransferToYourself');
+
+            return $this->redirect($request, $response, 'showTransferTicket');
+        }
+
+        if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, new NullFlashMessages())) {
+            $this->flashMessages->error('flash.error.transferFailed');
+
+            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);
+        }
+
+        try {
+            $this->paymentTransferService->transferPayment($from, $to);
+        } catch (RuntimeException $e) {
+            $this->flashMessages->error('flash.error.transferFailed');
+            $this->sentryCollector->collect($e);
+
+            return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);
+        }
+
+        $this->flashMessages->success('flash.success.ticketTransferred');
+
+        return $this->redirect($request, $response, 'dashboard');
+    }
+
+    private function isTransferToSelf(Participant $from, ?Participant $to): bool
+    {
+        return $to !== null && $from->id === $to->id;
+    }
+
     public function downloadFile(Request $request, Response $response, string $filename): Response
     {
         if (preg_match('/^[a-f0-9]{32}$/', $filename) !== 1) {
@@ -213,7 +295,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]>
+     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]|bool>
      */
     private function getTemplateData(Participant $participant): array
     {
@@ -231,6 +313,9 @@ class ParticipantController extends AbstractController
             'participants' => $participants,
             'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
+            // mirrors the transfer route gates (paid status + open transfer), so the dashboard never offers a link that bounces
+            'ownerTicketTransferAllowed' => $user->status === UserStatus::Paid
+                && $user->event->isOwnerTicketTransferOpen(),
         ];
     }
 }

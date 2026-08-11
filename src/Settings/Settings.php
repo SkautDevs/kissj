@@ -47,7 +47,9 @@ use kissj\Middleware\MonologContextMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
+use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
+use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Telemetry\Sentry\ContextMiddleware;
 use kissj\Telemetry\Sentry\HttpContextMiddleware;
@@ -63,6 +65,7 @@ use kissj\Participant\Admin\AdminParticipantController;
 use kissj\Participant\Admin\AdminPaymentController;
 use kissj\Participant\Admin\AdminService;
 use kissj\Participant\Admin\AdminTroopController;
+use kissj\Participant\Admin\PaymentTransferService;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantController;
@@ -236,7 +239,9 @@ class Settings
             NonChoosedRoleOnlyMiddleware::class => autowire(),
             NonLoggedOnlyMiddleware::class => autowire(),
             OpenStatusOnlyMiddleware::class => autowire(),
+            OwnerTicketTransferAllowedOnlyMiddleware::class => autowire(),
             PaidCancelledStatusOnlyMiddleware::class => autowire(),
+            PaidStatusOnlyMiddleware::class => autowire(),
             ParticipantController::class => autowire(),
             ParticipantFileService::class => autowire(),
             ParticipantRepository::class => autowire(),
@@ -250,6 +255,7 @@ class Settings
             PatrolService::class => autowire(),
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
+            PaymentTransferService::class => autowire(),
             Mailer::class => autowire(),
             Metrics::class => autowire(),
             QrCodeService::class => autowire(),

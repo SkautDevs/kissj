@@ -58,6 +58,11 @@ class TwigExtension extends AbstractExtension
                     $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Paid
                 ) || (
                     $participant instanceof TroopParticipant && $participant->troopLeader === null
+                ) || (
+                    // a tied TroopParticipant can never be a recipient (PaymentTransferService::recipientHasTroop)
+                    $participant->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed()
+                    && $participant->getUserButNotNull()->status === UserStatus::Approved
+                    && !$participant instanceof TroopParticipant
                 )
             ),
         ];

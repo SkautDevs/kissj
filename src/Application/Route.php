@@ -28,7 +28,9 @@ use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\NotGuestMiddleware;
 use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
+use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
+use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
@@ -216,6 +218,14 @@ class Route
                             $app->post('/changeDetailsAfterLock', ParticipantController::class . '::changeDetailsAfterLock')
                                 ->setName('changeDetailsAfterLock');
                         })->add(LockedStatusOnlyMiddleware::class);
+
+                        $app->group('', function (RouteCollectorProxy $app) {
+                            $app->get('/showTransferTicket', ParticipantController::class . '::showTransferTicket')
+                                ->setName('showTransferTicket');
+
+                            $app->post('/transferTicket', ParticipantController::class . '::transferTicket')
+                                ->setName('transferTicket');
+                        })->add(PaidStatusOnlyMiddleware::class)->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
                     });
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 

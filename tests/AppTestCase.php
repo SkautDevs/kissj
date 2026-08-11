@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use ArrayObject;
 use kissj\Application\ApplicationGetter;
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\Mailer\MailerSettings;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -26,8 +29,11 @@ use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
 use Slim\Psr7\Request;
 use Slim\Psr7\Uri;
+use Slim\Views\Twig;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mailer\Event\SentMessageEvent;
 
 class AppTestCase extends TestCase
 {
@@ -377,6 +383,22 @@ class AppTestCase extends TestCase
         return $eventRepository->get($newEvent->id);
     }
 
+    /**
+     * Obrok-typed event dated in the future - owner ticket transfer is gated on both the event type
+     * and startDay, and the seeded event started in 2021.
+     *
+     * @param App<ContainerInterface> $app
+     */
+    protected function getOwnerTransferEvent(App $app): Event
+    {
+        $event = $this->getObrokTestEvent($app);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'startDay' => DateTimeUtils::getDateTime('+1 month'),
+        ]);
+
+        return $event;
+    }
+
     // Event::getData() also picks up computed pseudo-properties (eventType, availableRoles,
     // logoInBase64, ...) that are derived by a getter method with no matching setter -
     // assigning those back to a new Event throws. Whitelist to the columns Event actually
@@ -519,6 +541,40 @@ class AppTestCase extends TestCase
     protected function createOpenIst(ContainerInterface $container, string $firstName, string $lastName): Participant
     {
         return $this->createIst($container, $firstName, $lastName, UserStatus::Open);
+    }
+
+    /**
+     * Listens on the app's real event dispatcher for Symfony Mailer's post-send event, so tests can assert
+     * which addresses actually got a mail without mocking the mailer itself.
+     *
+     * @param App<ContainerInterface> $app
+     * @return ArrayObject<int, string>
+     */
+    protected function captureSentMessageRecipients(App $app): ArrayObject
+    {
+        /** @var ArrayObject<int, string> $recipients */
+        $recipients = new ArrayObject();
+        $dispatcher = $this->getService($app, EventDispatcherInterface::class);
+        $dispatcher->addListener(SentMessageEvent::class, static function (SentMessageEvent $event) use ($recipients): void {
+            foreach ($event->getMessage()->getEnvelope()->getRecipients() as $recipient) {
+                $recipients[] = $recipient->getAddress();
+            }
+        });
+
+        return $recipients;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function initializeMailerSettings(App $app, Event $event): void
+    {
+        $mailerSettings = $this->getService($app, MailerSettings::class);
+        $mailerSettings->setEvent($event);
+        $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $event->slug);
+
+        $view = $this->getService($app, Twig::class);
+        $view->getEnvironment()->addGlobal('event', $event);
     }
 
     private function createIst(

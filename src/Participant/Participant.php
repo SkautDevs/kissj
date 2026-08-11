@@ -95,7 +95,7 @@ class Participant extends EntityDatetime
     protected function initDefaults(): void
     {
         parent::initDefaults();
-        $this->tieCode = $this->generateTieCode(); // TODO check if another code exists in DB
+        $this->tieCode = $this->generateTieCode();
         $this->entryCode = Uuid::uuid4()->toString();
         $this->adminNote = '';
     }
@@ -290,14 +290,14 @@ class Participant extends EntityDatetime
     }
 
     /**
-     * @return array<Payment>
+     * @return list<Payment>
      */
     public function getAllPaidPayment(): array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->getPayments(),
             fn (Payment $payment): bool => $payment->status === PaymentStatus::Paid,
-        );
+        ));
     }
 
     /**
@@ -366,6 +366,11 @@ class Participant extends EntityDatetime
     public function roleToString(ParticipantRole $role): string
     {
         return $role->value;
+    }
+
+    public function regenerateTieCode(): void
+    {
+        $this->tieCode = $this->generateTieCode();
     }
 
     private function generateTieCode(): string

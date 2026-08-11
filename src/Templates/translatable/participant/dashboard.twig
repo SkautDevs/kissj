@@ -15,17 +15,15 @@
     {% include('widgets/userCustomHelp.twig') %}
     
     {% if person is eligibleForShowTieCode %}
-        <h2>
-            {% if userStatus == 'paid' and  person.role.value == 'tl'%}
-                {{ 'dashboard.pairCode' | trans }} - {{ person.tieCode }}
-            {% else %}
-                {{ 'dashboard.tieCode' | trans }} - {{ person.tieCode }}
-            {% endif %}
-        </h2>
+        <h2>{{ 'dashboard.tieCode' | trans }} - {{ person.tieCode }}</h2>
     {% endif %}
 
     {% if event.eventtype.showReceiptToParticipant(person) %}
         <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{{ 'dashboard.downloadReceipt' | trans }}</a><br/>
+    {% endif %}
+
+    {% if ownerTicketTransferAllowed %}
+        <a href="{{ url_for('showTransferTicket', {'eventSlug': event.slug}) }}" class="btn">{{ 'ticketTransfer.dashboardLink' | trans }}</a><br/>
     {% endif %}
 </div>
 

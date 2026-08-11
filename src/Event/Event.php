@@ -119,6 +119,12 @@ class Event extends EntityDatetime
         return $this->startRegistration <= DateTimeUtils::getDateTime();
     }
 
+    public function isOwnerTicketTransferOpen(): bool
+    {
+        return $this->getEventType()->isOwnerTicketTransferAllowed()
+            && DateTimeUtils::getDateTime() < $this->startDay;
+    }
+
     /**
      * @return list<ParticipantRole>
      */

@@ -1,0 +1,14 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <div class="text-center">
+        <p>{{ 'email.payment-transfered-to-you.paidRegistrationReceived' | trans }}</p>
+
+        {% if event.getEventType.showParticipantInfoInMail %}
+            <p>{{ 'email.payment-successful.qrInfo' | trans }}</p>
+            <img src="cid:qr_info" alt="QR participant info"/>
+        {% endif %}
+
+        <p>{{ 'email.payment-successful.enjoy' | transGendered(genderSuffix) | raw }}</p>
+    </div>
+{% endblock %}

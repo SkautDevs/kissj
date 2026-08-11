@@ -32,6 +32,7 @@ class AdminPaymentController extends AbstractController
         private readonly PaymentRepository $paymentRepository,
         private readonly BankPaymentRepository $bankPaymentRepository,
         private readonly AdminService $adminService,
+        private readonly PaymentTransferService $paymentTransferService,
         private readonly UserRepository $userRepository,
         private readonly Metrics $metrics,
     ) {
@@ -251,7 +252,7 @@ class AdminPaymentController extends AbstractController
             'emailTo' => $emailTo,
             'from' => $participantFrom,
             'to' => $participantTo,
-            'transferPossible' => $this->adminService->isPaymentTransferPossible(
+            'transferPossible' => $this->paymentTransferService->isPaymentTransferPossible(
                 $participantFrom,
                 $participantTo,
                 $this->flashMessages,
@@ -273,7 +274,7 @@ class AdminPaymentController extends AbstractController
         $participantFrom = $this->participantRepository->getParticipantFromUser($userFrom);
         $participantTo = $this->participantRepository->getParticipantFromUser($userTo);
 
-        if (!$this->adminService->isPaymentTransferPossible(
+        if (!$this->paymentTransferService->isPaymentTransferPossible(
             $participantFrom,
             $participantTo,
             $this->flashMessages,
@@ -285,8 +286,13 @@ class AdminPaymentController extends AbstractController
                 $userTo->id,
             )));
         } else {
-            $this->adminService->transferPayment($participantFrom, $participantTo);
-            $this->flashMessages->success('flash.success.transfer');
+            try {
+                $this->paymentTransferService->transferPayment($participantFrom, $participantTo);
+                $this->flashMessages->success('flash.success.transfer');
+            } catch (\RuntimeException $e) {
+                $this->flashMessages->error('flash.error.transferFailed');
+                $this->sentryCollector->collect($e);
+            }
         }
 
         return $this->redirect(

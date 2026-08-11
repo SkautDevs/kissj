@@ -36,9 +36,6 @@ email:
         received: "We have received your payment for"
         thanks: ". Thank you!"
         enjoy: "Now you can fully enjoy the excitement for the upcoming event! So don't break your leg, make sure your tent is ready for the nature of northern Slovakia and stay tuned for more information. ;)"
-    text:
-        paidRegistrationTransfered: "Ahoy, your payment was transferred to a different participant. If you do not know about this, please contact us."
-        paymentTransfered: "tranfering different payment into your registration"
 detail:
     food-placeholder: "We arrange only above stated options of diet restriction. In case of other restrictions, you have to arrange all the food for whole event yourself and your participant fee is reduced."
     position-title: "Preferred position - select max. 5. We don't guarantee you to be placed at the selected position, but we'll try our best"

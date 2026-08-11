@@ -8,7 +8,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use PHPUnit\Framework\Attributes\Group;
-use kissj\Mailer\MailerSettings;
 use kissj\Participant\Guest\Guest;
 use kissj\Participant\Guest\GuestRepository;
 use kissj\Participant\Ist\IstRepository;
@@ -36,7 +35,6 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Slim\App;
-use Slim\Views\Twig;
 use Tests\AppTestCase;
 
 class ParticipantJourneyTest extends AppTestCase
@@ -1200,19 +1198,6 @@ class ParticipantJourneyTest extends AppTestCase
         $loginTokenRepository->persist($loginToken);
 
         return $loginToken;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     */
-    private function initializeMailerSettings(App $app, Event $event): void
-    {
-        $mailerSettings = $this->getService($app, MailerSettings::class);
-        $mailerSettings->setEvent($event);
-        $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $event->slug);
-
-        $view = $this->getService($app, Twig::class);
-        $view->getEnvironment()->addGlobal('event', $event);
     }
 
     /**

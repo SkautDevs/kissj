@@ -208,4 +208,10 @@ class EventTypeObrok extends EventType
 
         return $eventDeals;
     }
+
+    #[\Override]
+    public function isOwnerTicketTransferAllowed(): bool
+    {
+        return true;
+    }
 }

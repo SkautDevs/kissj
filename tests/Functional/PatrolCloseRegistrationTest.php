@@ -7,7 +7,6 @@ namespace Tests\Functional;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use kissj\Mailer\MailerSettings;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
@@ -18,7 +17,6 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Slim\App;
-use Slim\Views\Twig;
 use Tests\AppTestCase;
 
 class PatrolCloseRegistrationTest extends AppTestCase
@@ -152,16 +150,4 @@ class PatrolCloseRegistrationTest extends AppTestCase
         $repository->persist($participant);
     }
 
-    /**
-     * @param App<ContainerInterface> $app
-     */
-    private function initializeMailerSettings(App $app, Event $event): void
-    {
-        $mailerSettings = $this->getService($app, MailerSettings::class);
-        $mailerSettings->setEvent($event);
-        $mailerSettings->setFullUrlLink('http://test.example.com/v2/event/' . $event->slug);
-
-        $view = $this->getService($app, Twig::class);
-        $view->getEnvironment()->addGlobal('event', $event);
-    }
 }

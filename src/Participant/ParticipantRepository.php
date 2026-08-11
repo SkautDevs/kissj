@@ -23,6 +23,7 @@ use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use LeanMapper\Fluent;
+use LogicException;
 use RuntimeException;
 
 /**
@@ -523,18 +524,46 @@ class ParticipantRepository extends Repository
         return $this->findOneBy(['entry_code' => $entryCode]);
     }
 
+    public function isTieCodeInUse(string $tieCode): bool
+    {
+        return $this->findOneBy(['tie_code' => $tieCode]) !== null;
+    }
+
+    // tie codes route payments on transfer, so a collision must never persist to the database
+    public function ensureUniqueTieCode(Participant $participant): void
+    {
+        $attempts = 0;
+        while ($this->isTieCodeInUse($participant->tieCode)) {
+            if (++$attempts >= 10) {
+                throw new LogicException('Failed to generate a unique tie code after 10 attempts');
+            }
+
+            $participant->regenerateTieCode();
+        }
+    }
+
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
     {
-        $participant = $this->findOneBy(['tie_code' => $tieCode]);
-        if ($participant === null) {
+        // scoped in the query - tie_code has no unique index, so a cross-event duplicate
+        // must not shadow the recipient in the authorized event
+        // TODO fix that after ensuring TIE code uniqueness
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.event_id = %i', $authorizedEvent->id);
+        $qb->where('participant.tie_code = %s', strtoupper($tieCode));
+
+        /** @var (Row&iterable<string, mixed>)|null $row */
+        $row = $qb->fetch();
+        if ($row === null) {
             return null;
         }
 
-        if ($participant->user?->event->id === $authorizedEvent->id) {
-            return $participant;
+        $participant = $this->createEntity($row);
+        if (!$participant instanceof Participant) {
+            return null;
         }
 
-        return null;
+        return $participant;
     }
 
     public function findParticipantByUploadedFilename(string $filename, Event $event): ?Participant

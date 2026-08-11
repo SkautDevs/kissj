@@ -222,6 +222,17 @@ readonly class Mailer
         );
     }
 
+    public function sendPaymentTransferedToYou(Participant $participant): void
+    {
+        $this->sendMailFromTemplate(
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.payment-transfered-to-you.subject'),
+            'payment-transfered-to-you',
+            embeds: $this->getEmbeddedQr($participant),
+            participant: $participant,
+        );
+    }
+
     public function sendDuePaymentDenied(Participant $participant): void
     {
         $user = $participant->getUserButNotNull();

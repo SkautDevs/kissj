@@ -137,6 +137,7 @@ readonly class UserService
         $participant = new Participant();
         $participant->user = $user;
         $participant->role = $participantRole;
+        $this->participantRepository->ensureUniqueTieCode($participant);
         $this->participantRepository->persist($participant);
         $this->metrics->count(MetricName::RegistrationsCreated, 1, ['role' => $role]);
 
