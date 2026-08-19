@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Korbo;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiter\AgeGroup;
@@ -14,12 +15,19 @@ use kissj\Participant\Participant;
 class EventTypeKorbo extends EventType
 {
     private const int SCARF_PRICE = 150;
+    private const int LOW_PRICE_BUFFER = 150;
+    private const string LOW_PRICE_END = '2026-08-31 23:59:59';
+
 
     #[\Override]
     public function getPrice(Participant $participant): int
     {
         $price = parent::getPrice($participant);
 
+        $closeDate = $participant->registrationCloseDate;
+        if ($closeDate !== null && $closeDate > DateTimeUtils::getDateTime(self::LOW_PRICE_END)) {
+            $price += self::LOW_PRICE_BUFFER;
+        }
         if ($participant->scarf === Participant::SCARF_YES) {
             $price += self::SCARF_PRICE;
         }
