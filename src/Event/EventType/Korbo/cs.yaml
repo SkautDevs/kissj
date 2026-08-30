@@ -26,6 +26,8 @@ chooseRole:
     rolesAdvice: 'Účastník'
     adviceIstText: ' - hromada super lidí, bez kterých by akce neproběhla - jedou, aby ostatním nabídli své aktivity a místa. Na oplátku si užívají program připravený ostatními účastníky. '
     adviceOtText: ' - lidé, kteří na Korbu zajišťují důležité podpůrné služby - například záchranáři, bezpečáci, psychycká podpora, registrace, elektrikáři, vodaři nebo radiotým. Tuto roli použij pouze pokud víš, do čeho jdeš!'
+ticketTransfer:
+    description: "Svůj zaplacený lístek můžeš přenechat jinému, zatím nezaplacenému účastníkovi. Zadej jeho osobní kód - najde ho po přihlášení a schválení na svém přehledu."
 email:
     layout:
         ifQuestion: 'Pokud máš otázky, odpověď lze najít na naší webové stránce '

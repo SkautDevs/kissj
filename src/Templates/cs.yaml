@@ -580,7 +580,7 @@ transferPayment-admin:
     notPossible: "Přesun nelze uskutečnit"
 ticketTransfer:
     title: "Přesun lístku"
-    description: "Svůj zaplacený lístek můžeš přenechat jinému, zatím nezaplacenému účastníkovi ve stejné roli. Zadej jeho osobní kód — najde ho po přihlášení na svém přehledu."
+    description: "Svůj zaplacený lístek můžeš přenechat jinému, zatím nezaplacenému účastníkovi ve stejné roli. Zadej jeho osobní kód - najde ho po přihlášení na svém přehledu."
     recipientTieCode: "Osobní kód příjemce"
     recipientName: "Jméno"
     preview: "Zobrazit náhled"
