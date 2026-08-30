@@ -6,6 +6,7 @@ namespace Tests\Functional;
 
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentService;
@@ -113,11 +114,13 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
+        /** @var array<string, string> $csrf */
+        $csrf = $this->getService($app, TicketTransferCsrfMiddleware::class)->generateToken();
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/participant/transferTicket',
             'POST',
-            ['tieCode' => $recipientCode],
+            ['tieCode' => $recipientCode] + $csrf,
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -126,6 +129,94 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
         $userRepository = $this->getService($app, UserRepository::class);
         self::assertSame(UserStatus::Open, $userRepository->get($giver->id)->status);
         self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
+    }
+
+    public function testFullStackPostWithoutCsrfTokenIsRejected(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
+
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Approved);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $event->slug . '/participant/transferTicket',
+            'POST',
+            ['tieCode' => $recipientCode],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('showTransferTicket', $response->getHeaderLine('Location'));
+        self::assertContains(
+            $this->trans($app, 'flash.error.formExpired'),
+            $this->flashed($app),
+        );
+
+        $userRepository = $this->getService($app, UserRepository::class);
+        self::assertSame(UserStatus::Paid, $userRepository->get($giver->id)->status);
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipient->id)->status);
+    }
+
+    public function testFullStackPostWithInvalidCsrfTokenIsRejected(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
+
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Approved);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/' . $event->slug . '/participant/transferTicket',
+            'POST',
+            [
+                'tieCode' => $recipientCode,
+                'csrf_name' => 'csrf_forged',
+                'csrf_value' => base64_encode(random_bytes(64)),
+            ],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('showTransferTicket', $response->getHeaderLine('Location'));
+        self::assertContains(
+            $this->trans($app, 'flash.error.formExpired'),
+            $this->flashed($app),
+        );
+
+        $userRepository = $this->getService($app, UserRepository::class);
+        self::assertSame(UserStatus::Paid, $userRepository->get($giver->id)->status);
+        self::assertSame(UserStatus::Approved, $userRepository->get($recipient->id)->status);
+    }
+
+    public function testTransferFormCarriesCsrfToken(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
+
+        $giver = $this->makeParticipant($app, $event, UserStatus::Paid);
+        $recipient = $this->makeParticipant($app, $event, UserStatus::Approved);
+        $recipientCode = $this->tieCodeOf($app, $recipient);
+
+        $_SESSION['user'] = ['id' => $giver->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle(
+            $this->createRequest('/v2/event/' . $event->slug . '/participant/showTransferTicket')
+                ->withQueryParams(['tieCode' => $recipientCode]),
+        );
+
+        $body = (string) $response->getBody();
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('name="csrf_name"', $body);
+        self::assertStringContainsString('name="csrf_value"', $body);
+        self::assertMatchesRegularExpression('/name="csrf_value" value="[^"]+"/', $body);
     }
 
     public function testTransferFailsGracefullyWhenGiverHasNoPaidPayment(): void

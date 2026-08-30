@@ -10,6 +10,7 @@ use kissj\Deal\Deal;
 use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\FlashMessages\NullFlashMessages;
+use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Participant\Admin\PaymentTransferService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -40,6 +41,7 @@ class ParticipantController extends AbstractController
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
         private readonly PaymentTransferService $paymentTransferService,
+        private readonly TicketTransferCsrfMiddleware $csrfGuard,
     ) {
     }
 
@@ -227,6 +229,8 @@ class ParticipantController extends AbstractController
             'to' => $to,
             'tieCode' => $tieCode,
             'transferPossible' => $transferPossible,
+            'csrfName' => $request->getAttribute($this->csrfGuard->getTokenNameKey()),
+            'csrfValue' => $request->getAttribute($this->csrfGuard->getTokenValueKey()),
         ]);
     }
 

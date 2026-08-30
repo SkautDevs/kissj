@@ -824,6 +824,7 @@ flash:
         receiptNotAllowed: "Potvrzení o přijetí platby není pro tuto akci povoleno"
         cannotAccessTemp: "Problém přístupu k temporary složce. Zkus to znovu prosím za pár minut"
         transferFailed: "Přesun platby se nepovedl"
+        formExpired: "Platnost formuláře vypršela, zkus to prosím znovu"
         participantNotCancelled: "Účastník nemůže být označen, že nejede, pravděpodobně protože nebyl nalezen"
         patrolsNotAllowed: "Patroly nejsou pro tuto akci povoleny"
         badgesNotAllowed: "Generování badges není pro tuto akci povoleno"

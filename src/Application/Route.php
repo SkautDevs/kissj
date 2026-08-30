@@ -33,6 +33,7 @@ use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
 use kissj\Participant\Admin\AdminEventController;
@@ -225,7 +226,9 @@ class Route
 
                             $app->post('/transferTicket', ParticipantController::class . '::transferTicket')
                                 ->setName('transferTicket');
-                        })->add(PaidStatusOnlyMiddleware::class)->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
+                        })->add(TicketTransferCsrfMiddleware::class)
+                            ->add(PaidStatusOnlyMiddleware::class)
+                            ->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
                     });
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 

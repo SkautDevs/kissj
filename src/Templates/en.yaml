@@ -816,6 +816,7 @@ flash:
         receiptNotAllowed: "Receipt cannot be generated, because it is not allowed for this evet"
         cannotAccessTemp: "Cannot access temporary file. Try it again later please."
         transferFailed: "Payment transfer failed"
+        formExpired: "The form has expired, please try submitting again"
         participantNotCancelled: "Participant was not cancelled, probably not found"
         patrolsNotAllowed: "Patrols are not allowed for this event"
         badgesNotAllowed: "Badge generation is not allowed for this event"

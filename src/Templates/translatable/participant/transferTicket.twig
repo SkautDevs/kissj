@@ -26,6 +26,8 @@
             {% if transferPossible %}
                 <form method="POST" action="{{ url_for('transferTicket', {'eventSlug': event.slug}) }}">
                     <input name="tieCode" type="hidden" value="{{ tieCode }}" required>
+                    <input name="csrf_name" value="{{ csrfName }}" type="hidden">
+                    <input name="csrf_value" value="{{ csrfValue }}" type="hidden">
                     <input class="btn btn-small" type="submit" value="{{ 'ticketTransfer.confirm' | trans }}">
                 </form><br/>
             {% else %}
