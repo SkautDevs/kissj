@@ -143,6 +143,11 @@ abstract class EventType
         return null;
     }
 
+    public function getScriptNameWithoutLeadingSlash(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return list<string>
      */

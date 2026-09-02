@@ -92,6 +92,12 @@ class EventTypeNavigamus extends EventType
         return 'eventSpecificCss/stylesNavigamus27.css';
     }
 
+    #[\Override]
+    public function getScriptNameWithoutLeadingSlash(): string
+    {
+        return 'navigamus27/tentacle.js';
+    }
+
     /**
      * @inheritDoc
      */

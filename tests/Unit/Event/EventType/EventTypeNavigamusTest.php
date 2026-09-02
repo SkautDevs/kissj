@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Event\EventType;
 
+use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +15,27 @@ class EventTypeNavigamusTest extends TestCase
         self::assertSame(
             'eventSpecificCss/stylesNavigamus27.css',
             (new EventTypeNavigamus())->getStylesheetNameWithoutLeadingSlash(),
+        );
+    }
+
+    public function testBaseEventTypeReturnsNoScript(): void
+    {
+        self::assertNull((new EventTypeDefault())->getScriptNameWithoutLeadingSlash());
+    }
+
+    public function testUsesCompassTentacleScript(): void
+    {
+        self::assertSame(
+            'navigamus27/tentacle.js',
+            (new EventTypeNavigamus())->getScriptNameWithoutLeadingSlash(),
+        );
+    }
+
+    // _layout.twig loads this by name off the filesystem, so a typo would only surface as a 404 in production
+    public function testCompassTentacleScriptFileExists(): void
+    {
+        self::assertFileExists(
+            __DIR__ . '/../../../../public/' . (new EventTypeNavigamus())->getScriptNameWithoutLeadingSlash(),
         );
     }
 

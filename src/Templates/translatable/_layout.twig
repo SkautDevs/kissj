@@ -95,5 +95,8 @@
         <img class="footer-logo" src="{{ event.logoUrl }}" alt="logo of {{ event.readableName }}">
     </a>
 </footer>
+{% if event.eventType.getScriptNameWithoutLeadingSlash is not null %}
+    <script src="{{ base_path() }}/{{ event.eventType.getScriptNameWithoutLeadingSlash }}" defer></script>
+{% endif %}
 </body>
 </html>

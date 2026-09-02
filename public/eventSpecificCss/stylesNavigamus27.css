@@ -98,6 +98,48 @@ input, textarea, select, button {
     font-family: 'luciao sans', 'themix', sans-serif;
 }
 
+/* tentacle compass: a single arm reaches in from the corner and points its tip at the next
+   required field (navigamus27/tentacle.js); the base pivot sits just off-screen */
+body::after {
+    content: '';
+    position: fixed;
+    right: -60px;
+    bottom: -50px;
+    width: 70px;
+    height: 352px;
+    background: url('/navigamus27/tentacle.png') no-repeat center / contain;
+    pointer-events: none;
+    /* above the content cards so the tip visibly reaches onto them; clicks pass through */
+    z-index: 1;
+    transform: rotate(var(--tentacle-rot, -40deg));
+    transform-origin: 42.45% 94.31%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    body::after {
+        transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body:not(.tentacle-tracking)::after {
+        animation: tentacle-sway 6s ease-in-out infinite;
+    }
+}
+
+@keyframes tentacle-sway {
+    0%, 100% { transform: rotate(-43deg); }
+    50% { transform: rotate(-37deg); }
+}
+
+/* half-size static peek on small screens - the tracking script bails out below 900px */
+@media (width < 900px) {
+    body::after {
+        right: -30px;
+        bottom: -25px;
+        width: 35px;
+        height: 176px;
+    }
+}
+
 /* footer as the manual's wavy purple band: first layer draws the wave strip, second fills the rest */
 footer {
     margin-top: 40px;
@@ -126,6 +168,10 @@ footer a:visited {
     footer a,
     footer a:visited {
         color: #2b1977;
+    }
+
+    body::after {
+        display: none;
     }
 }
 
