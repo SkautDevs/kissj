@@ -89,7 +89,7 @@ class EventTypeNavigamus extends EventType
     #[\Override]
     public function getStylesheetNameWithoutLeadingSlash(): string
     {
-        return 'eventSpecificCss/stylesNavigamus25.css';
+        return 'eventSpecificCss/stylesNavigamus27.css';
     }
 
     /**

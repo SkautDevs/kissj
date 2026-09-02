@@ -1,0 +1,148 @@
+/* Navigamus 2027 skin - values from docs/Navigamus_27_manual_vizualni_identity.pdf.
+   licensed fonts mirrored from navigamus2027.skauting.cz - both ship a single regular weight.
+   the base shapes tile is replaced by the manual's tone-on-tone arm pattern. */
+@font-face {
+    font-family: 'seatren';
+    src: url('/fonts/seatren.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'luciao sans';
+    src: url('/fonts/luciaosans-regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* fallback for UAs where neither color-scheme query evaluates - an unset var() would void the footer band */
+:root {
+    --nav-band: #1b0e44;
+    --nav-wave: url('/navigamus27/waveDark.svg');
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-background: #f0f0f0;
+        --color-card-background: #ffffff;
+        --color-input-background: #ffffff;
+        --color-main: #1b0e44;
+        --color-accent: #c92039;
+        --color-fading: #e2ddf2;
+        --color-light: #2b1977;
+        --color-dark: #565656;
+        --color-grey: #757575;
+        --color-link: #2b1977;
+        --color-link-visited: #6a5cae;
+        --nav-band: #1b0e44;
+        --nav-wave: url('/navigamus27/waveDark.svg');
+        background-image: url('/navigamus27/patternLight.png');
+    }
+
+    .alert-info { --color: #2b1977; color: #ffffff; }
+    .alert-success { --color: #4d7c0f; color: #ffffff; }
+    .alert-warning { --color: #d9a404; color: #101010; }
+    .alert-error { --color: #c92039; color: #ffffff; }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #1b0e44;
+        --color-card-background: #241356;
+        --color-input-background: #2b1977;
+        --color-main: #ffffff;
+        --color-accent: #ee5570;
+        --color-fading: #2b1977;
+        --color-light: #b7a9e8;
+        --color-dark: #f0f0f0;
+        --color-grey: #a49fc0;
+        --color-link: #b7a9e8;
+        --color-link-visited: #9384cf;
+        --nav-band: #2b1977;
+        --nav-wave: url('/navigamus27/waveLight.svg');
+        background-image: url('/navigamus27/patternDark.png');
+    }
+
+    /* base th pairs var(--color-main) with white text - white on white in this palette */
+    th {
+        background: #2b1977;
+    }
+
+    .alert-info { --color: #221060; color: #ffffff; }
+    .alert-success { --color: #3f5d0c; color: #ffffff; }
+    .alert-warning { --color: #7a5c05; color: #f5f5f5; }
+    .alert-error { --color: #8f1520; color: #ffffff; }
+}
+
+/* manual: Seatren always uppercase with 5% letter-spacing; demo ships one weight, avoid faux bold */
+h1, h2, h3 {
+    font-family: 'seatren', 'themix', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-main);
+}
+
+/* manual: body text in Luciao Sans, dark/light grey with 1.5 line height;
+   the single weight leaves bold to synthesis - acceptable, same as headings */
+body {
+    font-family: 'luciao sans', 'themix', sans-serif;
+    color: var(--color-dark);
+    line-height: 1.5;
+}
+
+/* base pins form controls to themix explicitly, so body inheritance alone won't reach them */
+input, textarea, select, button {
+    font-family: 'luciao sans', 'themix', sans-serif;
+}
+
+/* footer as the manual's wavy purple band: first layer draws the wave strip, second fills the rest */
+footer {
+    margin-top: 40px;
+    padding: 40px 16px 24px;
+    color: #f0f0f0;
+    background-image: var(--nav-wave), linear-gradient(var(--nav-band), var(--nav-band));
+    background-position: left top, left 26px;
+    background-size: 180px 26px, 100% calc(100% - 26px);
+    background-repeat: repeat-x, no-repeat;
+}
+
+footer a {
+    color: #b7a9e8;
+}
+
+footer a:visited {
+    color: #9384cf;
+}
+
+/* print drops the band's background images but keeps text color - light-on-white otherwise */
+@media print {
+    footer {
+        color: #101010;
+    }
+
+    footer a,
+    footer a:visited {
+        color: #2b1977;
+    }
+}
+
+/* full-color logo is allowed only on white or purple - the white card keeps it legal on the band */
+.footer-logo {
+    background: #ffffff;
+    padding: 14px 18px;
+    border-radius: var(--border-radius);
+    width: 230px;
+}
+
+/* manual's wavy blocks: boxes open and close with a wave instead of hard edges; flat per manual - the mask would clip a shadow anyway.
+   waveDark.svg doubles as the top mask tile - masks read only the alpha channel, its fill color is irrelevant */
+.card {
+    box-shadow: none;
+    mask-image: url('/navigamus27/waveDark.svg'), linear-gradient(#000, #000), url('/navigamus27/waveMask.svg');
+    mask-repeat: repeat-x, no-repeat, repeat-x;
+    mask-position: left top, left 14px, left bottom;
+    mask-size: 120px 14px, 100% calc(100% - 28px), 120px 14px;
+}
