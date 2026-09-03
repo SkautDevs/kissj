@@ -106,6 +106,7 @@
 		"phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",
 		"phinx:migrate": "vendor/bin/phinx migrate --configuration src/Settings/phinxConfiguration.php",
 		"phinx:rollback": "vendor/bin/phinx rollback --configuration src/Settings/phinxConfiguration.php",
-		"phinx:status": "vendor/bin/phinx status --configuration src/Settings/phinxConfiguration.php"
+		"phinx:status": "vendor/bin/phinx status --configuration src/Settings/phinxConfiguration.php",
+		"phinx:seed": "vendor/bin/phinx seed:run --configuration src/Settings/phinxConfiguration.php --seed TestingEventsSeed"
 	}
 }
