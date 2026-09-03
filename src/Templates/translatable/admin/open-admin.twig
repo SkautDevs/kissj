@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.openParticipants' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card">
         <h2>{{ 'open-admin.open' | trans }} {{ event.readableName }}</h2>

@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="robots" content="noindex, nofollow">
 
-    <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
+    <title>{% block pageTitle %}{{ '_layout.title' | trans }}{% endblock %}{% if event is defined %} - {{ event.readableName }}{% endif %} - kissj</title>
 
     <style>{{ pdfCss|default('')|raw }}</style>
 </head>

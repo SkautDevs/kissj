@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.login' | trans }}{% endblock %}
+
 {% block content %}
     {% set bothLogins = event.eventType.isLoginEmailAllowed and event.eventType.isLoginSkautisAllowed %}
     <div class="two-cards">
