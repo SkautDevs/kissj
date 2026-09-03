@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.paymentsAuto' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card">
         <h2>{{ 'payments-admin.confirmText' | trans }} {{ event.readableName }}</h2>
