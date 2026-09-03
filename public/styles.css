@@ -484,6 +484,11 @@ tr:nth-child(even) {
 	color: var(--color-grey);
 }
 
+.text-break {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
 .skautis-member-disabled {
 	color: var(--color-grey);
 	font-weight: bold;

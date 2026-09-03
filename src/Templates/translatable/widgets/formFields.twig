@@ -101,7 +101,7 @@
             {% if value %}
                 {% set storedFilename = personDetails.getUploadedFilename(item.slug) %}
                 <b>
-                    <a target="_blank" href="{{ url_for('show-file', {'filename': storedFilename, 'eventSlug': event.slug}) }}">
+                    <a class="text-break" target="_blank" href="{{ url_for('show-file', {'filename': storedFilename, 'eventSlug': event.slug}) }}">
                         {{ value }}
                     </a>
                     {{ 'detail.uploadedFileSuccessful' | trans }}
@@ -224,7 +224,7 @@
         {{ item.label|trans }}:
         {% set filename = person.getUploadedFilename(item.slug) %}
         {% if filename %}
-            <a target="_blank"
+            <a class="text-break" target="_blank"
                href="{{ url_for('show-file', {'filename': filename, 'eventSlug': event.slug}) }}">
                 {{ value }}
             </a>
