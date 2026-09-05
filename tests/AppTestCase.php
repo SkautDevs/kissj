@@ -43,6 +43,8 @@ class AppTestCase extends TestCase
     public const string DB_FILENAME = 'db_tests.sqlite';
     public const string DB_TEMPLATE_FILENAME = 'db_template.sqlite';
 
+    protected const string TIE_CODE_PATTERN = '/^[ABCDEFGHJKLMNOPQRSTUVWXYZ]{6}$/';
+
     // full clearTempFolder() wipe happens once per process: it clears stale same-pid
     // leftovers (pid reuse after a crash) before the first template snapshot exists;
     // later fresh inits must keep the template and the compiled DI container.
@@ -187,12 +189,19 @@ class AppTestCase extends TestCase
             return;
         }
 
-        $arguments = [
-            'command' => 'migrate',
-            '--configuration' => __DIR__ . '/phinxConfiguration.php',
-        ];
+        $this->runPhinx(['command' => 'migrate']);
 
-        // tripwire: if the DB_TYPE force-set above is ever removed or reordered,
+        if (!copy($dbPath, $templatePath)) {
+            throw new RuntimeException('snapshotting the template database failed');
+        }
+    }
+
+    /**
+     * @param array<string, string> $arguments
+     */
+    protected function runPhinx(array $arguments): string
+    {
+        // tripwire: if the DB_TYPE force-set in forceSqliteDbType() is ever removed or reordered,
         // fail before phinx applies DDL to a real database; under a config-driven
         // phpunit run the phpunit.xml env force makes this unreachable - it guards
         // config-less invocations (custom -c, IDE runners)
@@ -203,13 +212,16 @@ class AppTestCase extends TestCase
         $phinx = new PhinxApplication();
         $phinx->setAutoExit(false);
         $phinxOutput = new BufferedOutput();
-        if ($phinx->run(new ArrayInput($arguments), $phinxOutput) !== 0) {
-            throw new RuntimeException('test database migration failed: ' . $phinxOutput->fetch());
+        $exitCode = $phinx->run(
+            new ArrayInput($arguments + ['--configuration' => __DIR__ . '/phinxConfiguration.php']),
+            $phinxOutput,
+        );
+        $output = $phinxOutput->fetch();
+        if ($exitCode !== 0) {
+            throw new RuntimeException('phinx run failed: ' . $output);
         }
 
-        if (!copy($dbPath, $templatePath)) {
-            throw new RuntimeException('snapshotting the template database failed');
-        }
+        return $output;
     }
 
     // the container env pins DB_TYPE=postgresql and phpdotenv never overrides
@@ -640,28 +652,44 @@ class AppTestCase extends TestCase
         $view->getEnvironment()->addGlobal('event', $event);
     }
 
+    // $event defaults to the test-slug event, $email to a unique throwaway address
+    protected function createParticipantWithRole(
+        ContainerInterface $container,
+        string $role,
+        ?Event $event = null,
+        ?string $email = null,
+    ): Participant {
+        /** @var UserService $userService */
+        $userService = $container->get(UserService::class);
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $container->get(EventRepository::class);
+
+        $user = $userService->registerEmailUser(
+            $email ?? $role . '-' . bin2hex(random_bytes(6)) . '@example.com',
+            $event ?? $this->getTestSlugEvent($eventRepository),
+        );
+
+        return $userService->createParticipantSetRole($user, $role);
+    }
+
     private function createIst(
         ContainerInterface $container,
         string $firstName,
         string $lastName,
         UserStatus $status,
     ): Participant {
-        /** @var UserService $userService */
-        $userService = $container->get(UserService::class);
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
         /** @var ParticipantRepository $participantRepository */
         $participantRepository = $container->get(ParticipantRepository::class);
 
-        $event = $this->getTestSlugEvent($eventRepository);
         $email = 'ist-' . $status->value . '-' . bin2hex(random_bytes(6)) . '@example.com';
-        $user = $userService->registerEmailUser($email, $event);
-        $participant = $userService->createParticipantSetRole($user, 'ist');
+        $participant = $this->createParticipantWithRole($container, 'ist', email: $email);
         $participant->firstName = $firstName;
         $participant->lastName = $lastName;
         $participantRepository->persist($participant);
+
+        $user = $participant->getUserButNotNull();
         $user->status = $status;
         $userRepository->persist($user);
 

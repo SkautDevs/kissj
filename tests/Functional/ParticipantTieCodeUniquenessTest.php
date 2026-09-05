@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\User\User;
-use kissj\User\UserService;
-use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class ParticipantTieCodeUniquenessTest extends AppTestCase
@@ -19,11 +15,14 @@ class ParticipantTieCodeUniquenessTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $event = $this->getService($app, EventRepository::class)->get(1);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
-        $participant = $this->getService($app, ParticipantRepository::class)
-            ->getParticipantFromUser($this->createUserWithParticipant($app, $event));
+        $participant = $this->createParticipantWithRole($app->getContainer(), 'ist', $event);
 
-        self::assertMatchesRegularExpression('/^[A-Z]{6}$/', $participant->tieCode);
+        self::assertMatchesRegularExpression(
+            self::TIE_CODE_PATTERN,
+            $participantRepository->getOneBy(['id' => $participant->id])->tieCode,
+        );
     }
 
     public function testEnsureUniqueTieCodeRegeneratesOnCollision(): void
@@ -32,28 +31,16 @@ class ParticipantTieCodeUniquenessTest extends AppTestCase
         $event = $this->getService($app, EventRepository::class)->get(1);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
 
-        $existing = $participantRepository->getParticipantFromUser($this->createUserWithParticipant($app, $event));
-        $existingCode = $existing->tieCode;
+        $existingCode = $this->createParticipantWithRole($app->getContainer(), 'ist', $event)->tieCode;
 
-        $colliding = $participantRepository->getParticipantFromUser($this->createUserWithParticipant($app, $event));
+        // the pre-check is only allowed on a detached entity, so build one instead of re-fetching
+        $colliding = new Participant();
         $colliding->tieCode = $existingCode;
 
         $participantRepository->ensureUniqueTieCode($colliding);
 
         self::assertNotSame($existingCode, $colliding->tieCode);
-        self::assertMatchesRegularExpression('/^[A-Z]{6}$/', $colliding->tieCode);
+        self::assertMatchesRegularExpression(self::TIE_CODE_PATTERN, $colliding->tieCode);
         self::assertFalse($participantRepository->isTieCodeInUse($colliding->tieCode));
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     */
-    private function createUserWithParticipant(App $app, Event $event): User
-    {
-        $userService = $this->getService($app, UserService::class);
-        $user = $userService->registerEmailUser('tie-code-' . uniqid('', true) . '@example.com', $event);
-        $userService->createParticipantSetRole($user, 'ist');
-
-        return $user;
     }
 }

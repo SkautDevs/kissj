@@ -6,6 +6,7 @@ namespace kissj\Participant\Patrol;
 
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Skautis\SkautisMemberData;
 use kissj\User\User;
@@ -15,6 +16,7 @@ readonly class PatrolService
     public function __construct(
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
+        private ParticipantRepository $participantRepository,
     ) {
     }
 
@@ -27,18 +29,27 @@ readonly class PatrolService
             $patrolLeader = new PatrolLeader();
             $patrolLeader->user = $user;
             $patrolLeader->role = ParticipantRole::PatrolLeader;
+            $this->participantRepository->ensureUniqueTieCode($patrolLeader);
             $this->patrolLeaderRepository->persist($patrolLeader);
         }
 
         return $patrolLeader;
     }
 
+    public function createPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant
+    {
+        $patrolParticipant = new PatrolParticipant();
+        $patrolParticipant->patrolLeader = $patrolLeader;
+        $this->participantRepository->ensureUniqueTieCode($patrolParticipant);
+
+        return $patrolParticipant;
+    }
+
     public function addPatrolParticipantFromSkautis(
         PatrolLeader $patrolLeader,
         SkautisMemberData $memberData,
     ): PatrolParticipant {
-        $patrolParticipant = new PatrolParticipant();
-        $patrolParticipant->patrolLeader = $patrolLeader;
+        $patrolParticipant = $this->createPatrolParticipant($patrolLeader);
         $patrolParticipant->firstName = $memberData->firstName;
         $patrolParticipant->lastName = $memberData->lastName;
         $patrolParticipant->nickname = $memberData->nickName;
