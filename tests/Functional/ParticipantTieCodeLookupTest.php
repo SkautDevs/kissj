@@ -30,32 +30,29 @@ class ParticipantTieCodeLookupTest extends AppTestCase
         self::assertSame($participant->id, $found->id);
     }
 
-    public function testFindsRecipientWhenAnotherEventHasTheSameTieCode(): void
+    public function testDoesNotFindParticipantOfAnotherEvent(): void
     {
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
-        $shadowingEvent = $eventRepository->get(1);
-        $recipientEvent = $this->getTestSlugEvent($eventRepository);
+        $otherEvent = $eventRepository->get(1);
+        $authorizedEvent = $this->getTestSlugEvent($eventRepository);
 
         $userService = $this->getService($app, UserService::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $istRepository = $this->getService($app, IstRepository::class);
 
-        // the shadowing participant is created first, so an unscoped lookup finds it instead of the recipient
-        $shadowingUser = $userService->registerEmailUser('tie-shadow-' . uniqid('', true) . '@example.com', $shadowingEvent);
-        $shadowingParticipant = $userService->createParticipantSetRole($shadowingUser, 'ist');
-        $recipientUser = $userService->registerEmailUser('tie-recipient-' . uniqid('', true) . '@example.com', $recipientEvent);
-        $recipientParticipant = $userService->createParticipantSetRole($recipientUser, 'ist');
+        $otherUser = $userService->registerEmailUser('tie-other-' . uniqid('', true) . '@example.com', $otherEvent);
+        $otherParticipant = $userService->createParticipantSetRole($otherUser, 'ist');
+        $authorizedUser = $userService->registerEmailUser('tie-authorized-' . uniqid('', true) . '@example.com', $authorizedEvent);
+        $authorizedParticipant = $userService->createParticipantSetRole($authorizedUser, 'ist');
 
-        // no unique index guards tie_code, so cross-event duplicates can exist in production data
-        $sharedTieCode = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
-        $shadowingParticipant->tieCode = $sharedTieCode;
-        $participantRepository->persist($shadowingParticipant);
-        $recipientParticipant->tieCode = $sharedTieCode;
-        $participantRepository->persist($recipientParticipant);
+        $otherTieCode = $istRepository->get($otherParticipant->id)->tieCode;
+        $authorizedTieCode = $istRepository->get($authorizedParticipant->id)->tieCode;
 
-        $found = $participantRepository->findOneByTieCodeAndEvent($sharedTieCode, $recipientEvent);
+        self::assertNull($participantRepository->findOneByTieCodeAndEvent($otherTieCode, $authorizedEvent));
 
+        $found = $participantRepository->findOneByTieCodeAndEvent($authorizedTieCode, $authorizedEvent);
         self::assertNotNull($found);
-        self::assertSame($recipientParticipant->id, $found->id);
+        self::assertSame($authorizedParticipant->id, $found->id);
     }
 }
