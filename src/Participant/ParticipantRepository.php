@@ -577,12 +577,17 @@ class ParticipantRepository extends Repository
 
     public function isTieCodeInUse(string $tieCode): bool
     {
-        return $this->findOneBy(['tie_code' => $tieCode]) !== null;
+        // no hydration - a colliding row with an unknown role must not blow up the mapper
+        return $this->isExisting(['tie_code' => $tieCode]);
     }
 
     // tie codes route payments on transfer, so a collision must never persist to the database
     public function ensureUniqueTieCode(Participant $participant): void
     {
+        if (!$participant->isDetached()) {
+            throw new LogicException('Tie code pre-check must run before the first persist');
+        }
+
         $attempts = 0;
         while ($this->isTieCodeInUse($participant->tieCode)) {
             if (++$attempts >= 10) {
@@ -595,9 +600,7 @@ class ParticipantRepository extends Repository
 
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
     {
-        // scoped in the query - tie_code has no unique index, so a cross-event duplicate
-        // must not shadow the recipient in the authorized event
-        // TODO fix that after ensuring TIE code uniqueness
+        // scoped in the query - a transfer recipient must belong to the authorized event
         $qb = $this->createFluent();
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
         $qb->where('u.event_id = %i', $authorizedEvent->id);

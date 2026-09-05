@@ -80,8 +80,7 @@ class PatrolController extends AbstractController
     public function addParticipant(Request $request, Response $response, User $user): Response
     {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
-        $patrolParticipant = new PatrolParticipant();
-        $patrolParticipant->patrolLeader = $patrolLeader;
+        $patrolParticipant = $this->patrolService->createPatrolParticipant($patrolLeader);
 
         /** @var array<string, string> $params */
         $params = $request->getParsedBody();
