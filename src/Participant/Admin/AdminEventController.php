@@ -13,7 +13,6 @@ use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\Payment\FinancesStatisticsService;
-use kissj\Payment\PaymentRepository;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -29,7 +28,6 @@ class AdminEventController extends AbstractController
         private readonly ParticipantStatisticsService $participantStatisticsService,
         private readonly EventRepository $eventRepository,
         private readonly EventService $eventService,
-        private readonly PaymentRepository $paymentRepository,
         private readonly FinancesStatisticsService $financesStatisticsService,
     ) {
     }
@@ -111,11 +109,10 @@ class AdminEventController extends AbstractController
         Response $response,
         Event $event,
     ): Response {
-        $payments = $this->paymentRepository->getNotCanceledEventPayments($event);
-
         return $this->view->render($response, 'admin/finances-admin.twig', [
             'event' => $event,
-            'report' => $this->financesStatisticsService->createFinancesReport($event, $payments),
+            'report' => $this->financesStatisticsService->createFinancesReport($event),
+            'monthUnknown' => FinancesStatisticsService::MONTH_UNKNOWN,
         ]);
     }
 

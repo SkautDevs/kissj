@@ -11,11 +11,16 @@ readonly class FinancesStatisticsService
 {
     public const string MONTH_UNKNOWN = 'unknown';
 
+    public function __construct(
+        private PaymentRepository $paymentRepository,
+    ) {
+    }
+
     /**
-     * @param Payment[] $payments
      * @return array{
      *     months: array<string, array{sums: array<string, float>, scarves: int}>,
-     *     currencies: list<string>,
+     *     paidCurrencies: list<string>,
+     *     waitingCurrencies: list<string>,
      *     paidTotal: array<string, float>,
      *     waitingTotal: array<string, float>,
      *     paidCount: int,
@@ -26,13 +31,14 @@ readonly class FinancesStatisticsService
      *     tiers: list<array{price: int|null, scarf: bool|null, paidCount: int, waitingCount: int}>,
      * }
      */
-    public function createFinancesReport(Event $event, array $payments): array
+    public function createFinancesReport(Event $event): array
     {
+        $payments = $this->paymentRepository->getNotCanceledEventPayments($event);
+
         $tiers = $event->getEventType()->getFinanceTiers($event);
         $showScarves = $tiers !== [];
 
         $months = [];
-        $currencies = [];
         $paidTotal = [];
         $waitingTotal = [];
         $paidCount = 0;
@@ -49,12 +55,7 @@ readonly class FinancesStatisticsService
         $otherTier = ['price' => null, 'scarf' => null, 'paidCount' => 0, 'waitingCount' => 0];
 
         foreach ($payments as $payment) {
-            if ($payment->status === PaymentStatus::Canceled) {
-                continue;
-            }
-
             $currency = Payment::normalizeCurrency($payment->currency) ?? $payment->currency;
-            $currencies[$currency] = true;
             $price = (float)$payment->price;
             $hasScarf = $showScarves && $payment->participant->scarf === Participant::SCARF_YES;
             $isPaid = $payment->status === PaymentStatus::Paid;
@@ -102,16 +103,19 @@ readonly class FinancesStatisticsService
             $months[self::MONTH_UNKNOWN] = $unknownMonth;
         }
 
-        $currencyList = array_keys($currencies);
-        sort($currencyList);
+        $paidCurrencies = array_keys($paidTotal);
+        sort($paidCurrencies);
+        $waitingCurrencies = array_keys($waitingTotal);
+        sort($waitingCurrencies);
 
-        if ($showScarves) {
+        if ($showScarves && ($otherTier['paidCount'] > 0 || $otherTier['waitingCount'] > 0)) {
             $tierStats[] = $otherTier;
         }
 
         return [
             'months' => $months,
-            'currencies' => $currencyList,
+            'paidCurrencies' => $paidCurrencies,
+            'waitingCurrencies' => $waitingCurrencies,
             'paidTotal' => $paidTotal,
             'waitingTotal' => $waitingTotal,
             'paidCount' => $paidCount,

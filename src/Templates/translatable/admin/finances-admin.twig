@@ -12,7 +12,7 @@
             <thead>
             <tr>
                 <th style="text-align: left">{{ 'finances-admin.month' | trans }}</th>
-                {% for currency in report.currencies %}
+                {% for currency in report.paidCurrencies %}
                     <th style="text-align: left">{{ currency }}</th>
                 {% endfor %}
                 {% if report.showScarves %}
@@ -23,8 +23,8 @@
             <tbody>
             {% for month, row in report.months %}
                 <tr>
-                    <th>{{ month == 'unknown' ? ('finances-admin.unknownMonth' | trans) : month }}</th>
-                    {% for currency in report.currencies %}
+                    <th>{{ month == monthUnknown ? ('finances-admin.unknownMonth' | trans) : month }}</th>
+                    {% for currency in report.paidCurrencies %}
                         <td>{{ row.sums[currency]|default(0) }}</td>
                     {% endfor %}
                     {% if report.showScarves %}
@@ -34,7 +34,7 @@
             {% endfor %}
             <tr>
                 <th>{{ 'finances-admin.total' | trans }} ({{ report.paidCount }})</th>
-                {% for currency in report.currencies %}
+                {% for currency in report.paidCurrencies %}
                     <td>{{ report.paidTotal[currency]|default(0) }}</td>
                 {% endfor %}
                 {% if report.showScarves %}
@@ -51,7 +51,7 @@
             <thead>
             <tr>
                 <th style="text-align: left">{{ 'finances-admin.waitingCount' | trans }}</th>
-                {% for currency in report.currencies %}
+                {% for currency in report.waitingCurrencies %}
                     <th style="text-align: left">{{ currency }}</th>
                 {% endfor %}
                 {% if report.showScarves %}
@@ -62,7 +62,7 @@
             <tbody>
             <tr>
                 <td>{{ report.waitingCount }}</td>
-                {% for currency in report.currencies %}
+                {% for currency in report.waitingCurrencies %}
                     <td>{{ report.waitingTotal[currency]|default(0) }}</td>
                 {% endfor %}
                 {% if report.showScarves %}
@@ -86,19 +86,17 @@
                 </thead>
                 <tbody>
                 {% for tier in report.tiers %}
-                    {% if tier.price is not null or tier.paidCount > 0 or tier.waitingCount > 0 %}
-                        <tr>
-                            <th>
-                                {% if tier.price is null %}
-                                    {{ 'finances-admin.otherTier' | trans }}
-                                {% else %}
-                                    {{ tier.price }} {{ (tier.scarf ? 'finances-admin.withScarf' : 'finances-admin.withoutScarf') | trans }}
-                                {% endif %}
-                            </th>
-                            <td>{{ tier.paidCount }}</td>
-                            <td>{{ tier.waitingCount }}</td>
-                        </tr>
-                    {% endif %}
+                    <tr>
+                        <th>
+                            {% if tier.price is null %}
+                                {{ 'finances-admin.otherTier' | trans }}
+                            {% else %}
+                                {{ tier.price }} {{ (tier.scarf ? 'finances-admin.withScarf' : 'finances-admin.withoutScarf') | trans }}
+                            {% endif %}
+                        </th>
+                        <td>{{ tier.paidCount }}</td>
+                        <td>{{ tier.waitingCount }}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
