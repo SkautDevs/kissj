@@ -9,6 +9,7 @@ use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\Event\Event;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Participant;
 
@@ -33,6 +34,22 @@ class EventTypeKorbo extends EventType
         }
 
         return $price;
+    }
+
+    /**
+     * @return list<array{price: int, scarf: bool}>
+     */
+    #[\Override]
+    public function getFinanceTiers(Event $event): array
+    {
+        $basePrice = $event->defaultPrice;
+
+        return [
+            ['price' => $basePrice, 'scarf' => false],
+            ['price' => $basePrice + self::LOW_PRICE_BUFFER, 'scarf' => false],
+            ['price' => $basePrice + self::SCARF_PRICE, 'scarf' => true],
+            ['price' => $basePrice + self::LOW_PRICE_BUFFER + self::SCARF_PRICE, 'scarf' => true],
+        ];
     }
 
     #[\Override]

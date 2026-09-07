@@ -47,6 +47,16 @@ abstract class EventType
         return $participant->getUserButNotNull()->event->defaultPrice;
     }
 
+    /**
+     * price tiers for the finances report; empty means no scarf/tier breakdown for this event type
+     *
+     * @return list<array{price: int, scarf: bool}>
+     */
+    public function getFinanceTiers(Event $event): array
+    {
+        return [];
+    }
+
     public function isFullForParticipant(
         Participant $participant,
         int $closedSameRoleSameContingentParticipantsCount,
