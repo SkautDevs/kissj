@@ -608,7 +608,7 @@ class AppTestCase extends TestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    protected function createAdminUser(App $app): User
+    protected function createAdminUser(App $app, UserRole $role = UserRole::Admin): User
     {
         $userRepository = $this->getService($app, UserRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -616,8 +616,8 @@ class AppTestCase extends TestCase
 
         $user = new User();
         $user->event = $testEvent;
-        $user->role = UserRole::Admin;
-        $user->email = 'admin@example.com';
+        $user->role = $role;
+        $user->email = $role->value . '@example.com';
         $user->loginType = UserLoginType::Email;
         $userRepository->persist($user);
 

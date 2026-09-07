@@ -381,7 +381,8 @@ class Route
                     })->add(ShowFoodStatsAllowedOnly::class);
 
                     $app->get('/finances', AdminEventController::class . '::showFinances')
-                        ->setName('admin-finances');
+                        ->setName('admin-finances')
+                        ->add(AdminPaymentsOnlyMiddleware::class);
 
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')

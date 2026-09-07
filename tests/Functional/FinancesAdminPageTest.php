@@ -13,6 +13,7 @@ use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
 use kissj\User\UserRepository;
+use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
@@ -63,10 +64,10 @@ class FinancesAdminPageTest extends AppTestCase
      * @param App<ContainerInterface> $app
      * @return App<ContainerInterface>
      */
-    private function loginAdminForEvent(App $app, Event $event): App
+    private function loginAdminForEvent(App $app, Event $event, UserRole $role = UserRole::Admin): App
     {
         $userRepository = $this->getService($app, UserRepository::class);
-        $adminUser = $this->createAdminUser($app);
+        $adminUser = $this->createAdminUser($app, $role);
         $adminUser->status = UserStatus::Open;
         $adminUser->event = $event;
         $userRepository->persist($adminUser);
@@ -125,6 +126,17 @@ class FinancesAdminPageTest extends AppTestCase
         self::assertStringContainsString('se šátkem', $body);
         self::assertStringContainsString('bez šátku', $body);
         self::assertStringContainsString('šátky', $body);
+    }
+
+    public function testFinancesPageRedirectsAdminNotEligibleToHandlePayments(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+
+        $app = $this->loginAdminForEvent($app, $event, UserRole::IstAdmin);
+        $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/admin/finances'));
+
+        self::assertSame(302, $response->getStatusCode());
     }
 
     public function testDashboardLinksToFinances(): void
