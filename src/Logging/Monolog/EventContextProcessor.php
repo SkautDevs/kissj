@@ -19,6 +19,7 @@ readonly class EventContextProcessor implements ProcessorInterface
     {
         $event = $this->event;
         $record = $record->with(context: [
+            ...$record->context,
             'event' => [
                 'id' => $event?->id,
                 'slug' => $event?->slug,

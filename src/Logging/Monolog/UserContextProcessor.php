@@ -20,6 +20,7 @@ readonly class UserContextProcessor implements ProcessorInterface
         $user = $this->user;
 
         $record = $record->with(context: [
+            ...$record->context,
             'user' => [
                 'authenticated' => $user instanceof User,
                 'id' => $user?->id,
