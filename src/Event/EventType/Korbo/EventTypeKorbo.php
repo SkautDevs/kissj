@@ -39,6 +39,8 @@ class EventTypeKorbo extends EventType
     /**
      * @return list<array{price: int, scarf: bool}>
      */
+    // tiers derive from the event's CURRENT defaultPrice, but payment prices are frozen at creation -
+    // a later defaultPrice change dumps older payments into the report's 'other' row
     #[\Override]
     public function getFinanceTiers(Event $event): array
     {
