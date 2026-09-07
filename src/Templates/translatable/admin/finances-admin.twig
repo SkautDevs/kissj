@@ -1,0 +1,107 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-small btn-grey">{{ 'finances-admin.back' | trans }}</a>
+    </div>
+
+    <div class="card">
+        <h3>{{ 'finances-admin.paidHeader' | trans }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <th style="text-align: left">{{ 'finances-admin.month' | trans }}</th>
+                {% for currency in report.currencies %}
+                    <th style="text-align: left">{{ currency }}</th>
+                {% endfor %}
+                {% if report.showScarves %}
+                    <th style="text-align: left">{{ 'finances-admin.scarves' | trans }}</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for month, row in report.months %}
+                <tr>
+                    <th>{{ month == 'unknown' ? ('finances-admin.unknownMonth' | trans) : month }}</th>
+                    {% for currency in report.currencies %}
+                        <td>{{ row.sums[currency]|default(0) }}</td>
+                    {% endfor %}
+                    {% if report.showScarves %}
+                        <td>{{ row.scarves }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            <tr>
+                <th>{{ 'finances-admin.total' | trans }} ({{ report.paidCount }})</th>
+                {% for currency in report.currencies %}
+                    <td>{{ report.paidTotal[currency]|default(0) }}</td>
+                {% endfor %}
+                {% if report.showScarves %}
+                    <td>{{ report.paidScarves }}</td>
+                {% endif %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>{{ 'finances-admin.waitingHeader' | trans }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <th style="text-align: left">{{ 'finances-admin.waitingCount' | trans }}</th>
+                {% for currency in report.currencies %}
+                    <th style="text-align: left">{{ currency }}</th>
+                {% endfor %}
+                {% if report.showScarves %}
+                    <th style="text-align: left">{{ 'finances-admin.scarves' | trans }}</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ report.waitingCount }}</td>
+                {% for currency in report.currencies %}
+                    <td>{{ report.waitingTotal[currency]|default(0) }}</td>
+                {% endfor %}
+                {% if report.showScarves %}
+                    <td>{{ report.waitingScarves }}</td>
+                {% endif %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if report.showScarves %}
+        <div class="card">
+            <h3>{{ 'finances-admin.tiersHeader' | trans }}</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th style="text-align: left">{{ 'finances-admin.price' | trans }}</th>
+                    <th style="text-align: left">{{ 'finances-admin.paidColumn' | trans }}</th>
+                    <th style="text-align: left">{{ 'finances-admin.waitingColumn' | trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tier in report.tiers %}
+                    {% if tier.price is not null or tier.paidCount > 0 or tier.waitingCount > 0 %}
+                        <tr>
+                            <th>
+                                {% if tier.price is null %}
+                                    {{ 'finances-admin.otherTier' | trans }}
+                                {% else %}
+                                    {{ tier.price }} {{ (tier.scarf ? 'finances-admin.withScarf' : 'finances-admin.withoutScarf') | trans }}
+                                {% endif %}
+                            </th>
+                            <td>{{ tier.paidCount }}</td>
+                            <td>{{ tier.waitingCount }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
