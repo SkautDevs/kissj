@@ -12,6 +12,9 @@ use kissj\Event\EventRepository;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Payment\Payment;
+use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentStatus;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
@@ -541,6 +544,49 @@ class AppTestCase extends TestCase
     protected function createOpenIst(ContainerInterface $container, string $firstName, string $lastName): Participant
     {
         return $this->createIst($container, $firstName, $lastName, UserStatus::Open);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createFinancesPayment(
+        App $app,
+        Event $event,
+        PaymentStatus $status,
+        string $price,
+        ?string $paidAt = null,
+        string $currency = 'Kč',
+        string $scarf = Participant::SCARF_NO,
+    ): Payment {
+        $userService = $this->getService($app, UserService::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $paymentRepository = $this->getService($app, PaymentRepository::class);
+
+        $email = 'finances-' . bin2hex(random_bytes(4)) . '@example.com';
+        $user = $userService->registerEmailUser($email, $event);
+        $participant = $userService->createParticipantSetRole($user, 'ist');
+        $participant->scarf = $scarf;
+        $participantRepository->persist($participant);
+
+        $payment = new Payment();
+        $payment->participant = $participant;
+        $payment->status = $status;
+        $payment->price = $price;
+        $payment->currency = $currency;
+        $payment->variableSymbol = (string)random_int(1000000000, 9999999999);
+        $payment->purpose = 'event fee';
+        $payment->accountNumber = '';
+        $payment->iban = '';
+        $payment->swift = '';
+        $payment->constantSymbol = '';
+        $payment->note = '';
+        $payment->due = DateTimeUtils::getDateTime('+14 days');
+        if ($paidAt !== null) {
+            $payment->paidAt = DateTimeUtils::getDateTime($paidAt);
+        }
+        $paymentRepository->persist($payment);
+
+        return $payment;
     }
 
     /**
