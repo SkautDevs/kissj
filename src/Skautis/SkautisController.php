@@ -31,11 +31,12 @@ class SkautisController extends AbstractController
         $this->skautisService->initSkautis($event->skautisAppId);
 
         $rawBody = $request->getParsedBody();
-        /** @var array<string, string> $parsedBody */
+        /** @var array<string, mixed> $parsedBody */
         $parsedBody = is_array($rawBody) ? $rawBody : [];
-        $this->skautisService->saveDataFromPost($parsedBody);
-
-        if (!$this->skautisService->isUserLoggedIn()) {
+        if (
+            !$this->skautisService->saveDataFromPost($parsedBody)
+            || !$this->skautisService->isUserLoggedIn()
+        ) {
             $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
 
             return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);

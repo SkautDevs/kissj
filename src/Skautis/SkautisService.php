@@ -65,11 +65,20 @@ class SkautisService
     }
 
     /**
-     * @param array<string,string> $parsedBody
+     * @param array<string, mixed> $parsedBody
      */
-    public function saveDataFromPost(array $parsedBody): void
+    public function saveDataFromPost(array $parsedBody): bool
     {
-        $this->skautis->setLoginData($parsedBody);
+        try {
+            // array-valued fields (`field[]=x`) would reach DateTime::createFromFormat as a TypeError
+            $this->skautis->setLoginData(array_filter($parsedBody, 'is_string'));
+        } catch (SkautisException $e) {
+            $this->logger->warning('Failed to read Skautis login data', ['reason' => $e->getMessage()]);
+
+            return false;
+        }
+
+        return true;
     }
 
     public function isUserLoggedIn(): bool
