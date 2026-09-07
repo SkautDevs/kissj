@@ -83,6 +83,7 @@ use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Participant\TshirtService;
 use kissj\ParticipantVendor\ParticipantVendorController;
+use kissj\Payment\FinancesStatisticsService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
@@ -253,6 +254,7 @@ class Settings
             PatrolLeadersOnlyMiddleware::class => autowire(),
             PatrolParticipantRepository::class => autowire(),
             PatrolService::class => autowire(),
+            FinancesStatisticsService::class => autowire(),
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
             PaymentTransferService::class => autowire(),
