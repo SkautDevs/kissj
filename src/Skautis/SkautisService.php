@@ -117,7 +117,7 @@ class SkautisService
                 $skautisUserDetailExternal->LastName ?? '',
                 $skautisUserDetailExternal->NickName ?? '',
                 DateTimeUtils::getDateTime($skautisUserDetailExternal->Birthday),
-                $skautisUserDetailExternal->Email,
+                $skautisUserDetailExternal->Email ?? '',
                 $skautisUserDetailExternal->Phone ?? '',
                 $skautisUserDetailExternal->Street ?? '',
                 $skautisUserDetailExternal->City ?? '',
