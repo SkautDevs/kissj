@@ -57,7 +57,35 @@
             user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
         }
 
-        {{ event.getEventType.getEventSpecificStyles }}
+        .footer-logo {
+            margin: 20px;
+            width: 200px;
+        }
+
+        .email-body {
+            margin: 0;
+            padding: 0 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .footer-item {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+        }
+
+        {{ eventEmailCss|default('')|raw }}
     </style>
 </head>
 <body class="email-body">

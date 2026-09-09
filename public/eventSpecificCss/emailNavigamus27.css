@@ -1,0 +1,27 @@
+/* the full-color logo is allowed only on white or purple, so keep its white card in mail too */
+.footer-logo {
+    background: #ffffff;
+    padding: 14px 18px;
+    border-radius: 6px;
+    width: 230px;
+}
+
+a {
+    color: #2b1977;
+}
+
+.btn {
+    background-color: #1b0e44;
+    color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #b7a9e8;
+    }
+
+    .btn {
+        background-color: #ffffff;
+        color: #241356;
+    }
+}

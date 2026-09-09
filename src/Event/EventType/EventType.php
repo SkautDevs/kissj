@@ -379,4 +379,9 @@ abstract class EventType
     {
         return null;
     }
+
+    public function getEmailStylesheetNameWithoutLeadingSlash(): ?string
+    {
+        return null;
+    }
 }

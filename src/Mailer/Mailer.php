@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Mailer;
 
+use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
 use kissj\Participant\Gender;
 use kissj\Participant\Participant;
@@ -290,6 +291,7 @@ readonly class Mailer
         $email->context(array_merge($parameters, [
             'fullRegistrationLink' => $this->settings->getFullUrlLink(),
             'eventImageExists' => is_file(__DIR__ . '/../../public/' . $event->logoUrl),
+            'eventEmailCss' => $this->getEventEmailCss($event),
             'genderSuffix' => $this->resolveGenderSuffix($participant),
         ]));
         array_map(fn (string $attachment) => $email->attach($attachment), $attachments);
@@ -306,6 +308,39 @@ readonly class Mailer
             $subject,
             $templateName,
         ));
+    }
+
+    private function getEventEmailCss(Event $event): string
+    {
+        $stylesheetName = $event->getEventType()->getEmailStylesheetNameWithoutLeadingSlash();
+
+        return $stylesheetName === null ? '' : $this->loadPublicCss($stylesheetName);
+    }
+
+    private function loadPublicCss(string $filename): string
+    {
+        $path = __DIR__ . '/../../public/' . $filename;
+        if (!is_file($path)) {
+            $this->logger->error(sprintf(
+                'Event email stylesheet %s is missing — sending mail without event styles',
+                $filename,
+            ));
+
+            return '';
+        }
+
+        $css = file_get_contents($path);
+        // only reachable outside HTTP requests - inside them, it would be a 500
+        if ($css === false) {
+            $this->logger->error(sprintf(
+                'Event email stylesheet %s is unreadable — sending mail without event styles',
+                $filename,
+            ));
+
+            return '';
+        }
+
+        return $css;
     }
 
     /**

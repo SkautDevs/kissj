@@ -127,6 +127,12 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
+    public function getEmailStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/emailObrok27.css';
+    }
+
+    #[\Override]
     public function getScriptNameWithoutLeadingSlash(): string
     {
         return 'obrok27/istCode.js';

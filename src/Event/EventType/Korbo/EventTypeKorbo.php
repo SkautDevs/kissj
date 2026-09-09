@@ -114,6 +114,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function getEmailStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/emailKorbo.css';
+    }
+
+    #[\Override]
     public function isBadgeGenerationAllowed(): bool
     {
         return false;

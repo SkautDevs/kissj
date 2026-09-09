@@ -1,0 +1,24 @@
+.footer-logo {
+    width: auto;
+    height: 160px;
+}
+
+a {
+    color: #6122eb;
+}
+
+.btn {
+    background-color: #101010;
+    color: #f9f9f9;
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #8b5cf6;
+    }
+
+    .btn {
+        background-color: #c2ea3a;
+        color: #1c1c1c;
+    }
+}

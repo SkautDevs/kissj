@@ -93,6 +93,12 @@ class EventTypeNavigamus extends EventType
     }
 
     #[\Override]
+    public function getEmailStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/emailNavigamus27.css';
+    }
+
+    #[\Override]
     public function getScriptNameWithoutLeadingSlash(): string
     {
         return 'navigamus27/tentacle.js';
