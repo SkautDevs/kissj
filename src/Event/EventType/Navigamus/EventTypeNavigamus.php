@@ -136,6 +136,7 @@ class EventTypeNavigamus extends EventType
     {
         return [
             'cs' => '🇨🇿 Česky',
+            'sk' => '🇸🇰 Slovensky',
         ];
     }
 
