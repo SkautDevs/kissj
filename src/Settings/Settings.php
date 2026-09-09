@@ -83,6 +83,7 @@ use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
 use kissj\Participant\TshirtService;
 use kissj\ParticipantVendor\ParticipantVendorController;
+use kissj\Payment\FinancesStatisticsService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
@@ -226,6 +227,7 @@ class Settings
             EventService::class => autowire(),
             ExportController::class => autowire(),
             ExportService::class => autowire(),
+            FinancesStatisticsService::class => autowire(),
             FioBankPaymentService::class => autowire(),
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),

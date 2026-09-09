@@ -366,6 +366,16 @@ th {
 	color: white;
 }
 
+table.table-wide {
+	width: 100%;
+}
+
+table.table-wide th,
+table.table-wide td {
+	padding: 6px 12px;
+	text-align: left;
+}
+
 tr:nth-child(even) {
 	background: var(--color-background);
 }

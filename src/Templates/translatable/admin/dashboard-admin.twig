@@ -162,6 +162,10 @@
                     <a href="{{ url_for('admin-food-stats', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.foodCount' | trans }}</a><br/>
                 {% endif %}
+                {% if user.role.isEligibleToHandlePayments %}
+                    <a href="{{ url_for('admin-finances', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.financesReport' | trans }}</a><br/>
+                {% endif %}
                 {% if event.allowOrganizingTeam %}
                     <a href="{{ url_for('admin-organizing-team', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.organizingTeam' | trans }}</a><br/>

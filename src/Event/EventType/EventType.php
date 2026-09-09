@@ -19,6 +19,7 @@ use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Deal\EventDeal;
+use kissj\Payment\FinanceTier;
 use kissj\Payment\Payment;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
@@ -45,6 +46,14 @@ abstract class EventType
         }
 
         return $participant->getUserButNotNull()->event->defaultPrice;
+    }
+
+    /**
+     * @return list<FinanceTier>
+     */
+    public function getFinanceTiers(Event $event): array
+    {
+        return [];
     }
 
     public function isFullForParticipant(

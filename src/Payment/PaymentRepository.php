@@ -8,6 +8,7 @@ use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
+use LeanMapper\Fluent;
 use RuntimeException;
 
 class PaymentRepository extends Repository
@@ -84,12 +85,25 @@ class PaymentRepository extends Repository
     /**
      * @return Payment[]
      */
+    public function getNotCanceledEventPayments(Event $event): array
+    {
+        $qb = $this->createEventPaymentsFluent($event);
+        $qb->where('payment.status != %s', PaymentStatus::Canceled);
+
+        /** @var list<Row> $rows */
+        $rows = $qb->fetchAll();
+        /** @var Payment[] $payments */
+        $payments = $this->createEntities($rows);
+
+        return $payments;
+    }
+
+    /**
+     * @return Payment[]
+     */
     private function getEventPayments(Event $event): array
     {
-        $qb = $this->createFluent();
-        $qb->join('participant')->as('participant')->on('participant.id = payment.participant_id');
-        $qb->join('user')->as('u')->on('u.id = participant.user_id');
-        $qb->where('u.event_id = %i', $event->id);
+        $qb = $this->createEventPaymentsFluent($event);
         $qb->where('payment.status = %s', PaymentStatus::Waiting);
 
         /** @var list<Row> $rows */
@@ -98,5 +112,15 @@ class PaymentRepository extends Repository
         $waitingEventPayments = $this->createEntities($rows);
 
         return $waitingEventPayments;
+    }
+
+    private function createEventPaymentsFluent(Event $event): Fluent
+    {
+        $qb = $this->createFluent();
+        $qb->join('participant')->as('participant')->on('participant.id = payment.participant_id');
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.event_id = %i', $event->id);
+
+        return $qb;
     }
 }
