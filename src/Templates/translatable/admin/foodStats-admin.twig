@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.foodStats' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card">
         <a href="{{ url_for('admin-export-food', {'eventSlug': event.slug}) }}"

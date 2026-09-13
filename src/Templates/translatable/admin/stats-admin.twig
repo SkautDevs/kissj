@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.stats' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card">
         <h2>{{ 'stats-admin.stats' | trans }} {{ event.readableName }}</h2>

@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.dashboard' | trans }}{% endblock %}
+
 {% block content %}
 {% set celebrationTemplate = event.eventType.getCelebrationTemplate() %}
 {% if (celebrate ?? false) and celebrationTemplate %}

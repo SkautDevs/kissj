@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.deny' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card card-half">
         <h2>{{ 'deny-admin.deny' | trans }} {{ ('role.' ~ participant.role.value)|trans }}</h2>
