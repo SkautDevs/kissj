@@ -1,0 +1,77 @@
+ARG COMPOSER_VERSION=2.9
+
+# Composer
+FROM docker.io/library/composer:${COMPOSER_VERSION} AS composer
+
+FROM quay.io/centos/centos:stream10-minimal
+
+ARG GIT_HASH=dev
+ENV GIT_HASH=${GIT_HASH}
+
+LABEL GIT_HASH=${GIT_HASH}
+
+ENV APP_DIR=/var/www/html
+
+WORKDIR ${APP_DIR}
+RUN curl -SL -o /tmp/static-php-1-0.noarch.rpm https://rpm.henderkes.com/static-php-1-0.noarch.rpm
+RUN rpm --install /tmp/static-php-1-0.noarch.rpm
+RUN microdnf install -y \
+        ca-certificates \
+        vim \
+        git \
+        unzip \
+        nss-tools
+
+RUN microdnf install -y \
+            frankenphp \
+            php-zts-pgsql \
+            php-zts-pdo \
+            php-zts-pdo_pgsql \
+            php-zts-gd \
+            php-zts-soap \
+            php-zts-redis \
+            php-zts-opcache
+
+RUN microdnf clean all
+
+# Simple app user
+RUN groupadd -g 1001 www-data && \
+     useradd -u 1001 -g www-data -s /sbin/nologin -d ${APP_DIR} -M www-data
+
+#PHP binary wrapper
+COPY ./deploy/container_images/frankenphp/php-wrapper.sh /usr/local/bin/php
+RUN chmod +x /usr/local/bin/php
+
+# Composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
+# PHP config
+RUN mkdir -p /usr/local/etc/php/conf.d
+
+COPY ./deploy/container_images/php/php.ini /etc/php-zts/php.ini
+
+COPY ./deploy/container_images/php/10-opcache.ini /etc/php-zts/conf.d/10-opcache.ini
+
+# Caddy/FrankenPHP config
+COPY ./deploy/container_images/frankenphp/Caddyfile /etc/Caddyfile
+
+#copy app
+COPY ./composer.json ${APP_DIR}/composer.json
+COPY ./composer.lock ${APP_DIR}/composer.lock
+COPY ./src ${APP_DIR}/src
+COPY ./public ${APP_DIR}/public
+COPY ./bin ${APP_DIR}/bin
+
+RUN COMPOSER_ALLOW_SUPERUSER=1 \
+    composer install \
+        --no-dev \
+        --no-interaction \
+        --optimize-autoloader
+
+RUN chown -R www-data:www-data ${APP_DIR}
+
+USER www-data
+
+EXPOSE 8080
+
+CMD ["frankenphp", "run", "--config", "/etc/Caddyfile"]
