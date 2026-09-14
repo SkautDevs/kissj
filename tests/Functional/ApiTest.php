@@ -19,6 +19,9 @@ use kissj\User\UserRepository;
 use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use Monolog\Handler\TestHandler;
+use Monolog\Level;
+use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Slim\Psr7\Factory\StreamFactory;
@@ -169,8 +172,13 @@ class ApiTest extends AppTestCase
         }
     }
 
-    private function createPaidParticipant(ContainerInterface $container): Participant
-    {
+    private function createIstParticipant(
+        ContainerInterface $container,
+        string $email,
+        string $firstName,
+        string $lastName,
+        UserStatus $status,
+    ): Participant {
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);
         /** @var EventRepository $eventRepository */
@@ -188,14 +196,13 @@ class ApiTest extends AppTestCase
         $eventRepository->persist($event);
 
         // Create user and IST participant
-        $email = 'entry-test@example.com';
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
         // Get as IST and fill required fields
         $ist = $istRepository->get($participant->id);
-        $ist->firstName = 'Entry';
-        $ist->lastName = 'Test';
+        $ist->firstName = $firstName;
+        $ist->lastName = $lastName;
         $ist->nickname = 'Tester';
         $ist->permanentResidence = '123 Test St';
         $ist->gender = 'male';
@@ -204,13 +211,23 @@ class ApiTest extends AppTestCase
         $ist->setTshirt('detail.tshirtGenderMale', 'detail.tshirtXL');
         $istRepository->persist($ist);
 
-        // Set user as paid (required for entry)
-        $user->status = UserStatus::Paid;
+        $user->status = $status;
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
         $userRepository->persist($user);
 
         return $istRepository->get($ist->id);
+    }
+
+    private function createPaidParticipant(ContainerInterface $container): Participant
+    {
+        return $this->createIstParticipant($container, 'entry-test@example.com', 'Entry', 'Test', UserStatus::Paid);
+    }
+
+    // AppTestCase::createOpenIst() targets event 'test-slug', not 'test-event-slug'.
+    private function createOpenParticipant(ContainerInterface $container): Participant
+    {
+        return $this->createIstParticipant($container, 'entry-test-open@example.com', 'Open', 'Ist', UserStatus::Open);
     }
 
     private function createPaidOrganizer(ContainerInterface $container): Participant
@@ -291,6 +308,60 @@ class ApiTest extends AppTestCase
         $ot = $body['roles']['ot'][$organizer->id];
         self::assertIsArray($ot);
         self::assertSame('Orga', $ot['firstname']);
+    }
+
+    public function testEntryListWithoutPaidOnlyLogsWarningAndDefaultsToPaidOnly(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $this->setupEventApiKeys($container);
+        $paid = $this->createPaidParticipant($container);
+        $open = $this->createOpenParticipant($container);
+        $logHandler = new TestHandler(Level::Warning);
+        $this->getService($app, Logger::class)->pushHandler($logHandler);
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
+        $response = $app->handle($request);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
+        self::assertIsArray($body['roles']);
+        self::assertIsArray($body['roles']['ist']);
+        self::assertArrayHasKey($paid->id, $body['roles']['ist']);
+        self::assertArrayNotHasKey($open->id, $body['roles']['ist']);
+
+        self::assertTrue($logHandler->hasWarningThatContains(
+            'Missing data about status filtering of entry app participant list, using default "Paid only"',
+        ));
+        self::assertCount(1, $logHandler->getRecords());
+        self::assertFalse($logHandler->hasAlertRecords());
+    }
+
+    public function testEntryListWithPaidOnlyFalseIncludesUnpaidWithoutWarning(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $this->setupEventApiKeys($container);
+        $paid = $this->createPaidParticipant($container);
+        $open = $this->createOpenParticipant($container);
+        $logHandler = new TestHandler(Level::Warning);
+        $this->getService($app, Logger::class)->pushHandler($logHandler);
+
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET)
+            ->withQueryParams(['paidOnly' => '0']);
+        $response = $app->handle($request);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
+        self::assertIsArray($body['roles']);
+        self::assertIsArray($body['roles']['ist']);
+        self::assertArrayHasKey($paid->id, $body['roles']['ist']);
+        self::assertArrayHasKey($open->id, $body['roles']['ist']);
+
+        self::assertFalse($logHandler->hasWarningRecords());
+        self::assertFalse($logHandler->hasAlertRecords());
     }
 
     public function testWrongScopeKeyReturns401(): void

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Entry;
 
-use Exception;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
@@ -31,14 +30,14 @@ class EntryController extends AbstractController
         Response $response,
         Event $authorizedEvent,
     ): Response {
-
-        try {
-            $filterPaidonly = (bool)$request->getQueryParams()['paidOnly'];
-        } catch (Exception $e) {
-            $this->logger->alert("Missing data about status filtering of entry app participant list, using default \"Paid only\"");
-            $filterPaidonly = true;
+        $queryParams = $request->getQueryParams();
+        $filterPaidOnly = true;
+        if (array_key_exists('paidOnly', $queryParams)) {
+            $filterPaidOnly = (bool)$queryParams['paidOnly'];
+        } else {
+            $this->logger->warning('Missing data about status filtering of entry app participant list, using default "Paid only"');
         }
-        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidonly);
+        $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidOnly);
         foreach ($participants as $role => $roleParticipants) {
             foreach ($roleParticipants as $id => $entryParticipant) {
                 $participants[$role][$id] = $this->tshirtService->translateEntryParticipantTree($entryParticipant);
