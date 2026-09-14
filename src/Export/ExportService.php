@@ -173,21 +173,22 @@ readonly class ExportService
             'uploadedChildWorkCertOriginalFilename',
             'uploadedAdultEventCertOriginalFilename',
             'printedHandbook',
-            'notes', // 35
+            'emergencyContact', // 35
+            'notes',
             'updatedAt',
             'registrationCloseDate',
             'registrationApproveDate',
-            'registrationPayDate',
-            'entryDate', // 40
+            'registrationPayDate', // 40
+            'entryDate',
             'leaveDate',
             'patrolOrTroopLeaderId',
             'patrolName',
-            'patrolParticipantCount',
-            'istSkills', // 45
+            'patrolParticipantCount', // 45
+            'istSkills',
             'istPreferredPosition',
             'driverLicense',
             'tieCode',
-            'deals',
+            'deals', // 50
         ]];
 
         foreach ($participants as $participant) {
@@ -271,12 +272,13 @@ readonly class ExportService
                     $participant->uploadedChildWorkCertOriginalFilename ?? '',
                     $participant->uploadedAdultEventCertOriginalFilename ?? '',
                     $participant->printedHandbook !== null ? (string)$participant->printedHandbook : '',
-                    $participant->notes ?? '', // 35
+                    $participant->emergencyContact ?? '', // 35
+                    $participant->notes ?? '',
                     $participant->updatedAt !== null ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
                     $participant->registrationCloseDate !== null ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
                     $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
-                    $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '',
-                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '', // 40
+                    $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '', // 40
+                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '',
                     $participant->leaveDate !== null ? $participant->leaveDate->format('d. m. Y H:i:s') : '',
                 ],
                 $ptPart,
