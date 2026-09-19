@@ -31,6 +31,7 @@ dashboard:
     youHaveTroop: "Si v skupine %troopName% s vedúcim skupiny %troopLeaderFullName%"
     details: "podrobnosti"
     tieCode: "Osobný kód"
+    tieCodeIst: "Osobný kód servisáka"
     listOfParticipants: "Zoznam účastníkov"
     addFromSkautis: "Pridať účastníkov zo Skautisu"
     addFromSkautisDisabled: "Pre import účastníkov sa prihlás cez Skautis"

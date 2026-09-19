@@ -15,7 +15,7 @@
     {% include('widgets/userCustomHelp.twig') %}
     
     {% if person is eligibleForShowTieCode %}
-        <h2>{{ 'dashboard.tieCode' | trans }} - {{ person.tieCode }}</h2>
+        <h2>{{ (person.role.value == 'ist' ? 'dashboard.tieCodeIst' : 'dashboard.tieCode') | trans }} - {{ person.tieCode }}</h2>
     {% endif %}
 
     {% if event.eventtype.showReceiptToParticipant(person) %}

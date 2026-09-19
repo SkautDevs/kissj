@@ -21,6 +21,7 @@ use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -246,7 +247,10 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
     public function testEligibleForShowTieCodeFalseForPaidIstOnOwnerTransferEvent(): void
     {
         $app = $this->getTestApp();
-        $event = $this->getObrokTestEvent($app);
+        // Korbo allows owner transfer but, unlike Obrok, does not show the code to ISTs in every status
+        $this->setEventType($app->getContainer(), 'korbo', 'korbo-owner-transfer');
+        $event = $this->getService($app, EventRepository::class)->findBySlug('korbo-owner-transfer');
+        self::assertNotNull($event);
 
         // Paid participants have already received a ticket, so their code must stay hidden
         // even on an owner-transfer event - proves the clause checks status, not just event type
@@ -254,6 +258,54 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $participant = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($giver);
 
         self::assertFalse($this->eligibleForShowTieCode($app, $participant));
+    }
+
+    #[DataProvider('allIstStatuses')]
+    public function testEligibleForShowTieCodeTrueForObrokIstInEveryStatus(UserStatus $status): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+
+        $ist = $this->createIst($app, $event, 'obrok-ist-code-' . uniqid('', true) . '@example.com', $status, 'Obrok', 'Ist');
+        $participant = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($ist);
+
+        self::assertTrue($this->eligibleForShowTieCode($app, $participant));
+    }
+
+    /**
+     * @return array<string, array{UserStatus}>
+     */
+    public static function allIstStatuses(): array
+    {
+        return [
+            'open' => [UserStatus::Open],
+            'closed' => [UserStatus::Closed],
+            'approved' => [UserStatus::Approved],
+            'paid' => [UserStatus::Paid],
+            'cancelled' => [UserStatus::Cancelled],
+        ];
+    }
+
+    public function testDashboardShowsIstTieCodeOnObrok(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+
+        $ist = $this->createIst($app, $event, 'obrok-ist-code-' . uniqid('', true) . '@example.com', UserStatus::Open, 'Obrok', 'Ist');
+        $tieCode = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($ist)->tieCode;
+
+        $_SESSION['user'] = ['id' => $ist->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'));
+
+        $label = $this->getService($app, TranslatorInterface::class)->trans('dashboard.tieCodeIst');
+        self::assertNotSame('dashboard.tieCodeIst', $label);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString(
+            $label . ' - ' . $tieCode,
+            (string) $response->getBody(),
+        );
     }
 
     public function testEligibleForShowTieCodeFalseForTroopParticipantWithLeaderOnOwnerTransferEvent(): void

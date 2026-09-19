@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Settings;
 
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -63,6 +64,9 @@ class TwigExtension extends AbstractExtension
                     $participant->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed()
                     && $participant->getUserButNotNull()->status === UserStatus::Approved
                     && !$participant instanceof TroopParticipant
+                ) || (
+                    $participant instanceof Ist
+                    && $participant->getUserButNotNull()->event->getEventType()->isTieCodeShownToIst()
                 )
             ),
         ];

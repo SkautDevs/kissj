@@ -220,4 +220,10 @@ class EventTypeObrok extends EventType
     {
         return true;
     }
+
+    #[\Override]
+    public function isTieCodeShownToIst(): bool
+    {
+        return true;
+    }
 }

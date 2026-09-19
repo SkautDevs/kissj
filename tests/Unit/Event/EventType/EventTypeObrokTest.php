@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Event\EventType;
 
+use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use PHPUnit\Framework\TestCase;
 
@@ -24,5 +25,15 @@ class EventTypeObrokTest extends TestCase
         self::assertTrue(
             is_file(__DIR__ . '/../../../../public/' . (new EventTypeObrok())->getScriptNameWithoutLeadingSlash()),
         );
+    }
+
+    public function testShowsTieCodeToIst(): void
+    {
+        self::assertTrue((new EventTypeObrok())->isTieCodeShownToIst());
+    }
+
+    public function testDefaultHidesTieCodeFromIst(): void
+    {
+        self::assertFalse((new EventTypeDefault())->isTieCodeShownToIst());
     }
 }

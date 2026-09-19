@@ -360,6 +360,11 @@ abstract class EventType
         return false;
     }
 
+    public function isTieCodeShownToIst(): bool
+    {
+        return false;
+    }
+
     public function getBadgeTemplateName(): string
     {
         return 'badge/badges.twig';
