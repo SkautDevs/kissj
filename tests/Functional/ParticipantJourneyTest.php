@@ -644,6 +644,53 @@ class ParticipantJourneyTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $finalLeaderUser->status);
     }
 
+    #[Group('troop')]
+    public function testTroopLeaderCloseUsesTroopLimitsNotPatrolLimits(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug(self::TEST_EVENT_SLUG);
+        self::assertNotNull($event);
+        $this->enableTroopForEvent($app, $event);
+        // a troop of 2 fits the patrol limits, so only the troop minimum can reject it
+        $event->minimalPatrolParticipantsCount = 1;
+        $event->maximalPatrolParticipantsCount = 10;
+        $event->minimalTroopParticipantsCount = 3;
+        $event->maximalTroopParticipantsCount = 10;
+        $eventRepository->persist($event);
+
+        $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+        $troopParticipantRepository = $this->getService($app, TroopParticipantRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $troopService = $this->getService($app, TroopService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+
+        $troopLeader = $this->createTroopLeaderWithDetails($app, 'troop-limits-leader@example.com', 'Limits Troop');
+        $this->initializeMailerSettings($app, $troopLeader->getUserButNotNull()->event);
+
+        foreach (['troop-limits-tp1@example.com', 'troop-limits-tp2@example.com'] as $email) {
+            $troopParticipant = $this->createTroopParticipantWithDetails($app, $email);
+            $troopService->tieTroopParticipantToTroopLeader($troopParticipant, $troopLeader);
+            $participantService->closeRegistration($troopParticipantRepository->get($troopParticipant->id));
+            self::assertSame(
+                UserStatus::Closed,
+                $userRepository->get($troopParticipant->getUserButNotNull()->id)->status,
+            );
+        }
+
+        /** @var TroopLeader $troopLeader */
+        $troopLeader = $troopLeaderRepository->get($troopLeader->id);
+        self::assertSame(2, $troopLeader->getTroopParticipantsCount());
+
+        $result = $participantService->isCloseRegistrationValid($troopLeader);
+        self::assertFalse($result->isValid);
+        self::assertContains('flash.warning.tlTooFewParticipantsTroop', array_column($result->warnings, 'key'));
+
+        $participantService->closeRegistration($troopLeader);
+        $leaderUser = $userRepository->get($troopLeader->getUserButNotNull()->id);
+        self::assertSame(UserStatus::Open, $leaderUser->status);
+    }
+
     /**
      * Test tying troop participant to leader using tie codes (the typical user flow).
      * This tests the tryTieTogetherWithMessages method which uses tie codes.
@@ -1215,10 +1262,8 @@ class ParticipantJourneyTest extends AppTestCase
         // Use high limits to handle accumulated test data in PostgreSQL
         $event->maximalClosedTroopLeadersCount = 10000;
         $event->maximalClosedTroopParticipantsCount = 10000;
-        // Also need to set min/max patrol participants count - used for validation of group sizes
-        // These are used by getMinimalPpCount/getMaximalPpCount for TroopLeader validation
-        $event->minimalPatrolParticipantsCount = 1;
-        $event->maximalPatrolParticipantsCount = 10;
+        $event->minimalTroopParticipantsCount = 1;
+        $event->maximalTroopParticipantsCount = 10;
         $eventRepository->persist($event);
     }
 
