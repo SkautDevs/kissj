@@ -3,7 +3,7 @@
 
     const INFO_URL = 'https://obrok.cz/predregistrace';
     const NOTE_PREFIX = 'Kód servisáka: ';
-    const NOTE_LINE = /^Kód servisáka: .*$/m;
+    const NOTE_LINE = /^Kód servisáka:.*$/m;
     const ERROR_TEXT = 'Kód se nepodařilo uložit, zkus to prosím znovu nebo ho vepiš do poznámky ručně.';
     const DETAILS_MISSING_TEXT = 'Nejdřív vyplň a ulož své údaje, potom ulož kód servisáka.';
 
