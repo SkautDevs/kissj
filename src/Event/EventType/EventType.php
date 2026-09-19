@@ -18,6 +18,7 @@ use kissj\Participant\Guest\Guest;
 use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\Troop\TroopLeader;
 use kissj\Deal\EventDeal;
 use kissj\Payment\FinanceTier;
 use kissj\Payment\Payment;
@@ -304,12 +305,20 @@ abstract class EventType
 
     public function getMinimalPpCount(Event $event, Participant $participant): int
     {
+        if ($participant instanceof TroopLeader) {
+            return $event->minimalTroopParticipantsCount ?? 0;
+        }
+
         return $event->minimalPatrolParticipantsCount ?? 0;
     }
 
-    public function getMaximalPpCount(Event $param, Participant $participant): ?int
+    public function getMaximalPpCount(Event $event, Participant $participant): ?int
     {
-        return $param->maximalPatrolParticipantsCount;
+        if ($participant instanceof TroopLeader) {
+            return $event->maximalTroopParticipantsCount;
+        }
+
+        return $event->maximalPatrolParticipantsCount;
     }
 
     public function showIban(): bool
