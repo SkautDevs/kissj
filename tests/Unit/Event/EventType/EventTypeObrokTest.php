@@ -20,8 +20,9 @@ class EventTypeObrokTest extends TestCase
     // _layout.twig loads this by name off the filesystem, so a typo would only surface as a 404 in production
     public function testIstCodeScriptFileExists(): void
     {
-        self::assertFileExists(
-            __DIR__ . '/../../../../public/' . (new EventTypeObrok())->getScriptNameWithoutLeadingSlash(),
+        // is_file, because assertFileExists also passes for the bare public/ directory
+        self::assertTrue(
+            is_file(__DIR__ . '/../../../../public/' . (new EventTypeObrok())->getScriptNameWithoutLeadingSlash()),
         );
     }
 }
