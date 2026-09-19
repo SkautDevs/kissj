@@ -5,6 +5,7 @@
     const NOTE_PREFIX = 'Kód servisáka: ';
     const NOTE_LINE = /^Kód servisáka: .*$/m;
     const ERROR_TEXT = 'Kód se nepodařilo uložit, zkus to prosím znovu nebo ho vepiš do poznámky ručně.';
+    const DETAILS_MISSING_TEXT = 'Nejdřív vyplň a ulož své údaje, potom ulož kód servisáka.';
 
     function el(tag, attributes, text) {
         const element = document.createElement(tag);
@@ -27,6 +28,25 @@
         return trimmed === '' ? line : trimmed + '\n' + line;
     }
 
+    function localDateEighteenYearsAgo() {
+        const date = new Date();
+        date.setFullYear(date.getFullYear() - 18);
+
+        return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+            .map((part) => String(part).padStart(2, '0'))
+            .join('-');
+    }
+
+    // an unsaved details form carries prefills (birthDate = today minus 18 years) that must not be persisted unseen
+    function isDetailsFormFilled(detailsForm) {
+        const birthDate = detailsForm.querySelector('input[name="birthDate"]');
+        if (birthDate !== null && birthDate.value === localDateEighteenYearsAgo()) {
+            return false;
+        }
+
+        return Array.from(detailsForm.querySelectorAll('[required]')).every((field) => field.value.trim() !== '');
+    }
+
     // replays the TL's own details form so every other field is sent back unchanged -
     // changeDetails nulls any allowed field missing from the POST
     async function saveCode(code) {
@@ -44,6 +64,9 @@
         const detailsForm = doc.querySelector('form[action$="/changeDetails"]');
         if (detailsForm === null || detailsForm.querySelector('textarea[name="notes"]') === null) {
             throw new Error('details form not found');
+        }
+        if (!isDetailsFormFilled(detailsForm)) {
+            throw Object.assign(new Error('details not filled'), {userMessage: DETAILS_MISSING_TEXT});
         }
 
         const data = new FormData(detailsForm);
@@ -87,6 +110,7 @@
                 window.location.reload();
             } catch (e) {
                 console.error(e);
+                error.textContent = e.userMessage ?? ERROR_TEXT;
                 error.hidden = false;
                 button.disabled = false;
             }
