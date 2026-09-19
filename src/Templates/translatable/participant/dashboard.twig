@@ -15,7 +15,7 @@
     {% include('widgets/userCustomHelp.twig') %}
     
     {% if person is eligibleForShowTieCode %}
-        <h2>{{ 'dashboard.tieCode' | trans }} - {{ person.tieCode }}</h2>
+        <h2>{{ (person.role.value == 'ist' ? 'dashboard.tieCodeIst' : 'dashboard.tieCode') | trans }} - {{ person.tieCode }}</h2>
     {% endif %}
 
     {% if event.eventtype.showReceiptToParticipant(person) %}
@@ -125,61 +125,12 @@
                     </p>
                     {% endif %}
                 {% endif %}
-
-                {# adding new participants into group #}
-                {% if userStatus == 'open' %}
-                    {% if person is PatrolLeader %}
-                        <a href="{{ url_for('pl-showAddParticipant', {'eventSlug': event.slug}) }}" class="btn btn-small">
-                            {{ 'dashboard.addParticipant' | trans }}
-                        </a>
-                        {% if event.eventType.isLoginSkautisAllowed %}
-                            <br/>
-                            {% if user.loginType.value == 'skautis' %}
-                                <a href="{{ url_for('pl-showAddFromSkautis', {'eventSlug': event.slug}) }}" class="btn btn-small">
-                                    {{ 'dashboard.addFromSkautis' | trans }}
-                                </a>
-                            {% else %}
-                                <button class="btn btn-small" disabled title="{{ 'dashboard.addFromSkautisDisabled' | trans }}">
-                                    {{ 'dashboard.addFromSkautis' | trans }}
-                                </button>
-                                <small>{{ 'dashboard.addFromSkautisDisabled' | trans }}</small>
-                            {% endif %}
-                        {% endif %}
-                    {% elseif person is TroopLeader %}
-                        {% include('widgets/troopTieForm.twig') with {
-                            formUrl: url_for('tie-tp-by-tl', {'eventSlug': event.slug}),
-                            textInputLabel: 'dashboard.tieCodeLabel',
-                            buttonLabel: 'dashboard.tieTroopParticipant'
-                        } %}
-                    {% endif %}
-                    <br/>
-                {% endif %}
             </div>
         </div>
-    
-        {% if userStatus == 'open' %}
-            {% if person is PatrolLeader %}
-                {% set linkLeaderLock = url_for('pl-showCloseRegistration', {'eventSlug': event.slug}) %}
-            {% elseif person is TroopLeader %}
-                {% set linkLeaderLock = url_for('showCloseRegistration', {'eventSlug': event.slug}) %}
-            {% endif %}                
-            <a class="btn btn-small" href="{{ linkLeaderLock }}">
-                {{ 'dashboard.lockRegistration' | trans }}
-            </a>
-        {% endif %}
-    
     {% else %}{# participant #}
             <div>
-                {% if person is TroopParticipant %}
-                    {% if person.getTroopLeader() is null %}
-                        {% include('widgets/troopTieForm.twig') with {
-                            formUrl: url_for('tie-tp-by-tp', {'eventSlug': event.slug}),
-                            textInputLabel: 'dashboard.codeForTieToTroop',
-                            buttonLabel: 'dashboard.tieToTroopLeader'
-                        } %}<br/>
-                    {% else %}
-                        <h2>{{ 'dashboard.youHaveTroop' | trans({'%troopName%': person.troopLeader.getPatrolName(), '%troopLeaderFullName%': person.troopLeader.getFullName()}) }}</h2>
-                    {% endif %}
+                {% if person is TroopParticipant and person.getTroopLeader() is not null %}
+                    <h2>{{ 'dashboard.youHaveTroop' | trans({'%troopName%': person.troopLeader.getPatrolName(), '%troopLeaderFullName%': person.troopLeader.getFullName()}) }}</h2>
                 {% endif %}
                 <h2>{{ 'dashboard.personalInfo' | trans }}</h2>
                 {% if userStatus == 'open' %}
@@ -195,12 +146,51 @@
                     <br/>
                 </div>
             </div>
-    
-            {% if userStatus == 'open' %}
-                <a class="btn btn-small" href="{{ url_for('showCloseRegistration', {'eventSlug': event.slug}) }}">
-                    {{ 'dashboard.lockRegistration' | trans }}</a>
+    {% endif %}
+</div>
+
+{% if (userStatus == 'open' and (person is PatrolLeader or person is TroopLeader))
+    or (person is TroopParticipant and person.getTroopLeader() is null) %}
+    <div class="card-double-layout">
+        <div class="card card-double">
+            {% if person is PatrolLeader %}
+                <a href="{{ url_for('pl-showAddParticipant', {'eventSlug': event.slug}) }}" class="btn btn-small">
+                    {{ 'dashboard.addParticipant' | trans }}
+                </a>
+                {% if event.eventType.isLoginSkautisAllowed %}
+                    <br/>
+                    {% if user.loginType.value == 'skautis' %}
+                        <a href="{{ url_for('pl-showAddFromSkautis', {'eventSlug': event.slug}) }}" class="btn btn-small">
+                            {{ 'dashboard.addFromSkautis' | trans }}
+                        </a>
+                    {% else %}
+                        <button class="btn btn-small" disabled title="{{ 'dashboard.addFromSkautisDisabled' | trans }}">
+                            {{ 'dashboard.addFromSkautis' | trans }}
+                        </button>
+                        <small>{{ 'dashboard.addFromSkautisDisabled' | trans }}</small>
+                    {% endif %}
+                {% endif %}
+            {% elseif person is TroopLeader %}
+                {% include('widgets/troopTieForm.twig') with {
+                    formUrl: url_for('tie-tp-by-tl', {'eventSlug': event.slug}),
+                    textInputLabel: 'dashboard.tieCodeLabel',
+                    buttonLabel: 'dashboard.tieTroopParticipant'
+                } %}
+            {% else %}
+                {% include('widgets/troopTieForm.twig') with {
+                    formUrl: url_for('tie-tp-by-tp', {'eventSlug': event.slug}),
+                    textInputLabel: 'dashboard.codeForTieToTroop',
+                    buttonLabel: 'dashboard.tieToTroopLeader'
+                } %}
             {% endif %}
         </div>
+    </div>
+{% endif %}
 
-    {% endif %}
+{% if userStatus == 'open' %}
+    <div class="card">
+        <a class="btn btn-small" href="{{ url_for(person is PatrolLeader ? 'pl-showCloseRegistration' : 'showCloseRegistration', {'eventSlug': event.slug}) }}">
+            {{ 'dashboard.lockRegistration' | trans }}</a>
+    </div>
+{% endif %}
 {% endblock %}

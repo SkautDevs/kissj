@@ -165,6 +165,14 @@ h1 {
 	margin-left: 2%;
 }
 
+@media (width < 600px) {
+    .card-double {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 h1 {
 	margin-top: 30px;
 }
@@ -192,6 +200,11 @@ a:visited {
 	padding: 15px;
 	border: none;
 	cursor: pointer;
+}
+
+/* input buttons default to white-space: pre, so a long label would widen the page on phones */
+input.btn {
+	white-space: normal;
 }
 
 .btn:visited {
@@ -277,6 +290,14 @@ li.step::after {
 
 li.step:first-child:after {
     content: none;
+}
+
+@media (width < 600px) {
+    li.step {
+        min-width: 0;
+        font-size: 0.75rem;
+        overflow-wrap: anywhere;
+    }
 }
 
 li.step.is-active {

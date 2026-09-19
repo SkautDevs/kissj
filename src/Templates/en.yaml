@@ -31,6 +31,7 @@ dashboard:
     youHaveTroop: "You are in troop %troopName% with troop leader %troopLeaderFullName%"
     details: "details"
     tieCode: "Personal code"
+    tieCodeIst: "Personal IST code"
     listOfParticipants: "List of participants"
     addFromSkautis: "Add participants from Skautis"
     addFromSkautisDisabled: "Log in with Skautis to import participants from your unit"
