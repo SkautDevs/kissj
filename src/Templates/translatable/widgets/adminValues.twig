@@ -1,11 +1,7 @@
-{% set subcamp = person.getValueForField('subcamp') %}
 {% set internalUniqueId = person.getValueForField('internalUniqueId') %}
 {% set internalCommonId = person.getValueForField('internalCommonId') %}
-{% if event.eventType.getSubcamps() is not empty and (subcamp or internalUniqueId or internalCommonId) %}
+{% if event.eventType.getSubcamps() is not empty and (internalUniqueId or internalCommonId) %}
     <h2>{{ 'adminValues.headline' | trans }}</h2>
-    {% if subcamp %}
-        {{ 'adminValues.subcamp' | trans }}: <b>{{ subcamp | trans }}</b><br/>
-    {% endif %}
     {% if internalUniqueId %}
         {{ 'adminValues.internalUniqueId' | trans }}: <b>{{ internalUniqueId }}</b><br/>
     {% endif %}

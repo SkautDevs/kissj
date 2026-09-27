@@ -1,18 +1,21 @@
 closed:
     welcome: "Ahoj!"
 chooseRole:
-    registerAsPl: "Registrovat oddíl/patrolu!"
+    registerAsPl: "Registrovat oddíl!"
     advicePlText: "je vedoucí skupiny účastníků. Účastníci se neregistrují samostatně, ale prostřednictvím svého vedoucího patroly. Ten je odpovědný za svoji patrolu v průběhu celé akce a také za ní jako celek platí registrační poplatek."
     adviceIstText: " je spoustu dospělých dobrovolníků, bez kterých by akce neproběhla. Jedou, aby organizátorům pomohli se vším možným."
 detail:
-    patrolNamePlaceholder: "stejný název jako pro předprogram, pokud jste se účastnili"
+    patrolNamePlaceholder: "stejný název jako pro předprogram, pokud se účastníte"
     contingentTitle: "Preferované loďstvo"
-    contingent:
-        without: "nesdílíme materiál přes více skupin - nemáme preferenci"
-        endeavour: "Endeavour - 🟧 oranžová"
-        adventure: "Adventure - 🟥 červená"
-        discovery: "Discovery - 🟩 zelená"
-        resolution: "Resolution - 🟦 modrá"
+    subcamp:
+        without: "nesdílíme materiál přes více oddílů - nemáme preferenci"
+        orange: "🟧 oranžová"
+        red: "🟥 červená"
+        green: "🟩 zelená"
+        blue: "🟦 modrá"
+adminValues:
+    subcamp: "Flotila"
+
 roster:
     perex: "Podpisem potvrzuji, že souhlasím s Pravidly akce + GDPR + Safe from Harm."
 receipt:
@@ -22,3 +25,8 @@ receipt:
         110 00 Praha 1<br/>
         IČO: 65991753
     "
+flash:
+    success:
+        skautisImported: "Úspěšně přidáno %count% účastníků ze Skautisu - nezapomeň všem přidat jídlo!"
+    warning:
+        plWrongDataParticipant: "Nemůžeme uzamknout registraci - účastníkovi %participantFullName% přidej jídlo"

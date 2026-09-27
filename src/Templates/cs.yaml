@@ -298,7 +298,7 @@ chooseRole:
     adviceTpText: "jede na akci se svým vedoucím skupiny. Registruje se samostatně. Neplatí sám, platí za něj vedoucí skupiny."
     adviceIstText: "je hromada dospělých dobrovolníků, bez kterých by akce neproběhla. Jsou to hrdinové akce, jedou, aby organizátorům pomohli se vším možným."
     adviceOtText: "je člen organizačního týmu. Tuto roli použij pouze pokud víš, do čeho jdeš!"
-    adviceGuestText: "je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi&nbsp;(:"
+    adviceGuestText: "je na akci host se speciálními pravidly. Pokud nevíš, jestli jsi host, pravděpodobně nejsi (:"
 login:
     registrationFor: "Registrace pro "
     email: "E-mail"
@@ -641,7 +641,7 @@ troopManagement-admin:
     untie: "Odepnout účastníka od skupiny"
 adminValues:
     headline: "Interní údaje akce"
-    subcamp: "subcamp"
+    subcamp: "Subcamp"
     internalUniqueId: "Interní unikátní ID"
     internalCommonId: "Interní společné ID"
     save: "Uložit interní ID"

@@ -300,7 +300,6 @@ class AdminValuesTest extends AppTestCase
 
             $suffix = bin2hex(random_bytes(4));
             $participant = $this->createPaidIst($container, 'Dash', 'Board' . $suffix);
-            $participant->subcamp = EventTypeCej::SUBCAMP_THEBA;
             $participant->internalUniqueId = 'CEJ-D-' . $suffix;
             $participant->internalCommonId = 'G-D';
             $participantRepository->persist($participant);
@@ -312,7 +311,6 @@ class AdminValuesTest extends AppTestCase
             ));
             self::assertSame(200, $response->getStatusCode());
             $body = (string)$response->getBody();
-            self::assertStringContainsString('Théba', $body);
             self::assertStringContainsString('CEJ-D-' . $suffix, $body);
             self::assertStringContainsString('G-D', $body);
         } finally {

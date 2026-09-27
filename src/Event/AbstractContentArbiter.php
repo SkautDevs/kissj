@@ -29,6 +29,7 @@ abstract class AbstractContentArbiter
     public ContentArbiterItem $medicaments;
     public ContentArbiterItem $psychicalHealth;
     public ContentArbiterItem $emergencyContact;
+    public ContentArbiterItem $subcamp;
     public ContentArbiterItem $food;
     public ContentArbiterItem $idNumber;
     public ContentArbiterItem $scarf;
@@ -63,6 +64,14 @@ abstract class AbstractContentArbiter
             order: 20,
             label: 'detail.patrolName',
             placeholder: 'detail.patrolNamePlaceholder',
+        );
+        $this->subcamp = new ContentArbiterItem(
+            slug: 'subcamp',
+            allowed: false,
+            type: ContentArbiterItemType::Select,
+            order: 25,
+            label: 'adminValues.subcamp',
+            placeholder: 'detail.subcamp-placeholder',
         );
         $this->firstName = new ContentArbiterItem(
             slug: 'firstName',
@@ -344,42 +353,8 @@ abstract class AbstractContentArbiter
      */
     public function getAllItems(): array
     {
-        $items = [
-            $this->contingent,
-            $this->patrolName,
-            $this->firstName,
-            $this->lastName,
-            $this->nickname,
-            $this->gender,
-            $this->birthDate,
-            $this->birthPlace,
-            $this->idNumber,
-            $this->address,
-            $this->country,
-            $this->email,
-            $this->phone,
-            $this->unit,
-            $this->languages,
-            $this->tshirt,
-            $this->food,
-            $this->health,
-            $this->medicaments,
-            $this->psychicalHealth,
-            $this->emergencyContact,
-            $this->swimming,
-            $this->scarf,
-            $this->arrivalDate,
-            $this->departureDate,
-            $this->driver,
-            $this->skills,
-            $this->preferredPosition,
-            $this->printedHandbook,
-            $this->parentalConsent,
-            $this->hospitalConsent,
-            $this->childWorkCert,
-            $this->adultEventCert,
-            $this->notes,
-        ];
+        /** @var array<ContentArbiterItem> $items */
+        $items = get_object_vars($this);
 
         usort($items, fn (ContentArbiterItem $a, ContentArbiterItem $b) => $a->order <=> $b->order);
 

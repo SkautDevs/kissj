@@ -20,6 +20,8 @@ class EventTypeNavigamus extends EventType
     private const PRICE_TIER_2_END = '2025-03-31 23:59:59';
     private const PRICE_TIER_3_END = '2025-04-30 23:59:59';
 
+    public const string DETAIL_SUBCAMP_WITHOUT = 'detail.subcamp.without';
+
     public function getPrice(Participant $participant): int
     {
         $now = DateTimeUtils::getDateTime();
@@ -31,7 +33,7 @@ class EventTypeNavigamus extends EventType
         };
 
         return match (true) {
-            $participant instanceof Ist => 900,
+            $participant instanceof Ist => 500,
             $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * $patrolPrice,
             default => parent::getPrice($participant),
         };
@@ -60,8 +62,9 @@ class EventTypeNavigamus extends EventType
         $caPl->phone->allowed = true;
         $caPl->food->allowed = true;
         $caPl->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
-        $caPl->contingent->allowed = true;
-        $caPl->contingent->options = ContentArbiterItem::selfMappedOptions($this->getContingents());
+        $caPl->subcamp->allowed = true;
+        $caPl->subcamp->options = ContentArbiterItem::selfMappedOptions($this->getSubcamps());
+        $caPl->subcamp->defaultValue = self::DETAIL_SUBCAMP_WITHOUT;
 
         return $caPl;
     }
@@ -149,15 +152,14 @@ class EventTypeNavigamus extends EventType
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function getContingents(): array
+    public function getSubcamps(): array
     {
         return [
-            'detail.contingent.without',
-            'detail.contingent.endeavour',
-            'detail.contingent.adventure',
-            'detail.contingent.discovery',
-            'detail.contingent.resolution',
+            self::DETAIL_SUBCAMP_WITHOUT,
+            'detail.subcamp.orange',
+            'detail.subcamp.red',
+            'detail.subcamp.green',
+            'detail.subcamp.blue',
         ];
     }
 

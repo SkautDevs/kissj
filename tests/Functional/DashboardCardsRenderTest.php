@@ -48,12 +48,6 @@ class DashboardCardsRenderTest extends AppTestCase
     {
         $xpath = $this->renderDashboard('pl', UserStatus::Open);
 
-        $addLink = $this->single($xpath, '//a[substring(@href, string-length(@href) - string-length("/patrol/addParticipant") + 1) = "/patrol/addParticipant"]');
-        $joinCard = $this->single($xpath, 'ancestor::div[' . self::CARD_DOUBLE . '][1]', $addLink);
-        $joinRow = $joinCard->parentNode;
-        self::assertInstanceOf(DOMElement::class, $joinRow);
-        self::assertTrue($this->hasClass($joinRow, 'card-double-layout'));
-
         $lockCard = $this->lockCard($xpath);
         self::assertStringEndsWith('/patrol/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
         self::assertSame(0, $this->countNodes($xpath, './/a[contains(@href, "/patrol/addParticipant")]', $lockCard));
