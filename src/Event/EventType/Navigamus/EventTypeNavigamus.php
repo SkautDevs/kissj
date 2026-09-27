@@ -163,6 +163,11 @@ class EventTypeNavigamus extends EventType
         ];
     }
 
+    public function isLoginEmailAllowed(): bool
+    {
+        return false;
+    }
+
     public function isLoginSkautisAllowed(): bool
     {
         return true;
