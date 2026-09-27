@@ -46,6 +46,7 @@ class EventTypeNavigamus extends EventType
         $caIst->phone->allowed = true;
         $caIst->food->allowed = true;
         $caIst->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
+        $caIst->unit->allowed = true;
         $caIst->preferredPosition->allowed = true;
         $caIst->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
         $caIst->arrivalDate->allowed = true;
@@ -61,6 +62,7 @@ class EventTypeNavigamus extends EventType
         $caPl->phone->allowed = true;
         $caPl->food->allowed = true;
         $caPl->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
+        $caPl->unit->allowed = true;
         $caPl->subcamp->allowed = true;
         $caPl->subcamp->options = ContentArbiterItem::selfMappedOptions($this->getSubcamps());
         $caPl->subcamp->defaultValue = self::DETAIL_SUBCAMP_WITHOUT;
@@ -74,6 +76,7 @@ class EventTypeNavigamus extends EventType
         $caPp = parent::getContentArbiterPatrolParticipant();
         $caPp->food->allowed = true;
         $caPp->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
+        $caPp->unit->allowed = true;
 
         return $caPp;
     }
