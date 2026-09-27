@@ -48,7 +48,6 @@ class EventTypeNavigamus extends EventType
         $caIst->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $caIst->preferredPosition->allowed = true;
         $caIst->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
-        $caIst->tshirt->allowed = true;
         $caIst->arrivalDate->allowed = true;
         $caIst->departureDate->allowed = true;
 
