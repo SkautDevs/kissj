@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Event\EventType;
 
 use kissj\Event\EventType\EventTypeDefault;
+use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +36,21 @@ class BadgeStylesheetTest extends TestCase
 
         self::assertFileExists(
             __DIR__ . '/../../../../public/' . $eventType->getBadgeStylesheetNameWithoutLeadingSlash(),
+        );
+    }
+
+    public function testNavigamusReturnsBadgeStylesheetPath(): void
+    {
+        self::assertSame(
+            'eventSpecificCss/badgeNavigamus27.css',
+            (new EventTypeNavigamus())->getBadgeStylesheetNameWithoutLeadingSlash(),
+        );
+    }
+
+    public function testNavigamusBadgeStylesheetFileExists(): void
+    {
+        self::assertFileExists(
+            __DIR__ . '/../../../../public/' . (new EventTypeNavigamus())->getBadgeStylesheetNameWithoutLeadingSlash(),
         );
     }
 }

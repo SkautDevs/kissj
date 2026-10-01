@@ -158,17 +158,19 @@
 
 .badge-info {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
 }
 
 .badge-info .badge-info-cell {
-    width: 50%;
+    width: 70%;
     text-align: center;
     vertical-align: top;
     padding: 2mm;
 }
 
 .badge-info .badge-info-cell--left {
+    width: 30%;
     border-right: 0.2mm solid #cccccc;
 }
 

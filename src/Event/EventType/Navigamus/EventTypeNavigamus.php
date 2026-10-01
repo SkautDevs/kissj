@@ -104,6 +104,12 @@ class EventTypeNavigamus extends EventType
     }
 
     #[\Override]
+    public function getBadgeStylesheetNameWithoutLeadingSlash(): string
+    {
+        return 'eventSpecificCss/badgeNavigamus27.css';
+    }
+
+    #[\Override]
     public function getScriptNameWithoutLeadingSlash(): string
     {
         return 'navigamus27/tentacle.js';

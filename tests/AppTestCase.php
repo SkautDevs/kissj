@@ -374,14 +374,30 @@ class AppTestCase extends TestCase
      */
     protected function getObrokTestEvent(App $app): Event
     {
+        return $this->getTypedTestEvent($app, 'obrok', 'obrok37');
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function getNavigamusTestEvent(App $app): Event
+    {
+        return $this->getTypedTestEvent($app, 'navigamus', 'navigamus37');
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function getTypedTestEvent(App $app, string $eventType, string $slug): Event
+    {
         $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->findBySlug('obrok37');
+        $event = $eventRepository->findBySlug($slug);
         if ($event !== null) {
             return $event;
         }
 
-        $newEvent = $this->createTestEventFromDefault($eventRepository, 'obrok37');
-        $this->setEventType($app->getContainer(), 'obrok', 'obrok37');
+        $newEvent = $this->createTestEventFromDefault($eventRepository, $slug);
+        $this->setEventType($app->getContainer(), $eventType, $slug);
 
         return $eventRepository->get($newEvent->id);
     }

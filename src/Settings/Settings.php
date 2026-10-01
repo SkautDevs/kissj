@@ -366,6 +366,8 @@ class Settings
                 'fontdata' => $fontDefaults['fontdata'] + [
                     'themix' => ['R' => 'TheMixLT.ttf', 'B' => 'TheMixLT-Bold.ttf'],
                     'skautbold' => ['R' => 'SkautBold.ttf', 'B' => 'SkautBold.ttf'],
+                    'seatren' => ['R' => 'seatren-truetype.ttf', 'B' => 'seatren-truetype.ttf'],
+                    'luciaosans' => ['R' => 'luciaosans-truetype.ttf', 'B' => 'luciaosans-truetype.ttf'],
                 ],
             ]);
 

@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% macro cell(badge, event) %}
-    <td class="badge">
+    <td class="badge{% if badge %} badge--{{ badge.participant.role.value }}{% endif %}">
         {% if badge %}
             {% set participant = badge.participant %}
             {% set fullName = participant.getFirstAndLastName %}
@@ -83,7 +83,7 @@
                                     <div class="badge-info-value">
                                         {%- if foodValue and badge.ca.food.options[foodValue] is defined -%}
                                             {{ badge.ca.food.options[foodValue] | trans }}
-                                        {%- elseif foodValue -%}{{ foodValue }}{%- else -%}—{%- endif -%}
+                                        {%- elseif foodValue -%}{{ foodValue | trans }}{%- else -%}—{%- endif -%}
                                     </div>
                                 </td>
                             </tr>

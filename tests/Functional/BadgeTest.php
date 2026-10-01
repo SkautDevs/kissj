@@ -364,4 +364,164 @@ class BadgeTest extends AppTestCase
         $bytes = $pdf->generateBadges($event, $mine);
         self::assertStringStartsWith('%PDF', $bytes);
     }
+
+    public function testNavigamusBrandFontsAreRegisteredAsTrueType(): void
+    {
+        $app = $this->getTestApp();
+        $mpdf = $this->getService($app, Mpdf::class);
+
+        /** @var array<string, mixed> $fontdata */
+        $fontdata = $mpdf->fontdata;
+
+        foreach (['seatren' => 'seatren-truetype.ttf', 'luciaosans' => 'luciaosans-truetype.ttf'] as $family => $file) {
+            self::assertArrayHasKey($family, $fontdata);
+            /** @var array<string, string> $familyData */
+            $familyData = $fontdata[$family];
+            self::assertSame($file, $familyData['R']);
+
+            $magic = file_get_contents(__DIR__ . '/../../public/fonts/' . $file, length: 4);
+            self::assertSame("\x00\x01\x00\x00", $magic);
+        }
+    }
+
+    public function testBadgeCellCarriesParticipantRoleClass(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+        $this->makeIst($container, $event, 'roleClass', 'RoleClassNick', UserStatus::Paid);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $mine = array_values(array_filter(
+            $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]),
+            fn (Participant $p) => $p->nickname === 'RoleClassNick',
+        ));
+        self::assertCount(1, $mine);
+
+        $html = $this->getService($app, PdfGenerator::class)->buildBadgesHtml($event, $mine);
+
+        self::assertStringContainsString('<td class="badge badge--ist">', $html);
+        self::assertSame(3, substr_count($html, '<td class="badge">'));
+        self::assertStringNotContainsString('badge--"', $html);
+    }
+
+    public function testBadgeInfoTablePinsStableColumnWidths(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->get(1);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+        $this->makeIst($container, $event, 'infoWidths', 'InfoWidthsNick', UserStatus::Paid);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $mine = array_values(array_filter(
+            $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]),
+            fn (Participant $p) => $p->nickname === 'InfoWidthsNick',
+        ));
+        self::assertCount(1, $mine);
+
+        $html = $this->getService($app, PdfGenerator::class)->buildBadgesHtml($event, $mine);
+
+        self::assertMatchesRegularExpression('/\.badge-info\s*\{[^}]*table-layout:\s*fixed/', $html);
+        self::assertMatchesRegularExpression('/\.badge-info \.badge-info-cell--left\s*\{[^}]*width:\s*30%/', $html);
+    }
+
+    public function testNavigamusBadgesRenderBrandAssetsAndRoleBands(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $this->getNavigamusTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+        $event->maximalClosedPatrolsCount = 100;
+        $eventRepository->persist($event);
+
+        $this->makeIst($container, $event, 'navIst', 'ŘízkyIst', UserStatus::Paid);
+
+        $userService = $this->getService($app, UserService::class);
+        $participantService = $this->getService($app, ParticipantService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $patrolLeaderRepository = $this->getService($app, PatrolLeaderRepository::class);
+
+        $plUser = $userService->registerEmailUser('badge-navigamus-pl@example.com', $event);
+        $plParticipant = $userService->createParticipantSetRole($plUser, 'pl');
+        $patrolLeader = $patrolLeaderRepository->get($plParticipant->id);
+        $participantService->addParamsIntoParticipant($patrolLeader, [
+            'patrolName' => 'NavigamusPatrol',
+            'firstName' => 'Lead',
+            'lastName' => 'Er',
+            'nickname' => 'ŠťastnýVůdce',
+            'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
+            'gender' => 'male',
+            'email' => 'badge-navigamus-pl@example.com',
+        ], $event->eventType->getContentArbiterPatrolLeader()->getAllItems());
+        $plUser->status = UserStatus::Paid;
+        $userRepository->persist($plUser);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $mine = array_values(array_filter(
+            $repo->getParticipantsForBadges($event, [ParticipantRole::Ist, ParticipantRole::PatrolLeader]),
+            fn (Participant $p) => in_array($p->nickname, ['ŘízkyIst', 'ŠťastnýVůdce'], true),
+        ));
+        self::assertCount(2, $mine);
+
+        $pdf = $this->getService($app, PdfGenerator::class);
+        $html = $pdf->buildBadgesHtml($event, $mine);
+
+        self::assertStringContainsString('badge--ist', $html);
+        self::assertStringContainsString('badge--pl', $html);
+        self::assertStringContainsString("url('navigamus27/badgeBandPurple.png')", $html);
+        self::assertStringContainsString("url('navigamus27/badgeBandRed.png')", $html);
+        self::assertStringNotContainsString("url('/", $html);
+
+        $mpdf = $this->getService($app, Mpdf::class);
+        self::assertIsString($mpdf->basepath);
+        preg_match_all('~url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)~i', $html, $matches);
+        self::assertNotEmpty($matches[1]);
+        foreach ($matches[1] as $url) {
+            self::assertFileExists($mpdf->basepath . $url);
+        }
+
+        self::assertStringStartsWith('%PDF', $pdf->generateBadges($event, $mine));
+    }
+
+    public function testBadgeTranslatesFoodOptionKeyMissingFromEventOptions(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $this->getNavigamusTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+        $this->makeIst($container, $event, 'legacyFood', 'LegacyFoodNick', UserStatus::Paid);
+
+        $repo = $this->getService($app, ParticipantRepository::class);
+        $mine = array_values(array_filter(
+            $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]),
+            fn (Participant $p) => $p->nickname === 'LegacyFoodNick',
+        ));
+        self::assertCount(1, $mine);
+        $mine[0]->foodPreferences = 'detail.foodVegan';
+        $repo->persist($mine[0]);
+
+        $html = $this->getService($app, PdfGenerator::class)->buildBadgesHtml($event, $mine);
+
+        self::assertStringNotContainsString('detail.foodVegan', $html);
+        self::assertStringContainsString('veganské', $html);
+    }
+
+    public function testNavigamusBlankBadgesRenderThroughMpdf(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $this->getNavigamusTestEvent($app);
+        $this->givePdfRenderedEventARealLogo($eventRepository, $event);
+
+        $pdf = $this->getService($app, PdfGenerator::class);
+
+        self::assertStringContainsString('badge--blank', $pdf->buildBlankBadgesHtml($event, 1));
+        self::assertStringStartsWith('%PDF', $pdf->generateBlankBadges($event, 1));
+    }
 }

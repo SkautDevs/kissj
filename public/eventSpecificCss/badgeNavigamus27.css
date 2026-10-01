@@ -1,0 +1,83 @@
+.badge-sheet {
+    font-family: 'luciaosans', sans-serif;
+}
+
+.badge-sheet td.badge--ist,
+.badge-sheet td.badge--ot,
+.badge-sheet td.badge--pl,
+.badge-sheet td.badge--pp,
+.badge-sheet td.badge--tl,
+.badge-sheet td.badge--tp,
+.badge-sheet td.badge--guest,
+.badge-sheet td.badge--blank {
+    background-image: url('navigamus27/badgeTentacle.png');
+    background-repeat: no-repeat;
+    background-position: left bottom;
+}
+
+.badge-role-label {
+    color: #c92039;
+    font-weight: normal;
+}
+
+.badge--ist .badge-role-label,
+.badge--ot .badge-role-label {
+    color: #1b0e44;
+}
+
+.badge-title {
+    font-family: 'seatren', sans-serif;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #1b0e44;
+}
+
+/* mPDF ignores background-size on this nested table, background-image-resize drives the stretch */
+.badge-name-band {
+    background-image: url('navigamus27/badgeBandPurple.png');
+    background-repeat: no-repeat;
+    background-image-resize: 6;
+}
+
+.badge--ist .badge-name-band,
+.badge--ot .badge-name-band {
+    background-image: url('navigamus27/badgeBandRed.png');
+}
+
+.badge-name-band td {
+    background-color: transparent;
+    padding: 5mm 4mm;
+}
+
+.badge-nick {
+    font-family: 'seatren', sans-serif;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-info-label {
+    color: #565656;
+}
+
+.badge-info-value {
+    color: #1b0e44;
+}
+
+.badge-info .badge-info-cell--left {
+    border-right: 0.2mm solid #1b0e44;
+}
+
+.badge-crisis {
+    color: #c92039;
+    border-top: 0.2mm solid #1b0e44;
+}
+
+.badge--blank .badge-blank-label {
+    color: #565656;
+}
+
+.badge--blank .badge-blank-line {
+    border-bottom-color: #1b0e44;
+}
