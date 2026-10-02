@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.adminDashboard' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card">
         <h2>{{ 'dashboard-admin.dashboard' | trans }} {{ event.readableName }}
