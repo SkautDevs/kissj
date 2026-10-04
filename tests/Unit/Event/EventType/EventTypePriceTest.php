@@ -13,7 +13,7 @@ class EventTypePriceTest extends TestCase
 {
     public function testNavigamusIstPrice(): void
     {
-        self::assertSame(900, (new EventTypeNavigamus())->getPrice(new Ist()));
+        self::assertSame(500, (new EventTypeNavigamus())->getPrice(new Ist()));
     }
 
     public function testAquaIstPrice(): void

@@ -6,6 +6,8 @@
     const NOTE_LINE = /^Kód servisáka:.*$/m;
     const ERROR_TEXT = 'Kód se nepodařilo uložit, zkus to prosím znovu nebo ho vepiš do poznámky ručně.';
     const DETAILS_MISSING_TEXT = 'Nejdřív vyplň a ulož své údaje, potom ulož kód servisáka.';
+    const MISSING_CODE_TEXT = 'Bez kódu servisáka to nepůjde! Vlož jeho šestipísmenný osobní kód.';
+    const MISSING_CODE_VIDEO_URL = new URL('hrozeni_prstem.mp4', document.currentScript.src).href;
 
     function el(tag, attributes, text) {
         const element = document.createElement(tag);
@@ -84,6 +86,36 @@
         }
     }
 
+    function showMissingCodeOverlay() {
+        if (document.getElementById('obrokMissingCode') !== null) {
+            return;
+        }
+
+        const overlay = el('div', {
+            id: 'obrokMissingCode',
+            style: 'position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;'
+                + ' background: rgba(0, 0, 0, 0.6); cursor: pointer;',
+        });
+        const panel = el('div', {
+            style: 'background: #fff; border-radius: 8px; padding: 1rem; max-width: 90vw; text-align: center;',
+        });
+        const video = el('video', {
+            src: MISSING_CODE_VIDEO_URL,
+            autoplay: '',
+            muted: '',
+            playsinline: '',
+            preload: 'none',
+            style: 'width: 410px; max-width: 100%; display: block; margin: 0 auto;',
+        });
+        video.muted = true;
+
+        panel.append(video, el('p', {style: 'margin: 0.5rem 0 0; font-weight: bold;'}, MISSING_CODE_TEXT));
+        overlay.append(panel);
+        overlay.addEventListener('click', () => overlay.remove());
+        video.addEventListener('ended', () => overlay.remove());
+        document.body.append(overlay);
+    }
+
     function buildForm() {
         const form = el('form', {class: 'form-group form-group-middle'});
         const label = el('label', {for: 'obrokIstCode'}, 'Pro registraci už teď potřebuješ osobní kód servisáka. ');
@@ -99,6 +131,13 @@
         });
         const button = el('input', {type: 'submit', value: 'Ulož kód servisáka', class: 'btn btn-small'});
         const error = el('p', {role: 'alert', hidden: 'hidden'}, ERROR_TEXT);
+
+        input.addEventListener('invalid', (invalidEvent) => {
+            if (input.value.trim() === '') {
+                invalidEvent.preventDefault();
+                showMissingCodeOverlay();
+            }
+        });
 
         form.append(el('h2', {}, 'Máš svého servisáka?'), label, input, el('br', {}), button, error);
         form.addEventListener('submit', async (submitEvent) => {
