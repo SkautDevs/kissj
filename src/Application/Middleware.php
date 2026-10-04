@@ -8,10 +8,12 @@ use kissj\ErrorHandlerGetter;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
+use kissj\Settings\EnvSettings;
 use kissj\Telemetry\Sentry\ContextMiddleware;
 use kissj\Telemetry\Sentry\HttpContextMiddleware;
 use kissj\Telemetry\Sentry\TransactionMiddleware;
 use kissj\Middleware\UserAuthenticationMiddleware;
+use LogicException;
 use Middlewares\TrailingSlash;
 use Psr\Container\ContainerInterface;
 use Selective\BasePath\BasePathMiddleware;
@@ -66,11 +68,15 @@ class Middleware
 
         // DEBUGGER - keep as last as possible to execute as soon as possible
         $errorHandlers = [];
-        if ($_ENV['DEBUG'] !== 'true') {
-            $container = $app->getContainer();
-            if ($container === null) {
-                throw new \RuntimeException('Cannot get container');
-            }
+        $container = $app->getContainer();
+        if ($container === null) {
+            throw new \RuntimeException('Cannot get container');
+        }
+        $env = $container->get(EnvSettings::class);
+        if ($env instanceof EnvSettings === false) {
+            throw new LogicException('EnvSettings is not registered in the container');
+        }
+        if ($env->debug === false) {
             $errorHandlers = [(new ErrorHandlerGetter($container))->getErrorHandler()];
         }
         $app->add(new WhoopsMiddleware([], $errorHandlers));

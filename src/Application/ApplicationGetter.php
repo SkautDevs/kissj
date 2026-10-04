@@ -8,8 +8,10 @@ use DI\ContainerBuilder;
 use Dotenv\Exception\ValidationException;
 use kissj\ErrorHandlerGetter;
 use kissj\Session\RedisSessionHandler;
+use kissj\Settings\EnvSettings;
 use kissj\Settings\Settings;
 use kissj\Telemetry\Sentry\ConsoleSubscriber;
+use LogicException;
 use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 use Slim\App;
@@ -42,9 +44,11 @@ class ApplicationGetter
         }
 
         $app = Bridge::create($container);
-        /** @var string $basePath */
-        $basePath = $_ENV['BASEPATH'];
-        $app->setBasePath($basePath);
+        $env = $container->get(EnvSettings::class);
+        if ($env instanceof EnvSettings === false) {
+            throw new LogicException('EnvSettings is not registered in the container');
+        }
+        $app->setBasePath($env->basePath);
 
         if (session_status() === PHP_SESSION_NONE) { // because of PhpUnit handling sessions poorly
             $sessionHandler = $container->get(SessionHandlerInterface::class);
@@ -88,7 +92,7 @@ class ApplicationGetter
             $tempPath,
         ));
         $containerBuilder->useAttributes(true);
-        if ($_ENV['DEBUG'] === 'false') {
+        if (EnvSettings::fromArray($_ENV, $envFilename)->debug === false) {
             $containerBuilder->enableCompilation($tempPath);
         }
 

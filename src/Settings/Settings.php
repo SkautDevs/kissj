@@ -6,7 +6,6 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
-use Dotenv\Exception\ValidationException;
 use kissj\Application\HealthController;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -159,13 +158,11 @@ class Settings
         }
         $this->validateAllSettings($dotenv);
 
-        if (($_ENV['DB_TYPE'] ?? 'postgresql') === 'sqlite' && $envFilename !== 'env.testing') {
-            throw new ValidationException('DB_TYPE=sqlite is supported only for the test suite (env.testing).');
-        }
-
         // computed here (not in the Connection closure) because compiled DI cannot capture closure vars;
         // default only - must match the phinx target in tests/phinxConfiguration.php
         $_ENV['DATABASE_PATH'] ??= $tempPath . '/db_tests.sqlite';
+
+        $env = EnvSettings::fromArray($_ENV, $envFilename);
 
         $beforeSend = function (SentryEvent $event): ?SentryEvent {
             // Check if error is from middleware exception capturer
@@ -179,13 +176,12 @@ class Settings
         };
 
         // init every time for capturing performance
-        /** @var array<string, string> $_ENV */
         $sentryClient = ClientBuilder::create([
-            'dsn' => $_ENV['SENTRY_DSN'],
-            'environment' => $_ENV['DEBUG'] !== 'true' ? 'PROD' : 'DEBUG',
-            'traces_sample_rate' => (float)($_ENV['SENTRY_TRACES_SAMPLE_RATE'] ?? '1'),
-            'profiles_sample_rate' => (float)($_ENV['SENTRY_PROFILES_SAMPLE_RATE'] ?? '1'),
-            'release' => 'kissj@' . $_ENV['GIT_HASH'],
+            'dsn' => $env->sentryDsn,
+            'environment' => $env->debug ? 'DEBUG' : 'PROD',
+            'traces_sample_rate' => $env->sentryTracesSampleRate,
+            'profiles_sample_rate' => $env->sentryProfilesSampleRate,
+            'release' => 'kissj@' . $env->gitHash,
             'before_send' => $beforeSend,
             // transactions dispatch to their own callback and ship request data on every sampled request
             'before_send_transaction' => $beforeSend,
@@ -278,54 +274,53 @@ class Settings
             VendorApiKeyMiddleware::class => autowire(),
         ];
 
-        $container[Connection::class] = function () {
-            $connection = match ($_ENV['DB_TYPE'] ?? 'postgresql') {
+        $container[Connection::class] = function (EnvSettings $env) {
+            $connection = match ($env->dbType) {
                 'sqlite' => new Connection([
                     'driver' => 'sqlite',
-                    'database' => $_ENV['DATABASE_PATH'],
+                    'database' => $env->databasePath,
                     'formatDateTime' => 'Y-m-d H:i:s', // match the ISO format phinx writes so datetimes round-trip
                     'formatDate' => 'Y-m-d',
                     'onConnect' => ['PRAGMA foreign_keys = ON'],// parity with postgres, which always enforces FKs
                 ]),
                 default => new Connection([
                     'driver' => 'postgre',
-                    'host' => $_ENV['DATABASE_HOST'],
-                    'username' => $_ENV['POSTGRES_USER'],
-                    'password' => $_ENV['POSTGRES_PASSWORD'],
-                    'database' => $_ENV['POSTGRES_DB'],
+                    'host' => $env->databaseHost,
+                    'username' => $env->postgresUser,
+                    'password' => $env->postgresPassword,
+                    'database' => $env->postgresDb,
                 ]),
             };
             $connection->onEvent[] = new DibiSpanListener();
 
             return $connection;
         };
-        $container[SaveFileHandler::class] = match ($_ENV['FILE_HANDLER_TYPE']) {
+        $container[SaveFileHandler::class] = match ($env->fileHandlerType) {
             'local' => new LocalSaveFileHandler(),
             's3bucket' => get(S3BucketSaveFileHandler::class),
             default => throw new \UnexpectedValueException('Got unknown FileHandler type parameter: '
-                . $_ENV['FILE_HANDLER_TYPE']),
+                . $env->fileHandlerType),
         };
         $container[FlashMessagesInterface::class] = autowire(FlashMessagesBySession::class);
         $container[IMapper::class] = autowire(Mapper::class);
         $container[IEntityFactory::class] = autowire(DefaultEntityFactory::class);
         $container[SentryClient::class] = $sentryClient;
+        $container[EnvSettings::class] = $env;
         $container[SentryHub::class] = $sentryHub;
 
-        $container[Logger::class] = function (SentryHub $sentryHub): LoggerInterface {
-            /** @var array<string, string> $_ENV */
-            $logger = new Logger($_ENV['APP_NAME']);
+        $container[Logger::class] = function (SentryHub $sentryHub, EnvSettings $env): LoggerInterface {
+            $logger = new Logger($env->appName);
             $logger->pushProcessor(new UidProcessor());
             $logger->pushProcessor(new GitProcessor());
             $logger->pushProcessor(new WebProcessor());
-            $loggerLevel = Level::fromName($_ENV['LOGGER_LEVEL']);
             $logger->pushHandler(
-                new StreamHandler('php://stdout', $loggerLevel),
+                new StreamHandler('php://stdout', $env->loggerLevel),
             );
             $logger->pushHandler(
                 new SentryHandler($sentryHub, Level::Info),
             );
 
-            if ($_ENV['DEBUG'] === 'true') {
+            if ($env->debug) {
                 $logger->pushHandler(
                     new StreamHandler(__DIR__ . '/../../logs/debug.log', Level::Debug),
                 );
@@ -334,8 +329,8 @@ class Settings
             return $logger;
         };
         $container[LoggerInterface::class] = get(Logger::class);
-        $container[MailerSettings::class] = fn () => new MailerSettings(
-            $_ENV['MAIL_DSN'],
+        $container[MailerSettings::class] = fn (EnvSettings $env) => new MailerSettings(
+            $env->mailDsn,
         );
         $container[EventDispatcherInterface::class] = function (Twig $twig): EventDispatcherInterface {
             $dispatcher = new EventDispatcher();
@@ -381,53 +376,44 @@ class Settings
         };
         $container[SessionHandlerInterface::class] = new RedisSessionHandler(
             new Redis(),
-            $_ENV['REDIS_HOST'],
-            (int)$_ENV['REDIS_PORT'],
-            $_ENV['REDIS_PASSWORD'],
+            $env->redisHost,
+            $env->redisPort,
+            $env->redisPassword,
         );
         $container[S3BucketSaveFileHandler::class] = fn (
             S3Client $s3Client,
             Collector $sentryCollector,
+            EnvSettings $env,
         ) => new S3BucketSaveFileHandler(
             $s3Client,
-            $_ENV['S3_BUCKET'],
+            $env->s3Bucket,
             $sentryCollector,
         );
-        $container[S3Client::class] = fn () => new S3Client([
+        $container[S3Client::class] = fn (EnvSettings $env) => new S3Client([
             'version' => 'latest',
-            'region' => $_ENV['S3_REGION'],
-            'endpoint' => $_ENV['S3_ENDPOINT'],
+            'region' => $env->s3Region,
+            'endpoint' => $env->s3Endpoint,
             'use_path_style_endpoint' => true,
             'credentials' => [
-                'key' => $_ENV['S3_KEY'],
-                'secret' => $_ENV['S3_SECRET'],
+                'key' => $env->s3Key,
+                'secret' => $env->s3Secret,
             ],
         ]);
-        $container[SkautisFactory::class] = fn () => new SkautisFactory(
-            $_ENV['SKAUTIS_USE_TEST'] !== 'false',
+        $container[SkautisFactory::class] = fn (EnvSettings $env) => new SkautisFactory(
+            $env->skautisUseTest,
         );
-        $container[AddCorsHeaderForAppDomainsMiddleware::class] = function () {
-            /** @var array<string, string> $_ENV */
-            $origins = array_values(array_filter(
-                array_map(
-                    static fn (string $origin): string => trim($origin),
-                    explode(',', $_ENV['CORS_ALLOWED_ORIGINS'] ?? ''),
-                ),
-                static fn (string $origin): bool => $origin !== '',
-            ));
-
+        $container[AddCorsHeaderForAppDomainsMiddleware::class] = function (EnvSettings $env) {
             return new AddCorsHeaderForAppDomainsMiddleware(
-                $origins === [] ? AddCorsHeaderForAppDomainsMiddleware::DEFAULT_ALLOWED_ORIGINS : $origins,
+                $env->corsAllowedOrigins,
                 new ResponseFactory(),
             );
         };
         $container[PdfGenerator::class] = get(mPdfGenerator::class);
-        $container[TranslatorFactory::class] = function () {
-            /** @var array<string, string> $_ENV */
+        $container[TranslatorFactory::class] = function (EnvSettings $env) {
             return new TranslatorFactory(
-                $_ENV['DEFAULT_LOCALE'],
-                $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/translations' : null,
-                $_ENV['DEBUG'] === 'true',
+                $env->defaultLocale,
+                $env->templateCache ? __DIR__ . '/../../temp/translations' : null,
+                $env->debug,
             );
         };
         $container[CurrentTranslator::class] = autowire(CurrentTranslator::class);
@@ -436,6 +422,7 @@ class Settings
             UserRegeneration $userRegeneration,
             CurrentTranslator $translator,
             FlashMessagesBySession $flashMessages,
+            EnvSettings $env,
         ) {
             $view = Twig::create(
                 [
@@ -443,9 +430,8 @@ class Settings
                     __DIR__ . '/../../public',
                 ],
                 [
-                    // env. variables are parsed into strings
-                    'cache' => $_ENV['TEMPLATE_CACHE'] !== 'false' ? __DIR__ . '/../../temp/twig' : false,
-                    'debug' => $_ENV['DEBUG'] === 'true',
+                    'cache' => $env->templateCache ? __DIR__ . '/../../temp/twig' : false,
+                    'debug' => $env->debug,
                 ],
             );
 
@@ -459,7 +445,7 @@ class Settings
             // a request-scoped resolver (proxy pattern, like CurrentTranslator) or move
             // registration into middleware that runs per request and resets on the way out.
             $view->getEnvironment()->addGlobal('user', $user);
-            $view->getEnvironment()->addGlobal('debug', $_ENV['DEBUG'] === "true");
+            $view->getEnvironment()->addGlobal('debug', $env->debug);
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));
@@ -493,10 +479,10 @@ class Settings
 
     private function validateAllSettings(Dotenv $dotenv): void
     {
+        $dotenv->required('BASEPATH');
         $dotenv->required('DEBUG')->notEmpty()->isBoolean();
         $dotenv->required('TEMPLATE_CACHE')->notEmpty()->isBoolean();
         $dotenv->required('DEFAULT_LOCALE')->notEmpty()->allowedValues(self::LOCALES_AVAILABLE);
-        $dotenv->required('LOGGER_FILENAME')->notEmpty();
         $dotenv->required('LOGGER_LEVEL')->notEmpty()->allowedValues(Level::NAMES);
         $dotenv->required('MAIL_DSN');
         $dotenv->required('FILE_HANDLER_TYPE')->allowedValues([

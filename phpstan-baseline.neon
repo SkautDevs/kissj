@@ -24,8 +24,3 @@ parameters:
 			count: 1
 			path: src/Participant/ParticipantService.php
 
-		-
-			message: '#^Parameter \#1 \$name of static method Monolog\\Level\:\:fromName\(\) expects ''ALERT''\|''Alert''\|''alert''\|''CRITICAL''\|''Critical''\|''critical''\|''DEBUG''\|''Debug''\|''debug''\|''EMERGENCY''\|''Emergency''\|''emergency''\|''ERROR''\|''Error''\|''error''\|''INFO''\|''Info''\|''info''\|''NOTICE''\|''Notice''\|''notice''\|''WARNING''\|''Warning''\|''warning'', string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Settings/Settings.php

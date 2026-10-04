@@ -115,9 +115,6 @@ spec:
           - name: DEFAULT_LOCALE
             value: {{ .Values.app.locale | quote }}
 
-          - name: LOGGER_FILENAME
-            value: dummy
-
           - name: LOGGER_LEVEL
             value: {{ .Values.app.log_level | quote }}
 
