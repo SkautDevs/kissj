@@ -7,6 +7,7 @@ namespace kissj\Payment;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
+use h4kuna\Fio\Exceptions\QueueLimit;
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
@@ -205,7 +206,7 @@ class PaymentService
                 return PaymentResult::withMessages([
                     new PaymentResultMessage(PaymentMessageSeverity::Info, 'flash.info.noNewPayments'),
                 ]);
-            } catch (ServiceUnavailable $e) {
+            } catch (ServiceUnavailable | QueueLimit $e) {
                 $this->sentryCollector->collect($e);
                 $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
                 $this->metrics->count(MetricName::PaymentsBankFetchFailed, 1);

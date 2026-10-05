@@ -50,4 +50,27 @@ class BankPaymentRepository extends Repository
 
         return $bankPayment?->bankId;
     }
+
+    /**
+     * @param list<string> $bankIds
+     * @return list<string>
+     */
+    public function findExistingBankIds(Event $event, array $bankIds): array
+    {
+        if ($bankIds === []) {
+            return [];
+        }
+
+        $qb = $this->connection->select('bank_id')->from($this->getTable());
+        $qb->where('event_id = %i AND bank_id IN %in', $event->id, $bankIds);
+
+        $existingBankIds = [];
+        foreach ($qb->fetchPairs(null, 'bank_id') as $bankId) {
+            if (is_string($bankId)) {
+                $existingBankIds[] = $bankId;
+            }
+        }
+
+        return $existingBankIds;
+    }
 }

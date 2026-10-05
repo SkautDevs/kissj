@@ -41,6 +41,7 @@ use kissj\Participant\ParticipantRole;
  * @property bool              $automaticPaymentPairing
  * @property string            $bankSlug
  * @property string|null       $bankApiKey
+ * @property int|null          $bankLastMoveId
  * @property int               $defaultPrice
  * @property string            $currency
  *

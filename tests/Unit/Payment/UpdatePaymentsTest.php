@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Payment;
 
+use h4kuna\Fio\Exceptions\QueueLimit;
 use h4kuna\Fio\Exceptions\ServiceUnavailable;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
@@ -272,6 +273,22 @@ class UpdatePaymentsTest extends TestCase
 
         $bankService = Mockery::mock(IBankPaymentService::class);
         $bankService->shouldReceive('getAndSafeFreshPaymentsFromBank')->andThrow(new ServiceUnavailable('bank down'));
+        $this->container->shouldReceive('get')->andReturn($bankService);
+        $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([]);
+
+        $result = $this->service()->updatePayments($event);
+
+        $this->assertHasMessage($result, PaymentMessageSeverity::Error, 'flash.error.fioConnectionFailed');
+    }
+
+    public function testBankQueueLimitReturnsErrorMessage(): void
+    {
+        $event = new Event();
+        $event->id = 1;
+        $event->bankSlug = 'fio';
+
+        $bankService = Mockery::mock(IBankPaymentService::class);
+        $bankService->shouldReceive('getAndSafeFreshPaymentsFromBank')->andThrow(new QueueLimit('queue full'));
         $this->container->shouldReceive('get')->andReturn($bankService);
         $this->bankPaymentRepository->shouldReceive('getBankPaymentsOrderedWithStatus')->andReturn([]);
 
