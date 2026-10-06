@@ -51,6 +51,20 @@ class ParticipantCapacityContingentTest extends AppTestCase
         self::assertTrue($participantService->isParticipantOrEventFull($istThird));
     }
 
+    public function testNullContingentOnlyMatchesNullContingent(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->seedTwoClosedContingentIsts($app, 1);
+        $this->createClosedIst($app, $event, 'capacity-null-closed@example.com', null);
+
+        $participantService = $this->getService($app, ParticipantService::class);
+        $nullIst = $this->createOpenIstWithContingent($app, $event, 'capacity-null-open@example.com', null);
+        $namedIst = $this->createOpenIstWithContingent($app, $event, 'capacity-null-named@example.com', 'contingent-c');
+
+        self::assertTrue($participantService->isParticipantOrEventFull($nullIst));
+        self::assertFalse($participantService->isParticipantOrEventFull($namedIst));
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */
@@ -74,7 +88,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createClosedIst(App $app, Event $event, string $email, string $contingent): void
+    private function createClosedIst(App $app, Event $event, string $email, ?string $contingent): void
     {
         $ist = $this->createOpenIstWithContingent($app, $event, $email, $contingent);
 
@@ -87,7 +101,7 @@ class ParticipantCapacityContingentTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createOpenIstWithContingent(App $app, Event $event, string $email, string $contingent): Ist
+    private function createOpenIstWithContingent(App $app, Event $event, string $email, ?string $contingent): Ist
     {
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser($email, $event);

@@ -6,6 +6,7 @@ namespace kissj\Participant;
 
 use Collator;
 use DateTimeInterface;
+use Dibi\Fluent as DibiFluent;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Entry\EntryParticipant;
@@ -269,6 +270,8 @@ class ParticipantRepository extends Repository
         array $roles,
         array $statuses,
         Event $event,
+        bool $restrictToContingent = false,
+        ?string $contingent = null,
     ): int {
         $qb = $this->connection->select('COUNT(*)')->from($this->getTable());
 
@@ -278,6 +281,9 @@ class ParticipantRepository extends Repository
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
+        if ($restrictToContingent) {
+            $this->addContingentCondition($qb, $contingent);
+        }
 
         /** @var int $count */
         $count = $qb->fetchSingle();
@@ -292,6 +298,9 @@ class ParticipantRepository extends Repository
             $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
             $qb->where('u.status IN %in', $statuses);
             $qb->where('u.event_id = %i', $event->id);
+            if ($restrictToContingent) {
+                $this->addContingentCondition($qb, $contingent);
+            }
 
             /** @var int $patrolParticipantsCount */
             $patrolParticipantsCount = $qb->fetchSingle();
@@ -300,6 +309,17 @@ class ParticipantRepository extends Repository
         }
 
         return $count;
+    }
+
+    private function addContingentCondition(DibiFluent $qb, ?string $contingent): void
+    {
+        if ($contingent === null) {
+            $qb->where('participant.contingent IS NULL');
+
+            return;
+        }
+
+        $qb->where('participant.contingent = %s', $contingent);
     }
 
     private function addFilterAdminParticipants(Fluent $qb, User $adminUser): void

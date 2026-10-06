@@ -13,7 +13,6 @@ use kissj\Skautis\SkautisService;
 use kissj\User\User;
 use Throwable;
 use kissj\User\UserLoginType;
-use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -48,15 +47,14 @@ class PatrolController extends AbstractController
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
         $patrolLeader = $this->patrolService->getPatrolLeader($user);
-        $patrolLeader = $this->participantService->closeRegistration($patrolLeader);
+        $closeResult = $this->participantService->closeRegistration($patrolLeader);
 
-        $patrolLeaderUser = $patrolLeader->getUserButNotNull();
-        if ($patrolLeaderUser->status === UserStatus::Closed) {
+        if ($closeResult->isValid) {
             $this->flashMessages->success('flash.success.locked');
             $this->logger->info('Locked registration for Patrol Leader with ID '
-                . $patrolLeader->id . ', user ID ' . $patrolLeaderUser->id);
+                . $patrolLeader->id . ', user ID ' . $patrolLeader->getUserButNotNull()->id);
         } else {
-            $this->flashMessages->error('flash.error.wrongData');
+            $this->flashRegistrationCloseResult($closeResult);
         }
 
         return $this->redirect($request, $response, 'dashboard');

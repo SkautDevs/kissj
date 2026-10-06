@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Event;
 
+use Dibi\Drivers\PostgreDriver;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Orm\Order;
@@ -88,6 +89,12 @@ class EventRepository extends Repository
         }
 
         return $events;
+    }
+
+    public function lockForCapacity(Event $event): void
+    {
+        $lockClause = $this->connection->getDriver() instanceof PostgreDriver ? ' FOR NO KEY UPDATE' : '';
+        $this->connection->query('SELECT id FROM %n WHERE id = %i' . $lockClause, $this->getTable(), $event->id);
     }
 
     public function generateNewOrganizingTeamRegistrationToken(Event $event): string

@@ -9,6 +9,7 @@ use kissj\Event\AbstractContentArbiter;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\Event;
+use kissj\Event\EventRepository;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -24,6 +25,7 @@ use kissj\Payment\PaymentStatus;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\UserLoginType;
+use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LogicException;
@@ -38,6 +40,8 @@ readonly class ParticipantService
         private Mailer $mailer,
         private Metrics $metrics,
         private TshirtService $tshirtService,
+        private EventRepository $eventRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -309,7 +313,7 @@ readonly class ParticipantService
     {
         $event = $participant->getUserButNotNull()->event;
 
-        $participants = $this->participantRepository->getAllParticipantsWithStatus(
+        return $this->participantRepository->getParticipantsCount(
             $participant->role === null ? [] : [$participant->role],
             [
                 UserStatus::Closed,
@@ -317,13 +321,9 @@ readonly class ParticipantService
                 UserStatus::Paid,
             ],
             $event,
+            $event->eventType->countContingentsTogetherForCapacity() === false,
+            $participant->contingent,
         );
-
-        if ($event->eventType->countContingentsTogetherForCapacity()) {
-            return count($participants);
-        }
-
-        return count($this->filterSameContingent($participants, $participant->contingent));
     }
 
     public function getParticipantsComingToEventCount(Event $event): int
@@ -343,25 +343,30 @@ readonly class ParticipantService
         return $allParticipants - $untiedParticipants;
     }
 
-    /**
-     * @param Participant[] $participants
-     * @return Participant[]
-     */
-    private function filterSameContingent(array $participants, ?string $contingent): array
+    public function closeRegistration(Participant $participant): RegistrationCloseResult
     {
-        return array_filter(
-            $participants,
-            fn (Participant $participant): bool => $participant->contingent === $contingent,
-        );
-    }
+        $user = $participant->getUserButNotNull();
+        $result = RegistrationCloseResult::startChecking();
+        $closedNow = $this->participantRepository->transactional(function () use ($participant, $user, &$result): bool {
+            $this->eventRepository->lockForCapacity($user->event);
 
-    public function closeRegistration(Participant $participant): Participant
-    {
-        if ($this->isCloseRegistrationValid($participant)->isValid) {
-            $user = $participant->getUserButNotNull();
+            if ($this->userRepository->get($user->id)->status !== UserStatus::Open) {
+                return false;
+            }
+
+            $result = $this->isCloseRegistrationValid($participant);
+            if ($result->isValid === false) {
+                return false;
+            }
+
             $participant->registrationCloseDate = DateTimeUtils::getDateTime();
             $this->participantRepository->persist($participant);
             $this->userService->setUserClosed($user);
+
+            return true;
+        });
+
+        if ($closedNow) {
             $this->mailer->sendRegistrationClosed($user, $participant);
             $this->metrics->count(
                 MetricName::RegistrationsLocked,
@@ -370,7 +375,7 @@ readonly class ParticipantService
             );
         }
 
-        return $participant;
+        return $result;
     }
 
     public function addNewPayment(Participant $participant, int $price, string $reason): Payment

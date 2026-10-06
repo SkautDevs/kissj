@@ -51,6 +51,7 @@ class PatrolCloseRegistrationTest extends AppTestCase
         $patrolLeader = $patrolLeaderRepository->get($patrolLeader->id);
 
         $this->initializeMailerSettings($app, $event);
+        $this->getService($app, UserService::class)->setUserOpen($patrolLeader->getUserButNotNull());
 
         $participantService = $this->getService($app, ParticipantService::class);
         $participantService->closeRegistration($patrolLeader);

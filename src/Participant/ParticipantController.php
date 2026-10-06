@@ -156,17 +156,17 @@ class ParticipantController extends AbstractController
     public function closeRegistration(Request $request, Response $response, User $user): Response
     {
         $participant = $this->participantRepository->getParticipantFromUser($user);
-        $participant = $this->participantService->closeRegistration($participant);
+        $closeResult = $this->participantService->closeRegistration($participant);
 
-        if ($participant->getUserButNotNull()->status === UserStatus::Closed) {
+        if ($closeResult->isValid) {
             $this->flashMessages->success('flash.success.locked');
             $this->logger->info('Locked registration for IST with ID ' . $participant->id
-                . ', user ID ' . $participant->id);
+                . ', user ID ' . $user->id);
 
             return $this->redirect($request, $response, 'dashboard', queryParams: ['celebrate' => '1']);
         }
 
-        $this->flashMessages->error('flash.error.wrongData');
+        $this->flashRegistrationCloseResult($closeResult);
 
         return $this->redirect($request, $response, 'dashboard');
     }

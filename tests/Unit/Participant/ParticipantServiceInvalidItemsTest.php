@@ -7,6 +7,7 @@ namespace Tests\Unit\Participant;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiterGuest;
+use kissj\Event\EventRepository;
 use kissj\Mailer\Mailer;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Guest\Guest;
@@ -107,6 +108,8 @@ class ParticipantServiceInvalidItemsTest extends TestCase
             $metrics,
             // TshirtService is readonly too - same reason as Mailer/UserService above
             new TshirtService(Mockery::mock(TranslatorInterface::class)),
+            Mockery::mock(EventRepository::class),
+            Mockery::mock(UserRepository::class),
         );
     }
 }
