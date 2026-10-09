@@ -7,7 +7,8 @@
     const ERROR_TEXT = 'Kód se nepodařilo uložit, zkus to prosím znovu nebo ho vepiš do poznámky ručně.';
     const DETAILS_MISSING_TEXT = 'Nejdřív vyplň a ulož své údaje, potom ulož kód servisáka.';
     const MISSING_CODE_TEXT = 'Bez kódu servisáka to nepůjde! Vlož jeho šestipísmenný osobní kód.';
-    const MISSING_CODE_VIDEO_URL = new URL('hrozeni_prstem.mp4', document.currentScript.src).href;
+    const MISSING_CODE_ANIMATION_URL = new URL('hrozeni_prstem.webp', document.currentScript.src).href;
+    const MISSING_CODE_ANIMATION_MS = 6000;
 
     function el(tag, attributes, text) {
         const element = document.createElement(tag);
@@ -97,22 +98,18 @@
                 + ' background: rgba(0, 0, 0, 0.6); cursor: pointer;',
         });
         const panel = el('div', {
-            style: 'background: #fff; border-radius: 8px; padding: 1rem; max-width: 90vw; text-align: center;',
+            style: 'background: var(--color-card-background); border-radius: 8px; padding: 1rem; max-width: 90vw; text-align: center;',
         });
-        const video = el('video', {
-            src: MISSING_CODE_VIDEO_URL,
-            autoplay: '',
-            muted: '',
-            playsinline: '',
-            preload: 'none',
+        const animation = el('img', {
+            src: MISSING_CODE_ANIMATION_URL,
+            alt: '',
             style: 'width: 410px; max-width: 100%; display: block; margin: 0 auto;',
         });
-        video.muted = true;
 
-        panel.append(video, el('p', {style: 'margin: 0.5rem 0 0; font-weight: bold;'}, MISSING_CODE_TEXT));
+        panel.append(animation, el('p', {style: 'margin: 0.5rem 0 0; font-weight: bold;'}, MISSING_CODE_TEXT));
         overlay.append(panel);
         overlay.addEventListener('click', () => overlay.remove());
-        video.addEventListener('ended', () => overlay.remove());
+        setTimeout(() => overlay.remove(), MISSING_CODE_ANIMATION_MS);
         document.body.append(overlay);
     }
 

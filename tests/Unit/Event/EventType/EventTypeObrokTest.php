@@ -27,9 +27,9 @@ class EventTypeObrokTest extends TestCase
         );
     }
 
-    public function testMissingCodeVideoFileExists(): void
+    public function testMissingCodeAnimationFileExists(): void
     {
-        self::assertTrue(is_file(__DIR__ . '/../../../../public/obrok27/hrozeni_prstem.mp4'));
+        self::assertTrue(is_file(__DIR__ . '/../../../../public/obrok27/hrozeni_prstem.webp'));
     }
 
     public function testShowsTieCodeToIst(): void
