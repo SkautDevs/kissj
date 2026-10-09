@@ -96,7 +96,7 @@ class AbstractContentArbiterTest extends TestCase
     {
         $ca = new ContentArbiterIst();
         self::assertSame(ContentArbiterItemType::Phone, $ca->phone->type);
-        self::assertSame('^\+?[0-9 ]+$', $ca->phone->pattern);
+        self::assertSame('(\+|00)[0-9 ]+|(42[01] ?)?[0-9]{3} ?[0-9]{3} ?[0-9]{3}', $ca->phone->pattern);
     }
 
     public function testTshirtFieldIsCompositeType(): void

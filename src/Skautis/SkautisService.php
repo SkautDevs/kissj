@@ -168,7 +168,7 @@ class SkautisService
         $participant->nickname = $skautisUserData->nickName;
         $participant->birthDate = $skautisUserData->birthday;
         $participant->email = $skautisUserData->email;
-        $participant->telephoneNumber = $skautisUserData->phone;
+        $participant->setTelephoneNumberNormalized($skautisUserData->phone);
         $participant->permanentResidence = $skautisUserData->getPermanentResidence();
         $participant->scoutUnit = $skautisUserData->unitName;
         if ($skautisUserData->gender !== Gender::Other) {

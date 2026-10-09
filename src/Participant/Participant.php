@@ -368,6 +368,44 @@ class Participant extends EntityDatetime
         return $role->value;
     }
 
+    public static function normalizeTelephoneNumber(string $raw): string
+    {
+        $collapsed = trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $raw) ?? $raw);
+        if (str_starts_with($collapsed, '00')) {
+            $collapsed = '+' . substr($collapsed, 2);
+        }
+
+        $compact = str_replace(' ', '', $collapsed);
+
+        if (preg_match('/^[0-9]{9}$/', $compact) === 1) {
+            $compact = '+420' . $compact;
+        }
+
+        if (preg_match('/^42[01][0-9]{9}$/', $compact) === 1) {
+            $compact = '+' . $compact;
+        }
+
+        if (preg_match('/^(\+42[01])([0-9]{3})([0-9]{3})([0-9]{3})$/', $compact, $parts) === 1) {
+            return sprintf('%s %s %s %s', $parts[1], $parts[2], $parts[3], $parts[4]);
+        }
+
+        return $collapsed;
+    }
+
+    public function setTelephoneNumberNormalized(?string $raw): void
+    {
+        if ($raw === null) {
+            $this->telephoneNumber = null;
+
+            return;
+        }
+
+        $this->telephoneNumber = self::normalizeTelephoneNumber($raw);
+        if ($this->telephoneNumber === '') {
+            $this->telephoneNumber = null;
+        }
+    }
+
     public function regenerateTieCode(): void
     {
         $this->tieCode = $this->generateTieCode();

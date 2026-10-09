@@ -118,6 +118,9 @@ readonly class ParticipantService
                         $participant->patrolName = $params['patrolName'] ?? null;
                     }
                 })(),
+                'telephoneNumber' => (function () use ($params, $participant): void {
+                    $participant->setTelephoneNumberNormalized($params['telephoneNumber'] ?? null);
+                })(),
                 default => (function () use ($slug, $params, $participant): void {
                     $participant->__set($slug, $params[$slug] ?? null);
                 })(),
@@ -297,7 +300,11 @@ readonly class ParticipantService
             $invalid[] = $ca->email;
         }
 
-        if ($ca->phone->allowed && $p->telephoneNumber !== null && preg_match('/^\+?[0-9 ]+$/', $p->telephoneNumber) === 0) {
+        if (
+            $ca->phone->allowed
+            && $p->telephoneNumber !== null
+            && preg_match('/^\+[0-9 ]+$/', Participant::normalizeTelephoneNumber($p->telephoneNumber)) === 0
+        ) {
             $invalid[] = $ca->phone;
         }
 

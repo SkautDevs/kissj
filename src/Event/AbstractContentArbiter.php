@@ -164,7 +164,7 @@ abstract class AbstractContentArbiter
             order: 140,
             label: 'detail.phone',
             placeholder: 'detail.phonePlaceholder',
-            pattern: '^\+?[0-9 ]+$',
+            pattern: '(\+|00)[0-9 ]+|(42[01] ?)?[0-9]{3} ?[0-9]{3} ?[0-9]{3}',
         );
         $this->unit = new ContentArbiterItem(
             slug: 'scoutUnit',
