@@ -24,7 +24,7 @@ login:
     more: "Více informací o registraci"
     skautis: "Přihlásit se přes skautIS"
 login-help:
-    text: "<h2>Přihlašovací systém kissj</h2><h3>Jak to vlastně funguje?</h3><p>Přihlašování do registračního systému kissj na Obroku probíhá přes skautIS účet.</p><p>Po přihlášení se s účtem skautIS tě kissj přesměruje na stránku, kde budeš moci vyplnit svou registraci.</p><p>Zůstávaš přihlášen/a dokud se ručně neodhlásíš.</p><p>Po odhlášení nemá nikdo přístup k tvým informacím, dokonce ani ze stejného zařízení.</p><h3>Jak se propojit se skupinou?</h3><p>Při přihlašování je ti předán osobní kód, ten pošleš své/mu vedoucímu skupiny, dovyplníš všechny potřebné informace a poté se uzamkneš.</p><p>Vedoucí tě při svém přihlašování připne ke své skupině. Ve chvíli, kdy budete ve skupině připnutí všichni, vedoucí skupiny uzamkne i svoji registraci</p><h3>Stále si nevíš rady?</h3><p>Podívej se na <a href='https://obrok24.cz'>web obroku</a>, kde jsme pro tebe připravili podrobný <a href='https://obrok24.cz/nav'>návod na registraci</a> </p><h3>Otázky?</h3><p>Pokud by se měl vyskytnout problém s přihlašováním, napiš e-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou.</p>"
+    text: "<h2>Přihlašovací systém kissj</h2><h3>Jak to vlastně funguje?</h3><p>Přihlašování do registračního systému kissj na Obroku probíhá přes skautIS účet.</p><p>Po přihlášení se s účtem skautIS tě kissj přesměruje na stránku, kde budeš moci vyplnit svou registraci.</p><p>Zůstávaš přihlášen/a dokud se ručně neodhlásíš.</p><p>Po odhlášení nemá nikdo přístup k tvým informacím, dokonce ani ze stejného zařízení.</p><h3>Jak se propojit se skupinou?</h3><p>Při přihlašování je ti předán osobní kód, ten pošleš své/mu vedoucímu skupiny, dovyplníš všechny potřebné informace a poté se uzamkneš.</p><p>Vedoucí tě při svém přihlašování připne ke své skupině. Ve chvíli, kdy budete ve skupině připnutí všichni, vedoucí skupiny uzamkne i svoji registraci</p><h3>Stále si nevíš rady?</h3><p>Podívej se na <a href='https://obrok.skaut.cz'>web obroku</a>, kde jsme pro tebe připravili podrobný <a href='https://obrok.skaut.cz/registrace'>návod na registraci</a> </p><h3>Otázky?</h3><p>Pokud by se měl vyskytnout problém s přihlašováním, napiš e-mail organizátorům akce, zajisté se ti pokusí pomoci jak nejlépe to dovedou.</p>"
     backToLogin: "Zpět k přihlášení"
 
 role:
@@ -33,8 +33,16 @@ role:
 detail:
     patrolName: "Název skupiny"
     patrolNamePlaceholder: "Jméno vaší skupiny"
+    emergencyContact: "Kontakt na zákonného zástupce (jméno + telefon)"
+    emergencyContact-placeholder: "Jana Nováková, +420 603 123 456"
+    printedHandbook-detail: "Preferuji tištěný handbook namísto digitálního"
     foodLactoseFree: "bez laktózy (může obsahovat stopové množství)"
     foodGlutenFree: "bez lepku (může obsahovat stopové množství)"
+    arrivalDate-helptext: "Datum příjezdu můžeš měnit i po odeslání přihlášky. Servisáci, kteří budou na akci od pondělí do neděle 17:00, dostanou vrácenou část poplatku."
+    language-helptext: "Chceš dělat buddyho zahraničním servisákům? Napiš sem, jakými jazyky mluvíš."
+    notice-helptext: "Bereš s sebou dítě do školky? Napiš sem jeho jméno a datum narození. Vyplňuje jen jeden z rodičů."
+    parentalConsent-helptext: "PDF nebo obrázek, max 10 MB. Vzor ke stažení najdeš na <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
+    hospitalConsent-helptext: "PDF nebo obrázek, max 10 MB. Vzor ke stažení najdeš na <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
 
 deal:
     sfh: "Safe From Harm"
@@ -42,11 +50,3 @@ deal:
     sfh-button: "Vyplnit dotazník Safe From Harm"
     sfh-doneBadly: "Safe From Harm je vyplněn, ale bohužel nebyl vyplněn správně (%date%). Prosím zkus ho vyplnit znovu"
     sfh-done: "Safe From Harm je vyplněn, děkujeme!"
-    programme: "Vybírání programů"
-    programme-missing: "Svůj přidělený program najdeš na adrese <a target=\"_blank\" href=\"https://obrok24.cz/program/data.php?code=%tieCode%\">https://obrok24.cz/program/data.php?code=%tieCode%</a>"
-    programme-button: "Vybrat program na akci"
-    programme-done: "Svůj vybraný program najdeš na adrese <a target=\"_blank\" href=\"https://obrok24.cz/program/data.php?code=%tieCode%\">https://obrok24.cz/program/data.php?code=%tieCode%</a>"
-    bus: "Obbjednávka Obrokové autobusové dopravy z Prahy"
-    bus-missing: "Pokud máš zájem o dopravu až k areálu, vyplň prosím tento formulář"
-    bus-button: "Objednat autobusovou dopravu pro skupinu"
-    bus-done: "Doprava je objednána, díky!"

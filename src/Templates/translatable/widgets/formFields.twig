@@ -8,6 +8,7 @@
     @param user          The user entity (for email fallback)
 #}
 {% macro renderField(item, value, personDetails, event, user) %}
+    {% import _self as forms %}
     {% if item.type.value == 'text' or item.type.value == 'phone' %}
         <div class="form-group"
             {% if item.ageGroup %}
@@ -26,6 +27,7 @@
                 {% if item.pattern %}pattern="{{ item.pattern }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
             >
+            {{ forms.renderHelpText(item) }}
         </div>
     {% elseif item.type.value == 'email' %}
         <div class="form-group">
@@ -52,6 +54,7 @@
                 {% if item.required %}required="required"{% endif %}
                 {% if item.slug == 'birthDate' %}data-event-start-day="{{ event.startDay.getTimestamp() }}"{% endif %}
             >
+            {{ forms.renderHelpText(item) }}
         </div>
     {% elseif item.type.value == 'select' %}
         <div class="form-group">
@@ -71,11 +74,8 @@
                     </option>
                 {% endfor %}
             </select>
+            {{ forms.renderHelpText(item) }}
         </div>
-        {% if item.helpText %}
-            {{ item.helpText|trans }}
-            <br><br>
-        {% endif %}
     {% elseif item.type.value == 'textarea' %}
         <div class="form-group">
             <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
@@ -86,6 +86,7 @@
                 name="{{ item.slug }}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
             >{{ value }}</textarea>
+            {{ forms.renderHelpText(item) }}
         </div>
     {% elseif item.type.value == 'file' %}
         <div id="{{ item.slug }}Form" class="form-group"
@@ -107,7 +108,7 @@
                     {{ 'detail.uploadedFileSuccessful' | trans }}
                 </b>
             {% endif %}
-            {{ 'detail.uploadedFileNote' | trans | raw }}
+            {{ forms.renderHelpText(item) }}
         </div>
     {% elseif item.type.value == 'checkbox' %}
         {% if item.slug == 'preferredPosition' %}
@@ -120,9 +121,8 @@
                         {{ transKey|trans }}
                     </label>
                 {% endfor %}
+                {{ forms.renderHelpText(item) }}
             </div>
-            {{ 'detail.position-placeholder' | trans }}
-            <br>
         {% elseif item.slug == 'printedHandbook' %}
             <div class="form-group">
                 <label for="{{ item.slug }}">{{ 'detail.printedHandbook-detail' | trans }}: </label>
@@ -190,6 +190,8 @@
         </div>
     {% endif %}
 {% endmacro %}
+
+{% macro renderHelpText(item) %}{% if item.helpText %}<div>{{ item.helpText|trans|raw }}</div>{% endif %}{% endmacro %}
 
 {#
     Renders a read-only detail display for details.twig.

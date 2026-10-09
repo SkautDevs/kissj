@@ -1,5 +1,5 @@
 detail:
-    uploadedFileNote: "PDF with consent can be found at <a target=\"_blank\" href=\"https://example.com/wsj\">our website</a>."
+    parentalConsent-helptext: "PDF or image, max 10 MB. PDF with consent can be found at <a target=\"_blank\" href=\"https://example.com/wsj\">our website</a>."
     contingent:
         czechia: "🇨🇿 Český kontingent"
         team: "⚜ Organizing Team"

@@ -119,6 +119,16 @@ class AbstractContentArbiterTest extends TestCase
         self::assertSame('detail.language', $ca->languages->label);
     }
 
+    public function testFileAndPositionItemsCarryHelpTexts(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        foreach (['parentalConsent', 'hospitalConsent', 'childWorkCert', 'adultEventCert', 'preferredPosition'] as $slug) {
+            self::assertSame('detail.' . $slug . '-helptext', $ca->$slug->helpText);
+            self::assertNull($ca->$slug->placeholder);
+        }
+    }
+
     public function testPlaceholdersMatchTemplateTranslationKeys(): void
     {
         $ca = new ContentArbiterIst();
@@ -161,20 +171,42 @@ class AbstractContentArbiterTest extends TestCase
         self::assertSame(['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'], $ca->scarf->options);
     }
 
-    public function testEditableAfterLockDefaultsToFalseForAllFields(): void
+    public function testArrivalAndDepartureDatesDefaultToEditableAfterLockWithHelpText(): void
+    {
+        $ca = new ContentArbiterIst();
+
+        self::assertTrue($ca->arrivalDate->editableAfterLock);
+        self::assertSame('detail.arrivalDate-helptext', $ca->arrivalDate->helpText);
+        self::assertTrue($ca->departureDate->editableAfterLock);
+        self::assertSame('detail.departureDate-helptext', $ca->departureDate->helpText);
+    }
+
+    public function testEditableAfterLockDefaultsToFalseForAllOtherFields(): void
     {
         $ca = new ContentArbiterIst();
 
         foreach ($ca->getAllItems() as $item) {
+            if ($item === $ca->arrivalDate || $item === $ca->departureDate) {
+                continue;
+            }
             self::assertFalse($item->editableAfterLock, 'Field ' . $item->slug . ' should default to editableAfterLock=false');
         }
     }
 
-    public function testGetEditableAfterLockItemsReturnsEmptyByDefault(): void
+    public function testGetEditableAfterLockItemsReturnsEmptyWhenDatesNotAllowed(): void
     {
         $ca = new ContentArbiterIst();
 
         self::assertEmpty($ca->getEditableAfterLockItems());
+    }
+
+    public function testGetEditableAfterLockItemsReturnsDatesWhenAllowed(): void
+    {
+        $ca = new ContentArbiterIst();
+        $ca->arrivalDate->allowed = true;
+        $ca->departureDate->allowed = true;
+
+        self::assertSame([$ca->arrivalDate, $ca->departureDate], $ca->getEditableAfterLockItems());
     }
 
     public function testGetEditableAfterLockItemsReturnsOnlyAllowedAndEditableAfterLock(): void

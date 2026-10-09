@@ -258,6 +258,8 @@ abstract class AbstractContentArbiter
             order: 250,
             label: 'detail.arrivalDate',
             placeholder: 'detail.arrivalDatePlaceholder',
+            helpText: 'detail.arrivalDate-helptext',
+            editableAfterLock: true,
         );
         $this->departureDate = new ContentArbiterItem(
             slug: 'departureDate',
@@ -266,6 +268,8 @@ abstract class AbstractContentArbiter
             order: 260,
             label: 'detail.departureDate',
             placeholder: 'detail.departureDatePlaceholder',
+            helpText: 'detail.departureDate-helptext',
+            editableAfterLock: true,
         );
         $this->driver = new ContentArbiterItem(
             slug: 'driversLicense',
@@ -290,7 +294,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::Checkbox,
             order: 290,
             label: 'detail.preferredPosition',
-            placeholder: 'detail.position-placeholder',
+            helpText: 'detail.preferredPosition-helptext',
         );
         $this->printedHandbook = new ContentArbiterItem(
             slug: 'printedHandbook',
@@ -307,7 +311,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::File,
             order: 400,
             label: 'detail.parentalConsent',
-            placeholder: 'detail.parentalConsentPlaceholder',
+            helpText: 'detail.parentalConsent-helptext',
             ageGroup: AgeGroup::Under18,
         );
         $this->hospitalConsent = new ContentArbiterItem(
@@ -316,7 +320,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::File,
             order: 410,
             label: 'detail.hospitalConsent',
-            placeholder: 'detail.hospitalConsentPlaceholder',
+            helpText: 'detail.hospitalConsent-helptext',
             ageGroup: AgeGroup::Under18,
         );
         $this->childWorkCert = new ContentArbiterItem(
@@ -325,7 +329,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::File,
             order: 420,
             label: 'detail.childWorkCert',
-            placeholder: 'detail.childWorkCertPlaceholder',
+            helpText: 'detail.childWorkCert-helptext',
             ageGroup: AgeGroup::Over18,
         );
         $this->adultEventCert = new ContentArbiterItem(
@@ -334,7 +338,7 @@ abstract class AbstractContentArbiter
             type: ContentArbiterItemType::File,
             order: 430,
             label: 'detail.adultEventCert',
-            placeholder: 'detail.adultEventCertPlaceholder',
+            helpText: 'detail.adultEventCert-helptext',
             ageGroup: AgeGroup::Over18,
         );
         $this->notes = new ContentArbiterItem(

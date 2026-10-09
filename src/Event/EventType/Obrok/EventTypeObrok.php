@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace kissj\Event\EventType\Obrok;
 
+use kissj\Event\ContentArbiter\AgeGroup;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Troop\TroopLeader;
-use kissj\Deal\EventDeal;
-use kissj\Participant\Troop\TroopParticipant;
 
 class EventTypeObrok extends EventType
 {
-    public const string SLUG_PROGRAMME = 'programme';
-
     #[\Override]
     public function getPrice(Participant $participant): int
     {
@@ -43,11 +41,14 @@ class EventTypeObrok extends EventType
         $ca->food->allowed = true;
         $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->arrivalDate->allowed = true;
-        $ca->arrivalDate->editableAfterLock = true;
+        $ca->languages->allowed = true;
+        $ca->languages->required = false;
+        $ca->languages->helpText = 'detail.language-helptext';
         $ca->parentalConsent->allowed = true;
         $ca->hospitalConsent->allowed = true;
         $ca->childWorkCert->allowed = true;
         $ca->adultEventCert->allowed = true;
+        $ca->notes->helpText = 'detail.notice-helptext';
 
         return $ca;
     }
@@ -64,6 +65,9 @@ class EventTypeObrok extends EventType
         $ca->printedHandbook->allowed = true;
         $ca->parentalConsent->allowed = true;
         $ca->hospitalConsent->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->emergencyContact->ageGroup = AgeGroup::Under18;
+        $ca->emergencyContact->editableAfterLock = true;
         $ca->adultEventCert->allowed = true;
 
         return $ca;
@@ -81,7 +85,19 @@ class EventTypeObrok extends EventType
         $ca->printedHandbook->allowed = true;
         $ca->parentalConsent->allowed = true;
         $ca->hospitalConsent->allowed = true;
+        $ca->emergencyContact->allowed = true;
+        $ca->emergencyContact->ageGroup = AgeGroup::Under18;
+        $ca->emergencyContact->editableAfterLock = true;
         $ca->adultEventCert->allowed = true;
+
+        return $ca;
+    }
+
+    #[\Override]
+    public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
+    {
+        $ca = parent::getContentArbiterOrganizingTeam();
+        $ca->notes->helpText = 'detail.notice-helptext';
 
         return $ca;
     }
@@ -192,33 +208,6 @@ class EventTypeObrok extends EventType
     protected function isReceiptAllowed(): bool
     {
         return true;
-    }
-
-    #[\Override]
-    public function getEventDeals(Participant $participant): array
-    {
-        $eventDeals = [
-            new EventDeal(
-                self::SLUG_SFH,
-                sprintf(
-                    'TODO %s',
-                    $participant->tieCode,
-                ),
-            ),
-        ];
-
-        if ($participant instanceof TroopLeader || $participant instanceof TroopParticipant) {
-            $eventDeals[] = new EventDeal(
-                self::SLUG_PROGRAMME,
-                sprintf(
-                    'TODO %s %s',
-                    $participant->tieCode,
-                    $participant->getFullName(),
-                ),
-            );
-        }
-
-        return $eventDeals;
     }
 
     #[\Override]

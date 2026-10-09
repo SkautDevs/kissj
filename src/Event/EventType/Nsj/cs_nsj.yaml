@@ -1,6 +1,5 @@
 detail:
     notice-placeholder: "Už tě kontaktoval někdo z týmu? Cokoli dalšího?"
-    position-placeholder: "Vyber max. 5. Nezaručujeme zařazení na vybranou pozici, ale posnažíme se!"
     position:
         programme: "Program"
         photo: "Komunikace - web, foto + video, socky..."
