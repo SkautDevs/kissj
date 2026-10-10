@@ -10,16 +10,16 @@ use PHPUnit\Framework\TestCase;
 
 class EventTypeObrokTest extends TestCase
 {
-    public function testUsesIstCodeScript(): void
+    public function testUsesObrok27Script(): void
     {
         self::assertSame(
-            'obrok27/istCode.js',
+            'obrok27/obrok27.js',
             (new EventTypeObrok())->getScriptNameWithoutLeadingSlash(),
         );
     }
 
     // _layout.twig loads this by name off the filesystem, so a typo would only surface as a 404 in production
-    public function testIstCodeScriptFileExists(): void
+    public function testObrok27ScriptFileExists(): void
     {
         // is_file, because assertFileExists also passes for the bare public/ directory
         self::assertTrue(

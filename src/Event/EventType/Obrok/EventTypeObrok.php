@@ -151,7 +151,7 @@ class EventTypeObrok extends EventType
     #[\Override]
     public function getScriptNameWithoutLeadingSlash(): string
     {
-        return 'obrok27/istCode.js';
+        return 'obrok27/obrok27.js';
     }
 
     #[\Override]
