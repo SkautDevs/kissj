@@ -32,6 +32,24 @@ class EventTypeObrokTest extends TestCase
         self::assertTrue(is_file(__DIR__ . '/../../../../public/obrok27/hrozeni_prstem.webp'));
     }
 
+    public function testTagSlotListsExactlyTheTagFiles(): void
+    {
+        $publicDir = __DIR__ . '/../../../../public/';
+        $script = file_get_contents($publicDir . (new EventTypeObrok())->getScriptNameWithoutLeadingSlash());
+        self::assertIsString($script);
+        preg_match_all('/O27tag_\w+\.svg/', $script, $matches);
+        $listed = array_unique($matches[0]);
+        sort($listed);
+
+        $tagFiles = glob($publicDir . 'obrok27/tags/*.svg');
+        self::assertIsArray($tagFiles);
+        $onDisk = array_map(basename(...), $tagFiles);
+        sort($onDisk);
+
+        self::assertNotEmpty($onDisk);
+        self::assertSame($onDisk, $listed);
+    }
+
     public function testShowsTieCodeToIst(): void
     {
         self::assertTrue((new EventTypeObrok())->isTieCodeShownToIst());

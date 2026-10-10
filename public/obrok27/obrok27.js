@@ -164,3 +164,99 @@
         }
     });
 })();
+
+(function () {
+    'use strict';
+
+    const TAGS = [
+        'O27tag_fajvka.svg',
+        'O27tag_hvezda.svg',
+        'O27tag_hvezda_man.svg',
+        'O27tag_lilie.svg',
+        'O27tag_nahoru.svg',
+        'O27tag_obrok.svg',
+        'O27tag_otaznik.svg',
+        'O27tag_rychle.svg',
+        'O27tag_slib.svg',
+        'O27tag_stan.svg',
+        'O27tag_uzel.svg',
+        'O27tag_vykricnik.svg',
+    ];
+    const TAGS_URL = new URL('tags/', document.currentScript.src);
+    const REEL_LENGTH = 24;
+    const SPIN_MS = 4000;
+    const MIN_OVERSHOOT = 0.05;
+    const MAX_OVERSHOOT = 0.4;
+
+    function randomTagOtherThan(tag) {
+        const others = TAGS.filter((candidate) => candidate !== tag);
+
+        return others[Math.floor(Math.random() * others.length)];
+    }
+
+    function tagImage(tag) {
+        const image = document.createElement('img');
+        image.src = new URL(tag, TAGS_URL).href;
+        image.alt = '';
+
+        return image;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const slot = document.createElement('div');
+        slot.className = 'tag-slot';
+        slot.setAttribute('aria-hidden', 'true');
+        const reel = document.createElement('div');
+        reel.className = 'tag-slot-reel';
+        let current = TAGS[Math.floor(Math.random() * TAGS.length)];
+        reel.append(tagImage(current));
+        slot.append(reel);
+        document.body.append(slot);
+        window.addEventListener('load', () => TAGS.forEach(tagImage));
+
+        let spinning = false;
+        document.addEventListener('click', function (event) {
+            const box = slot.getBoundingClientRect();
+            const isInsideSlot = event.clientX >= box.left && event.clientX < box.right
+                && event.clientY >= box.top && event.clientY < box.bottom;
+            if (spinning || isInsideSlot === false || event.target.closest('a, button, input, select, textarea, label') !== null) {
+                return;
+            }
+            const target = randomTagOtherThan(current);
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                reel.replaceChildren(tagImage(target));
+                current = target;
+
+                return;
+            }
+            spinning = true;
+
+            const strip = [randomTagOtherThan(target), target];
+            while (strip.length < REEL_LENGTH - 1) {
+                strip.push(randomTagOtherThan(strip[strip.length - 1]));
+            }
+            const images = [...strip.map(tagImage), reel.firstElementChild];
+            reel.replaceChildren(...images);
+
+            const height = slot.clientHeight;
+            const start = -(images.length - 1) * height;
+            const distance = (images.length - 2) * height;
+            const overshoot = (MIN_OVERSHOOT + Math.random() * (MAX_OVERSHOOT - MIN_OVERSHOOT)) * height;
+            const at = (progress, extra = 0) => ({transform: `translateY(${start + progress * distance + extra}px)`});
+            const animation = reel.animate([
+                {...at(0), easing: 'cubic-bezier(.5, 0, 1, 1)'},
+                {...at(0.07), offset: 0.08, easing: 'linear'},
+                {...at(0.46), offset: 0.3, easing: 'cubic-bezier(.3, .6, .5, 1)'},
+                {...at(1, overshoot), offset: 0.9, easing: 'ease-in-out'},
+                at(1),
+            ], {duration: SPIN_MS, fill: 'forwards'});
+
+            animation.finished.finally(function () {
+                reel.replaceChildren(images[1]);
+                animation.cancel();
+                current = target;
+                spinning = false;
+            });
+        });
+    });
+})();
