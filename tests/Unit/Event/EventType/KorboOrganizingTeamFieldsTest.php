@@ -58,6 +58,13 @@ class KorboOrganizingTeamFieldsTest extends TestCase
         self::assertFalse($ca->gender->allowed);
     }
 
+    public function testFoodIsDisabled(): void
+    {
+        $ca = (new EventTypeKorbo())->getContentArbiterOrganizingTeam();
+
+        self::assertFalse($ca->food->allowed);
+    }
+
     public function testUnitIsAllowed(): void
     {
         $ca = (new EventTypeKorbo())->getContentArbiterOrganizingTeam();

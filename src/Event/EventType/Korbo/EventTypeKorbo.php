@@ -85,8 +85,7 @@ class EventTypeKorbo extends EventType
     {
         $ca = parent::getContentArbiterOrganizingTeam();
 
-        $ca->phone->allowed = true;
-        $ca->email->allowed = true;
+        $ca->food->allowed = false;
         $ca->country->allowed = true;
         $ca->country->options = ContentArbiterItem::selfMappedOptions($this->getParticipantCountries());
         $ca->unit->allowed = true;

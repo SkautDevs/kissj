@@ -6,6 +6,7 @@ namespace kissj\Event\EventType;
 
 use kissj\Application\StringUtils;
 use kissj\Event\AbstractContentArbiter;
+use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterOrganizingTeam;
@@ -106,7 +107,12 @@ abstract class EventType
 
     public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
     {
-        return new ContentArbiterOrganizingTeam();
+        $cao = new ContentArbiterOrganizingTeam();
+        // food cannot be in ContentArbiterOrganizingTeam because correct food options for the event
+        $cao->food->allowed = true;
+        $cao->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
+
+        return $cao;
     }
 
     public function getContentArbiterForRole(ParticipantRole $role): AbstractContentArbiter
