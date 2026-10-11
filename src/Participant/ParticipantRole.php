@@ -13,6 +13,8 @@ enum ParticipantRole: string
     case TroopLeader = 'tl';
     case TroopParticipant = 'tp';
     case OrganizingTeam = 'ot';
+    case TechnicalTeamLeader = 'ttl';
+    case TechnicalTeamParticipant = 'ttp';
 
     /**
      * @return list<ParticipantRole>
@@ -27,6 +29,22 @@ enum ParticipantRole: string
             self::Ist,
             self::Guest,
             self::OrganizingTeam,
+            self::TechnicalTeamLeader,
+            self::TechnicalTeamParticipant,
         ];
+    }
+
+    public function hasOwnUser(): bool
+    {
+        return match ($this) {
+            self::PatrolParticipant, self::TechnicalTeamParticipant => false,
+            self::PatrolLeader,
+            self::TroopLeader,
+            self::TroopParticipant,
+            self::Ist,
+            self::Guest,
+            self::OrganizingTeam,
+            self::TechnicalTeamLeader => true,
+        };
     }
 }

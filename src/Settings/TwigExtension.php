@@ -8,6 +8,8 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\UserStatus;
@@ -39,8 +41,18 @@ class TwigExtension extends AbstractExtension
                 fn (Participant $participant): bool => $participant instanceof TroopParticipant
             ),
             new TwigTest(
+                'TechnicalTeamLeader',
+                fn (Participant $participant): bool => $participant instanceof TechnicalTeamLeader
+            ),
+            new TwigTest(
+                'TechnicalTeamParticipant',
+                fn (Participant $participant): bool => $participant instanceof TechnicalTeamParticipant
+            ),
+            new TwigTest(
                 'Leader',
-                fn (Participant $participant): bool => $participant instanceof PatrolLeader || $participant instanceof TroopLeader
+                fn (Participant $participant): bool => $participant instanceof PatrolLeader
+                    || $participant instanceof TroopLeader
+                    || $participant instanceof TechnicalTeamLeader
             ),
             new TwigTest(
                 'Troop',
@@ -48,7 +60,7 @@ class TwigExtension extends AbstractExtension
             ),
             new TwigTest(
                 'hasUser',
-                fn (Participant $participant): bool => !$participant instanceof PatrolParticipant
+                fn (Participant $participant): bool => $participant->hasOwnUser()
             ),
             new TwigTest(
                 'eligibleForShowTieCode',

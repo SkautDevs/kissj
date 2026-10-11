@@ -15,6 +15,8 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
@@ -52,6 +54,8 @@ class MapperTest extends TestCase
             'Ist' => [Ist::class, 'participant'],
             'Guest' => [Guest::class, 'participant'],
             'OrganizingTeam' => [OrganizingTeam::class, 'participant'],
+            'TechnicalTeamLeader' => [TechnicalTeamLeader::class, 'participant'],
+            'TechnicalTeamParticipant' => [TechnicalTeamParticipant::class, 'participant'],
         ];
     }
 
@@ -85,6 +89,8 @@ class MapperTest extends TestCase
             'ist' => [ParticipantRole::Ist, Ist::class],
             'guest' => [ParticipantRole::Guest, Guest::class],
             'ot' => [ParticipantRole::OrganizingTeam, OrganizingTeam::class],
+            'ttl' => [ParticipantRole::TechnicalTeamLeader, TechnicalTeamLeader::class],
+            'ttp' => [ParticipantRole::TechnicalTeamParticipant, TechnicalTeamParticipant::class],
         ];
     }
 

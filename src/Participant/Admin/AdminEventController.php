@@ -223,6 +223,8 @@ class AdminEventController extends AbstractController
             'ist' => $this->saveIst($event, $body),
             'guest' => $this->saveGuest($event, $body),
             'ot' => $this->saveOrganizingTeam($event, $body),
+            'ttl' => $this->saveTechnicalTeamLeader($event, $body),
+            'ttp' => true,
             default => throw new \RuntimeException('Unknown role: ' . $roleValue),
         };
 
@@ -370,6 +372,16 @@ class AdminEventController extends AbstractController
         return true;
     }
 
+    /**
+     * @param array<mixed> $body
+     */
+    private function saveTechnicalTeamLeader(Event $event, array $body): bool
+    {
+        $event->allowTechnicalTeams = isset($body['allowTechnicalTeams']);
+
+        return true;
+    }
+
     private function formatCap(?int $cap): string
     {
         return $cap === null ? $this->translator->trans('dashboard-admin.limitUnlimited') : (string)$cap;
@@ -383,10 +395,11 @@ class AdminEventController extends AbstractController
             ParticipantRole::Ist => 'allowIsts',
             ParticipantRole::Guest => 'allowGuests',
             ParticipantRole::OrganizingTeam => 'allowOrganizingTeam',
+            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => 'allowTechnicalTeams',
         };
     }
 
-    private function getMaxFieldForRole(ParticipantRole $role): string
+    private function getMaxFieldForRole(ParticipantRole $role): ?string
     {
         return match ($role) {
             ParticipantRole::PatrolLeader => 'maximalClosedPatrolsCount',
@@ -396,6 +409,7 @@ class AdminEventController extends AbstractController
             ParticipantRole::Ist => 'maximalClosedIstsCount',
             ParticipantRole::Guest => 'maximalClosedGuestsCount',
             ParticipantRole::OrganizingTeam => 'maximalClosedOrganizingTeamCount',
+            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => null,
         };
     }
 
