@@ -8,7 +8,7 @@
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="ot">
                     <input type="submit" class="btn form-wide btn-highlight"
-                           value="{{ 'chooseRole.registerAsOt' | trans }} ({{ 'chooseRole.unlockedByLink' | trans }})">
+                           value="{{ 'chooseRole.registerAsOt' | trans }}">
                 </form>
                 <br/>
             {% endif %}
@@ -16,7 +16,7 @@
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="ttl">
                     <input type="submit" class="btn form-wide btn-highlight"
-                           value="{{ 'chooseRole.registerAsTtl' | trans }} ({{ 'chooseRole.unlockedByLink' | trans }})">
+                           value="{{ 'chooseRole.registerAsTtl' | trans }}">
                 </form>
                 <br/>
             {% endif %}

@@ -60,7 +60,7 @@ class UserController extends AbstractController
             && $event->technicalTeamRegistrationToken !== null
             && $ttlToken === $event->technicalTeamRegistrationToken
         ) {
-            $_SESSION['ttl_access_granted'] = true;
+            $_SESSION['ttl_access_granted'] = $event->id;
         }
 
         $prefillEmail = $_SESSION['prefill_email'] ?? null;
@@ -69,6 +69,7 @@ class UserController extends AbstractController
         $data = [
             'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
             'otToken' => $otToken,
+            'ttlToken' => is_string($ttlToken) ? $ttlToken : null,
             'prefillEmail' => $prefillEmail,
         ];
         if ($event->getEventType()->isLoginSkautisAllowed()) {
@@ -89,6 +90,8 @@ class UserController extends AbstractController
         $parsedBody = $request->getParsedBody();
         $otTokenRaw = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
         $otToken = is_string($otTokenRaw) ? $otTokenRaw : null;
+        $ttlTokenRaw = is_array($parsedBody) ? ($parsedBody['ttl_token'] ?? null) : null;
+        $ttlToken = is_string($ttlTokenRaw) ? $ttlTokenRaw : null;
 
         $caseVariantEmail = $this->userService->findCaseVariantEmail($email, $event);
         if ($caseVariantEmail !== null) {
@@ -100,7 +103,7 @@ class UserController extends AbstractController
         }
 
         try {
-            $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken);
+            $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken, $ttlToken);
         } catch (Exception $e) {
             $this->sentryCollector->collect($e);
             $this->logger->error('Error sending login email to ' . $email, [$e]);
@@ -136,7 +139,7 @@ class UserController extends AbstractController
 
             $ttlToken = $queryParams['ttl_token'] ?? null;
             if ($ttlToken !== null && $ttlToken === $user->event->technicalTeamRegistrationToken) {
-                $_SESSION['ttl_access_granted'] = true;
+                $_SESSION['ttl_access_granted'] = $user->event->id;
             }
 
             return $this->redirect($request, $response, 'getDashboard');
@@ -164,7 +167,7 @@ class UserController extends AbstractController
         return $this->view->render($response, 'kissj/choose-role.twig', [
             'event' => $user->event,
             'otAccessGranted' => $_SESSION['ot_access_granted'] ?? false,
-            'ttlAccessGranted' => (bool)($_SESSION['ttl_access_granted'] ?? false) && $user->event->allowTechnicalTeams,
+            'ttlAccessGranted' => ($_SESSION['ttl_access_granted'] ?? null) === $user->event->id && $user->event->allowTechnicalTeams,
         ]);
     }
 
@@ -187,7 +190,7 @@ class UserController extends AbstractController
         if (
             $role === ParticipantRole::TechnicalTeamLeader->value
             && (
-                (bool)($_SESSION['ttl_access_granted'] ?? false) === false
+                ($_SESSION['ttl_access_granted'] ?? null) !== $user->event->id
                 || $user->event->allowTechnicalTeams === false
             )
         ) {

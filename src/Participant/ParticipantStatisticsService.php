@@ -61,6 +61,8 @@ readonly class ParticipantStatisticsService
             ParticipantRole::Ist,
             ParticipantRole::Guest,
             ParticipantRole::OrganizingTeam,
+            ParticipantRole::TechnicalTeamLeader,
+            ParticipantRole::TechnicalTeamParticipant,
         ],
     ): ParticipantFoodPlan {
         $eventParticipants = $this->participantRepository->getAllParticipantsWithStatus(
@@ -160,6 +162,10 @@ readonly class ParticipantStatisticsService
         foreach ($deduplicatedParticipants as $participant) {
             if (EntryStatus::entryFromDatetime($participant->entryDate, $participant->leaveDate)
                 !== EntryStatus::ENTRY_STATUS_USED) {
+                continue;
+            }
+
+            if ($participant->foodPreferences === Participant::FOOD_NO_EVENT_FOOD) {
                 continue;
             }
 

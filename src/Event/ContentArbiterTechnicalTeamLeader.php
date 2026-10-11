@@ -9,8 +9,7 @@ class ContentArbiterTechnicalTeamLeader extends ContentArbiterTechnicalTeamParti
     public function __construct()
     {
         parent::__construct();
-        $this->patrolName->allowed = true;
-        $this->patrolName->label = 'detail.technicalTeamName';
+        $this->technicalTeamName->allowed = true;
         $this->email->allowed = true;
         $this->phone->allowed = true;
     }

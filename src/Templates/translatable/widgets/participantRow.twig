@@ -3,6 +3,8 @@
     - {{ person.getPatrolParticipantsCount }} {{ 'stats-admin.numberPatrolParticipantsTotal' | trans }} <b>{{ person.getPatrolName }}</b>
 {% elseif person is TroopLeader %}
     - {{ person.getTroopParticipantsCount }} {{ 'stats-admin.numberPatrolParticipantsTotal' | trans }} <b>{{ person.getPatrolName }}</b>
+{% elseif person is TechnicalTeamLeader %}
+    - {{ person.getTechnicalTeamParticipantsCount }} {{ 'stats-admin.numberTechnicalTeamParticipantsTotal' | trans }} <b>{{ person.getTechnicalTeamName }}</b>
 {% endif %}
 {% if ca.contingent.allowed %}
     - <b>{{ person.getContingent|trans }}</b>
@@ -26,6 +28,11 @@
 {% elseif person is TroopLeader %}
     {% for troopParticipant in person.troopParticipants %}
         <br/>{% include 'widgets/participantRow.twig' with {'person': troopParticipant, 'ca': caTp} %}
+    {% endfor %}
+    <br/>
+{% elseif person is TechnicalTeamLeader %}
+    {% for technicalTeamParticipant in person.technicalTeamParticipants %}
+        <br/>{% include 'widgets/participantRow.twig' with {'person': technicalTeamParticipant, 'ca': ca} %}
     {% endfor %}
     <br/>
 {% endif %}

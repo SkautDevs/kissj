@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
-use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\AbstractController;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentSource;
@@ -52,6 +52,7 @@ class AdminPaymentController extends AbstractController
                     'ist' => 'payments-admin.allIstsPaid',
                     'pl' => 'payments-admin.allPatrolsPaid',
                     'tl' => 'payments-admin.allTroopLeadersPaid',
+                    'ttl' => 'payments-admin.allTechnicalTeamsPaid',
                     'ot' => 'payments-admin.allOrganizingTeamPaid',
                 ],
             ),
@@ -326,7 +327,9 @@ class AdminPaymentController extends AbstractController
         $participant = $this->participantRepository->findParticipantById($participantId, $event);
         if ($participant === null) {
             $this->flashMessages->warning('flash.warning.participantNotFoundAddPaymentNotPossible');
-        } elseif ($participant instanceof PatrolParticipant) {
+        } elseif ($participant instanceof TechnicalTeamParticipant) {
+            $this->flashMessages->warning('flash.warning.technicalTeamParticipantCannotHavePayment');
+        } elseif ($participant->hasOwnUser() === false) {
             $this->flashMessages->warning('flash.warning.patrolParticipantCannotHavePayment');
         } elseif ($participant->getUserButNotNull()->status->isUnfitForNewPayment()) {
             $this->flashMessages->warning('flash.warning.participantNotInCorrectStatusForAddPayment');

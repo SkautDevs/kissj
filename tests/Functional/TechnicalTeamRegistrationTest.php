@@ -33,7 +33,7 @@ class TechnicalTeamRegistrationTest extends AppTestCase
         );
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertTrue($_SESSION['ttl_access_granted']);
+        self::assertSame($this->getTestSlugEvent($this->getEventRepository())->id, $_SESSION['ttl_access_granted']);
     }
 
     public function testLoginWithWrongTtlTokenDoesNotGrantAccess(): void
@@ -53,13 +53,13 @@ class TechnicalTeamRegistrationTest extends AppTestCase
         $this->enableTechnicalTeams('abc123');
         $user = $this->createUserWithoutRole('ttl-reg-3@example.com');
         $_SESSION['user'] = ['id' => $user->id];
-        $_SESSION['ttl_access_granted'] = true;
+        $_SESSION['ttl_access_granted'] = $user->event->id;
 
         $body = $this->fetchChooseRoleBody();
 
         self::assertStringContainsString('value="ttl"', $body);
         self::assertStringContainsString('btn-highlight', $body);
-        self::assertStringContainsString('odemčeno odkazem', $body);
+        self::assertStringContainsString('Registrovat technický tým', $body);
     }
 
     public function testChooseRoleHidesTtlWithoutToken(): void
@@ -92,7 +92,7 @@ class TechnicalTeamRegistrationTest extends AppTestCase
         $this->enableTechnicalTeams('abc123');
         $user = $this->createUserWithoutRole('ttl-reg-6@example.com');
         $_SESSION['user'] = ['id' => $user->id];
-        $_SESSION['ttl_access_granted'] = true;
+        $_SESSION['ttl_access_granted'] = $user->event->id;
 
         $response = $this->postRole('ttl');
 
@@ -101,12 +101,38 @@ class TechnicalTeamRegistrationTest extends AppTestCase
         self::assertInstanceOf(TechnicalTeamLeader::class, $participant);
     }
 
+    public function testSetRoleTtlRejectedWhenTokenGrantedForAnotherEvent(): void
+    {
+        $this->enableTechnicalTeams('abc123');
+        $user = $this->createUserWithoutRole('ttl-reg-other-event@example.com');
+        $_SESSION['user'] = ['id' => $user->id];
+        $_SESSION['ttl_access_granted'] = $user->event->id + 1000;
+
+        $response = $this->postRole('ttl');
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('chooseRole', $response->getHeaderLine('Location'));
+        $this->assertNoParticipantCreated($user);
+    }
+
+    public function testLoginWithArrayTtlTokenIsTreatedAsAbsent(): void
+    {
+        $this->enableTechnicalTeams('abc123');
+
+        $response = $this->getTestApp(false)->handle(
+            $this->createRequest(self::BASE_URL . '/login')->withQueryParams(['ttl_token' => ['x']]),
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringNotContainsString('name="ttl_token"', (string)$response->getBody());
+    }
+
     public function testSetRoleTtpIsAlwaysRejected(): void
     {
         $this->enableTechnicalTeams('abc123');
         $user = $this->createUserWithoutRole('ttl-reg-7@example.com');
         $_SESSION['user'] = ['id' => $user->id];
-        $_SESSION['ttl_access_granted'] = true;
+        $_SESSION['ttl_access_granted'] = $user->event->id;
 
         $response = $this->postRole('ttp');
 
@@ -122,7 +148,7 @@ class TechnicalTeamRegistrationTest extends AppTestCase
         $event = $this->getTestSlugEvent($this->getEventRepository());
         $this->mutateEventForTest($this->getContainer(), $event, ['allowTechnicalTeams' => false]);
         $_SESSION['user'] = ['id' => $user->id];
-        $_SESSION['ttl_access_granted'] = true;
+        $_SESSION['ttl_access_granted'] = $user->event->id;
 
         $response = $this->postRole('ttl');
 

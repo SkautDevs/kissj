@@ -75,7 +75,8 @@ class TwigExtension extends AbstractExtension
                     // a tied TroopParticipant can never be a recipient (PaymentTransferService::recipientHasTroop)
                     $participant->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed()
                     && $participant->getUserButNotNull()->status === UserStatus::Approved
-                    && !$participant instanceof TroopParticipant
+                    && $participant instanceof TroopParticipant === false
+                    && $participant instanceof TechnicalTeamLeader === false
                 ) || (
                     $participant instanceof Ist
                     && $participant->getUserButNotNull()->event->getEventType()->isTieCodeShownToIst()

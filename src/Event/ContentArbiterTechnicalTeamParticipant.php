@@ -20,7 +20,6 @@ class ContentArbiterTechnicalTeamParticipant extends AbstractContentArbiter
         $this->scarf->allowed = true;
         $this->scarf->required = false;
         $this->scarf->options = [
-            '' => 'detail.foodChoose',
             'yes' => 'detail.scarfTechnicalTeamYes',
             'no' => 'detail.scarfNo',
         ];

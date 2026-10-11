@@ -17,7 +17,7 @@ readonly class UrlRedactor
             return self::REDACTED;
         }
 
-        $value = preg_replace('~(^|[?&])ot_token=[^&#]*~', '${1}ot_token=' . self::REDACTED, $value);
+        $value = preg_replace('~(^|[?&])(ot_token|ttl_token)=[^&#]*~', '${1}${2}=' . self::REDACTED, $value);
         if ($value === null) {
             return self::REDACTED;
         }
@@ -41,9 +41,13 @@ readonly class UrlRedactor
         }
 
         $data = $request['data'] ?? null;
-        if (is_array($data) && array_key_exists('ot_token', $data)) {
-            $data['ot_token'] = self::REDACTED;
-            $request['data'] = $data;
+        if (is_array($data)) {
+            foreach (['ot_token', 'ttl_token'] as $tokenKey) {
+                if (array_key_exists($tokenKey, $data)) {
+                    $data[$tokenKey] = self::REDACTED;
+                    $request['data'] = $data;
+                }
+            }
         }
 
         $headers = $request['headers'] ?? null;

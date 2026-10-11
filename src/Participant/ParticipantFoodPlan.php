@@ -10,6 +10,8 @@ use DateTimeZone;
 use kissj\Event\Event;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 
@@ -44,7 +46,7 @@ class ParticipantFoodPlan
         $this->dietTypes = array_unique(
             array_filter(
                 array_column($participants, 'foodPreferences'),
-                fn (?string $food) => !is_null($food)
+                fn (?string $food) => $food !== null && $food !== Participant::FOOD_NO_EVENT_FOOD
             )
         );
 
@@ -114,9 +116,15 @@ class ParticipantFoodPlan
                 if ($p instanceof PatrolLeader || $p instanceof TroopLeader) {
                     $patrolOrTroopLeaderName = $p->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)$p->id;
+                } elseif ($p instanceof TechnicalTeamLeader) {
+                    $patrolOrTroopLeaderName = $p->technicalTeamName ?? $p->getFullName();
+                    $patrolOrTroopLeaderId = (string)$p->id;
                 } elseif ($p instanceof PatrolParticipant) {
                     $patrolOrTroopLeaderName = $p->patrolLeader->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)$p->patrolLeader->id;
+                } elseif ($p instanceof TechnicalTeamParticipant) {
+                    $patrolOrTroopLeaderName = $p->technicalTeamLeader->technicalTeamName ?? $p->getFullName();
+                    $patrolOrTroopLeaderId = (string)$p->technicalTeamLeader->id;
                 } elseif ($p instanceof TroopParticipant) {
                     $patrolOrTroopLeaderName = $p->troopLeader->patrolName ?? $p->getFullName();
                     $patrolOrTroopLeaderId = (string)($p->troopLeader ?? $p)->id;
@@ -246,7 +254,7 @@ class ParticipantFoodPlan
                 continue;
             }
 
-            if ($diet === null) {
+            if ($diet === null || $diet === Participant::FOOD_NO_EVENT_FOOD) {
                 continue;
             }
             $dayKey = $date->format('j.n.');

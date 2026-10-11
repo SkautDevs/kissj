@@ -325,6 +325,7 @@ class ParticipantController extends AbstractController
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
             // mirrors the transfer route gates (paid status + open transfer), so the dashboard never offers a link that bounces
             'ownerTicketTransferAllowed' => $user->status === UserStatus::Paid
+                && $participant instanceof TechnicalTeamLeader === false
                 && $user->event->isOwnerTicketTransferOpen(),
         ];
     }

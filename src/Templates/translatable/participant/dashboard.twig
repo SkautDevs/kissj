@@ -8,7 +8,7 @@
 <div class="card">
     <h2>
         {{ ('role.' ~ person.role.value)|trans }}
-        {% if person is Leader %}{{ person.getPatrolName }}{% endif %}
+        {% if person is TechnicalTeamLeader %}{{ person.getTechnicalTeamName }}{% elseif person is Leader %}{{ person.getPatrolName }}{% endif %}
         -
         {{ 'dashboard.details' | trans }}
     </h2>

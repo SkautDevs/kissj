@@ -6,6 +6,8 @@ namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
+use kissj\FlashMessages\FlashMessagesBySession;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\RoleChangeResult;
 use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
@@ -19,6 +21,7 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
 
 class TechnicalTeamDashboardTest extends AppTestCase
@@ -62,6 +65,49 @@ class TechnicalTeamDashboardTest extends AppTestCase
         self::assertCount(1, $members);
         self::assertSame('detail.foodNoEventFood', $members[0]->foodPreferences);
         self::assertNull($members[0]->healthProblems);
+    }
+
+    public function testLeaderSavesTeamNameFromDetailsForm(): void
+    {
+        $app = $this->getTestApp();
+        [$leader, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-team-name@example.com');
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $response = $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/participant/changeDetails',
+            'POST',
+            ['technicalTeamName' => 'Kitchen crew'],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)->get($leader->id);
+        self::assertSame('Kitchen crew', $freshLeader->technicalTeamName);
+    }
+
+    public function testNonLeaderIsRedirectedFromTechnicalTeamRoutes(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        [$leader, $leaderUser] = $this->createTechnicalTeamLeader($container, 'ttl-only-leader@example.com');
+        $event = $leaderUser->event;
+        $this->mutateEventForTest($container, $event, ['allowIsts' => true]);
+        $istUser = $this->getService($app, UserService::class)->registerEmailUser('ttl-only-ist@example.com', $event);
+        $this->getService($app, UserService::class)->createParticipantSetRole($istUser, 'ist');
+        $_SESSION['user'] = ['id' => $istUser->id];
+
+        $response = $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/addParticipant',
+            'POST',
+            ['firstName' => 'Intruder'],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringEndsWith('/v2/event/' . self::TEST_EVENT_SLUG, $response->getHeaderLine('Location'));
+        self::assertContains(
+            $this->getService($app, TranslatorInterface::class)->trans('flash.error.ttlOnly'),
+            array_column($this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(), 'message'),
+        );
+        self::assertSame([], $this->getMembers($leader));
     }
 
     public function testCannotEditForeignTeamMember(): void
@@ -152,7 +198,7 @@ class TechnicalTeamDashboardTest extends AppTestCase
         self::assertSame([], $this->getService($app, PaymentRepository::class)->findByParticipant($freshLeader));
     }
 
-    public function testRoleChangeToOrFromTechnicalTeamIsRejected(): void
+    public function testRoleChangeBetweenIstAndTechnicalTeamLeaderSucceeds(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -163,8 +209,44 @@ class TechnicalTeamDashboardTest extends AppTestCase
         $ist = $this->getService($app, UserService::class)->createParticipantSetRole($istUser, 'ist');
         $participantService = $this->getService($app, ParticipantService::class);
 
-        self::assertSame(RoleChangeResult::RoleNotValid, $participantService->tryChangeRole('ttl', $ist, $event));
-        self::assertSame(RoleChangeResult::RoleNotValid, $participantService->tryChangeRole('ist', $leader, $event));
+        self::assertSame(RoleChangeResult::Success, $participantService->tryChangeRole('ttl', $ist, $event));
+        self::assertSame(RoleChangeResult::Success, $participantService->tryChangeRole('ist', $leader, $event));
+        self::assertInstanceOf(
+            TechnicalTeamLeader::class,
+            $this->getService($this->getTestApp(false), ParticipantRepository::class)->get($ist->id),
+        );
+    }
+
+    public function testTechnicalTeamLeaderWithMembersCannotChangeRole(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        [$leader, $leaderUser] = $this->createTechnicalTeamLeader($container, 'ttl-role-2@example.com');
+        $event = $leaderUser->event;
+        $this->mutateEventForTest($container, $event, ['allowIsts' => true]);
+        $this->addMember($leader, 'Member');
+        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)->get($leader->id);
+
+        self::assertSame(
+            RoleChangeResult::TechnicalTeamHasParticipants,
+            $this->getService($app, ParticipantService::class)->tryChangeRole('ist', $freshLeader, $event),
+        );
+    }
+
+    public function testRoleChangeToOrFromTechnicalTeamParticipantIsRejected(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        [$leader, $leaderUser] = $this->createTechnicalTeamLeader($container, 'ttl-role-3@example.com');
+        $event = $leaderUser->event;
+        $this->mutateEventForTest($container, $event, ['allowIsts' => true]);
+        $member = $this->addMember($leader, 'Member');
+        $istUser = $this->getService($app, UserService::class)->registerEmailUser('ttl-role-ist-3@example.com', $event);
+        $ist = $this->getService($app, UserService::class)->createParticipantSetRole($istUser, 'ist');
+        $participantService = $this->getService($app, ParticipantService::class);
+
+        self::assertSame(RoleChangeResult::RoleNotValid, $participantService->tryChangeRole('ttp', $ist, $event));
+        self::assertSame(RoleChangeResult::RoleNotValid, $participantService->tryChangeRole('ist', $member, $event));
     }
 
     public function testClosedLeaderCanEditMemberDatesOnly(): void
@@ -211,6 +293,115 @@ class TechnicalTeamDashboardTest extends AppTestCase
         self::assertSame('Original', $reloaded->firstName);
     }
 
+    public function testPaidLeaderDashboardOffersNoOwnerTicketTransfer(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
+        $this->mutateEventForTest($app->getContainer(), $event, ['allowTechnicalTeams' => true]);
+        $userService = $this->getService($app, UserService::class);
+        $user = $userService->registerEmailUser('ttl-transfer-' . bin2hex(random_bytes(4)) . '@example.com', $event);
+        $userService->createParticipantSetRole($user, 'ttl');
+        $userService->setUserPaid($user);
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $response = $this->getTestApp(false)->handle(
+            $this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'),
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringNotContainsString('/showTransferTicket', (string)$response->getBody());
+    }
+
+    public function testCannotDeleteForeignTeamMember(): void
+    {
+        $app = $this->getTestApp();
+        [, $userA] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-del-a@example.com');
+        [$leaderB] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-del-b@example.com');
+        $memberB = $this->addMember($leaderB, 'Original');
+        $_SESSION['user'] = ['id' => $userA->id];
+
+        $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/participant/' . $memberB->id . '/delete',
+            'POST',
+        ));
+
+        self::assertCount(1, $this->getMembers($leaderB));
+    }
+
+    public function testClosedLeaderCannotDeleteOrEditMember(): void
+    {
+        $app = $this->getTestApp();
+        [$leader, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-closed-del@example.com');
+        $member = $this->addMember($leader, 'Original');
+        $this->getService($app, UserService::class)->setUserClosed($user);
+        $_SESSION['user'] = ['id' => $user->id];
+
+        foreach ([['/delete', []], ['/changeDetails', ['firstName' => 'Changed']]] as [$path, $body]) {
+            try {
+                $this->getTestApp(false)->handle($this->createRequest(
+                    self::BASE_URL . '/technical-team/participant/' . $member->id . $path,
+                    'POST',
+                    $body,
+                ));
+                self::fail('closed leader reached ' . $path);
+            } catch (RuntimeException $e) {
+                self::assertStringContainsString('not in editing status', $e->getMessage());
+            }
+        }
+
+        $members = $this->getMembers($leader);
+        self::assertCount(1, $members);
+        self::assertSame('Original', $members[0]->firstName);
+    }
+
+    public function testShowDeleteOnOwnLeaderIdRedirectsToDashboard(): void
+    {
+        $app = $this->getTestApp();
+        [$leader, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-wrong-id-1@example.com');
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $response = $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/participant/' . $leader->id . '/showDelete',
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testShowDeleteOnNonexistentIdRedirectsToDashboard(): void
+    {
+        $app = $this->getTestApp();
+        [, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-wrong-id-2@example.com');
+        $_SESSION['user'] = ['id' => $user->id];
+
+        $response = $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/participant/2000000000/showDelete',
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testCannotEditForeignTeamMemberAfterLock(): void
+    {
+        $app = $this->getTestApp();
+        [, $userA] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-lockf-a@example.com');
+        [$leaderB] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-lockf-b@example.com');
+        $memberB = $this->addMember($leaderB, 'Original');
+        $this->getService($app, UserService::class)->setUserClosed($userA);
+        $_SESSION['user'] = ['id' => $userA->id];
+
+        $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/participant/' . $memberB->id . '/changeDetailsAfterLock',
+            'POST',
+            ['arrivalDate' => '2027-07-02', 'departureDate' => '2027-07-04'],
+        ));
+
+        $reloaded = $this->getMembers($leaderB)[0];
+        self::assertNull($reloaded->arrivalDate);
+        self::assertNull($reloaded->departureDate);
+    }
+
     /**
      * @return array{0: TechnicalTeamLeader, 1: User}
      */
@@ -237,7 +428,7 @@ class TechnicalTeamDashboardTest extends AppTestCase
 
     private function prepareClosableLeader(TechnicalTeamLeader $leader): void
     {
-        $leader->patrolName = 'Kitchen';
+        $leader->technicalTeamName = 'Kitchen';
         $leader->firstName = 'Lead';
         $leader->lastName = 'Er';
         $leader->email = 'ttl-leader-contact@example.com';

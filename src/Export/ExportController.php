@@ -91,6 +91,8 @@ class ExportController extends AbstractController
                 ParticipantRole::PatrolParticipant,
                 ParticipantRole::TroopLeader,
                 ParticipantRole::TroopParticipant,
+                ParticipantRole::TechnicalTeamLeader,
+                ParticipantRole::TechnicalTeamParticipant,
             ],
         )->aggregatedToCSV();
         $this->logger->info('Exported patrols and troops food summary by user with ID: ' . $user->id);

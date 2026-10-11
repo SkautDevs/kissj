@@ -62,10 +62,11 @@ class CheckLeaderParticipants extends BaseMiddleware
                 return $this->createRedirectResponse($request, 'dashboard');
             }
         } elseif ($leader instanceof TechnicalTeamLeader) {
-            if ($this->technicalTeamService->belongsToLeader(
-                $this->technicalTeamService->getTechnicalTeamParticipant($participantId),
-                $leader,
-            ) === false) {
+            $technicalTeamParticipant = $this->technicalTeamService->findTechnicalTeamParticipant($participantId);
+            if (
+                $technicalTeamParticipant === null
+                || $this->technicalTeamService->belongsToLeader($technicalTeamParticipant, $leader) === false
+            ) {
                 $this->flashMessages->error('flash.error.wrongTechnicalTeam');
 
                 return $this->createRedirectResponse($request, 'dashboard');
