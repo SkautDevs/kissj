@@ -18,6 +18,7 @@ class EventRoleEnabledTest extends TestCase
         $event->allowIsts = false;
         $event->allowGuests = false;
         $event->allowOrganizingTeam = false;
+        $event->allowTechnicalTeams = false;
 
         self::assertTrue($event->isRoleEnabled(ParticipantRole::PatrolLeader));
         self::assertTrue($event->isRoleEnabled(ParticipantRole::PatrolParticipant));
@@ -35,6 +36,7 @@ class EventRoleEnabledTest extends TestCase
         $event->allowIsts = false;
         $event->allowGuests = false;
         $event->allowOrganizingTeam = false;
+        $event->allowTechnicalTeams = false;
 
         self::assertTrue($event->isRoleEnabled(ParticipantRole::TroopLeader));
         self::assertTrue($event->isRoleEnabled(ParticipantRole::TroopParticipant));
@@ -49,6 +51,7 @@ class EventRoleEnabledTest extends TestCase
         $event->allowIsts = true;
         $event->allowGuests = false;
         $event->allowOrganizingTeam = false;
+        $event->allowTechnicalTeams = false;
 
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolLeader));
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolParticipant));
@@ -67,6 +70,7 @@ class EventRoleEnabledTest extends TestCase
         $event->allowIsts = false;
         $event->allowGuests = true;
         $event->allowOrganizingTeam = false;
+        $event->allowTechnicalTeams = false;
 
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolLeader));
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolParticipant));
@@ -85,6 +89,7 @@ class EventRoleEnabledTest extends TestCase
         $event->allowIsts = false;
         $event->allowGuests = false;
         $event->allowOrganizingTeam = true;
+        $event->allowTechnicalTeams = false;
 
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolLeader));
         self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolParticipant));
@@ -93,5 +98,24 @@ class EventRoleEnabledTest extends TestCase
         self::assertFalse($event->isRoleEnabled(ParticipantRole::Ist));
         self::assertFalse($event->isRoleEnabled(ParticipantRole::Guest));
         self::assertTrue($event->isRoleEnabled(ParticipantRole::OrganizingTeam));
+    }
+
+    public function testTechnicalTeamRolesFollowAllowTechnicalTeams(): void
+    {
+        $event = new Event();
+        $event->allowPatrols = false;
+        $event->allowTroops = false;
+        $event->allowIsts = false;
+        $event->allowGuests = false;
+        $event->allowOrganizingTeam = false;
+        $event->allowTechnicalTeams = true;
+
+        self::assertTrue($event->isRoleEnabled(ParticipantRole::TechnicalTeamLeader));
+        self::assertTrue($event->isRoleEnabled(ParticipantRole::TechnicalTeamParticipant));
+        self::assertFalse($event->isRoleEnabled(ParticipantRole::PatrolLeader));
+        self::assertSame(
+            [ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant],
+            $event->getAvailableRoles(),
+        );
     }
 }

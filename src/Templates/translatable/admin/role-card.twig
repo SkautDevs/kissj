@@ -9,7 +9,7 @@
 
     {% set allowField = config.allowField %}
 
-    {% if roleValue not in ['pp', 'tp'] %}
+    {% if roleValue not in ['pp', 'tp', 'ttp'] %}
         <label>
             <input type="checkbox" name="{{ allowField }}" value="1"
                    {% if config.enabled %}checked{% endif %}>
@@ -26,8 +26,10 @@
         </p>
     {% endif %}
 
-    <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ config.eventTypeMaxLabel }}</strong></p>
-    <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ config.dbMaxLabel }}</strong></p>
+    {% if config.maxField is not null %}
+        <p>{{ 'roleManagement.actualMaxCount' | trans }}: <strong>{{ config.eventTypeMaxLabel }}</strong></p>
+        <p>{{ 'roleManagement.dbMaxCount' | trans }}: <strong>{{ config.dbMaxLabel }}</strong></p>
+    {% endif %}
 
     {% set maxField = config.maxField %}
 
@@ -37,15 +39,17 @@
         </p>
     {% endif %}
 
-    {% if roleValue != 'pp' %}
-        {% if config.hasDifference %}
-            <input type="hidden" name="{{ maxField }}" value="{{ config.dbMax }}">
-        {% else %}
-            <label class="form-group">
-                {{ 'roleManagement.maxCount' | trans }}:<br/>
-                <input class="form-control form-wide" type="number" name="{{ maxField }}"
-                       value="{{ config.dbMax is null ? '' : config.dbMax }}" min="0" max="1000000">
-            </label>
+    {% if config.maxField is not null %}
+        {% if roleValue != 'pp' %}
+            {% if config.hasDifference %}
+                <input type="hidden" name="{{ maxField }}" value="{{ config.dbMax }}">
+            {% else %}
+                <label class="form-group">
+                    {{ 'roleManagement.maxCount' | trans }}:<br/>
+                    <input class="form-control form-wide" type="number" name="{{ maxField }}"
+                           value="{{ config.dbMax is null ? '' : config.dbMax }}" min="0" max="1000000">
+                </label>
+            {% endif %}
         {% endif %}
     {% endif %}
 

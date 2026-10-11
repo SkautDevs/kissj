@@ -7,6 +7,7 @@ namespace kissj\Participant;
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Deal\Deal;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
@@ -186,11 +187,25 @@ class Participant extends EntityDatetime
             return $patrolLeaderUser;
         }
 
+        if ($this instanceof TechnicalTeamParticipant) {
+            $technicalTeamLeaderUser = $this->technicalTeamLeader->user;
+            if ($technicalTeamLeaderUser === null) {
+                throw new LogicException('Missing user for technical team leader ID ' . $this->technicalTeamLeader->id);
+            }
+
+            return $technicalTeamLeaderUser;
+        }
+
         if ($this->user === null) {
             throw new LogicException('Missing user for participant ID ' . $this->id);
         }
 
         return $this->user;
+    }
+
+    public function hasOwnUser(): bool
+    {
+        return ($this instanceof PatrolParticipant || $this instanceof TechnicalTeamParticipant) === false;
     }
 
     public function getOwnOrLeaderContingent(): ?string

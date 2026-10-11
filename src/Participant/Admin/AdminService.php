@@ -77,8 +77,10 @@ readonly class AdminService
         return match ($role) {
             ParticipantRole::PatrolLeader => $eventType->getContentArbiterForRole(ParticipantRole::PatrolParticipant),
             ParticipantRole::TroopLeader => $eventType->getContentArbiterForRole(ParticipantRole::TroopParticipant),
+            ParticipantRole::TechnicalTeamLeader => $eventType->getContentArbiterForRole(ParticipantRole::TechnicalTeamParticipant),
             ParticipantRole::PatrolParticipant,
             ParticipantRole::TroopParticipant,
+            ParticipantRole::TechnicalTeamParticipant,
             ParticipantRole::Ist,
             ParticipantRole::Guest,
             ParticipantRole::OrganizingTeam => null,

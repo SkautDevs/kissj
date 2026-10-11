@@ -62,6 +62,10 @@ use kissj\Participant\ParticipantRole;
  * @property int|null          $organizingTeamPrice
  * @property string|null       $organizingTeamRegistrationToken
  *
+ * @property bool              $allowTechnicalTeams
+ * @property int|null          $technicalTeamPrice
+ * @property string|null       $technicalTeamRegistrationToken
+ *
  * @property bool              $allowTroops
  * @property int|null          $maximalClosedTroopLeadersCount
  * @property int|null          $maximalClosedTroopParticipantsCount
@@ -149,6 +153,10 @@ class Event extends EntityDatetime
         if ($this->allowOrganizingTeam) {
             $roles[] = ParticipantRole::OrganizingTeam;
         }
+        if ($this->allowTechnicalTeams) {
+            $roles[] = ParticipantRole::TechnicalTeamLeader;
+            $roles[] = ParticipantRole::TechnicalTeamParticipant;
+        }
 
         return $roles;
     }
@@ -161,6 +169,7 @@ class Event extends EntityDatetime
             ParticipantRole::Ist => $this->allowIsts,
             ParticipantRole::Guest => $this->allowGuests,
             ParticipantRole::OrganizingTeam => $this->allowOrganizingTeam,
+            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => $this->allowTechnicalTeams,
         };
     }
 

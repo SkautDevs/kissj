@@ -111,6 +111,7 @@ readonly class UserService
     {
         unset($_SESSION['user']);
         unset($_SESSION['ot_access_granted']);
+        unset($_SESSION['ttl_access_granted']);
     }
 
     public function invalidateAllLoginTokens(User $user): void

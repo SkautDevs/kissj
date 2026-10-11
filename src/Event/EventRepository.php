@@ -104,4 +104,12 @@ class EventRepository extends Repository
 
         return $event->organizingTeamRegistrationToken;
     }
+
+    public function generateNewTechnicalTeamRegistrationToken(Event $event): string
+    {
+        $event->technicalTeamRegistrationToken = bin2hex(random_bytes(16));
+        $this->persist($event);
+
+        return $event->technicalTeamRegistrationToken;
+    }
 }

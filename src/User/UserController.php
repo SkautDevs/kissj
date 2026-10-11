@@ -54,6 +54,15 @@ class UserController extends AbstractController
             $_SESSION['ot_access_granted'] = true;
         }
 
+        $ttlToken = $queryParams['ttl_token'] ?? null;
+        if (
+            is_string($ttlToken)
+            && $event->technicalTeamRegistrationToken !== null
+            && $ttlToken === $event->technicalTeamRegistrationToken
+        ) {
+            $_SESSION['ttl_access_granted'] = true;
+        }
+
         $prefillEmail = $_SESSION['prefill_email'] ?? null;
         unset($_SESSION['prefill_email']);
 
@@ -125,6 +134,11 @@ class UserController extends AbstractController
                 $_SESSION['ot_access_granted'] = true;
             }
 
+            $ttlToken = $queryParams['ttl_token'] ?? null;
+            if ($ttlToken !== null && $ttlToken === $user->event->technicalTeamRegistrationToken) {
+                $_SESSION['ttl_access_granted'] = true;
+            }
+
             return $this->redirect($request, $response, 'getDashboard');
         }
 
@@ -150,6 +164,7 @@ class UserController extends AbstractController
         return $this->view->render($response, 'kissj/choose-role.twig', [
             'event' => $user->event,
             'otAccessGranted' => $_SESSION['ot_access_granted'] ?? false,
+            'ttlAccessGranted' => (bool)($_SESSION['ttl_access_granted'] ?? false) && $user->event->allowTechnicalTeams,
         ]);
     }
 
@@ -159,6 +174,24 @@ class UserController extends AbstractController
 
         if ($role === ParticipantRole::OrganizingTeam->value && !((bool)($_SESSION['ot_access_granted'] ?? false))) {
             $this->flashMessages->error('flash.error.otAccessDenied');
+
+            return $this->redirect($request, $response, 'chooseRole');
+        }
+
+        if ($role === ParticipantRole::TechnicalTeamParticipant->value) {
+            $this->flashMessages->error('flash.error.ttlAccessDenied');
+
+            return $this->redirect($request, $response, 'chooseRole');
+        }
+
+        if (
+            $role === ParticipantRole::TechnicalTeamLeader->value
+            && (
+                (bool)($_SESSION['ttl_access_granted'] ?? false) === false
+                || $user->event->allowTechnicalTeams === false
+            )
+        ) {
+            $this->flashMessages->error('flash.error.ttlAccessDenied');
 
             return $this->redirect($request, $response, 'chooseRole');
         }

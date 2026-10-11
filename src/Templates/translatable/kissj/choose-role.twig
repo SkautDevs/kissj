@@ -7,8 +7,16 @@
             {% if otAccessGranted %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="ot">
-                    <input type="submit" class="btn form-wide"
-                           value="{{ 'chooseRole.registerAsOt' | trans }}">
+                    <input type="submit" class="btn form-wide btn-highlight"
+                           value="{{ 'chooseRole.registerAsOt' | trans }} ({{ 'chooseRole.unlockedByLink' | trans }})">
+                </form>
+                <br/>
+            {% endif %}
+            {% if ttlAccessGranted %}
+                <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
+                    <input type="hidden" name="role" value="ttl">
+                    <input type="submit" class="btn form-wide btn-highlight"
+                           value="{{ 'chooseRole.registerAsTtl' | trans }} ({{ 'chooseRole.unlockedByLink' | trans }})">
                 </form>
                 <br/>
             {% endif %}
@@ -53,6 +61,9 @@
             <h2>{{ 'chooseRole.rolesAdvice' | trans }}</h2>
             {% if otAccessGranted %}
                 <p><b>{{ 'role.ot' | trans }}</b> {{ 'chooseRole.adviceOtText' | trans }}</p>
+            {% endif %}
+            {% if ttlAccessGranted %}
+                <p><b>{{ 'role.ttl' | trans }}</b> {{ 'chooseRole.adviceTtlText' | trans }}</p>
             {% endif %}
             {% if event.allowPatrols %}
                 <p><b>{{ 'role.pl' | trans }}</b> {{ 'chooseRole.advicePlText' | trans }}</p>
