@@ -73,6 +73,21 @@
                                     <a href="{{ url_for('p-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
                                                 class="material-icons">search</i></a>
                                 {% endif %}
+                            {% elseif person is TechnicalTeamLeader %}
+                                {{ 'role.ttp' | trans }} <b>{{ p.getFullName }}</b>
+                                {% if userStatus == 'open' %}
+                                    <a href="{{ url_for('ttp-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">edit</i></a>
+                                    <a href="{{ url_for('ttp-showDelete', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">delete</i></a>
+                                {% else %}
+                                    <a href="{{ url_for('ttp-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                class="material-icons">search</i></a>
+                                    {% if userStatus != 'cancelled' %}
+                                        <a href="{{ url_for('ttp-showChangeDetailsAfterLock', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
+                                                    class="material-icons">edit_calendar</i></a>
+                                    {% endif %}
+                                {% endif %}
                             {% elseif person is TroopLeader %}
                                 {% set participantUserStatus = p.user.status.value %}
                                 <span class="{% if participantUserStatus == 'open' %}highlight{% endif %}">
@@ -100,7 +115,7 @@
                 </ol>
 
                 {# help text how many participants is needed #}
-                {% if userStatus == 'open' %}
+                {% if userStatus == 'open' and person is not TechnicalTeamLeader %}
                     {% if not (person is PatrolLeader and maximalPpCount is null and minimalPpCount == 0) %}
                     <p>
                         {{ 'dashboard.youNeed' | trans }}
@@ -144,6 +159,12 @@
                             <small>{{ 'dashboard.addFromSkautisDisabled' | trans }}</small>
                         {% endif %}
                     {% endif %}
+                {% endif %}
+
+                {% if person is TechnicalTeamLeader and userStatus == 'open' %}
+                    <a href="{{ url_for('ttl-showAddParticipant', {'eventSlug': event.slug}) }}" class="btn btn-small">
+                        {{ 'dashboard.addTechnicalTeamMember' | trans }}
+                    </a>
                 {% endif %}
             </div>
         </div>
@@ -192,7 +213,7 @@
 
 {% if userStatus == 'open' %}
     <div class="card">
-        <a class="btn btn-small" href="{{ url_for(person is PatrolLeader ? 'pl-showCloseRegistration' : 'showCloseRegistration', {'eventSlug': event.slug}) }}">
+        <a class="btn btn-small" href="{{ url_for(person is PatrolLeader ? 'pl-showCloseRegistration' : (person is TechnicalTeamLeader ? 'ttl-showCloseRegistration' : 'showCloseRegistration'), {'eventSlug': event.slug}) }}">
             {{ 'dashboard.lockRegistration' | trans }}</a>
     </div>
 {% endif %}

@@ -52,6 +52,7 @@ use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
 use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\TechnicalTeamLeadersOnlyMiddleware;
 use kissj\Telemetry\Sentry\ContextMiddleware;
 use kissj\Telemetry\Sentry\HttpContextMiddleware;
 use kissj\Telemetry\Sentry\TransactionMiddleware;
@@ -78,6 +79,8 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\TechnicalTeam\TechnicalTeamController;
+use kissj\Participant\TechnicalTeam\TechnicalTeamService;
 use kissj\Participant\TechnicalTeam\TechnicalTeamLeaderRepository;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipantRepository;
 use kissj\Participant\Troop\TroopController;
@@ -257,6 +260,9 @@ class Settings
             PatrolLeadersOnlyMiddleware::class => autowire(),
             PatrolParticipantRepository::class => autowire(),
             PatrolService::class => autowire(),
+            TechnicalTeamController::class => autowire(),
+            TechnicalTeamService::class => autowire(),
+            TechnicalTeamLeadersOnlyMiddleware::class => autowire(),
             TechnicalTeamLeaderRepository::class => autowire(),
             TechnicalTeamParticipantRepository::class => autowire(),
             PaymentRepository::class => autowire(),
