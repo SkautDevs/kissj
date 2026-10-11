@@ -14,6 +14,7 @@ use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\RoleChangeResult;
 use kissj\Telemetry\MetricName;
@@ -254,7 +255,14 @@ class AdminParticipantController extends AbstractController
 
         return $this->view->render($response, 'admin/changeRole.twig', [
             'person' => $participant,
-            'roles' => $event->getAvailableRoles(),
+            'roles' => array_filter(
+                $event->getAvailableRoles(),
+                static fn (ParticipantRole $role): bool => in_array(
+                    $role,
+                    [ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant],
+                    true,
+                ) === false,
+            ),
         ]);
     }
 

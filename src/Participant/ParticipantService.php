@@ -15,6 +15,8 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Patrol\SinglePatrolRoster;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -114,7 +116,7 @@ readonly class ParticipantService
                     $participant->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
                 })(),
                 'patrolName' => (function () use ($params, $participant): void {
-                    if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
+                    if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader || $participant instanceof TechnicalTeamLeader) {
                         $participant->patrolName = $params['patrolName'] ?? null;
                     }
                 })(),
@@ -139,6 +141,10 @@ readonly class ParticipantService
 
         if ($participant instanceof TroopLeader) {
             $result = $this->validateTroopLeaderRegistrationClose($participant, $event, $result);
+        }
+
+        if ($participant instanceof TechnicalTeamLeader) {
+            $result = $this->validateTechnicalTeamLeaderRegistrationClose($participant, $event, $result);
         }
 
         $invalidItems = $this->getInvalidItemsForClose(
@@ -185,6 +191,23 @@ readonly class ParticipantService
 
         return $event->maximalClosedParticipantsCount !== null
             && $this->getParticipantsComingToEventCount($event) >= $event->maximalClosedParticipantsCount;
+    }
+
+    private function validateTechnicalTeamLeaderRegistrationClose(
+        TechnicalTeamLeader     $technicalTeamLeader,
+        Event                   $event,
+        RegistrationCloseResult $result,
+    ): RegistrationCloseResult {
+        $contentArbiter = $event->getEventType()->getContentArbiterTechnicalTeamParticipant();
+        foreach ($technicalTeamLeader->technicalTeamParticipants as $participant) {
+            if ($this->isParticipantDataValidForClose($participant, $contentArbiter) === false) {
+                $result = $result->withWarning('flash.warning.ttlWrongDataParticipant', [
+                    '%participantFullName%' => $participant->getFullName(),
+                ]);
+            }
+        }
+
+        return $result;
     }
 
     private function validatePatrolLeaderRegistrationClose(
@@ -291,7 +314,7 @@ readonly class ParticipantService
                 continue;
             }
 
-            if ($p->getValueForField($item->slug) === null) {
+            if (in_array($p->getValueForField($item->slug), [null, ''], true)) {
                 $invalid[] = $item;
             }
         }
@@ -492,9 +515,14 @@ readonly class ParticipantService
 
     public function cancelParticipant(Participant $participant): Participant
     {
-        if ($participant instanceof PatrolLeader || $participant instanceof PatrolParticipant) {
-            // patrol members share the leader's user - cancelling would flip the whole patrol
-            throw new LogicException('Cancelling patrol roles is not supported - it would cancel the whole patrol');
+        if (
+            $participant instanceof PatrolLeader
+            || $participant instanceof PatrolParticipant
+            || $participant instanceof TechnicalTeamLeader
+            || $participant instanceof TechnicalTeamParticipant
+        ) {
+            // group members share the leader's user - cancelling would flip the whole group
+            throw new LogicException('Cancelling patrol or technical team roles is not supported - it would cancel the whole group');
         }
 
         $this->userService->setUserCancelled($participant->getUserButNotNull());
@@ -564,6 +592,14 @@ readonly class ParticipantService
     {
         $role = ParticipantRole::tryFrom($roleFromBody);
         if ($role === null || !in_array($role, $event->getAvailableRoles(), true)) {
+            return RoleChangeResult::RoleNotValid;
+        }
+
+        if (
+            in_array($role, [ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant], true)
+            || $participant instanceof TechnicalTeamLeader
+            || $participant instanceof TechnicalTeamParticipant
+        ) {
             return RoleChangeResult::RoleNotValid;
         }
 

@@ -33,6 +33,7 @@ use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\ParticipantOwnerOrAdminMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
+use kissj\Middleware\TechnicalTeamLeadersOnlyMiddleware;
 use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Middleware\TroopLeadersOnlyMiddleware;
 use kissj\Middleware\TroopParticipantsOnlyMiddleware;
@@ -42,6 +43,7 @@ use kissj\Participant\Admin\AdminPaymentController;
 use kissj\Participant\Admin\AdminTroopController;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
+use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
@@ -165,6 +167,48 @@ class Route
                             })->add(CheckLeaderParticipants::class);
                         })->add(OpenStatusOnlyMiddleware::class);
                     })->add(PatrolLeadersOnlyMiddleware::class);
+
+                    $app->group('/technical-team', function (RouteCollectorProxy $app) {
+                        $app->get('/participant/{participantId}/show', TechnicalTeamController::class . '::showParticipant')
+                            ->setName('ttp-show')
+                            ->add(CheckLeaderParticipants::class);
+
+                        $app->group('', function (RouteCollectorProxy $app) {
+                            $app->get('/closeRegistration', TechnicalTeamController::class . '::showCloseRegistration')
+                                ->setName('ttl-showCloseRegistration');
+
+                            $app->post('/closeRegistration', TechnicalTeamController::class . '::closeRegistration')
+                                ->setName('ttl-closeRegistration');
+
+                            $app->get('/addParticipant', TechnicalTeamController::class . '::showAddParticipant')
+                                ->setName('ttl-showAddParticipant');
+
+                            $app->post('/addParticipant', TechnicalTeamController::class . '::addParticipant')
+                                ->setName('ttl-addParticipant');
+
+                            $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
+                                $app->get('/showChangeDetails', TechnicalTeamController::class . '::showChangeDetailsParticipant')
+                                    ->setName('ttp-showChangeDetails');
+
+                                $app->post('/changeDetails', TechnicalTeamController::class . '::changeDetailsParticipant')
+                                    ->setName('ttp-changeDetails');
+
+                                $app->get('/showDelete', TechnicalTeamController::class . '::showDeleteParticipant')
+                                    ->setName('ttp-showDelete');
+
+                                $app->post('/delete', TechnicalTeamController::class . '::deleteParticipant')
+                                    ->setName('ttp-delete');
+                            })->add(CheckLeaderParticipants::class);
+                        })->add(OpenStatusOnlyMiddleware::class);
+
+                        $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
+                            $app->get('/showChangeDetailsAfterLock', TechnicalTeamController::class . '::showChangeDetailsAfterLockParticipant')
+                                ->setName('ttp-showChangeDetailsAfterLock');
+
+                            $app->post('/changeDetailsAfterLock', TechnicalTeamController::class . '::changeDetailsAfterLockParticipant')
+                                ->setName('ttp-changeDetailsAfterLock');
+                        })->add(CheckLeaderParticipants::class)->add(LockedStatusOnlyMiddleware::class);
+                    })->add(TechnicalTeamLeadersOnlyMiddleware::class);
 
                     $app->group('/troop', function (RouteCollectorProxy $app) {
                         $app->post('/tieParticipantToTroopByLeader', TroopController::class . '::tieParticipantToTroopByLeader')

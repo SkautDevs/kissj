@@ -8,6 +8,8 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamService;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\Troop\TroopService;
@@ -25,6 +27,7 @@ class CheckLeaderParticipants extends BaseMiddleware
         private readonly PatrolService $patrolService,
         private readonly TroopService $troopService,
         private readonly TroopParticipantRepository $troopParticipantRepository,
+        private readonly TechnicalTeamService $technicalTeamService,
         private readonly ParticipantRepository $participantRepository,
         private readonly FlashMessagesInterface $flashMessages,
     ) {
@@ -55,6 +58,15 @@ class CheckLeaderParticipants extends BaseMiddleware
                 $leader,
             )) {
                 $this->flashMessages->error('flash.error.wrongTroop');
+
+                return $this->createRedirectResponse($request, 'dashboard');
+            }
+        } elseif ($leader instanceof TechnicalTeamLeader) {
+            if ($this->technicalTeamService->belongsToLeader(
+                $this->technicalTeamService->getTechnicalTeamParticipant($participantId),
+                $leader,
+            ) === false) {
+                $this->flashMessages->error('flash.error.wrongTechnicalTeam');
 
                 return $this->createRedirectResponse($request, 'dashboard');
             }

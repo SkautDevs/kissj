@@ -7,10 +7,15 @@
             {{ 'userCustomHelp.statusOpenTl' | trans }}
         {% elseif userRole == 'tp' %}
             {{ 'userCustomHelp.statusOpenTp' | trans }}
+        {% elseif userRole == 'ttl' %}
+            {{ 'userCustomHelp.statusOpenTtl' | trans }}
         {% endif %}
     {% elseif userStatus == 'closed' %}
         {% if userRole == 'guest' %}
             {{ 'userCustomHelp.statusClosedGuest' | trans }} <a
+                href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
+        {% elseif userRole == 'ttl' %}
+            {{ 'userCustomHelp.statusClosedTtl' | trans }} <a
                 href="mailto:{{ event.getContactEmail }}">{{ event.getContactEmail }}</a>
         {% else %}
             {{ 'userCustomHelp.statusClosed' | trans }} <a
@@ -25,6 +30,8 @@
     {% elseif userStatus == 'paid' %}
         {% if userRole == 'guest' %}
             {{ 'userCustomHelp.statusPaidGuest' | trans({'%event.getReadableName%': event.getReadableName}) }}
+        {% elseif userRole == 'ttl' %}
+            {{ 'userCustomHelp.statusPaidTtl' | trans({'%event.getReadableName%': event.getReadableName}) }}
         {% else %}
             {{ 'userCustomHelp.statusPaid' | trans({'%event.getReadableName%': event.getReadableName}) }}
         {% endif %}
