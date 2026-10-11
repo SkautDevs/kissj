@@ -73,6 +73,9 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/kissj/php-ubi
     needs: deps
+    services:
+      redis:
+        image: redis:7-alpine
     steps:
 
       - name: Download workdir tarball
@@ -85,7 +88,6 @@ jobs:
         run: tar -xzf workdir.tgz 
 
       - name: unit 
-        continue-on-error: true
         run: composer run-script unit --no-interaction
         env:
           COMPOSER_ALLOW_SUPERUSER: 1
