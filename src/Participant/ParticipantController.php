@@ -15,6 +15,9 @@ use kissj\Participant\Admin\PaymentTransferService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipantRepository;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -37,6 +40,7 @@ class ParticipantController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly PatrolParticipantRepository $patrolParticipantRepository,
         private readonly TroopParticipantRepository $troopParticipantRepository,
+        private readonly TechnicalTeamParticipantRepository $technicalTeamParticipantRepository,
         private readonly DealRepository $dealRepository,
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
@@ -299,7 +303,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|Deal[]|bool>
+     * @return array<string, User|Participant|AbstractContentArbiter|PatrolParticipant[]|TroopParticipant[]|TechnicalTeamParticipant[]|Deal[]|bool>
      */
     private function getTemplateData(Participant $participant): array
     {
@@ -309,6 +313,8 @@ class ParticipantController extends AbstractController
             $participants = $this->patrolParticipantRepository->findAllPatrolParticipantsForPatrolLeader($participant);
         } elseif ($participant instanceof TroopLeader) {
             $participants = $this->troopParticipantRepository->findAllTroopParticipantsForTroopLeader($participant);
+        } elseif ($participant instanceof TechnicalTeamLeader) {
+            $participants = $this->technicalTeamParticipantRepository->findAllForTechnicalTeamLeader($participant);
         }
 
         return [
