@@ -12,6 +12,7 @@ use kissj\Event\ContentArbiter\ContentArbiterItem;
 use kissj\Event\Event;
 use kissj\Event\EventType\EventType;
 use kissj\Participant\Participant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Payment\ScarfFinanceTier;
 
 class EventTypeKorbo extends EventType
@@ -25,6 +26,9 @@ class EventTypeKorbo extends EventType
     public function getPrice(Participant $participant): int
     {
         $price = parent::getPrice($participant);
+        if ($participant instanceof TechnicalTeamLeader) {
+            return $price;
+        }
 
         $closeDate = $participant->registrationCloseDate;
         if ($closeDate !== null && $closeDate > DateTimeUtils::getDateTime(self::LOW_PRICE_END)) {

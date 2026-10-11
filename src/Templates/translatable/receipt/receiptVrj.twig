@@ -16,10 +16,16 @@
         '%eventReadableName%': event.readableName,
         '%eventDates%': eventDates,
     }) }}</p>
-<p>{{ 'receipt.acceptPaymentParticipant'|trans({
-        '%participantFullName%': participant.getFullName,
-        '%participantFullAddress%': participant.permanentResidence,
-    }) }}</p>
+{% if participantAddress %}
+    <p>{{ 'receipt.acceptPaymentParticipant'|trans({
+            '%participantFullName%': participant.getFullName,
+            '%participantFullAddress%': participantAddress,
+        }) }}</p>
+{% else %}
+    <p>{{ 'receipt.acceptPaymentParticipantNoAddress'|trans({
+            '%participantFullName%': participant.getFullName,
+        }) }}</p>
+{% endif %}
 {% if allOtherParticipants %}
     <p>{{ 'receipt.acceptPaymentMoreParticipant'|trans({
             '%allOtherParticipants%': allOtherParticipants,

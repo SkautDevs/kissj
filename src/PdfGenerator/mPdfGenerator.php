@@ -9,6 +9,7 @@ use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Payment\Payment;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Payment\QrCodeService;
@@ -44,6 +45,7 @@ class mPdfGenerator extends PdfGenerator
             'skautLogo' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautLogoPath($participant)),
             'eventDates' => $event->startDay->format('j. n. Y') . ' až ' . $event->endDay->format('j. n. Y'),
             'participant' => $participant,
+            'participantAddress' => $participant->permanentResidence ?? '',
             'allOtherParticipants' => $this->getOtherParticipantsIfNeeded($participant),
             'receipts' => $receipts,
             'signAndStamp' => ImageUtils::getLocalImageInBase64($event->eventType->getSkautStampSignPath($participant)),
@@ -61,6 +63,10 @@ class mPdfGenerator extends PdfGenerator
 
         if ($participant instanceof TroopLeader) {
             return implode(', ', $this->getParticipantNames($participant->troopParticipants));
+        }
+
+        if ($participant instanceof TechnicalTeamLeader) {
+            return implode(', ', $this->getParticipantNames($participant->technicalTeamParticipants));
         }
 
         return null;

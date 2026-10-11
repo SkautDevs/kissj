@@ -8,6 +8,8 @@
 .badge-sheet td.badge--pp,
 .badge-sheet td.badge--tl,
 .badge-sheet td.badge--tp,
+.badge-sheet td.badge--ttl,
+.badge-sheet td.badge--ttp,
 .badge-sheet td.badge--guest,
 .badge-sheet td.badge--blank {
     background-image: url('navigamus27/badgeTentacle.png');

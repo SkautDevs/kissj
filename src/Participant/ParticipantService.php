@@ -116,8 +116,13 @@ readonly class ParticipantService
                     $participant->printedHandbook = array_key_exists('printedHandbook', $params) ? true : null;
                 })(),
                 'patrolName' => (function () use ($params, $participant): void {
-                    if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader || $participant instanceof TechnicalTeamLeader) {
+                    if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
                         $participant->patrolName = $params['patrolName'] ?? null;
+                    }
+                })(),
+                'technicalTeamName' => (function () use ($params, $participant): void {
+                    if ($participant instanceof TechnicalTeamLeader) {
+                        $participant->technicalTeamName = $params['technicalTeamName'] ?? null;
                     }
                 })(),
                 'telephoneNumber' => (function () use ($params, $participant): void {
@@ -595,12 +600,14 @@ readonly class ParticipantService
             return RoleChangeResult::RoleNotValid;
         }
 
-        if (
-            in_array($role, [ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant], true)
-            || $participant instanceof TechnicalTeamLeader
-            || $participant instanceof TechnicalTeamParticipant
-        ) {
+        if ($role === ParticipantRole::TechnicalTeamParticipant || $participant instanceof TechnicalTeamParticipant) {
             return RoleChangeResult::RoleNotValid;
+        }
+
+        if ($participant instanceof TechnicalTeamLeader) {
+            if ($participant->getTechnicalTeamParticipantsCount() > 0) {
+                return RoleChangeResult::TechnicalTeamHasParticipants;
+            }
         }
 
         if ($participant instanceof PatrolLeader) {

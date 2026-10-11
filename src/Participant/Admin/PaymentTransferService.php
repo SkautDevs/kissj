@@ -9,6 +9,7 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
@@ -54,6 +55,12 @@ readonly class PaymentTransferService
             return false;
         }
 
+        if ($participantFrom->hasOwnUser() === false || $participantTo->hasOwnUser() === false) {
+            $flash->warning('flash.warning.groupMemberNotSupported');
+
+            return false;
+        }
+
         if ($participantFrom->role !== $participantTo->role) {
             $flash->warning('flash.warning.sameRole');
             $isPossible = false;
@@ -95,6 +102,11 @@ readonly class PaymentTransferService
 
         if ($participantFrom instanceof PatrolLeader || $participantTo instanceof PatrolLeader) {
             $flash->warning('flash.warning.patrolLeaderNotSupported');
+            $isPossible = false;
+        }
+
+        if ($participantFrom instanceof TechnicalTeamLeader || $participantTo instanceof TechnicalTeamLeader) {
+            $flash->warning('flash.warning.technicalTeamLeaderNotSupported');
             $isPossible = false;
         }
 

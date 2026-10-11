@@ -68,6 +68,13 @@
                     <p>{{ 'dashboard-admin.approvedOt' | trans }}: {{ organizingTeam.approvedCount }}</p>
                     <p>{{ 'dashboard-admin.paidOt' | trans }}: {{ organizingTeam.paidCount }}</p>
                 {% endif %}
+                {% if event.allowTechnicalTeams %}
+                    <h3>{{ 'role.ttl' | trans }} {{ 'dashboard-admin.count' | trans }}</h3>
+                    <p>{{ 'dashboard-admin.openTtl' | trans }}: {{ technicalTeamLeaders.openCount }}</p>
+                    <p>{{ 'dashboard-admin.lockedTtl' | trans }}: {{ technicalTeamLeaders.closedCount }}</p>
+                    <p>{{ 'dashboard-admin.approvedTtl' | trans }}: {{ technicalTeamLeaders.approvedCount }}</p>
+                    <p>{{ 'dashboard-admin.paidTtl' | trans }}: {{ technicalTeamLeaders.paidCount }}</p>
+                {% endif %}
             </div>
         </div>
         <div class="card-divide">
@@ -169,6 +176,10 @@
                 {% if event.allowOrganizingTeam %}
                     <a href="{{ url_for('admin-organizing-team', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.organizingTeam' | trans }}</a><br/>
+                {% endif %}
+                {% if event.allowTechnicalTeams %}
+                    <a href="{{ url_for('admin-technical-teams', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.technicalTeams' | trans }}</a><br/>
                 {% endif %}
                 <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
                    class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>

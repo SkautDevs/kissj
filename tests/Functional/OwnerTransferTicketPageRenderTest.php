@@ -12,6 +12,7 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeaderRepository;
 use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -334,6 +335,23 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         /** @var TroopParticipant $reloaded */
         $reloaded = $troopParticipantRepository->get($troopParticipant->id);
         self::assertFalse($this->eligibleForShowTieCode($app, $reloaded));
+    }
+
+    public function testEligibleForShowTieCodeFalseForApprovedTechnicalTeamLeaderOnOwnerTransferEvent(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+
+        $userService = $this->getService($app, UserService::class);
+        $leaderUser = $userService->registerEmailUser('transfer-ttl-' . uniqid('', true) . '@example.com', $event);
+        $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'ttl');
+
+        $leaderUser->status = UserStatus::Approved;
+        $this->getService($app, UserRepository::class)->persist($leaderUser);
+
+        $technicalTeamLeader = $this->getService($app, TechnicalTeamLeaderRepository::class)->get($leaderParticipant->id);
+        self::assertTrue($technicalTeamLeader->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed());
+        self::assertFalse($this->eligibleForShowTieCode($app, $technicalTeamLeader));
     }
 
     /**

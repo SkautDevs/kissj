@@ -341,6 +341,30 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         self::assertFalse($emptyStatistic['showContingent']);
     }
 
+    public function testPresentFoodStatisticSkipsNoEventFoodParticipants(): void
+    {
+        $app = $this->getTestApp();
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
+
+        $event = $this->getObrokTestEvent($app);
+
+        $eater = $this->makeEnteredOtherFoodParticipant($app, $event, null, 'Eater', 'Adam');
+        $skipper = $this->makeEnteredOtherFoodParticipant($app, $event, null, 'Skipper', 'Bob');
+        $skipper->foodPreferences = 'detail.foodNoEventFood';
+        $participantRepository->persist($skipper);
+        $skipper = $participantRepository->getParticipantById($skipper->id, $event);
+
+        $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
+            [$eater, $skipper],
+            ParticipantRole::all(),
+        );
+
+        self::assertSame(1, $statistic['grandTotal']);
+        self::assertSame(0, $this->colTotal($statistic, 'detail.foodNoEventFood'));
+        self::assertNotContains('detail.foodNoEventFood', $statistic['foodTypes']);
+    }
+
     public function testOtherFoodDetailsShowContingentInheritedFromPatrolLeader(): void
     {
         $app = $this->getTestApp();

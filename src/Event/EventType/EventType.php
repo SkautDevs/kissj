@@ -127,7 +127,7 @@ abstract class EventType
     public function getContentArbiterTechnicalTeamLeader(): ContentArbiterTechnicalTeamLeader
     {
         $ca = new ContentArbiterTechnicalTeamLeader();
-        $ca->food->options = $this->getTechnicalTeamFoodOptions();
+        $ca->food->options = $this->getFoodOptionsWithNoFood();
 
         return $ca;
     }
@@ -135,7 +135,7 @@ abstract class EventType
     public function getContentArbiterTechnicalTeamParticipant(): ContentArbiterTechnicalTeamParticipant
     {
         $ca = new ContentArbiterTechnicalTeamParticipant();
-        $ca->food->options = $this->getTechnicalTeamFoodOptions();
+        $ca->food->options = $this->getFoodOptionsWithNoFood();
 
         return $ca;
     }
@@ -143,10 +143,9 @@ abstract class EventType
     /**
      * @return array<string, string>
      */
-    private function getTechnicalTeamFoodOptions(): array
+    private function getFoodOptionsWithNoFood(): array
     {
-        return ['' => 'detail.foodChoose']
-            + ContentArbiterItem::selfMappedOptions([...$this->getFoodOptions(), 'detail.foodNoEventFood']);
+        return ContentArbiterItem::selfMappedOptions([...$this->getFoodOptions(), Participant::FOOD_NO_EVENT_FOOD]);
     }
 
     public function getContentArbiterForRole(ParticipantRole $role): AbstractContentArbiter
@@ -328,7 +327,8 @@ abstract class EventType
         return
             $this->isReceiptAllowed()
             && $participant->getUserButNotNull()->status === UserStatus::Paid
-            && $participant->role !== ParticipantRole::Guest;
+            && $participant->role !== ParticipantRole::Guest
+            && $participant->getAllPaidPayment() !== [];
     }
 
     public function getReceiptTemplateName(Participant $participant): string

@@ -10,6 +10,7 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\TshirtService;
 use kissj\User\UserStatus;
@@ -231,6 +232,8 @@ class EntryController extends AbstractController
             $groupParticipants = $leader->troopParticipants;
         } elseif ($leader instanceof PatrolLeader) {
             $groupParticipants = $leader->patrolParticipants;
+        } elseif ($leader instanceof TechnicalTeamLeader) {
+            $groupParticipants = $leader->technicalTeamParticipants;
         } else {
             return null;
         }

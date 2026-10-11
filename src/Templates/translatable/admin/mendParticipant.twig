@@ -12,6 +12,8 @@
                 ({{ participant.getTroopParticipantsCount() }}x {{ 'role.tp' | trans }})
             {% elseif participant is PatrolLeader %}
                 ({{ participant.getPatrolParticipantsCount() }}x {{ 'role.pp' | trans }})
+            {% elseif participant is TechnicalTeamLeader %}
+                ({{ participant.getTechnicalTeamParticipantsCount() }}x {{ 'role.ttp' | trans }})
             {% endif %}<br/>
             {{ 'mend-admin.tieCode' | trans }}: <b>{{ participant.tieCode }}</b>
             <br/>
@@ -41,6 +43,17 @@
             {% endif %}
             {{ include('widgets/detailsForAdmin.twig', {person: participant, ca: ca}) }}
             <br/>
+            {% if participant is TechnicalTeamLeader %}
+                <h3>{{ 'role.ttp' | trans }}</h3>
+                {% for member in participant.technicalTeamParticipants %}
+                    <a href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': member.id}) }}">{{ member.getFullName }}</a>
+                    {% if member.getValueForField('foodPreferences') is not null %}- {{ member.getValueForField('foodPreferences') }}{% endif %}
+                    {% if member.getValueForField('arrivalDate') is not null %}- {{ member.getValueForField('arrivalDate')|date('d. m. Y') }}{% endif %}
+                    {% if member.getValueForField('departureDate') is not null %}- {{ member.getValueForField('departureDate')|date('d. m. Y') }}{% endif %}
+                    <br/>
+                {% endfor %}
+                <br/>
+            {% endif %}
             {{ 'mend-admin.enter' | trans }}:
             {% set entryDate = participant.getEntryDate() %}
             {% if entryDate %}
@@ -117,7 +130,7 @@
                 {{ 'mend-admin.editParticipant' | trans }}
             </a>
             <br/>
-            {% if participant is not PatrolParticipant %}
+            {% if participant is hasUser %}
                 <a
                     href="{{ url_for('admin-show-add-new-payment', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
                     class="btn"
@@ -126,7 +139,7 @@
                 </a>
                 <br/>
             {% endif %}
-            {% if participant is not PatrolLeader and participant is not PatrolParticipant %}
+            {% if participant is hasUser and participant is not PatrolLeader and participant is not TechnicalTeamLeader %}
                 {# TODO add placeholder for PL "not supported yet" #}
                 {# PatrolParticipant shares the leader's user - cancelling would cancel the whole patrol #}
                 <form

@@ -13,6 +13,7 @@ use kissj\Event\EventType\EventType;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 
 class EventTypeJj extends EventType
 {
@@ -20,6 +21,10 @@ class EventTypeJj extends EventType
 
     public function getPrice(Participant $participant): int
     {
+        if ($participant instanceof TechnicalTeamLeader) {
+            return parent::getPrice($participant);
+        }
+
         $price = match (true) {
             $participant instanceof Ist => 300,
             $participant instanceof PatrolLeader => ($participant->getPatrolParticipantsCount() + 1) * 650,

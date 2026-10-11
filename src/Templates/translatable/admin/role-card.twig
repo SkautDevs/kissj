@@ -1,8 +1,10 @@
 {% set role = config.role %}
 {% set roleValue = role.value %}
 
+{% if config.savable %}
 <form method="POST" action="{{ url_for('admin-save-role-management', {'eventSlug': event.slug}) }}">
     <input type="hidden" name="role" value="{{ roleValue }}">
+{% endif %}
 
     <h3{% if not config.enabled %} class="role-disabled"{% endif %}>{{ ('role.' ~ roleValue)|trans }}</h3>
     <p{% if not config.enabled %} class="role-disabled"{% endif %}><em>{{ ('chooseRole.advice' ~ roleValue|capitalize ~ 'Text')|trans }}</em></p>
@@ -95,6 +97,8 @@
         </ul>
     </details>
 
+{% if config.savable %}
     <br/>
     <input type="submit" class="btn btn-small" value="{{ 'roleManagement.save' | trans }}">
 </form>
+{% endif %}

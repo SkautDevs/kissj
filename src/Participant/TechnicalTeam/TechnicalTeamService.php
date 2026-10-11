@@ -24,6 +24,13 @@ readonly class TechnicalTeamService
         return $this->technicalTeamParticipantRepository->get($participantId);
     }
 
+    public function findTechnicalTeamParticipant(int $participantId): ?TechnicalTeamParticipant
+    {
+        $participant = $this->technicalTeamParticipantRepository->findOneBy(['id' => $participantId]);
+
+        return $participant instanceof TechnicalTeamParticipant ? $participant : null;
+    }
+
     public function deleteTechnicalTeamParticipant(TechnicalTeamParticipant $participant): void
     {
         $this->technicalTeamParticipantRepository->delete($participant);

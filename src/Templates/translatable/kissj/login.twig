@@ -30,6 +30,9 @@
                     {% if otToken is defined and otToken is not null %}
                         <input type="hidden" name="ot_token" value="{{ otToken }}">
                     {% endif %}
+                    {% if ttlToken is defined and ttlToken is not null %}
+                        <input type="hidden" name="ttl_token" value="{{ ttlToken }}">
+                    {% endif %}
                     <div class="form-group">
                         <label for="form-email">{{ 'login.email' | trans }}:</label>
                         <input
