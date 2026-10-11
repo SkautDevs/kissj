@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.badges' | trans }}{% endblock %}
+
 {% block content %}
     <div class="card text-center">
         <h2>{{ 'badges.title' | trans }} {{ event.readableName }}</h2>

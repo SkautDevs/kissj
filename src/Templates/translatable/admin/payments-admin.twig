@@ -1,5 +1,7 @@
 {% extends "_layout.twig" %}
 
+{% block pageTitle %}{{ 'pageTitle.payments' | trans }}{% endblock %}
+
 {% block content %}
     <script src="{{ base_path() }}/js/admin-ajax-submit.js" defer></script>
     <div class="card">

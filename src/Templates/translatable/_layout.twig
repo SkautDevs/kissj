@@ -15,7 +15,7 @@
     <meta name="theme-color" content="#872e4e" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
+    <title>{% block pageTitle %}{{ '_layout.title' | trans }}{% endblock %}{% if event is defined %} - {{ event.readableName }}{% endif %} - kissj</title>
 
     <link rel="shortcut icon" href="/favicon-16x16.png" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -38,7 +38,7 @@
 </head>
 
 <body class="wrapper">
-<h1 class="text-center">{{ '_layout.title' | trans }} - {{ event.readableName }}</h1>
+<h1 class="text-center">{{ block('pageTitle') }}{% if event is defined %} - {{ event.readableName }}{% endif %}</h1>
 <div class="user text-right">
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
