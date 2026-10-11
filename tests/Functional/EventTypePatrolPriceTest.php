@@ -11,6 +11,10 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeaderRepository;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipantRepository;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -32,6 +36,36 @@ class EventTypePatrolPriceTest extends AppTestCase
         $patrolLeader = $this->makePatrolWithTwoParticipants($app);
 
         self::assertSame((2 + 1) * 160, (new EventTypeAqua())->getPrice($patrolLeader));
+    }
+
+    public function testNavigamusTechnicalTeamLeaderPriceIsNotPatrolPrice(): void
+    {
+        $app = $this->getTestApp();
+        $userService = $this->getService($app, UserService::class);
+        $technicalTeamLeaderRepository = $this->getService($app, TechnicalTeamLeaderRepository::class);
+        $technicalTeamParticipantRepository = $this->getService($app, TechnicalTeamParticipantRepository::class);
+
+        $event = $this->getNavigamusTestEvent($app);
+        $leaderUser = $userService->registerEmailUser('price-ttl-' . bin2hex(random_bytes(4)) . '@example.com', $event);
+        $leaderParticipant = $userService->createParticipantSetRole($leaderUser, 'ttl');
+        /** @var TechnicalTeamLeader $technicalTeamLeader */
+        $technicalTeamLeader = $technicalTeamLeaderRepository->get($leaderParticipant->id);
+
+        foreach (['One', 'Two'] as $lastName) {
+            $member = new TechnicalTeamParticipant();
+            $member->technicalTeamLeader = $technicalTeamLeader;
+            $member->firstName = 'Member';
+            $member->lastName = $lastName;
+            $technicalTeamParticipantRepository->persist($member);
+        }
+
+        self::assertSame(0, (new EventTypeNavigamus())->getPrice($technicalTeamLeader));
+
+        $this->mutateEventForTest($app->getContainer(), $event, ['technicalTeamPrice' => 100]);
+
+        $reloadedLeader = $technicalTeamLeaderRepository->get($technicalTeamLeader->id);
+
+        self::assertSame(300, (new EventTypeNavigamus())->getPrice($reloadedLeader));
     }
 
     /**

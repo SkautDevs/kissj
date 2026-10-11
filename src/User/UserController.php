@@ -54,6 +54,15 @@ class UserController extends AbstractController
             $_SESSION['ot_access_granted'] = true;
         }
 
+        $ttlToken = $queryParams['ttl_token'] ?? null;
+        if (
+            is_string($ttlToken)
+            && $event->technicalTeamRegistrationToken !== null
+            && $ttlToken === $event->technicalTeamRegistrationToken
+        ) {
+            $_SESSION['ttl_access_granted'] = true;
+        }
+
         $prefillEmail = $_SESSION['prefill_email'] ?? null;
         unset($_SESSION['prefill_email']);
 
@@ -125,6 +134,11 @@ class UserController extends AbstractController
                 $_SESSION['ot_access_granted'] = true;
             }
 
+            $ttlToken = $queryParams['ttl_token'] ?? null;
+            if ($ttlToken !== null && $ttlToken === $user->event->technicalTeamRegistrationToken) {
+                $_SESSION['ttl_access_granted'] = true;
+            }
+
             return $this->redirect($request, $response, 'landing');
         }
 
@@ -147,7 +161,7 @@ class UserController extends AbstractController
 
     public function chooseRole(User $user, Request $request, Response $response): Response
     {
-        $roles = $user->event->getSelectableRoles($this->isOtAccessGranted());
+        $roles = $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted());
         if (count($roles) === 1) {
             return $this->createParticipantWithRole($user, $roles[0], $request, $response);
         }
@@ -166,14 +180,15 @@ class UserController extends AbstractController
     {
         $postedRole = $this->getParameterFromBody($request, 'role');
         $role = ParticipantRole::tryFrom($postedRole);
-        $selectableRoles = $user->event->getSelectableRoles($this->isOtAccessGranted());
+        $selectableRoles = $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted());
 
         if ($role === null || in_array($role, $selectableRoles, true) === false) {
-            $this->flashMessages->error(
-                $postedRole === ParticipantRole::OrganizingTeam->value
-                    ? 'flash.error.otAccessDenied'
-                    : 'flash.error.roleNotAvailable',
-            );
+            $this->flashMessages->error(match ($postedRole) {
+                ParticipantRole::OrganizingTeam->value => 'flash.error.otAccessDenied',
+                ParticipantRole::TechnicalTeamLeader->value,
+                ParticipantRole::TechnicalTeamParticipant->value => 'flash.error.ttlAccessDenied',
+                default => 'flash.error.roleNotAvailable',
+            });
 
             return $this->redirect($request, $response, 'chooseRole');
         }
@@ -181,9 +196,15 @@ class UserController extends AbstractController
         return $this->createParticipantWithRole($user, $role, $request, $response);
     }
 
+
     private function isOtAccessGranted(): bool
     {
         return (bool)($_SESSION['ot_access_granted'] ?? false);
+    }
+
+    private function isTtlAccessGranted(): bool
+    {
+        return (bool)($_SESSION['ttl_access_granted'] ?? false);
     }
 
     private function createParticipantWithRole(

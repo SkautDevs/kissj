@@ -7,8 +7,10 @@
             {% for role in roles %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="{{ role.value }}">
-                    <input type="submit" class="btn form-wide"
-                           value="{{ ('chooseRole.registerAs' ~ role.value|capitalize)|trans }}">
+                    {% set unlockedByLink = role.value in ['ot', 'ttl'] %}
+                    {% set label = ('chooseRole.registerAs' ~ role.value|capitalize)|trans %}
+                    <input type="submit" class="btn form-wide{{ unlockedByLink ? ' btn-highlight' }}"
+                           value="{{ label }}{{ unlockedByLink ? ' (' ~ 'chooseRole.unlockedByLink'|trans ~ ')' }}">
                 </form>
                 <br/>
             {% endfor %}

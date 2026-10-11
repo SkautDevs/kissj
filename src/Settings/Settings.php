@@ -16,6 +16,8 @@ use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiterTechnicalTeamLeader;
+use kissj\Event\ContentArbiterTechnicalTeamParticipant;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\EventController;
@@ -76,6 +78,8 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeaderRepository;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipantRepository;
 use kissj\Participant\Troop\TroopController;
 use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\Participant\Troop\TroopParticipantRepository;
@@ -212,6 +216,8 @@ class Settings
             ContentArbiterIst::class => autowire(),
             ContentArbiterPatrolLeader::class => autowire(),
             ContentArbiterPatrolParticipant::class => autowire(),
+            ContentArbiterTechnicalTeamLeader::class => autowire(),
+            ContentArbiterTechnicalTeamParticipant::class => autowire(),
             ContentArbiterTroopLeader::class => autowire(),
             ContentArbiterTroopParticipant::class => autowire(),
             EntryApiKeyMiddleware::class => autowire(),
@@ -251,6 +257,8 @@ class Settings
             PatrolLeadersOnlyMiddleware::class => autowire(),
             PatrolParticipantRepository::class => autowire(),
             PatrolService::class => autowire(),
+            TechnicalTeamLeaderRepository::class => autowire(),
+            TechnicalTeamParticipantRepository::class => autowire(),
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
             PaymentTransferService::class => autowire(),

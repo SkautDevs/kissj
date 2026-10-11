@@ -14,6 +14,8 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
@@ -44,6 +46,8 @@ class Mapper implements IMapper
             Ist::class,
             Guest::class,
             OrganizingTeam::class,
+            TechnicalTeamLeader::class,
+            TechnicalTeamParticipant::class,
         ];
         if (in_array($entityClass, $participantVariants, true)) {
             $entityClass = Participant::class;
@@ -86,6 +90,8 @@ class Mapper implements IMapper
                     ParticipantRole::Ist->value => Ist::class,
                     ParticipantRole::Guest->value => Guest::class,
                     ParticipantRole::OrganizingTeam->value => OrganizingTeam::class,
+                    ParticipantRole::TechnicalTeamLeader->value => TechnicalTeamLeader::class,
+                    ParticipantRole::TechnicalTeamParticipant->value => TechnicalTeamParticipant::class,
                     default => throw new \UnexpectedValueException('Got unknown Participant role: '
                         . $rowData['role'] . ' for Participant with ID: ' . $rowData['id']),
                 };

@@ -20,6 +20,7 @@ class EventService
             ParticipantRole::Guest => $event->maximalClosedGuestsCount,
             ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount,
             ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount,
+            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => null,
         };
     }
 }

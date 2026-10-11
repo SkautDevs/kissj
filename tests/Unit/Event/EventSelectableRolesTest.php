@@ -45,6 +45,27 @@ class EventSelectableRolesTest extends TestCase
         self::assertSame(['ot', 'pl', 'tl', 'tp', 'ist', 'guest'], $this->values($event, true));
     }
 
+    public function testTechnicalTeamLeaderIsHiddenWithoutAccess(): void
+    {
+        $event = $this->createEvent(ists: true, technicalTeams: true);
+
+        self::assertSame(['ist'], $this->values($event, false, false));
+    }
+
+    public function testTechnicalTeamLeaderFollowsOrganizingTeamWithAccess(): void
+    {
+        $event = $this->createEvent(ists: true, organizingTeam: true, technicalTeams: true);
+
+        self::assertSame(['ot', 'ttl', 'ist'], $this->values($event, true, true));
+    }
+
+    public function testTechnicalTeamLeaderNeedsTechnicalTeamsAllowed(): void
+    {
+        $event = $this->createEvent(ists: true);
+
+        self::assertSame(['ist'], $this->values($event, false, true));
+    }
+
     public function testNothingEnabled(): void
     {
         $event = $this->createEvent();
@@ -58,6 +79,7 @@ class EventSelectableRolesTest extends TestCase
         bool $ists = false,
         bool $guests = false,
         bool $organizingTeam = false,
+        bool $technicalTeams = false,
     ): Event {
         $event = new Event();
         $event->allowPatrols = $patrols;
@@ -65,6 +87,7 @@ class EventSelectableRolesTest extends TestCase
         $event->allowIsts = $ists;
         $event->allowGuests = $guests;
         $event->allowOrganizingTeam = $organizingTeam;
+        $event->allowTechnicalTeams = $technicalTeams;
 
         return $event;
     }
@@ -72,11 +95,11 @@ class EventSelectableRolesTest extends TestCase
     /**
      * @return list<string>
      */
-    private function values(Event $event, bool $otAccessGranted): array
+    private function values(Event $event, bool $otAccessGranted, bool $ttlAccessGranted = false): array
     {
         return array_values(array_map(
             fn (ParticipantRole $role): string => $role->value,
-            $event->getSelectableRoles($otAccessGranted),
+            $event->getSelectableRoles($otAccessGranted, $ttlAccessGranted),
         ));
     }
 }

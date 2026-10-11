@@ -12,6 +12,8 @@ use kissj\Event\ContentArbiterIst;
 use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
+use kissj\Event\ContentArbiterTechnicalTeamLeader;
+use kissj\Event\ContentArbiterTechnicalTeamParticipant;
 use kissj\Event\ContentArbiterTroopLeader;
 use kissj\Event\ContentArbiterTroopParticipant;
 use kissj\Event\Event;
@@ -19,6 +21,7 @@ use kissj\Participant\Guest\Guest;
 use kissj\Participant\OrganizingTeam\OrganizingTeam;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Deal\EventDeal;
 use kissj\Payment\FinanceTier;
@@ -45,6 +48,12 @@ abstract class EventType
 
         if ($participant instanceof OrganizingTeam) {
             return $participant->getUserButNotNull()->event->organizingTeamPrice ?? 0;
+        }
+
+        if ($participant instanceof TechnicalTeamLeader) {
+            $pricePerHead = $participant->getUserButNotNull()->event->technicalTeamPrice ?? 0;
+
+            return ($participant->getTechnicalTeamParticipantsCount() + 1) * $pricePerHead;
         }
 
         return $participant->getUserButNotNull()->event->defaultPrice;
@@ -115,6 +124,31 @@ abstract class EventType
         return $cao;
     }
 
+    public function getContentArbiterTechnicalTeamLeader(): ContentArbiterTechnicalTeamLeader
+    {
+        $ca = new ContentArbiterTechnicalTeamLeader();
+        $ca->food->options = $this->getTechnicalTeamFoodOptions();
+
+        return $ca;
+    }
+
+    public function getContentArbiterTechnicalTeamParticipant(): ContentArbiterTechnicalTeamParticipant
+    {
+        $ca = new ContentArbiterTechnicalTeamParticipant();
+        $ca->food->options = $this->getTechnicalTeamFoodOptions();
+
+        return $ca;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getTechnicalTeamFoodOptions(): array
+    {
+        return ['' => 'detail.foodChoose']
+            + ContentArbiterItem::selfMappedOptions([...$this->getFoodOptions(), 'detail.foodNoEventFood']);
+    }
+
     public function getContentArbiterForRole(ParticipantRole $role): AbstractContentArbiter
     {
         return match ($role) {
@@ -125,6 +159,8 @@ abstract class EventType
             ParticipantRole::Ist => $this->getContentArbiterIst(),
             ParticipantRole::Guest => $this->getContentArbiterGuest(),
             ParticipantRole::OrganizingTeam => $this->getContentArbiterOrganizingTeam(),
+            ParticipantRole::TechnicalTeamLeader => $this->getContentArbiterTechnicalTeamLeader(),
+            ParticipantRole::TechnicalTeamParticipant => $this->getContentArbiterTechnicalTeamParticipant(),
         };
     }
 
@@ -138,6 +174,7 @@ abstract class EventType
             ParticipantRole::Guest => $event->maximalClosedGuestsCount,
             ParticipantRole::OrganizingTeam => $event->maximalClosedOrganizingTeamCount,
             ParticipantRole::PatrolParticipant => $event->maximalPatrolParticipantsCount,
+            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => null,
         };
     }
 

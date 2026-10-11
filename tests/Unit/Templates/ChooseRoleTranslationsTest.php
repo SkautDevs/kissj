@@ -19,11 +19,12 @@ class ChooseRoleTranslationsTest extends TestCase
         $event->allowIsts = true;
         $event->allowGuests = true;
         $event->allowOrganizingTeam = true;
+        $event->allowTechnicalTeams = true;
 
         $missing = [];
         foreach (['cs', 'en', 'sk'] as $locale) {
             $translations = Yaml::parseFile(__DIR__ . '/../../../src/Templates/' . $locale . '.yaml');
-            foreach ($event->getSelectableRoles(true) as $role) {
+            foreach ($event->getSelectableRoles(true, true) as $role) {
                 $capitalized = ucfirst(strtolower($role->value));
                 foreach ($this->keysFor($role, $capitalized) as $key) {
                     if ($this->resolve($translations, $key) === null) {

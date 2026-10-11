@@ -458,6 +458,7 @@ class AppTestCase extends TestCase
         'allowGuests', 'maximalClosedGuestsCount', 'guestPrice',
         'allowOrganizingTeam', 'maximalClosedOrganizingTeamCount', 'organizingTeamPrice',
         'organizingTeamRegistrationToken',
+        'allowTechnicalTeams', 'technicalTeamPrice', 'technicalTeamRegistrationToken',
         'allowTroops', 'maximalClosedTroopLeadersCount', 'maximalClosedTroopParticipantsCount',
         'minimalTroopParticipantsCount', 'maximalTroopParticipantsCount',
         'maximalClosedParticipantsCount',
