@@ -15,7 +15,7 @@
             {% for person in section.participants %}
                 <div class="card">
                     {% if section.childContentArbiter is not null %}
-                        <h3>{{ person.getPatrolName }}</h3>
+                        <h3>{{ person is TechnicalTeamLeader ? person.getTechnicalTeamName : person.getPatrolName }}</h3>
                         <br/>
                         <h4>{{ person.getFullName }}</h4>
                         {% include 'widgets/detailsForAdmin.twig' with {'person': person, 'ca': section.contentArbiter} %}
@@ -25,6 +25,12 @@
                             <h4>{{ 'role.pp' | trans }} {{ 'dashboard.details' | trans }}</h4>
                             {% for pp in person.patrolParticipants %}
                                 {% include 'widgets/detailsForAdmin.twig' with {'person': pp, 'ca': section.childContentArbiter, 'useShortNaming': true} %}
+                                <br/>
+                            {% endfor %}
+                        {% elseif section.role.value == 'ttl' %}
+                            <h4>{{ 'role.ttp' | trans }} {{ 'dashboard.details' | trans }}</h4>
+                            {% for ttp in person.technicalTeamParticipants %}
+                                {% include 'widgets/detailsForAdmin.twig' with {'person': ttp, 'ca': section.childContentArbiter, 'useShortNaming': true} %}
                                 <br/>
                             {% endfor %}
                         {% else %}

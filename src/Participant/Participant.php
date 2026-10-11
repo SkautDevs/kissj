@@ -90,6 +90,7 @@ class Participant extends EntityDatetime
     protected const string PREFERRED_POSITION_DELIMITER = ' & ';
 
     public const string FOOD_OTHER = 'detail.foodOther'; // refactor into ContentArbiter
+    public const string FOOD_NO_EVENT_FOOD = 'detail.foodNoEventFood';
     public const string SCARF_NO = 'no'; // refactor into ContentArbiter
     public const string SCARF_YES = 'yes'; // refactor into ContentArbiter
 
@@ -205,7 +206,7 @@ class Participant extends EntityDatetime
 
     public function hasOwnUser(): bool
     {
-        return ($this instanceof PatrolParticipant || $this instanceof TechnicalTeamParticipant) === false;
+        return $this->getRoleOrFail()->hasOwnUser();
     }
 
     public function getOwnOrLeaderContingent(): ?string

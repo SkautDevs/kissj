@@ -60,7 +60,7 @@ class UserController extends AbstractController
             && $event->technicalTeamRegistrationToken !== null
             && $ttlToken === $event->technicalTeamRegistrationToken
         ) {
-            $_SESSION['ttl_access_granted'] = true;
+            $_SESSION['ttl_access_granted'] = $event->id;
         }
 
         $prefillEmail = $_SESSION['prefill_email'] ?? null;
@@ -69,6 +69,7 @@ class UserController extends AbstractController
         $data = [
             'lastLogin' => $this->cookieHandler->getCookie($request, 'lastLogin'),
             'otToken' => $otToken,
+            'ttlToken' => is_string($ttlToken) ? $ttlToken : null,
             'prefillEmail' => $prefillEmail,
         ];
         if ($event->getEventType()->isLoginSkautisAllowed()) {
@@ -89,6 +90,8 @@ class UserController extends AbstractController
         $parsedBody = $request->getParsedBody();
         $otTokenRaw = is_array($parsedBody) ? ($parsedBody['ot_token'] ?? null) : null;
         $otToken = is_string($otTokenRaw) ? $otTokenRaw : null;
+        $ttlTokenRaw = is_array($parsedBody) ? ($parsedBody['ttl_token'] ?? null) : null;
+        $ttlToken = is_string($ttlTokenRaw) ? $ttlTokenRaw : null;
 
         $caseVariantEmail = $this->userService->findCaseVariantEmail($email, $event);
         if ($caseVariantEmail !== null) {
@@ -100,7 +103,7 @@ class UserController extends AbstractController
         }
 
         try {
-            $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken);
+            $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken, $ttlToken);
         } catch (Exception $e) {
             $this->sentryCollector->collect($e);
             $this->logger->error('Error sending login email to ' . $email, [$e]);
@@ -136,7 +139,7 @@ class UserController extends AbstractController
 
             $ttlToken = $queryParams['ttl_token'] ?? null;
             if ($ttlToken !== null && $ttlToken === $user->event->technicalTeamRegistrationToken) {
-                $_SESSION['ttl_access_granted'] = true;
+                $_SESSION['ttl_access_granted'] = $user->event->id;
             }
 
             return $this->redirect($request, $response, 'landing');
@@ -161,7 +164,7 @@ class UserController extends AbstractController
 
     public function chooseRole(User $user, Request $request, Response $response): Response
     {
-        $roles = $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted());
+        $roles = $this->getSelectableRoles($user);
         if (count($roles) === 1) {
             return $this->createParticipantWithRole($user, $roles[0], $request, $response);
         }
@@ -180,7 +183,7 @@ class UserController extends AbstractController
     {
         $postedRole = $this->getParameterFromBody($request, 'role');
         $role = ParticipantRole::tryFrom($postedRole);
-        $selectableRoles = $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted());
+        $selectableRoles = $this->getSelectableRoles($user);
 
         if ($role === null || in_array($role, $selectableRoles, true) === false) {
             $this->flashMessages->error(match ($postedRole) {
@@ -196,15 +199,22 @@ class UserController extends AbstractController
         return $this->createParticipantWithRole($user, $role, $request, $response);
     }
 
+    /**
+     * @return list<ParticipantRole>
+     */
+    private function getSelectableRoles(User $user): array
+    {
+        return $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted($user));
+    }
 
     private function isOtAccessGranted(): bool
     {
         return (bool)($_SESSION['ot_access_granted'] ?? false);
     }
 
-    private function isTtlAccessGranted(): bool
+    private function isTtlAccessGranted(User $user): bool
     {
-        return (bool)($_SESSION['ttl_access_granted'] ?? false);
+        return ($_SESSION['ttl_access_granted'] ?? null) === $user->event->id;
     }
 
     private function createParticipantWithRole(

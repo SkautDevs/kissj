@@ -37,7 +37,7 @@ class TechnicalTeamFieldsTest extends TestCase
 
         self::assertSame(
             [
-                'patrolName',
+                'technicalTeamName',
                 'firstName',
                 'lastName',
                 'nickname',
@@ -50,16 +50,15 @@ class TechnicalTeamFieldsTest extends TestCase
             ],
             $slugs,
         );
-        self::assertSame('detail.technicalTeamName', $ca->patrolName->label);
+        self::assertFalse($ca->patrolName->allowed);
     }
 
-    public function testFoodOptionsStartWithEmptyPromptAndEndWithNoEventFood(): void
+    public function testFoodOptionsAreEventFoodOptionsEndingWithNoEventFood(): void
     {
         foreach ([new EventTypeObrok(), new EventTypeNavigamus()] as $eventType) {
             $options = $eventType->getContentArbiterTechnicalTeamParticipant()->food->options;
 
-            self::assertSame('', array_key_first($options));
-            self::assertSame('detail.foodChoose', $options['']);
+            self::assertSame($eventType->getFoodOptions()[0], array_key_first($options));
             self::assertSame('detail.foodNoEventFood', array_key_last($options));
             foreach ($eventType->getFoodOptions() as $eventFoodOption) {
                 self::assertArrayHasKey($eventFoodOption, $options);
@@ -73,7 +72,7 @@ class TechnicalTeamFieldsTest extends TestCase
         $ca = (new EventTypeDefault())->getContentArbiterTechnicalTeamParticipant();
 
         self::assertSame(
-            ['' => 'detail.foodChoose', 'yes' => 'detail.scarfTechnicalTeamYes', 'no' => 'detail.scarfNo'],
+            ['yes' => 'detail.scarfTechnicalTeamYes', 'no' => 'detail.scarfNo'],
             $ca->scarf->options,
         );
     }

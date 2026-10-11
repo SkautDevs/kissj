@@ -8,7 +8,7 @@ use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 
 /**
- * @property string|null                $patrolName
+ * @property string|null                $technicalTeamName m:column(patrol_name)
  * @property TechnicalTeamParticipant[] $technicalTeamParticipants m:belongsToMany(patrol_leader_id:participant)
  */
 class TechnicalTeamLeader extends Participant

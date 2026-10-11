@@ -50,7 +50,7 @@ readonly class UserService
         return $user;
     }
 
-    public function sendLoginTokenByMail(string $email, Request $request, Event $event, ?string $otToken = null): string
+    public function sendLoginTokenByMail(string $email, Request $request, Event $event, ?string $otToken = null, ?string $ttlToken = null): string
     {
         $user = $this->userRepository->getUserFromEmail($email, $event);
         $this->invalidateAllLoginTokens($user);
@@ -71,8 +71,9 @@ readonly class UserService
             'loginWithToken',
             ['token' => $token, 'eventSlug' => $event->slug]
         );
-        if ($otToken !== null) {
-            $fullLink .= '?ot_token=' . urlencode($otToken);
+        $queryParams = array_filter(['ot_token' => $otToken, 'ttl_token' => $ttlToken], static fn (?string $value): bool => $value !== null);
+        if ($queryParams !== []) {
+            $fullLink .= '?' . http_build_query($queryParams);
         }
         $this->mailer->sendLoginToken($user, $fullLink);
 

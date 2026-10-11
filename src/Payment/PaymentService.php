@@ -19,6 +19,7 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
@@ -325,6 +326,10 @@ class PaymentService
     {
         if ($participant instanceof PatrolLeader) {
             return $event->slug . ' ' . ($participant->patrolName ?? '') . ' ' . $participant->getFullName();
+        }
+
+        if ($participant instanceof TechnicalTeamLeader) {
+            return $event->slug . ' ' . ($participant->technicalTeamName ?? '') . ' ' . $participant->getFullName();
         }
 
         return $event->slug . ' ' . $participant->getFullName();

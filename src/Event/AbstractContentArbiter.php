@@ -13,6 +13,7 @@ abstract class AbstractContentArbiter
 {
     public ContentArbiterItem $contingent;
     public ContentArbiterItem $patrolName;
+    public ContentArbiterItem $technicalTeamName;
     public ContentArbiterItem $firstName;
     public ContentArbiterItem $lastName;
     public ContentArbiterItem $nickname;
@@ -64,6 +65,13 @@ abstract class AbstractContentArbiter
             order: 20,
             label: 'detail.patrolName',
             placeholder: 'detail.patrolNamePlaceholder',
+        );
+        $this->technicalTeamName = new ContentArbiterItem(
+            slug: 'technicalTeamName',
+            allowed: false,
+            type: ContentArbiterItemType::Text,
+            order: 20,
+            label: 'detail.technicalTeamName',
         );
         $this->subcamp = new ContentArbiterItem(
             slug: 'subcamp',

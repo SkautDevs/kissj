@@ -3,6 +3,8 @@
     {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getPatrolParticipantsCount + 1}}</b><br/>
 {% endif %}{% if person is TroopLeader %}
     {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
+{% endif %}{% if person is TechnicalTeamLeader %}
+    {{ 'stats-admin.numberTechnicalTeamParticipants' | trans }}: <b>{{ person.getTechnicalTeamParticipantsCount + 1 }}</b><br/>
 {% endif %}{% if ca.contingent.allowed %}
     {{ 'detail.contingentTitle' | trans }}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}{% if ca.email.allowed %}

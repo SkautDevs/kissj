@@ -12,6 +12,7 @@ use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Tests\AppTestCase;
 
 class AdminRoleManagementCapacityTest extends AppTestCase
@@ -107,6 +108,28 @@ class AdminRoleManagementCapacityTest extends AppTestCase
         $body = $this->fetchRoleManagement();
 
         self::assertMatchesRegularExpression('/name="maximalPatrolParticipantsCount"\s+value="8"/', $body);
+    }
+
+    public function testTechnicalTeamParticipantCardHasNoSaveForm(): void
+    {
+        $app = $this->getTestApp();
+        $this->loginAsEventAdmin($app->getContainer());
+
+        $body = $this->fetchRoleManagement();
+
+        self::assertStringContainsString('name="role" value="ttl"', $body);
+        self::assertStringNotContainsString('name="role" value="ttp"', $body);
+    }
+
+    public function testTechnicalTeamParticipantPostIsRejected(): void
+    {
+        $app = $this->getTestApp();
+        $this->loginAsEventAdmin($app->getContainer());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unknown role: ttp');
+
+        $this->getTestApp(false)->handle($this->createRequest(self::ROLE_MANAGEMENT_URL, 'POST', ['role' => 'ttp']));
     }
 
     // distinct numbers for every cap the page renders, so a test can null exactly one of them

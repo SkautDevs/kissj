@@ -1,0 +1,55 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'technicalTeams-admin.title' | trans }} {{ event.readableName }}</h2>
+        <a href="{{ url_for('admin-dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'payments-admin.back' | trans }}</a>
+    </div>
+    {% if ttlRegistrationUrl %}
+        <div class="card">
+            <h3>{{ 'technicalTeams-admin.registrationUrl' | trans }}</h3>
+            <p>{{ 'technicalTeams-admin.registrationUrlDescription' | trans }}</p>
+            <input type="text" class="form-control form-wide" value="{{ ttlRegistrationUrl }}" readonly onclick="this.select()">
+            <br/>
+            <form method="POST" action="{{ url_for('admin-technical-teams-regenerate-token', {'eventSlug': event.slug}) }}">
+                <input type="submit" class="btn btn-grey btn-small" value="{{ 'technicalTeams-admin.regenerateToken' | trans }}">
+            </form>
+        </div>
+    {% endif %}
+    <div class="card">
+        <h3>{{ 'technicalTeams-admin.teams' | trans }}</h3>
+        {% if technicalTeamLeaders %}
+            <table>
+                <thead>
+                <tr>
+                    <th>{{ 'technicalTeams-admin.teamName' | trans }}</th>
+                    <th>{{ 'technicalTeams-admin.contact' | trans }}</th>
+                    <th>{{ 'technicalTeams-admin.email' | trans }}</th>
+                    <th>{{ 'technicalTeams-admin.phone' | trans }}</th>
+                    <th>{{ 'technicalTeams-admin.status' | trans }}</th>
+                    <th>{{ 'technicalTeams-admin.heads' | trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ttl in technicalTeamLeaders %}
+                    <tr>
+                        <td>{{ ttl.getTechnicalTeamName }}</td>
+                        <td>
+                            <a href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': ttl.id}) }}">{{ ttl.getFullName() }}</a>
+                        </td>
+                        <td>{{ ttl.getUserButNotNull().email }}</td>
+                        <td>{{ ttl.getTelephoneNumber }}</td>
+                        <td>{{ ('dashboard.userStatus.' ~ ttl.getUserButNotNull().status.value) | trans }}</td>
+                        <td>{{ ttl.getTechnicalTeamParticipantsCount() + 1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <p>{{ 'technicalTeams-admin.totalOpen' | trans }}: <b>{{ openHeadsCount }}</b></p>
+            <p>{{ 'technicalTeams-admin.totalClosed' | trans }}: <b>{{ closedHeadsCount }}</b></p>
+        {% else %}
+            <p>{{ 'technicalTeams-admin.noTeams' | trans }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

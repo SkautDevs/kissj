@@ -467,6 +467,14 @@ class Route
                             ->setName('admin-organizing-team-regenerate-token');
                     });
 
+                    $app->group('/technical-teams', function (RouteCollectorProxy $app) {
+                        $app->get('', AdminEventController::class . '::showTechnicalTeams')
+                            ->setName('admin-technical-teams');
+
+                        $app->post('/regenerateToken', AdminEventController::class . '::regenerateTechnicalTeamToken')
+                            ->setName('admin-technical-teams-regenerate-token');
+                    });
+
                     $app->get('/roleManagement', AdminEventController::class . '::showRoleManagement')
                         ->setName('admin-role-management');
 

@@ -7,6 +7,8 @@ namespace kissj\Participant\Admin;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopParticipant;
 use RuntimeException;
 use kissj\AbstractController;
@@ -45,7 +47,7 @@ class AdminParticipantController extends AbstractController
                 $event,
                 $user,
                 UserStatus::Paid,
-                ['ist' => null, 'pl' => null, 'tl' => null, 'guest' => null, 'ot' => null],
+                ['ist' => null, 'pl' => null, 'tl' => null, 'ttl' => null, 'guest' => null, 'ot' => null],
                 orderByUpdatedAt: true,
             ),
         ]);
@@ -61,7 +63,7 @@ class AdminParticipantController extends AbstractController
                 $event,
                 $user,
                 UserStatus::Open,
-                ['ist' => null, 'pl' => null, 'tl' => null, 'tp' => null, 'guest' => null, 'ot' => null],
+                ['ist' => null, 'pl' => null, 'tl' => null, 'ttl' => null, 'tp' => null, 'guest' => null, 'ot' => null],
                 orderByUpdatedAt: true,
                 filterEmpty: true,
             ),
@@ -78,7 +80,7 @@ class AdminParticipantController extends AbstractController
                 $event,
                 $user,
                 UserStatus::Closed,
-                ['ist' => null, 'pl' => null, 'tl' => null, 'tp' => null, 'guest' => null, 'ot' => null],
+                ['ist' => null, 'pl' => null, 'tl' => null, 'ttl' => null, 'tp' => null, 'guest' => null, 'ot' => null],
                 orderByUpdatedAt: true,
             ),
         ]);
@@ -257,11 +259,7 @@ class AdminParticipantController extends AbstractController
             'person' => $participant,
             'roles' => array_filter(
                 $event->getAvailableRoles(),
-                static fn (ParticipantRole $role): bool => in_array(
-                    $role,
-                    [ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant],
-                    true,
-                ) === false,
+                static fn (ParticipantRole $role): bool => $role !== ParticipantRole::TechnicalTeamParticipant,
             ),
         ]);
     }
@@ -281,6 +279,7 @@ class AdminParticipantController extends AbstractController
             RoleChangeResult::RoleNotValid => $this->flashMessages->error($roleChangeResult->value),
             RoleChangeResult::PatrolHasParticipants,
             RoleChangeResult::TroopHasParticipants,
+            RoleChangeResult::TechnicalTeamHasParticipants,
             RoleChangeResult::SameRole,
             RoleChangeResult::NotOpen => $this->flashMessages->warning($roleChangeResult->value),
         };
@@ -315,6 +314,10 @@ class AdminParticipantController extends AbstractController
             // a patrol participant has no own user - cancelling would flip the patrol leader's
             // shared user to cancelled and hide the whole patrol from the entry app
             $this->flashMessages->warning('flash.warning.cancelPatrolParticipantNotSupported');
+        } elseif ($participant instanceof TechnicalTeamLeader) {
+            $this->flashMessages->warning('flash.warning.cancelTechnicalTeamLeaderNotSupported');
+        } elseif ($participant instanceof TechnicalTeamParticipant) {
+            $this->flashMessages->warning('flash.warning.cancelTechnicalTeamParticipantNotSupported');
         } elseif ($participant instanceof Participant) {
             $this->participantService->cancelParticipant($participant);
             $this->flashMessages->success('flash.success.participantCancelled');
@@ -347,6 +350,8 @@ class AdminParticipantController extends AbstractController
             $this->flashMessages->warning('flash.warning.participantNotInCancelledStatus');
         } elseif ($participant instanceof PatrolLeader) {
             $this->flashMessages->warning('flash.warning.cancelPatrolLeaderNotSupported');
+        } elseif ($participant instanceof TechnicalTeamLeader) {
+            $this->flashMessages->warning('flash.warning.cancelTechnicalTeamLeaderNotSupported');
         } else {
             $this->participantService->uncancelParticipant($participant);
             $this->flashMessages->success('flash.success.participantUncancelled');

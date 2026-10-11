@@ -12,6 +12,7 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Payment\FinancesStatisticsService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -74,6 +75,7 @@ class AdminEventController extends AbstractController
                 'troopParticipants' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopParticipant),
                 'guests' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Guest),
                 'organizingTeam' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::OrganizingTeam),
+                'technicalTeamLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TechnicalTeamLeader),
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
                 'foodStatistic' => $foodStatistic,
@@ -160,6 +162,63 @@ class AdminEventController extends AbstractController
         return $this->redirect($request, $response, 'admin-organizing-team');
     }
 
+    public function showTechnicalTeams(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+        /** @var list<TechnicalTeamLeader> $technicalTeamLeaders */
+        $technicalTeamLeaders = $this->participantRepository->getAllParticipantsWithStatus(
+            [ParticipantRole::TechnicalTeamLeader],
+            [UserStatus::Open, UserStatus::Closed, UserStatus::Approved, UserStatus::Paid],
+            $event,
+        );
+
+        $openHeadsCount = 0;
+        $closedHeadsCount = 0;
+        foreach ($technicalTeamLeaders as $technicalTeamLeader) {
+            $headsCount = $technicalTeamLeader->getTechnicalTeamParticipantsCount() + 1;
+            if ($technicalTeamLeader->getUserButNotNull()->status === UserStatus::Open) {
+                $openHeadsCount += $headsCount;
+            } else {
+                $closedHeadsCount += $headsCount;
+            }
+        }
+
+        $ttlRegistrationUrl = null;
+        if ($event->allowTechnicalTeams) {
+            $ttlToken = $event->technicalTeamRegistrationToken
+                ?? $this->eventRepository->generateNewTechnicalTeamRegistrationToken($event);
+
+            $ttlRegistrationUrl = RouteContext::fromRequest($request)->getRouteParser()->fullUrlFor(
+                $request->getUri(),
+                'loginAskEmail',
+                ['eventSlug' => $event->slug],
+                ['ttl_token' => $ttlToken],
+            );
+        }
+
+        return $this->view->render($response, 'admin/technicalTeams-admin.twig', [
+            'technicalTeamLeaders' => $technicalTeamLeaders,
+            'openHeadsCount' => $openHeadsCount,
+            'closedHeadsCount' => $closedHeadsCount,
+            'ttlRegistrationUrl' => $ttlRegistrationUrl,
+        ]);
+    }
+
+    public function regenerateTechnicalTeamToken(
+        Request $request,
+        Response $response,
+        Event $event,
+    ): Response {
+        $this->eventRepository->generateNewTechnicalTeamRegistrationToken($event);
+
+        $this->flashMessages->success('flash.success.ttlTokenRegenerated');
+        $this->logger->info('TTL registration token regenerated for event ' . $event->slug);
+
+        return $this->redirect($request, $response, 'admin-technical-teams');
+    }
+
     public function showRoleManagement(
         Response $response,
         Event $event,
@@ -175,6 +234,7 @@ class AdminEventController extends AbstractController
             $roleConfigurations[] = [
                 'role' => $role,
                 'enabled' => $event->isRoleEnabled($role),
+                'savable' => $role !== ParticipantRole::TechnicalTeamParticipant,
                 'allowField' => $this->getAllowFieldForRole($role),
                 'maxField' => $this->getMaxFieldForRole($role),
                 'allowedItems' => $allowedItems,
@@ -224,7 +284,6 @@ class AdminEventController extends AbstractController
             'guest' => $this->saveGuest($event, $body),
             'ot' => $this->saveOrganizingTeam($event, $body),
             'ttl' => $this->saveTechnicalTeamLeader($event, $body),
-            'ttp' => true,
             default => throw new \RuntimeException('Unknown role: ' . $roleValue),
         };
 

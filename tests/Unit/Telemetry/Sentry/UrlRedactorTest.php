@@ -42,6 +42,35 @@ class UrlRedactorTest extends TestCase
         );
     }
 
+    public function testRedactsTtlTokenInQueryString(): void
+    {
+        self::assertSame(
+            'http://kissj.net/v2/event/navigamus27/login?ttl_token=' . UrlRedactor::REDACTED . '&lang=cs',
+            UrlRedactor::redact('http://kissj.net/v2/event/navigamus27/login?ttl_token=secret-team-token&lang=cs'),
+        );
+    }
+
+    public function testRedactsBothRegistrationTokensInOneQueryString(): void
+    {
+        self::assertSame(
+            'ot_token=' . UrlRedactor::REDACTED . '&ttl_token=' . UrlRedactor::REDACTED,
+            UrlRedactor::redact('ot_token=a&ttl_token=b'),
+        );
+    }
+
+    public function testScrubsTtlTokenFromPostedRequestData(): void
+    {
+        $event = Event::createEvent();
+        $event->setRequest([
+            'data' => ['ttl_token' => 'secret-team-token', 'email' => 'scout@example.com'],
+        ]);
+
+        self::assertSame(
+            ['ttl_token' => UrlRedactor::REDACTED, 'email' => 'scout@example.com'],
+            UrlRedactor::scrub($event)->getRequest()['data'],
+        );
+    }
+
     public function testPreservesQueryStringFollowingARedactedTryLoginSegment(): void
     {
         self::assertSame(

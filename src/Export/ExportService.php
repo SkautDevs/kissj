@@ -12,6 +12,8 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
@@ -102,13 +104,14 @@ readonly class ExportService
         ];
 
         foreach ($participants as $participant) {
-            if (!$participant instanceof PatrolParticipant) {
+            if ($participant->hasOwnUser()) {
                 $rows[] = [
                     (string)$participant->id, // 0
                     $participant->role->value ?? '',
                     match (true) {
                         $participant instanceof PatrolLeader => (string)$participant->getPatrolParticipantsCount(),
                         $participant instanceof TroopLeader => (string)$participant->getTroopParticipantsCount(),
+                        $participant instanceof TechnicalTeamLeader => (string)$participant->getTechnicalTeamParticipantsCount(),
                         default => '',
                     },
                     $this->getContingentTranslated($participant),
@@ -206,6 +209,16 @@ readonly class ExportService
                 $participant instanceof PatrolParticipant => [
                     (string)$participant->patrolLeader->id,
                     $participant->patrolLeader->patrolName ?? '',
+                    '',
+                ],
+                $participant instanceof TechnicalTeamLeader => [
+                    (string)$participant->id,
+                    $participant->technicalTeamName ?? '',
+                    (string)$participant->getTechnicalTeamParticipantsCount(),
+                ],
+                $participant instanceof TechnicalTeamParticipant => [
+                    (string)$participant->technicalTeamLeader->id,
+                    $participant->technicalTeamLeader->technicalTeamName ?? '',
                     '',
                 ],
                 $participant instanceof TroopParticipant => [

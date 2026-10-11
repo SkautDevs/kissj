@@ -18,6 +18,8 @@ use kissj\Orm\Repository;
 use kissj\Participant\Admin\StatisticUserValueObject;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
+use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\User\User;
@@ -74,13 +76,14 @@ class ParticipantRepository extends Repository
         /** @var Participant[] $participants */
         $participants = $this->createEntities($rows);
 
-        if (in_array(ParticipantRole::PatrolParticipant, $roles, true)) {
+        $rolesWithoutOwnUser = $this->filterRolesWithoutOwnUser($roles);
+        if ($rolesWithoutOwnUser !== []) {
             $qb = $this->createFluent();
 
             $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
             $qb->join('user')->as('u')->on('u.id = pl.user_id');
 
-            $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+            $qb->where('participant.role IN %in', $rolesWithoutOwnUser);
             $qb->where('u.status IN %in', $statuses);
             $qb->where('u.event_id = %i', $event->id);
 
@@ -130,7 +133,7 @@ class ParticipantRepository extends Repository
         $qb = $this->createFluent();
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
-        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
@@ -163,7 +166,7 @@ class ParticipantRepository extends Repository
         $qb = $this->createFluent();
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
-        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('participant.internal_unique_id IS NOT NULL');
@@ -173,6 +176,18 @@ class ParticipantRepository extends Repository
         $patrolParticipants = $this->createEntities($rows);
 
         return $this->dedupeParticipantsById([...$participants, ...$patrolParticipants]);
+    }
+
+    /**
+     * @param ParticipantRole[] $roles
+     * @return list<ParticipantRole>
+     */
+    private function filterRolesWithoutOwnUser(array $roles): array
+    {
+        return array_values(array_filter(
+            $roles,
+            fn (ParticipantRole $role): bool => $role->hasOwnUser() === false,
+        ));
     }
 
     /**
@@ -201,7 +216,7 @@ class ParticipantRepository extends Repository
             $event,
         );
 
-        // PatrolParticipants may be returned twice by the leader-status expansion, so dedupe by id.
+        // Patrol and technical team participants may be returned twice by the leader-status expansion, so dedupe by id.
         $sortable = [];
         foreach ($participants as $participant) {
             $sortable[$participant->id] = [
@@ -240,6 +255,12 @@ class ParticipantRepository extends Repository
         }
         if ($participant instanceof TroopLeader) {
             return 'troop-' . $this->padId($participant->id);
+        }
+        if ($participant instanceof TechnicalTeamParticipant) {
+            return 'ttl-' . $this->padId($participant->technicalTeamLeader->id);
+        }
+        if ($participant instanceof TechnicalTeamLeader) {
+            return 'ttl-' . $this->padId($participant->id);
         }
 
         $role = $participant->role;
@@ -288,14 +309,15 @@ class ParticipantRepository extends Repository
         /** @var int $count */
         $count = $qb->fetchSingle();
 
-        // patrol participants have no own user - counted through their leader, mirroring getAllParticipantsWithStatus()
-        if (in_array(ParticipantRole::PatrolParticipant, $roles, true)) {
+        // patrol and technical team participants have no own user - counted through their leader, mirroring getAllParticipantsWithStatus()
+        $rolesWithoutOwnUser = $this->filterRolesWithoutOwnUser($roles);
+        if ($rolesWithoutOwnUser !== []) {
             $qb = $this->connection->select('COUNT(*)')->from($this->getTable());
 
             $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
             $qb->join('user')->as('u')->on('u.id = pl.user_id');
 
-            $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+            $qb->where('participant.role IN %in', $rolesWithoutOwnUser);
             $qb->where('u.status IN %in', $statuses);
             $qb->where('u.event_id = %i', $event->id);
             if ($restrictToContingent) {
@@ -406,8 +428,12 @@ class ParticipantRepository extends Repository
                     return $a->patrolLeader->id <=> $b->patrolLeader->id;
                 }
 
+                if ($a instanceof TechnicalTeamParticipant && $b instanceof TechnicalTeamParticipant) {
+                    return $a->technicalTeamLeader->id <=> $b->technicalTeamLeader->id;
+                }
+
                 if ($a instanceof TroopParticipant && $b instanceof TroopParticipant) {
-                    return ($a->troopLeader->id ?? $a->id) <=> ($b->troopLeader->id ?? $a->id);
+                    return ($a->troopLeader->id ?? $a->id) <=> ($b->troopLeader->id ?? $b->id);
                 }
 
                 return $a->id <=> $b->id;
@@ -475,6 +501,11 @@ class ParticipantRepository extends Repository
         if ($event->allowIsts) {
             $entries[ParticipantRole::Ist->value]
                 = $this->getEntryStatisticForRole($event, ParticipantRole::Ist);
+        }
+
+        if ($event->allowTechnicalTeams) {
+            $entries[ParticipantRole::TechnicalTeamLeader->value]
+                = $this->getEntryStatisticForRole($event, ParticipantRole::TechnicalTeamLeader);
         }
 
         return $entries;
@@ -651,6 +682,7 @@ class ParticipantRepository extends Repository
             ParticipantRole::Ist,
             ParticipantRole::Guest,
             ParticipantRole::OrganizingTeam,
+            ParticipantRole::TechnicalTeamLeader,
         ], $paidOnly);
 
         $participants = [];
@@ -678,6 +710,7 @@ class ParticipantRepository extends Repository
             $role = match ($dpRole) {
                 ParticipantRole::TroopParticipant->value => ParticipantRole::TroopLeader->value,
                 ParticipantRole::PatrolParticipant->value => ParticipantRole::PatrolLeader->value,
+                ParticipantRole::TechnicalTeamParticipant->value => ParticipantRole::TechnicalTeamLeader->value,
                 default => 'unknown',
             };
 
@@ -765,7 +798,7 @@ class ParticipantRepository extends Repository
             $qb->where('u.status = %s', UserStatus::Paid);
         }
 
-        $qb->where('participant.role = %s', ParticipantRole::PatrolParticipant);
+        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
 
         $this->addOrdersBy($qb, [new Order('participant.id')]);
 

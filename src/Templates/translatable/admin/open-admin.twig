@@ -26,6 +26,19 @@
                             {% include 'widgets/detailsMinimal.twig' with {'person': pp, 'ca': section.childContentArbiter, 'useShortNaming': true} %}
                             <br/>
                         {% endfor %}
+                    {% elseif section.role.value == 'ttl' %}
+                        <h3>{{ person.getTechnicalTeamName }}</h3>
+                        {{ 'stats-admin.numberTechnicalTeamParticipants' | trans }}: <b>{{ person.getTechnicalTeamParticipantsCount + 1}}</b><br/>
+                        <br/>
+                        <h4>{{ person.getFullName }}</h4>
+                        {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
+                        <br/>
+
+                        <h4>{{ 'role.ttp' | trans }} {{ 'dashboard.details' | trans }}</h4>
+                        {% for ttp in person.technicalTeamParticipants %}
+                            {% include 'widgets/detailsMinimal.twig' with {'person': ttp, 'ca': section.childContentArbiter, 'useShortNaming': true} %}
+                            <br/>
+                        {% endfor %}
                     {% elseif section.role.value == 'tl' %}
                         <h3>{{ person.getPatrolName }}</h3>
                         {{ 'stats-admin.numberPatrolParticipants' | trans }}: <b>{{ person.getTroopParticipantsCount + 1}}</b><br/>
