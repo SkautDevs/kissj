@@ -191,7 +191,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro renderHelpText(item) %}{% if item.helpText %}<div>{{ item.helpText|trans|raw }}</div>{% endif %}{% endmacro %}
+{% macro renderHelpText(item) %}{% if item.helpText %}<div class="help-text">{{ item.helpText|trans|raw }}</div>{% endif %}{% endmacro %}
 
 {#
     Renders a read-only detail display for details.twig.
