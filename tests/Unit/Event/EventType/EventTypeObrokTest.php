@@ -37,7 +37,7 @@ class EventTypeObrokTest extends TestCase
         $publicDir = __DIR__ . '/../../../../public/';
         $script = file_get_contents($publicDir . (new EventTypeObrok())->getScriptNameWithoutLeadingSlash());
         self::assertIsString($script);
-        preg_match_all('/O27tag_\w+\.svg/', $script, $matches);
+        preg_match_all('/tag_motiv_[a-z-]+_o\.svg/', $script, $matches);
         $listed = array_unique($matches[0]);
         sort($listed);
 
@@ -46,8 +46,21 @@ class EventTypeObrokTest extends TestCase
         $onDisk = array_map(basename(...), $tagFiles);
         sort($onDisk);
 
-        self::assertNotEmpty($onDisk);
+        self::assertCount(8, $listed);
         self::assertSame($onDisk, $listed);
+    }
+
+    public function testEveryLocalUrlInTheStylesheetExists(): void
+    {
+        $stylesheet = __DIR__ . '/../../../../public/' . (new EventTypeObrok())->getStylesheetNameWithoutLeadingSlash();
+        $css = file_get_contents($stylesheet);
+        self::assertIsString($css);
+        preg_match_all("/url\\('(\\.\\.\\/[^']+)'\\)/", $css, $matches);
+
+        self::assertNotEmpty($matches[1]);
+        foreach ($matches[1] as $relativeUrl) {
+            self::assertFileExists(dirname($stylesheet) . '/' . $relativeUrl);
+        }
     }
 
     public function testShowsTieCodeToIst(): void

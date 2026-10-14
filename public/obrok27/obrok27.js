@@ -169,18 +169,14 @@
     'use strict';
 
     const TAGS = [
-        'O27tag_fajvka.svg',
-        'O27tag_hvezda.svg',
-        'O27tag_hvezda_man.svg',
-        'O27tag_lilie.svg',
-        'O27tag_nahoru.svg',
-        'O27tag_obrok.svg',
-        'O27tag_otaznik.svg',
-        'O27tag_rychle.svg',
-        'O27tag_slib.svg',
-        'O27tag_stan.svg',
-        'O27tag_uzel.svg',
-        'O27tag_vykricnik.svg',
+        'tag_motiv_cihla_o.svg',
+        'tag_motiv_hvezda_o.svg',
+        'tag_motiv_hvezda-man_o.svg',
+        'tag_motiv_lilie_o.svg',
+        'tag_motiv_obrok_o.svg',
+        'tag_motiv_slib_o.svg',
+        'tag_motiv_stan_o.svg',
+        'tag_motiv_uzel_o.svg',
     ];
     const TAGS_URL = new URL('tags/', document.currentScript.src);
     const REEL_LENGTH = 24;
@@ -211,7 +207,7 @@
         let current = TAGS[Math.floor(Math.random() * TAGS.length)];
         reel.append(tagImage(current));
         slot.append(reel);
-        document.body.append(slot);
+        document.querySelector('footer').append(slot);
         window.addEventListener('load', () => TAGS.forEach(tagImage));
 
         let spinning = false;
@@ -259,4 +255,15 @@
             });
         });
     });
+})();
+
+(function () {
+    'use strict';
+
+    const HIGHLIGHTS = ['event-name-green', 'event-name-orange', 'event-name-white'];
+
+    const eventName = document.querySelector('h1 .event-name');
+    if (eventName !== null) {
+        eventName.classList.add(HIGHLIGHTS[Math.floor(Math.random() * HIGHLIGHTS.length)]);
+    }
 })();
