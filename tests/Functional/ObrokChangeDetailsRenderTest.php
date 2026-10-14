@@ -34,4 +34,24 @@ class ObrokChangeDetailsRenderTest extends AppTestCase
         self::assertStringNotContainsString('PDF s potvrzením najdeš na našem webu', $body);
         self::assertSame(1, substr_count($body, 'v případě jiné diety'));
     }
+
+    public function testLayoutWrapsEventNameAndMarksHelpTexts(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+        $userService = $this->getService($app, UserService::class);
+        $user = $userService->registerEmailUser('obrok-layout-' . uniqid('', true) . '@example.com', $event);
+        $userService->createParticipantSetRole($user, 'ist');
+
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(self::BASE_URL . '/participant/showChangeDetails'));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString(' - <span class="event-name">' . htmlspecialchars($event->readableName) . '</span></h1>', $body);
+        self::assertStringContainsString('<div class="help-text">', $body);
+        self::assertStringNotContainsString('<div>PDF nebo obrázek, max 10 MB', $body);
+    }
 }
