@@ -57,6 +57,27 @@ class EventEmailCssTest extends AppTestCase
         self::assertStringNotContainsString('<link rel="stylesheet"', $htmlBody);
     }
 
+    public function testObrokEventEmailEmbedsItsBrandCss(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+        $this->containerForCleanup = $container;
+        $this->setEventType($container, 'obrok', 'test-event-slug');
+
+        $htmlBody = $this->captureLoginEmailHtmlBody($app);
+
+        $styleStart = strpos($htmlBody, '<style>');
+        $styleEnd = strpos($htmlBody, '</style>');
+        self::assertIsInt($styleStart);
+        self::assertIsInt($styleEnd);
+        $styleBlock = substr($htmlBody, $styleStart, $styleEnd - $styleStart);
+
+        self::assertStringContainsString('#FF5733', $styleBlock);
+        self::assertStringContainsString('brightness(0) invert(1)', $styleBlock);
+        self::assertStringContainsString('#FFFFFF', $styleBlock);
+        self::assertStringNotContainsString('#c2ea3a', $styleBlock);
+    }
+
     public function testDefaultEventEmailCarriesNoEventCss(): void
     {
         $app = $this->getTestApp();
