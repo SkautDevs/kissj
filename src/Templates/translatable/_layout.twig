@@ -38,7 +38,7 @@
 </head>
 
 <body class="wrapper">
-<h1 class="text-center">{{ '_layout.title' | trans }} - {{ event.readableName }}</h1>
+<h1 class="text-center">{{ '_layout.title' | trans }} - <span class="event-name">{{ event.readableName }}</span></h1>
 <div class="user text-right">
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
