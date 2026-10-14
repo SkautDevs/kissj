@@ -1,126 +1,402 @@
-/* Obrok 27 palette: lime field, black content, purple accent - taken from docs/obrok_design_0.jpg.
-   background-image is cleared because the base shapes tiles are opaque and would hide the field. */
+@font-face {
+    font-family: 'montserrat-obrok';
+    src: url('../obrok27/Montserrat-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --o27-dark: #15133F;
+    --o27-white: #FFFFFF;
+    --o27-purple: #4D2F90;
+    --o27-green: #E0FF00;
+    --o27-orange: #FF5733;
+    background-image: none;
+    font-weight: 700;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
-        --color-background: #c2ea3a;
-        --color-card-background: #f9f9f9;
-        --color-input-background: #ffffff;
-        --color-main: #101010;
-        --color-accent: #6122eb;
-        --color-fading: #e4f7a8;
-        --color-light: #8fb52c;
-        --color-dark: #101010;
-        --color-grey: #636363;
-        --color-link: #6122eb;
-        --color-link-visited: #4a18b0;
-        background-image: none;
-    }
-
-    h1 {
-        background-color: #101010;
-        color: #ffffff;
-    }
-
-    .alert-info {
-        --color: #6122eb;
-        color: #ffffff;
-    }
-
-    .alert-success {
-        --color: #4d7c0f;
-        color: #ffffff;
-    }
-
-    .alert-warning {
-        --color: #d9a404;
-        color: #101010;
-    }
-
-    .alert-error {
-        --color: #c81e2d;
-        color: #ffffff;
+        --color-background: #F1F1F4;
+        --color-card-background: var(--o27-white);
+        --color-input-background: var(--o27-white);
+        --color-main: var(--o27-dark);
+        --color-accent: var(--o27-orange);
+        --color-fading: #F1F1F4;
+        --color-light: var(--o27-purple);
+        --color-dark: var(--o27-dark);
+        --color-grey: var(--o27-purple);
+        --color-link: var(--o27-purple);
+        --color-link-visited: var(--o27-purple);
+        --o27-line: var(--o27-dark);
+        --o27-header: var(--o27-dark);
+        --o27-message-line: var(--o27-dark);
+        --o27-step-done: var(--o27-dark);
+        --o27-step-done-text: var(--o27-white);
+        --o27-table-head: var(--o27-dark);
+        --o27-zebra: #F1F1F4;
+        --o27-step-line: var(--o27-dark);
     }
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-background: #101010;
-        --color-card-background: #1c1c1c;
-        --color-input-background: #252525;
-        --color-main: #c2ea3a;
-        --color-accent: #8b5cf6;
-        --color-fading: #2a3312;
-        --color-light: #a8cc33;
-        --color-dark: #e4f7a8;
-        --color-grey: #909090;
-        --color-link: #8b5cf6;
-        --color-link-visited: #a78bfa;
-        background-image: none;
-    }
-
-    h1 {
-        background-color: #c2ea3a;
-        color: #101010;
-    }
-
-    .alert-info {
-        --color: #4a18b0;
-        color: #ffffff;
-    }
-
-    .alert-success {
-        --color: #3f5d0c;
-        color: #ffffff;
-    }
-
-    .alert-warning {
-        --color: #7a5c05;
-        color: #f5f5f5;
-    }
-
-    .alert-error {
-        --color: #8f1520;
-        color: #ffffff;
+        --color-background: var(--o27-dark);
+        --color-card-background: var(--o27-dark);
+        --color-input-background: #28264E;
+        --color-main: var(--o27-white);
+        --color-accent: var(--o27-orange);
+        --color-fading: #28264E;
+        --color-light: var(--o27-white);
+        --color-dark: var(--o27-white);
+        --color-grey: var(--o27-white);
+        --color-link: var(--o27-green);
+        --color-link-visited: var(--o27-green);
+        --o27-line: var(--o27-purple);
+        --o27-header: var(--o27-purple);
+        --o27-message-line: var(--o27-white);
+        --o27-step-done: var(--o27-white);
+        --o27-step-done-text: var(--o27-dark);
+        --o27-table-head: var(--o27-purple);
+        --o27-zebra: #28264E;
+        --o27-step-line: var(--o27-white);
     }
 }
 
-/* headings echo the design's label bar; inline-block keeps the stripe as wide as its text */
+h1, h2, h3 {
+    font-family: 'montserrat-obrok', 'themix', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.help-text, input, textarea, select, td {
+    font-weight: 400;
+}
+
 h1 {
-    display: inline-block;
-    padding: 8px 18px;
-    border-radius: var(--border-radius);
+    margin: 0 0 8px;
+    min-height: 150px;
+    padding: 40px 150px 56px 24px;
+    background: var(--o27-header) url('../obrok27/O27_logo_full_w.svg') no-repeat right 25px top 25px / 100px auto;
+    color: var(--o27-white);
+    font-size: clamp(22px, 3vw, 34px);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), 63% calc(100% - 19px), calc(63% - 3px) 100%, 0 calc(100% - 2px));
+}
+
+h1.text-center {
+    text-align: left;
+}
+
+h1 .event-name {
+    color: var(--o27-green);
+}
+
+h1 .event-name.event-name-orange {
+    color: var(--o27-orange);
+}
+
+h1 .event-name.event-name-white {
+    color: var(--o27-white);
+}
+
+.user {
+    font-weight: 400;
+    padding: 8px 16px;
+}
+
+ul.steps {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 20px;
+    padding: 0 16px;
+}
+
+li.step {
+    --o27-step-shape: polygon(2px 0, 100% 1px, calc(100% - 1px) 100%, 0 calc(100% - 2px));
+    flex: 1 1 auto;
+    width: auto;
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-main);
+    background: var(--o27-step-line);
+    clip-path: var(--o27-step-shape);
+}
+
+li.step:nth-child(3n+2) {
+    --o27-step-shape: polygon(0 1px, calc(100% - 2px) 0, 100% calc(100% - 1px), 1px 100%);
+}
+
+li.step:nth-child(3n) {
+    --o27-step-shape: polygon(1px 2px, 100% 0, calc(100% - 2px) 100%, 0 100%);
+}
+
+li.step::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+    background: var(--color-background);
+    clip-path: var(--o27-step-shape);
+}
+
+li.step::after,
+li.step.is-active::after {
+    content: none;
+}
+
+li.step.is-active {
+    color: var(--o27-step-done-text);
+    background: var(--o27-step-done);
+}
+
+li.step.is-active::before {
+    background: var(--o27-step-done);
+}
+
+.card {
+    --o27-card-shape: polygon(6px 0, 100% 4px, calc(100% - 3px) calc(100% - 7px), 0 100%);
+    position: relative;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--o27-line);
+    clip-path: var(--o27-card-shape);
+}
+
+.card:nth-of-type(3n+2) {
+    --o27-card-shape: polygon(0 5px, calc(100% - 7px) 0, 100% 100%, 4px calc(100% - 3px));
+}
+
+.card:nth-of-type(3n) {
+    --o27-card-shape: polygon(5px 3px, 100% 0, calc(100% - 6px) 100%, 0 calc(100% - 4px));
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    background: var(--color-card-background);
+    clip-path: var(--o27-card-shape);
+}
+
+.card:has(table) {
+    overflow-x: auto;
+    clip-path: none;
+    background: var(--color-card-background);
+    outline: 2px solid var(--o27-line);
+    outline-offset: -2px;
+}
+
+.card:has(table)::before {
+    content: none;
+}
+
+.form-control,
+input,
+textarea,
+select {
+    border: 2px solid var(--o27-line);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.form-control:valid {
+    box-shadow: none;
+}
+
+.form-control:invalid {
+    box-shadow: none;
+}
+
+.form-control:user-invalid {
+    border-color: var(--o27-orange);
+}
+
+.btn {
+    --o27-button-shape: polygon(3px 0, 100% 2px, calc(100% - 2px) 100%, 0 calc(100% - 3px));
+    border-radius: 0;
+    font-weight: 700;
+    clip-path: var(--o27-button-shape);
+}
+
+.btn:nth-child(even) {
+    --o27-button-shape: polygon(0 2px, calc(100% - 3px) 0, 100% calc(100% - 2px), 2px 100%);
+}
+
+.btn.btn-mini {
+    --o27-button-shape: polygon(2px 0, 100% 1px, calc(100% - 1px) 100%, 0 calc(100% - 2px));
+}
+
+.btn.btn-mini:nth-child(even) {
+    --o27-button-shape: polygon(0 1px, calc(100% - 2px) 0, 100% calc(100% - 1px), 1px 100%);
+}
+
+.btn,
+.btn:visited {
+    background: var(--o27-orange);
+    color: var(--o27-dark);
+}
+
+.btn-grey,
+.btn-grey:visited {
+    background: var(--o27-purple);
+    color: var(--o27-white);
+}
+
+.btn-highlight,
+.btn-highlight:visited {
+    background: var(--o27-green);
+    color: var(--o27-dark);
+    outline: none;
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--o27-dark);
+    outline-offset: -6px;
+}
+
+.btn.btn-mini:focus-visible {
+    outline-width: 2px;
+    outline-offset: -3px;
+}
+
+.btn-grey:focus-visible {
+    outline-color: var(--o27-white);
+}
+
+.alert {
+    --o27-alert-shape: polygon(5px 0, 100% 3px, calc(100% - 3px) calc(100% - 5px), 0 100%);
+    position: relative;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--o27-message-line);
+    clip-path: var(--o27-alert-shape);
+}
+
+.alert:nth-child(even) {
+    --o27-alert-shape: polygon(0 4px, calc(100% - 6px) 0, 100% 100%, 3px calc(100% - 3px));
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    background: var(--o27-message-fill);
+    clip-path: var(--o27-alert-shape);
+}
+
+.alert a,
+.alert a:visited {
+    color: inherit;
+}
+
+.alert-success {
+    --o27-message-fill: var(--o27-green);
+    color: var(--o27-dark);
+}
+
+.alert-error {
+    --o27-message-fill: var(--o27-orange);
+    color: var(--o27-dark);
+}
+
+.alert-info {
+    --o27-message-fill: var(--o27-purple);
+    color: var(--o27-white);
+}
+
+.alert-warning {
+    --o27-message-fill: var(--o27-white);
+    color: var(--o27-dark);
+}
+
+th {
+    background: var(--o27-table-head);
+    color: var(--o27-white);
+    font-weight: 700;
+}
+
+tr:nth-child(even) {
+    background: var(--o27-zebra);
+}
+
+footer {
+    position: relative;
+    isolation: isolate;
+    margin-top: 90px;
+    padding: 72px 24px 24px;
+    color: var(--o27-white);
+    font-weight: 400;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--o27-purple);
+    clip-path: polygon(0 22px, 42% 20px, calc(42% + 2px) 0, 100% 3px, 100% 100%, 0 100%);
+}
+
+footer a,
+footer a:visited {
+    color: var(--o27-white);
+}
+
+footer > a.footer-item {
+    display: none;
 }
 
 .tag-slot {
-    position: fixed;
-    left: 16px;
-    bottom: 16px;
-    width: 110px;
-    height: 143px;
+    position: absolute;
+    top: -60px;
+    right: 8%;
+    width: 84px;
+    height: 120px;
     overflow: hidden;
-    opacity: 0.85;
-    z-index: -1;
+    cursor: pointer;
 }
 
 .tag-slot-reel img {
     display: block;
-    width: 110px;
-    height: 143px;
+    width: 84px;
+    height: 120px;
     object-fit: contain;
-    object-position: left bottom;
+    object-position: center;
 }
 
-@media (width < 900px) {
-    .tag-slot {
-        display: none;
+@media (width < 600px) {
+    h1 {
+        min-height: 120px;
+        padding: 24px 104px 40px 16px;
+        background-position: right 16px top 20px;
+        background-size: 72px auto;
+        font-size: 20px;
     }
-}
 
-/* the ghost mark is portrait, so cap its height - the shared 200px width rule makes it tower */
-.footer-logo {
-    margin: 20px;
-    width: auto;
-    height: 160px;
+    li.step {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        overflow-wrap: normal;
+    }
+
+    .tag-slot,
+    .tag-slot-reel img {
+        width: 64px;
+        height: 92px;
+    }
+
+    .tag-slot {
+        top: -46px;
+    }
 }
 
 .celebration {

@@ -1,24 +1,29 @@
-.footer-logo {
-    width: auto;
-    height: 160px;
+.email-body {
+    color: #15133F;
 }
 
 a {
-    color: #6122eb;
+    color: #4D2F90;
 }
 
 .btn {
-    background-color: #101010;
-    color: #f9f9f9;
+    background-color: #FF5733;
+    color: #15133F;
+    font-weight: 700;
+    border-radius: 0;
+    clip-path: polygon(3px 0, 100% 2px, calc(100% - 2px) 100%, 0 calc(100% - 3px));
 }
 
 @media (prefers-color-scheme: dark) {
-    a {
-        color: #8b5cf6;
+    .email-body {
+        color: #FFFFFF;
     }
 
-    .btn {
-        background-color: #c2ea3a;
-        color: #1c1c1c;
+    a {
+        color: #E0FF00;
+    }
+
+    .footer-logo {
+        filter: brightness(0) invert(1);
     }
 }
