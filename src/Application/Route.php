@@ -232,7 +232,6 @@ class Route
                         })->add(CheckLeaderParticipants::class);
                     });
 
-                    // TODO refactor for patrols
                     $app->group('/participant', function (RouteCollectorProxy $app) {
                         $app->get('/dashboard', ParticipantController::class . '::showDashboard')
                             ->setName('dashboard');

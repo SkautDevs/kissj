@@ -70,8 +70,6 @@ readonly class ErrorHandlerGetter
             http_response_code(500);
             echo self::renderExceptionPage();
             die;
-
-            // TODO add logger with mail
         };
     }
 }
