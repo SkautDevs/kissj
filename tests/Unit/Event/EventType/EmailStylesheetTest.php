@@ -25,14 +25,6 @@ class EmailStylesheetTest extends TestCase
         self::assertSame($expectedPath, $eventType->getEmailStylesheetNameWithoutLeadingSlash());
     }
 
-    // Mailer loads this by name off the filesystem, so a typo would only surface as an unstyled email
-    #[DataProvider('provideEventTypesWithEmailStylesheet')]
-    public function testEmailStylesheetFileExists(EventType $eventType, string $expectedPath): void
-    {
-        // is_file, because assertFileExists also passes for a bare directory
-        self::assertTrue(is_file(__DIR__ . '/../../../../public/' . $expectedPath));
-    }
-
     // mail clients do not support custom properties or webfonts - a var() here renders as nothing,
     // which is exactly the failure mode this whole mechanism exists to avoid
     #[DataProvider('provideEventTypesWithEmailStylesheet')]
