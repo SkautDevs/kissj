@@ -167,7 +167,7 @@ class TestingEventsSeed extends AbstractSeed
                     $this->insertTroops($eventId, $slug, $eventDefinition);
                     continue;
                 }
-                // remaining roles are ist/guest/ot — pl/tl are handled above
+                // remaining roles are ist/guest/ot (pl/tl are handled above)
                 for ($n = 1; $n <= 20; $n++) {
                     $status = $this->statusForIndex($n);
                     $email = sprintf('%s%d@%s.test', $role, $n, $slug);
@@ -381,7 +381,7 @@ class TestingEventsSeed extends AbstractSeed
         ?int $userId,
         ?int $patrolLeaderId,
         ?string $contingent = null,
-        // TPs derive status from their leader, not their own index — see insertTroops()
+        // TPs derive status from their leader, not their own index (see insertTroops())
         ?string $statusOverride = null,
     ): int {
         $status = $statusOverride ?? $this->statusForIndex($n);

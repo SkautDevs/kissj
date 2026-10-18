@@ -140,7 +140,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $translator = $this->getService($app, TranslatorInterface::class);
         self::assertStringContainsString('Pavel', $body);
         self::assertStringContainsString($translator->trans('ticketTransfer.notPossible'), $body);
-        // recipient is already Paid — the GET preview must surface the detailed reason, unlike the POST
+        // recipient is already Paid: the GET preview must surface the detailed reason, unlike the POST
         self::assertStringContainsString($translator->trans('flash.warning.isPaid'), $body);
     }
 
@@ -149,7 +149,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        // Approved, not Paid — PaidStatusOnlyMiddleware must block before the controller ever runs
+        // Approved, not Paid: PaidStatusOnlyMiddleware must block before the controller ever runs
         $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Giver', 'Five');
 
         $_SESSION['user'] = ['id' => $giver->id];

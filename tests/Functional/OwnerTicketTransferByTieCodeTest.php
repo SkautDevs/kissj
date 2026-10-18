@@ -293,7 +293,7 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
         $userService->createParticipantSetRole($user, 'ist');
 
         if ($status === UserStatus::Paid) {
-            // a Paid participant must be backed by a real confirmed payment —
+            // a Paid participant must be backed by a real confirmed payment:
             // PaymentTransferService looks up getFirstPaidPayment() on the giver
             $this->initializeMailerSettings($app, $event);
             $participantRepository = $this->getService($app, ParticipantRepository::class);

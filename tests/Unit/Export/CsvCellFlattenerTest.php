@@ -45,7 +45,7 @@ class CsvCellFlattenerTest extends TestCase
         $csv->addFormatter(new CsvCellFlattener());
         $csv->insertOne(["multi\r\n\r\nline", 'plain']);
 
-        // fputcsv encloses fields containing spaces — that quoting is expected and valid
+        // fputcsv encloses fields containing spaces; that quoting is expected and valid
         self::assertSame("\"multi line\",plain\n", $csv->toString());
     }
 }

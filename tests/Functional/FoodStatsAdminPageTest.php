@@ -297,7 +297,7 @@ class FoodStatsAdminPageTest extends AppTestCase
         // notice and issues are always-rendered columns for this row; contingent is additionally
         // gated by showContingent, whose value depends on other tests' fixtures in the shared dev
         // DB, so assert at least the two guaranteed em dashes rather than an exact count
-        self::assertGreaterThanOrEqual(2, substr_count($row, '—'));
+        self::assertGreaterThanOrEqual(2, substr_count($row, "\u{2014}"));
     }
 
     public function testFoodStatsPageOmitsContingentColumnWhenNobodyHasOne(): void

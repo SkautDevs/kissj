@@ -176,7 +176,7 @@ class AppTestCase extends TestCase
         $connection = $this->getService($app, Connection::class);
         if ($connection->getConfig('driver') !== 'sqlite') {
             throw new LogicException(
-                'Functional tests must run on the per-test sqlite database — refusing to touch a real database.',
+                'Functional tests must run on the per-test sqlite database, refusing to touch a real database.',
             );
         }
         $this->connectionsToClose[] = $connection;
@@ -301,7 +301,7 @@ class AppTestCase extends TestCase
         // phpunit run the phpunit.xml env force makes this unreachable - it guards
         // config-less invocations (custom -c, IDE runners)
         if ($_ENV['DB_TYPE'] !== 'sqlite') {
-            throw new LogicException('Test migrations must run on sqlite — refusing to migrate a real database.');
+            throw new LogicException('Test migrations must run on sqlite, refusing to migrate a real database.');
         }
 
         $phinx = new PhinxApplication();

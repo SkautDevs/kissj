@@ -87,7 +87,7 @@ class TranslatorFactoryTest extends TestCase
         $factory->createForEventType($eventType);
         $base = $factory->createBase();
 
-        // Untranslated keys resolve to the id itself — confirms isolation.
+        // Untranslated keys resolve to the id itself, which confirms isolation.
         self::assertSame('leaky.key', $base->trans('leaky.key'));
     }
 

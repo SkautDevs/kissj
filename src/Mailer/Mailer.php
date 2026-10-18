@@ -322,7 +322,7 @@ readonly class Mailer
         $path = __DIR__ . '/../../public/' . $filename;
         if (!is_file($path)) {
             $this->logger->error(sprintf(
-                'Event email stylesheet %s is missing — sending mail without event styles',
+                'Event email stylesheet %s is missing, sending mail without event styles',
                 $filename,
             ));
 
@@ -333,7 +333,7 @@ readonly class Mailer
         // only reachable outside HTTP requests - inside them, it would be a 500
         if ($css === false) {
             $this->logger->error(sprintf(
-                'Event email stylesheet %s is unreadable — sending mail without event styles',
+                'Event email stylesheet %s is unreadable, sending mail without event styles',
                 $filename,
             ));
 
@@ -372,7 +372,7 @@ readonly class Mailer
         $gender = Gender::tryFrom($participant->gender);
         if ($gender === null) {
             $this->logger->warning(sprintf(
-                'Participant %d has invalid gender value "%s" — falling back to gender-neutral email text',
+                'Participant %d has invalid gender value "%s", falling back to gender-neutral email text',
                 $participant->id,
                 $participant->gender,
             ));

@@ -93,7 +93,7 @@ class EmailTranslationKeysTest extends TestCase
     /**
      * The bug this guards: an event overrides a neutral key with its own text, but the
      * base catalogue still supplies the `.man`/`.woman` variants. `transGendered` then
-     * serves that stale base gendered text to participants with a gender set — silently
+     * serves that stale base gendered text to participants with a gender set, silently
      * ignoring the event override. Gender is only populated for Skautis events, so only
      * those can hit it; an override whose text equals the base is harmless (nothing to
      * shadow). Any Skautis event that overrides a gendered-family neutral key with
@@ -128,7 +128,7 @@ class EmailTranslationKeysTest extends TestCase
                     foreach (['.man', '.woman'] as $suffix) {
                         if (!array_key_exists($baseKey . $suffix, $override)) {
                             $violations[] = sprintf(
-                                '%s (%s) overrides %s but not %s%s — base gendered text leaks for gendered participants',
+                                '%s (%s) overrides %s but not %s%s: base gendered text leaks for gendered participants',
                                 $slug,
                                 $locale,
                                 $baseKey,
@@ -190,12 +190,12 @@ class EmailTranslationKeysTest extends TestCase
             self::assertArrayHasKey(
                 $base,
                 $enMessages,
-                "en.yaml missing base form {$base} — English users with gender set would fall back to Czech",
+                "en.yaml missing base form {$base}: English users with gender set would fall back to Czech",
             );
             self::assertArrayHasKey(
                 $base,
                 $skMessages,
-                "sk.yaml missing base form {$base} — Slovak users with gender set would fall back to Czech",
+                "sk.yaml missing base form {$base}: Slovak users with gender set would fall back to Czech",
             );
         }
     }
