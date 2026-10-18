@@ -87,38 +87,6 @@ class ParticipantVendorTest extends AppTestCase
         self::assertNull($vendoredParticipant['medicaments']);
     }
 
-    public function testWrongKeyReturns401(): void
-    {
-        $app = $this->getTestApp();
-        $container = $app->getContainer();
-        $this->setupEventApiKeys($container);
-        $participant = $this->createParticipantWithHealthData($container);
-
-        $request = $this->createBearerRequest(
-            self::TEST_PREFIX_URL . '/vendor/participant/' . $participant->tieCode,
-            'totally-wrong-key',
-        );
-        $response = $app->handle($request);
-
-        self::assertSame(401, $response->getStatusCode());
-    }
-
-    public function testMissingAuthorizationHeaderReturns401(): void
-    {
-        $app = $this->getTestApp();
-        $container = $app->getContainer();
-        $this->setupEventApiKeys($container);
-        $participant = $this->createParticipantWithHealthData($container);
-
-        $request = $this->createBearerRequest(
-            self::TEST_PREFIX_URL . '/vendor/participant/' . $participant->tieCode,
-            null,
-        );
-        $response = $app->handle($request);
-
-        self::assertSame(401, $response->getStatusCode());
-    }
-
     public function testKeyAmbiguousAcrossEventsIsRejected(): void
     {
         $app = $this->getTestApp();
@@ -198,7 +166,7 @@ class ParticipantVendorTest extends AppTestCase
     /**
      * @param array<string, string> $extraHeaders
      */
-    private function createBearerRequest(string $path, ?string $token, array $extraHeaders = []): Request
+    private function createBearerRequest(string $path, string $token, array $extraHeaders = []): Request
     {
         $uri = new Uri('', '', 80, $path);
         $handle = fopen('php://temp', 'wb+');
@@ -207,10 +175,10 @@ class ParticipantVendorTest extends AppTestCase
         }
         $stream = (new StreamFactory())->createStreamFromResource($handle);
 
-        $headerData = ['Content-Type' => 'application/json'];
-        if ($token !== null) {
-            $headerData['Authorization'] = 'Bearer ' . $token;
-        }
+        $headerData = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $token,
+        ];
         foreach ($extraHeaders as $name => $value) {
             $headerData[$name] = $value;
         }

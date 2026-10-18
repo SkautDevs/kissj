@@ -32,6 +32,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Slim\App;
+use Slim\Interfaces\RouteInterface;
+use Slim\Interfaces\RouteResolverInterface;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
 use Slim\Psr7\Request;
@@ -366,6 +368,31 @@ class AppTestCase extends TestCase
         }
 
         return $request;
+    }
+
+    protected function fillPlaceholders(string $pattern): string
+    {
+        $withEvent = preg_replace('/\{eventSlug(:[^}]+)?\}/', 'test-event-slug', $pattern)
+            ?? throw new LogicException('eventSlug replacement failed on ' . $pattern);
+        $filled = preg_replace('/\{[^}]+\}/', '1', $withEvent)
+            ?? throw new LogicException('placeholder replacement failed on ' . $pattern);
+
+        return str_replace(['[', ']'], '', $filled);
+    }
+
+    protected function findRouteMismatch(
+        RouteResolverInterface $routeResolver,
+        RouteInterface $route,
+        string $method,
+        string $path,
+        string $label,
+    ): ?string {
+        $resolvedIdentifier = $routeResolver->computeRoutingResults($path, $method)->getRouteIdentifier();
+        if ($resolvedIdentifier !== $route->getIdentifier()) {
+            return sprintf('%s: path resolves to route %s instead', $label, $resolvedIdentifier ?? 'none');
+        }
+
+        return null;
     }
 
     protected function clearTempFolder(): void

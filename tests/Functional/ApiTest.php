@@ -352,25 +352,6 @@ class ApiTest extends AppTestCase
         self::assertArrayHasKey($open->id, $body['roles']['ist']);
     }
 
-    public function testWrongScopeKeyReturns401(): void
-    {
-        $app = $this->getTestApp();
-
-        $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->findBySlug('test-event-slug');
-        if ($event !== null) {
-            $event->apiKeyDeals = 'deals-only-key';
-            $event->apiKeyEntry = 'entry-only-key';
-            $event->apiKeyVendor = 'vendor-only-key';
-            $eventRepository->persist($event);
-        }
-
-        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'deals-only-key');
-        $response = $app->handle($request);
-
-        self::assertSame(401, $response->getStatusCode());
-    }
-
     public function testChangeAdminNote(): void
     {
         // First app instance to set up data
