@@ -15,7 +15,7 @@ use kissj\Orm\EntityDatetime;
  * @property UserStatus    $status m:passThru(statusFromString|statusToString)
  * @property UserLoginType $loginType m:passThru(loginTypeFromString|loginTypeToString)
  */
-class User extends EntityDateTime
+class User extends EntityDatetime
 {
     public function initDefaults(): void
     {
