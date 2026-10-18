@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Slim\App;
 use Tests\AppTestCase;
 
@@ -28,12 +30,30 @@ class PatrolLeaderTest extends AppTestCase
 
         $email = 'test@example.com';
         $user = $userService->registerEmailUser($email, $testEvent);
+        $userService->createParticipantSetRole($user, 'pl');
         $patrolLeader = $patrolService->getPatrolLeader($user);
 
         self::assertEquals($user->id, $patrolLeader->getUserButNotNull()->id);
         self::assertEquals(ParticipantRole::PatrolLeader, $patrolLeader->role);
         self::assertEquals(UserRole::Participant, $patrolLeader->getUserButNotNull()->role);
-        self::assertEquals(UserStatus::WithoutRole, $patrolLeader->getUserButNotNull()->status);
+        self::assertEquals(UserStatus::Open, $patrolLeader->getUserButNotNull()->status);
+    }
+
+    public function testGetPatrolLeaderThrowsForUserWithoutPatrolLeader(): void
+    {
+        $app = $this->getTestApp();
+        $userService = $this->getService($app, UserService::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $testEvent = $this->getService($app, EventRepository::class)->get(1);
+        $user = $userService->registerEmailUser('no-pl-' . bin2hex(random_bytes(4)) . '@example.com', $testEvent);
+        $participantCountBefore = count($participantRepository->findBy([]));
+
+        try {
+            $this->getService($app, PatrolService::class)->getPatrolLeader($user);
+            self::fail('Expected RuntimeException');
+        } catch (RuntimeException) {
+            self::assertCount($participantCountBefore, $participantRepository->findBy([]));
+        }
     }
 
     public function testDashboardOmitsMaximumWhenPatrolMaximumIsNull(): void
