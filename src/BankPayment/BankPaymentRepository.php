@@ -7,6 +7,7 @@ namespace kissj\BankPayment;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
+use RuntimeException;
 
 /**
  * @method BankPayment get(int $bankPaymentId)
@@ -16,6 +17,16 @@ use kissj\Orm\Repository;
  */
 class BankPaymentRepository extends Repository
 {
+    public function getById(int $bankPaymentId, Event $event): BankPayment
+    {
+        $bankPayment = $this->findOneBy(['id' => $bankPaymentId, 'event' => $event]);
+        if ($bankPayment === null) {
+            throw new RuntimeException(sprintf('Bank payment with ID %s not found', $bankPaymentId));
+        }
+
+        return $bankPayment;
+    }
+
     /**
      * @return BankPayment[]
      */

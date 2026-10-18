@@ -335,18 +335,18 @@ class PaymentService
         return $event->slug . ' ' . $participant->getFullName();
     }
 
-    public function setBankPaymentPaired(int $paymentId): BankPayment
+    public function setBankPaymentPaired(int $paymentId, Event $event): BankPayment
     {
-        $bankPayment = $this->bankPaymentRepository->get($paymentId);
+        $bankPayment = $this->bankPaymentRepository->getById($paymentId, $event);
         $bankPayment->status = BankPayment::STATUS_PAIRED;
         $this->bankPaymentRepository->persist($bankPayment);
 
         return $bankPayment;
     }
 
-    public function setBankPaymentUnrelated(int $paymentId): BankPayment
+    public function setBankPaymentUnrelated(int $paymentId, Event $event): BankPayment
     {
-        $bankPayment = $this->bankPaymentRepository->get($paymentId);
+        $bankPayment = $this->bankPaymentRepository->getById($paymentId, $event);
         $bankPayment->status = BankPayment::STATUS_UNRELATED;
         $this->bankPaymentRepository->persist($bankPayment);
 
