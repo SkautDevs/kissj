@@ -19,6 +19,7 @@ use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -273,6 +274,7 @@ class TechnicalTeamDashboardTest extends AppTestCase
     public function testOpenLeaderCannotUseAfterLockMemberEdit(): void
     {
         $app = $this->getTestApp();
+        $this->expectLog(Level::Warning, 'tried to access after-lock edit');
         [$leader, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-lock-2@example.com');
         $member = $this->addMember($leader, 'Original');
         $_SESSION['user'] = ['id' => $user->id];
@@ -331,6 +333,7 @@ class TechnicalTeamDashboardTest extends AppTestCase
     public function testClosedLeaderCannotDeleteOrEditMember(): void
     {
         $app = $this->getTestApp();
+        $this->expectLog(Level::Warning, 'is trying to change data');
         [$leader, $user] = $this->createTechnicalTeamLeader($app->getContainer(), 'ttl-closed-del@example.com');
         $member = $this->addMember($leader, 'Original');
         $this->getService($app, UserService::class)->setUserClosed($user);
