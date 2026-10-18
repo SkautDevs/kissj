@@ -7,7 +7,6 @@ namespace kissj\Participant\Patrol;
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
 use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantRole;
 use kissj\Skautis\SkautisMemberData;
 use kissj\User\User;
 
@@ -22,18 +21,7 @@ readonly class PatrolService
 
     public function getPatrolLeader(User $user): PatrolLeader
     {
-        $patrolLeader = $this->patrolLeaderRepository->findOneBy(['user' => $user]);
-
-        if ($patrolLeader === null) {
-            // TODO remove, it is here only for testing
-            $patrolLeader = new PatrolLeader();
-            $patrolLeader->user = $user;
-            $patrolLeader->role = ParticipantRole::PatrolLeader;
-            $this->participantRepository->ensureUniqueTieCode($patrolLeader);
-            $this->patrolLeaderRepository->persist($patrolLeader);
-        }
-
-        return $patrolLeader;
+        return $this->patrolLeaderRepository->getOneBy(['user' => $user]);
     }
 
     public function createPatrolParticipant(PatrolLeader $patrolLeader): PatrolParticipant
@@ -63,10 +51,9 @@ readonly class PatrolService
         return $patrolParticipant;
     }
 
-    // TODO refactor to repository->get()
     public function getPatrolParticipant(int $patrolParticipantId): PatrolParticipant
     {
-        return $this->patrolParticipantRepository->getOneBy(['id' => $patrolParticipantId]);
+        return $this->patrolParticipantRepository->get($patrolParticipantId);
     }
 
     public function deletePatrolParticipant(PatrolParticipant $patrolParticipant): void

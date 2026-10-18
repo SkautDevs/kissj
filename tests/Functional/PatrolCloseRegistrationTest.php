@@ -12,7 +12,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
-use kissj\Participant\Patrol\PatrolService;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
@@ -93,11 +92,6 @@ class PatrolCloseRegistrationTest extends AppTestCase
 
         $this->initializeMailerSettings($app, $event);
 
-        // PatrolService::getPatrolLeader() (used by createPatrolLeader()) is a test-only
-        // shortcut that never runs UserService::createParticipantSetRole - the user's status
-        // stays WithoutRole, which ChoosedRoleOnlyMiddleware would reject. Open it explicitly,
-        // matching what choosing the pl role during real registration does.
-        $this->getService($app, UserService::class)->setUserOpen($patrolLeader->getUserButNotNull());
         $_SESSION['user'] = ['id' => $patrolLeader->getUserButNotNull()->id];
 
         $response = $this->getTestApp(false)->handle($this->createRequest(
@@ -133,7 +127,9 @@ class PatrolCloseRegistrationTest extends AppTestCase
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser($email, $event);
 
-        return $this->getService($app, PatrolService::class)->getPatrolLeader($user);
+        $participant = $userService->createParticipantSetRole($user, 'pl');
+
+        return $this->getService($app, PatrolLeaderRepository::class)->get($participant->id);
     }
 
     /**

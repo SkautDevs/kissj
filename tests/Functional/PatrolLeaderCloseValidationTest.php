@@ -12,7 +12,6 @@ use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
-use kissj\Participant\Patrol\PatrolService;
 use kissj\Participant\RegistrationCloseResult;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
@@ -119,7 +118,9 @@ class PatrolLeaderCloseValidationTest extends AppTestCase
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser($email, $event);
 
-        return $this->getService($app, PatrolService::class)->getPatrolLeader($user);
+        $participant = $userService->createParticipantSetRole($user, 'pl');
+
+        return $this->getService($app, PatrolLeaderRepository::class)->get($participant->id);
     }
 
     /**
