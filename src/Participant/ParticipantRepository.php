@@ -830,7 +830,7 @@ class ParticipantRepository extends Repository
          * } $array */
         $array = $row->toArray();
 
-        $tshirt = Tshirt::fromStored($array['tshirt'] ?? null);
+        $tshirt = Tshirt::fromStored($array['tshirt']);
 
         return new EntryParticipant(
             $array['id'],

@@ -47,7 +47,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(403, $response->getStatusCode());
+        self::assertSame(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertEquals('invalid', $body['status']);
@@ -70,7 +70,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(403, $response->getStatusCode());
+        self::assertSame(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertEquals('invalid', $body['status']);
@@ -93,7 +93,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertEquals('valid', $body['status']);
@@ -117,7 +117,7 @@ class ApiTest extends AppTestCase
             ['eventSecret' => self::TEST_EVENT_SECRET],
         );
         $response1 = $app->handle($request1);
-        self::assertEquals(200, $response1->getStatusCode());
+        self::assertSame(200, $response1->getStatusCode());
 
         // Second entry (same participant)
         $request2 = $this->createJsonRequest(
@@ -127,7 +127,7 @@ class ApiTest extends AppTestCase
         );
         $response2 = $this->getTestApp(false)->handle($request2);
 
-        self::assertEquals(200, $response2->getStatusCode());
+        self::assertSame(200, $response2->getStatusCode());
         $body = json_decode((string)$response2->getBody(), true);
         self::assertIsArray($body);
         self::assertEquals('used', $body['status']);
@@ -263,7 +263,7 @@ class ApiTest extends AppTestCase
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', null);
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
         self::assertStringContainsString('missing Authorization header', (string)$response->getBody());
     }
 
@@ -276,7 +276,7 @@ class ApiTest extends AppTestCase
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'wrong-token');
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
         self::assertStringContainsString('no event exists', (string)$response->getBody());
     }
 
@@ -292,7 +292,7 @@ class ApiTest extends AppTestCase
             ->withQueryParams(['paidOnly' => '1']);
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertArrayHasKey('eventName', $body);
@@ -368,7 +368,7 @@ class ApiTest extends AppTestCase
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', 'deals-only-key');
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testChangeAdminNote(): void
@@ -413,7 +413,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertArrayHasKey('adminNote', $body);
@@ -423,7 +423,7 @@ class ApiTest extends AppTestCase
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $updatedParticipant = $participantRepository->get($participant->id);
         self::assertInstanceOf(Participant::class, $updatedParticipant);
-        self::assertEquals($noteText, $updatedParticipant->adminNote);
+        self::assertSame($noteText, $updatedParticipant->adminNote);
     }
 
     public function testChangeAdminNoteRequiresAdmin(): void
@@ -464,7 +464,7 @@ class ApiTest extends AppTestCase
         $response = $app->handle($request);
 
         // Should redirect (302) because user is not admin
-        self::assertEquals(302, $response->getStatusCode());
+        self::assertSame(302, $response->getStatusCode());
     }
 
     public function testConfirmPayment(): void
@@ -505,7 +505,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertSame([], $body);
 
@@ -555,7 +555,7 @@ class ApiTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(409, $response->getStatusCode());
+        self::assertSame(409, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
         self::assertArrayHasKey('translationKey', $body);

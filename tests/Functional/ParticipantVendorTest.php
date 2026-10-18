@@ -39,7 +39,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $vendoredParticipant = $this->decodeVendoredParticipant($response);
         self::assertSame('Allergic to peanuts', $vendoredParticipant['physicalHealth']);
         self::assertSame('Mild anxiety', $vendoredParticipant['psychicalHealth']);
@@ -59,7 +59,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $vendoredParticipant = $this->decodeVendoredParticipant($response);
         self::assertNull($vendoredParticipant['physicalHealth']);
         self::assertNull($vendoredParticipant['psychicalHealth']);
@@ -80,7 +80,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         $vendoredParticipant = $this->decodeVendoredParticipant($response);
         self::assertNull($vendoredParticipant['physicalHealth']);
         self::assertNull($vendoredParticipant['psychicalHealth']);
@@ -100,7 +100,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testMissingAuthorizationHeaderReturns401(): void
@@ -116,7 +116,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testKeyAmbiguousAcrossEventsIsRejected(): void
@@ -140,7 +140,7 @@ class ParticipantVendorTest extends AppTestCase
         );
         $response = $app->handle($request);
 
-        self::assertEquals(401, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     private function setupEventApiKeys(ContainerInterface $container): void

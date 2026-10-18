@@ -151,9 +151,14 @@ class DashboardCardsRenderTest extends AppTestCase
         $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'));
         self::assertSame(200, $response->getStatusCode());
 
+        $html = (string) $response->getBody();
+        if ($html === '') {
+            self::fail('dashboard rendered an empty body');
+        }
+
         $document = new DOMDocument();
         libxml_use_internal_errors(true);
-        $document->loadHTML((string) $response->getBody());
+        $document->loadHTML($html);
         libxml_clear_errors();
 
         return new DOMXPath($document);
