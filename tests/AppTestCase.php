@@ -268,10 +268,27 @@ class AppTestCase extends TestCase
         }
 
         $this->runPhinx(['command' => 'migrate']);
+        $this->seedSkautisAppId();
 
         if (!copy($dbPath, $templatePath)) {
             throw new RuntimeException('snapshotting the template database failed');
         }
+    }
+
+    private function seedSkautisAppId(): void
+    {
+        $app = (new ApplicationGetter())->getApp(
+            __DIR__ . '/',
+            'env.testing',
+            $this->getRunTempPath()
+        );
+        $this->getService($app, Logger::class)->setHandlers([new TestHandler()]);
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug')
+            ?? throw new RuntimeException('Seed event test-event-slug not found - did migrations run?');
+        $event->skautisAppId = 'test-skautis-app-id';
+        $eventRepository->persist($event);
+        $this->getService($app, Connection::class)->disconnect();
     }
 
     /**

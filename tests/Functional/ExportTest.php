@@ -51,7 +51,7 @@ class ExportTest extends AppTestCase
                     'lastName' => 'leaderový',
                     'nickname' => 'burákové máslo ' . $i,
                     'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
-                    'gender' => 'male',
+                    'gender' => 'man',
                     'permanentResidence' => 'Kalimdor',
                     'country' => 'Azeroth',
                     'scoutUnit' => 'attack helicopter',

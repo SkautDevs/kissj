@@ -98,7 +98,7 @@ class EntryCodePaidCheckTest extends AppTestCase
         $ist->lastName = 'PaidCheck';
         $ist->nickname = 'Tester';
         $ist->permanentResidence = '123 Test St';
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
         $istRepository->persist($ist);

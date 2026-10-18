@@ -44,7 +44,7 @@ class BadgeTest extends AppTestCase
             'lastName' => 'Last' . $suffix,
             'nickname' => $nickname,
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
-            'gender' => 'male',
+            'gender' => 'man',
             'email' => 'badge-' . $suffix . '@example.com',
         ], $event->eventType->getContentArbiterIst()->getAllItems());
 
@@ -130,7 +130,7 @@ class BadgeTest extends AppTestCase
             'lastName' => 'Er',
             'nickname' => 'PatrolLeaderNick',
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
-            'gender' => 'male',
+            'gender' => 'man',
             'email' => 'badge-patrol-pl@example.com',
         ], $event->eventType->getContentArbiterPatrolLeader()->getAllItems());
         $plUser->status = UserStatus::Paid;
@@ -147,7 +147,7 @@ class BadgeTest extends AppTestCase
             'lastName' => 'Member',
             'nickname' => 'PatrolMemberNick',
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
-            'gender' => 'male',
+            'gender' => 'man',
             'email' => 'badge-patrol-pp@example.com',
         ], $event->eventType->getContentArbiterPatrolParticipant()->getAllItems());
         $ppUser->status = UserStatus::Paid;
@@ -455,7 +455,7 @@ class BadgeTest extends AppTestCase
             'lastName' => 'Er',
             'nickname' => 'ŠťastnýVůdce',
             'birthDate' => (DateTimeUtils::getDateTime())->format(DATE_ATOM),
-            'gender' => 'male',
+            'gender' => 'man',
             'email' => 'badge-navigamus-pl@example.com',
         ], $event->eventType->getContentArbiterPatrolLeader()->getAllItems());
         $plUser->status = UserStatus::Paid;

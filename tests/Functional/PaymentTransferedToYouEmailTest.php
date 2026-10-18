@@ -65,10 +65,7 @@ class PaymentTransferedToYouEmailTest extends AppTestCase
 
         $twig = $this->getService($app, Twig::class);
 
-        // hits the plain landing route rather than /login: Korbo enables Skautis login and
-        // the fixture event has no skautisAppId, so /login crashes on unrelated setup, not on
-        // anything this test cares about. Korbo is cs-only, so the resolved locale is 'cs'
-        // with no Accept-Language header on the test request
+        // Korbo is cs-only, so the resolved locale is 'cs' with no Accept-Language header on the test request
         $app->handle($this->createRequest('/v2/event/test-event-slug'));
 
         $korboHtml = $twig->fetch('emails/payment-transfered-to-you.twig', ['event' => $event, 'genderSuffix' => '']);

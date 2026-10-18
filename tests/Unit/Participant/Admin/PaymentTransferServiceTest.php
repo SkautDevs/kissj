@@ -346,7 +346,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $troopLeader->nickname = 'TL';
         $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $troopLeader->email = $user->email;
-        $troopLeader->gender = 'male';
+        $troopLeader->gender = 'man';
         $troopLeader->country = 'CZ';
         $troopLeaderRepository->persist($troopLeader);
 
@@ -388,7 +388,7 @@ class PaymentTransferServiceTest extends AppTestCase
         $ist->nickname = 'TT';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $user->email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
