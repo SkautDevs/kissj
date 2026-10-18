@@ -704,6 +704,7 @@ adminValues:
 mend-admin:
     addPayment: "Přidat platbu"
     cancelParticipant: "Označit účastníka že nejede"
+    leaderCancelNotSupported: "Zrušení vedoucího zatím není podporované"
     didNotEnterYet: "ještě na akci nevstoupil"
     didNotLeaveYet: "ještě z akce neodešel"
     editParticipant: "Upravit účastníka"

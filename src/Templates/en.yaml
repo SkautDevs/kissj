@@ -696,6 +696,7 @@ adminValues:
 mend-admin:
     addPayment: "Add payment"
     cancelParticipant: "Mark participant as not going"
+    leaderCancelNotSupported: "Cancelling a leader is not supported yet"
     didNotEnterYet: "did not enter yet"
     didNotLeaveYet: "did not leave yet"
     editParticipant: "Edit participant"
