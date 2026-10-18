@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use LogicException;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteResolverInterface;
 use Tests\AppTestCase;
@@ -88,16 +87,6 @@ class RouteGuardTest extends AppTestCase
             || str_starts_with($pattern, self::PUBLIC_PATH_PREFIX);
     }
 
-    private function fillPlaceholders(string $pattern): string
-    {
-        $withEvent = preg_replace('/\{eventSlug(:[^}]+)?\}/', self::EVENT_SLUG, $pattern)
-            ?? throw new LogicException('eventSlug replacement failed on ' . $pattern);
-        $filled = preg_replace('/\{[^}]+\}/', '1', $withEvent)
-            ?? throw new LogicException('placeholder replacement failed on ' . $pattern);
-
-        return str_replace(['[', ']'], '', $filled);
-    }
-
     private function findBlockFailure(
         RouteResolverInterface $routeResolver,
         RouteInterface $route,
@@ -107,9 +96,9 @@ class RouteGuardTest extends AppTestCase
     ): ?string {
         $label = sprintf('%s %s %s', $route->getName() ?? '(unnamed)', $method, $path);
 
-        $resolvedIdentifier = $routeResolver->computeRoutingResults($path, $method)->getRouteIdentifier();
-        if ($resolvedIdentifier !== $route->getIdentifier()) {
-            return sprintf('%s: path resolves to route %s instead', $label, $resolvedIdentifier ?? 'none');
+        $routeMismatch = $this->findRouteMismatch($routeResolver, $route, $method, $path, $label);
+        if ($routeMismatch !== null) {
+            return $routeMismatch;
         }
 
         $_SESSION = [];
