@@ -218,7 +218,6 @@ _layout:
     approvedBar: "Schválené"
     payedBar: "Zaplatené! (:"
     creator: "s ♥ vytvoril Lung & company"
-    analytics: "Využívame Plausible Analytics, aby sme získali základné informácie o využití KISSJ. Plausible Analytics sú zamerané na súkromie používateľov, sú plne GDPR kompatibilné a nevyužívajú cookies."
 landing:
     cta:
         description: "KISSJ už používa napríklad Central European Jamboree, KORBO, Navigamus, Obrok a ďalšie"

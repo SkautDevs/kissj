@@ -218,7 +218,6 @@ _layout:
     approvedBar: "Approved"
     payedBar: "Paid (:"
     creator: "with ♥ created by Lung & company"
-    analytics: "We are using Plausible Analytics to collect basic numbers on usage of KISSJ. Plausible Analytics is privacy focused, GDPR compliant and cookie-free analytcs."
 landing:
     cta:
         description: "KISSJ is already used by Central European Jamboree, KORBO, Navigamus, Obrok and more"
