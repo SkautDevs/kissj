@@ -6,11 +6,12 @@ namespace Tests\Unit\Telemetry\Sentry;
 
 use kissj\Settings\Settings;
 use PHPUnit\Framework\TestCase;
+use Sentry\Breadcrumb;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
 use Sentry\Event;
+use Sentry\ExceptionDataBag;
 use Sentry\Options;
-use Sentry\Serializer\PayloadSerializer;
 use Sentry\Transport\Result;
 use Sentry\Transport\ResultStatus;
 use Sentry\Transport\TransportInterface;
@@ -79,7 +80,42 @@ class SentryClientRedactionWiringTest extends TestCase
         $sentEvent = $transport->sentEvent;
         self::assertInstanceOf(Event::class, $sentEvent, 'the event never reached the transport');
 
-        return (new PayloadSerializer($options))->serialize($sentEvent);
+        return $this->encodeRedactableFields($sentEvent);
+    }
+
+    private function encodeRedactableFields(Event $event): string
+    {
+        $user = $event->getUser();
+
+        return json_encode([
+            'transaction' => $event->getTransaction(),
+            'message' => $event->getMessage(),
+            'message_formatted' => $event->getMessageFormatted(),
+            'message_params' => $event->getMessageParams(),
+            'request' => $event->getRequest(),
+            'contexts' => $event->getContexts(),
+            'extra' => $event->getExtra(),
+            'tags' => $event->getTags(),
+            'user' => $user === null ? null : [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'ip_address' => $user->getIpAddress(),
+                'metadata' => $user->getMetadata(),
+            ],
+            'breadcrumbs' => array_map(
+                static fn (Breadcrumb $breadcrumb): array => [
+                    'category' => $breadcrumb->getCategory(),
+                    'message' => $breadcrumb->getMessage(),
+                    'metadata' => $breadcrumb->getMetadata(),
+                ],
+                $event->getBreadcrumbs(),
+            ),
+            'exceptions' => array_map(
+                static fn (ExceptionDataBag $exception): string => $exception->getValue(),
+                $event->getExceptions(),
+            ),
+        ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
     }
 
     private function getProductionSentryOptions(): Options

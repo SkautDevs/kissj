@@ -14,7 +14,7 @@ class HealthTest extends AppTestCase
 
         $response = $app->handle($this->createRequest('/v3/kissj/health'));
 
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
         self::assertJsonStringEqualsJsonString('{"status":"ok"}', (string)$response->getBody());
     }
 }

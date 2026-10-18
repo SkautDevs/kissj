@@ -33,7 +33,7 @@ class PatrolLeaderTest extends AppTestCase
         $userService->createParticipantSetRole($user, 'pl');
         $patrolLeader = $patrolService->getPatrolLeader($user);
 
-        self::assertEquals($user->id, $patrolLeader->getUserButNotNull()->id);
+        self::assertSame($user->id, $patrolLeader->getUserButNotNull()->id);
         self::assertEquals(ParticipantRole::PatrolLeader, $patrolLeader->role);
         self::assertEquals(UserRole::Participant, $patrolLeader->getUserButNotNull()->role);
         self::assertEquals(UserStatus::Open, $patrolLeader->getUserButNotNull()->status);

@@ -37,7 +37,7 @@ class ScenarioTest extends AppTestCase
             'POST',
             ['email' => 'test@examnple.com'],
         ));
-        self::assertEquals(302, $responsePostLogin->getStatusCode());
+        self::assertSame(302, $responsePostLogin->getStatusCode());
         $responsePostLoginHeader = $responsePostLogin->getHeaderLine('location');
 
         // show after login page

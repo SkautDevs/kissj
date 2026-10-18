@@ -36,7 +36,7 @@ class RegisterTest extends AppTestCase
         $loadedToken = $userService->getLoginTokenFromStringToken($loginToken->token);
         $loadedUser = $loadedToken->user;
 
-        self::assertEquals($user->id, $loadedUser->id);
+        self::assertSame($user->id, $loadedUser->id);
         self::assertFalse($loadedToken->used);
     }
 

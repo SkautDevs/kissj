@@ -13,11 +13,11 @@ class BaseTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $responseRoot = $app->handle($this->createRequest('/'));
-        self::assertEquals(301, $responseRoot->getStatusCode());
+        self::assertSame(301, $responseRoot->getStatusCode());
 
         $app = $this->getTestApp();
         $responseSpecific = $app->handle($this->createRequest('/v2/event/test-event-slug/login'));
-        self::assertEquals(200, $responseSpecific->getStatusCode());
+        self::assertSame(200, $responseSpecific->getStatusCode());
 
         $app = $this->getTestApp();
         $this->expectException(HttpNotFoundException::class);
