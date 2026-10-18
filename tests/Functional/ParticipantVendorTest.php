@@ -10,6 +10,7 @@ use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
+use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use RuntimeException;
@@ -121,6 +122,7 @@ class ParticipantVendorTest extends AppTestCase
     public function testKeyAmbiguousAcrossEventsIsRejected(): void
     {
         $app = $this->getTestApp();
+        $this->expectLog(Level::Error, 'rejecting as ambiguous');
         $container = $app->getContainer();
         $eventRepository = $this->getService($app, EventRepository::class);
 

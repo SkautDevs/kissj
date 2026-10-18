@@ -19,9 +19,7 @@ use kissj\User\UserRepository;
 use kissj\User\UserRole;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
-use Monolog\Handler\TestHandler;
 use Monolog\Level;
-use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Slim\Psr7\Factory\StreamFactory;
@@ -291,7 +289,8 @@ class ApiTest extends AppTestCase
         $participant = $this->createPaidParticipant($container);
         $organizer = $this->createPaidOrganizer($container);
 
-        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
+        $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET)
+            ->withQueryParams(['paidOnly' => '1']);
         $response = $app->handle($request);
 
         self::assertEquals(200, $response->getStatusCode());
@@ -313,12 +312,11 @@ class ApiTest extends AppTestCase
     public function testEntryListWithoutPaidOnlyLogsWarningAndDefaultsToPaidOnly(): void
     {
         $app = $this->getTestApp();
+        $this->expectLog(Level::Warning, 'Missing data about status filtering');
         $container = $app->getContainer();
         $this->setupEventApiKeys($container);
         $paid = $this->createPaidParticipant($container);
         $open = $this->createOpenParticipant($container);
-        $logHandler = new TestHandler(Level::Warning);
-        $this->getService($app, Logger::class)->pushHandler($logHandler);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET);
         $response = $app->handle($request);
@@ -331,11 +329,7 @@ class ApiTest extends AppTestCase
         self::assertArrayHasKey($paid->id, $body['roles']['ist']);
         self::assertArrayNotHasKey($open->id, $body['roles']['ist']);
 
-        self::assertTrue($logHandler->hasWarningThatContains(
-            'Missing data about status filtering of entry app participant list, using default "Paid only"',
-        ));
-        self::assertCount(1, $logHandler->getRecords());
-        self::assertFalse($logHandler->hasAlertRecords());
+        self::assertCount(1, $this->getTestLogHandler()->getRecords());
     }
 
     public function testEntryListWithPaidOnlyFalseIncludesUnpaidWithoutWarning(): void
@@ -345,8 +339,6 @@ class ApiTest extends AppTestCase
         $this->setupEventApiKeys($container);
         $paid = $this->createPaidParticipant($container);
         $open = $this->createOpenParticipant($container);
-        $logHandler = new TestHandler(Level::Warning);
-        $this->getService($app, Logger::class)->pushHandler($logHandler);
 
         $request = $this->createBearerRequest(self::TEST_PREFIX_URL . '/entry/list', 'GET', self::TEST_EVENT_SECRET)
             ->withQueryParams(['paidOnly' => '0']);
@@ -359,9 +351,6 @@ class ApiTest extends AppTestCase
         self::assertIsArray($body['roles']['ist']);
         self::assertArrayHasKey($paid->id, $body['roles']['ist']);
         self::assertArrayHasKey($open->id, $body['roles']['ist']);
-
-        self::assertFalse($logHandler->hasWarningRecords());
-        self::assertFalse($logHandler->hasAlertRecords());
     }
 
     public function testWrongScopeKeyReturns401(): void

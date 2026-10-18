@@ -23,6 +23,10 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LeanMapper\Connection;
 use LogicException;
+use Monolog\Handler\TestHandler;
+use Monolog\Level;
+use Monolog\LogRecord;
+use Monolog\Logger;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -37,6 +41,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Event\SentMessageEvent;
+use Throwable;
 
 class AppTestCase extends TestCase
 {
@@ -67,9 +72,17 @@ class AppTestCase extends TestCase
     /** @var array{container: ContainerInterface, eventId: int, originals: array<string, mixed>}|null */
     private ?array $mutatedEventRestore = null;
 
+    private ?TestHandler $testLogHandler = null;
+
+    /** @var list<array{level: Level, fragment: string}> */
+    private array $expectedLogs = [];
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->testLogHandler = null;
+        $this->expectedLogs = [];
 
         // Save original handlers before test runs
         // Note: set_error_handler returns the previous handler
@@ -168,7 +181,72 @@ class AppTestCase extends TestCase
         }
         $this->connectionsToClose[] = $connection;
 
+        $this->getService($app, Logger::class)->setHandlers([$this->getTestLogHandler()]);
+
         return $app;
+    }
+
+    protected function getTestLogHandler(): TestHandler
+    {
+        return $this->testLogHandler ??= new TestHandler();
+    }
+
+    protected function expectLog(Level $level, string $fragment): void
+    {
+        $this->expectedLogs[] = ['level' => $level, 'fragment' => $fragment];
+    }
+
+    protected function assertPostConditions(): void
+    {
+        parent::assertPostConditions();
+
+        $records = $this->testLogHandler?->getRecords() ?? [];
+
+        $undeclared = [];
+        foreach ($records as $record) {
+            if ($record->level->isLowerThan(Level::Warning) === false && $this->isDeclared($record) === false) {
+                $undeclared[] = $record->level->name . ' ' . $record->message;
+            }
+        }
+        if ($undeclared !== []) {
+            self::fail("Undeclared log records (use expectLog()):\n" . implode("\n", $undeclared));
+        }
+
+        $unmatched = [];
+        foreach ($this->expectedLogs as $expectation) {
+            if ($this->testLogHandler?->hasRecordThatContains($expectation['fragment'], $expectation['level']) !== true) {
+                $unmatched[] = $expectation['level']->name . ' ' . $expectation['fragment'];
+            }
+        }
+        if ($unmatched !== []) {
+            self::fail("Expected log records never emitted:\n" . implode("\n", $unmatched));
+        }
+    }
+
+    protected function onNotSuccessfulTest(Throwable $t): never
+    {
+        $lines = [];
+        foreach ($this->testLogHandler?->getRecords() ?? [] as $record) {
+            if ($record->level->isLowerThan(Level::Warning) === false) {
+                $lines[] = $record->level->name . ' ' . $record->message;
+            }
+        }
+        if ($lines !== []) {
+            fwrite(STDERR, "\nCaptured log records:\n" . implode("\n", $lines) . "\n");
+        }
+
+        parent::onNotSuccessfulTest($t);
+    }
+
+    private function isDeclared(LogRecord $record): bool
+    {
+        foreach ($this->expectedLogs as $expectation) {
+            if ($expectation['level'] === $record->level && str_contains($record->message, $expectation['fragment'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // clean database per init without paying the migration chain each time:
