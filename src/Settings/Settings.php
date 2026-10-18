@@ -459,7 +459,6 @@ class Settings
             // a request-scoped resolver (proxy pattern, like CurrentTranslator) or move
             // registration into middleware that runs per request and resets on the way out.
             $view->getEnvironment()->addGlobal('user', $user);
-            $view->getEnvironment()->addGlobal('debug', $env->debug);
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));

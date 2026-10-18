@@ -23,18 +23,6 @@
     {% if event.eventType.getStylesheetNameWithoutLeadingSlash is not null %}
         <link rel="stylesheet" href="{{ base_path() }}/{{ event.eventType.getStylesheetNameWithoutLeadingSlash }}">
     {% endif %}
-    {% if debug == false %}
-        <!-- Plausible Analytics -->
-        <!--
-            Plausible Analytics are privacy focused, GDPR-compliant and cookie-free analytics.
-
-            WHY:
-                We are using anlytics to help us understand the incoming traffic, see peaks when opening registration to new events and properly scaling.
-                kissj.net is hosted on Microsoft Azure, Azure Kubernetes Service (AKS)
-        -->
-        <script defer data-domain="kissj.net" src="https://plausible.io/js/plausible.js"></script>
-        <!-- End Plausible Anlaytics -->
-    {% endif %}
 </head>
 
 <body class="wrapper">
@@ -79,13 +67,6 @@
     {% block content %}{% endblock %}
 </main>
 <footer>
-    {#
-    TODO: Add Privacy policy site to disclose analytics properly
-    Right now, we prefere deployment to get the data ASAP
-    <p class="text-center text-small text-muted m-0">
-        {{ '_layout.analytics' | trans }}
-    </p>
-    #}
     <span class="footer-item">
         <a href="{{ event.webUrl }}" target="_blank">{{ event.readableName }}</a>
         | <a href="https://devs.skauting.cz/" target="_blank">{{ '_layout.creator' | trans }}</a>
