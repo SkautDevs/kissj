@@ -6,6 +6,7 @@ namespace kissj\Export;
 
 use Exception;
 use kissj\AbstractController;
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -108,7 +109,7 @@ class ExportController extends AbstractController
         array $csvRows,
         string $fileName,
     ): Response {
-        $fileName .= '_' . date(DATE_ATOM);
+        $fileName .= '_' . DateTimeUtils::getDateTime()->format(DATE_ATOM);
 
         $response = $response->withAddedHeader('Content-Type', 'text/csv');
         $response = $response->withAddedHeader('Content-Disposition', 'attachment; filename="' . $fileName . '.csv";');
