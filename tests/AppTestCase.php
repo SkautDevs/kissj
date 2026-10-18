@@ -173,25 +173,17 @@ class AppTestCase extends TestCase
             $this->getRunTempPath()
         );
 
-        $this->connectionsToClose[] = $this->getSqliteConnection($app);
-        $this->getService($app, Logger::class)->setHandlers([$this->getTestLogHandler()]);
-
-        return $app;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     */
-    private function getSqliteConnection(App $app): Connection
-    {
         $connection = $this->getService($app, Connection::class);
         if ($connection->getConfig('driver') !== 'sqlite') {
             throw new LogicException(
                 'Functional tests must run on the per-test sqlite database — refusing to touch a real database.',
             );
         }
+        $this->connectionsToClose[] = $connection;
 
-        return $connection;
+        $this->getService($app, Logger::class)->setHandlers([$this->getTestLogHandler()]);
+
+        return $app;
     }
 
     protected function getTestLogHandler(): TestHandler
@@ -283,6 +275,22 @@ class AppTestCase extends TestCase
         }
     }
 
+    private function seedSkautisAppId(): void
+    {
+        $app = (new ApplicationGetter())->getApp(
+            __DIR__ . '/',
+            'env.testing',
+            $this->getRunTempPath()
+        );
+        $this->getService($app, Logger::class)->setHandlers([new TestHandler()]);
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug')
+            ?? throw new RuntimeException('Seed event test-event-slug not found - did migrations run?');
+        $event->skautisAppId = 'test-skautis-app-id';
+        $eventRepository->persist($event);
+        $this->getService($app, Connection::class)->disconnect();
+    }
+
     /**
      * @param array<string, string> $arguments
      */
@@ -309,19 +317,6 @@ class AppTestCase extends TestCase
         }
 
         return $output;
-    }
-
-    private function seedSkautisAppId(): void
-    {
-        $app = (new ApplicationGetter())->getApp(__DIR__ . '/', 'env.testing', $this->getRunTempPath());
-        $connection = $this->getSqliteConnection($app);
-        $this->getService($app, Logger::class)->setHandlers([new TestHandler()]);
-        $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->findBySlug('test-event-slug')
-            ?? throw new RuntimeException('Seed event test-event-slug not found - did migrations run?');
-        $event->skautisAppId = 'test-skautis-app-id';
-        $eventRepository->persist($event);
-        $connection->disconnect();
     }
 
     // the container env pins DB_TYPE=postgresql and phpdotenv never overrides

@@ -29,7 +29,7 @@ class PatrolCloseRegistrationTest extends AppTestCase
         $patrolLeader->patrolName = 'Test Patrol';
         $patrolLeader->firstName = 'Leader';
         $patrolLeader->lastName = 'Test';
-        $patrolLeader->gender = 'female';
+        $patrolLeader->gender = 'woman';
         $patrolLeader->birthDate = DateTimeUtils::getDateTime('1995-05-15');
         $patrolLeader->permanentResidence = '123 Test Street, Test City';
         $this->getService($app, PatrolLeaderRepository::class)->persist($patrolLeader);
@@ -38,7 +38,7 @@ class PatrolCloseRegistrationTest extends AppTestCase
             $p->lastName = 'Id';
             $p->nickname = 'Vali';
             $p->permanentResidence = '1 Scout Street, Scout Town';
-            $p->gender = 'male';
+            $p->gender = 'man';
             $p->birthDate = DateTimeUtils::getDateTime('1990-01-01');
             $p->healthProblems = 'None';
             $p->psychicalHealthProblems = 'None';
@@ -70,7 +70,7 @@ class PatrolCloseRegistrationTest extends AppTestCase
         $patrolLeader->patrolName = 'Route Patrol';
         $patrolLeader->firstName = 'Leader';
         $patrolLeader->lastName = 'Route';
-        $patrolLeader->gender = 'female';
+        $patrolLeader->gender = 'woman';
         $patrolLeader->birthDate = DateTimeUtils::getDateTime('1995-05-15');
         $patrolLeader->permanentResidence = '123 Test Street, Test City';
         $this->getService($app, PatrolLeaderRepository::class)->persist($patrolLeader);
@@ -79,7 +79,7 @@ class PatrolCloseRegistrationTest extends AppTestCase
             $p->lastName = 'Id';
             $p->nickname = 'Vali';
             $p->permanentResidence = '1 Scout Street, Scout Town';
-            $p->gender = 'male';
+            $p->gender = 'man';
             $p->birthDate = DateTimeUtils::getDateTime('1990-01-01');
             $p->healthProblems = 'None';
             $p->psychicalHealthProblems = 'None';

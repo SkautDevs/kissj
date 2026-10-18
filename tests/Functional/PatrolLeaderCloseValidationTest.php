@@ -54,7 +54,7 @@ class PatrolLeaderCloseValidationTest extends AppTestCase
             $p->lastName = 'Id';
             $p->nickname = 'Vali';
             $p->permanentResidence = '1 Scout Street, Scout Town';
-            $p->gender = 'male';
+            $p->gender = 'man';
             $p->birthDate = DateTimeUtils::getDateTime('1990-01-01');
             $p->healthProblems = 'None';
             $p->psychicalHealthProblems = 'None';

@@ -211,7 +211,7 @@ class AdminPaymentTransferTest extends AppTestCase
         $ist->nickname = 'AT';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $user->email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);

@@ -81,7 +81,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'Tester';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
@@ -155,7 +155,7 @@ class ParticipantJourneyTest extends AppTestCase
         $patrolLeader->lastName = 'Test';
         $patrolLeader->nickname = 'LeaderNick';
         $patrolLeader->permanentResidence = '123 Test Street, Test City';
-        $patrolLeader->gender = 'female';
+        $patrolLeader->gender = 'woman';
         $patrolLeader->birthDate = DateTimeUtils::getDateTime('1995-05-15');
         $patrolLeader->healthProblems = 'None';
         $patrolLeader->psychicalHealthProblems = 'None';
@@ -182,7 +182,7 @@ class ParticipantJourneyTest extends AppTestCase
         $participant1->lastName = 'One';
         $participant1->nickname = 'P1';
         $participant1->permanentResidence = '456 Test Ave, Test Town';
-        $participant1->gender = 'male';
+        $participant1->gender = 'man';
         $participant1->birthDate = DateTimeUtils::getDateTime('2005-03-20');
         $participant1->healthProblems = 'None';
         $participant1->psychicalHealthProblems = 'None';
@@ -205,7 +205,7 @@ class ParticipantJourneyTest extends AppTestCase
         $participant2->lastName = 'Two';
         $participant2->nickname = 'P2';
         $participant2->permanentResidence = '789 Test Blvd, Test Village';
-        $participant2->gender = 'female';
+        $participant2->gender = 'woman';
         $participant2->birthDate = DateTimeUtils::getDateTime('2006-07-10');
         $participant2->healthProblems = 'None';
         $participant2->psychicalHealthProblems = 'None';
@@ -321,7 +321,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'Tester';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $ist->permanentResidence = 'Test Street 1';
@@ -525,7 +525,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopLeader->lastName = 'Leader';
         $troopLeader->nickname = 'Chief';
         $troopLeader->permanentResidence = '123 Leader Ave, Leader City';
-        $troopLeader->gender = 'male';
+        $troopLeader->gender = 'man';
         $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-15');
         $troopLeader->healthProblems = 'None';
         $troopLeader->psychicalHealthProblems = 'None';
@@ -550,7 +550,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopParticipant1->lastName = 'One';
         $troopParticipant1->nickname = 'S1';
         $troopParticipant1->permanentResidence = '456 Scout Street, Scout Town';
-        $troopParticipant1->gender = 'male';
+        $troopParticipant1->gender = 'man';
         $troopParticipant1->birthDate = DateTimeUtils::getDateTime('2005-06-20');
         $troopParticipant1->healthProblems = 'None';
         $troopParticipant1->psychicalHealthProblems = 'None';
@@ -573,7 +573,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopParticipant2->lastName = 'Two';
         $troopParticipant2->nickname = 'S2';
         $troopParticipant2->permanentResidence = '789 Scout Blvd, Scout Village';
-        $troopParticipant2->gender = 'female';
+        $troopParticipant2->gender = 'woman';
         $troopParticipant2->birthDate = DateTimeUtils::getDateTime('2006-09-10');
         $troopParticipant2->healthProblems = 'None';
         $troopParticipant2->psychicalHealthProblems = 'None';
@@ -935,7 +935,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'Tester';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
@@ -983,7 +983,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ot->lastName = 'OT';
         $ot->nickname = 'Organizer';
         $ot->permanentResidence = '123 OT Street, OT City';
-        $ot->gender = 'male';
+        $ot->gender = 'man';
         $ot->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ot->healthProblems = 'None';
         $ot->psychicalHealthProblems = 'None';
@@ -1030,7 +1030,7 @@ class ParticipantJourneyTest extends AppTestCase
         $guest->lastName = 'Guest';
         $guest->nickname = 'PG';
         $guest->permanentResidence = '123 Pay Street';
-        $guest->gender = 'male';
+        $guest->gender = 'man';
         $guest->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $guest->healthProblems = 'None';
         $guest->psychicalHealthProblems = 'None';
@@ -1077,7 +1077,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'PC';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
@@ -1137,7 +1137,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'ZP';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
@@ -1188,7 +1188,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->nickname = 'RT';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $istRepository->persist($ist);
@@ -1287,7 +1287,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopLeader->firstName = 'Test';
         $troopLeader->lastName = 'Leader';
         $troopLeader->email = $email;
-        $troopLeader->gender = 'male';
+        $troopLeader->gender = 'man';
         $troopLeader->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $troopLeader->permanentResidence = 'Addr';
         $troopLeader->healthProblems = 'None';
@@ -1315,7 +1315,7 @@ class ParticipantJourneyTest extends AppTestCase
         $tp->firstName = 'Test';
         $tp->lastName = 'Participant';
         $tp->email = $email;
-        $tp->gender = 'female';
+        $tp->gender = 'woman';
         $tp->birthDate = DateTimeUtils::getDateTime('1995-01-01');
         $tp->permanentResidence = 'Addr';
         $tp->healthProblems = 'None';

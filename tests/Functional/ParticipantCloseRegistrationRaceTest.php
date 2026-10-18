@@ -141,7 +141,7 @@ class ParticipantCloseRegistrationRaceTest extends AppTestCase
         $ist->nickname = 'Racer';
         $ist->birthDate = DateTimeUtils::getDateTime('1990-01-01');
         $ist->email = $email;
-        $ist->gender = 'male';
+        $ist->gender = 'man';
         $ist->country = 'CZ';
         $ist->permanentResidence = '1 Scout Street, Scout Town';
         $ist->contingent = 'detail.contingent.czechia';
