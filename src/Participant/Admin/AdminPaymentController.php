@@ -203,9 +203,8 @@ class AdminPaymentController extends AbstractController
         Event $event,
         int $paymentId,
     ): Response {
-        // TODO check if correct event
         $notice = $this->getParameterFromBody($request, 'notice', true);
-        $this->paymentService->setBankPaymentPaired($paymentId);
+        $this->paymentService->setBankPaymentPaired($paymentId, $event);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
         $this->metrics->count(MetricName::PaymentsMarkedPaired, 1);
         $this->flashMessages->info('flash.info.markedAsPaired');
@@ -220,9 +219,10 @@ class AdminPaymentController extends AbstractController
     public function markBankPaymentUnrelated(
         Request $request,
         Response $response,
+        Event $event,
         int $paymentId,
     ): Response {
-        $this->paymentService->setBankPaymentUnrelated($paymentId);
+        $this->paymentService->setBankPaymentUnrelated($paymentId, $event);
         $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
         $this->metrics->count(MetricName::PaymentsMarkedUnrelated, 1);
         $this->flashMessages->info('flash.info.markedAsUnrelated');
