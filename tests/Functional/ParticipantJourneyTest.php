@@ -1151,7 +1151,7 @@ class ParticipantJourneyTest extends AppTestCase
         $payments = $ist->getNoncanceledPayments();
         $originalPayment = $payments[0];
 
-        // Change price to 0 — should auto-confirm
+        // Change price to 0: should auto-confirm
         $newPayment = $participantService->changePaymentPrice($originalPayment, 0, 'Full scholarship');
 
         self::assertSame(PaymentStatus::Paid, $newPayment->status);

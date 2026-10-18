@@ -36,7 +36,7 @@ class PatrolLeaderCloseValidationTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->configurePatrolCounts($app, 0, 5);
         $patrolLeader = $this->createPatrolLeader($app, $event, 'patrol-invalid@example.com');
-        // participant with no filled fields — required data missing
+        // participant with no filled fields: required data missing
         $this->addPatrolParticipant($app, $patrolLeader);
 
         $result = $this->closeResultFor($app, $patrolLeader);

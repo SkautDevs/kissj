@@ -45,7 +45,7 @@ class OwnerTransferSelfTest extends AppTestCase
         );
         self::assertContains($translator->trans('flash.warning.cannotTransferToYourself'), $flashed);
 
-        // no transfer happened — the owner is still Paid
+        // no transfer happened, the owner is still Paid
         self::assertSame(UserStatus::Paid, $this->getService($app, UserRepository::class)->get($user->id)->status);
     }
 

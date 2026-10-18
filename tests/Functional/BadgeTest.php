@@ -96,7 +96,7 @@ class BadgeTest extends AppTestCase
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
 
         // badges must come out in human alphabetical order of the name printed on them:
-        // case-insensitive, Czech collation (Š between S and T), nickname-less ones by full name —
+        // case-insensitive, Czech collation (Š between S and T), nickname-less ones by full name:
         // alphaSort < FirstsortNoNick LastsortNoNick < ŠimonSort < ZebraSort
         self::assertSame([
             'badge-sortLower@example.com',
@@ -136,7 +136,7 @@ class BadgeTest extends AppTestCase
         $plUser->status = UserStatus::Paid;
         $userRepository->persist($plUser);
 
-        // patrol member covered by the paid leader — must appear on badges, and only once despite the
+        // patrol member covered by the paid leader: must appear on badges, and only once despite the
         // leader-status expansion in getAllParticipantsWithStatus returning them twice
         $ppUser = $userService->registerEmailUser('badge-patrol-pp@example.com', $event);
         $ppParticipant = $userService->createParticipantSetRole($ppUser, 'pp');

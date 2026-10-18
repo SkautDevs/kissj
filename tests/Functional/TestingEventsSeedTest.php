@@ -167,7 +167,7 @@ class TestingEventsSeedTest extends AppTestCase
         // tripwire mirrors AppTestCase::provideCleanDatabase() - refuse to run phinx against
         // anything but the per-test sqlite database
         if ($_ENV['DB_TYPE'] !== 'sqlite') {
-            throw new LogicException('Seed test must run on sqlite — refusing to touch a real database.');
+            throw new LogicException('Seed test must run on sqlite, refusing to touch a real database.');
         }
 
         $phinx = new PhinxApplication();

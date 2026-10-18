@@ -31,7 +31,7 @@ class FileDownloadTest extends AppTestCase
         $_SESSION['user'] = ['id' => $user->id];
         $app = $this->getTestApp(false);
 
-        // Middleware passes (owner), file doesn't exist on disk — RuntimeException from LazyOpenStream
+        // Middleware passes (owner), file doesn't exist on disk: RuntimeException from LazyOpenStream
         try {
             $app->handle($this->createRequest(
                 self::BASE_URL . '/showFile/' . $uniqueFilename,
@@ -59,7 +59,7 @@ class FileDownloadTest extends AppTestCase
         $_SESSION['user'] = ['id' => $adminUser->id];
         $app = $this->getTestApp(false);
 
-        // Middleware passes (admin), file doesn't exist on disk — RuntimeException from LazyOpenStream
+        // Middleware passes (admin), file doesn't exist on disk: RuntimeException from LazyOpenStream
         try {
             $app->handle($this->createRequest(
                 self::BASE_URL . '/showFile/' . $uniqueFilename,

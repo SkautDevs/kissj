@@ -58,7 +58,7 @@ class TranslationKeysTest extends TestCase
                     }
 
                     $unresolved[] = sprintf(
-                        '%s:%d "%s" — %s',
+                        '%s:%d "%s": %s',
                         $this->relativePath($path),
                         $index + 1,
                         $key,
@@ -100,7 +100,7 @@ class TranslationKeysTest extends TestCase
             }
 
             if ($missing !== []) {
-                $gaps[] = sprintf('"%s" — missing in %s', $key, implode(', ', $missing));
+                $gaps[] = sprintf('"%s": missing in %s', $key, implode(', ', $missing));
             }
         }
 
