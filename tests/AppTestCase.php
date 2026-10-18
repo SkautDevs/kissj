@@ -495,7 +495,7 @@ class AppTestCase extends TestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function getTypedTestEvent(App $app, string $eventType, string $slug): Event
+    protected function getTypedTestEvent(App $app, string $eventType, string $slug): Event
     {
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->findBySlug($slug);

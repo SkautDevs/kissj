@@ -491,19 +491,15 @@ readonly class ParticipantService
             throw new ParticipantException('flash.warning.notApproved');
         }
 
-        $this->userService->setUserApproved($participant->getUserButNotNull());
-
-        $participant->registrationApproveDate = DateTimeUtils::getDateTime();
-        $this->participantRepository->persist($participant);
-
         if ($participant instanceof TroopParticipant) {
+            $this->setRegistrationApproved($participant);
             $this->mailer->sendTroopParticipantRegistrationFinished($participant);
 
             return $participant;
         }
 
-        $event = $participant->getUserButNotNull()->event;
-        $price = $event->getEventType()->getPrice($participant);
+        $price = $participant->getUserButNotNull()->event->getEventType()->getPrice($participant);
+        $this->setRegistrationApproved($participant);
 
         if ($price === 0) {
             $this->userService->setUserPaid($participant->getUserButNotNull());
@@ -516,6 +512,14 @@ readonly class ParticipantService
         $this->mailer->sendRegistrationApprovedWithPayment($participant, $payment);
 
         return $participant;
+    }
+
+    private function setRegistrationApproved(Participant $participant): void
+    {
+        $this->userService->setUserApproved($participant->getUserButNotNull());
+
+        $participant->registrationApproveDate = DateTimeUtils::getDateTime();
+        $this->participantRepository->persist($participant);
     }
 
     public function cancelParticipant(Participant $participant): Participant
