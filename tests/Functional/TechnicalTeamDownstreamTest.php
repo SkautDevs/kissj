@@ -120,7 +120,7 @@ class TechnicalTeamDownstreamTest extends AppTestCase
 
         $entryParticipants = $this->getService($app, ParticipantRepository::class)->getParticipantsForEntry($event, true);
 
-        $entryLeader = $entryParticipants[ParticipantRole::TechnicalTeamLeader->value][$leader->id] ?? null;
+        $entryLeader = $entryParticipants['ttl'][$leader->id] ?? null;
         self::assertInstanceOf(EntryParticipant::class, $entryLeader);
         self::assertCount(2, $entryLeader->participants);
     }
@@ -316,7 +316,7 @@ class TechnicalTeamDownstreamTest extends AppTestCase
         self::assertNotContains(self::NO_EVENT_FOOD, $csvRows[1]);
         $leaderRows = array_values(array_filter(
             $csvRows,
-            fn (array $row): bool => $row[0] === 'role.' . ParticipantRole::TechnicalTeamLeader->value,
+            fn (array $row): bool => $row[0] === 'role.ttl',
         ));
         self::assertCount(1, $leaderRows);
         $leaderMealsCount = array_sum(array_map(intval(...), array_slice($leaderRows[0], 1)));
@@ -420,7 +420,7 @@ class TechnicalTeamDownstreamTest extends AppTestCase
     {
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser('ttl-downstream-' . bin2hex(random_bytes(6)) . '@example.com', $event);
-        $participant = $userService->createParticipantSetRole($user, ParticipantRole::TechnicalTeamLeader->value);
+        $participant = $userService->createParticipantSetRole($user, 'ttl');
 
         $repository = $this->getService($app, TechnicalTeamLeaderRepository::class);
         $leader = $repository->get($participant->id);

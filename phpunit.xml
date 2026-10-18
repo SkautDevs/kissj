@@ -11,6 +11,7 @@
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
+            <exclude>tests/Unit/Phpstan/data</exclude>
         </testsuite>
         <testsuite name="Functional">
             <directory>tests/Functional</directory>

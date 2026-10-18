@@ -280,9 +280,9 @@ class PaymentTransferServiceTest extends AppTestCase
             $participantRepository->getParticipantById($to->id, $event)->getPayments(),
         );
         sort($recipientStatuses);
-        self::assertSame([PaymentStatus::Canceled->value, PaymentStatus::Paid->value], $recipientStatuses);
+        self::assertSame(['canceled', 'paid'], $recipientStatuses);
 
-        // one mail per side — the cancelled waiting payment is implied by "your registration is now paid"
+        // one mail per side: the cancelled waiting payment is implied by "your registration is now paid"
         $counts = array_count_values($sentTo->getArrayCopy());
         self::assertSame(1, $counts[$to->getUserButNotNull()->email] ?? 0);
         self::assertSame(1, $counts[$from->getUserButNotNull()->email] ?? 0);

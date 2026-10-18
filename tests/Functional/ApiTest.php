@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
-use kissj\Entry\EntryStatus;
 use kissj\Event\EventRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
@@ -51,7 +50,7 @@ class ApiTest extends AppTestCase
         self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
+        self::assertEquals('invalid', $body['status']);
         self::assertEquals('participant not found', $body['reason']);
     }
 
@@ -74,7 +73,7 @@ class ApiTest extends AppTestCase
         self::assertEquals(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertEquals(EntryStatus::ENTRY_STATUS_INVALID->value, $body['status']);
+        self::assertEquals('invalid', $body['status']);
         self::assertEquals('invalid event secret', $body['reason']);
     }
 
@@ -97,7 +96,7 @@ class ApiTest extends AppTestCase
         self::assertEquals(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertEquals(EntryStatus::ENTRY_STATUS_VALID->value, $body['status']);
+        self::assertEquals('valid', $body['status']);
         self::assertArrayHasKey('fullName', $body);
         self::assertArrayHasKey('email', $body);
     }
@@ -131,7 +130,7 @@ class ApiTest extends AppTestCase
         self::assertEquals(200, $response2->getStatusCode());
         $body = json_decode((string)$response2->getBody(), true);
         self::assertIsArray($body);
-        self::assertEquals(EntryStatus::ENTRY_STATUS_USED->value, $body['status']);
+        self::assertEquals('used', $body['status']);
         self::assertArrayHasKey('entryDateTime', $body);
     }
 

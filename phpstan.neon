@@ -5,6 +5,7 @@ parameters:
 		- tests
 	excludePaths:
 		- tests/temp/*
+		- tests/Unit/Phpstan/data/*
 	ignoreErrors:
 		 - '#Access to an undefined property LeanMapper\\Row::\$.*\.#' # 3rd party library
 		 -
@@ -40,6 +41,10 @@ parameters:
 
 rules:
 	- kissj\Phpstan\NoConstructorUseDatetimeRule
+	- kissj\Phpstan\UserStatusWriteOnlyInUserServiceRule
+	- kissj\Phpstan\DatabaseAccessOnlyInRepositoryRule
+	- kissj\Phpstan\NoSuperglobalsRule
+	- kissj\Phpstan\NoEnumValueInTestsRule
 
 includes:
 	- phpstan-baseline.neon
