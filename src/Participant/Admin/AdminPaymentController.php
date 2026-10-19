@@ -80,7 +80,7 @@ class AdminPaymentController extends AbstractController
 
         $this->participantService->cancelPayment($payment, $reason, PaymentSource::ManualAdmin);
         $this->flashMessages->info('flash.info.paymentCanceled');
-        $this->logger->info('Cancelled payment ID ' . $paymentId . ' for participant with reason: ' . $reason);
+        $this->logger->info('Cancelled payment for participant', ['paymentId' => $paymentId, 'reason' => $reason]);
 
         return $this->redirect(
             $request,
@@ -130,7 +130,11 @@ class AdminPaymentController extends AbstractController
 
         $this->participantService->changePaymentPrice($payment, $newPrice, $reason);
         $this->flashMessages->success('flash.success.paymentPriceChanged');
-        $this->logger->info('Payment ID ' . $paymentId . ' price changed to ' . $newPrice . ' with reason: ' . $reason);
+        $this->logger->info('Payment price changed', [
+            'paymentId' => $paymentId,
+            'newPrice' => $newPrice,
+            'reason' => $reason,
+        ]);
         $this->metrics->count(MetricName::PaymentsPriceChanged, 1);
 
         return $this->redirect($request, $response, 'admin-show-payments');
@@ -159,7 +163,7 @@ class AdminPaymentController extends AbstractController
         $payment = $this->paymentRepository->getById($paymentId, $event);
 
         $this->flashPaymentResult($this->paymentService->confirmPayment($payment, PaymentSource::ManualAdmin));
-        $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
+        $this->logger->info('Payment manually confirmed as paid', ['paymentId' => $paymentId]);
 
         return $this->redirect(
             $request,
@@ -205,7 +209,7 @@ class AdminPaymentController extends AbstractController
     ): Response {
         $notice = $this->getParameterFromBody($request, 'notice', true);
         $this->paymentService->setBankPaymentPaired($paymentId, $event);
-        $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as paired with notice: ' . $notice);
+        $this->logger->info('Bank payment marked as paired', ['bankPaymentId' => $paymentId, 'notice' => $notice]);
         $this->metrics->count(MetricName::PaymentsMarkedPaired, 1);
         $this->flashMessages->info('flash.info.markedAsPaired');
 
@@ -223,7 +227,7 @@ class AdminPaymentController extends AbstractController
         int $paymentId,
     ): Response {
         $this->paymentService->setBankPaymentUnrelated($paymentId, $event);
-        $this->logger->info('Payment with ID ' . $paymentId . ' has been marked as unrelated');
+        $this->logger->info('Bank payment marked as unrelated', ['bankPaymentId' => $paymentId]);
         $this->metrics->count(MetricName::PaymentsMarkedUnrelated, 1);
         $this->flashMessages->info('flash.info.markedAsUnrelated');
 

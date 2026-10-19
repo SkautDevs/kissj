@@ -65,7 +65,12 @@ readonly class ErrorHandlerGetter
             $code = $throwable->getCode();
             $message = $inspector->getExceptionMessage();
 
-            $this->logger->error('Throwable! ' . $title . '(' . $code . ') -> ' . $message, [ 'exception' => $throwable ]);
+            $this->logger->error('Uncaught throwable', [
+                'exception' => $throwable,
+                'title' => $title,
+                'code' => $code,
+                'message' => $message,
+            ]);
 
             http_response_code(500);
             echo self::renderExceptionPage();

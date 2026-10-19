@@ -192,12 +192,11 @@ readonly class PaymentTransferService
         $this->userRepository->persist($userFrom);
         $this->userRepository->persist($userTo);
 
-        $this->logger->info(sprintf(
-            'Transferred payment ID %s from participant ID %s to participant ID %s',
-            $transferredPayment !== null ? (string)$transferredPayment->id : 'N/A',
-            $userFrom->id,
-            $userTo->id,
-        ));
+        $this->logger->info('Transferred payment between participants', [
+            'paymentId' => $transferredPayment?->id,
+            'fromUserId' => $userFrom->id,
+            'toUserId' => $userTo->id,
+        ]);
         $this->metrics->count(MetricName::PaymentsTransferred, 1);
     }
 

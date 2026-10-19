@@ -110,8 +110,11 @@ class ParticipantController extends AbstractController
         $this->participantFileService->handleUploadedFiles($participant, $request, $editableItems);
 
         $editedSlugs = array_map(fn (ContentArbiterItem $item) => $item->slug, $editableItems);
-        $this->logger->info('Changed details after lock for participant ID ' . $participant->id
-            . ', user ID ' . $user->id . ', fields: ' . implode(', ', $editedSlugs));
+        $this->logger->info('Changed details after lock for participant', [
+            'participantId' => $participant->id,
+            'userId' => $user->id,
+            'fields' => $editedSlugs,
+        ]);
         $this->metrics->count(
             MetricName::RegistrationsEditedAfterLock,
             1,
@@ -164,8 +167,10 @@ class ParticipantController extends AbstractController
 
         if ($closeResult->isValid) {
             $this->flashMessages->success('flash.success.locked');
-            $this->logger->info('Locked registration for IST with ID ' . $participant->id
-                . ', user ID ' . $user->id);
+            $this->logger->info('Locked registration for IST', [
+                'participantId' => $participant->id,
+                'userId' => $user->id,
+            ]);
 
             return $this->redirect($request, $response, 'dashboard', queryParams: ['celebrate' => '1']);
         }

@@ -105,8 +105,7 @@ class UserController extends AbstractController
         try {
             $this->userService->sendLoginTokenByMail($email, $request, $event, $otToken, $ttlToken);
         } catch (Exception $e) {
-            $this->sentryCollector->collect($e);
-            $this->logger->error('Error sending login email to ' . $email, [$e]);
+            $this->logger->error('Error sending login email', ['email' => $email, 'exception' => $e]);
             $this->flashMessages->error('flash.error.mailError');
 
             return $this->redirect($request, $response, 'loginAskEmail');

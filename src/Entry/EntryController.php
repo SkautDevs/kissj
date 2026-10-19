@@ -179,7 +179,7 @@ class EntryController extends AbstractController
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $this->participantService->setAsEntered($participant);
-        $this->logger->info('Participant with ID ' . $participantId . ' set as entered from admin');
+        $this->logger->info('Participant set as entered from admin', ['participantId' => $participantId]);
 
         return $this->redirect(
             $request,
@@ -195,7 +195,7 @@ class EntryController extends AbstractController
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $this->participantService->setAsUnentered($participant);
-        $this->logger->info('Participant with ID ' . $participantId . ' set as NOT entered from admin');
+        $this->logger->info('Participant set as NOT entered from admin', ['participantId' => $participantId]);
 
         return $this->redirect(
             $request,
@@ -211,7 +211,7 @@ class EntryController extends AbstractController
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $this->participantService->setAsUnleaved($participant);
-        $this->logger->info('Participant with ID ' . $participantId . ' set as NOT leaved from admin');
+        $this->logger->info('Participant set as NOT leaved from admin', ['participantId' => $participantId]);
 
         return $this->redirect(
             $request,

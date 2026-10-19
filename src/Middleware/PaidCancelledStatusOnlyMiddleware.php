@@ -21,7 +21,8 @@ class PaidCancelledStatusOnlyMiddleware extends BaseMiddleware
 
         if ($user instanceof User && !$user->status->isPaidOrCancelled()) {
             $this->logger->warning(
-                'User ' . $user->email . ' is trying to access "paid or cancelled only" route, even he has status "' . $user->status->value . '"'
+                'User is trying to access "paid or cancelled only" route without paid or cancelled status',
+                ['email' => $user->email, 'status' => $user->status->value],
             );
             throw new \RuntimeException('You cannot change your data when you are not in paid or cancelled status');
         }

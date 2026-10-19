@@ -207,7 +207,8 @@ class AppTestCase extends TestCase
         $undeclared = [];
         foreach ($records as $record) {
             if ($record->level->isLowerThan(Level::Warning) === false && $this->isDeclared($record) === false) {
-                $undeclared[] = $record->level->name . ' ' . $record->message;
+                $undeclared[] = $record->level->name . ' ' . $record->message . ' '
+                    . json_encode($record->context, JSON_THROW_ON_ERROR);
             }
         }
         if ($undeclared !== []) {
@@ -230,7 +231,8 @@ class AppTestCase extends TestCase
         $lines = [];
         foreach ($this->testLogHandler?->getRecords() ?? [] as $record) {
             if ($record->level->isLowerThan(Level::Warning) === false) {
-                $lines[] = $record->level->name . ' ' . $record->message;
+                $lines[] = $record->level->name . ' ' . $record->message . ' '
+                    . json_encode($record->context, JSON_THROW_ON_ERROR);
             }
         }
         if ($lines !== []) {

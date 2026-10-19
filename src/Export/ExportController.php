@@ -41,7 +41,7 @@ class ExportController extends AbstractController
         Event $event
     ): Response {
         $csvRows = $this->exportService->healthDataToCSV($event, $user);
-        $this->logger->info('Exported health data about participants by user with ID' . $user->id);
+        $this->logger->info('Exported health data about participants', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_health');
     }
@@ -52,7 +52,7 @@ class ExportController extends AbstractController
         Event $event
     ): Response {
         $csvRows = $this->exportService->paidContactDataToCSV($event, $user);
-        $this->logger->info('Exported data about participants which paid by user with ID' . $user->id);
+        $this->logger->info('Exported data about participants which paid', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_paid');
     }
@@ -63,7 +63,7 @@ class ExportController extends AbstractController
         Event $event
     ): Response {
         $csvRows = $this->exportService->allRegistrationDataToCSV($event, $user);
-        $this->logger->info('Exported FULL current data about participants by user with ID' . $user->id);
+        $this->logger->info('Exported FULL current data about participants', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_full');
     }
@@ -74,7 +74,7 @@ class ExportController extends AbstractController
         Event $event,
     ): Response {
         $csvRows = $this->participantStatisticsService->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
-        $this->logger->info('Exported participants food summary by user with ID: ' . $user->id);
+        $this->logger->info('Exported participants food summary', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
     }
@@ -96,7 +96,7 @@ class ExportController extends AbstractController
                 ParticipantRole::TechnicalTeamParticipant,
             ],
         )->aggregatedToCSV();
-        $this->logger->info('Exported patrols and troops food summary by user with ID: ' . $user->id);
+        $this->logger->info('Exported patrols and troops food summary', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_patrol_troop_food');
     }
@@ -186,7 +186,7 @@ class ExportController extends AbstractController
         }
 
         $participants = $this->participantRepository->getParticipantsForBadges($event, $selectedRoles);
-        $this->logger->info('Generated badges for event ' . $event->slug . ' by user with ID ' . $user->id);
+        $this->logger->info('Generated badges', ['eventSlug' => $event->slug, 'userId' => $user->id]);
 
         return $this->streamPdf($response, $this->pdfGenerator->generateBadges($event, $participants));
     }

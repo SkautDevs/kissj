@@ -7,7 +7,6 @@ namespace Tests\Unit\Payment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\Banks;
 use kissj\BankPayment\BankServiceProvider;
-use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\Mailer;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\ParticipantRepository;
@@ -21,7 +20,6 @@ use Mockery;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Sentry\State\Hub;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -55,9 +53,6 @@ class PaymentServiceTest extends TestCase
             ),
             $mailerMock,
             Mockery::mock(Logger::class),
-            new Collector(
-                Mockery::mock(Hub::class),
-            ),
             $metrics,
         );
 

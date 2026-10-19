@@ -36,12 +36,11 @@ readonly class FioBankPaymentService implements IBankPaymentService
         $freshPayments = $fioRead->lastDownload();
         $idLastDownload = $this->idLastDownload($freshPayments);
         if ($idLastDownload !== $lastMoveId) {
-            $this->logger->warning(sprintf(
-                'Event ID %d Fio breakpoint drifted: stored %d, bank %s, rewinding',
-                $event->id,
-                $lastMoveId,
-                $idLastDownload === null ? 'null' : (string)$idLastDownload,
-            ));
+            $this->logger->warning('Fio breakpoint drifted, rewinding', [
+                'eventId' => $event->id,
+                'storedLastMoveId' => $lastMoveId,
+                'bankLastMoveId' => $idLastDownload,
+            ]);
             $savedCount = $this->savePayments($event, $freshPayments, false);
             $this->assertRewindAccepted($fioRead->setLastId($lastMoveId));
 

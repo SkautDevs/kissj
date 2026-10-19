@@ -7,7 +7,6 @@ namespace kissj\Skautis;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Telemetry\Sentry\Collector;
 use kissj\Participant\Country;
 use kissj\Participant\Gender;
 use kissj\Participant\Participant;
@@ -37,7 +36,6 @@ class SkautisService
         private readonly UserRepository $userRepository,
         private readonly FlashMessagesInterface $flashMessages,
         private readonly LoggerInterface $logger,
-        private readonly Collector $sentryCollector,
     ) {
     }
 
@@ -54,7 +52,7 @@ class SkautisService
                     'ID' => $loginId,
                 ]);
             } catch (SkautisException $t) {
-                $this->logger->warning('Failed to refresh Skautis login: ' . $t->getMessage());
+                $this->logger->warning('Failed to refresh Skautis login', ['exception' => $t]);
             }
         }
     }
@@ -128,9 +126,8 @@ class SkautisService
                 $additionalDetails->country,
             );
         } catch (Throwable $t) {
-            $this->sentryCollector->collect($t);
-            $this->logger->error('Error while getting user details from skautis: ' . $t->getMessage(), [
-                'throwable' => $t,
+            $this->logger->error('Error while getting user details from skautis', [
+                'exception' => $t,
             ]);
 
             return null;
@@ -286,7 +283,8 @@ class SkautisService
             );
         } catch (Throwable $throwable) {
             $this->logger->warning(
-                'Failed to load additional Skautis person details: ' . $throwable->getMessage(),
+                'Failed to load additional Skautis person details',
+                ['exception' => $throwable],
             );
 
             return new SkautisPersonAdditionalDetails(Gender::Other, Country::Other);
@@ -297,7 +295,7 @@ class SkautisService
     {
         $gender = Gender::fromSkautisIdSex($idSex);
         if ($gender === Gender::Other && $idSex !== null && $idSex !== '') {
-            $this->logger->warning('Unrecognized Skautis ID_Sex value: ' . $idSex);
+            $this->logger->warning('Unrecognized Skautis ID_Sex value', ['idSex' => $idSex]);
         }
 
         return $gender;
@@ -307,7 +305,7 @@ class SkautisService
     {
         $country = Country::fromSkautisState($state);
         if ($country === Country::Other && $state !== null && $state !== '') {
-            $this->logger->warning('Unrecognized Skautis State value: ' . $state);
+            $this->logger->warning('Unrecognized Skautis State value', ['state' => $state]);
         }
 
         return $country;

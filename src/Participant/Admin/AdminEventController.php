@@ -157,7 +157,7 @@ class AdminEventController extends AbstractController
         $this->eventRepository->generateNewOrganizingTeamRegistrationToken($event);
 
         $this->flashMessages->success('flash.success.otTokenRegenerated');
-        $this->logger->info('OT registration token regenerated for event ' . $event->slug);
+        $this->logger->info('OT registration token regenerated', ['eventSlug' => $event->slug]);
 
         return $this->redirect($request, $response, 'admin-organizing-team');
     }
@@ -214,7 +214,7 @@ class AdminEventController extends AbstractController
         $this->eventRepository->generateNewTechnicalTeamRegistrationToken($event);
 
         $this->flashMessages->success('flash.success.ttlTokenRegenerated');
-        $this->logger->info('TTL registration token regenerated for event ' . $event->slug);
+        $this->logger->info('TTL registration token regenerated', ['eventSlug' => $event->slug]);
 
         return $this->redirect($request, $response, 'admin-technical-teams');
     }

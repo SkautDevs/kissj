@@ -24,10 +24,8 @@ class VendorApiKeyMiddleware extends AbstractApiKeyMiddleware
 
         if (count($matchingEvents) > 1) {
             $this->logger->error(
-                sprintf(
-                    'Vendor API key matched %d events - rejecting as ambiguous',
-                    count($matchingEvents),
-                ),
+                'Vendor API key matched multiple events, rejecting as ambiguous',
+                ['matchedEventCount' => count($matchingEvents)],
             );
 
             return null;

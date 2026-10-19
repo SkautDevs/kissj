@@ -25,7 +25,6 @@ use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
 use kissj\Payment\QrCodeService;
 use kissj\Telemetry\Metrics;
-use kissj\Telemetry\Sentry\Collector;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -36,7 +35,6 @@ use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Sentry\State\Hub;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -74,8 +72,6 @@ class UpdatePaymentsTest extends TestCase
             Mockery::mock(Logger::class),
             $metrics,
         );
-        $hub = Mockery::mock(Hub::class);
-        $hub->shouldIgnoreMissing();
         $userService = new UserService(
             Mockery::mock(LoginTokenRepository::class),
             Mockery::mock(ParticipantRepository::class),
@@ -95,16 +91,24 @@ class UpdatePaymentsTest extends TestCase
             $userService,
             $mailer,
             $loggerToUse,
-            new Collector($hub),
             $metrics,
         ])->makePartial();
     }
 
-    private function mockLoggerExpectingWarning(string $messagePattern): LoggerInterface&MockInterface
-    {
+    private function mockLoggerExpectingCurrencyMismatchWarning(
+        string $paymentCurrency,
+        string $bankCurrency,
+    ): LoggerInterface&MockInterface {
         $loggerMock = Mockery::mock(LoggerInterface::class);
         $loggerMock->shouldIgnoreMissing();
-        $loggerMock->shouldReceive('warning')->once()->with(Mockery::pattern($messagePattern));
+        $loggerMock->shouldReceive('warning')->once()->with(
+            'Payment matches variable symbol and price, but not currency, left for manual pairing',
+            [
+                'paymentId' => 1,
+                'paymentCurrency' => $paymentCurrency,
+                'bankCurrency' => $bankCurrency,
+            ],
+        );
         assert($loggerMock instanceof LoggerInterface);
 
         return $loggerMock;
@@ -330,7 +334,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*Kč.*EUR/u'));
+        $service = $this->service($this->mockLoggerExpectingCurrencyMismatchWarning('Kč', 'EUR'));
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -369,7 +373,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*Kc\$.*CZK/u'));
+        $service = $this->service($this->mockLoggerExpectingCurrencyMismatchWarning('Kc$', 'CZK'));
         $service->shouldReceive('confirmPayment')->never();
 
         $result = $service->updatePayments($event);
@@ -389,7 +393,7 @@ class UpdatePaymentsTest extends TestCase
         $this->paymentRepository->shouldReceive('getWaitingPaymentsKeydByVariableSymbols')
             ->andReturn(['1234567890' => $payment]);
 
-        $service = $this->service($this->mockLoggerExpectingWarning('/Payment ID 1\b.*EUR.*CZK/u'));
+        $service = $this->service($this->mockLoggerExpectingCurrencyMismatchWarning('EUR', 'CZK'));
         $service->shouldReceive('confirmPayment')->never();
 
         $service->updatePayments($event);

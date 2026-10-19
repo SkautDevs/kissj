@@ -8,7 +8,6 @@ use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\ParticipantRepository;
 use kissj\Skautis\SkautisFactory;
 use kissj\Skautis\SkautisService;
-use kissj\Telemetry\Sentry\Collector;
 use kissj\User\UserRegeneration;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -38,7 +37,6 @@ class SkautisServiceTest extends TestCase
             Mockery::mock(UserRepository::class),
             Mockery::mock(FlashMessagesInterface::class),
             $this->logger,
-            self::createStub(Collector::class),
         );
         $this->service->initSkautis('test-app-id');
     }

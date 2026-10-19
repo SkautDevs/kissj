@@ -14,7 +14,6 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\BankServiceProvider;
 use kissj\Event\Event;
-use kissj\Telemetry\Sentry\Collector;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -36,7 +35,6 @@ class PaymentService
         private readonly UserService $userService,
         private readonly Mailer $mailer,
         private readonly LoggerInterface $logger,
-        private readonly Collector $sentryCollector,
         private readonly Metrics $metrics,
     ) {
     }
@@ -117,7 +115,7 @@ class PaymentService
 
             $this->userService->setUserOpen($payment->participant->getUserButNotNull());
             $this->mailer->sendDuePaymentDenied($payment->participant);
-            $this->logger->info('Payment ID ' . $payment->id . ' was automatically denied because payment due');
+            $this->logger->info('Payment was automatically denied because payment due', ['paymentId' => $payment->id]);
             $deniedPaymentsCount++;
         }
 
@@ -208,8 +206,7 @@ class PaymentService
                     new PaymentResultMessage(PaymentMessageSeverity::Info, 'flash.info.noNewPayments'),
                 ]);
             } catch (ServiceUnavailable | QueueLimit $e) {
-                $this->sentryCollector->collect($e);
-                $this->logger->info('Event ID ' . $event->id . ' failed to fetch data from bank: ' . $e->getMessage());
+                $this->logger->warning('Failed to fetch data from bank', ['eventId' => $event->id, 'exception' => $e]);
                 $this->metrics->count(MetricName::PaymentsBankFetchFailed, 1);
 
                 return PaymentResult::withMessages([
@@ -236,17 +233,23 @@ class PaymentService
                     // match!
                     $this->confirmPayment($payment, PaymentSource::AutoBankMatch);
                     $this->metrics->count(MetricName::PaymentsMatched, 1);
-                    $this->logger->info('Payment ID ' . $payment->id
-                        . ' automatically set to status ' . $payment->status->value);
+                    $this->logger->info('Payment automatically set to new status', [
+                        'paymentId' => $payment->id,
+                        'status' => $payment->status->value,
+                    ]);
 
                     $bankPayment->status = BankPayment::STATUS_PAIRED;
                     $counterNewPaid++;
                 } else {
                     if ($payment->price === $bankPayment->price) {
-                        $this->logger->warning('Payment ID ' . $payment->id
-                            . ' matches variable symbol and price, but not currency (payment "'
-                            . $payment->currency . '", bank "' . ($bankPayment->currency ?? 'null')
-                            . '") - left for manual pairing');
+                        $this->logger->warning(
+                            'Payment matches variable symbol and price, but not currency, left for manual pairing',
+                            [
+                                'paymentId' => $payment->id,
+                                'paymentCurrency' => $payment->currency,
+                                'bankCurrency' => $bankPayment->currency,
+                            ],
+                        );
                     }
 
                     // matching VS, not matching price or currency

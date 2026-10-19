@@ -171,14 +171,7 @@ class Settings
 
         $env = EnvSettings::fromArray($_ENV, $envFilename);
 
-        $beforeSend = function (SentryEvent $event): ?SentryEvent {
-            // Check if error is from middleware exception capturer
-            // Exceptions are captured in the middleware as exception directly with \Sentry\captureException()
-            if ($event->getLogger() === "monolog.KISSJ"
-                && str_contains($event->getMessage() ?? '', 'Exception!')) {
-                return null;
-            }
-
+        $beforeSend = function (SentryEvent $event): SentryEvent {
             return UrlRedactor::scrub($event);
         };
 

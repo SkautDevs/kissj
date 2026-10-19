@@ -24,8 +24,11 @@ class LockedStatusOnlyMiddleware extends BaseMiddleware
 
         if (!$user instanceof User || !$user->status->isLocked()) {
             $this->logger->warning(
-                'User ' . ($user instanceof User ? $user->email : 'unknown')
-                . ' tried to access after-lock edit with status "' . ($user instanceof User ? $user->status->value : 'none') . '"'
+                'User tried to access after-lock edit without locked status',
+                [
+                    'email' => $user instanceof User ? $user->email : null,
+                    'status' => $user instanceof User ? $user->status->value : null,
+                ],
             );
 
             throw new RuntimeException('You can only edit details after lock when your registration is locked');
