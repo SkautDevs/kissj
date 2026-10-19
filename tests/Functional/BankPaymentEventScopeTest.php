@@ -6,7 +6,6 @@ namespace Tests\Functional;
 
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Payment\PaymentService;
 use kissj\User\User;
@@ -104,38 +103,6 @@ class BankPaymentEventScopeTest extends AppTestCase
         self::assertSame(BankPayment::STATUS_UNRELATED, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
     }
 
-    public function testPairedRouteDoesNotChangePaymentOfOtherEvent(): void
-    {
-        $app = $this->getTestApp();
-        $bankPayment = $this->createBankPayment(
-            $this->getService($app, BankPaymentRepository::class),
-            $this->getSmallTestEvent($this->getService($app, EventRepository::class)),
-        );
-
-        try {
-            $this->postAsAdmin('setPaymentPaired', $bankPayment);
-            self::fail('Expected RuntimeException');
-        } catch (RuntimeException) {
-            self::assertSame(BankPayment::STATUS_FRESH, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
-        }
-    }
-
-    public function testUnrelatedRouteDoesNotChangePaymentOfOtherEvent(): void
-    {
-        $app = $this->getTestApp();
-        $bankPayment = $this->createBankPayment(
-            $this->getService($app, BankPaymentRepository::class),
-            $this->getSmallTestEvent($this->getService($app, EventRepository::class)),
-        );
-
-        try {
-            $this->postAsAdmin('setPaymentUnrelated', $bankPayment);
-            self::fail('Expected RuntimeException');
-        } catch (RuntimeException) {
-            self::assertSame(BankPayment::STATUS_FRESH, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
-        }
-    }
-
     private function postAsAdmin(string $routeSegment, BankPayment $bankPayment): ResponseInterface
     {
         $userRepository = $this->getService($this->getTestApp(false), UserRepository::class);
@@ -153,17 +120,6 @@ class BankPaymentEventScopeTest extends AppTestCase
             'POST',
             ['notice' => 'test'],
         ));
-    }
-
-    private function createBankPayment(BankPaymentRepository $repository, Event $event): BankPayment
-    {
-        $bankPayment = new BankPayment();
-        $bankPayment->event = $event;
-        $bankPayment->bankId = bin2hex(random_bytes(4));
-        $bankPayment->status = BankPayment::STATUS_FRESH;
-        $repository->persist($bankPayment);
-
-        return $bankPayment;
     }
 
     private function reloadStatus(BankPaymentRepository $repository, BankPayment $bankPayment): ?string

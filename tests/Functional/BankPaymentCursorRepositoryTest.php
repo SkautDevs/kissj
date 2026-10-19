@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
-use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use Tests\AppTestCase;
 
@@ -39,17 +37,5 @@ class BankPaymentCursorRepositoryTest extends AppTestCase
 
         self::assertSame(['101'], $bankPaymentRepository->findExistingBankIds($event, ['101', '102', '103']));
         self::assertSame([], $bankPaymentRepository->findExistingBankIds($event, []));
-    }
-
-    private function createBankPayment(
-        BankPaymentRepository $bankPaymentRepository,
-        Event $event,
-        string $bankId,
-    ): void {
-        $bankPayment = new BankPayment();
-        $bankPayment->event = $event;
-        $bankPayment->bankId = $bankId;
-        $bankPayment->status = BankPayment::STATUS_FRESH;
-        $bankPaymentRepository->persist($bankPayment);
     }
 }
