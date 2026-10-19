@@ -225,10 +225,12 @@ class Route
                                 ->setName('tp-show');
 
                             $app->get('/showUntie', TroopController::class . '::showUntieParticipant')
-                                ->setName('tp-showUntie');
+                                ->setName('tp-showUntie')
+                                ->add(OpenStatusOnlyMiddleware::class);
 
                             $app->post('/untie', TroopController::class . '::untieParticipant')
-                                ->setName('tp-untie');
+                                ->setName('tp-untie')
+                                ->add(OpenStatusOnlyMiddleware::class);
                         })->add(CheckLeaderParticipants::class);
                     });
 

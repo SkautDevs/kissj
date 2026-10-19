@@ -23,6 +23,11 @@ enum UserStatus: string
         return in_array($this, [self::Approved, self::Paid], true) === false;
     }
 
+    public function canTieToTroop(): bool
+    {
+        return in_array($this, [self::Open, self::Closed], true);
+    }
+
     public function isLocked(): bool
     {
         return in_array($this, [self::Closed, self::Approved, self::Paid], true);

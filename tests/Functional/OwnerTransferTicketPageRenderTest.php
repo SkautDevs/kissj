@@ -7,7 +7,6 @@ namespace Tests\Functional;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\Participant;
@@ -397,15 +396,4 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         return $user;
     }
 
-    /**
-     * @param App<ContainerInterface> $app
-     * @return list<string>
-     */
-    private function flashed(App $app): array
-    {
-        return array_column(
-            $this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(),
-            'message',
-        );
-    }
 }
