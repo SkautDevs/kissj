@@ -7,6 +7,8 @@ namespace Tests;
 use ArrayObject;
 use kissj\Application\ApplicationGetter;
 use kissj\Application\DateTimeUtils;
+use kissj\BankPayment\BankPayment;
+use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Mailer\MailerSettings;
@@ -710,16 +712,19 @@ class AppTestCase extends TestCase
         ?string $paidAt = null,
         string $currency = 'Kč',
         string $scarf = Participant::SCARF_NO,
+        ?Participant $participant = null,
     ): Payment {
         $userService = $this->getService($app, UserService::class);
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $paymentRepository = $this->getService($app, PaymentRepository::class);
 
-        $email = 'finances-' . bin2hex(random_bytes(4)) . '@example.com';
-        $user = $userService->registerEmailUser($email, $event);
-        $participant = $userService->createParticipantSetRole($user, 'ist');
-        $participant->scarf = $scarf;
-        $participantRepository->persist($participant);
+        if ($participant === null) {
+            $email = 'finances-' . bin2hex(random_bytes(4)) . '@example.com';
+            $user = $userService->registerEmailUser($email, $event);
+            $participant = $userService->createParticipantSetRole($user, 'ist');
+            $participant->scarf = $scarf;
+            $participantRepository->persist($participant);
+        }
 
         $payment = new Payment();
         $payment->participant = $participant;
@@ -740,6 +745,20 @@ class AppTestCase extends TestCase
         $paymentRepository->persist($payment);
 
         return $payment;
+    }
+
+    protected function createBankPayment(
+        BankPaymentRepository $repository,
+        Event $event,
+        ?string $bankId = null,
+    ): BankPayment {
+        $bankPayment = new BankPayment();
+        $bankPayment->event = $event;
+        $bankPayment->bankId = $bankId ?? bin2hex(random_bytes(4));
+        $bankPayment->status = BankPayment::STATUS_FRESH;
+        $repository->persist($bankPayment);
+
+        return $bankPayment;
     }
 
     /**

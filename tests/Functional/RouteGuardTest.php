@@ -13,7 +13,7 @@ class RouteGuardTest extends AppTestCase
 {
     private const string EVENT_SLUG = 'test-event-slug';
 
-    private const array PUBLIC_EXACT_PATTERNS = [
+    public const array PUBLIC_EXACT_PATTERNS = [
         '/',
         '/v2',
         '/v2/kissj/events',
