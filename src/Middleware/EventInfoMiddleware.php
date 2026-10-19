@@ -57,7 +57,8 @@ class EventInfoMiddleware extends BaseMiddleware
     {
         if ($event->skautisAppId === '') {
             $this->logger->error(
-                sprintf('Event "%s" has Skautis login enabled, but skautisAppId in DB is empty', $event->slug),
+                'Event has Skautis login enabled, but skautisAppId in DB is empty',
+                ['eventSlug' => $event->slug],
             );
 
             return;

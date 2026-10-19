@@ -61,7 +61,7 @@ class AdminJsonController extends AbstractController
             }
         }
 
-        $this->logger->info('Payment ID ' . $paymentId . ' manually confirmed as paid');
+        $this->logger->info('Payment manually confirmed as paid', ['paymentId' => $paymentId]);
 
         return $this->successfulJsonResponse($response);
     }

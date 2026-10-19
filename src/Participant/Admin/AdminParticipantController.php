@@ -133,8 +133,11 @@ class AdminParticipantController extends AbstractController
         $this->participantService->denyRegistration($participant, $reason);
 
         $this->flashMessages->info('flash.info.denied');
-        $this->logger->info('Denied registration for participant with ID '
-            . $participantId . ' and role ' . ($participant->role->value ?? 'missing') . ' with reason: ' . $reason);
+        $this->logger->info('Denied registration for participant', [
+            'participantId' => $participantId,
+            'role' => $participant->role?->value,
+            'reason' => $reason,
+        ]);
         $this->metrics->count(MetricName::RegistrationsDenied, 1, ['role' => $participant->role->value ?? 'unknown role']);
 
         return $this->redirect($request, $response, 'admin-show-approving');
@@ -177,7 +180,10 @@ class AdminParticipantController extends AbstractController
 
         $this->participantRepository->persist($participant);
         $this->flashMessages->success('flash.success.detailsSaved');
-        $this->logger->info('Participant with ID ' . $participantId . ' details changed by user with ID ' . $user->id);
+        $this->logger->info('Participant details changed by user', [
+            'participantId' => $participantId,
+            'userId' => $user->id,
+        ]);
         $this->metrics->count(MetricName::ParticipantsAdminEdited, 1);
 
         return $this->redirect(

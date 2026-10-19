@@ -43,8 +43,10 @@ class TechnicalTeamController extends AbstractController
 
         if ($closeResult->isValid) {
             $this->flashMessages->success('flash.success.locked');
-            $this->logger->info('Locked registration for Technical Team Leader with ID '
-                . $technicalTeamLeader->id . ', user ID ' . $technicalTeamLeader->getUserButNotNull()->id);
+            $this->logger->info('Locked registration for Technical Team Leader', [
+                'participantId' => $technicalTeamLeader->id,
+                'userId' => $technicalTeamLeader->getUserButNotNull()->id,
+            ]);
         } else {
             $this->flashRegistrationCloseResult($closeResult);
         }
@@ -172,8 +174,10 @@ class TechnicalTeamController extends AbstractController
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();
         $this->participantService->updateEditableAfterLockFields($participant, $parsed, $editableItems);
-        $this->logger->info('Changed details after lock for technical team participant ID ' . $participant->id
-            . ', user ID ' . $user->id);
+        $this->logger->info('Changed details after lock for technical team participant', [
+            'participantId' => $participant->id,
+            'userId' => $user->id,
+        ]);
         $this->flashMessages->success('flash.success.detailsSaved');
 
         return $this->redirect($request, $response, 'dashboard');

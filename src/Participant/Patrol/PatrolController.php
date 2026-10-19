@@ -51,8 +51,10 @@ class PatrolController extends AbstractController
 
         if ($closeResult->isValid) {
             $this->flashMessages->success('flash.success.locked');
-            $this->logger->info('Locked registration for Patrol Leader with ID '
-                . $patrolLeader->id . ', user ID ' . $patrolLeader->getUserButNotNull()->id);
+            $this->logger->info('Locked registration for Patrol Leader', [
+                'participantId' => $patrolLeader->id,
+                'userId' => $patrolLeader->getUserButNotNull()->id,
+            ]);
         } else {
             $this->flashRegistrationCloseResult($closeResult);
         }
@@ -114,8 +116,7 @@ class PatrolController extends AbstractController
             $unitIds = $this->skautisService->getLeaderUnitIds($personId);
             $members = $this->skautisService->getUnitMembers($unitIds);
         } catch (Throwable $e) {
-            $this->sentryCollector->collect($e);
-            $this->logger->error('Skautis API error while fetching unit members: ' . $e->getMessage());
+            $this->logger->error('Skautis API error while fetching unit members', ['exception' => $e]);
             $this->flashMessages->error('flash.error.skautisApiError');
 
             return $this->redirect($request, $response, 'dashboard');
@@ -159,8 +160,7 @@ class PatrolController extends AbstractController
             $unitIds = $this->skautisService->getLeaderUnitIds($personId);
             $members = $this->skautisService->getUnitMembers($unitIds);
         } catch (Throwable $e) {
-            $this->sentryCollector->collect($e);
-            $this->logger->error('Skautis API error while fetching unit members: ' . $e->getMessage());
+            $this->logger->error('Skautis API error while fetching unit members', ['exception' => $e]);
             $this->flashMessages->error('flash.error.skautisApiError');
 
             return $this->redirect($request, $response, 'dashboard');

@@ -302,12 +302,11 @@ readonly class Mailer
         $this->mailer->send($email);
         $this->metrics->count(MetricName::EmailsSent, 1, ['template' => $templateName]);
 
-        $this->logger->info(sprintf(
-            'Sent email to %s with subject %s from template name %s',
-            $recipientEmail,
-            $subject,
-            $templateName,
-        ));
+        $this->logger->info('Sent email', [
+            'recipientEmail' => $recipientEmail,
+            'subject' => $subject,
+            'templateName' => $templateName,
+        ]);
     }
 
     private function getEventEmailCss(Event $event): string
@@ -321,10 +320,9 @@ readonly class Mailer
     {
         $path = __DIR__ . '/../../public/' . $filename;
         if (!is_file($path)) {
-            $this->logger->error(sprintf(
-                'Event email stylesheet %s is missing, sending mail without event styles',
-                $filename,
-            ));
+            $this->logger->error('Event email stylesheet is missing, sending mail without event styles', [
+                'filename' => $filename,
+            ]);
 
             return '';
         }
@@ -332,10 +330,9 @@ readonly class Mailer
         $css = file_get_contents($path);
         // only reachable outside HTTP requests - inside them, it would be a 500
         if ($css === false) {
-            $this->logger->error(sprintf(
-                'Event email stylesheet %s is unreadable, sending mail without event styles',
-                $filename,
-            ));
+            $this->logger->error('Event email stylesheet is unreadable, sending mail without event styles', [
+                'filename' => $filename,
+            ]);
 
             return '';
         }
@@ -371,11 +368,10 @@ readonly class Mailer
 
         $gender = Gender::tryFrom($participant->gender);
         if ($gender === null) {
-            $this->logger->warning(sprintf(
-                'Participant %d has invalid gender value "%s", falling back to gender-neutral email text',
-                $participant->id,
-                $participant->gender,
-            ));
+            $this->logger->warning('Participant has invalid gender value, falling back to gender-neutral email text', [
+                'participantId' => $participant->id,
+                'gender' => $participant->gender,
+            ]);
             return '';
         }
 

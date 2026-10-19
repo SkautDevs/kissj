@@ -45,6 +45,7 @@ rules:
 	- kissj\Phpstan\DatabaseAccessOnlyInRepositoryRule
 	- kissj\Phpstan\NoSuperglobalsRule
 	- kissj\Phpstan\NoEnumValueInTestsRule
+	- kissj\Phpstan\StaticLogMessageRule
 
 includes:
 	- phpstan-baseline.neon

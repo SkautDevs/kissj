@@ -126,7 +126,11 @@ class FioBankPaymentServiceTest extends AppTestCase
             $this->transactionList(105, 107, [[106, 500.0]]),
         );
         $this->fioRead->shouldReceive('setLastId')->with(100)->once()->ordered()->andReturn($this->response(200));
-        $this->logger->shouldReceive('warning')->once();
+        $this->logger->shouldReceive('warning')->once()->with('Fio breakpoint drifted, rewinding', [
+            'eventId' => $this->event->id,
+            'storedLastMoveId' => 100,
+            'bankLastMoveId' => 105,
+        ]);
 
         self::assertSame(1, $this->service->getAndSafeFreshPaymentsFromBank($this->event));
 
@@ -141,7 +145,11 @@ class FioBankPaymentServiceTest extends AppTestCase
             $this->transactionList(105, 107, [[106, 500.0]]),
         );
         $this->fioRead->shouldReceive('setLastId')->with(100)->once()->ordered()->andThrow(new ServiceUnavailable());
-        $this->logger->shouldReceive('warning')->once();
+        $this->logger->shouldReceive('warning')->once()->with('Fio breakpoint drifted, rewinding', [
+            'eventId' => $this->event->id,
+            'storedLastMoveId' => 100,
+            'bankLastMoveId' => 105,
+        ]);
 
         try {
             $this->service->getAndSafeFreshPaymentsFromBank($this->event);
@@ -160,7 +168,11 @@ class FioBankPaymentServiceTest extends AppTestCase
             $this->transactionList(105, 107, [[106, 500.0]]),
         );
         $this->fioRead->shouldReceive('setLastId')->with(100)->once()->ordered()->andReturn($this->response(404));
-        $this->logger->shouldReceive('warning')->once();
+        $this->logger->shouldReceive('warning')->once()->with('Fio breakpoint drifted, rewinding', [
+            'eventId' => $this->event->id,
+            'storedLastMoveId' => 100,
+            'bankLastMoveId' => 105,
+        ]);
 
         try {
             $this->service->getAndSafeFreshPaymentsFromBank($this->event);
