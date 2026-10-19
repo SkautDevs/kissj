@@ -11,6 +11,7 @@ use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -32,6 +33,7 @@ use Monolog\Logger;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Slim\App;
 use Slim\Interfaces\RouteInterface;
@@ -40,11 +42,13 @@ use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
 use Slim\Psr7\Request;
 use Slim\Psr7\Uri;
+use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Event\SentMessageEvent;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
 class AppTestCase extends TestCase
@@ -856,5 +860,71 @@ class AppTestCase extends TestCase
         $userRepository->persist($user);
 
         return $user;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createUser(App $app, Event $event, UserStatus $status): User
+    {
+        $user = new User();
+        $user->event = $event;
+        $user->role = UserRole::Participant;
+        $user->email = 'status-user-' . uniqid('', true) . '@example.com';
+        $user->loginType = UserLoginType::Email;
+        $user->status = $status;
+        $this->getService($app, UserRepository::class)->persist($user);
+
+        return $user;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createRoutedUserRequest(App $app, Event $event, ?User $user): ServerRequestInterface
+    {
+        $path = '/v2/event/' . $event->slug . '/participant/dashboard';
+
+        $request = $this->createRequest($path)
+            ->withAttribute(RouteContext::ROUTE_PARSER, $app->getRouteCollector()->getRouteParser())
+            ->withAttribute(
+                RouteContext::ROUTING_RESULTS,
+                $app->getRouteResolver()->computeRoutingResults($path, 'GET'),
+            )
+            ->withAttribute('event', $event);
+
+        if ($user !== null) {
+            $request = $request->withAttribute('user', $user);
+        }
+
+        return $request;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function urlFor(App $app, string $routeName, Event $event): string
+    {
+        return $app->getRouteCollector()->getRouteParser()->urlFor($routeName, ['eventSlug' => $event->slug]);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function translate(App $app, string $key): string
+    {
+        return $this->getService($app, TranslatorInterface::class)->trans($key);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     * @return list<string>
+     */
+    protected function flashed(App $app): array
+    {
+        return array_column(
+            $this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(),
+            'message',
+        );
     }
 }

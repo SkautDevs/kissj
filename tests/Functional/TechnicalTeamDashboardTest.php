@@ -21,7 +21,6 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Monolog\Level;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
 
@@ -279,16 +278,18 @@ class TechnicalTeamDashboardTest extends AppTestCase
         $member = $this->addMember($leader, 'Original');
         $_SESSION['user'] = ['id' => $user->id];
 
-        try {
-            $this->getTestApp(false)->handle($this->createRequest(
-                self::BASE_URL . '/technical-team/participant/' . $member->id . '/changeDetailsAfterLock',
-                'POST',
-                ['arrivalDate' => '2027-07-02', 'departureDate' => '2027-07-04', 'firstName' => 'Changed'],
-            ));
-            self::fail('LockedStatusOnlyMiddleware should reject an open leader');
-        } catch (RuntimeException $exception) {
-            self::assertStringContainsString('registration is locked', $exception->getMessage());
-        }
+        $response = $this->getTestApp(false)->handle($this->createRequest(
+            self::BASE_URL . '/technical-team/participant/' . $member->id . '/changeDetailsAfterLock',
+            'POST',
+            ['arrivalDate' => '2027-07-02', 'departureDate' => '2027-07-04', 'firstName' => 'Changed'],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringEndsWith(self::BASE_URL . '/participant/dashboard', $response->getHeaderLine('Location'));
+        self::assertContains(
+            $this->getService($app, TranslatorInterface::class)->trans('flash.error.lockedStatusRequired'),
+            array_column($this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(), 'message'),
+        );
 
         $reloaded = $this->getMembers($leader)[0];
         self::assertNull($reloaded->arrivalDate);
@@ -340,16 +341,23 @@ class TechnicalTeamDashboardTest extends AppTestCase
         $_SESSION['user'] = ['id' => $user->id];
 
         foreach ([['/delete', []], ['/changeDetails', ['firstName' => 'Changed']]] as [$path, $body]) {
-            try {
-                $this->getTestApp(false)->handle($this->createRequest(
-                    self::BASE_URL . '/technical-team/participant/' . $member->id . $path,
-                    'POST',
-                    $body,
-                ));
-                self::fail('closed leader reached ' . $path);
-            } catch (RuntimeException $e) {
-                self::assertStringContainsString('not in editing status', $e->getMessage());
-            }
+            $response = $this->getTestApp(false)->handle($this->createRequest(
+                self::BASE_URL . '/technical-team/participant/' . $member->id . $path,
+                'POST',
+                $body,
+            ));
+
+            self::assertSame(302, $response->getStatusCode(), $path);
+            self::assertStringEndsWith(
+                self::BASE_URL . '/participant/dashboard',
+                $response->getHeaderLine('Location'),
+                $path,
+            );
+            self::assertContains(
+                $this->translate($app, 'flash.error.openStatusRequired'),
+                $this->flashed($app),
+                $path,
+            );
         }
 
         $members = $this->getMembers($leader);

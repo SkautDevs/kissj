@@ -58,6 +58,12 @@ class TroopController extends AbstractController
         User $user,
         Event $event,
     ): Response {
+        if ($user->status->canTieToTroop() === false) {
+            $this->flashMessages->warning('flash.warning.tpCannotTieInStatus');
+
+            return $this->redirect($request, $response, 'getDashboard');
+        }
+
         $troopParticipant = $this->troopParticipantRepository->getFromUser($user);
         if ($troopParticipant->troopLeader !== null) {
             $this->flashMessages->warning('flash.warning.alreadyTied');

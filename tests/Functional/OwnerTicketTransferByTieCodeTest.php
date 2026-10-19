@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\Event;
-use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Middleware\TicketTransferCsrfMiddleware;
 use kissj\Participant\ParticipantController;
 use kissj\Participant\ParticipantRepository;
@@ -319,18 +318,6 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
         return $this->getService($app, ParticipantRepository::class)
             ->getParticipantFromUser($user)
             ->tieCode;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     * @return list<string>
-     */
-    private function flashed(App $app): array
-    {
-        return array_column(
-            $this->getService($app, FlashMessagesBySession::class)->dumpMessagesIntoArray(),
-            'message',
-        );
     }
 
     /**
