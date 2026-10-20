@@ -22,8 +22,8 @@ class EventTypeObrok extends EventType
     public function getPrice(Participant $participant): int
     {
         return match (true) {
-            $participant instanceof Ist => 500,
-            $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 1600,
+            $participant instanceof Ist => 1000,
+            $participant instanceof TroopLeader => (count($participant->troopParticipants) + 1) * 2000,
             default => parent::getPrice($participant),
         };
     }
