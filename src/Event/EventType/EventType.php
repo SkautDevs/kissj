@@ -190,6 +190,26 @@ abstract class EventType
         return null;
     }
 
+    public function getFaviconNameWithoutLeadingSlash(): string
+    {
+        return 'favicon-16x16.png';
+    }
+
+    public function getAppleTouchIconNameWithoutLeadingSlash(): ?string
+    {
+        return null;
+    }
+
+    public function getThemeColorLight(): string
+    {
+        return '#e6ebed';
+    }
+
+    public function getThemeColorDark(): string
+    {
+        return '#212121';
+    }
+
     public function getCelebrationTemplate(): ?string
     {
         return null;

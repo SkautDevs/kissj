@@ -50,7 +50,24 @@ class ObrokChangeDetailsRenderTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string) $response->getBody();
-        self::assertStringContainsString(' - <span class="event-name">' . htmlspecialchars($event->readableName) . '</span></h1>', $body);
+        self::assertStringContainsString(
+            '<h1 class="text-center">Registrace <span class="event-name">'
+                . htmlspecialchars($event->readableName) . '</span></h1>',
+            $body,
+        );
+        self::assertStringContainsString('<link rel="icon" href="/obrok27/favicon-32.png" type="image/png">', $body);
+        self::assertStringContainsString(
+            '<link rel="apple-touch-icon" href="/obrok27/apple-touch-icon-180.png">',
+            $body,
+        );
+        self::assertStringContainsString(
+            '<meta name="theme-color" content="#F1F1F4" media="(prefers-color-scheme: light)">',
+            $body,
+        );
+        self::assertStringContainsString(
+            '<meta name="theme-color" content="#15133F" media="(prefers-color-scheme: dark)">',
+            $body,
+        );
         self::assertStringContainsString('<div class="help-text">', $body);
         self::assertStringNotContainsString('<div>PDF nebo obrázek, max 10 MB', $body);
     }

@@ -173,6 +173,8 @@ class EventTypeConsistencyTest extends AppTestCase
             $eventType->getScriptNameWithoutLeadingSlash(),
             $eventType->getBadgeStylesheetNameWithoutLeadingSlash(),
             $eventType->getEmailStylesheetNameWithoutLeadingSlash(),
+            $eventType->getFaviconNameWithoutLeadingSlash(),
+            $eventType->getAppleTouchIconNameWithoutLeadingSlash(),
         ];
         foreach (array_filter($publicFiles, static fn (?string $path): bool => $path !== null) as $path) {
             self::assertTrue(is_file(self::PUBLIC_DIR . $path), $eventTypeClass . ' references missing public/' . $path);

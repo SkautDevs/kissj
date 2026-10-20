@@ -98,6 +98,18 @@ class EventTypeNavigamus extends EventType
     }
 
     #[\Override]
+    public function getThemeColorLight(): string
+    {
+        return '#f0f0f0';
+    }
+
+    #[\Override]
+    public function getThemeColorDark(): string
+    {
+        return '#1b0e44';
+    }
+
+    #[\Override]
     public function getEmailStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/emailNavigamus27.css';
