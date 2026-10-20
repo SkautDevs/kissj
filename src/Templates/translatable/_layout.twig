@@ -11,13 +11,17 @@
         style-src-elem 'self' https://fonts.googleapis.com/;
         style-src-attr 'unsafe-inline';
     ">
-    <meta name="theme-color" content="#255C9E" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0b1426" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="{{ event.eventType.getThemeColorLight }}" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="{{ event.eventType.getThemeColorDark }}" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
 
-    <link rel="shortcut icon" href="/favicon-16x16.png" type="image/x-icon">
+    <link rel="icon" href="{{ base_path() }}/{{ event.eventType.getFaviconNameWithoutLeadingSlash }}" type="image/png">
+    {% set appleTouchIcon = event.eventType.getAppleTouchIconNameWithoutLeadingSlash %}
+    {% if appleTouchIcon is not null %}
+        <link rel="apple-touch-icon" href="{{ base_path() }}/{{ appleTouchIcon }}">
+    {% endif %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ base_path() }}/styles.css">
     {% if event.eventType.getStylesheetNameWithoutLeadingSlash is not null %}
@@ -26,7 +30,7 @@
 </head>
 
 <body class="wrapper">
-<h1 class="text-center">{{ '_layout.title' | trans }} - <span class="event-name">{{ event.readableName }}</span></h1>
+<h1 class="text-center">{{ '_layout.title' | trans }} <span class="event-name">{{ event.readableName }}</span></h1>
 <div class="user text-right">
     {% for localeSlug, localeText in event.eventType.getLanguages() %}
         <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}

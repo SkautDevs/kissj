@@ -117,6 +117,12 @@ class EventTypeKorbo extends EventType
     }
 
     #[\Override]
+    public function getThemeColorLight(): string
+    {
+        return '#ede9e6';
+    }
+
+    #[\Override]
     public function getEmailStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/emailKorbo.css';

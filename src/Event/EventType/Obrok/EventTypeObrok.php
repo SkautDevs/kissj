@@ -137,6 +137,30 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
+    public function getFaviconNameWithoutLeadingSlash(): string
+    {
+        return 'obrok27/favicon-32.png';
+    }
+
+    #[\Override]
+    public function getAppleTouchIconNameWithoutLeadingSlash(): string
+    {
+        return 'obrok27/apple-touch-icon-180.png';
+    }
+
+    #[\Override]
+    public function getThemeColorLight(): string
+    {
+        return '#F1F1F4';
+    }
+
+    #[\Override]
+    public function getThemeColorDark(): string
+    {
+        return '#15133F';
+    }
+
+    #[\Override]
     public function getBadgeStylesheetNameWithoutLeadingSlash(): string
     {
         return 'eventSpecificCss/badgeObrok27.css';

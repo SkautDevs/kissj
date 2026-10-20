@@ -26,4 +26,13 @@ class EventTypeDefaultTest extends TestCase
     {
         self::assertTrue((new EventTypeDefault())->enforceActiveSkautisMembership());
     }
+
+    public function testDefaultUsesGenericFaviconAndThemeColors(): void
+    {
+        $eventType = new EventTypeDefault();
+        self::assertSame('favicon-16x16.png', $eventType->getFaviconNameWithoutLeadingSlash());
+        self::assertNull($eventType->getAppleTouchIconNameWithoutLeadingSlash());
+        self::assertSame('#255C9E', $eventType->getThemeColorLight());
+        self::assertSame('#0b1426', $eventType->getThemeColorDark());
+    }
 }

@@ -128,6 +128,18 @@ class EventTypeJj extends EventType
         return 'eventSpecificCss/stylesJj25.css';
     }
 
+    #[\Override]
+    public function getThemeColorLight(): string
+    {
+        return '#e4e1d5';
+    }
+
+    #[\Override]
+    public function getThemeColorDark(): string
+    {
+        return '#e4e1d5';
+    }
+
     /**
      * @inheritDoc
      */

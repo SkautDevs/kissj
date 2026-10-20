@@ -74,15 +74,6 @@ class BaseThemeTest extends TestCase
         self::assertDoesNotMatchRegularExpression('/\.alert \{[^}]*box-shadow/', $css);
     }
 
-    public function testMobileBrowserBarUsesMainBlueInLightAndPageNavyInDark(): void
-    {
-        $layout = file_get_contents(__DIR__ . '/../../../src/Templates/translatable/_layout.twig');
-        self::assertIsString($layout);
-
-        self::assertStringContainsString('content="#255C9E" media="(prefers-color-scheme: light)"', $layout);
-        self::assertStringContainsString('content="#0b1426" media="(prefers-color-scheme: dark)"', $layout);
-    }
-
     public function testMailLayoutUsesTheSameSkautTokens(): void
     {
         $mail = file_get_contents(__DIR__ . '/../../../src/Templates/translatable/emails/_mail-layout.twig');
