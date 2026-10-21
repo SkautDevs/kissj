@@ -26,7 +26,6 @@ use kissj\User\User;
 use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use LeanMapper\Fluent;
-use LogicException;
 use RuntimeException;
 
 /**
@@ -573,29 +572,6 @@ class ParticipantRepository extends Repository
     public function findOneByEntryCode(string $entryCode): ?Participant
     {
         return $this->findOneBy(['entry_code' => $entryCode]);
-    }
-
-    public function isTieCodeInUse(string $tieCode): bool
-    {
-        // no hydration - a colliding row with an unknown role must not blow up the mapper
-        return $this->isExisting(['tie_code' => $tieCode]);
-    }
-
-    // tie codes route payments on transfer, so a collision must never persist to the database
-    public function ensureUniqueTieCode(Participant $participant): void
-    {
-        if (!$participant->isDetached()) {
-            throw new LogicException('Tie code pre-check must run before the first persist');
-        }
-
-        $attempts = 0;
-        while ($this->isTieCodeInUse($participant->tieCode)) {
-            if (++$attempts >= 10) {
-                throw new LogicException('Failed to generate a unique tie code after 10 attempts');
-            }
-
-            $participant->regenerateTieCode();
-        }
     }
 
     public function findOneByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant

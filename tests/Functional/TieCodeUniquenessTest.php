@@ -8,7 +8,6 @@ use Dibi\UniqueConstraintViolationException;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use LeanMapper\Connection;
-use LogicException;
 use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
 
@@ -29,18 +28,6 @@ class TieCodeUniquenessTest extends AppTestCase
 
         $this->expectException(UniqueConstraintViolationException::class);
         $participantRepository->persist($second);
-    }
-
-    public function testEnsureUniqueTieCodeRejectsPersistedParticipant(): void
-    {
-        $app = $this->getTestApp();
-        $participantRepository = $this->getService($app, ParticipantRepository::class);
-
-        $ist = $this->createOpenIst($app->getContainer(), 'Cyd', 'Third' . bin2hex(random_bytes(4)));
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Tie code pre-check must run before the first persist');
-        $participantRepository->ensureUniqueTieCode($ist);
     }
 
     public function testMigrationRepairsLegacyAndDuplicateCodesKeepingTroopLeaders(): void

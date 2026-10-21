@@ -122,7 +122,7 @@ class PatrolAddParticipantTest extends AppTestCase
         self::assertNull($newParticipant->scarf);
     }
 
-    public function testAddParticipantEnsuresUniqueTieCodeBeforePersist(): void
+    public function testAddParticipantPersistsParticipantBeforePatrolParticipant(): void
     {
         $app = $this->getTestApp();
         [$patrolLeader, $leaderUser] = $this->createPatrolLeader($app->getContainer(), 'pl-tie-code-test@example.com');
@@ -139,7 +139,6 @@ class PatrolAddParticipantTest extends AppTestCase
         // globally() makes ordered() span both mocks - plain ordered() only orders one mock's own calls
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $participantRepositoryMock = Mockery::mock($participantRepository)->makePartial();
-        $participantRepositoryMock->shouldReceive('ensureUniqueTieCode')->once()->globally()->ordered()->passthru();
         // the row is really INSERTed here, inside ParticipantService::addParamsIntoParticipant() - passthru()
         // would run the method on the uninitialised mock, so delegate to the proxied repository instead
         $participantRepositoryMock->shouldReceive('persist')
@@ -176,7 +175,7 @@ class PatrolAddParticipantTest extends AppTestCase
     }
 
     // a unit test cannot cover the factory: LeanMapper refuses a detached PatrolLeader on the relationship
-    public function testCreatePatrolParticipantEnsuresUniqueTieCodeWithoutPersisting(): void
+    public function testCreatePatrolParticipantDoesNotPersist(): void
     {
         $app = $this->getTestApp();
         [$patrolLeader] = $this->createPatrolLeader($app->getContainer(), 'pl-factory-test@example.com');
@@ -186,12 +185,9 @@ class PatrolAddParticipantTest extends AppTestCase
         self::assertTrue($patrolParticipant->isDetached());
         self::assertSame($patrolLeader->id, $patrolParticipant->patrolLeader->id);
         self::assertMatchesRegularExpression(self::TIE_CODE_PATTERN, $patrolParticipant->tieCode);
-        self::assertFalse(
-            $this->getService($app, ParticipantRepository::class)->isTieCodeInUse($patrolParticipant->tieCode),
-        );
     }
 
-    public function testAddPatrolParticipantFromSkautisEnsuresUniqueTieCodeBeforePersist(): void
+    public function testAddPatrolParticipantFromSkautisPersistsOnce(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -200,10 +196,6 @@ class PatrolAddParticipantTest extends AppTestCase
         // no HTTP request here, so the service is driven on the same container that created the leader
         $patrolLeader = $this->createPatrolLeader($container, 'pl-skautis-tie-code-test@example.com')[0];
 
-        $participantRepositoryMock = Mockery::mock($this->getService($app, ParticipantRepository::class))
-            ->makePartial();
-        $participantRepositoryMock->shouldReceive('ensureUniqueTieCode')->once()->globally()->ordered();
-
         // Mockery::capture() fills this by reference, which PHPStan cannot see
         /** @var PatrolParticipant|null $persisted */
         $persisted = null;
@@ -211,12 +203,9 @@ class PatrolAddParticipantTest extends AppTestCase
             ->makePartial();
         $patrolParticipantRepositoryMock->shouldReceive('persist')
             ->once()
-            ->globally()
-            ->ordered()
             ->with(Mockery::capture($persisted));
 
         // PHP-DI caches autowired instances, so swap the repositories before PatrolService is first resolved
-        $container->set(ParticipantRepository::class, $participantRepositoryMock);
         $container->set(PatrolParticipantRepository::class, $patrolParticipantRepositoryMock);
 
         $patrolService = $this->getService($app, PatrolService::class);
