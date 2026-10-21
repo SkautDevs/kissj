@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream9
+FROM quay.io/centos/centos:stream10
 LABEL maintainers="Kissj devs <https://github.com/SkautDevs>"
 ARG GIT_HASH
 ENV GIT_HASH=${GIT_HASH}
@@ -7,12 +7,12 @@ LABEL GIT_HASH=${GIT_HASH}
 WORKDIR /var/www/html
 
 #enable needed epel & remi repos
-RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm https://rpms.remirepo.net/enterprise/remi-release-10.rpm -y
 RUN /usr/bin/crb enable
-#enable php83 module and install php
-RUN dnf module enable php:remi-8.3 -y
+#enable php85 module and install php
+RUN dnf module enable php:remi-8.5 -y
 RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache php-pecl-excimer unzip vim git -y \
- && dnf clean all
+ && dnf update -y && dnf clean all
 
 #copy app
 COPY ./composer.json /var/www/html/composer.json
@@ -30,12 +30,12 @@ COPY ./deploy/container_images/php/10-opcache.ini /etc/php.d/10-opcache.ini
 #add user
 RUN groupadd -g 1001 www-data
 RUN useradd -u 1001 -g 1001 www-data -s /sbin/nologin -d /var/www/html -M
-RUN chown -R www-data:www-data /var/lib/php 
+RUN chown -R www-data:www-data /var/lib/php
 
 #install deps
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --working-dir=/var/www/html --no-dev --no-interaction --ignore-platform-req=ext-sqlite3 --optimize-autoloader
 
-RUN chown -R www-data:www-data /var/www/html 
+RUN chown -R www-data:www-data /var/www/html
 
 USER www-data
 STOPSIGNAL SIGQUIT
