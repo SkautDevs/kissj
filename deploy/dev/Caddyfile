@@ -1,10 +1,22 @@
-:8080 {
-	root * /var/www/html/public
-	file_server
-	php_fastcgi {env.PHPFPM_HOST}:9000
-	try_files {path} /index.php
+{
+    auto_https off
+    admin off
+}
 
-	log {
-		output stdout
-	}
+:8080 {
+    root * /var/www/html/public
+
+    encode gzip zstd
+
+    php_server {
+        index index.php
+        env * {env.*}
+    }
+
+    file_server
+
+    log {
+        output stdout
+        format console
+    }
 }
