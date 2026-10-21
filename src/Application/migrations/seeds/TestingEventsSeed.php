@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 use kissj\Application\DateTimeUtils;
+use kissj\Application\migrations\seeds\programmes\Korbo3026Programmes;
+use kissj\Application\migrations\seeds\programmes\Miquik3026Programmes;
+use kissj\Application\migrations\seeds\programmes\Navigamus3027Programmes;
+use kissj\Application\migrations\seeds\programmes\Obrok3027Programmes;
+use kissj\Programme\Programme;
 use Phinx\Seed\AbstractSeed;
 use Ramsey\Uuid\Uuid;
 
@@ -87,7 +92,7 @@ class TestingEventsSeed extends AbstractSeed
             'event_type' => 'korbo',
             'logo_url' => '/logo_korbo_1272.png',
             'start_day' => '2026-11-13',
-            'end_day' => '2026-11-15',
+            'end_day' => '2026-11-17',
             'prefix_variable_symbol' => 31,
             'roles' => ['ist'],
         ],
@@ -142,6 +147,26 @@ class TestingEventsSeed extends AbstractSeed
             'prefix_variable_symbol' => 37,
             'roles' => ['pl', 'ist', 'guest'],
         ],
+        [
+            'slug' => 'miquik3026',
+            'readable_name' => 'Miquik 3026',
+            'event_type' => 'miquik',
+            'logo_url' => '/SKAUT_horizontalni_logo_250.png',
+            'start_day' => '2026-11-13',
+            'end_day' => '2026-11-15',
+            'prefix_variable_symbol' => 36,
+            'roles' => ['pl', 'ist'],
+        ],
+    ];
+
+    private const string PROGRAMME_WINDOW_START = '2026-01-01 00:00:00';
+    private const string PROGRAMME_WINDOW_END = '2099-12-31 23:59:59';
+
+    private const array PROGRAMMES_BY_SLUG = [
+        'navigamus3027' => Navigamus3027Programmes::PROGRAMMES,
+        'korbo3026' => Korbo3026Programmes::PROGRAMMES,
+        'miquik3026' => Miquik3026Programmes::PROGRAMMES,
+        'obrok3027' => Obrok3027Programmes::PROGRAMMES,
     ];
 
     public function run(): void
@@ -153,31 +178,140 @@ class TestingEventsSeed extends AbstractSeed
             $slug = $eventDefinition['slug'];
             if ($this->eventExists($slug)) {
                 $this->getOutput()->writeln('skipping existing event ' . $slug);
-                continue;
+            } else {
+                $this->insertEventWithParticipants($eventDefinition);
             }
-            $eventId = $this->insertEvent($eventDefinition);
-            $this->insertUser($eventId, 'a@a.a', 'admin', 'open');
 
-            foreach ($eventDefinition['roles'] as $role) {
-                if ($role === 'pl') {
-                    $this->insertPatrols($eventId, $slug, $eventDefinition);
-                    continue;
-                }
-                if ($role === 'tl') {
-                    $this->insertTroops($eventId, $slug, $eventDefinition);
-                    continue;
-                }
-                // remaining roles are ist/guest/ot (pl/tl are handled above)
-                for ($n = 1; $n <= 20; $n++) {
-                    $status = $this->statusForIndex($n);
-                    $email = sprintf('%s%d@%s.test', $role, $n, $slug);
-                    $userId = $this->insertUser($eventId, $email, 'participant', $status);
-                    $contingent = $this->contingentFor($slug, $role, $n);
-                    $participantId = $this->insertParticipant($slug, $role, $n, $userId, null, $contingent);
-                    $this->insertPaymentIfDue($participantId, $status, $slug, $role, $n, $eventDefinition);
-                }
+            if (array_key_exists($slug, self::PROGRAMMES_BY_SLUG)) {
+                $this->seedProgrammes($eventDefinition);
             }
         }
+    }
+
+    /**
+     * @param array<string, mixed> $eventDefinition
+     */
+    private function insertEventWithParticipants(array $eventDefinition): void
+    {
+        /** @var string $slug */
+        $slug = $eventDefinition['slug'];
+        $eventId = $this->insertEvent($eventDefinition);
+        $this->insertUser($eventId, 'a@a.a', 'admin', 'open');
+        /** @var list<string> $roles */
+        $roles = $eventDefinition['roles'];
+
+        foreach ($roles as $role) {
+            if ($role === 'pl') {
+                $this->insertPatrols($eventId, $slug, $eventDefinition);
+                continue;
+            }
+            if ($role === 'tl') {
+                $this->insertTroops($eventId, $slug, $eventDefinition);
+                continue;
+            }
+            for ($n = 1; $n <= 20; $n++) {
+                $status = $this->statusForIndex($n);
+                $email = sprintf('%s%d@%s.test', $role, $n, $slug);
+                $userId = $this->insertUser($eventId, $email, 'participant', $status);
+                $contingent = $this->contingentFor($slug, $role, $n);
+                $participantId = $this->insertParticipant($slug, $role, $n, $userId, null, $contingent);
+                $this->insertPaymentIfDue($participantId, $status, $slug, $role, $n, $eventDefinition);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $eventDefinition
+     */
+    private function seedProgrammes(array $eventDefinition): void
+    {
+        /** @var string $slug */
+        $slug = $eventDefinition['slug'];
+        $eventRow = $this->fetchRow(sprintf("SELECT id FROM event WHERE slug = '%s'", $slug));
+        if ($eventRow === false) {
+            throw new RuntimeException('event not found by slug: ' . $slug);
+        }
+        $eventId = $this->rowId($eventRow);
+
+        if ($this->fetchRow(sprintf('SELECT id FROM programme WHERE event_id = %d', $eventId)) !== false) {
+            return;
+        }
+
+        $programmeCount = $this->insertProgrammes($slug, $eventId);
+        $this->execute(sprintf(
+            "UPDATE event SET programme_registration_start = '%s', programme_registration_end = '%s' WHERE id = %d",
+            self::PROGRAMME_WINDOW_START,
+            self::PROGRAMME_WINDOW_END,
+            $eventId,
+        ));
+
+        $this->getOutput()->writeln(sprintf('seeded %d programmes for %s', $programmeCount, $slug));
+    }
+
+    /**
+     * @param list<array<string, mixed>> $programmes
+     */
+    private function areProgrammeImagesEnabled(array $programmes): bool
+    {
+        $hasImages = false;
+        foreach ($programmes as $programme) {
+            $hasImages = $hasImages || ($programme['image'] ?? null) !== null;
+        }
+        if ($hasImages === false) {
+            return false;
+        }
+        if ($this->getAdapter()->getOption('file_handler_type') !== 'local') {
+            $this->getOutput()->writeln('skipping programme images: file handler is not local');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function storeProgrammeImage(string $imageName): string
+    {
+        $hashedName = md5($imageName);
+        $uploadFolder = __DIR__ . '/../../../../uploads/';
+        if (is_dir($uploadFolder) === false && mkdir($uploadFolder, 0775, true) === false) {
+            throw new RuntimeException('cannot create upload folder ' . $uploadFolder);
+        }
+        if (file_exists($uploadFolder . $hashedName) === false
+            && copy(__DIR__ . '/programmes/images/' . $imageName, $uploadFolder . $hashedName) === false
+        ) {
+            throw new RuntimeException('cannot copy programme image ' . $imageName);
+        }
+
+        return $hashedName;
+    }
+
+    private function insertProgrammes(string $slug, int $eventId): int
+    {
+        $programmes = self::PROGRAMMES_BY_SLUG[$slug];
+        $imagesEnabled = $this->areProgrammeImagesEnabled($programmes);
+        $programmeRows = [];
+        foreach ($programmes as $programme) {
+            $image = $programme['image'] ?? null;
+            $programmeRows[] = [
+                'name' => $programme['name'],
+                'description' => $programme['description'],
+                'place' => $programme['place'],
+                'image_filename' => $imagesEnabled && $image !== null ? $this->storeProgrammeImage($image) : null,
+                'start' => $programme['start'],
+                'end' => $programme['end'],
+                'capacity' => $programme['capacity'],
+                'is_preregistered' => $programme['isPreregistered'],
+                'exclusive_group_name' => null,
+                'roles' => Programme::encodeRoleValues($programme['roles']),
+                'deleted_at' => null,
+                'event_id' => $eventId,
+                'created_at' => self::CREATED_AT,
+                'updated_at' => self::CREATED_AT,
+            ];
+        }
+        $this->table('programme')->insert($programmeRows)->saveData();
+
+        return count($programmes);
     }
 
     /**

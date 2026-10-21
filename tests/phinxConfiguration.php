@@ -33,6 +33,7 @@ return [
             'name' => $databasePath,
             'suffix' => '',
             'charset' => 'utf8',
+            'file_handler_type' => $_ENV['FILE_HANDLER_TYPE'] ?? null,
         ],
 		'postgresql' => [
 			'adapter' => 'pgsql',
@@ -40,6 +41,7 @@ return [
 			'name' => $_ENV['POSTGRES_DB'],
 			'user' => $_ENV['POSTGRES_USER'],
 			'pass' => $_ENV['POSTGRES_PASSWORD'],
+			'file_handler_type' => $_ENV['FILE_HANDLER_TYPE'] ?? null,
 		],
 	],
 ];

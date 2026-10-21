@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Event\EventType\EventTypeDefault;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use LogicException;
@@ -21,9 +24,17 @@ use Tests\AppTestCase;
 
 class TestingEventsSeedTest extends AppTestCase
 {
-    private const array SEEDED_SLUGS = ['korbo3026', 'navigamus3027', 'obrok3027', 'nsj3025', 'cej3026', 'default3026'];
+    private const array SEEDED_SLUGS = [
+        'korbo3026',
+        'navigamus3027',
+        'obrok3027',
+        'nsj3025',
+        'cej3026',
+        'miquik3026',
+        'default3026',
+    ];
 
-    public function testSeedsSixEventsWithAdminsIdempotently(): void
+    public function testSeedsSevenEventsWithAdminsIdempotently(): void
     {
         $app = $this->getTestApp();
         /** @var EventRepository $eventRepository */
@@ -37,7 +48,7 @@ class TestingEventsSeedTest extends AppTestCase
 
         $this->runSeed();
 
-        self::assertCount($eventCountBefore + 6, $eventRepository->findAll());
+        self::assertCount($eventCountBefore + 7, $eventRepository->findAll());
         foreach (self::SEEDED_SLUGS as $slug) {
             $event = $eventRepository->findBySlug($slug);
             self::assertNotNull($event, 'missing seeded event ' . $slug);
@@ -59,6 +70,19 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertTrue($korbo->allowIsts);
         self::assertFalse($korbo->allowPatrols);
         self::assertFalse($korbo->allowGuests);
+        self::assertSame('2026-11-17', $korbo->endDay->format('Y-m-d'));
+
+        $miquik = $eventRepository->findBySlug('miquik3026');
+        self::assertNotNull($miquik);
+        self::assertTrue($miquik->allowPatrols);
+        self::assertTrue($miquik->allowIsts);
+        self::assertFalse($miquik->allowTroops);
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::Ist], UserStatus::cases(), $miquik),
+        );
 
         $default = $eventRepository->findBySlug('default3026');
         self::assertNotNull($default);
@@ -77,7 +101,7 @@ class TestingEventsSeedTest extends AppTestCase
         );
 
         $this->runSeed();
-        self::assertCount($eventCountBefore + 6, $eventRepository->findAll());
+        self::assertCount($eventCountBefore + 7, $eventRepository->findAll());
     }
 
     public function testSeedsSimpleRoleParticipantsWithStatusSplitAndPayments(): void
@@ -179,6 +203,207 @@ class TestingEventsSeedTest extends AppTestCase
 
         $this->runSeed();
         self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::PatrolParticipant], UserStatus::cases(), $navigamus));
+    }
+
+    public function testSeedsProgrammesWithRolesAndOpenWindow(): void
+    {
+        $app = $this->getTestApp();
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->getService($app, EventRepository::class);
+        /** @var ProgrammeRepository $programmeRepository */
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $expectedCounts = ['navigamus3027' => 8, 'korbo3026' => 59, 'miquik3026' => 41, 'obrok3027' => 204];
+
+        $this->runSeed();
+
+        foreach ($expectedCounts as $slug => $count) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            self::assertCount($count, $programmeRepository->findActiveForEvent($event), $slug);
+            self::assertTrue($event->isProgrammeRegistrationOpen(), $slug);
+        }
+        foreach (['nsj3025', 'cej3026'] as $slug) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            self::assertCount(0, $programmeRepository->findActiveForEvent($event), $slug);
+            self::assertFalse($event->isProgrammeRegistrationOpen(), $slug);
+        }
+
+        $obrok = $eventRepository->findBySlug('obrok3027');
+        self::assertNotNull($obrok);
+        $obrokProgrammes = $programmeRepository->findActiveForEvent($obrok);
+        foreach ($obrokProgrammes as $programme) {
+            self::assertNotContains(ParticipantRole::PatrolLeader, $programme->getTargetRoles());
+        }
+        $targetingTroopLeader = array_filter(
+            $obrokProgrammes,
+            fn (Programme $programme): bool => $programme->isForRole(ParticipantRole::TroopLeader),
+        );
+        self::assertNotEmpty($targetingTroopLeader);
+
+        $miquik = $eventRepository->findBySlug('miquik3026');
+        self::assertNotNull($miquik);
+        foreach ($programmeRepository->findActiveForEvent($miquik) as $programme) {
+            self::assertSame(['ist', 'pl'], $this->sortedRoleValues($programme), $programme->name);
+        }
+        $roleLinksBefore = $this->countRoleLinks($eventRepository, $programmeRepository, array_keys($expectedCounts));
+
+        $this->runSeed();
+
+        foreach ($expectedCounts as $slug => $count) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            self::assertCount($count, $programmeRepository->findActiveForEvent($event), $slug);
+        }
+        self::assertSame(
+            $roleLinksBefore,
+            $this->countRoleLinks($eventRepository, $programmeRepository, array_keys($expectedCounts)),
+        );
+    }
+
+    public function testSeedsSkautImagesOnThreeOfFourObrokProgrammes(): void
+    {
+        $app = $this->getTestApp();
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->getService($app, EventRepository::class);
+        /** @var ProgrammeRepository $programmeRepository */
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+
+        $this->runSeed();
+
+        $obrok = $eventRepository->findBySlug('obrok3027');
+        self::assertNotNull($obrok);
+        $sourceFolder = __DIR__ . '/../../src/Application/migrations/seeds/programmes/images/';
+        $sourceBytesByHash = [];
+        $sourcePaths = glob($sourceFolder . 'skaut-*.png');
+        self::assertIsArray($sourcePaths);
+        foreach ($sourcePaths as $sourcePath) {
+            $sourceBytesByHash[md5(basename($sourcePath))] = file_get_contents($sourcePath);
+        }
+        self::assertCount(20, $sourceBytesByHash);
+
+        $withImage = 0;
+        foreach ($programmeRepository->findActiveForEvent($obrok) as $programme) {
+            if ($programme->imageFilename === null) {
+                continue;
+            }
+            $withImage++;
+            self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $programme->imageFilename);
+            self::assertArrayHasKey($programme->imageFilename, $sourceBytesByHash);
+            self::assertSame(
+                $sourceBytesByHash[$programme->imageFilename],
+                file_get_contents(__DIR__ . '/../../uploads/' . $programme->imageFilename),
+            );
+        }
+        self::assertSame(153, $withImage);
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
+            self::assertNull($programme->imageFilename);
+        }
+    }
+
+    public function testSeedRefillsProgrammesOfEventThatHasNone(): void
+    {
+        $app = $this->getTestApp();
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->getService($app, EventRepository::class);
+        /** @var ProgrammeRepository $programmeRepository */
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+
+        $this->runSeed();
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
+            $programmeRepository->delete($programme);
+        }
+        self::assertCount(0, $programmeRepository->findActiveForEvent($navigamus));
+
+        $this->runSeed();
+
+        self::assertCount(8, $programmeRepository->findActiveForEvent($navigamus));
+    }
+
+    public function testSeedRefillKeepsEventDays(): void
+    {
+        $app = $this->getTestApp();
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->getService($app, EventRepository::class);
+        /** @var ProgrammeRepository $programmeRepository */
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+
+        $this->runSeed();
+
+        $korbo = $eventRepository->findBySlug('korbo3026');
+        self::assertNotNull($korbo);
+        foreach ($programmeRepository->findActiveForEvent($korbo) as $programme) {
+            $programmeRepository->delete($programme);
+        }
+        $korbo->endDay = DateTimeUtils::getDateTime('2026-11-15');
+        $eventRepository->persist($korbo);
+
+        $this->runSeed();
+
+        $korboAfter = $eventRepository->findBySlug('korbo3026');
+        self::assertNotNull($korboAfter);
+        self::assertSame('2026-11-15', $korboAfter->endDay->format('Y-m-d'));
+        self::assertCount(59, $programmeRepository->findActiveForEvent($korboAfter));
+    }
+
+    public function testSeedDoesNotRefillEventWhoseProgrammesAreAllSoftDeleted(): void
+    {
+        $app = $this->getTestApp();
+        /** @var EventRepository $eventRepository */
+        $eventRepository = $this->getService($app, EventRepository::class);
+        /** @var ProgrammeRepository $programmeRepository */
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+
+        $this->runSeed();
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
+            $programme->deletedAt = DateTimeUtils::getDateTime();
+            $programmeRepository->persist($programme);
+        }
+        self::assertCount(0, $programmeRepository->findActiveForEvent($navigamus));
+
+        $this->runSeed();
+
+        self::assertCount(0, $programmeRepository->findActiveForEvent($navigamus));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function sortedRoleValues(Programme $programme): array
+    {
+        $values = array_map(fn (ParticipantRole $role): string => $role->value, $programme->getTargetRoles());
+        sort($values);
+
+        return $values;
+    }
+
+    /**
+     * @param list<string|int> $slugs
+     */
+    private function countRoleLinks(
+        EventRepository $eventRepository,
+        ProgrammeRepository $programmeRepository,
+        array $slugs,
+    ): int {
+        $total = 0;
+        foreach ($slugs as $slug) {
+            $event = $eventRepository->findBySlug((string)$slug);
+            self::assertNotNull($event);
+            foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
+                $total += count($programme->getTargetRoles());
+            }
+        }
+
+        return $total;
     }
 
     private function runSeed(): void
