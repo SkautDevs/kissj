@@ -11,13 +11,7 @@ RUN dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noar
 RUN /usr/bin/crb enable
 #enable php83 module and install php
 RUN dnf module enable php:remi-8.3 -y
-RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache unzip vim git -y
-
-#build deps for Excimer (Sentry profiling)
-RUN dnf install -y gcc make php-devel php-pear \
- && pecl install excimer \
- && echo "extension=excimer.so" > /etc/php.d/40-excimer.ini \
- && dnf remove -y gcc make php-devel php-pear \
+RUN dnf install php-fpm php-cli composer php-pgsql php-pdo php-gd php-soap php-redis php-opcache php-pecl-excimer unzip vim git -y \
  && dnf clean all
 
 #copy app
