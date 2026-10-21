@@ -5,20 +5,39 @@ declare(strict_types=1);
 namespace kissj\Orm;
 
 use Dibi\Row;
+use kissj\Participant\Participant;
 use LeanMapper\Entity;
 use LeanMapper\Fluent;
 use LeanMapper\Repository as BaseRepository;
+use LogicException;
 
 /**
- * @property string[] $onBeforeCreate
+ * @property callable[] $onBeforeCreate
  * @property string[] $onBeforePersist
  */
 class Repository extends BaseRepository
 {
     public function initEvents(): void
     {
+        $this->onBeforeCreate[] = $this->ensureUniqueTieCodeBeforeCreate(...);
         $this->onBeforeCreate[] = EntityDatetime::class . '::setCreatedAtBeforeCreate';
         $this->onBeforePersist[] = EntityDatetime::class . '::setUpdatedAtBeforePersist';
+    }
+
+    private function ensureUniqueTieCodeBeforeCreate(Entity $entity): void
+    {
+        if ($entity instanceof Participant === false) {
+            return;
+        }
+
+        $attempts = 0;
+        while ($this->isExisting(['tie_code' => $entity->tieCode])) {
+            if (++$attempts >= 10) {
+                throw new LogicException('Failed to generate a unique tie code after 10 attempts');
+            }
+
+            $entity->regenerateTieCode();
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ namespace kissj\Participant\Patrol;
 
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
-use kissj\Participant\ParticipantRepository;
 use kissj\Skautis\SkautisMemberData;
 use kissj\User\User;
 
@@ -15,7 +14,6 @@ readonly class PatrolService
     public function __construct(
         private PatrolLeaderRepository $patrolLeaderRepository,
         private PatrolParticipantRepository $patrolParticipantRepository,
-        private ParticipantRepository $participantRepository,
     ) {
     }
 
@@ -28,7 +26,6 @@ readonly class PatrolService
     {
         $patrolParticipant = new PatrolParticipant();
         $patrolParticipant->patrolLeader = $patrolLeader;
-        $this->participantRepository->ensureUniqueTieCode($patrolParticipant);
 
         return $patrolParticipant;
     }
