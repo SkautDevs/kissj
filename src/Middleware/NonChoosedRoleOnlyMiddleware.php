@@ -3,7 +3,6 @@
 namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\User\User;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -18,9 +17,9 @@ class NonChoosedRoleOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $user = $request->getAttribute('user');
+        $user = $this->tryGetUser($request);
 
-        if ($user instanceof User && $user->status !== UserStatus::WithoutRole) {
+        if ($user !== null && $user->status !== UserStatus::WithoutRole) {
             $this->flashMessages->warning('flash.warning.roleChoosed');
 
             return $this->createRedirectResponse($request, 'landing');

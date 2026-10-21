@@ -7,7 +7,6 @@ namespace kissj\Middleware;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
-use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -22,10 +21,10 @@ class TechnicalTeamLeadersOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $user = $request->getAttribute('user');
+        $user = $this->tryGetUser($request);
 
         if (
-            $user instanceof User
+            $user !== null
             && $this->participantRepository->getParticipantFromUser($user)->role !== ParticipantRole::TechnicalTeamLeader
         ) {
             $this->flashMessages->error('flash.error.ttlOnly');

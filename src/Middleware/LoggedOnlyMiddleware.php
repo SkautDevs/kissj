@@ -2,9 +2,7 @@
 
 namespace kissj\Middleware;
 
-use kissj\Event\Event;
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\User\User;
 use kissj\User\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -20,17 +18,14 @@ class LoggedOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        if ($request->getAttribute('user') === null) {
+        $user = $this->tryGetUser($request);
+        if ($user === null) {
             $this->flashMessages->warning('flash.warning.notLogged');
 
             return $this->createRedirectResponse($request, 'loginAskEmail');
         }
 
-        /** @var User $user */
-        $user = $request->getAttribute('user');
-
-        /** @var Event|null $event */
-        $event = $request->getAttribute('event');
+        $event = $this->tryGetEvent($request);
         if ($event === null) {
             throw new \Exception('Cannot get event from request');
         }

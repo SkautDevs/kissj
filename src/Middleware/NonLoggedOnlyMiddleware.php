@@ -16,7 +16,7 @@ class NonLoggedOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        if ($request->getAttribute('user') !== null) {
+        if ($this->tryGetUser($request) !== null) {
             $this->flashMessages->warning('flash.warning.loggedIn');
 
             return $this->createRedirectResponse($request, 'landing');

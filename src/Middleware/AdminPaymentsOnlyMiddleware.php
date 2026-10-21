@@ -3,7 +3,6 @@
 namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
@@ -17,9 +16,9 @@ class AdminPaymentsOnlyMiddleware extends BaseMiddleware
 
     public function process(Request $request, ResponseHandler $handler): Response
     {
-        $user = $request->getAttribute('user');
+        $user = $this->tryGetUser($request);
 
-        if ($user instanceof User && $user->role->isEligibleToHandlePayments() === false) {
+        if ($user !== null && $user->role->isEligibleToHandlePayments() === false) {
             $this->flashMessages->error('flash.error.adminPaymentsOnly');
 
             return $this->createRedirectResponse($request, 'getDashboard');
