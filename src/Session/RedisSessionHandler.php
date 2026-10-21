@@ -6,8 +6,9 @@ namespace kissj\Session;
 
 use Redis;
 use SessionHandlerInterface;
+use SessionUpdateTimestampHandlerInterface;
 
-readonly class RedisSessionHandler implements SessionHandlerInterface
+readonly class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimestampHandlerInterface
 {
     public function __construct(
         private Redis $redis,
@@ -48,6 +49,16 @@ readonly class RedisSessionHandler implements SessionHandlerInterface
     public function write(string $id, string $data): bool
     {
         return $this->redis->setex($id, $this->ttl, $data);
+    }
+
+    public function validateId(string $id): bool
+    {
+        return (int)$this->redis->exists($id) > 0;
+    }
+
+    public function updateTimestamp(string $id, string $data): bool
+    {
+        return $this->redis->expire($id, $this->ttl) || $this->write($id, $data);
     }
 
     public function destroy(string $id): bool
