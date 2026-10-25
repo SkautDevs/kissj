@@ -7,6 +7,7 @@ namespace kissj\Programme;
 use DateTimeImmutable;
 use DateTimeZone;
 use kissj\AbstractController;
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\FileHandler\UploadFileHandler;
@@ -242,7 +243,7 @@ class ProgrammeAdminController extends AbstractController
 
     private function parseDatetime(string $value): ?DateTimeImmutable
     {
-        $parsed = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $value, new DateTimeZone('Europe/Berlin'));
+        $parsed = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $value, new DateTimeZone(DateTimeUtils::TIMEZONE));
 
         if ($parsed === false || DateTimeImmutable::getLastErrors() !== false) {
             return null;

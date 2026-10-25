@@ -6,6 +6,7 @@ namespace kissj\Settings;
 
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
+use kissj\Application\DateTimeUtils;
 use kissj\Application\HealthController;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
@@ -310,6 +311,7 @@ class Settings
                     'username' => $env->postgresUser,
                     'password' => $env->postgresPassword,
                     'database' => $env->postgresDb,
+                    'onConnect' => [sprintf("SET TIME ZONE '%s'", DateTimeUtils::TIMEZONE)],
                 ]),
             };
             $connection->onEvent[] = new DibiSpanListener();

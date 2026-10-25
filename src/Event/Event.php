@@ -74,7 +74,7 @@ use kissj\Participant\ParticipantRole;
  *
  * @property int|null          $maximalClosedParticipantsCount
  *
- * @property DateTimeInterface $startRegistration m:passThru(dateFromString|dateToString) // in UTC
+ * @property DateTimeInterface $startRegistration m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $endDay m:passThru(dateFromString|dateToString)
  *

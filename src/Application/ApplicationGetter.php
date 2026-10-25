@@ -85,6 +85,7 @@ class ApplicationGetter
 
     private function buildContainer(string $envPath, string $envFilename, string $tempPath): Container
     {
+        date_default_timezone_set(DateTimeUtils::TIMEZONE);
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions((new Settings())->getContainerDefinition(
             $envPath,

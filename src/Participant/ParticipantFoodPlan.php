@@ -4,9 +4,9 @@ namespace kissj\Participant;
 
 use DateInterval;
 use DatePeriod;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
+use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -17,7 +17,7 @@ use kissj\Participant\Troop\TroopParticipant;
 
 class ParticipantFoodPlan
 {
-    /** @var DatePeriod<DateTime, DateTime, null> */
+    /** @var DatePeriod<DateTimeImmutable, DateTimeImmutable, null> */
     public DatePeriod $dates;
 
     /** @var string[] */
@@ -39,8 +39,8 @@ class ParticipantFoodPlan
     public function __construct(array $participants, Event $event, bool $usePatrolAndTroopsAgreggator = false)
     {
         //normalize dates from event
-        $defaultStartDay = DateTime::createFromInterface($event->startDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0);
-        $defaultEndDay = DateTime::createFromInterface($event->endDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0);
+        $defaultStartDay = DateTimeUtils::getDay($event->startDay);
+        $defaultEndDay = DateTimeUtils::getDay($event->endDay);
 
         $this->dates = $this->getDateRange($participants, $defaultStartDay, $defaultEndDay, );
         $this->dietTypes = array_unique(
@@ -58,7 +58,7 @@ class ParticipantFoodPlan
 
     /**
      * @param Participant[] $participants
-     * @return DatePeriod<DateTime, DateTime, null>
+     * @return DatePeriod<DateTimeImmutable, DateTimeImmutable, null>
      */
     private function getDateRange(
         array $participants,
@@ -91,9 +91,9 @@ class ParticipantFoodPlan
 
         // date period for which stats will be generated.
         return new DatePeriod(
-            DateTime::createFromInterface($firstDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0),
+            DateTimeUtils::getDay($firstDay),
             new DateInterval('P1D'),
-            DateTime::createFromInterface($lastDay)->setTimezone(new DateTimeZone('UTC'))->setTime(0, 0),
+            DateTimeUtils::getDay($lastDay),
             DatePeriod::INCLUDE_END_DATE,
         );
     }
@@ -246,8 +246,8 @@ class ParticipantFoodPlan
         string $aggregator,
     ): array {
         $diet = $p->foodPreferences;
-        $arrival = $p->arrivalDate ?? $defaultStartDay;
-        $departure = $p->departureDate ?? $defaultEndDay;
+        $arrival = DateTimeUtils::getDay($p->arrivalDate ?? $defaultStartDay);
+        $departure = DateTimeUtils::getDay($p->departureDate ?? $defaultEndDay);
 
         foreach ($this->dates as $date) {
             if ($date < $arrival || $date > $departure) {

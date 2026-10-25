@@ -104,6 +104,7 @@ Place new keys beside thematically related keys, so each block stays readable as
 ## Database Migrations
 
 Always create a Phinx migration for schema changes — no manual SQL.
+New datetime columns use 'timestamp' with ['timezone' => true]; calendar dates use 'date'.
 
 ## Configuration
 

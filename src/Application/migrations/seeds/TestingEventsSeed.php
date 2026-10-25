@@ -171,6 +171,10 @@ class TestingEventsSeed extends AbstractSeed
 
     public function run(): void
     {
+        if ($this->getAdapter()->getAdapterType() === 'pgsql') {
+            $this->execute(sprintf("SET TIME ZONE '%s'", DateTimeUtils::TIMEZONE));
+        }
+
         $this->realignIdSequences();
 
         foreach (self::EVENTS as $eventDefinition) {
