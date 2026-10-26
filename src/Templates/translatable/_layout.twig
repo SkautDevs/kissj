@@ -11,8 +11,8 @@
         style-src-elem 'self' https://fonts.googleapis.com/;
         style-src-attr 'unsafe-inline';
     ">
-    <meta name="theme-color" content="#319197" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#872e4e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#255C9E" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b1426" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>{{ '_layout.title' | trans }} - {{ event.readableName }} - kissj</title>
@@ -89,6 +89,7 @@
     <span class="footer-item">
         <a href="{{ event.webUrl }}" target="_blank">{{ event.readableName }}</a>
         | <a href="https://devs.skauting.cz/" target="_blank">{{ '_layout.creator' | trans }}</a>
+        {# the Ukraine link can be swapped for the formal "Junák – český skaut, z. s." footer when the time comes #}
         | <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a>
     </span>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">

@@ -42,7 +42,8 @@ Everything on it must look like an official Skaut product.
 ### Typography
 
 - Titles: SKAUT Bold. It is a licensed webfont with uppercase glyphs only.
-- Body text: TheMix. The manual names Open Sans as the free fallback for web applications, so KISSJ uses Open Sans.
+- Body text: TheMix, loaded from cdn.skauting.cz together with SKAUT Bold.
+  Open Sans is the manual's fallback, not needed here.
 - Do not set long text in capitals for emphasis. Emphasise at most a tenth of a text.
 
 ### Colours
@@ -73,7 +74,63 @@ The vivid palette (Pestrá) is for signals and navigation only: alerts, status b
 | Pestrá (vivid) | `#FFCC00` `#EE8027` `#E53434` `#A0067D` `#5E2281` `#172983` `#007BC2` `#89BA17` |
 
 - White is the base surface. Avoid pure black, use a dark palette colour for text instead.
-- The current KISSJ main colour `#0D71B9` is in no palette. The nearest official ones are `#255C9E` and `#20649B`.
+- The base theme uses the KISSJ tokens below.
+
+### KISSJ tokens
+
+The base theme sets these in `public/styles.css`. Branded events override them in `public/eventSpecificCss/`.
+The mail layout (`src/Templates/translatable/emails/_mail-layout.twig`) carries the same main and link tokens.
+
+| Token | Light | Dark | Source |
+|-------|-------|------|--------|
+| `--color-background` | `#ffffff` | `#0b1426` | White base surface. Dark is derived navy. |
+| `--color-card-background` | `#f9f9f9` | `#14203a` | Neutral. Dark is derived navy. |
+| `--color-input-background` | `#ffffff` | `#1c2a47` | Neutral. Dark is derived navy. |
+| `--color-main` | `#255C9E` | `#6B96CA` | Light: logo blue. Dark: palette 2. |
+| `--color-accent` | `#B85637` | `#F9B200` | Light: palette 3. Dark: logo yellow. |
+| `--color-fading` (progress track) | `#6B96CA` | `#294885` | Light: palette 2. Dark: logo dark blue. |
+| `--color-light` | `#3979B5` | `#3979B5` | Logo light blue. |
+| `--color-dark` | `#294885` | `#BDD4DF` | Light: logo dark blue. Dark: palette 1. |
+| `--color-grey` | `#636363` | `#888888` | Neutral, not from a palette. |
+| `--color-stripe` (table rows) | `#ebf2f5` | `#0b1426` | Light: 30 % palette 1 `#BDD4DF` over white. Dark: page navy. |
+| `--color-link` | `#172983` | `#BDD4DF` | Light: Pestrá. Dark: palette 1. |
+| `--color-link-visited` | `#5E2281` | `#B98ED9` | Light: Pestrá. Dark: derived, tint of Pestrá `#5E2281`. |
+| alert text | `#172983` | `#e8eef5` | Light: Pestrá. Dark: derived off-white. |
+
+Alerts keep centred text, have a 4 px top strip in the hue and no shadow.
+The hue is a Pestrá colour. The light tint is 18 % hue over 82 % `#ffffff`.
+The dark tint is 28 % hue over 72 % `#14203a`.
+For example `#007BC2` gives `#d1e7f4` (light) and `#0e3960` (dark).
+
+| Alert | Hue (strip) | Light tint | Dark tint |
+|-------|-------------|------------|-----------|
+| info | `#007BC2` | `#d1e7f4` | `#0e3960` |
+| success | `#89BA17` | `#eaf3d5` | `#354b30` |
+| warning | `#FFCC00` | `#fff6d1` | `#56502a` |
+| error | `#E53434` | `#fadada` | `#4f2638` |
+
+The mobile browser bar (`theme-color`) is the main blue `#255C9E` in light and the page navy `#0b1426` in dark mode.
+
+### Background
+
+- Two tiles: `public/background_mozaika_light.svg` and `public/background_mozaika_dark.svg`.
+- Each is a 400 px seamless square cut from the official coloured mozaika wallpaper.
+  Fragments sit at 10 % strength on `#ffffff` (light) and `#0b1426` (dark).
+- Source: `SKAUT_A3_mozaika_tapeta_barevna.svg` in the [brand wallpaper folder][tapeta]
+  (`1wv8cYt5KdYutc9dJrTSrOd8XASB2sbWW`).
+  Old Drive files need the `resourcekey` parameter for a direct download.
+- The generator `bin/make-mozaika-tile.py` needs `python3` and `chromium` on the host.
+
+Download the source to `/tmp/mozaika-src/barevna.svg` first, then run:
+
+```
+python3 -I bin/make-mozaika-tile.py /tmp/mozaika-src/barevna.svg public/background_mozaika_light.svg \
+  --background '#ffffff' --strength 0.10 --x 160 --y 590 --size 400
+python3 -I bin/make-mozaika-tile.py /tmp/mozaika-src/barevna.svg public/background_mozaika_dark.svg \
+  --background '#0b1426' --strength 0.10 --x 160 --y 590 --size 400
+```
+
+- Regenerate instead of editing the SVGs by hand. Never recolour the fragments beyond the tint strength.
 
 ### Shapes
 
@@ -106,7 +163,8 @@ Merchandise is the only area the manual exempts.
 1. Does the change affect the default event? Then every strict rule above applies.
 2. Is every logo an official file from the brand Drive, unaltered and above its minimum size?
 3. Is every colour from one palette, at most three per surface, with the vivid palette only for signals?
-4. Is text in Open Sans, with no all-caps emphasis?
+4. Is text in TheMix, with no all-caps emphasis?
 5. On a branded event, is the Skaut logo still present and far from the event logo?
 
 [drive]: https://drive.google.com/drive/folders/1-ZdKULLTFY7Cb4SXBFsZ9FmAuEA4srr1
+[tapeta]: https://drive.google.com/drive/folders/1wv8cYt5KdYutc9dJrTSrOd8XASB2sbWW

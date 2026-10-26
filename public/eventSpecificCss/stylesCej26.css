@@ -12,6 +12,8 @@
         --color-main: #8e2923;
         --color-fading: #556910;
         --color-light: #556910;
+        --color-card-background: #252525;
+        --color-input-background: #2f2f2f;
         background-image: url('/background_dark_cej26.png');
     }
 }
