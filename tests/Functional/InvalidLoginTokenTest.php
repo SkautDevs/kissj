@@ -115,6 +115,7 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testLoginPageRendersPrefilledEmailFromSessionAndClearsIt(): void
     {
         $app = $this->getTestApp();
+        $this->setEventType($app->getContainer(), 'nsj', self::TEST_EVENT_SLUG);
 
         $_SESSION['prefill_email'] = 'prefill-me@example.com';
 
@@ -133,6 +134,7 @@ class InvalidLoginTokenTest extends AppTestCase
     public function testLoginPageRendersEmptyEmailFieldWhenNoSessionPrefill(): void
     {
         $app = $this->getTestApp();
+        $this->setEventType($app->getContainer(), 'nsj', self::TEST_EVENT_SLUG);
 
         $response = $app->handle(
             $this->createRequest(self::BASE_URL . '/login'),

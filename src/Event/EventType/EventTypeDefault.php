@@ -19,4 +19,31 @@ class EventTypeDefault extends EventType
             new FinanceTier($event->defaultPrice),
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    #[\Override]
+    public function getLanguages(): array
+    {
+        return ['cs' => '🇨🇿 Česky'];
+    }
+
+    #[\Override]
+    public function isLoginEmailAllowed(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    public function isLoginSkautisAllowed(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
+    public function enforceActiveSkautisMembership(): bool
+    {
+        return true;
+    }
 }

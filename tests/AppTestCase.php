@@ -23,6 +23,8 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LeanMapper\Connection;
 use LogicException;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -158,15 +160,24 @@ class AppTestCase extends TestCase
             $this->getRunTempPath()
         );
 
+        $this->connectionsToClose[] = $this->getSqliteConnection($app);
+
+        return $app;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function getSqliteConnection(App $app): Connection
+    {
         $connection = $this->getService($app, Connection::class);
         if ($connection->getConfig('driver') !== 'sqlite') {
             throw new LogicException(
                 'Functional tests must run on the per-test sqlite database — refusing to touch a real database.',
             );
         }
-        $this->connectionsToClose[] = $connection;
 
-        return $app;
+        return $connection;
     }
 
     // clean database per init without paying the migration chain each time:
@@ -207,9 +218,24 @@ class AppTestCase extends TestCase
             throw new RuntimeException('test database migration failed: ' . $phinxOutput->fetch());
         }
 
+        $this->seedSkautisAppId();
+
         if (!copy($dbPath, $templatePath)) {
             throw new RuntimeException('snapshotting the template database failed');
         }
+    }
+
+    private function seedSkautisAppId(): void
+    {
+        $app = (new ApplicationGetter())->getApp(__DIR__ . '/', 'env.testing', $this->getRunTempPath());
+        $connection = $this->getSqliteConnection($app);
+        $this->getService($app, Logger::class)->setHandlers([new TestHandler()]);
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $event = $eventRepository->findBySlug('test-event-slug')
+            ?? throw new RuntimeException('Seed event test-event-slug not found - did migrations run?');
+        $event->skautisAppId = 'test-skautis-app-id';
+        $eventRepository->persist($event);
+        $connection->disconnect();
     }
 
     // the container env pins DB_TYPE=postgresql and phpdotenv never overrides

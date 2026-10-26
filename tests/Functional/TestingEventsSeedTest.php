@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
+use kissj\Event\EventType\EventTypeDefault;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentRepository;
@@ -20,21 +21,23 @@ use Tests\AppTestCase;
 
 class TestingEventsSeedTest extends AppTestCase
 {
-    private const array SEEDED_SLUGS = ['korbo3026', 'navigamus3027', 'obrok3027', 'nsj3025', 'cej3026'];
+    private const array SEEDED_SLUGS = ['korbo3026', 'navigamus3027', 'obrok3027', 'nsj3025', 'cej3026', 'default3026'];
 
-    public function testSeedsFiveEventsWithAdminsIdempotently(): void
+    public function testSeedsSixEventsWithAdminsIdempotently(): void
     {
         $app = $this->getTestApp();
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getService($app, EventRepository::class);
         /** @var UserRepository $userRepository */
         $userRepository = $this->getService($app, UserRepository::class);
+        /** @var ParticipantRepository $participantRepository */
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
         $eventCountBefore = count($eventRepository->findAll());
 
         $this->runSeed();
 
-        self::assertCount($eventCountBefore + 5, $eventRepository->findAll());
+        self::assertCount($eventCountBefore + 6, $eventRepository->findAll());
         foreach (self::SEEDED_SLUGS as $slug) {
             $event = $eventRepository->findBySlug($slug);
             self::assertNotNull($event, 'missing seeded event ' . $slug);
@@ -57,8 +60,24 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertFalse($korbo->allowPatrols);
         self::assertFalse($korbo->allowGuests);
 
+        $default = $eventRepository->findBySlug('default3026');
+        self::assertNotNull($default);
+        self::assertInstanceOf(EventTypeDefault::class, $default->getEventType());
+        self::assertSame('Testovací akce 3026', $default->readableName);
+        self::assertSame('/logo_skaut_white_bg_800.png', $default->logoUrl);
+        self::assertFileExists(__DIR__ . '/../../public' . $default->logoUrl);
+        self::assertNotSame('', $default->skautisAppId);
+        self::assertTrue($default->allowPatrols);
+        self::assertTrue($default->allowIsts);
+        self::assertTrue($default->allowGuests);
+        self::assertFalse($default->allowTroops);
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $default),
+        );
+
         $this->runSeed();
-        self::assertCount($eventCountBefore + 5, $eventRepository->findAll());
+        self::assertCount($eventCountBefore + 6, $eventRepository->findAll());
     }
 
     public function testSeedsSimpleRoleParticipantsWithStatusSplitAndPayments(): void

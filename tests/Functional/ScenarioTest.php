@@ -14,6 +14,7 @@ class ScenarioTest extends AppTestCase
     {
         // redirect from landing to login (via middleware chain)
         $app = $this->getTestApp();
+        $this->setEventType($app->getContainer(), 'nsj', 'test-event-slug');
 
         $responseRoot = $app->handle($this->createRequest(self::TEST_EVENT_PREFIX_URL));
         self::assertSame(302, $responseRoot->getStatusCode());

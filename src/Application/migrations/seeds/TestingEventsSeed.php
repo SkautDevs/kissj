@@ -132,6 +132,16 @@ class TestingEventsSeed extends AbstractSeed
             // cej cannot price guest/ot (EventTypeCej::transformPaymentPrice supports only PL/IST) - excluded here
             'roles' => ['pl', 'ist'],
         ],
+        [
+            'slug' => 'default3026',
+            'readable_name' => 'Testovací akce 3026',
+            'event_type' => 'default',
+            'logo_url' => '/logo_skaut_white_bg_800.png',
+            'start_day' => '2026-09-18',
+            'end_day' => '2026-09-20',
+            'prefix_variable_symbol' => 37,
+            'roles' => ['pl', 'ist', 'guest'],
+        ],
     ];
 
     public function run(): void

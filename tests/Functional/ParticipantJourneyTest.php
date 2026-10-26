@@ -258,6 +258,7 @@ class ParticipantJourneyTest extends AppTestCase
     public function testLoginViaHttpRequests(): void
     {
         $app = $this->getTestApp();
+        $this->setEventType($app->getContainer(), 'nsj', 'test-event-slug');
         $email = 'http-test@example.com';
 
         $responseLoginPage = $app->handle($this->createRequest(self::BASE_URL . '/login'));
