@@ -153,6 +153,32 @@ class Event extends EntityDatetime
         return $roles;
     }
 
+    /**
+     * @return list<ParticipantRole>
+     */
+    public function getSelectableRoles(bool $otAccessGranted): array
+    {
+        $roles = [];
+        if ($this->allowOrganizingTeam && $otAccessGranted) {
+            $roles[] = ParticipantRole::OrganizingTeam;
+        }
+        if ($this->allowPatrols) {
+            $roles[] = ParticipantRole::PatrolLeader;
+        }
+        if ($this->allowTroops) {
+            $roles[] = ParticipantRole::TroopLeader;
+            $roles[] = ParticipantRole::TroopParticipant;
+        }
+        if ($this->allowIsts) {
+            $roles[] = ParticipantRole::Ist;
+        }
+        if ($this->allowGuests) {
+            $roles[] = ParticipantRole::Guest;
+        }
+
+        return $roles;
+    }
+
     public function isRoleEnabled(ParticipantRole $role): bool
     {
         return match ($role) {

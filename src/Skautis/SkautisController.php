@@ -54,6 +54,6 @@ class SkautisController extends AbstractController
         $user = $this->skautisService->getOrCreateAndLogInSkautisUser($skautisUserData, $event);
         $this->skautisService->updateSkautisUserMembership($user, $skautisUserData);
 
-        return $this->redirect($request, $response, 'getDashboard', ['eventSlug' => $eventSlug]);
+        return $this->redirect($request, $response, 'landing', ['eventSlug' => $eventSlug]);
     }
 }

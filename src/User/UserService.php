@@ -10,7 +10,6 @@ use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
-use kissj\Skautis\SkautisService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -21,7 +20,6 @@ readonly class UserService
     public function __construct(
         private LoginTokenRepository $loginTokenRepository,
         private ParticipantRepository $participantRepository,
-        protected SkautisService $skautisService,
         private UserRepository $userRepository,
         private Mailer $mailer,
         private Metrics $metrics,
@@ -132,22 +130,19 @@ readonly class UserService
         return $this->userRepository->findFirstCaseInsensitiveVariant($email, $event)?->email;
     }
 
-    public function createParticipantSetRole(User $user, ParticipantRole $participantRole): Participant
+    public function createParticipantSetRole(User $user, string $role): Participant
     {
+        $participantRole = ParticipantRole::from($role);
 
         $participant = new Participant();
         $participant->user = $user;
         $participant->role = $participantRole;
         $this->participantRepository->ensureUniqueTieCode($participant);
         $this->participantRepository->persist($participant);
-        $this->metrics->count(MetricName::RegistrationsCreated, 1, ['role' => $participantRole->value]);
+        $this->metrics->count(MetricName::RegistrationsCreated, 1, ['role' => $role]);
 
         $user->status = UserStatus::Open;
         $this->userRepository->persist($user);
-        
-        if ($user->loginType === UserLoginType::Skautis) {
-            $this->skautisService->prefillDataFromSkautis($participant);
-        }
 
         return $participant;
     }
