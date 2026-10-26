@@ -111,6 +111,11 @@ Always create a Phinx migration for schema changes — no manual SQL.
 - Production uses environment variables loaded from Vault — do not modify production config
 - Never commit `.env` or secrets
 
+## Branding
+
+Visual rules for the default event (strict) and branded events (lax) live in `BRANDING.md`.
+Read it before touching any logo, colour, font or template.
+
 ## Off-Limits
 
 - `deploy/` directory (Helm charts, deployment config) — do not touch
