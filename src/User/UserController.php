@@ -125,7 +125,7 @@ class UserController extends AbstractController
                 $_SESSION['ot_access_granted'] = true;
             }
 
-            return $this->redirect($request, $response, 'getDashboard');
+            return $this->redirect($request, $response, 'landing');
         }
 
         $loginToken = $this->userService->findLoginTokenByStringToken($token);
@@ -147,55 +147,56 @@ class UserController extends AbstractController
 
     public function chooseRole(User $user, Request $request, Response $response): Response
     {
-        $roles = $user->event->getAvailableRoles();
+        $roles = $user->event->getSelectableRoles($this->isOtAccessGranted());
         if (count($roles) === 1) {
-            $role = $roles[0];
-            if (
-                $user->loginType === UserLoginType::Skautis &&
-                !$this->skautisService->isUserLoggedIn()
-            ) {
-                $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
-                return $this->redirect($request, $response, 'landing');
-            }
-
-            $this->userService->createParticipantSetRole(
-                $user,
-                $role,
-            );
-
-            return $this->redirect($request, $response, 'getDashboard');
-
+            return $this->createParticipantWithRole($user, $roles[0], $request, $response);
         }
-        // TODO add preference into get parameter
+
+        if ($roles === []) {
+            $this->flashMessages->info('flash.info.noRoleAvailable');
+        }
+
         return $this->view->render($response, 'kissj/choose-role.twig', [
             'event' => $user->event,
-            'otAccessGranted' => $_SESSION['ot_access_granted'] ?? false,
+            'roles' => $roles,
         ]);
     }
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
-        $role = $this->getParameterFromBody($request, 'role');
+        $postedRole = $this->getParameterFromBody($request, 'role');
+        $role = ParticipantRole::tryFrom($postedRole);
+        $selectableRoles = $user->event->getSelectableRoles($this->isOtAccessGranted());
 
-        if ($role === ParticipantRole::OrganizingTeam->value && !((bool)($_SESSION['ot_access_granted'] ?? false))) {
-            $this->flashMessages->error('flash.error.otAccessDenied');
+        if ($role === null || in_array($role, $selectableRoles, true) === false) {
+            $this->flashMessages->error(
+                $postedRole === ParticipantRole::OrganizingTeam->value
+                    ? 'flash.error.otAccessDenied'
+                    : 'flash.error.roleNotAvailable',
+            );
 
             return $this->redirect($request, $response, 'chooseRole');
         }
 
-        if (
-            $user->loginType === UserLoginType::Skautis &&
-            !$this->skautisService->isUserLoggedIn()
-        ) {
-            $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
-            return $this->redirect($request, $response, 'landing');
-        }
+        return $this->createParticipantWithRole($user, $role, $request, $response);
+    }
 
-        $participantRole = ParticipantRole::from($this->getParameterFromBody($request, 'role'));
-        $this->userService->createParticipantSetRole(
-            $user,
-            $participantRole,
-        );
+    private function isOtAccessGranted(): bool
+    {
+        return (bool)($_SESSION['ot_access_granted'] ?? false);
+    }
+
+    private function createParticipantWithRole(
+        User $user,
+        ParticipantRole $role,
+        Request $request,
+        Response $response,
+    ): Response {
+        $participant = $this->userService->createParticipantSetRole($user, $role->value);
+
+        if ($user->loginType === UserLoginType::Skautis) {
+            $this->skautisService->prefillDataFromSkautis($participant);
+        }
 
         return $this->redirect($request, $response, 'getDashboard');
     }

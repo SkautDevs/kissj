@@ -165,7 +165,7 @@ readonly class ParticipantService
 
         if ($event->eventType->enforceActiveSkautisMembership()
             && $participant->getUserButNotNull()->loginType === UserLoginType::Skautis
-            && !(bool)$participant->getUserButNotNull()->skautisHasMembership) {
+            && $participant->getUserButNotNull()->skautisHasMembership !== true) {
             $result = $result->withWarning('flash.warning.missingSkautisMembership');
         }
 
