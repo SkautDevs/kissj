@@ -89,6 +89,7 @@ use kissj\Participant\ParticipantRole;
  * @property string|null       $apiKeyEntry
  * @property string|null       $apiKeyVendor
  * @property string|null       $apiKeyVendorHealth
+ * @property string|null       $apiKeyEvent
  *
  * @property string            $skautisAppId
  */

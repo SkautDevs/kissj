@@ -17,6 +17,13 @@ class DateTimeUtilsTest extends TestCase
         self::assertSame('Europe/Berlin', $day->getTimezone()->getName());
     }
 
+    public function testFormatAtomConvertsToBerlinTime(): void
+    {
+        $utc = DateTimeUtils::getDateTime('2027-05-19T07:30:00+00:00');
+
+        self::assertSame('2027-05-19T09:30:00+02:00', DateTimeUtils::formatAtom($utc));
+    }
+
     public function testGetDayDropsTimeOfDay(): void
     {
         $day = DateTimeUtils::getDay(DateTimeUtils::getDateTime('2026-07-01 23:30:00'));

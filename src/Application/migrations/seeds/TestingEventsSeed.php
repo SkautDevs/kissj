@@ -196,6 +196,7 @@ class TestingEventsSeed extends AbstractSeed
             }
 
             if (array_key_exists($slug, self::PROGRAMMES_BY_SLUG)) {
+                $this->fillMissingApiKey($slug);
                 $this->seedProgrammes($eventDefinition);
             }
         }
@@ -508,6 +509,14 @@ class TestingEventsSeed extends AbstractSeed
         $this->execute(
             'SELECT setval(\'event_id_seq\', GREATEST('
             . '(SELECT last_value FROM event_id_seq), (SELECT COALESCE(MAX(id), 0) FROM event)))',
+        );
+    }
+
+    private function fillMissingApiKey(string $slug): void
+    {
+        $this->execute(
+            'UPDATE event SET api_key_event = ? WHERE slug = ? AND api_key_event IS NULL',
+            ['event-' . $slug, $slug],
         );
     }
 

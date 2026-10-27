@@ -64,6 +64,11 @@ class EventRepository extends Repository
         return $this->findOneBy(['api_key_entry' => $apiKey]);
     }
 
+    public function findByEventApiKey(string $apiKey): ?Event
+    {
+        return $this->findOneBy(['api_key_event' => $apiKey]);
+    }
+
     /**
      * Matches either scoped vendor key column. Returns every event that matches so the
      * caller can detect ambiguity (a key accidentally reused across events/columns) instead

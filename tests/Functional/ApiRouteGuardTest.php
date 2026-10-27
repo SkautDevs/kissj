@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use Dibi\UniqueConstraintViolationException;
 use kissj\Event\EventRepository;
 use LogicException;
 use Psr\Container\ContainerInterface;
@@ -19,19 +20,22 @@ class ApiRouteGuardTest extends AppTestCase
     private const string EVENT_SLUG = 'test-event-slug';
     private const string API_PATH_PREFIX = '/v3/';
     private const string UNKNOWN_KEY = 'route-guard-unknown-key';
+    private const string DUPLICATE_KEY_EVENT_SLUG = 'route-guard-duplicate-key-event';
 
     private const array KEYS = [
         'apiKeyEntry' => 'route-guard-entry-key',
         'apiKeyDeals' => 'route-guard-deals-key',
         'apiKeyVendor' => 'route-guard-vendor-key',
         'apiKeyVendorHealth' => 'route-guard-vendor-health-key',
+        'apiKeyEvent' => 'route-guard-event-key',
     ];
 
     private const array WRONG_KEY_FIELDS_BY_GUARD = [
-        'entry' => ['apiKeyDeals', 'apiKeyVendor', 'apiKeyVendorHealth'],
-        'deal' => ['apiKeyEntry', 'apiKeyVendor', 'apiKeyVendorHealth'],
-        'vendor' => ['apiKeyEntry', 'apiKeyDeals'],
-        'adminSession' => ['apiKeyEntry', 'apiKeyDeals', 'apiKeyVendor', 'apiKeyVendorHealth'],
+        'entry' => ['apiKeyDeals', 'apiKeyVendor', 'apiKeyVendorHealth', 'apiKeyEvent'],
+        'deal' => ['apiKeyEntry', 'apiKeyVendor', 'apiKeyVendorHealth', 'apiKeyEvent'],
+        'vendor' => ['apiKeyEntry', 'apiKeyDeals', 'apiKeyEvent'],
+        'event' => ['apiKeyEntry', 'apiKeyDeals', 'apiKeyVendor', 'apiKeyVendorHealth'],
+        'adminSession' => ['apiKeyEntry', 'apiKeyDeals', 'apiKeyVendor', 'apiKeyVendorHealth', 'apiKeyEvent'],
     ];
 
     private const array GUARD_BY_ROUTE_NAME = [
@@ -45,6 +49,9 @@ class ApiRouteGuardTest extends AppTestCase
         'leave-group-from-web-app' => 'entry',
         'vendor-bearer-check' => 'vendor',
         'vendor-participant-by-tie-code' => 'vendor',
+        'programme-api-list' => 'event',
+        'programme-api-participant-by-tie-code' => 'event',
+        'programme-api-programme-participants' => 'event',
         'admin-change-note' => 'adminSession',
         'admin-approve-json' => 'adminSession',
         'admin-confirm-payment-json' => 'adminSession',
@@ -108,6 +115,7 @@ class ApiRouteGuardTest extends AppTestCase
 
         self::assertSame(self::EVENT_SLUG, $eventRepository->findByEntryApiKey(self::KEYS['apiKeyEntry'])?->slug);
         self::assertSame(self::EVENT_SLUG, $eventRepository->findByDealApiKey(self::KEYS['apiKeyDeals'])?->slug);
+        self::assertSame(self::EVENT_SLUG, $eventRepository->findByEventApiKey(self::KEYS['apiKeyEvent'])?->slug);
         foreach ([self::KEYS['apiKeyVendor'], self::KEYS['apiKeyVendorHealth']] as $vendorKey) {
             $events = $eventRepository->findAllByVendorApiKey($vendorKey);
             self::assertCount(1, $events);
@@ -116,11 +124,25 @@ class ApiRouteGuardTest extends AppTestCase
 
         self::assertNull($eventRepository->findByEntryApiKey(self::UNKNOWN_KEY));
         self::assertNull($eventRepository->findByDealApiKey(self::UNKNOWN_KEY));
+        self::assertNull($eventRepository->findByEventApiKey(self::UNKNOWN_KEY));
         self::assertSame([], $eventRepository->findAllByVendorApiKey(self::UNKNOWN_KEY));
 
         $allKeys = [...array_values(self::KEYS), self::UNKNOWN_KEY];
         self::assertNotContains('', $allKeys);
         self::assertCount(count($allKeys), array_unique($allKeys));
+    }
+
+    public function testEventApiKeyIsUniqueAcrossEvents(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $otherEvent = $this->getTypedTestEvent($app, 'default', self::DUPLICATE_KEY_EVENT_SLUG);
+        $this->setEventKeys($app);
+
+        $otherEvent->apiKeyEvent = self::KEYS['apiKeyEvent'];
+
+        $this->expectException(UniqueConstraintViolationException::class);
+        $eventRepository->persist($otherEvent);
     }
 
     public function testAnonymousPreflightIsAnsweredByCorsMiddleware(): void

@@ -41,6 +41,7 @@ use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
+use kissj\Middleware\EventApiKeyMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\LockedStatusOnlyMiddleware;
@@ -98,6 +99,7 @@ use kissj\Payment\QrCodeService;
 use kissj\PdfGenerator\mPdfGenerator;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\ProgrammeAdminController;
+use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeJsonController;
 use kissj\Programme\ProgrammeRegistrationRepository;
@@ -227,6 +229,7 @@ class Settings
             ContentArbiterTroopLeader::class => autowire(),
             ContentArbiterTroopParticipant::class => autowire(),
             EntryApiKeyMiddleware::class => autowire(),
+            EventApiKeyMiddleware::class => autowire(),
             EntryController::class => autowire(),
             EventController::class => autowire(),
             EventInfoMiddleware::class => autowire(),
@@ -273,6 +276,7 @@ class Settings
             PaymentTransferService::class => autowire(),
             ProgrammeAdminController::class => autowire(),
             ProgrammeAdminsOnlyMiddleware::class => autowire(),
+            ProgrammeApiController::class => autowire(),
             ProgrammeController::class => autowire(),
             ProgrammeJsonController::class => autowire(),
             ProgrammeRegistrationRepository::class => autowire(),

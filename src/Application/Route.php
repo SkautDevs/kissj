@@ -19,6 +19,7 @@ use kissj\Middleware\BadgesAllowedOnlyMiddleware;
 use kissj\Middleware\TopAdminsOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
+use kissj\Middleware\EventApiKeyMiddleware;
 use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
@@ -46,6 +47,7 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Programme\ProgrammeAdminController;
+use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeJsonController;
 use kissj\Programme\ProgrammeSectionAdminController;
@@ -684,6 +686,20 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('vendor-participant-by-tie-code');
             });
+
+            $app->group('/programme', function (RouteCollectorProxy $app) {
+                $app->get('/list', ProgrammeApiController::class . '::list')
+                    ->setName('programme-api-list');
+
+                $app->get('/participant/tie/{tieCode}', ProgrammeApiController::class . '::participantByTieCode')
+                    ->setName('programme-api-participant-by-tie-code');
+
+                $app->get(
+                    '/{programmeId:[0-9]+}/participants',
+                    ProgrammeApiController::class . '::programmeParticipants',
+                )
+                    ->setName('programme-api-programme-participants');
+            })->add(EventApiKeyMiddleware::class);
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->group('/admin', function (RouteCollectorProxy $app) {

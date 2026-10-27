@@ -23,6 +23,7 @@ class ProgrammeRepository extends Repository
         $qb->where('event_id = %i', $event->id);
         $qb->where('deleted_at IS NULL');
         $qb->orderBy('start')->asc();
+        $qb->orderBy('id')->asc();
 
         return $this->hydrateProgrammes($qb->fetchAll());
     }
@@ -125,14 +126,9 @@ class ProgrammeRepository extends Repository
      */
     private function hydrateProgrammes(array $rows): array
     {
-        $programmes = [];
-        foreach ($rows as $row) {
-            /** @var Row&iterable<string, mixed> $row */
-            /** @var Programme $programme */
-            $programme = $this->createEntity($row);
-            $programmes[] = $programme;
-        }
+        /** @var array<int, Programme> $programmes */
+        $programmes = $this->createEntities($rows);
 
-        return $programmes;
+        return array_values($programmes);
     }
 }

@@ -449,7 +449,7 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertCount(0, $programmeRepository->findActiveForEvent($navigamus));
     }
 
-    public function testSeedsProgrammeSections(): void
+    public function testSeedsProgrammeSectionsAndEventApiKeys(): void
     {
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -488,6 +488,7 @@ class TestingEventsSeedTest extends AppTestCase
         foreach (self::SEEDED_SLUGS as $slug) {
             $event = $eventRepository->findBySlug($slug);
             self::assertNotNull($event);
+            self::assertSame(isset($expectedSections[$slug]) ? 'event-' . $slug : null, $event->apiKeyEvent, $slug);
             self::assertSame(
                 $expectedSections[$slug] ?? [],
                 $this->sectionExclusivityByName($sectionRepository->findForEvent($event)),
@@ -500,6 +501,7 @@ class TestingEventsSeedTest extends AppTestCase
 
         $obrok = $eventRepository->findBySlug('obrok3027');
         self::assertNotNull($obrok);
+        self::assertSame('event-obrok3027', $obrok->apiKeyEvent);
         $obrokCounts = [];
         foreach ($sectionRepository->findForEvent($obrok) as $section) {
             $obrokCounts[$section->name] = $sectionRepository->countProgrammes($section);
@@ -582,6 +584,28 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertTrue($restored->isExclusive);
         self::assertSame(0, $restored->sortOrder);
         self::assertNull($restored->subtitle);
+    }
+
+    public function testReseedFillsMissingApiKeyAndKeepsManualOne(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+
+        $this->runSeed();
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        $navigamus->apiKeyEvent = null;
+        $eventRepository->persist($navigamus);
+        $korbo = $eventRepository->findBySlug('korbo3026');
+        self::assertNotNull($korbo);
+        $korbo->apiKeyEvent = 'manually-set-key';
+        $eventRepository->persist($korbo);
+
+        $this->runSeed();
+
+        self::assertSame('event-navigamus3027', $eventRepository->findBySlug('navigamus3027')?->apiKeyEvent);
+        self::assertSame('manually-set-key', $eventRepository->findBySlug('korbo3026')?->apiKeyEvent);
     }
 
     /**

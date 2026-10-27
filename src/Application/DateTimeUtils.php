@@ -17,6 +17,13 @@ class DateTimeUtils
         return new DateTimeImmutable($datetime, new DateTimeZone(self::TIMEZONE));
     }
 
+    public static function formatAtom(DateTimeInterface $value): string
+    {
+        return DateTimeImmutable::createFromInterface($value)
+            ->setTimezone(new DateTimeZone(self::TIMEZONE))
+            ->format(DATE_ATOM);
+    }
+
     public static function getDay(DateTimeInterface $value): DateTimeImmutable
     {
         return self::getDateTime($value->format('Y-m-d'));

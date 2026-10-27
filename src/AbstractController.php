@@ -117,9 +117,9 @@ abstract class AbstractController
     }
 
     /**
-     * @param array<string,int|string|EntryStatus|null|array<mixed>>|\stdClass $json
+     * @param array<string,int|string|EntryStatus|null|array<mixed>>|object $json
      */
-    protected function getResponseWithJson(Response $response, array|\stdClass $json, int $statusCode = 200): Response
+    protected function getResponseWithJson(Response $response, array|object $json, int $statusCode = 200): Response
     {
         $encodedJson = Utils::jsonEncode($json);
         $response->getBody()->write($encodedJson);
