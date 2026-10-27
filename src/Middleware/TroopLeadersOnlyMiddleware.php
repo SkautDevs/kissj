@@ -1,35 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace kissj\Middleware;
 
-use kissj\FlashMessages\FlashMessagesInterface;
-use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;
 
-class TroopLeadersOnlyMiddleware extends BaseMiddleware
+class TroopLeadersOnlyMiddleware extends AbstractRoleOnlyMiddleware
 {
-    public function __construct(
-        private readonly FlashMessagesInterface $flashMessages,
-        private readonly ParticipantRepository $participantRepository,
-    ) {
+    protected function getRole(): ParticipantRole
+    {
+        return ParticipantRole::TroopLeader;
     }
 
-    public function process(Request $request, ResponseHandler $handler): Response
+    protected function getFlashKey(): string
     {
-        $user = $this->tryGetUser($request);
-
-        if (
-            $user !== null
-            && $this->participantRepository->getParticipantFromUser($user)->role !== ParticipantRole::TroopLeader
-        ) {
-            $this->flashMessages->error('flash.error.tlOnly');
-
-            return $this->createRedirectResponse($request, 'landing');
-        }
-
-        return $handler->handle($request);
+        return 'flash.error.tlOnly';
     }
 }
