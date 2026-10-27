@@ -347,8 +347,7 @@ abstract class EventType
         return
             $this->isReceiptAllowed()
             && $participant->getUserButNotNull()->status === UserStatus::Paid
-            && $participant->role !== ParticipantRole::Guest
-            && $participant->getAllPaidPayment() !== [];
+            && $participant->getPaidPaymentsWithNonZeroPrice() !== [];
     }
 
     public function getReceiptTemplateName(Participant $participant): string

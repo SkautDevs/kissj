@@ -949,7 +949,6 @@ flash:
         ttlOnly: "Tato stránka je jen pro vedoucí technického týmu."
         tlOnly: "Pardon, nejsi přihlášený jako vedoucí skupiny"
         tpOnly: "Pardon, nejsi přihlášený jako účastník skupiny"
-        notGuest: "Pardon, jsi přihlášený jako host"
         wrongPatrol: "Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou patrolu"
         wrongTechnicalTeam: "Tento člen nepatří do tvého týmu."
         wrongTroop: "Pardon, ale nemůžeš upravovat či si zobrazit informace účastníků mimo tvou skupinu"

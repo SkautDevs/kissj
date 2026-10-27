@@ -941,7 +941,6 @@ flash:
         ttlOnly: "This page is for technical team leaders only."
         tlOnly: "Sorry, you are not logged as Troop Leader"
         tpOnly: "Sorry, you are not logged as Troop Participant"
-        notGuest: "Sorry, you are logged as guest"
         wrongPatrol: "Sorry, but you cannot edit or view participants outside your patrol"
         wrongTechnicalTeam: "This member does not belong to your team."
         wrongTroop: "Sorry, but you cannot modify or view information of participants outside of your group"

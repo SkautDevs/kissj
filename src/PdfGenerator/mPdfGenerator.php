@@ -34,7 +34,7 @@ class mPdfGenerator extends PdfGenerator
     public function generatePdfReceipt(Participant $participant, string $templateName): string
     {
         $event = $participant->getUserButNotNull()->event;
-        $payments = $participant->getAllPaidPayment();
+        $payments = $participant->getPaidPaymentsWithNonZeroPrice();
 
         $receipts = array_map(fn (Payment $payment) => [
             'payment' => $payment,

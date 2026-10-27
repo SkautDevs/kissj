@@ -21,9 +21,6 @@ email:
         ifQuestion: "Pokud máš otázky, můžeš odpovědi na ně najít na našem webu"
         sendEmail: "nebo můžeš rovnou kontaktovat našeho admina pro registraci"
         farewell: "Brzy na viděnou!"
-flash:
-    error:
-        notGuest: "Pardon, jsi přihlášený jako tým"
 receipt:
     headline: "Potvrzení o přijetí platby"
     number: "Číslo dokladu"

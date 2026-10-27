@@ -329,6 +329,17 @@ class Participant extends EntityDatetime
     }
 
     /**
+     * @return list<Payment>
+     */
+    public function getPaidPaymentsWithNonZeroPrice(): array
+    {
+        return array_values(array_filter(
+            $this->getAllPaidPayment(),
+            fn (Payment $payment): bool => (float)$payment->price > 0,
+        ));
+    }
+
+    /**
      * @return Payment[]
      */
     public function getNoncanceledPayments(): array

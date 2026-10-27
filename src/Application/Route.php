@@ -25,7 +25,6 @@ use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
-use kissj\Middleware\NotGuestMiddleware;
 use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
@@ -244,8 +243,7 @@ class Route
 
                         $app->get('/download/receipt', ParticipantController::class . '::downloadReceipt')
                             ->setName('downloadReceipt')
-                            ->add(PaidCancelledStatusOnlyMiddleware::class)
-                            ->add(NotGuestMiddleware::class);
+                            ->add(PaidCancelledStatusOnlyMiddleware::class);
 
                         $app->group('', function (RouteCollectorProxy $app) {
                             $app->get('/showChangeDetails', ParticipantController::class . '::showDetailsChangeable')
