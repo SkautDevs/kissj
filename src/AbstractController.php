@@ -190,6 +190,16 @@ abstract class AbstractController
         return $parameter;
     }
 
+    protected function isCheckboxCheckedInBody(Request $request, string $parameterName): bool
+    {
+        $parsedBody = $request->getParsedBody();
+        if (is_array($parsedBody) === false) {
+            throw new \RuntimeException('getParsedBody() did not returned array');
+        }
+
+        return array_key_exists($parameterName, $parsedBody);
+    }
+
     protected function getParameterFromQuery(Request $request, string $parameterName): string
     {
         $queryParams = $request->getQueryParams();

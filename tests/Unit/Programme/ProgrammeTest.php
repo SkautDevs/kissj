@@ -6,11 +6,23 @@ namespace Tests\Unit\Programme;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeSection;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProgrammeTest extends TestCase
 {
+    public function testSectionLabelAppendsSubtitleOnlyWhenSet(): void
+    {
+        $section = new ProgrammeSection();
+        $section->name = 'Vapro';
+        $section->subtitle = null;
+        self::assertSame('Vapro', $section->getLabel());
+
+        $section->subtitle = '1. blok';
+        self::assertSame('Vapro (1. blok)', $section->getLabel());
+    }
+
     #[DataProvider('overlapProvider')]
     public function testOverlap(string $startA, string $endA, string $startB, string $endB, bool $expected): void
     {
@@ -37,81 +49,11 @@ class ProgrammeTest extends TestCase
         ];
     }
 
-    #[DataProvider('exclusivityProvider')]
-    public function testExclusivity(
-        string $startA,
-        string $endA,
-        ?string $groupA,
-        string $startB,
-        string $endB,
-        ?string $groupB,
-        bool $expected,
-    ): void {
-        $a = $this->createProgramme($startA, $endA, $groupA);
-        $b = $this->createProgramme($startB, $endB, $groupB);
-
-        // isExclusiveWith is symmetric, so both directions must agree
-        self::assertSame($expected, $a->isExclusiveWith($b));
-        self::assertSame($expected, $b->isExclusiveWith($a));
-    }
-
-    /**
-     * @return array<string, array{string, string, ?string, string, string, ?string, bool}>
-     */
-    public static function exclusivityProvider(): array
-    {
-        return [
-            'same group overlapping is exclusive' =>
-                [
-                    '2027-06-05 08:00',
-                    '2027-06-05 10:00',
-                    'workshops',
-                    '2027-06-05 09:00',
-                    '2027-06-05 11:00',
-                    'workshops',
-                    true,
-                ],
-            'different group is not exclusive' =>
-                [
-                    '2027-06-05 08:00',
-                    '2027-06-05 10:00',
-                    'workshops',
-                    '2027-06-05 09:00',
-                    '2027-06-05 11:00',
-                    'games',
-                    false,
-                ],
-            'grouped vs ungrouped is not exclusive' =>
-                [
-                    '2027-06-05 08:00',
-                    '2027-06-05 10:00',
-                    'workshops',
-                    '2027-06-05 09:00',
-                    '2027-06-05 11:00',
-                    null,
-                    false,
-                ],
-            'both ungrouped overlapping is not exclusive' =>
-                ['2027-06-05 08:00', '2027-06-05 10:00', null, '2027-06-05 09:30', '2027-06-05 10:30', null, false],
-            'same group touching borders is not exclusive' =>
-                [
-                    '2027-06-05 08:00',
-                    '2027-06-05 10:00',
-                    'workshops',
-                    '2027-06-05 10:00',
-                    '2027-06-05 12:00',
-                    'workshops',
-                    false,
-                ],
-        ];
-    }
-
-    private function createProgramme(string $start, string $end, ?string $groupName = null): Programme
+    private function createProgramme(string $start, string $end): Programme
     {
         $programme = new Programme();
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
-        $programme->exclusiveGroupName = $groupName;
 
         return $programme;
     }

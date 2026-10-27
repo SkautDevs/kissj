@@ -14,6 +14,7 @@ use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeService;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
@@ -35,6 +36,8 @@ class ProgrammeAdminTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'programme-admin@example.com');
+        $workshops = $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'workshops', true);
+        $games = $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'games');
 
         $uniqueName = 'created via admin ' . bin2hex(random_bytes(4));
         $responseCreate = $app->handle($this->createRequest(
@@ -47,7 +50,7 @@ class ProgrammeAdminTest extends AppTestCase
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '15',
-                'exclusiveGroupName' => 'workshops',
+                'sectionId' => (string)$workshops->id,
                 'roles' => ['ist', 'tl'],
             ],
         ));
@@ -70,7 +73,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame($uniqueName, $programme->name);
         self::assertSame(15, $programme->capacity);
         self::assertFalse($programme->isPreregistered);
-        self::assertSame('workshops', $programme->exclusiveGroupName);
+        self::assertSame($workshops->id, $programme->section->id);
         self::assertCount(2, $programme->getTargetRoles());
 
         $responseEdit = $app->handle($this->createRequest(
@@ -83,7 +86,7 @@ class ProgrammeAdminTest extends AppTestCase
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
-                'exclusiveGroupName' => '',
+                'sectionId' => (string)$games->id,
                 'isPreregistered' => '1',
                 'roles' => ['ist'],
             ],
@@ -99,7 +102,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame($uniqueName . ' renamed', $reloaded->name);
         self::assertSame(5, $reloaded->capacity);
         self::assertTrue($reloaded->isPreregistered);
-        self::assertNull($reloaded->exclusiveGroupName);
+        self::assertSame($games->id, $reloaded->section->id);
         self::assertCount(1, $reloaded->getTargetRoles());
 
         $responseDelete = $app->handle($this->createRequest(
@@ -110,6 +113,44 @@ class ProgrammeAdminTest extends AppTestCase
 
         $this->expectException(\RuntimeException::class);
         $programmeRepository->getActiveById($programme->id, $event);
+    }
+
+    public function testMovingProgrammeIntoExclusiveSectionWarnsAboutOverlappingRegistrations(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'programme-move-exclusive-admin@example.com');
+        $event = $this->getEvent($app);
+        $exclusive = $this->createProgrammeSection($app->getContainer(), $event, 'exclusive target', true);
+        $open = $this->createProgrammeSection($app->getContainer(), $event, 'open source');
+        $stayer = $this->createProgramme($app, 'stays in exclusive', $exclusive, 5);
+        $mover = $this->createProgramme($app, 'moves into exclusive', $open, 5);
+        $service = $this->getService($app, ProgrammeService::class);
+        $doubleBooked = $this->createPaidIstWithEmail($app, 'double-booked-mover@example.com');
+        self::assertTrue($service->adminAssign($stayer, $doubleBooked)->success);
+        self::assertTrue($service->adminAssign($mover, $doubleBooked)->success);
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/' . $mover->id . '/edit',
+            'POST',
+            [
+                'name' => 'moves into exclusive',
+                'description' => 'desc',
+                'place' => 'tent A',
+                'start' => '2027-06-05T10:00',
+                'end' => '2027-06-05T12:00',
+                'capacity' => '5',
+                'sectionId' => (string)$exclusive->id,
+                'roles' => ['ist'],
+            ],
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        $flashed = $this->flashed($app);
+        self::assertContains(
+            str_replace('%count%', '1', $this->translate($app, 'flash.warning.programmeExclusiveConflicts')),
+            $flashed,
+        );
+        self::assertContains($this->translate($app, 'flash.success.programmeSaved'), $flashed);
     }
 
     public function testFlippingProgrammeToPreregisteredSoftDeletesActiveRegistrations(): void
@@ -136,7 +177,7 @@ class ProgrammeAdminTest extends AppTestCase
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
-                'exclusiveGroupName' => '',
+                'sectionId' => (string)$programme->section->id,
                 'isPreregistered' => '1',
                 'roles' => ['ist'],
             ],
@@ -156,6 +197,7 @@ class ProgrammeAdminTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'tampered-role-admin@example.com');
+        $section = $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'tampered');
 
         $uniqueName = 'tampered role programme ' . bin2hex(random_bytes(4));
         $response = $app->handle($this->createRequest(
@@ -168,7 +210,7 @@ class ProgrammeAdminTest extends AppTestCase
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '15',
-                'exclusiveGroupName' => '',
+                'sectionId' => (string)$section->id,
                 'roles' => ['ist', 'not-a-role'],
             ],
         ));
@@ -213,10 +255,9 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
-            $this->programmeBody($uniqueName, '2027-06-05T10:00', '2027-06-05T12:00', [
+            $this->programmeBody($app, $uniqueName, '2027-06-05T10:00', '2027-06-05T12:00', [
                 'description' => 'a < b',
                 'place' => "O'Brien",
-                'exclusiveGroupName' => 'Hry & "venku"',
             ]),
         ));
         self::assertSame(302, $response->getStatusCode());
@@ -229,7 +270,62 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame($uniqueName, $programme->name);
         self::assertSame('a < b', $programme->description);
         self::assertSame("O'Brien", $programme->place);
-        self::assertSame('Hry & "venku"', $programme->exclusiveGroupName);
+    }
+
+    public function testProgrammeFormIsNotRenderedWhenEventHasNoSection(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'no-section-form-admin@example.com');
+        $sectionsUrl = '/v2/event/test-event-slug/admin/programmes/sections';
+
+        $bodyWithout = (string)$app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes/new'))
+            ->getBody();
+        self::assertStringContainsString($this->translate($app, 'programme.admin.formSectionNone'), $bodyWithout);
+        self::assertStringContainsString('href="' . $sectionsUrl . '"', $bodyWithout);
+        self::assertStringNotContainsString('<form', $bodyWithout);
+
+        $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'first section');
+        $bodyWith = (string)$app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes/new'))
+            ->getBody();
+        self::assertStringContainsString('id="sectionId"', $bodyWith);
+        self::assertStringNotContainsString($this->translate($app, 'programme.admin.formSectionNone'), $bodyWith);
+    }
+
+    public function testProgrammeFormRejectsSectionOfAnotherEvent(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'foreign-section-admin@example.com');
+        $foreignEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
+        $foreignSection = $this->createProgrammeSection($app->getContainer(), $foreignEvent, 'foreign');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Programme section not found for event');
+        $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/new',
+            'POST',
+            $this->programmeBody($app, 'foreign section', '2027-06-05T10:00', '2027-06-05T12:00', [
+                'sectionId' => (string)$foreignSection->id,
+            ]),
+        ));
+    }
+
+    public function testProgrammeEditRejectsSectionOfAnotherEvent(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'foreign-section-edit-admin@example.com');
+        $programme = $this->createProgramme($app, 'foreign section edit ' . bin2hex(random_bytes(4)), null, 5);
+        $foreignEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
+        $foreignSection = $this->createProgrammeSection($app->getContainer(), $foreignEvent, 'foreign');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Programme section not found for event');
+        $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
+            'POST',
+            $this->programmeBody($app, $programme->name, '2027-06-05T10:00', '2027-06-05T12:00', [
+                'sectionId' => (string)$foreignSection->id,
+            ]),
+        ));
     }
 
     public function testCreateRejectsEndBeforeStart(): void
@@ -241,7 +337,7 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
-            $this->programmeBody($uniqueName, '2027-06-05T12:00', '2027-06-05T10:00'),
+            $this->programmeBody($app, $uniqueName, '2027-06-05T12:00', '2027-06-05T10:00'),
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -258,7 +354,7 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
-            $this->programmeBody($uniqueName, 'abc', '2027-06-05T10:00'),
+            $this->programmeBody($app, $uniqueName, 'abc', '2027-06-05T10:00'),
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -275,7 +371,7 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
-            $this->programmeBody($uniqueName, '2027-02-30T10:00', '2027-03-05T10:00'),
+            $this->programmeBody($app, $uniqueName, '2027-02-30T10:00', '2027-03-05T10:00'),
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -294,7 +390,7 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
             'POST',
-            $this->programmeBody($programme->name, '2027-06-05T15:00', '2027-06-05T15:00'),
+            $this->programmeBody($app, $programme->name, '2027-06-05T15:00', '2027-06-05T15:00'),
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -366,11 +462,14 @@ class ProgrammeAdminTest extends AppTestCase
     }
 
     /**
+     * @param App<ContainerInterface> $app
      * @param array<string, list<string>|string> $overrides
      * @return array<string, list<string>|string>
      */
-    private function programmeBody(string $name, string $start, string $end, array $overrides = []): array
+    private function programmeBody(App $app, string $name, string $start, string $end, array $overrides = []): array
     {
+        $section = $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'form section');
+
         return array_merge([
             'name' => $name,
             'description' => 'desc',
@@ -378,7 +477,7 @@ class ProgrammeAdminTest extends AppTestCase
             'start' => $start,
             'end' => $end,
             'capacity' => '5',
-            'exclusiveGroupName' => '',
+            'sectionId' => (string)$section->id,
             'roles' => ['ist'],
         ], $overrides);
     }
@@ -672,6 +771,7 @@ class ProgrammeAdminTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'new-card-admin@example.com');
+        $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'new card section');
 
         $response = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes/new'));
         $body = (string)$response->getBody();
@@ -857,7 +957,7 @@ class ProgrammeAdminTest extends AppTestCase
     private function createProgramme(
         App $app,
         string $name,
-        ?string $groupName,
+        ?ProgrammeSection $section,
         int $capacity,
         bool $isPreregistered = false,
     ): Programme {
@@ -873,8 +973,9 @@ class ProgrammeAdminTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = $capacity;
         $programme->isPreregistered = $isPreregistered;
-        $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programme->section = $section
+            ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
         $programme->setTargetRoles([ParticipantRole::Ist]);
         $programmeRepository->persist($programme);
 

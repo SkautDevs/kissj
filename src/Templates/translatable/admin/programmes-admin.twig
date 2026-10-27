@@ -31,6 +31,9 @@
         <a class="btn" href="{{ url_for('admin-programme-new', {eventSlug: event.slug}) }}">
             {{- 'programme.admin.new'|trans -}}
         </a>
+        <a class="btn" href="{{ url_for('admin-programme-sections', {eventSlug: event.slug}) }}">
+            {{- 'programme.admin.sections.open'|trans -}}
+        </a>
         <a class="btn" href="{{ url_for('admin-export-programmes', {eventSlug: event.slug}) }}">
             {{- 'programme.admin.exportCsv'|trans -}}
         </a>
@@ -61,7 +64,7 @@
             {{ 'programme.admin.colTime'|trans }}:
             <b>{{ programme.start|date('j. n. Y H:i') }} – {{ programme.end|date('j. n. H:i') }}</b><br/>
             {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.place }}</b><br/>
-            {{ 'programme.admin.colGroup'|trans }}: <b>{{ programme.getExclusiveGroupName() ?: '–' }}</b><br/>
+            {{ 'programme.admin.colSection'|trans }}: <b>{{ programme.section.getLabel() }}</b><br/>
             {{ 'programme.admin.colOccupancy'|trans }}:
             {% if programme.isPreregistered %}
                 <b>{{ 'programme.admin.preregistered'|trans }}</b><br/>

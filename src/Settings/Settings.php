@@ -102,6 +102,8 @@ use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeJsonController;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSectionAdminController;
+use kissj\Programme\ProgrammeSectionRepository;
 use kissj\Programme\ProgrammeService;
 use kissj\Session\RedisSessionHandler;
 use kissj\Skautis\SkautisController;
@@ -275,6 +277,8 @@ class Settings
             ProgrammeJsonController::class => autowire(),
             ProgrammeRegistrationRepository::class => autowire(),
             ProgrammeRepository::class => autowire(),
+            ProgrammeSectionAdminController::class => autowire(),
+            ProgrammeSectionRepository::class => autowire(),
             ProgrammeService::class => autowire(),
             Mailer::class => autowire(),
             Metrics::class => autowire(),

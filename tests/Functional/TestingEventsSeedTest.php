@@ -13,6 +13,8 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
+use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use LogicException;
@@ -445,6 +447,167 @@ class TestingEventsSeedTest extends AppTestCase
         $this->runSeed();
 
         self::assertCount(0, $programmeRepository->findActiveForEvent($navigamus));
+    }
+
+    public function testSeedsProgrammeSections(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $sectionRepository = $this->getService($app, ProgrammeSectionRepository::class);
+        $expectedSections = [
+            'navigamus3027' => ['Doprovodný program' => true, 'Ceremoniály' => false],
+            'korbo3026' => [
+                'Pohybová' => false,
+                'Tvořivá' => false,
+                'Kulturní' => false,
+                'Přednáška' => false,
+                'Debata' => false,
+                'Jiné' => false,
+            ],
+            'miquik3026' => [
+                'Úvodní přednáška' => false,
+                '1. sekce' => true,
+                '2. sekce' => true,
+                '3. sekce' => true,
+                'Závěrečná přednáška' => false,
+            ],
+            'obrok3027' => [
+                'Účastníci' => false,
+                'V areálu' => false,
+                'VaPro' => true,
+                'VýRo' => true,
+                'Semináře' => true,
+                'RoPro' => true,
+                'Inspiromat' => true,
+            ],
+        ];
+
+        $this->runSeed();
+
+        foreach (self::SEEDED_SLUGS as $slug) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            self::assertSame(
+                $expectedSections[$slug] ?? [],
+                $this->sectionExclusivityByName($sectionRepository->findForEvent($event)),
+                $slug,
+            );
+            foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
+                self::assertSame($event->id, $programme->section->event->id, $programme->name);
+            }
+        }
+
+        $obrok = $eventRepository->findBySlug('obrok3027');
+        self::assertNotNull($obrok);
+        $obrokCounts = [];
+        foreach ($sectionRepository->findForEvent($obrok) as $section) {
+            $obrokCounts[$section->name] = $sectionRepository->countProgrammes($section);
+        }
+        self::assertSame(
+            [
+                'Účastníci' => 15,
+                'V areálu' => 135,
+                'VaPro' => 12,
+                'VýRo' => 18,
+                'Semináře' => 11,
+                'RoPro' => 9,
+                'Inspiromat' => 4,
+            ],
+            $obrokCounts,
+        );
+        $sectionCountBefore = $this->countSections($eventRepository, $sectionRepository);
+
+        $this->runSeed();
+
+        self::assertSame($sectionCountBefore, $this->countSections($eventRepository, $sectionRepository));
+    }
+
+    public function testReseedMovesProgrammesOutOfLegacyProgramSection(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $sectionRepository = $this->getService($app, ProgrammeSectionRepository::class);
+
+        $this->runSeed();
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        $legacySection = $this->createProgrammeSection($app->getContainer(), $navigamus, 'Program');
+        foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
+            $programme->section = $legacySection;
+            $programme->start = DateTimeUtils::getDateTime($programme->start->format('Y-m-d H:i:s') . ' +1 day');
+            $programme->end = DateTimeUtils::getDateTime($programme->end->format('Y-m-d H:i:s') . ' +1 day');
+            $programmeRepository->persist($programme);
+        }
+        foreach ($sectionRepository->findForEvent($navigamus) as $section) {
+            if ($section->id !== $legacySection->id) {
+                $sectionRepository->delete($section);
+            }
+        }
+
+        $this->runSeed();
+
+        $sections = $sectionRepository->findForEvent($navigamus);
+        self::assertSame(
+            ['Doprovodný program' => true, 'Ceremoniály' => false],
+            $this->sectionExclusivityByName($sections),
+        );
+        self::assertSame(8, $sectionRepository->countProgrammes($sections[0]));
+        self::assertCount(8, $programmeRepository->findActiveForEvent($navigamus));
+    }
+
+    public function testReseedRestoresSectionExclusivityOrderAndSubtitle(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $sectionRepository = $this->getService($app, ProgrammeSectionRepository::class);
+
+        $this->runSeed();
+
+        $navigamus = $eventRepository->findBySlug('navigamus3027');
+        self::assertNotNull($navigamus);
+        $section = $sectionRepository->findForEvent($navigamus)[0];
+        self::assertSame('Doprovodný program', $section->name);
+        $section->isExclusive = false;
+        $section->sortOrder = 9;
+        $section->subtitle = 'manual subtitle';
+        $sectionRepository->persist($section);
+
+        $this->runSeed();
+
+        $restored = $sectionRepository->get($section->id);
+        self::assertInstanceOf(ProgrammeSection::class, $restored);
+        self::assertTrue($restored->isExclusive);
+        self::assertSame(0, $restored->sortOrder);
+        self::assertNull($restored->subtitle);
+    }
+
+    /**
+     * @param list<ProgrammeSection> $sections
+     * @return array<string, bool>
+     */
+    private function sectionExclusivityByName(array $sections): array
+    {
+        $exclusivityByName = [];
+        foreach ($sections as $section) {
+            $exclusivityByName[$section->name] = $section->isExclusive;
+        }
+
+        return $exclusivityByName;
+    }
+
+    private function countSections(EventRepository $eventRepository, ProgrammeSectionRepository $sectionRepository): int
+    {
+        $total = 0;
+        foreach (self::SEEDED_SLUGS as $slug) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            $total += count($sectionRepository->findForEvent($event));
+        }
+
+        return $total;
     }
 
     /**

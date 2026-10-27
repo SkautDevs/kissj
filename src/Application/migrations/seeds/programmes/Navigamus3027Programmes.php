@@ -7,6 +7,22 @@ namespace kissj\Application\migrations\seeds\programmes;
 class Navigamus3027Programmes
 {
     /**
+     * @var list<array{name: string, subtitle: string|null, isExclusive: bool}>
+     */
+    public const array SECTIONS = [
+        [
+            'name' => 'Doprovodný program',
+            'subtitle' => null,
+            'isExclusive' => true,
+        ],
+        [
+            'name' => 'Ceremoniály',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+    ];
+
+    /**
      * @var list<array{
      *     name: string,
      *     description: string,
@@ -16,6 +32,7 @@ class Navigamus3027Programmes
      *     capacity: int,
      *     isPreregistered: bool,
      *     roles: list<string>,
+     *     section: string,
      * }>
      */
     public const array PROGRAMMES = [
@@ -28,6 +45,7 @@ class Navigamus3027Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Exkurze – elektrárna Štěchovice',
@@ -38,6 +56,7 @@ class Navigamus3027Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Plavba výletní lodí po Slapech',
@@ -48,6 +67,7 @@ class Navigamus3027Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Prohlídka zámku Konopiště',
@@ -58,6 +78,7 @@ class Navigamus3027Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Výlet na Drtinovu rozhlednu nebo rozhlednu Veselý vrch',
@@ -68,6 +89,7 @@ class Navigamus3027Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Program vodní záchranné služby',
@@ -78,6 +100,7 @@ class Navigamus3027Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Plavba k místu prvního tábora skautek',
@@ -88,6 +111,7 @@ class Navigamus3027Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
         [
             'name' => 'Plavba k místu prvního tábora skautek',
@@ -98,6 +122,7 @@ class Navigamus3027Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Doprovodný program',
         ],
     ];
 }

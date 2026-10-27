@@ -120,24 +120,6 @@ class ProgrammeRepository extends Repository
     }
 
     /**
-     * @return list<string>
-     */
-    public function findExclusiveGroupNames(Event $event): array
-    {
-        $qb = $this->connection->select('DISTINCT exclusive_group_name')
-            ->from('programme')
-            ->where('event_id = %i', $event->id)
-            ->where('deleted_at IS NULL')
-            ->where('exclusive_group_name IS NOT NULL')
-            ->orderBy('exclusive_group_name');
-
-        /** @var list<string> $names */
-        $names = $qb->fetchPairs(null, 'exclusive_group_name');
-
-        return $names;
-    }
-
-    /**
      * @param array<int, Row> $rows
      * @return list<Programme>
      */

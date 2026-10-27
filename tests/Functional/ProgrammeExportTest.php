@@ -14,6 +14,8 @@ use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
+use kissj\Programme\ProgrammeSectionRepository;
 use kissj\Programme\ProgrammeService;
 use kissj\User\User;
 use kissj\User\UserRepository;
@@ -70,7 +72,8 @@ class ProgrammeExportTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => 'test-event-slug']);
 
-        $workshop = $this->createProgramme($app, 'csv workshop', 'workshops', 5);
+        $workshops = $this->createProgrammeSection($app->getContainer(), $event, 'workshops', true);
+        $workshop = $this->createProgramme($app, 'csv workshop', $workshops, 5);
         $this->createProgramme($app, 'csv ceremony', null, 1, '2027-06-05 08:00', '2027-06-05 09:00', null, true);
         $active = $this->createPaidIstWithEmail($app, 'csv-active@example.com');
         $gone = $this->createPaidIstWithEmail($app, 'csv-gone@example.com');
@@ -81,10 +84,35 @@ class ProgrammeExportTest extends AppTestCase
         $rows = $exportService->programmeRegistrationsToCSV($event);
 
         self::assertCount(2, $rows); // header + 1 active registration
+        self::assertSame('section', $rows[0][1]);
         self::assertSame('csv workshop', $rows[1][0]);
+        self::assertSame('workshops', $rows[1][1]);
         self::assertStringContainsString('csv-active@example.com', implode(',', $rows[1]));
         self::assertStringNotContainsString('csv-gone@example.com', (string)json_encode($rows));
         self::assertStringNotContainsString('csv ceremony', (string)json_encode($rows));
+    }
+
+    public function testSectionSubtitleIsShownInCsvAndAttendance(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeService::class);
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'Vapro');
+        $section->subtitle = '1. blok';
+        $this->getService($app, ProgrammeSectionRepository::class)->persist($section);
+        $programme = $this->createProgramme($app, 'subtitled workshop', $section, 5);
+        self::assertTrue($service->register($this->createPaidIstWithEmail($app, 'csv-sub@example.com'), $programme->id)
+            ->success);
+
+        $rows = $this->getService($app, ExportService::class)->programmeRegistrationsToCSV($event);
+        $html = $this->getService($app, PdfGenerator::class)->buildProgrammeAttendanceHtml($event, [[
+            'programme' => $programme,
+            'registrations' => $this->getService($app, ProgrammeRegistrationRepository::class)
+                ->findActiveForProgramme($programme),
+        ]]);
+
+        self::assertSame(['subtitled workshop', 'Vapro (1. blok)'], array_slice($rows[1], 0, 2));
+        self::assertStringContainsString('(Vapro (1. blok))', $html);
     }
 
     public function testGroupedActiveRegistrationsExcludeSoftDeletedAndForeignProgrammes(): void
@@ -120,7 +148,7 @@ class ProgrammeExportTest extends AppTestCase
     private function createProgramme(
         App $app,
         string $name,
-        ?string $groupName,
+        ?ProgrammeSection $section,
         int $capacity,
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
@@ -139,8 +167,9 @@ class ProgrammeExportTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
         $programme->isPreregistered = $isPreregistered;
-        $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programme->section = $section
+            ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
         $programme->setTargetRoles(
             $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
         );

@@ -48,6 +48,7 @@ use kissj\Participant\Troop\TroopController;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeJsonController;
+use kissj\Programme\ProgrammeSectionAdminController;
 use kissj\Skautis\SkautisController;
 use kissj\User\UserController;
 use Psr\Container\ContainerInterface;
@@ -557,6 +558,23 @@ class Route
 
                     $app->post('/window', ProgrammeAdminController::class . '::saveWindow')
                         ->setName('admin-programme-window');
+
+                    $app->get('/sections', ProgrammeSectionAdminController::class . '::overview')
+                        ->setName('admin-programme-sections');
+
+                    $app->post('/sections', ProgrammeSectionAdminController::class . '::create')
+                        ->setName('admin-programme-section-create');
+
+                    $app->post('/sections/{sectionId}/edit', ProgrammeSectionAdminController::class . '::update')
+                        ->setName('admin-programme-section-update');
+
+                    $app->post('/sections/{sectionId}/delete', ProgrammeSectionAdminController::class . '::delete')
+                        ->setName('admin-programme-section-delete');
+
+                    $app->post(
+                        '/sections/{sectionId}/move/{direction:up|down}',
+                        ProgrammeSectionAdminController::class . '::move',
+                    )->setName('admin-programme-section-move');
 
                     $app->get('/new', ProgrammeAdminController::class . '::showCreate')
                         ->setName('admin-programme-new');

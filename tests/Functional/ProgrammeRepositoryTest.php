@@ -11,6 +11,7 @@ use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
 use kissj\User\User;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
@@ -29,7 +30,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
 
-        $istProgramme = $this->createProgramme($app, 'ist night game', 'games', [ParticipantRole::Ist]);
+        $istProgramme = $this->createProgramme($app, 'ist night game', null, [ParticipantRole::Ist]);
         $tlProgramme = $this->createProgramme(
             $app,
             'tl workshop',
@@ -62,8 +63,6 @@ class ProgrammeRepositoryTest extends AppTestCase
         $registrationRepository->softDelete($registration);
         self::assertSame(0, $registrationRepository->countActiveForProgramme($istProgramme));
         self::assertNull($registrationRepository->findActive($istProgramme, $participant));
-
-        self::assertContains('games', $programmeRepository->findExclusiveGroupNames($event));
 
         $istProgramme->deletedAt = DateTimeUtils::getDateTime();
         $programmeRepository->persist($istProgramme);
@@ -179,7 +178,7 @@ class ProgrammeRepositoryTest extends AppTestCase
     private function createProgramme(
         App $app,
         string $name,
-        ?string $groupName,
+        ?ProgrammeSection $section,
         array $roles,
         bool $isPreregistered = false,
     ): Programme {
@@ -195,8 +194,9 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;
         $programme->isPreregistered = $isPreregistered;
-        $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programme->section = $section
+            ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
         $programme->setTargetRoles($roles);
         $programmeRepository->persist($programme);
 

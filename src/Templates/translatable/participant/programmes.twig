@@ -9,7 +9,8 @@
                 <li>
                     <a href="{{ url_for('programme-detail', {eventSlug: event.slug, programmeId: programme.id}) }}">{{ programme.name }}</a>
                     {{ programme.start|date('j. n. Y H:i') }} - {{ programme.end|date('H:i') }},
-                    {{ programme.place }}
+                    {{ programme.place }},
+                    {{ programme.section.getLabel() }}
 
                     {% if programme.isPreregistered %}
                         <span>{{ 'programme.list.preregistered'|trans }}</span>

@@ -1,0 +1,65 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'programme.admin.sections.title'|trans }}</h2>
+        <a href="{{ url_for('admin-programmes', {eventSlug: event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'programme.admin.sections.back'|trans }}</a>
+    </div>
+
+    <div class="card text-left">
+        <h3>{{ 'programme.admin.sections.add'|trans }}</h3>
+        <form method="post" action="{{ url_for('admin-programme-section-create', {eventSlug: event.slug}) }}">
+            <input class="form-control" type="text" name="name" required
+                   placeholder="{{ 'programme.admin.sections.colName'|trans }}">
+            <input class="form-control" type="text" name="subtitle"
+                   placeholder="{{ 'programme.admin.sections.colSubtitle'|trans }}">
+            <label>
+                <input type="checkbox" name="isExclusive" value="1">
+                {{ 'programme.admin.sections.exclusive'|trans }}
+            </label>
+            <input type="submit" class="btn btn-small" value="{{ 'programme.admin.sections.add'|trans }}">
+        </form>
+    </div>
+
+    {% for section in sections %}
+        {% set routeParams = {eventSlug: event.slug, sectionId: section.id} %}
+        <div class="card text-left">
+            <form method="post" action="{{ url_for('admin-programme-section-update', routeParams) }}">
+                <input class="form-control" type="text" name="name" required value="{{ section.name }}"
+                       placeholder="{{ 'programme.admin.sections.colName'|trans }}">
+                <input class="form-control" type="text" name="subtitle" value="{{ section.getSubtitle() }}"
+                       placeholder="{{ 'programme.admin.sections.colSubtitle'|trans }}">
+                <label>
+                    <input type="checkbox" name="isExclusive" value="1" {{ section.isExclusive ? 'checked' : '' }}>
+                    {{ 'programme.admin.sections.exclusive'|trans }}
+                </label>
+                <br/>
+                {{ 'programme.admin.sections.colCount'|trans }}: <b>{{ counts[section.id].active }}</b>
+                {% if counts[section.id].deleted > 0 %}
+                    {{ 'programme.admin.sections.deletedCount'|trans({'%count%': counts[section.id].deleted}) }}
+                {% endif %}
+                <br/>
+                <input type="submit" class="btn btn-small" value="{{ 'programme.admin.sections.save'|trans }}">
+            </form>
+            <br/>
+            {% set moveUpParams = routeParams|merge({direction: 'up'}) %}
+            {% set moveDownParams = routeParams|merge({direction: 'down'}) %}
+            <form method="post" action="{{ url_for('admin-programme-section-move', moveUpParams) }}"
+                  style="display: inline">
+                <input type="submit" class="btn btn-small btn-grey"
+                       value="{{ 'programme.admin.sections.moveUp'|trans }}">
+            </form>
+            <form method="post" action="{{ url_for('admin-programme-section-move', moveDownParams) }}"
+                  style="display: inline">
+                <input type="submit" class="btn btn-small btn-grey"
+                       value="{{ 'programme.admin.sections.moveDown'|trans }}">
+            </form>
+            <form method="post" action="{{ url_for('admin-programme-section-delete', routeParams) }}"
+                  style="display: inline">
+                <input type="submit" class="btn btn-small btn-grey"
+                       value="{{ 'programme.admin.sections.delete'|trans }}">
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}

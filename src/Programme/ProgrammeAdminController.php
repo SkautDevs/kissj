@@ -22,6 +22,7 @@ class ProgrammeAdminController extends AbstractController
     public function __construct(
         private readonly ProgrammeService $programmeService,
         private readonly ProgrammeRepository $programmeRepository,
+        private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly EventRepository $eventRepository,
         private readonly UploadFileHandler $uploadFileHandler,
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
@@ -79,6 +80,7 @@ class ProgrammeAdminController extends AbstractController
 
         $programme = new Programme();
         $programme->event = $event;
+        $programme->section = $this->getSectionFromRequest($request, $event);
         $programme->imageFilename = null;
         $programme->start = $start;
         $programme->end = $end;
@@ -114,6 +116,7 @@ class ProgrammeAdminController extends AbstractController
 
         $programme->start = $start;
         $programme->end = $end;
+        $programme->section = $this->getSectionFromRequest($request, $event);
         $this->fillFromRequest($programme, $request);
 
         $this->programmeRepository->transactional(function () use ($programme): void {
@@ -124,9 +127,27 @@ class ProgrammeAdminController extends AbstractController
             }
         });
         $this->saveImage($programme, $request);
+        $this->warnAboutExclusiveConflicts($programme);
         $this->flashMessages->success('flash.success.programmeSaved');
 
         return $this->redirect($request, $response, 'admin-programmes');
+    }
+
+    private function warnAboutExclusiveConflicts(Programme $programme): void
+    {
+        if ($programme->section->isExclusive === false || $programme->isPreregistered) {
+            return;
+        }
+
+        $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingRegistrations(
+            $programme->section,
+        );
+        if ($conflictCount > 0) {
+            $this->flashMessages->warning(
+                'flash.warning.programmeExclusiveConflicts',
+                ['%count%' => (string)$conflictCount],
+            );
+        }
     }
 
     public function delete(Request $request, Response $response, Event $event, int $programmeId): Response
@@ -220,7 +241,7 @@ class ProgrammeAdminController extends AbstractController
     {
         return $this->view->render($response, 'admin/programmeEdit-admin.twig', [
             'programme' => $programme,
-            'existingGroupNames' => $this->programmeRepository->findExclusiveGroupNames($event),
+            'sections' => $this->programmeSectionRepository->findForEvent($event),
             'allRoles' => ParticipantRole::all(),
             'event' => $event,
         ]);
@@ -232,13 +253,17 @@ class ProgrammeAdminController extends AbstractController
         $programme->description = $this->getParameterFromBody($request, 'description');
         $programme->place = $this->getParameterFromBody($request, 'place');
         $programme->capacity = max(1, (int)$this->getParameterFromBody($request, 'capacity'));
+        $programme->isPreregistered = $this->isCheckboxCheckedInBody($request, 'isPreregistered');
 
-        $parsedBody = $request->getParsedBody();
-        $programme->isPreregistered = is_array($parsedBody) && ($parsedBody['isPreregistered'] ?? '') === '1';
-
-        $groupName = $this->getParameterFromBody($request, 'exclusiveGroupName');
-        $programme->exclusiveGroupName = ($groupName === '' || $programme->isPreregistered) ? null : $groupName;
         $programme->setTargetRoles($this->rolesFromRequest($request));
+    }
+
+    private function getSectionFromRequest(Request $request, Event $event): ProgrammeSection
+    {
+        return $this->programmeSectionRepository->getForEventById(
+            (int)$this->getParameterFromBody($request, 'sectionId'),
+            $event,
+        );
     }
 
     private function parseDatetime(string $value): ?DateTimeImmutable

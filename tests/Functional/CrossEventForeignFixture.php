@@ -12,6 +12,7 @@ readonly class CrossEventForeignFixture
         public int $paymentId,
         public int $bankPaymentId,
         public int $programmeId,
+        public int $programmeSectionId,
     ) {
     }
 }

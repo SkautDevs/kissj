@@ -318,7 +318,7 @@ readonly class ExportService
     {
         $rows = [[
             'programme',
-            'exclusive group',
+            'section',
             'start',
             'end',
             'place',
@@ -338,7 +338,7 @@ readonly class ExportService
                 $participant = $registration->participant;
                 $rows[] = [
                     $programme->name,
-                    $programme->exclusiveGroupName ?? '',
+                    $programme->section->getLabel(),
                     $programme->start->format('Y-m-d H:i'),
                     $programme->end->format('Y-m-d H:i'),
                     $programme->place,

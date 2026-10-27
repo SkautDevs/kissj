@@ -111,8 +111,8 @@ class TestingEventsSeed extends AbstractSeed
             'readable_name' => 'Obrok 3027',
             'event_type' => 'obrok',
             'logo_url' => '/logo_obrok27.png',
-            'start_day' => '2027-05-27',
-            'end_day' => '2027-05-31',
+            'start_day' => '2027-05-19',
+            'end_day' => '2027-05-23',
             'prefix_variable_symbol' => 33,
             'roles' => ['tl', 'ist', 'guest', 'ot'],
         ],
@@ -168,6 +168,15 @@ class TestingEventsSeed extends AbstractSeed
         'miquik3026' => Miquik3026Programmes::PROGRAMMES,
         'obrok3027' => Obrok3027Programmes::PROGRAMMES,
     ];
+
+    private const array SECTIONS_BY_SLUG = [
+        'navigamus3027' => Navigamus3027Programmes::SECTIONS,
+        'korbo3026' => Korbo3026Programmes::SECTIONS,
+        'miquik3026' => Miquik3026Programmes::SECTIONS,
+        'obrok3027' => Obrok3027Programmes::SECTIONS,
+    ];
+
+    private const string LEGACY_SECTION_NAME = 'Program';
 
     public function run(): void
     {
@@ -236,12 +245,17 @@ class TestingEventsSeed extends AbstractSeed
             throw new RuntimeException('event not found by slug: ' . $slug);
         }
         $eventId = $this->rowId($eventRow);
+        $sectionIds = $this->ensureProgrammeSections($slug, $eventId);
 
         if ($this->fetchRow(sprintf('SELECT id FROM programme WHERE event_id = %d', $eventId)) !== false) {
+            $this->reassignProgrammeSections($slug, $eventId, $sectionIds);
+            $this->deleteEmptyLegacySection($eventId);
+
             return;
         }
 
-        $programmeCount = $this->insertProgrammes($slug, $eventId);
+        $programmeCount = $this->insertProgrammes($slug, $eventId, $sectionIds);
+        $this->deleteEmptyLegacySection($eventId);
         $this->execute(sprintf(
             "UPDATE event SET programme_registration_start = '%s', programme_registration_end = '%s' WHERE id = %d",
             self::PROGRAMME_WINDOW_START,
@@ -289,7 +303,10 @@ class TestingEventsSeed extends AbstractSeed
         return $hashedName;
     }
 
-    private function insertProgrammes(string $slug, int $eventId): int
+    /**
+     * @param array<string, int> $sectionIds
+     */
+    private function insertProgrammes(string $slug, int $eventId, array $sectionIds): int
     {
         $programmes = self::PROGRAMMES_BY_SLUG[$slug];
         $imagesEnabled = $this->areProgrammeImagesEnabled($programmes);
@@ -305,10 +322,10 @@ class TestingEventsSeed extends AbstractSeed
                 'end' => $programme['end'],
                 'capacity' => $programme['capacity'],
                 'is_preregistered' => $programme['isPreregistered'],
-                'exclusive_group_name' => null,
                 'roles' => Programme::encodeRoleValues($programme['roles']),
                 'deleted_at' => null,
                 'event_id' => $eventId,
+                'section_id' => $sectionIds[$programme['section']],
                 'created_at' => self::CREATED_AT,
                 'updated_at' => self::CREATED_AT,
             ];
@@ -316,6 +333,93 @@ class TestingEventsSeed extends AbstractSeed
         $this->table('programme')->insert($programmeRows)->saveData();
 
         return count($programmes);
+    }
+
+    /**
+     * @return array<string, int> section id by name
+     */
+    private function ensureProgrammeSections(string $slug, int $eventId): array
+    {
+        $sectionIds = $this->findSectionIdsByName($eventId);
+        $missingRows = [];
+        foreach (self::SECTIONS_BY_SLUG[$slug] as $sortOrder => $section) {
+            if (array_key_exists($section['name'], $sectionIds)) {
+                $this->execute(
+                    sprintf(
+                        'UPDATE programme_section SET subtitle = ?, is_exclusive = %s, sort_order = ? WHERE id = ?',
+                        $section['isExclusive'] ? 'TRUE' : 'FALSE',
+                    ),
+                    [$section['subtitle'], $sortOrder, $sectionIds[$section['name']]],
+                );
+            } else {
+                $missingRows[] = [
+                    'event_id' => $eventId,
+                    'name' => $section['name'],
+                    'subtitle' => $section['subtitle'],
+                    'is_exclusive' => $section['isExclusive'],
+                    'sort_order' => $sortOrder,
+                    'created_at' => self::CREATED_AT,
+                    'updated_at' => self::CREATED_AT,
+                ];
+            }
+        }
+        if ($missingRows !== []) {
+            $this->table('programme_section')->insert($missingRows)->saveData();
+            $sectionIds = $this->findSectionIdsByName($eventId);
+        }
+
+        return $sectionIds;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function findSectionIdsByName(int $eventId): array
+    {
+        $sectionIds = [];
+        /** @var list<array<array-key, mixed>> $rows */
+        $rows = $this->fetchAll(sprintf(
+            'SELECT id, name FROM programme_section WHERE event_id = %d ORDER BY id',
+            $eventId,
+        ));
+        foreach ($rows as $row) {
+            $name = $row['name'];
+            if (is_string($name) === false) {
+                throw new RuntimeException('unexpected section name type: ' . get_debug_type($name));
+            }
+            if (array_key_exists($name, $sectionIds) === false) {
+                $sectionIds[$name] = $this->rowId($row);
+            }
+        }
+
+        return $sectionIds;
+    }
+
+    /**
+     * @param array<string, int> $sectionIds
+     */
+    private function reassignProgrammeSections(string $slug, int $eventId, array $sectionIds): void
+    {
+        $sectionIdsByProgrammeName = [];
+        foreach (self::PROGRAMMES_BY_SLUG[$slug] as $programme) {
+            $sectionIdsByProgrammeName[$programme['name']] = $sectionIds[$programme['section']];
+        }
+
+        foreach ($sectionIdsByProgrammeName as $programmeName => $sectionId) {
+            $this->execute(
+                'UPDATE programme SET section_id = ? WHERE event_id = ? AND name = ?',
+                [$sectionId, $eventId, $programmeName],
+            );
+        }
+    }
+
+    private function deleteEmptyLegacySection(int $eventId): void
+    {
+        $this->execute(
+            'DELETE FROM programme_section WHERE event_id = ? AND name = ? AND NOT EXISTS '
+            . '(SELECT 1 FROM programme WHERE programme.section_id = programme_section.id)',
+            [$eventId, self::LEGACY_SECTION_NAME],
+        );
     }
 
     /**

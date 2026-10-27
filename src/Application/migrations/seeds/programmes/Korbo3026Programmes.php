@@ -7,6 +7,42 @@ namespace kissj\Application\migrations\seeds\programmes;
 class Korbo3026Programmes
 {
     /**
+     * @var list<array{name: string, subtitle: string|null, isExclusive: bool}>
+     */
+    public const array SECTIONS = [
+        [
+            'name' => 'Pohybová',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => 'Tvořivá',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => 'Kulturní',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => 'Přednáška',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => 'Debata',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => 'Jiné',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+    ];
+
+    /**
      * @var list<array{
      *     name: string,
      *     description: string,
@@ -16,6 +52,7 @@ class Korbo3026Programmes
      *     capacity: int,
      *     isPreregistered: bool,
      *     roles: list<string>,
+     *     section: string,
      * }>
      */
     public const array PROGRAMMES = [
@@ -28,6 +65,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Hennování a zaplétání copánků',
@@ -38,6 +76,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Postavme si Korbo  - v tuto dobu prosím neplánuj jiné aktivity.',
@@ -48,6 +87,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => true,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Stavba Peca Pizze',
@@ -58,6 +98,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Speed dating (i pro zadané :D)',
@@ -68,6 +109,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Riskuj (vědomostní hra na týmy)',
@@ -78,6 +120,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerka pro ranní ptáčata',
@@ -88,6 +131,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerka pro noční sovy',
@@ -98,6 +142,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Volejbal',
@@ -108,6 +153,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Splutí Orlice 1.0',
@@ -118,6 +164,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Matrix',
@@ -128,6 +175,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Ranní koupání se Sherpou',
@@ -138,6 +186,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Vzduchovky - střelba',
@@ -148,6 +197,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Jak si ušít Týpí',
@@ -158,6 +208,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Přednáška',
         ],
         [
             'name' => 'workshop mikroknihy',
@@ -168,6 +219,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Slacklajnový workshop',
@@ -178,6 +230,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Splutí Orlice 2.0',
@@ -188,6 +241,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Japonská vazba',
@@ -198,6 +252,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Turnaj ve fofršťouchu',
@@ -208,6 +263,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Volejbal pokročilé',
@@ -218,6 +274,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Vlajkovaná!!!',
@@ -228,6 +285,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Náušnice z pet lahví',
@@ -238,6 +296,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Večerka pro ranní ptáčata',
@@ -248,6 +307,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerka pro noční sovy',
@@ -258,6 +318,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Volejbal',
@@ -268,6 +329,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Ranní koupání se Sherpou',
@@ -278,6 +340,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Masáž zad - workshop',
@@ -288,6 +351,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Ahoj, neznáme se?',
@@ -298,6 +362,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Lacross',
@@ -308,6 +373,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Příprava letních závitků',
@@ -318,6 +384,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Čajový workshop',
@@ -328,6 +395,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Volejbal pokročilé',
@@ -338,6 +406,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Softball',
@@ -348,6 +417,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Mexiko Yap: Erasmus, kartely, breaking stereotypes',
@@ -358,6 +428,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Přednáška',
         ],
         [
             'name' => 'Frisbee (ultimátní!)',
@@ -368,6 +439,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Korbo ples',
@@ -378,6 +450,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => true,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Bezpečí-jak udržujeme my sami akce bezpečné',
@@ -388,6 +461,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Přednáška',
         ],
         [
             'name' => 'Slunovrazi',
@@ -398,6 +472,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Večerka pro ranní ptáčata',
@@ -408,6 +483,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerka pro noční sovy',
@@ -418,6 +494,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Volejbal',
@@ -428,6 +505,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Ranní koupání se Sherpou',
@@ -438,6 +516,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Čtení enviromentálních textíků + diskuze',
@@ -448,6 +527,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Alkohol a jiné návykové látky... proč jsou pro nás tématem',
@@ -458,6 +538,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Debata',
         ],
         [
             'name' => 'Street magic',
@@ -468,6 +549,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Poobědové sudoku',
@@ -478,6 +560,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'časopis Roverský Kmen na Korbu',
@@ -488,6 +571,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Debata',
         ],
         [
             'name' => 'Japonská vazba 2.0',
@@ -498,6 +582,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'Volejbal pokročilé',
@@ -508,6 +593,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Pevnost Boyard',
@@ -518,6 +604,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Diskuze - Co bude s Korbem?',
@@ -528,6 +615,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => true,
             'roles' => ['ist'],
+            'section' => 'Debata',
         ],
         [
             'name' => 'Zdobení pohorek',
@@ -538,6 +626,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Tvořivá',
         ],
         [
             'name' => 'CESTOVATELSKÝ VEČER',
@@ -548,6 +637,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerní mikromagie',
@@ -558,6 +648,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Slunovrazi',
@@ -568,6 +659,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Večerka pro ranní ptáčata',
@@ -578,6 +670,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Jiné',
         ],
         [
             'name' => 'Večerka pro noční sovy',
@@ -588,6 +681,7 @@ class Korbo3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Kulturní',
         ],
         [
             'name' => 'Volejbal',
@@ -598,6 +692,7 @@ class Korbo3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
         [
             'name' => 'Ranní koupání se Sherpou',
@@ -608,6 +703,7 @@ class Korbo3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist'],
+            'section' => 'Pohybová',
         ],
     ];
 }

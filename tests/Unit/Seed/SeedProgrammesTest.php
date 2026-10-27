@@ -24,7 +24,7 @@ class SeedProgrammesTest extends TestCase
             'navigamus' => [Navigamus3027Programmes::class, '2027-06-03', '2027-06-06', 8, ['ist']],
             'korbo' => [Korbo3026Programmes::class, '2026-11-13', '2026-11-17', 59, ['ist']],
             'miquik' => [Miquik3026Programmes::class, '2026-11-13', '2026-11-15', 41, ['pl', 'ist']],
-            'obrok' => [Obrok3027Programmes::class, '2027-05-27', '2027-05-31', 204, ['tl', 'ist']],
+            'obrok' => [Obrok3027Programmes::class, '2027-05-19', '2027-05-23', 204, ['tl', 'ist']],
         ];
     }
 
@@ -72,6 +72,73 @@ class SeedProgrammesTest extends TestCase
             self::assertSame([2, 5, 30][$index % 3], $programme['capacity']);
             self::assertNotSame('', $programme['name']);
         }
+    }
+
+    /**
+     * @return array<string, array{class-string, list<array{string, bool, int}>}>
+     */
+    public static function sectionProvider(): array
+    {
+        return [
+            'navigamus' => [Navigamus3027Programmes::class, [
+                ['Doprovodný program', true, 8],
+                ['Ceremoniály', false, 0],
+            ]],
+            'korbo' => [Korbo3026Programmes::class, [
+                ['Pohybová', false, 23],
+                ['Tvořivá', false, 9],
+                ['Kulturní', false, 9],
+                ['Přednáška', false, 3],
+                ['Debata', false, 3],
+                ['Jiné', false, 12],
+            ]],
+            'miquik' => [Miquik3026Programmes::class, [
+                ['Úvodní přednáška', false, 1],
+                ['1. sekce', true, 13],
+                ['2. sekce', true, 13],
+                ['3. sekce', true, 13],
+                ['Závěrečná přednáška', false, 1],
+            ]],
+            'obrok' => [Obrok3027Programmes::class, [
+                ['Účastníci', false, 15],
+                ['V areálu', false, 135],
+                ['VaPro', true, 12],
+                ['VýRo', true, 18],
+                ['Semináře', true, 11],
+                ['RoPro', true, 9],
+                ['Inspiromat', true, 4],
+            ]],
+        ];
+    }
+
+    /**
+     * @param class-string $class
+     * @param list<array{string, bool, int}> $expectedSections
+     */
+    #[DataProvider('sectionProvider')]
+    public function testSectionsAndAssignmentsMatchTheSpec(string $class, array $expectedSections): void
+    {
+        /** @var list<array{name: string, subtitle: string|null, isExclusive: bool}> $sections */
+        $sections = $class::SECTIONS;
+        /** @var list<array{name: string, section: string}> $programmes */
+        $programmes = $class::PROGRAMMES;
+
+        $expectedDefinitions = [];
+        $expectedCounts = [];
+        foreach ($expectedSections as [$name, $isExclusive, $count]) {
+            $expectedDefinitions[] = ['name' => $name, 'subtitle' => null, 'isExclusive' => $isExclusive];
+            $expectedCounts[$name] = $count;
+        }
+        self::assertSame($expectedDefinitions, $sections);
+        $sectionNames = array_column($sections, 'name');
+        self::assertSame($sectionNames, array_values(array_unique($sectionNames)));
+
+        $actualCounts = array_fill_keys(array_keys($expectedCounts), 0);
+        foreach ($programmes as $programme) {
+            self::assertArrayHasKey($programme['section'], $actualCounts, $programme['name']);
+            $actualCounts[$programme['section']]++;
+        }
+        self::assertSame($expectedCounts, $actualCounts);
     }
 
     public function testMultilineDescriptionsAreKept(): void

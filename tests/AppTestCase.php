@@ -18,6 +18,8 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\ProgrammeSection;
+use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
@@ -384,7 +386,9 @@ class AppTestCase extends TestCase
     {
         $withEvent = preg_replace('/\{eventSlug(:[^}]+)?\}/', 'test-event-slug', $pattern)
             ?? throw new LogicException('eventSlug replacement failed on ' . $pattern);
-        $filled = preg_replace('/\{[^}]+\}/', '1', $withEvent)
+        $withAlternatives = preg_replace('/\{\w+:(\w+)(\|\w+)*\}/', '$1', $withEvent)
+            ?? throw new LogicException('alternatives replacement failed on ' . $pattern);
+        $filled = preg_replace('/\{[^}]+\}/', '1', $withAlternatives)
             ?? throw new LogicException('placeholder replacement failed on ' . $pattern);
 
         return str_replace(['[', ']'], '', $filled);
@@ -751,6 +755,28 @@ class AppTestCase extends TestCase
         $paymentRepository->persist($payment);
 
         return $payment;
+    }
+
+    protected function createProgrammeSection(
+        ContainerInterface $container,
+        Event $event,
+        string $name,
+        bool $isExclusive = false,
+    ): ProgrammeSection {
+        $sectionRepository = $container->get(ProgrammeSectionRepository::class);
+        if ($sectionRepository instanceof ProgrammeSectionRepository === false) {
+            throw new LogicException('ProgrammeSectionRepository is not wired');
+        }
+
+        $section = new ProgrammeSection();
+        $section->event = $event;
+        $section->name = $name;
+        $section->subtitle = null;
+        $section->isExclusive = $isExclusive;
+        $section->sortOrder = count($sectionRepository->findForEvent($event));
+        $sectionRepository->persist($section);
+
+        return $section;
     }
 
     protected function createBankPayment(

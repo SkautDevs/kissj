@@ -19,7 +19,7 @@ use kissj\Participant\ParticipantRole;
  * @property DateTimeInterface      $end m:passThru(dateFromString|dateToString)
  * @property int                    $capacity
  * @property bool                   $isPreregistered
- * @property string|null            $exclusiveGroupName
+ * @property ProgrammeSection       $section m:hasOne(section_id)
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)
  * @property Event                  $event m:hasOne
  */
@@ -34,8 +34,8 @@ class Programme extends EntityDatetime
 
     public function isExclusiveWith(self $other): bool
     {
-        return $this->exclusiveGroupName !== null
-            && $this->exclusiveGroupName === $other->exclusiveGroupName
+        return $this->section->id === $other->section->id
+            && $this->section->isExclusive
             && $this->overlapsWith($other);
     }
 

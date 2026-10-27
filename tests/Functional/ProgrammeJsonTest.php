@@ -10,6 +10,7 @@ use kissj\Participant\ParticipantRole;
 use kissj\Participant\Participant;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
@@ -208,7 +209,7 @@ class ProgrammeJsonTest extends AppTestCase
     private function createProgramme(
         App $app,
         string $name,
-        ?string $groupName,
+        ?ProgrammeSection $section,
         int $capacity,
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
@@ -227,8 +228,9 @@ class ProgrammeJsonTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
         $programme->isPreregistered = $isPreregistered;
-        $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programme->section = $section
+            ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
         $programme->setTargetRoles(
             $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
         );

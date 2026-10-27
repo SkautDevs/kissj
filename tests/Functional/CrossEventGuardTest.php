@@ -15,6 +15,7 @@ use kissj\Payment\PaymentStatus;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\User;
 use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
@@ -51,7 +52,7 @@ class CrossEventGuardTest extends AppTestCase
 
     private const array WITHOUT_ROLE_ROUTE_NAMES = ['chooseRole', 'setRole'];
 
-    private const array PARTICIPANT_NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME = [
+    private const array NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME = [
         'admin-cancel-participant' => 'flash.error.participantNotCancelled',
         'admin-add-new-payment' => 'flash.warning.participantNotFoundAddPaymentNotPossible',
     ];
@@ -260,6 +261,7 @@ class CrossEventGuardTest extends AppTestCase
             $payment->id,
             $bankPayment->id,
             $programme->id,
+            $programme->section->id,
         );
     }
 
@@ -277,8 +279,8 @@ class CrossEventGuardTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;
         $programme->isPreregistered = false;
-        $programme->exclusiveGroupName = null;
         $programme->event = $event;
+        $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'cross-event');
         $programme->setTargetRoles([ParticipantRole::Ist]);
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
@@ -351,6 +353,9 @@ class CrossEventGuardTest extends AppTestCase
         if (str_contains($pattern, '{programmeId}')) {
             return CrossEventIdKind::Programme;
         }
+        if (str_contains($pattern, '{sectionId}')) {
+            return CrossEventIdKind::ProgrammeSection;
+        }
 
         $hasParticipantId = str_contains($pattern, '{participantId}');
         $hasPaymentId = str_contains($pattern, '{paymentId}');
@@ -380,6 +385,8 @@ class CrossEventGuardTest extends AppTestCase
             '{participantId}' => (string)$fixture->participantId,
             '{paymentId}' => (string)$paymentId,
             '{programmeId}' => (string)$fixture->programmeId,
+            '{sectionId}' => (string)$fixture->programmeSectionId,
+            '{direction:up|down}' => 'up',
             ...self::FILLER_PLACEHOLDERS,
         ]);
         if (preg_match('/\{[^}]+\}/', $filled) === 1) {
@@ -396,6 +403,7 @@ class CrossEventGuardTest extends AppTestCase
             CrossEventIdKind::Payment => sprintf('Payment with ID %d not found', $fixture->paymentId),
             CrossEventIdKind::BankPayment => sprintf('Bank payment with ID %d not found', $fixture->bankPaymentId),
             CrossEventIdKind::Programme => 'Programme not found for event',
+            CrossEventIdKind::ProgrammeSection => 'Programme section not found for event',
         };
     }
 
@@ -422,6 +430,7 @@ class CrossEventGuardTest extends AppTestCase
         $paymentBefore = $this->getPaymentRow($fixture);
         $bankPaymentBefore = $this->getBankPaymentRow($fixture);
         $programmeBefore = $this->getProgrammeRow($fixture);
+        $sectionBefore = $this->getProgrammeSectionRow($fixture);
 
         $rejection = $this->findRejectionFailure($route, $method, $path, $admin, $label, $fixture);
 
@@ -439,6 +448,9 @@ class CrossEventGuardTest extends AppTestCase
         }
         if ($this->getProgrammeRow($fixture) !== $programmeBefore) {
             return sprintf('%s: foreign programme changed', $label);
+        }
+        if ($this->getProgrammeSectionRow($fixture) !== $sectionBefore) {
+            return sprintf('%s: foreign programme section changed', $label);
         }
 
         return $rejection;
@@ -476,7 +488,7 @@ class CrossEventGuardTest extends AppTestCase
             return null;
         }
 
-        $flashKey = self::PARTICIPANT_NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME[$route->getName() ?? ''] ?? null;
+        $flashKey = self::NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME[$route->getName() ?? ''] ?? null;
         if ($flashKey !== null && $this->hasFlash($requestApp, $flashKey)) {
             return null;
         }
@@ -547,5 +559,14 @@ class CrossEventGuardTest extends AppTestCase
     {
         return $this->getService($this->getTestApp(false), ProgrammeRepository::class)
             ->get($fixture->programmeId)->getRowData();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getProgrammeSectionRow(CrossEventForeignFixture $fixture): array
+    {
+        return $this->getService($this->getTestApp(false), ProgrammeSectionRepository::class)
+            ->get($fixture->programmeSectionId)->getRowData();
     }
 }

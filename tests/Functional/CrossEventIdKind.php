@@ -10,4 +10,5 @@ enum CrossEventIdKind
     case Payment;
     case BankPayment;
     case Programme;
+    case ProgrammeSection;
 }

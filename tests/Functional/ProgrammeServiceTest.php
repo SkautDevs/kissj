@@ -15,6 +15,7 @@ use kissj\Participant\Patrol\PatrolService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
+use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeService;
 use kissj\User\User;
 use kissj\User\UserRepository;
@@ -101,22 +102,27 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertSame('flash.error.programmeAlreadyRegistered', $duplicate->translationKey);
     }
 
-    public function testSameGroupOverlapRejectedOthersAllowed(): void
+    public function testSameExclusiveSectionOverlapRejectedOthersAllowed(): void
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $morning = $this->createProgramme($app, 'morning', 'workshops', 5, '2027-06-05 08:00', '2027-06-05 10:00');
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $workshops = $this->createProgrammeSection($app->getContainer(), $event, 'workshops', true);
+        $games = $this->createProgrammeSection($app->getContainer(), $event, 'games', true);
+        $open = $this->createProgrammeSection($app->getContainer(), $event, 'open');
+        $morning = $this->createProgramme($app, 'morning', $workshops, 5, '2027-06-05 08:00', '2027-06-05 10:00');
         $overlapping = $this->createProgramme(
             $app,
             'overlapping',
-            'workshops',
+            $workshops,
             5,
             '2027-06-05 09:00',
             '2027-06-05 11:00',
         );
-        $touching = $this->createProgramme($app, 'touching', 'workshops', 5, '2027-06-05 10:00', '2027-06-05 12:00');
-        $otherGroup = $this->createProgramme($app, 'other group', 'games', 5, '2027-06-05 09:00', '2027-06-05 11:00');
-        $ungrouped = $this->createProgramme($app, 'ungrouped', null, 5, '2027-06-05 09:00', '2027-06-05 11:00');
+        $touching = $this->createProgramme($app, 'touching', $workshops, 5, '2027-06-05 10:00', '2027-06-05 12:00');
+        $otherGroup = $this->createProgramme($app, 'other group', $games, 5, '2027-06-05 09:00', '2027-06-05 11:00');
+        $ungrouped = $this->createProgramme($app, 'ungrouped', $open, 5, '2027-06-05 09:00', '2027-06-05 11:00');
+        $sameOpen = $this->createProgramme($app, 'same open', $open, 5, '2027-06-05 09:30', '2027-06-05 10:30');
 
         $ist = $this->createPaidIstWithEmail($app, 'overlap-ist@example.com');
 
@@ -129,6 +135,7 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertTrue($service->register($ist, $touching->id)->success);
         self::assertTrue($service->register($ist, $otherGroup->id)->success);
         self::assertTrue($service->register($ist, $ungrouped->id)->success);
+        self::assertTrue($service->register($ist, $sameOpen->id)->success);
     }
 
     public function testWrongRoleRejected(): void
@@ -176,12 +183,14 @@ class ProgrammeServiceTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        // same group + same time as ceremony - still must be registrable
-        $this->createProgramme($app, 'ceremony', 'main', 1, '2027-06-05 08:00', '2027-06-05 12:00', null, true);
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $main = $this->createProgrammeSection($app->getContainer(), $event, 'main', true);
+        // same exclusive section + same time as ceremony - still must be registrable
+        $this->createProgramme($app, 'ceremony', $main, 1, '2027-06-05 08:00', '2027-06-05 12:00', null, true);
         $workshop = $this->createProgramme(
             $app,
             'workshop during ceremony',
-            'main',
+            $main,
             5,
             '2027-06-05 09:00',
             '2027-06-05 10:00',
@@ -423,7 +432,7 @@ class ProgrammeServiceTest extends AppTestCase
     private function createProgramme(
         App $app,
         string $name,
-        ?string $groupName,
+        ?ProgrammeSection $section,
         int $capacity,
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
@@ -442,8 +451,9 @@ class ProgrammeServiceTest extends AppTestCase
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
         $programme->isPreregistered = $isPreregistered;
-        $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programme->section = $section
+            ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
         $programme->setTargetRoles(
             $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
         );

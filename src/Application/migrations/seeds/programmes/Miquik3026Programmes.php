@@ -7,6 +7,37 @@ namespace kissj\Application\migrations\seeds\programmes;
 class Miquik3026Programmes
 {
     /**
+     * @var list<array{name: string, subtitle: string|null, isExclusive: bool}>
+     */
+    public const array SECTIONS = [
+        [
+            'name' => 'Úvodní přednáška',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+        [
+            'name' => '1. sekce',
+            'subtitle' => null,
+            'isExclusive' => true,
+        ],
+        [
+            'name' => '2. sekce',
+            'subtitle' => null,
+            'isExclusive' => true,
+        ],
+        [
+            'name' => '3. sekce',
+            'subtitle' => null,
+            'isExclusive' => true,
+        ],
+        [
+            'name' => 'Závěrečná přednáška',
+            'subtitle' => null,
+            'isExclusive' => false,
+        ],
+    ];
+
+    /**
      * @var list<array{
      *     name: string,
      *     description: string,
@@ -16,6 +47,7 @@ class Miquik3026Programmes
      *     capacity: int,
      *     isPreregistered: bool,
      *     roles: list<string>,
+     *     section: string,
      * }>
      */
     public const array PROGRAMMES = [
@@ -28,6 +60,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => 'Úvodní přednáška',
         ],
         [
             'name' => 'Smrt NEporazíme, ale jak přemůžeme strach?',
@@ -38,6 +71,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => "Masarykových pětkrát \"NE!\"",
@@ -48,6 +82,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'AI ve vědě a výzkumu, aneb dobrý sluha, ale zlý pán',
@@ -58,6 +93,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Svoboda a demokracie: návod k použití',
@@ -68,6 +104,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Mise tvůrčího nenásilí v dějinách i současnosti',
@@ -78,6 +115,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'NE jako pojistka svobody',
@@ -88,6 +126,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'NE v sociálních službách pro lidi bez domova',
@@ -98,6 +137,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'NEbojte se roverských expedic!',
@@ -108,6 +148,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Nepotřebujete Nevyhnutelně Nemovitost',
@@ -118,6 +159,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Cestou - Necestou zpátky domů z Miquiku 2024',
@@ -128,6 +170,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Ne! Služba nekončí jen u roverů',
@@ -138,6 +181,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Když Vám tělo říká „NE!“',
@@ -148,6 +192,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Stop, Drop, and FToP',
@@ -158,6 +203,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '1. sekce',
         ],
         [
             'name' => 'Nesrozumitelná justice a důvěra v ní',
@@ -168,6 +214,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => '„Ne!“ – Jak se rodí závislost a proč není slabost říct dost!',
@@ -178,6 +225,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'NEsmyslná reklama',
@@ -188,6 +236,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Jiné děti v oddíle - jak se z toho NEzbláznit?',
@@ -198,6 +247,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'NEbýt pasivní když se děje zlo, aneb příklady českých dobrovolníků a dobrovolnických technologických projektů pro podporu napadené Ukrajiny',
@@ -208,6 +258,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Roverský vizuální styl a jak ho používat',
@@ -218,6 +269,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Co má umět skaut*ka budoucnosti?',
@@ -228,6 +280,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Jak začít s učením a neztratit sám sebe.',
@@ -238,6 +291,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Kdo říká, že holky hokej hrát nemají, je omezený hlupák',
@@ -248,6 +302,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Neodkládej své sny a začni je žít, tak jako já v 45!',
@@ -258,6 +313,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Pomoc v aplikaci Záchranka: Psychosociální modul',
@@ -268,6 +324,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Přijetí sebe sama: start každé duchovní cesty!',
@@ -278,6 +335,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Ne! v české přírodě',
@@ -288,6 +346,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '2. sekce',
         ],
         [
             'name' => 'Neexistuje plán B: Improvizace, která zachraňuje životy, když vše selže',
@@ -298,6 +357,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Ne je svoboda. Díky NE získáte víc a zlepšíte vztahy.',
@@ -308,6 +368,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'K čemu (ne)chovat včely a jak můžete využít jejich produkty v každodenním životě?',
@@ -318,6 +379,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'NE neznamená slabost: Jak říkat ne, zvládat tlak a nepřetěžovat se',
@@ -328,6 +390,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'NEtradičně o R(S)ituálech!',
@@ -338,6 +401,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'NEzůstávej doma -> zažij mezinárodko od A do Z!',
@@ -348,6 +412,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Jak mohu měnit skauting mimo svoje středisko?',
@@ -358,6 +423,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Ne! nezodpovědnému přístupu k planetě u nás na středisku',
@@ -368,6 +434,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'NE!ch se provést Rovernetem',
@@ -378,6 +445,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'To be a wonderer is no small feat - a few words about Polish Rovering',
@@ -388,6 +456,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Neslyšíš? Nevadí!',
@@ -398,6 +467,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Nevadí, že nevidí? Ne!',
@@ -408,6 +478,7 @@ class Miquik3026Programmes
             'capacity' => 30,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Skauting v letech 1945-1950: Když komunisté řekli Junáku NE',
@@ -418,6 +489,7 @@ class Miquik3026Programmes
             'capacity' => 2,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => '3. sekce',
         ],
         [
             'name' => 'Čemu řekli Češi NE a čemu ANO? Malé povolební zamyšlení',
@@ -428,6 +500,7 @@ class Miquik3026Programmes
             'capacity' => 5,
             'isPreregistered' => false,
             'roles' => ['ist', 'pl'],
+            'section' => 'Závěrečná přednáška',
         ],
     ];
 }

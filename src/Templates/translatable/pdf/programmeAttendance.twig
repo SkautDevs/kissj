@@ -6,7 +6,7 @@
         <p>
             {{ sheet.programme.start|date('j. n. Y H:i') }} – {{ sheet.programme.end|date('j. n. Y H:i') }},
             {{ sheet.programme.place }}
-            {% if sheet.programme.getExclusiveGroupName() %}({{ sheet.programme.getExclusiveGroupName() }}){% endif %}
+            ({{ sheet.programme.section.getLabel() }})
         </p>
         <p>{{ sheet.registrations|length }}/{{ sheet.programme.capacity }}</p>
 
