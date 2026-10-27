@@ -12,7 +12,8 @@ use PHPStan\Testing\RuleTestCase;
  */
 class DatabaseAccessOnlyInRepositoryRuleTest extends RuleTestCase
 {
-    private const string MESSAGE = 'Access the database through a Repository class (src/Orm/Repository.php), never via Connection/Fluent directly.';
+    private const string MESSAGE = 'Access the database through a Repository class (src/Orm/Repository.php), never via '
+        . 'Connection/Fluent directly.';
 
     protected function getRule(): DatabaseAccessOnlyInRepositoryRule
     {
@@ -22,11 +23,11 @@ class DatabaseAccessOnlyInRepositoryRuleTest extends RuleTestCase
     public function testReportsConnectionAndFluentUseOutsideRepositoriesOnly(): void
     {
         $this->analyse([__DIR__ . '/data/database-access.php'], [
-            [self::MESSAGE, 11],
-            [self::MESSAGE, 12],
-            [self::MESSAGE, 13],
-            [self::MESSAGE, 14],
             [self::MESSAGE, 15],
+            [self::MESSAGE, 16],
+            [self::MESSAGE, 17],
+            [self::MESSAGE, 18],
+            [self::MESSAGE, 19],
         ]);
     }
 }

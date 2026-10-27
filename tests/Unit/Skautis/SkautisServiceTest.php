@@ -53,7 +53,10 @@ class SkautisServiceTest extends TestCase
             ->once()
             ->with(
                 'Failed to read Skautis login data',
-                Mockery::on(fn (array $context) => is_string($context['reason'] ?? null) && str_contains($context['reason'], '2026-09-08T00:00:00')),
+                Mockery::on(
+                    fn (array $context) => is_string($context['reason'] ?? null)
+                        && str_contains($context['reason'], '2026-09-08T00:00:00'),
+                ),
             );
 
         $accepted = $this->service->saveDataFromPost([

@@ -248,7 +248,9 @@ abstract class AbstractContentArbiter
             order: 230,
             label: 'detail.swimSkill',
             placeholder: 'detail.swimSkillPlaceholder',
-            options: ContentArbiterItem::selfMappedOptions(['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50']),
+            options: ContentArbiterItem::selfMappedOptions(
+                ['detail.swimSkillNo', 'detail.swimSkillLess50', 'detail.swimSkillMore50'],
+            ),
         );
         $this->scarf = new ContentArbiterItem(
             slug: 'scarf',
@@ -286,7 +288,11 @@ abstract class AbstractContentArbiter
             order: 270,
             label: 'detail.driver',
             placeholder: 'detail.driverPlaceholder',
-            options: ['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'],
+            options: [
+                'dont' => 'detail.driver-dont',
+                'less 10000 km' => 'detail.driver-less10k',
+                'more 10000 km' => 'detail.driver-more10k',
+            ],
         );
         $this->skills = new ContentArbiterItem(
             slug: 'skills',

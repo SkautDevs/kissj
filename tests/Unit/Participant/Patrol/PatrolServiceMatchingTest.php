@@ -24,9 +24,42 @@ class PatrolServiceMatchingTest extends TestCase
         $participantBirthday = DateTimeUtils::getDateTime('2005-03-10');
 
         $members = [
-            new SkautisMemberData(1, $leaderFirstName, $leaderLastName, '', $leaderBirthday, '', '', '', Country::Other, Gender::Man),
-            new SkautisMemberData(2, $participantFirstName, $participantLastName, '', $participantBirthday, '', '', '', Country::Other, Gender::Woman),
-            new SkautisMemberData(3, 'Petr', 'Svoboda', '', DateTimeUtils::getDateTime('2006-01-01'), '', '', '', Country::Other, Gender::Man),
+            new SkautisMemberData(
+                1,
+                $leaderFirstName,
+                $leaderLastName,
+                '',
+                $leaderBirthday,
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Man,
+            ),
+            new SkautisMemberData(
+                2,
+                $participantFirstName,
+                $participantLastName,
+                '',
+                $participantBirthday,
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Woman,
+            ),
+            new SkautisMemberData(
+                3,
+                'Petr',
+                'Svoboda',
+                '',
+                DateTimeUtils::getDateTime('2006-01-01'),
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Man,
+            ),
         ];
 
         $result = PatrolService::matchMembersAgainstExisting(
@@ -35,7 +68,11 @@ class PatrolServiceMatchingTest extends TestCase
             $leaderLastName,
             $leaderBirthday,
             [
-                ['firstName' => $participantFirstName, 'lastName' => $participantLastName, 'birthDate' => $participantBirthday],
+                [
+                    'firstName' => $participantFirstName,
+                    'lastName' => $participantLastName,
+                    'birthDate' => $participantBirthday,
+                ],
             ],
         );
 
@@ -47,8 +84,30 @@ class PatrolServiceMatchingTest extends TestCase
     public function testMatchWithNoExistingParticipants(): void
     {
         $members = [
-            new SkautisMemberData(1, 'Jan', 'Novák', '', DateTimeUtils::getDateTime('1990-05-15'), '', '', '', Country::Other, Gender::Man),
-            new SkautisMemberData(2, 'Petr', 'Svoboda', '', DateTimeUtils::getDateTime('2006-01-01'), '', '', '', Country::Other, Gender::Man),
+            new SkautisMemberData(
+                1,
+                'Jan',
+                'Novák',
+                '',
+                DateTimeUtils::getDateTime('1990-05-15'),
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Man,
+            ),
+            new SkautisMemberData(
+                2,
+                'Petr',
+                'Svoboda',
+                '',
+                DateTimeUtils::getDateTime('2006-01-01'),
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Man,
+            ),
         ];
 
         $result = PatrolService::matchMembersAgainstExisting(
@@ -66,7 +125,18 @@ class PatrolServiceMatchingTest extends TestCase
     public function testMatchWithNullBirthDateInExistingParticipant(): void
     {
         $members = [
-            new SkautisMemberData(1, 'Eva', 'Dvořáková', '', DateTimeUtils::getDateTime('2005-03-10'), '', '', '', Country::Other, Gender::Woman),
+            new SkautisMemberData(
+                1,
+                'Eva',
+                'Dvořáková',
+                '',
+                DateTimeUtils::getDateTime('2005-03-10'),
+                '',
+                '',
+                '',
+                Country::Other,
+                Gender::Woman,
+            ),
         ];
 
         $result = PatrolService::matchMembersAgainstExisting(

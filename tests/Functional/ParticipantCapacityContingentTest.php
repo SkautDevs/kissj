@@ -45,7 +45,12 @@ class ParticipantCapacityContingentTest extends AppTestCase
 
         $event = $this->seedTwoClosedContingentIsts($app, 2);
 
-        $istThird = $this->createOpenIstWithContingent($app, $event, 'capacity-third-a-navigamus@example.com', 'contingent-a');
+        $istThird = $this->createOpenIstWithContingent(
+            $app,
+            $event,
+            'capacity-third-a-navigamus@example.com',
+            'contingent-a',
+        );
 
         $participantService = $this->getService($app, ParticipantService::class);
         self::assertTrue($participantService->isParticipantOrEventFull($istThird));

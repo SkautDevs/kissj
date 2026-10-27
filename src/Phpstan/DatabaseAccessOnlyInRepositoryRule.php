@@ -40,7 +40,8 @@ class DatabaseAccessOnlyInRepositoryRule implements Rule
 
         return [
             RuleErrorBuilder::message(
-                'Access the database through a Repository class (src/Orm/Repository.php), never via Connection/Fluent directly.',
+                'Access the database through a Repository class (src/Orm/Repository.php), never via Connection/Fluent '
+                    . 'directly.',
             )->identifier('kissj.databaseAccess')->build(),
         ];
     }

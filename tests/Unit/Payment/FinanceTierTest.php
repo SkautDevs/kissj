@@ -44,7 +44,13 @@ class FinanceTierTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $event = $this->getObrokTestEvent($app);
-        $payment = $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '600', scarf: Participant::SCARF_YES);
+        $payment = $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '600',
+            scarf: Participant::SCARF_YES,
+        );
 
         $tier = new ScarfFinanceTier(600, true);
 
@@ -66,7 +72,13 @@ class FinanceTierTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $event = $this->getObrokTestEvent($app);
-        $payment = $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '450', scarf: Participant::SCARF_YES);
+        $payment = $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '450',
+            scarf: Participant::SCARF_YES,
+        );
 
         $tier = new ScarfFinanceTier(600, true);
 

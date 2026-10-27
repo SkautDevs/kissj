@@ -110,7 +110,13 @@ class SeedProgrammesTest extends TestCase
 
     public function testOtherEventsHaveNoImages(): void
     {
-        foreach ([Navigamus3027Programmes::PROGRAMMES, Korbo3026Programmes::PROGRAMMES, Miquik3026Programmes::PROGRAMMES] as $programmes) {
+        $programmesByEvent = [
+            Navigamus3027Programmes::PROGRAMMES,
+            Korbo3026Programmes::PROGRAMMES,
+            Miquik3026Programmes::PROGRAMMES,
+        ];
+
+        foreach ($programmesByEvent as $programmes) {
             foreach ($programmes as $programme) {
                 self::assertArrayNotHasKey('image', $programme);
             }

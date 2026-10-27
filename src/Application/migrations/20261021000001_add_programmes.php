@@ -28,9 +28,19 @@ final class AddProgrammes extends AbstractMigration
 
         $registration = $this->table('programme_registration');
         $registration->addColumn('programme_id', 'integer', ['null' => false]);
-        $registration->addForeignKey('programme_id', 'programme', ['id'], ['constraint' => 'programme_registration_programme_id_fk']);
+        $registration->addForeignKey(
+            'programme_id',
+            'programme',
+            ['id'],
+            ['constraint' => 'programme_registration_programme_id_fk'],
+        );
         $registration->addColumn('participant_id', 'integer', ['null' => false]);
-        $registration->addForeignKey('participant_id', 'participant', ['id'], ['constraint' => 'programme_registration_participant_id_fk']);
+        $registration->addForeignKey(
+            'participant_id',
+            'participant',
+            ['id'],
+            ['constraint' => 'programme_registration_participant_id_fk'],
+        );
         $registration->addColumn('deleted_at', 'datetime', ['null' => true, 'default' => null]);
         $registration->addColumn('created_at', 'datetime', ['null' => false]);
         $registration->addColumn('updated_at', 'datetime', ['null' => false]);

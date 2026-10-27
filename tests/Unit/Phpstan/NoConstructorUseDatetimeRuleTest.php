@@ -13,7 +13,8 @@ use PHPStan\Testing\RuleTestCase;
  */
 class NoConstructorUseDatetimeRuleTest extends RuleTestCase
 {
-    private const string CONSTRUCTOR_MESSAGE = 'Do not use constructor of DateTimeInterface() directly, use DateTimeUtils::getDateTime() instead.';
+    private const string CONSTRUCTOR_MESSAGE = 'Do not use constructor of DateTimeInterface() directly, use '
+        . 'DateTimeUtils::getDateTime() instead.';
 
     protected function getRule(): NoConstructorUseDatetimeRule
     {

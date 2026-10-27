@@ -164,7 +164,11 @@ class Mapper implements IMapper
 
     protected function toUnderScore(string $string): string
     {
-        $pregReplaced = preg_replace_callback('#(?<=.)([A-Z])#', fn (array $m): string => '_' . strtolower($m[1]), $string);
+        $pregReplaced = preg_replace_callback(
+            '#(?<=.)([A-Z])#',
+            fn (array $m): string => '_' . strtolower($m[1]),
+            $string,
+        );
         if ($pregReplaced === null) {
             throw new \RuntimeException('preg_replace_callback failed');
         }

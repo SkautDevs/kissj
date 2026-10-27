@@ -31,7 +31,11 @@ class DealController extends AbstractController
             return $response->withStatus(400);
         }
 
-        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm($jsonFromBody, $authorizedEvent, $this->sentryCollector);
+        $deal = $this->dealRepository->trySaveNewDealFromGoogleForm(
+            $jsonFromBody,
+            $authorizedEvent,
+            $this->sentryCollector,
+        );
         if ($deal === null) {
             $this->sentryCollector->collect(new \Exception(sprintf(
                 'Missing data or invalid auth in request. Body: %s',

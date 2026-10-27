@@ -71,11 +71,23 @@ class AdminEventController extends AbstractController
                 'organizingTeamCap' => $this->formatCap($event->maximalClosedOrganizingTeamCount),
                 'patrols' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::PatrolLeader),
                 'ists' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Ist),
-                'troopLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopLeader),
-                'troopParticipants' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TroopParticipant),
+                'troopLeaders' => $this->participantStatisticsService->getStatistic(
+                    $event,
+                    ParticipantRole::TroopLeader,
+                ),
+                'troopParticipants' => $this->participantStatisticsService->getStatistic(
+                    $event,
+                    ParticipantRole::TroopParticipant,
+                ),
                 'guests' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::Guest),
-                'organizingTeam' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::OrganizingTeam),
-                'technicalTeamLeaders' => $this->participantStatisticsService->getStatistic($event, ParticipantRole::TechnicalTeamLeader),
+                'organizingTeam' => $this->participantStatisticsService->getStatistic(
+                    $event,
+                    ParticipantRole::OrganizingTeam,
+                ),
+                'technicalTeamLeaders' => $this->participantStatisticsService->getStatistic(
+                    $event,
+                    ParticipantRole::TechnicalTeamLeader,
+                ),
                 'contingentsPatrolStatistic' => $contingentStatistic,
                 'istArrivalStatistic' => $istArrivalStatistic,
                 'foodStatistic' => $foodStatistic,

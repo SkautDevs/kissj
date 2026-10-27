@@ -267,7 +267,10 @@ class ParticipantController extends AbstractController
             return $this->redirect($request, $response, 'showTransferTicket');
         }
 
-        if ($to === null || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, new NullFlashMessages())) {
+        if (
+            $to === null
+            || !$this->paymentTransferService->isPaymentTransferPossible($from, $to, new NullFlashMessages())
+        ) {
             $this->flashMessages->error('flash.error.transferFailed');
 
             return $this->redirect($request, $response, 'showTransferTicket', queryParams: ['tieCode' => $tieCode]);

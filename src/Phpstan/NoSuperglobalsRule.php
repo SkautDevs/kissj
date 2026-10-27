@@ -21,7 +21,16 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 class NoSuperglobalsRule implements Rule
 {
-    private const array SUPERGLOBALS = ['_GET', '_POST', '_COOKIE', '_FILES', '_REQUEST', '_SERVER', '_SESSION', '_ENV'];
+    private const array SUPERGLOBALS = [
+        '_GET',
+        '_POST',
+        '_COOKIE',
+        '_FILES',
+        '_REQUEST',
+        '_SERVER',
+        '_SESSION',
+        '_ENV',
+    ];
 
     private const array ALLOWED_CLASSES = [
         Settings::class,
@@ -57,7 +66,8 @@ class NoSuperglobalsRule implements Rule
 
         return [
             RuleErrorBuilder::message(
-                'Read request/session/env data through the PSR-7 request, EnvSettings, FlashMessagesBySession or UserRegeneration, not superglobals.',
+                'Read request/session/env data through the PSR-7 request, EnvSettings, FlashMessagesBySession or '
+                    . 'UserRegeneration, not superglobals.',
             )->identifier('kissj.superglobal')->build(),
         ];
     }

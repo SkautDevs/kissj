@@ -56,7 +56,8 @@ class TwigExtension extends AbstractExtension
             ),
             new TwigTest(
                 'Troop',
-                fn (Participant $participant): bool => $participant instanceof TroopLeader || $participant instanceof TroopParticipant
+                fn (Participant $participant): bool => $participant instanceof TroopLeader
+                    || $participant instanceof TroopParticipant
             ),
             new TwigTest(
                 'hasUser',
@@ -65,10 +66,13 @@ class TwigExtension extends AbstractExtension
             new TwigTest(
                 'eligibleForShowTieCode',
                 fn (Participant $participant): bool => (
-                    $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Open
+                    $participant instanceof TroopLeader
+                    && $participant->getUserButNotNull()->status === UserStatus::Open
                 ) || (
-                    // TroopLeader TieCode is also used for pairing with some external services, so they have to be able to access it in paid status
-                    $participant instanceof TroopLeader && $participant->getUserButNotNull()->status === UserStatus::Paid
+                    // TroopLeader TieCode is also used for pairing with some external services,
+                    // so they have to be able to access it in paid status
+                    $participant instanceof TroopLeader
+                    && $participant->getUserButNotNull()->status === UserStatus::Paid
                 ) || (
                     $participant instanceof TroopParticipant && $participant->troopLeader === null
                 ) || (

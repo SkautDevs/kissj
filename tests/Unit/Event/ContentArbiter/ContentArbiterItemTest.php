@@ -53,7 +53,10 @@ class ContentArbiterItemTest extends TestCase
         self::assertTrue($item->allowed);
         self::assertFalse($item->required);
         self::assertSame('detail.foodWithout', $item->defaultValue);
-        self::assertSame(['detail.foodWithout' => 'detail.foodWithout', 'detail.foodVegetarian' => 'detail.foodVegetarian'], $item->options);
+        self::assertSame(
+            ['detail.foodWithout' => 'detail.foodWithout', 'detail.foodVegetarian' => 'detail.foodVegetarian'],
+            $item->options,
+        );
         self::assertSame(['food-select'], $item->extraClasses);
     }
 

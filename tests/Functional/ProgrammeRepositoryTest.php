@@ -30,10 +30,18 @@ class ProgrammeRepositoryTest extends AppTestCase
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
 
         $istProgramme = $this->createProgramme($app, 'ist night game', 'games', [ParticipantRole::Ist]);
-        $tlProgramme = $this->createProgramme($app, 'tl workshop', null, [ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant]);
+        $tlProgramme = $this->createProgramme(
+            $app,
+            'tl workshop',
+            null,
+            [ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
+        );
 
         // functional tests share one persistent event; assert on the rows we created, not on event-global counts
-        $istProgrammeIds = array_map(static fn (Programme $programme): int => $programme->id, $programmeRepository->findActiveForRole($event, ParticipantRole::Ist));
+        $istProgrammeIds = array_map(
+            static fn (Programme $programme): int => $programme->id,
+            $programmeRepository->findActiveForRole($event, ParticipantRole::Ist),
+        );
         self::assertContains($istProgramme->id, $istProgrammeIds);
         self::assertNotContains($tlProgramme->id, $istProgrammeIds);
 
@@ -74,8 +82,14 @@ class ProgrammeRepositoryTest extends AppTestCase
 
         $programme = $this->createProgramme($app, 'find active workshop', null, [ParticipantRole::Ist]);
 
-        $ownParticipant = $userService->createParticipantSetRole($this->registerUser($app, 'find-active-own@example.com'), 'ist');
-        $otherParticipant = $userService->createParticipantSetRole($this->registerUser($app, 'find-active-other@example.com'), 'ist');
+        $ownParticipant = $userService->createParticipantSetRole(
+            $this->registerUser($app, 'find-active-own@example.com'),
+            'ist',
+        );
+        $otherParticipant = $userService->createParticipantSetRole(
+            $this->registerUser($app, 'find-active-other@example.com'),
+            'ist',
+        );
 
         foreach ([$ownParticipant, $otherParticipant] as $participant) {
             $registration = new ProgrammeRegistration();

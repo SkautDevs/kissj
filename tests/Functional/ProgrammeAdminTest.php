@@ -521,7 +521,9 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertStringContainsString('export route workshop', $csvBody);
         self::assertStringContainsString('export-route-ist@example.com', $csvBody);
 
-        $printAllResponse = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/export/programmes-print'));
+        $printAllResponse = $app->handle(
+            $this->createRequest('/v2/event/test-event-slug/admin/export/programmes-print'),
+        );
         self::assertSame(200, $printAllResponse->getStatusCode());
         self::assertStringContainsString('application/pdf', $printAllResponse->getHeaderLine('Content-Type'));
 
@@ -852,8 +854,13 @@ class ProgrammeAdminTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createProgramme(App $app, string $name, ?string $groupName, int $capacity, bool $isPreregistered = false): Programme
-    {
+    private function createProgramme(
+        App $app,
+        string $name,
+        ?string $groupName,
+        int $capacity,
+        bool $isPreregistered = false,
+    ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
 

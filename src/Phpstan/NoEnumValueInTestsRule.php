@@ -48,7 +48,8 @@ class NoEnumValueInTestsRule implements Rule
 
         return [
             RuleErrorBuilder::message(
-                'Use the literal backing value in tests instead of Enum::Case->value, so a changed enum value fails the test.',
+                'Use the literal backing value in tests instead of Enum::Case->value, so a changed enum value fails '
+                    . 'the test.',
             )->identifier('kissj.enumValueInTest')->build(),
         ];
     }

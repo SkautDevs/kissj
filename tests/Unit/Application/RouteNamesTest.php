@@ -91,7 +91,11 @@ class RouteNamesTest extends AppTestCase
                 }
             }
 
-            self::assertGreaterThan(0, $matchCount, 'pattern ' . $pattern . ' matched nothing: the call shape it guards has changed');
+            self::assertGreaterThan(
+                0,
+                $matchCount,
+                'pattern ' . $pattern . ' matched nothing: the call shape it guards has changed',
+            );
         }
 
         return $references;

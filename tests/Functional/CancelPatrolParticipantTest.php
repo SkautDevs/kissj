@@ -50,7 +50,8 @@ class CancelPatrolParticipantTest extends AppTestCase
         self::assertSame(
             UserStatus::Paid,
             $leaderUserAfter->status,
-            'Cancelling one patrol participant must not cancel the patrol leader\'s user (whole patrol would vanish from the entry app)',
+            'Cancelling one patrol participant must not cancel the patrol leader\'s user (whole patrol would vanish '
+                . 'from the entry app)',
         );
     }
 

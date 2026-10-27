@@ -36,7 +36,9 @@ class EntryController extends AbstractController
         if (array_key_exists('paidOnly', $queryParams)) {
             $filterPaidOnly = (bool)$queryParams['paidOnly'];
         } else {
-            $this->logger->warning('Missing data about status filtering of entry app participant list, using default "Paid only"');
+            $this->logger->warning(
+                'Missing data about status filtering of entry app participant list, using default "Paid only"',
+            );
         }
         $participants = $this->participantRepository->getParticipantsForEntry($authorizedEvent, $filterPaidOnly);
         foreach ($participants as $role => $roleParticipants) {
@@ -72,7 +74,11 @@ class EntryController extends AbstractController
         $eventSecret = $bodyJson['eventSecret'];
         $event = $participant->getUserButNotNull()->event;
 
-        if (!is_string($eventSecret) || $event->apiKeyEntry === null || !hash_equals($event->apiKeyEntry, $eventSecret)) {
+        if (
+            !is_string($eventSecret)
+            || $event->apiKeyEntry === null
+            || !hash_equals($event->apiKeyEntry, $eventSecret)
+        ) {
             return $this->createErrorEntryResponse($response, 'invalid event secret');
         }
 

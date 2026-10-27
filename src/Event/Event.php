@@ -212,7 +212,8 @@ class Event extends EntityDatetime
             ParticipantRole::Ist => $this->allowIsts,
             ParticipantRole::Guest => $this->allowGuests,
             ParticipantRole::OrganizingTeam => $this->allowOrganizingTeam,
-            ParticipantRole::TechnicalTeamLeader, ParticipantRole::TechnicalTeamParticipant => $this->allowTechnicalTeams,
+            ParticipantRole::TechnicalTeamLeader,
+            ParticipantRole::TechnicalTeamParticipant => $this->allowTechnicalTeams,
         };
     }
 

@@ -123,11 +123,17 @@ class ParticipantServicePhoneTest extends TestCase
         $ca->phone->allowed = true;
 
         foreach (['603123456', '00420603123456', '+420 603 123 456'] as $valid) {
-            self::assertNotContains($ca->phone, $service->getInvalidItemsForClose($this->createGuestWithPhone($valid), $ca));
+            self::assertNotContains(
+                $ca->phone,
+                $service->getInvalidItemsForClose($this->createGuestWithPhone($valid), $ca),
+            );
         }
 
         foreach (['0905 123 456', '12345'] as $invalid) {
-            self::assertContains($ca->phone, $service->getInvalidItemsForClose($this->createGuestWithPhone($invalid), $ca));
+            self::assertContains(
+                $ca->phone,
+                $service->getInvalidItemsForClose($this->createGuestWithPhone($invalid), $ca),
+            );
         }
     }
 

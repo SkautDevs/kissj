@@ -337,7 +337,10 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
 
         return $this->createRequest($path, 'POST')
             ->withAttribute(RouteContext::ROUTE_PARSER, $app->getRouteCollector()->getRouteParser())
-            ->withAttribute(RouteContext::ROUTING_RESULTS, $app->getRouteResolver()->computeRoutingResults($path, 'POST'))
+            ->withAttribute(
+                RouteContext::ROUTING_RESULTS,
+                $app->getRouteResolver()->computeRoutingResults($path, 'POST'),
+            )
             ->withAttribute('event', $event);
     }
 }

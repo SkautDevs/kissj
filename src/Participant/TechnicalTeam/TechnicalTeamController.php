@@ -169,7 +169,9 @@ class TechnicalTeamController extends AbstractController
         User $user,
     ): Response {
         $participant = $this->technicalTeamService->getTechnicalTeamParticipant($participantId);
-        $editableItems = $user->event->eventType->getContentArbiterTechnicalTeamParticipant()->getEditableAfterLockItems();
+        $editableItems = $user->event->eventType
+            ->getContentArbiterTechnicalTeamParticipant()
+            ->getEditableAfterLockItems();
 
         /** @var array<string, string|null> $parsed */
         $parsed = $request->getParsedBody();

@@ -99,7 +99,10 @@ class ScenarioTest extends AppTestCase
         $responseLockedDashboard = $this->sendRequest(self::TEST_EVENT_PREFIX_URL . 'participant/dashboard');
         self::assertSame(200, $responseLockedDashboard->getStatusCode());
         self::assertStringContainsString($firstName, (string)$responseLockedDashboard->getBody());
-        self::assertStringNotContainsString('participant/closeRegistration', (string)$responseLockedDashboard->getBody());
+        self::assertStringNotContainsString(
+            'participant/closeRegistration',
+            (string)$responseLockedDashboard->getBody(),
+        );
 
         $responseLogout = $this->sendRequest(self::TEST_EVENT_PREFIX_URL . 'logout');
         self::assertSame(302, $responseLogout->getStatusCode());

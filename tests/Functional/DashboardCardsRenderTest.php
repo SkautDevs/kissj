@@ -23,15 +23,22 @@ class DashboardCardsRenderTest extends AppTestCase
 {
     private const string CARD = 'contains(concat(" ", normalize-space(@class), " "), " card ")';
     private const string CARD_DOUBLE = 'contains(concat(" ", normalize-space(@class), " "), " card-double ")';
-    private const string CARD_DOUBLE_LAYOUT = 'contains(concat(" ", normalize-space(@class), " "), " card-double-layout ")';
-    private const string LOCK_LINK = '//a[substring(@href, string-length(@href) - string-length("/closeRegistration") + 1) = "/closeRegistration"]';
-    private const string TP_TIE_FORM = '//form[substring(@action, string-length(@action) - string-length("/tieParticipantToTroopByParticipant") + 1) = "/tieParticipantToTroopByParticipant"]';
+    private const string CARD_DOUBLE_LAYOUT = 'contains(concat(" ", normalize-space(@class), " "), " '
+        . 'card-double-layout ")';
+    private const string LOCK_LINK = '//a[substring(@href, string-length(@href) - string-length("/closeRegistration") '
+        . '+ 1) = "/closeRegistration"]';
+    private const string TP_TIE_FORM = '//form[substring(@action, string-length(@action) - '
+        . 'string-length("/tieParticipantToTroopByParticipant") + 1) = "/tieParticipantToTroopByParticipant"]';
 
     public function testOpenTroopLeaderHasTieFormInJoinRowAndLockInOwnCard(): void
     {
         $xpath = $this->renderDashboard('tl', UserStatus::Open);
 
-        $tieForm = $this->single($xpath, '//form[substring(@action, string-length(@action) - string-length("/tieParticipantToTroopByLeader") + 1) = "/tieParticipantToTroopByLeader"]');
+        $tieForm = $this->single(
+            $xpath,
+            '//form[substring(@action, string-length(@action) - string-length("/tieParticipantToTroopByLeader") + 1) = '
+                . '"/tieParticipantToTroopByLeader"]',
+        );
         $joinCard = $this->single($xpath, 'ancestor::div[' . self::CARD_DOUBLE . '][1]', $tieForm);
         self::assertTrue($this->hasClass($joinCard, 'card'));
         $joinRow = $joinCard->parentNode;
@@ -39,7 +46,10 @@ class DashboardCardsRenderTest extends AppTestCase
         self::assertTrue($this->hasClass($joinRow, 'card-double-layout'));
 
         $lockCard = $this->lockCard($xpath);
-        self::assertStringEndsWith('/participant/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
+        self::assertStringEndsWith(
+            '/participant/closeRegistration',
+            $this->single($xpath, self::LOCK_LINK)->getAttribute('href'),
+        );
         self::assertSame(0, $this->countNodes($xpath, './/form', $lockCard));
         self::assertSame(0, $this->countNodes($xpath, './/ol', $lockCard));
     }
@@ -49,7 +59,10 @@ class DashboardCardsRenderTest extends AppTestCase
         $xpath = $this->renderDashboard('pl', UserStatus::Open);
 
         $lockCard = $this->lockCard($xpath);
-        self::assertStringEndsWith('/patrol/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
+        self::assertStringEndsWith(
+            '/patrol/closeRegistration',
+            $this->single($xpath, self::LOCK_LINK)->getAttribute('href'),
+        );
         self::assertSame(0, $this->countNodes($xpath, './/a[contains(@href, "/patrol/addParticipant")]', $lockCard));
         self::assertSame(0, $this->countNodes($xpath, './/ol', $lockCard));
     }
@@ -60,7 +73,10 @@ class DashboardCardsRenderTest extends AppTestCase
 
         $this->assertTroopParticipantTieFormInJoinRow($xpath);
         $lockCard = $this->lockCard($xpath);
-        self::assertStringEndsWith('/participant/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
+        self::assertStringEndsWith(
+            '/participant/closeRegistration',
+            $this->single($xpath, self::LOCK_LINK)->getAttribute('href'),
+        );
         self::assertSame(0, $this->countNodes($xpath, './/form', $lockCard));
     }
 
@@ -95,7 +111,10 @@ class DashboardCardsRenderTest extends AppTestCase
         $editDetailsLink = $this->single($xpath, '//a[contains(@href, "/participant/showChangeDetails")]');
         $detailsCard = $this->single($xpath, 'ancestor::div[' . self::CARD . '][1]', $editDetailsLink);
         self::assertSame(1, $this->countNodes($xpath, './/h2[contains(., "Dashboard Cards Troop")]', $detailsCard));
-        self::assertStringEndsWith('/participant/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
+        self::assertStringEndsWith(
+            '/participant/closeRegistration',
+            $this->single($xpath, self::LOCK_LINK)->getAttribute('href'),
+        );
         $this->lockCard($xpath);
     }
 
@@ -105,8 +124,14 @@ class DashboardCardsRenderTest extends AppTestCase
 
         self::assertSame(0, $this->countNodes($xpath, '//div[' . self::CARD_DOUBLE_LAYOUT . ']'));
         $lockCard = $this->lockCard($xpath);
-        self::assertStringEndsWith('/participant/closeRegistration', $this->single($xpath, self::LOCK_LINK)->getAttribute('href'));
-        self::assertSame(0, $this->countNodes($xpath, './/a[contains(@href, "/participant/showChangeDetails")]', $lockCard));
+        self::assertStringEndsWith(
+            '/participant/closeRegistration',
+            $this->single($xpath, self::LOCK_LINK)->getAttribute('href'),
+        );
+        self::assertSame(
+            0,
+            $this->countNodes($xpath, './/a[contains(@href, "/participant/showChangeDetails")]', $lockCard),
+        );
     }
 
     public function testClosedTroopLeaderHasNoJoinRowAndNoLock(): void

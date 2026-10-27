@@ -177,7 +177,10 @@ class EventTypeConsistencyTest extends AppTestCase
             $eventType->getAppleTouchIconNameWithoutLeadingSlash(),
         ];
         foreach (array_filter($publicFiles, static fn (?string $path): bool => $path !== null) as $path) {
-            self::assertTrue(is_file(self::PUBLIC_DIR . $path), $eventTypeClass . ' references missing public/' . $path);
+            self::assertTrue(
+                is_file(self::PUBLIC_DIR . $path),
+                $eventTypeClass . ' references missing public/' . $path,
+            );
         }
 
         $templates = [
@@ -188,7 +191,10 @@ class EventTypeConsistencyTest extends AppTestCase
             $eventType->getReceiptTemplateName(new Participant()),
         ];
         foreach (array_filter($templates, static fn (?string $path): bool => $path !== null) as $path) {
-            self::assertTrue(is_file(self::TEMPLATE_DIR . $path), $eventTypeClass . ' references missing template ' . $path);
+            self::assertTrue(
+                is_file(self::TEMPLATE_DIR . $path),
+                $eventTypeClass . ' references missing template ' . $path,
+            );
         }
 
         foreach ($eventType->getTranslationFilePaths() as $path) {
@@ -230,8 +236,10 @@ class EventTypeConsistencyTest extends AppTestCase
         return $this->reloadParticipant($participantRepository, $participant);
     }
 
-    private function reloadParticipant(ParticipantRepository $participantRepository, Participant $participant): Participant
-    {
+    private function reloadParticipant(
+        ParticipantRepository $participantRepository,
+        Participant $participant,
+    ): Participant {
         $reloadedParticipant = $participantRepository->get($participant->id);
         self::assertInstanceOf(Participant::class, $reloadedParticipant);
 

@@ -62,15 +62,47 @@ class ProgrammeTest extends TestCase
     {
         return [
             'same group overlapping is exclusive' =>
-                ['2027-06-05 08:00', '2027-06-05 10:00', 'workshops', '2027-06-05 09:00', '2027-06-05 11:00', 'workshops', true],
+                [
+                    '2027-06-05 08:00',
+                    '2027-06-05 10:00',
+                    'workshops',
+                    '2027-06-05 09:00',
+                    '2027-06-05 11:00',
+                    'workshops',
+                    true,
+                ],
             'different group is not exclusive' =>
-                ['2027-06-05 08:00', '2027-06-05 10:00', 'workshops', '2027-06-05 09:00', '2027-06-05 11:00', 'games', false],
+                [
+                    '2027-06-05 08:00',
+                    '2027-06-05 10:00',
+                    'workshops',
+                    '2027-06-05 09:00',
+                    '2027-06-05 11:00',
+                    'games',
+                    false,
+                ],
             'grouped vs ungrouped is not exclusive' =>
-                ['2027-06-05 08:00', '2027-06-05 10:00', 'workshops', '2027-06-05 09:00', '2027-06-05 11:00', null, false],
+                [
+                    '2027-06-05 08:00',
+                    '2027-06-05 10:00',
+                    'workshops',
+                    '2027-06-05 09:00',
+                    '2027-06-05 11:00',
+                    null,
+                    false,
+                ],
             'both ungrouped overlapping is not exclusive' =>
                 ['2027-06-05 08:00', '2027-06-05 10:00', null, '2027-06-05 09:30', '2027-06-05 10:30', null, false],
             'same group touching borders is not exclusive' =>
-                ['2027-06-05 08:00', '2027-06-05 10:00', 'workshops', '2027-06-05 10:00', '2027-06-05 12:00', 'workshops', false],
+                [
+                    '2027-06-05 08:00',
+                    '2027-06-05 10:00',
+                    'workshops',
+                    '2027-06-05 10:00',
+                    '2027-06-05 12:00',
+                    'workshops',
+                    false,
+                ],
         ];
     }
 

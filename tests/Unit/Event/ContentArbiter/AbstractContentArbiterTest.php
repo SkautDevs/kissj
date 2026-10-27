@@ -123,7 +123,8 @@ class AbstractContentArbiterTest extends TestCase
     {
         $ca = new ContentArbiterIst();
 
-        foreach (['parentalConsent', 'hospitalConsent', 'childWorkCert', 'adultEventCert', 'preferredPosition'] as $slug) {
+        $slugs = ['parentalConsent', 'hospitalConsent', 'childWorkCert', 'adultEventCert', 'preferredPosition'];
+        foreach ($slugs as $slug) {
             self::assertSame('detail.' . $slug . '-helptext', $ca->$slug->helpText);
             self::assertNull($ca->$slug->placeholder);
         }
@@ -162,12 +163,26 @@ class AbstractContentArbiterTest extends TestCase
     {
         $ca = new ContentArbiterIst();
 
-        self::assertSame(['man' => 'detail.genderMan', 'woman' => 'detail.genderWoman', 'other' => 'detail.genderOther'], $ca->gender->options);
         self::assertSame(
-            ['detail.swimSkillNo' => 'detail.swimSkillNo', 'detail.swimSkillLess50' => 'detail.swimSkillLess50', 'detail.swimSkillMore50' => 'detail.swimSkillMore50'],
+            ['man' => 'detail.genderMan', 'woman' => 'detail.genderWoman', 'other' => 'detail.genderOther'],
+            $ca->gender->options,
+        );
+        self::assertSame(
+            [
+                'detail.swimSkillNo' => 'detail.swimSkillNo',
+                'detail.swimSkillLess50' => 'detail.swimSkillLess50',
+                'detail.swimSkillMore50' => 'detail.swimSkillMore50',
+            ],
             $ca->swimming->options,
         );
-        self::assertSame(['dont' => 'detail.driver-dont', 'less 10000 km' => 'detail.driver-less10k', 'more 10000 km' => 'detail.driver-more10k'], $ca->driver->options);
+        self::assertSame(
+            [
+                'dont' => 'detail.driver-dont',
+                'less 10000 km' => 'detail.driver-less10k',
+                'more 10000 km' => 'detail.driver-more10k',
+            ],
+            $ca->driver->options,
+        );
         self::assertSame(['yes' => 'detail.scarfYes', 'no' => 'detail.scarfNo'], $ca->scarf->options);
     }
 
@@ -189,7 +204,10 @@ class AbstractContentArbiterTest extends TestCase
             if ($item === $ca->arrivalDate || $item === $ca->departureDate) {
                 continue;
             }
-            self::assertFalse($item->editableAfterLock, 'Field ' . $item->slug . ' should default to editableAfterLock=false');
+            self::assertFalse(
+                $item->editableAfterLock,
+                'Field ' . $item->slug . ' should default to editableAfterLock=false',
+            );
         }
     }
 

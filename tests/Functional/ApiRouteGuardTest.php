@@ -76,7 +76,15 @@ class ApiRouteGuardTest extends AppTestCase
 
                 foreach ($this->getRejectedApiKeys($guard) as $apiKey) {
                     $checkedCount++;
-                    $failure = $this->findRejectionFailure($app->getRouteResolver(), $route, $guard, $method, $path, $apiKey, $loginUrl);
+                    $failure = $this->findRejectionFailure(
+                        $app->getRouteResolver(),
+                        $route,
+                        $guard,
+                        $method,
+                        $path,
+                        $apiKey,
+                        $loginUrl,
+                    );
                     if ($failure !== null) {
                         $failures[] = $failure;
                     }
@@ -85,7 +93,11 @@ class ApiRouteGuardTest extends AppTestCase
         }
 
         self::assertSame([], $failures, 'api route accepted missing or wrong credentials');
-        self::assertGreaterThanOrEqual(50, $checkedCount, 'too few requests checked, the route list or guard map is broken');
+        self::assertGreaterThanOrEqual(
+            50,
+            $checkedCount,
+            'too few requests checked, the route list or guard map is broken',
+        );
     }
 
     public function testEveryStoredApiKeyResolvesToTheTestEventOnly(): void

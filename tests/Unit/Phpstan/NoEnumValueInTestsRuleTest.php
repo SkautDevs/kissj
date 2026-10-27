@@ -12,7 +12,8 @@ use PHPStan\Testing\RuleTestCase;
  */
 class NoEnumValueInTestsRuleTest extends RuleTestCase
 {
-    private const string MESSAGE = 'Use the literal backing value in tests instead of Enum::Case->value, so a changed enum value fails the test.';
+    private const string MESSAGE = 'Use the literal backing value in tests instead of Enum::Case->value, so a changed '
+        . 'enum value fails the test.';
 
     protected function getRule(): NoEnumValueInTestsRule
     {

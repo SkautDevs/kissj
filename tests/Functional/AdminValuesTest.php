@@ -64,7 +64,13 @@ class AdminValuesTest extends AppTestCase
             $participant = $this->createPaidIst($container, 'Jana', 'Novakova' . $suffix);
             $other = $this->createPaidIst($container, 'Petr', 'Svoboda' . $suffix);
 
-            $result = $adminService->setAdminValues($participant, $event, EventTypeCej::SUBCAMP_THEBA, 'CEJ-001-' . $suffix, 'G-7');
+            $result = $adminService->setAdminValues(
+                $participant,
+                $event,
+                EventTypeCej::SUBCAMP_THEBA,
+                'CEJ-001-' . $suffix,
+                'G-7',
+            );
             self::assertSame(AdminValuesSaveResult::Saved, $result);
 
             $reloaded = $participantRepository->getParticipantById($participant->id, $event);
@@ -89,7 +95,13 @@ class AdminValuesTest extends AppTestCase
             // re-saving the same participant with its own unique ID is not a conflict
             self::assertSame(
                 AdminValuesSaveResult::Saved,
-                $adminService->setAdminValues($participant, $event, EventTypeCej::SUBCAMP_SPARTA, 'CEJ-001-' . $suffix, null),
+                $adminService->setAdminValues(
+                    $participant,
+                    $event,
+                    EventTypeCej::SUBCAMP_SPARTA,
+                    'CEJ-001-' . $suffix,
+                    null,
+                ),
             );
         } finally {
             $this->resetEventToDefault($container, self::TEST_EVENT_SLUG);

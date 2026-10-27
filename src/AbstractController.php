@@ -67,10 +67,22 @@ abstract class AbstractController
     {
         foreach ($result->messages as $message) {
             match ($message->severity) {
-                PaymentMessageSeverity::Info => $this->flashMessages->info($message->translationKey, $message->translationParams),
-                PaymentMessageSeverity::Success => $this->flashMessages->success($message->translationKey, $message->translationParams),
-                PaymentMessageSeverity::Warning => $this->flashMessages->warning($message->translationKey, $message->translationParams),
-                PaymentMessageSeverity::Error => $this->flashMessages->error($message->translationKey, $message->translationParams),
+                PaymentMessageSeverity::Info => $this->flashMessages->info(
+                    $message->translationKey,
+                    $message->translationParams,
+                ),
+                PaymentMessageSeverity::Success => $this->flashMessages->success(
+                    $message->translationKey,
+                    $message->translationParams,
+                ),
+                PaymentMessageSeverity::Warning => $this->flashMessages->warning(
+                    $message->translationKey,
+                    $message->translationParams,
+                ),
+                PaymentMessageSeverity::Error => $this->flashMessages->error(
+                    $message->translationKey,
+                    $message->translationParams,
+                ),
             };
         }
     }

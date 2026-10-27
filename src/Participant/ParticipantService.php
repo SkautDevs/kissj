@@ -533,7 +533,9 @@ readonly class ParticipantService
             || $participant instanceof TechnicalTeamParticipant
         ) {
             // group members share the leader's user - cancelling would flip the whole group
-            throw new LogicException('Cancelling patrol or technical team roles is not supported - it would cancel the whole group');
+            throw new LogicException(
+                'Cancelling patrol or technical team roles is not supported - it would cancel the whole group',
+            );
         }
 
         $this->userService->setUserCancelled($participant->getUserButNotNull());

@@ -141,7 +141,9 @@ class ProgrammeExportTest extends AppTestCase
         $programme->isPreregistered = $isPreregistered;
         $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        $programme->setTargetRoles($roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant]);
+        $programme->setTargetRoles(
+            $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
+        );
         $programmeRepository->persist($programme);
 
         return $programme;

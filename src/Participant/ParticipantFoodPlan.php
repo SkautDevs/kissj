@@ -27,7 +27,8 @@ class ParticipantFoodPlan
     private bool $usePatrolAndTroopsAggregator;
 
     /** @var  array<int|string, string> */
-    private array $participantPatrolTroopName; // patrol leader id => patrolName, so that we don't have to query db later
+    // patrol leader id => patrolName, so that we don't have to query db later
+    private array $participantPatrolTroopName;
 
     /** @var array<string, array<string, array<string, int>>> */
     private array $aggregatedRows;
@@ -133,7 +134,13 @@ class ParticipantFoodPlan
                 }
 
                 $this->participantPatrolTroopName[$patrolOrTroopLeaderId] = $patrolOrTroopLeaderName;
-                $rows = $this->insertParticipantIntoRows($p, $defaultStartDay, $defaultEndDay, $rows, $patrolOrTroopLeaderId);
+                $rows = $this->insertParticipantIntoRows(
+                    $p,
+                    $defaultStartDay,
+                    $defaultEndDay,
+                    $rows,
+                    $patrolOrTroopLeaderId,
+                );
             }
         } else {
             foreach ($participants as $p) {
@@ -172,7 +179,8 @@ class ParticipantFoodPlan
                 if (isset($row[$date])) {
                     $sum = 0;
                     foreach ($dietTypesIncludingSum as $dietType) {
-                        if (isset($row[$date][$dietType])) { // day summaries are not yet initialized at this point - so skip them
+                        // day summaries are not yet initialized at this point - so skip them
+                        if (isset($row[$date][$dietType])) {
                             $summary[$date][$dietType] += $row[$date][$dietType];
                             $sum += $row[$date][$dietType];
                         }

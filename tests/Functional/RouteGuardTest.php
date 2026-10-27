@@ -56,7 +56,11 @@ class RouteGuardTest extends AppTestCase
         }
 
         self::assertSame([], $failures, 'anonymous request was not blocked on a non-public route');
-        self::assertGreaterThanOrEqual(100, $checkedCount, 'too few routes checked, the route list or allowlist is broken');
+        self::assertGreaterThanOrEqual(
+            100,
+            $checkedCount,
+            'too few routes checked, the route list or allowlist is broken',
+        );
     }
 
     public function testEveryPublicAllowlistEntryMatchesARoute(): void
@@ -73,7 +77,10 @@ class RouteGuardTest extends AppTestCase
             }
         }
 
-        $prefixMatches = array_filter($patterns, static fn (string $pattern): bool => str_starts_with($pattern, self::PUBLIC_PATH_PREFIX));
+        $prefixMatches = array_filter(
+            $patterns,
+            static fn (string $pattern): bool => str_starts_with($pattern, self::PUBLIC_PATH_PREFIX),
+        );
         if ($prefixMatches === []) {
             $unmatched[] = self::PUBLIC_PATH_PREFIX . '*';
         }

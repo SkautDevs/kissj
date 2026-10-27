@@ -25,7 +25,7 @@ use Ramsey\Uuid\Uuid;
  *
  * @property int                    $id
  * @property User|null              $user m:hasOne
- * @property ParticipantRole|null   $role m:passThru(roleFromString|roleToString) #needed for DB working (see Mapper.php)
+ * @property ParticipantRole|null   $role m:passThru(roleFromString|roleToString) #needed for DB (see Mapper.php)
  *
  * @property string|null            $contingent
  * @property string|null            $firstName
@@ -452,7 +452,11 @@ class Participant extends EntityDatetime
 
     private function generateTieCode(): string
     {
-        return substr(str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', self::TIE_CODE_LENGTH * 9)), 0, self::TIE_CODE_LENGTH);
+        return substr(
+            str_shuffle(str_repeat('ABCDEFGHJKLMNOPQRSTUVWXYZ', self::TIE_CODE_LENGTH * 9)),
+            0,
+            self::TIE_CODE_LENGTH,
+        );
     }
 
     public function findDeal(string $slug): ?Deal

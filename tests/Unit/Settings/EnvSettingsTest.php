@@ -127,7 +127,10 @@ class EnvSettingsTest extends TestCase
 
     public function testCorsOriginsAreTrimmedAndEmptiesDropped(): void
     {
-        $env = EnvSettings::fromArray(['CORS_ALLOWED_ORIGINS' => ' https://a.example.org , ,https://b.example.org,'] + $this->validEnv(), '.env');
+        $env = EnvSettings::fromArray(
+            ['CORS_ALLOWED_ORIGINS' => ' https://a.example.org , ,https://b.example.org,'] + $this->validEnv(),
+            '.env',
+        );
         self::assertSame(['https://a.example.org', 'https://b.example.org'], $env->corsAllowedOrigins);
 
         $env = EnvSettings::fromArray(['CORS_ALLOWED_ORIGINS' => ''] + $this->validEnv(), '.env');

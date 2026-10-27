@@ -93,7 +93,21 @@ class SkautisService
         try {
             /** @var object{ID_Person: int|string, HasMembership: bool} $skautisUserDetail */
             $skautisUserDetail = $this->skautis->UserManagement->UserDetail();
-            /** @var object{ID: int, UserName: string, FirstName: string, LastName: string, NickName: string, Birthday: string, Email: string, Phone: string, Street: string, City: string, PostCode: string} $skautisUserDetailExternal */
+            /**
+             * @var object{
+             *     ID: int,
+             *     UserName: string,
+             *     FirstName: string,
+             *     LastName: string,
+             *     NickName: string,
+             *     Birthday: string,
+             *     Email: string,
+             *     Phone: string,
+             *     Street: string,
+             *     City: string,
+             *     PostCode: string,
+             * } $skautisUserDetailExternal
+             */
             $skautisUserDetailExternal = $this->skautis->UserManagement->UserDetailExternal();
             $idPersonFromSkautis = $skautisUserDetail->ID_Person;
             if ($skautisUserDetail->HasMembership === true && is_numeric($idPersonFromSkautis)) {
@@ -233,7 +247,20 @@ class SkautisService
     {
         $members = [];
         foreach ($unitIds as $unitId) {
-            /** @var list<object{ID: int, FirstName: string, LastName: string, NickName: string, Birthday: string, Street: string, City: string, Postcode: string, State: string, ID_Sex: string}> $persons */
+            /**
+             * @var list<object{
+             *     ID: int,
+             *     FirstName: string,
+             *     LastName: string,
+             *     NickName: string,
+             *     Birthday: string,
+             *     Street: string,
+             *     City: string,
+             *     Postcode: string,
+             *     State: string,
+             *     ID_Sex: string,
+             * }> $persons
+             */
             $persons = $this->skautis->OrganizationUnit->PersonAll([
                 'ID_Unit' => $unitId,
                 'OnlyDirectMember' => true,

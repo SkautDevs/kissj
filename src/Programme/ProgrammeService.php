@@ -78,7 +78,8 @@ readonly class ProgrammeService
 
                 $this->programmeRegistrationRepository->softDelete($registration);
 
-                $remaining = $programme->capacity - $this->programmeRegistrationRepository->countActiveForProgramme($programme);
+                $activeCount = $this->programmeRegistrationRepository->countActiveForProgramme($programme);
+                $remaining = $programme->capacity - $activeCount;
 
                 return new ProgrammeRegistrationResult(true, 'flash.success.programmeUnregistered', $remaining);
             },

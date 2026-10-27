@@ -254,7 +254,13 @@ class CrossEventGuardTest extends AppTestCase
         $bankPayment = $this->createBankPayment($this->getService($app, BankPaymentRepository::class), $foreignEvent);
         $programme = $this->createProgramme($app, $foreignEvent);
 
-        return new CrossEventForeignFixture($participant->id, $user->id, $payment->id, $bankPayment->id, $programme->id);
+        return new CrossEventForeignFixture(
+            $participant->id,
+            $user->id,
+            $payment->id,
+            $bankPayment->id,
+            $programme->id,
+        );
     }
 
     /**

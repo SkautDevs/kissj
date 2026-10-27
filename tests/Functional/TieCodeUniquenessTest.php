@@ -90,7 +90,10 @@ class TieCodeUniquenessTest extends AppTestCase
         self::assertStringContainsString(' 123456 -> ', $migrateOutput);
         self::assertStringContainsString(': legacy default', $migrateOutput);
         self::assertStringContainsString(': duplicate of participant ' . $newestTl->id . PHP_EOL, $migrateOutput);
-        self::assertStringContainsString('rewrote 2 legacy and 5 duplicate tie codes (2 troop leaders)', $migrateOutput);
+        self::assertStringContainsString(
+            'rewrote 2 legacy and 5 duplicate tie codes (2 troop leaders)',
+            $migrateOutput,
+        );
 
         // the index is back after the repair
         $duplicateIst = $participantRepository->getOneBy(['id' => $duplicateIst->id]);

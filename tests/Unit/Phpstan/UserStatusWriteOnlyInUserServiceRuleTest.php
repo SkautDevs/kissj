@@ -21,7 +21,8 @@ class UserStatusWriteOnlyInUserServiceRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/user-status-write.php'], [
             [
-                'Change User::$status only through UserService (setUserOpen/Closed/Approved/Paid/Cancelled), so status transitions stay in one place.',
+                'Change User::$status only through UserService (setUserOpen/Closed/Approved/Paid/Cancelled), so status '
+                    . 'transitions stay in one place.',
                 11,
             ],
         ]);

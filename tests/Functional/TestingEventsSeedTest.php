@@ -118,15 +118,37 @@ class TestingEventsSeedTest extends AppTestCase
 
         $korbo = $eventRepository->findBySlug('korbo3026');
         self::assertNotNull($korbo);
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::Ist], UserStatus::cases(), $korbo));
-        self::assertSame(5, $participantRepository->getParticipantsCount([ParticipantRole::Ist], [UserStatus::Paid], $korbo));
-        self::assertSame(5, $participantRepository->getParticipantsCount([ParticipantRole::Ist], [UserStatus::Open], $korbo));
-        self::assertSame(0, $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $korbo));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::Ist], UserStatus::cases(), $korbo),
+        );
+        self::assertSame(
+            5,
+            $participantRepository->getParticipantsCount([ParticipantRole::Ist], [UserStatus::Paid], $korbo),
+        );
+        self::assertSame(
+            5,
+            $participantRepository->getParticipantsCount([ParticipantRole::Ist], [UserStatus::Open], $korbo),
+        );
+        self::assertSame(
+            0,
+            $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $korbo),
+        );
 
         $navigamus = $eventRepository->findBySlug('navigamus3027');
         self::assertNotNull($navigamus);
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $navigamus));
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::OrganizingTeam], UserStatus::cases(), $navigamus));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $navigamus),
+        );
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::OrganizingTeam],
+                UserStatus::cases(),
+                $navigamus,
+            ),
+        );
 
         // guest/ot payments price the discounted rate, not the event's default_price
         $paidGuest = $participantRepository->findOneBy(['email' => 'guest20@navigamus3027.test']);
@@ -138,8 +160,14 @@ class TestingEventsSeedTest extends AppTestCase
         $cej = $eventRepository->findBySlug('cej3026');
         self::assertNotNull($cej);
         // cej cannot price guest/ot - deliberately excluded from its role list
-        self::assertSame(0, $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $cej));
-        self::assertSame(0, $participantRepository->getParticipantsCount([ParticipantRole::OrganizingTeam], UserStatus::cases(), $cej));
+        self::assertSame(
+            0,
+            $participantRepository->getParticipantsCount([ParticipantRole::Guest], UserStatus::cases(), $cej),
+        );
+        self::assertSame(
+            0,
+            $participantRepository->getParticipantsCount([ParticipantRole::OrganizingTeam], UserStatus::cases(), $cej),
+        );
 
         $cejIst = $participantRepository->findOneBy(['email' => 'ist20@cej3026.test']);
         self::assertNotNull($cejIst);
@@ -152,7 +180,10 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertSame(PaymentStatus::Paid, $payments[0]->status);
 
         $this->runSeed();
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::Ist], UserStatus::cases(), $korbo));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::Ist], UserStatus::cases(), $korbo),
+        );
 
         // re-run must not duplicate payments for an already-seeded participant
         $paidIstAfterRerun = $participantRepository->findOneBy(['email' => 'ist20@korbo3026.test']);
@@ -176,10 +207,31 @@ class TestingEventsSeedTest extends AppTestCase
 
         $navigamus = $eventRepository->findBySlug('navigamus3027');
         self::assertNotNull($navigamus);
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::PatrolLeader], UserStatus::cases(), $navigamus));
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::PatrolParticipant], UserStatus::cases(), $navigamus));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::PatrolLeader],
+                UserStatus::cases(),
+                $navigamus,
+            ),
+        );
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::PatrolParticipant],
+                UserStatus::cases(),
+                $navigamus,
+            ),
+        );
         // paid PLs carry 2 PPs each
-        self::assertSame(10, $participantRepository->getParticipantsCount([ParticipantRole::PatrolParticipant], [UserStatus::Paid], $navigamus));
+        self::assertSame(
+            10,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::PatrolParticipant],
+                [UserStatus::Paid],
+                $navigamus,
+            ),
+        );
 
         // PPs have no user of their own - the app never creates one for them
         $pp1 = $participantRepository->findOneBy(['email' => 'pp1@navigamus3027.test']);
@@ -192,9 +244,22 @@ class TestingEventsSeedTest extends AppTestCase
 
         $obrok = $eventRepository->findBySlug('obrok3027');
         self::assertNotNull($obrok);
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::TroopLeader], UserStatus::cases(), $obrok));
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::TroopParticipant], UserStatus::cases(), $obrok));
-        self::assertSame(0, $participantRepository->getParticipantsCount([ParticipantRole::PatrolLeader], UserStatus::cases(), $obrok));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount([ParticipantRole::TroopLeader], UserStatus::cases(), $obrok),
+        );
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::TroopParticipant],
+                UserStatus::cases(),
+                $obrok,
+            ),
+        );
+        self::assertSame(
+            0,
+            $participantRepository->getParticipantsCount([ParticipantRole::PatrolLeader], UserStatus::cases(), $obrok),
+        );
 
         // TPs reach paid via their leader's payment cascade - the app never creates a TP payment directly
         $obrokTp = $participantRepository->findOneBy(['email' => 'tp20@obrok3027.test']);
@@ -202,7 +267,14 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertCount(0, $paymentRepository->findByParticipant($obrokTp));
 
         $this->runSeed();
-        self::assertSame(20, $participantRepository->getParticipantsCount([ParticipantRole::PatrolParticipant], UserStatus::cases(), $navigamus));
+        self::assertSame(
+            20,
+            $participantRepository->getParticipantsCount(
+                [ParticipantRole::PatrolParticipant],
+                UserStatus::cases(),
+                $navigamus,
+            ),
+        );
     }
 
     public function testSeedsProgrammesWithRolesAndOpenWindow(): void

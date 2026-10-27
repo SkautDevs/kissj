@@ -86,7 +86,9 @@ class ExportController extends AbstractController
         User $user,
         Event $event,
     ): Response {
-        $csvRows = $this->participantStatisticsService->createParticipantFoodPlanFromEvent($event, false)->aggregatedToCSV();
+        $csvRows = $this->participantStatisticsService
+            ->createParticipantFoodPlanFromEvent($event, false)
+            ->aggregatedToCSV();
         $this->logger->info('Exported participants food summary', ['userId' => $user->id]);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
@@ -233,7 +235,8 @@ class ExportController extends AbstractController
      */
     private function buildAttendanceSheets(Event $event, ?int $onlyProgrammeId): array
     {
-        $registrationsByProgramme = $this->programmeRegistrationRepository->findActiveForEventGroupedByProgramme($event);
+        $registrationsByProgramme = $this->programmeRegistrationRepository
+            ->findActiveForEventGroupedByProgramme($event);
         $sheets = [];
         foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
             if ($programme->isPreregistered) {

@@ -47,7 +47,10 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         $participant->arrivalDate = DateTimeUtils::getDateTime('2026-07-20');
         $participant->departureDate = DateTimeUtils::getDateTime('2026-07-25');
 
-        $invalidItems = $this->getParticipantService()->getInvalidItemsForClose($participant, new ContentArbiterGuest());
+        $invalidItems = $this->getParticipantService()->getInvalidItemsForClose(
+            $participant,
+            new ContentArbiterGuest(),
+        );
 
         self::assertSame(
             ['lastName', 'telephoneNumber', 'email'],
@@ -79,7 +82,9 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         $participant->arrivalDate = DateTimeUtils::getDateTime('2026-07-20');
         $participant->departureDate = DateTimeUtils::getDateTime('2026-07-25');
 
-        self::assertFalse($this->getParticipantService()->isParticipantDataValidForClose($participant, new ContentArbiterGuest()));
+        self::assertFalse(
+            $this->getParticipantService()->isParticipantDataValidForClose($participant, new ContentArbiterGuest()),
+        );
     }
 
     public function testGetInvalidItemsForCloseReturnsEmptyListForFullyValidParticipant(): void
@@ -93,8 +98,13 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         $participant->arrivalDate = DateTimeUtils::getDateTime('2026-07-20');
         $participant->departureDate = DateTimeUtils::getDateTime('2026-07-25');
 
-        self::assertSame([], $this->getParticipantService()->getInvalidItemsForClose($participant, new ContentArbiterGuest()));
-        self::assertTrue($this->getParticipantService()->isParticipantDataValidForClose($participant, new ContentArbiterGuest()));
+        self::assertSame(
+            [],
+            $this->getParticipantService()->getInvalidItemsForClose($participant, new ContentArbiterGuest()),
+        );
+        self::assertTrue(
+            $this->getParticipantService()->isParticipantDataValidForClose($participant, new ContentArbiterGuest()),
+        );
     }
 
     private function getParticipantService(): ParticipantService

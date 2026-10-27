@@ -71,7 +71,11 @@ readonly class ParticipantStatisticsService
             $event,
         );
 
-        return $this->createParticipantFoodPlanFromParticipants($eventParticipants, $event, $usePatrolAndTroopsAggregator);
+        return $this->createParticipantFoodPlanFromParticipants(
+            $eventParticipants,
+            $event,
+            $usePatrolAndTroopsAggregator,
+        );
     }
 
     /**

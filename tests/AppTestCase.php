@@ -223,7 +223,9 @@ class AppTestCase extends TestCase
 
         $unmatched = [];
         foreach ($this->expectedLogs as $expectation) {
-            if ($this->testLogHandler?->hasRecordThatContains($expectation['fragment'], $expectation['level']) !== true) {
+            if (
+                $this->testLogHandler?->hasRecordThatContains($expectation['fragment'], $expectation['level']) !== true
+            ) {
                 $unmatched[] = $expectation['level']->name . ' ' . $expectation['fragment'];
             }
         }
@@ -777,11 +779,14 @@ class AppTestCase extends TestCase
         /** @var ArrayObject<int, string> $recipients */
         $recipients = new ArrayObject();
         $dispatcher = $this->getService($app, EventDispatcherInterface::class);
-        $dispatcher->addListener(SentMessageEvent::class, static function (SentMessageEvent $event) use ($recipients): void {
-            foreach ($event->getMessage()->getEnvelope()->getRecipients() as $recipient) {
-                $recipients[] = $recipient->getAddress();
-            }
-        });
+        $dispatcher->addListener(
+            SentMessageEvent::class,
+            static function (SentMessageEvent $event) use ($recipients): void {
+                foreach ($event->getMessage()->getEnvelope()->getRecipients() as $recipient) {
+                    $recipients[] = $recipient->getAddress();
+                }
+            },
+        );
 
         return $recipients;
     }

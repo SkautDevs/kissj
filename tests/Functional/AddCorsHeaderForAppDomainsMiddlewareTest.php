@@ -22,7 +22,10 @@ class AddCorsHeaderForAppDomainsMiddlewareTest extends AppTestCase
         self::assertTrue($handler->called);
         self::assertSame('https://entry.example.org', $response->getHeaderLine('Access-Control-Allow-Origin'));
         self::assertSame('Origin', $response->getHeaderLine('Vary'));
-        self::assertStringContainsStringIgnoringCase('content-type', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertStringContainsStringIgnoringCase(
+            'content-type',
+            $response->getHeaderLine('Access-Control-Allow-Headers'),
+        );
         self::assertSame('3600', $response->getHeaderLine('Access-Control-Max-Age'));
         self::assertFalse($response->hasHeader('Access-Control-Allow-Credentials'));
     }

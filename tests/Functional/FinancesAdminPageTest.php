@@ -70,7 +70,14 @@ class FinancesAdminPageTest extends AppTestCase
         $eventRepository->persist($event);
         $event = $eventRepository->get($event->id);
 
-        $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '600', '2026-05-12', scarf: Participant::SCARF_YES);
+        $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '600',
+            '2026-05-12',
+            scarf: Participant::SCARF_YES,
+        );
         $this->createFinancesPayment($app, $event, PaymentStatus::Waiting, '750', scarf: Participant::SCARF_YES);
 
         $app = $this->loginAdminForEvent($app, $event);

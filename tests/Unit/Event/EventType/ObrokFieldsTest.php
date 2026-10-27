@@ -70,7 +70,10 @@ class ObrokFieldsTest extends TestCase
         self::assertIsArray($translations);
         self::assertIsArray($translations['detail']);
 
-        self::assertSame('Kontakt na zákonného zástupce (jméno + telefon)', $translations['detail']['emergencyContact']);
+        self::assertSame(
+            'Kontakt na zákonného zástupce (jméno + telefon)',
+            $translations['detail']['emergencyContact'],
+        );
     }
 
     public function testOffersNoDeals(): void
@@ -87,7 +90,10 @@ class ObrokFieldsTest extends TestCase
         self::assertIsArray($translations);
         self::assertIsArray($translations['detail']);
 
-        self::assertSame('Preferuji tištěný handbook namísto digitálního', $translations['detail']['printedHandbook-detail']);
+        self::assertSame(
+            'Preferuji tištěný handbook namísto digitálního',
+            $translations['detail']['printedHandbook-detail'],
+        );
     }
 
     public function testNoLinksToOldObrokWebsite(): void

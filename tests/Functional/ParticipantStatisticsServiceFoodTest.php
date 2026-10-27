@@ -58,8 +58,10 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         }
     }
 
-    private function enterAndTrackForCleanup(ParticipantService $participantService, Participant $participant): Participant
-    {
+    private function enterAndTrackForCleanup(
+        ParticipantService $participantService,
+        Participant $participant,
+    ): Participant {
         $participantService->setAsEntered($participant);
         $this->enteredParticipants[] = $participant;
         $this->participantServiceForTeardown = $participantService;
@@ -113,23 +115,58 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $before = $statisticsService->getPresentFoodStatisticByRole($event, $roles);
 
         // 1) Paid, checked in, vegetarian IST -> should count
-        $onSiteIst = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodVegetarian');
+        $onSiteIst = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'ist',
+            'detail.foodVegetarian',
+        );
         $this->enterAndTrackForCleanup($participantService, $onSiteIst);
 
         // 2) Paid, checked in, food not set, patrol leader -> should count under "not set"
-        $onSitePlNoFood = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'pl', null);
+        $onSitePlNoFood = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'pl',
+            null,
+        );
         $this->enterAndTrackForCleanup($participantService, $onSitePlNoFood);
 
         // 3) Paid, never checked in (entryDate null) -> excluded
-        $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodVegetarian');
+        $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'ist',
+            'detail.foodVegetarian',
+        );
 
         // 4) Paid, checked in then left (leaveDate set) -> excluded
-        $leftGuest = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'guest', 'detail.foodVegan');
+        $leftGuest = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'guest',
+            'detail.foodVegan',
+        );
         $this->enterAndTrackForCleanup($participantService, $leftGuest);
         $participantService->setAsLeaved($leftGuest);
 
         // 5) Checked in but Cancelled (not Paid) -> excluded
-        $cancelledTl = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'tl', 'detail.foodVegetarian');
+        $cancelledTl = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'tl',
+            'detail.foodVegetarian',
+        );
         $this->enterAndTrackForCleanup($participantService, $cancelledTl);
         $cancelledUser = $cancelledTl->getUserButNotNull();
         $cancelledUser->status = UserStatus::Cancelled;
@@ -144,19 +181,23 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
 
         self::assertSame(
             1,
-            $this->matrixCell($after, 'role.ist', 'detail.foodVegetarian') - $this->matrixCell($before, 'role.ist', 'detail.foodVegetarian'),
+            $this->matrixCell($after, 'role.ist', 'detail.foodVegetarian')
+                - $this->matrixCell($before, 'role.ist', 'detail.foodVegetarian'),
         );
         self::assertSame(
             1,
-            $this->matrixCell($after, 'role.pl', ParticipantStatisticsService::NOT_SET_FOOD_KEY) - $this->matrixCell($before, 'role.pl', ParticipantStatisticsService::NOT_SET_FOOD_KEY),
+            $this->matrixCell($after, 'role.pl', ParticipantStatisticsService::NOT_SET_FOOD_KEY)
+                - $this->matrixCell($before, 'role.pl', ParticipantStatisticsService::NOT_SET_FOOD_KEY),
         );
         self::assertSame(
             0,
-            $this->matrixCell($after, 'role.guest', 'detail.foodVegan') - $this->matrixCell($before, 'role.guest', 'detail.foodVegan'),
+            $this->matrixCell($after, 'role.guest', 'detail.foodVegan')
+                - $this->matrixCell($before, 'role.guest', 'detail.foodVegan'),
         );
         self::assertSame(
             0,
-            $this->matrixCell($after, 'role.tl', 'detail.foodVegetarian') - $this->matrixCell($before, 'role.tl', 'detail.foodVegetarian'),
+            $this->matrixCell($after, 'role.tl', 'detail.foodVegetarian')
+                - $this->matrixCell($before, 'role.tl', 'detail.foodVegetarian'),
         );
 
         self::assertSame(1, $after['rowTotals']['role.ist'] - $before['rowTotals']['role.ist']);
@@ -167,7 +208,8 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         );
         self::assertSame(
             1,
-            $this->colTotal($after, ParticipantStatisticsService::NOT_SET_FOOD_KEY) - $this->colTotal($before, ParticipantStatisticsService::NOT_SET_FOOD_KEY),
+            $this->colTotal($after, ParticipantStatisticsService::NOT_SET_FOOD_KEY)
+                - $this->colTotal($before, ParticipantStatisticsService::NOT_SET_FOOD_KEY),
         );
         self::assertSame(2, $after['grandTotal'] - $before['grandTotal']);
     }
@@ -219,7 +261,8 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
 
         self::assertSame(
             1,
-            $this->matrixCell($after, 'role.pp', 'detail.foodVegetarian') - $this->matrixCell($before, 'role.pp', 'detail.foodVegetarian'),
+            $this->matrixCell($after, 'role.pp', 'detail.foodVegetarian')
+                - $this->matrixCell($before, 'role.pp', 'detail.foodVegetarian'),
         );
         self::assertSame(1, $after['rowTotals']['role.pp'] - $before['rowTotals']['role.pp']);
         self::assertSame(
@@ -243,12 +286,33 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
 
         $event = $this->getObrokTestEvent($app);
 
-        $enteredOther = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodOther');
+        $enteredOther = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'ist',
+            'detail.foodOther',
+        );
         $this->enterAndTrackForCleanup($participantService, $enteredOther);
 
-        $notEnteredOther = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodOther');
+        $notEnteredOther = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'ist',
+            'detail.foodOther',
+        );
 
-        $enteredVegetarian = $this->makePaidParticipant($userService, $userRepository, $participantRepository, $event, 'ist', 'detail.foodVegetarian');
+        $enteredVegetarian = $this->makePaidParticipant(
+            $userService,
+            $userRepository,
+            $participantRepository,
+            $event,
+            'ist',
+            'detail.foodVegetarian',
+        );
         $this->enterAndTrackForCleanup($participantService, $enteredVegetarian);
 
         $statistic = $statisticsService->getPresentFoodStatisticByRole($event, ParticipantRole::all());
@@ -393,7 +457,14 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $event = $this->getObrokTestEvent($app);
 
         $bravoIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'bravo', 'Adamova', 'Bara');
-        $alfaPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', null, 'Zeman', 'Adam');
+        $alfaPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant(
+            $app,
+            $event,
+            'alfa',
+            null,
+            'Zeman',
+            'Adam',
+        );
 
         $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
             [$bravoIst, $alfaPatrolParticipant],
@@ -418,7 +489,14 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
         $event = $this->getObrokTestEvent($app);
 
         $mikeIst = $this->makeEnteredOtherFoodParticipant($app, $event, 'mike', 'Adamova', 'Bara');
-        $zuluPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant($app, $event, 'alfa', 'zulu', 'Zeman', 'Adam');
+        $zuluPatrolParticipant = $this->makeEnteredOtherFoodPatrolParticipant(
+            $app,
+            $event,
+            'alfa',
+            'zulu',
+            'Zeman',
+            'Adam',
+        );
 
         $statistic = $statisticsService->getPresentFoodStatisticFromParticipants(
             [$mikeIst, $zuluPatrolParticipant],

@@ -34,7 +34,8 @@ class UserServiceTest extends TestCase
 
         $userRepository = Mockery::mock(UserRepository::class);
         $userRepository->shouldReceive('isEmailUserExisting')->with('FOO@example.com', $event)->andReturn(false);
-        $userRepository->shouldReceive('findFirstCaseInsensitiveVariant')->with('FOO@example.com', $event)->andReturn($variantUser);
+        $userRepository->shouldReceive('findFirstCaseInsensitiveVariant')
+            ->with('FOO@example.com', $event)->andReturn($variantUser);
 
         self::assertSame(
             'foo@example.com',
@@ -59,7 +60,8 @@ class UserServiceTest extends TestCase
 
         $userRepository = Mockery::mock(UserRepository::class);
         $userRepository->shouldReceive('isEmailUserExisting')->with('new@example.com', $event)->andReturn(false);
-        $userRepository->shouldReceive('findFirstCaseInsensitiveVariant')->with('new@example.com', $event)->andReturn(null);
+        $userRepository->shouldReceive('findFirstCaseInsensitiveVariant')
+            ->with('new@example.com', $event)->andReturn(null);
 
         self::assertNull($this->createUserService($userRepository)->findCaseVariantEmail('new@example.com', $event));
     }

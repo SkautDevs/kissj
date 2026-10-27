@@ -41,7 +41,8 @@ class EventTypeCej extends EventType
         $contingent = (string)$participant->contingent;
 
         return match ($participant::class) {
-            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1) * $this->getPricePerPatrolMember($contingent),
+            PatrolLeader::class => ($participant->getPatrolParticipantsCount() + 1)
+                * $this->getPricePerPatrolMember($contingent),
             Ist::class => $this->getIstPrice($contingent),
             default => throw new LogicException('not supported in this event type'),
         };
@@ -82,7 +83,10 @@ class EventTypeCej extends EventType
             self::CONTINGENT_CZECHIA => $this->transformPaymentPriceForCzechia($payment, $participant),
             self::CONTINGENT_SLOVAKIA => $this->transformPaymentPriceForSlovakia($payment, $participant),
             self::CONTINGENT_POLAND => $this->transformPaymentPriceForPoland($payment, $participant),
-            self::CONTINGENT_HUNGARY, self::CONTINGENT_TEAM => $this->transformPaymentPriceForHungary($payment, $participant),
+            self::CONTINGENT_HUNGARY, self::CONTINGENT_TEAM => $this->transformPaymentPriceForHungary(
+                $payment,
+                $participant,
+            ),
             self::CONTINGENT_ROMANIA => $this->transformPaymentPriceForRomania($payment, $participant),
             self::CONTINGENT_EUROPEAN => $this->transformPaymentPriceForEurope($payment, $participant),
             default => throw new LogicException('unknown contingent for this event type'),
@@ -308,7 +312,10 @@ class EventTypeCej extends EventType
             UserRole::ContingentAdminHu => [self::CONTINGENT_HUNGARY],
             UserRole::ContingentAdminRo => [self::CONTINGENT_ROMANIA],
             UserRole::ContingentAdminEu => [self::CONTINGENT_EUROPEAN],
-            UserRole::Participant, UserRole::ProgrammeAdmin, UserRole::ContingentAdminGb, UserRole::ContingentAdminSw => [],
+            UserRole::Participant,
+            UserRole::ProgrammeAdmin,
+            UserRole::ContingentAdminGb,
+            UserRole::ContingentAdminSw => [],
         };
     }
 
@@ -398,7 +405,8 @@ class EventTypeCej extends EventType
             $eventDeals[] = new EventDeal(
                 self::SLUG_IST_ROLE,
                 sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSelT2FEy29-nnS5ebkuphPkuPNjVL-zLxiorFrpdTazE-q8zQ/viewform?pli=1&usp=pp_url&entry.1385658419=%s',
+                    'https://docs.google.com/forms/d/e/1FAIpQLSelT2FEy29-nnS5ebkuphPkuPNjVL-zLxiorFrpdTazE-q8zQ'
+                        . '/viewform?pli=1&usp=pp_url&entry.1385658419=%s',
                     $participant->tieCode,
                 ),
             );
@@ -408,7 +416,8 @@ class EventTypeCej extends EventType
             $eventDeals[] = new EventDeal(
                 self::SLUG_PL_PROGRAMME,
                 sprintf(
-                    'https://docs.google.com/forms/d/e/1FAIpQLSe9qayDocu0ZFEbH7z_pXr5H892k80rYpCfGNoigdnfrFQTIA/viewform?usp=pp_url&entry.577027413=%s',
+                    'https://docs.google.com/forms/d/e/1FAIpQLSe9qayDocu0ZFEbH7z_pXr5H892k80rYpCfGNoigdnfrFQTIA'
+                        . '/viewform?usp=pp_url&entry.577027413=%s',
                     $participant->tieCode,
                 ),
             );

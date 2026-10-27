@@ -111,8 +111,10 @@ class FioBankPaymentServiceTest extends AppTestCase
 
     public function testBootstrapWithoutPaymentsStoresBookmarkFromEmptyDownload(): void
     {
-        $this->fioRead->shouldReceive('setLastDate')->with('now - 89 days')->once()->ordered()->andReturn($this->response(200));
-        $this->fioRead->shouldReceive('lastDownload')->once()->ordered()->andReturn($this->transactionList(80, null, []));
+        $this->fioRead->shouldReceive('setLastDate')
+            ->with('now - 89 days')->once()->ordered()->andReturn($this->response(200));
+        $this->fioRead->shouldReceive('lastDownload')
+            ->once()->ordered()->andReturn($this->transactionList(80, null, []));
 
         self::assertSame(0, $this->service->getAndSafeFreshPaymentsFromBank($this->event));
 

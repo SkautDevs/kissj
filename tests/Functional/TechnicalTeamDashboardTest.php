@@ -80,7 +80,8 @@ class TechnicalTeamDashboardTest extends AppTestCase
         ));
 
         self::assertSame(302, $response->getStatusCode());
-        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)->get($leader->id);
+        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)
+            ->get($leader->id);
         self::assertSame('Kitchen crew', $freshLeader->technicalTeamName);
     }
 
@@ -225,7 +226,8 @@ class TechnicalTeamDashboardTest extends AppTestCase
         $event = $leaderUser->event;
         $this->mutateEventForTest($container, $event, ['allowIsts' => true]);
         $this->addMember($leader, 'Member');
-        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)->get($leader->id);
+        $freshLeader = $this->getService($this->getTestApp(false), TechnicalTeamLeaderRepository::class)
+            ->get($leader->id);
 
         self::assertSame(
             RoleChangeResult::TechnicalTeamHasParticipants,
@@ -455,8 +457,11 @@ class TechnicalTeamDashboardTest extends AppTestCase
     /**
      * @param (callable(TechnicalTeamParticipant): mixed)|null $fill
      */
-    private function addMember(TechnicalTeamLeader $leader, string $firstName, ?callable $fill = null): TechnicalTeamParticipant
-    {
+    private function addMember(
+        TechnicalTeamLeader $leader,
+        string $firstName,
+        ?callable $fill = null,
+    ): TechnicalTeamParticipant {
         $member = new TechnicalTeamParticipant();
         $member->technicalTeamLeader = $leader;
         $member->firstName = $firstName;

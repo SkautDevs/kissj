@@ -27,7 +27,10 @@ class BankPaymentEventScopeTest extends AppTestCase
 
         $this->getService($app, PaymentService::class)->setBankPaymentPaired($bankPayment->id, $event);
 
-        self::assertSame(BankPayment::STATUS_PAIRED, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+        self::assertSame(
+            BankPayment::STATUS_PAIRED,
+            $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+        );
     }
 
     public function testSetUnrelatedChangesPaymentOfSameEvent(): void
@@ -38,7 +41,10 @@ class BankPaymentEventScopeTest extends AppTestCase
 
         $this->getService($app, PaymentService::class)->setBankPaymentUnrelated($bankPayment->id, $event);
 
-        self::assertSame(BankPayment::STATUS_UNRELATED, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+        self::assertSame(
+            BankPayment::STATUS_UNRELATED,
+            $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+        );
     }
 
     public function testSetPairedRejectsPaymentOfOtherEvent(): void
@@ -53,7 +59,10 @@ class BankPaymentEventScopeTest extends AppTestCase
             $this->getService($app, PaymentService::class)->setBankPaymentPaired($bankPayment->id, $event);
             self::fail('Expected RuntimeException');
         } catch (RuntimeException) {
-            self::assertSame(BankPayment::STATUS_FRESH, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+            self::assertSame(
+                BankPayment::STATUS_FRESH,
+                $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+            );
         }
     }
 
@@ -69,7 +78,10 @@ class BankPaymentEventScopeTest extends AppTestCase
             $this->getService($app, PaymentService::class)->setBankPaymentUnrelated($bankPayment->id, $event);
             self::fail('Expected RuntimeException');
         } catch (RuntimeException) {
-            self::assertSame(BankPayment::STATUS_FRESH, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+            self::assertSame(
+                BankPayment::STATUS_FRESH,
+                $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+            );
         }
     }
 
@@ -85,7 +97,10 @@ class BankPaymentEventScopeTest extends AppTestCase
 
         self::assertSame(302, $response->getStatusCode());
         self::assertStringContainsString('/admin/payments/auto', $response->getHeaderLine('Location'));
-        self::assertSame(BankPayment::STATUS_PAIRED, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+        self::assertSame(
+            BankPayment::STATUS_PAIRED,
+            $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+        );
     }
 
     public function testUnrelatedRouteChangesPaymentOfSameEvent(): void
@@ -100,7 +115,10 @@ class BankPaymentEventScopeTest extends AppTestCase
 
         self::assertSame(302, $response->getStatusCode());
         self::assertStringContainsString('/admin/payments/auto', $response->getHeaderLine('Location'));
-        self::assertSame(BankPayment::STATUS_UNRELATED, $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment));
+        self::assertSame(
+            BankPayment::STATUS_UNRELATED,
+            $this->reloadStatus($this->getService($app, BankPaymentRepository::class), $bankPayment),
+        );
     }
 
     private function postAsAdmin(string $routeSegment, BankPayment $bankPayment): ResponseInterface

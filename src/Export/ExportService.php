@@ -115,7 +115,8 @@ readonly class ExportService
                     match (true) {
                         $participant instanceof PatrolLeader => (string)$participant->getPatrolParticipantsCount(),
                         $participant instanceof TroopLeader => (string)$participant->getTroopParticipantsCount(),
-                        $participant instanceof TechnicalTeamLeader => (string)$participant->getTechnicalTeamParticipantsCount(),
+                        $participant instanceof TechnicalTeamLeader
+                            => (string)$participant->getTechnicalTeamParticipantsCount(),
                         default => '',
                     },
                     $this->getContingentTranslated($participant),
@@ -291,12 +292,12 @@ readonly class ExportService
                     $participant->printedHandbook !== null ? (string)$participant->printedHandbook : '',
                     $participant->emergencyContact ?? '', // 35
                     $participant->notes ?? '',
-                    $participant->updatedAt !== null ? $participant->updatedAt->format('d. m. Y H:i:s') : '',
-                    $participant->registrationCloseDate !== null ? $participant->registrationCloseDate->format('d. m. Y H:i:s') : '',
-                    $participant->registrationApproveDate !== null ? $participant->registrationApproveDate->format('d. m. Y H:i:s') : '',
-                    $participant->registrationPayDate !== null ? $participant->registrationPayDate->format('d. m. Y H:i:s') : '', // 40
-                    $participant->entryDate !== null ? $participant->entryDate->format('d. m. Y H:i:s') : '',
-                    $participant->leaveDate !== null ? $participant->leaveDate->format('d. m. Y H:i:s') : '',
+                    $participant->updatedAt?->format('d. m. Y H:i:s') ?? '',
+                    $participant->registrationCloseDate?->format('d. m. Y H:i:s') ?? '',
+                    $participant->registrationApproveDate?->format('d. m. Y H:i:s') ?? '',
+                    $participant->registrationPayDate?->format('d. m. Y H:i:s') ?? '', // 40
+                    $participant->entryDate?->format('d. m. Y H:i:s') ?? '',
+                    $participant->leaveDate?->format('d. m. Y H:i:s') ?? '',
                 ],
                 $ptPart,
                 $istPart,
@@ -327,7 +328,8 @@ readonly class ExportService
             'registered at',
         ]];
 
-        $registrationsByProgramme = $this->programmeRegistrationRepository->findActiveForEventGroupedByProgramme($event);
+        $registrationsByProgramme = $this->programmeRegistrationRepository
+            ->findActiveForEventGroupedByProgramme($event);
         foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
             if ($programme->isPreregistered) {
                 continue;

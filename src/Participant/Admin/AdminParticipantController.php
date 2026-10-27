@@ -138,7 +138,11 @@ class AdminParticipantController extends AbstractController
             'role' => $participant->role?->value,
             'reason' => $reason,
         ]);
-        $this->metrics->count(MetricName::RegistrationsDenied, 1, ['role' => $participant->role->value ?? 'unknown role']);
+        $this->metrics->count(
+            MetricName::RegistrationsDenied,
+            1,
+            ['role' => $participant->role->value ?? 'unknown role'],
+        );
 
         return $this->redirect($request, $response, 'admin-show-approving');
     }
@@ -218,7 +222,9 @@ class AdminParticipantController extends AbstractController
 
         match ($result) {
             AdminValuesSaveResult::Saved => $this->flashMessages->success('flash.success.adminValuesSaved'),
-            AdminValuesSaveResult::UnknownSubcamp => $this->flashMessages->error('flash.error.adminValuesUnknownSubcamp'),
+            AdminValuesSaveResult::UnknownSubcamp => $this->flashMessages->error(
+                'flash.error.adminValuesUnknownSubcamp',
+            ),
             AdminValuesSaveResult::UniqueIdTaken => $this->flashMessages->error('flash.error.adminValuesUniqueIdTaken'),
         };
 

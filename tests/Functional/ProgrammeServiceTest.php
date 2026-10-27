@@ -106,7 +106,14 @@ class ProgrammeServiceTest extends AppTestCase
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
         $morning = $this->createProgramme($app, 'morning', 'workshops', 5, '2027-06-05 08:00', '2027-06-05 10:00');
-        $overlapping = $this->createProgramme($app, 'overlapping', 'workshops', 5, '2027-06-05 09:00', '2027-06-05 11:00');
+        $overlapping = $this->createProgramme(
+            $app,
+            'overlapping',
+            'workshops',
+            5,
+            '2027-06-05 09:00',
+            '2027-06-05 11:00',
+        );
         $touching = $this->createProgramme($app, 'touching', 'workshops', 5, '2027-06-05 10:00', '2027-06-05 12:00');
         $otherGroup = $this->createProgramme($app, 'other group', 'games', 5, '2027-06-05 09:00', '2027-06-05 11:00');
         $ungrouped = $this->createProgramme($app, 'ungrouped', null, 5, '2027-06-05 09:00', '2027-06-05 11:00');
@@ -128,7 +135,15 @@ class ProgrammeServiceTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $tlOnly = $this->createProgramme($app, 'tl only', null, 5, '2027-06-05 08:00', '2027-06-05 10:00', [ParticipantRole::TroopLeader]);
+        $tlOnly = $this->createProgramme(
+            $app,
+            'tl only',
+            null,
+            5,
+            '2027-06-05 08:00',
+            '2027-06-05 10:00',
+            [ParticipantRole::TroopLeader],
+        );
         $ist = $this->createPaidIstWithEmail($app, 'wrong-role-ist@example.com');
 
         $result = $service->register($ist, $tlOnly->id);
@@ -140,7 +155,16 @@ class ProgrammeServiceTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $ceremony = $this->createProgramme($app, 'opening ceremony', null, 1, '2027-06-05 08:00', '2027-06-05 10:00', null, true);
+        $ceremony = $this->createProgramme(
+            $app,
+            'opening ceremony',
+            null,
+            1,
+            '2027-06-05 08:00',
+            '2027-06-05 10:00',
+            null,
+            true,
+        );
         $ist = $this->createPaidIstWithEmail($app, 'ceremony-ist@example.com');
 
         $result = $service->register($ist, $ceremony->id);
@@ -154,7 +178,14 @@ class ProgrammeServiceTest extends AppTestCase
         $service = $this->getService($app, ProgrammeService::class);
         // same group + same time as ceremony - still must be registrable
         $this->createProgramme($app, 'ceremony', 'main', 1, '2027-06-05 08:00', '2027-06-05 12:00', null, true);
-        $workshop = $this->createProgramme($app, 'workshop during ceremony', 'main', 5, '2027-06-05 09:00', '2027-06-05 10:00');
+        $workshop = $this->createProgramme(
+            $app,
+            'workshop during ceremony',
+            'main',
+            5,
+            '2027-06-05 09:00',
+            '2027-06-05 10:00',
+        );
         $ist = $this->createPaidIstWithEmail($app, 'during-ceremony-ist@example.com');
 
         self::assertTrue($service->register($ist, $workshop->id)->success);
@@ -215,7 +246,16 @@ class ProgrammeServiceTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $ceremony = $this->createProgramme($app, 'admin-assign ceremony', null, 999, '2027-06-05 08:00', '2027-06-05 10:00', null, true);
+        $ceremony = $this->createProgramme(
+            $app,
+            'admin-assign ceremony',
+            null,
+            999,
+            '2027-06-05 08:00',
+            '2027-06-05 10:00',
+            null,
+            true,
+        );
         $ist = $this->createPaidIstWithEmail($app, 'admin-assign-ceremony-ist@example.com');
 
         $result = $service->adminAssign($ceremony, $ist);
@@ -404,7 +444,9 @@ class ProgrammeServiceTest extends AppTestCase
         $programme->isPreregistered = $isPreregistered;
         $programme->exclusiveGroupName = $groupName;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        $programme->setTargetRoles($roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant]);
+        $programme->setTargetRoles(
+            $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
+        );
         $programmeRepository->persist($programme);
 
         return $programme;

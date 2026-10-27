@@ -71,7 +71,11 @@ class Route
             $app->group('/kissj', function (RouteCollectorProxy $app) {
                 /*
                 $app->get('/createEvent', function (Request $request, Response $response) {
-                    return $this->get('view')->render($response, 'kissj/createEvent.twig', ['banks' => $this->banks->getBanks()]);
+                    return $this->get('view')->render(
+                        $response,
+                        'kissj/createEvent.twig',
+                        ['banks' => $this->banks->getBanks()],
+                    );
                 })->setName('createEvent')->add($helper['loggedOnly']);
 
                 $app->post('/createEvent', EventController::class.'createEvent')
@@ -172,7 +176,10 @@ class Route
                     })->add(PatrolLeadersOnlyMiddleware::class);
 
                     $app->group('/technical-team', function (RouteCollectorProxy $app) {
-                        $app->get('/participant/{participantId}/show', TechnicalTeamController::class . '::showParticipant')
+                        $app->get(
+                            '/participant/{participantId}/show',
+                            TechnicalTeamController::class . '::showParticipant',
+                        )
                             ->setName('ttp-show')
                             ->add(CheckLeaderParticipants::class);
 
@@ -190,10 +197,16 @@ class Route
                                 ->setName('ttl-addParticipant');
 
                             $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
-                                $app->get('/showChangeDetails', TechnicalTeamController::class . '::showChangeDetailsParticipant')
+                                $app->get(
+                                    '/showChangeDetails',
+                                    TechnicalTeamController::class . '::showChangeDetailsParticipant',
+                                )
                                     ->setName('ttp-showChangeDetails');
 
-                                $app->post('/changeDetails', TechnicalTeamController::class . '::changeDetailsParticipant')
+                                $app->post(
+                                    '/changeDetails',
+                                    TechnicalTeamController::class . '::changeDetailsParticipant',
+                                )
                                     ->setName('ttp-changeDetails');
 
                                 $app->get('/showDelete', TechnicalTeamController::class . '::showDeleteParticipant')
@@ -205,21 +218,33 @@ class Route
                         })->add(OpenStatusOnlyMiddleware::class);
 
                         $app->group('/participant/{participantId}', function (RouteCollectorProxy $app) {
-                            $app->get('/showChangeDetailsAfterLock', TechnicalTeamController::class . '::showChangeDetailsAfterLockParticipant')
+                            $app->get(
+                                '/showChangeDetailsAfterLock',
+                                TechnicalTeamController::class . '::showChangeDetailsAfterLockParticipant',
+                            )
                                 ->setName('ttp-showChangeDetailsAfterLock');
 
-                            $app->post('/changeDetailsAfterLock', TechnicalTeamController::class . '::changeDetailsAfterLockParticipant')
+                            $app->post(
+                                '/changeDetailsAfterLock',
+                                TechnicalTeamController::class . '::changeDetailsAfterLockParticipant',
+                            )
                                 ->setName('ttp-changeDetailsAfterLock');
                         })->add(CheckLeaderParticipants::class)->add(LockedStatusOnlyMiddleware::class);
                     })->add(TechnicalTeamLeadersOnlyMiddleware::class);
 
                     $app->group('/troop', function (RouteCollectorProxy $app) {
-                        $app->post('/tieParticipantToTroopByLeader', TroopController::class . '::tieParticipantToTroopByLeader')
+                        $app->post(
+                            '/tieParticipantToTroopByLeader',
+                            TroopController::class . '::tieParticipantToTroopByLeader',
+                        )
                             ->setName('tie-tp-by-tl')
                             ->add(TroopLeadersOnlyMiddleware::class)
                             ->add(OpenStatusOnlyMiddleware::class);
 
-                        $app->post('/tieParticipantToTroopByParticipant', TroopController::class . '::tieParticipantToTroopByParticipant')
+                        $app->post(
+                            '/tieParticipantToTroopByParticipant',
+                            TroopController::class . '::tieParticipantToTroopByParticipant',
+                        )
                             ->setName('tie-tp-by-tp')
                             ->add(TroopParticipantsOnlyMiddleware::class);
 
@@ -260,10 +285,16 @@ class Route
                         })->add(OpenStatusOnlyMiddleware::class);
 
                         $app->group('', function (RouteCollectorProxy $app) {
-                            $app->get('/showChangeDetailsAfterLock', ParticipantController::class . '::showDetailsChangeableAfterLock')
+                            $app->get(
+                                '/showChangeDetailsAfterLock',
+                                ParticipantController::class . '::showDetailsChangeableAfterLock',
+                            )
                                 ->setName('showDetailsChangeableAfterLock');
 
-                            $app->post('/changeDetailsAfterLock', ParticipantController::class . '::changeDetailsAfterLock')
+                            $app->post(
+                                '/changeDetailsAfterLock',
+                                ParticipantController::class . '::changeDetailsAfterLock',
+                            )
                                 ->setName('changeDetailsAfterLock');
                         })->add(LockedStatusOnlyMiddleware::class);
 
@@ -356,13 +387,22 @@ class Route
                         $app->get('', AdminParticipantController::class . '::showApproving')
                             ->setName('admin-show-approving');
 
-                        $app->post('/approveParticipant/{participantId}', AdminParticipantController::class . '::approveParticipant')
+                        $app->post(
+                            '/approveParticipant/{participantId}',
+                            AdminParticipantController::class . '::approveParticipant',
+                        )
                             ->setName('admin-approve');
 
-                        $app->get('/denyParticipant/{participantId}', AdminParticipantController::class . '::showDenyParticipant')
+                        $app->get(
+                            '/denyParticipant/{participantId}',
+                            AdminParticipantController::class . '::showDenyParticipant',
+                        )
                             ->setName('admin-deny-participant-show');
 
-                        $app->post('/denyParticipant/{participantId}', AdminParticipantController::class . '::denyParticipant')
+                        $app->post(
+                            '/denyParticipant/{participantId}',
+                            AdminParticipantController::class . '::denyParticipant',
+                        )
                             ->setName('admin-deny-participant');
                     });
 
@@ -376,7 +416,10 @@ class Route
                         $app->post('/cancelPayment/{paymentId}', AdminPaymentController::class . '::cancelPayment')
                             ->setName('admin-cancel-payment');
 
-                        $app->get('/changePrice/{paymentId}', AdminPaymentController::class . '::showChangePaymentPrice')
+                        $app->get(
+                            '/changePrice/{paymentId}',
+                            AdminPaymentController::class . '::showChangePaymentPrice',
+                        )
                             ->setName('admin-show-change-payment-price');
 
                         $app->post('/changePrice/{paymentId}', AdminPaymentController::class . '::changePaymentPrice')
@@ -412,7 +455,10 @@ class Route
                         $app->post('/transferPayment', AdminPaymentController::class . '::transferPayment')
                             ->setName('admin-transfer-payment');
 
-                        $app->get('/addNewPayment/{participantId}', AdminPaymentController::class . '::showAddNewPayment')
+                        $app->get(
+                            '/addNewPayment/{participantId}',
+                            AdminPaymentController::class . '::showAddNewPayment',
+                        )
                             ->setName('admin-show-add-new-payment');
 
                         $app->post('/addNewPayment/{participantId}', AdminPaymentController::class . '::addNewPayment')
@@ -467,7 +513,8 @@ class Route
                         $app->group('/food', function (RouteCollectorProxy $app) {
                             $app->get('/summary', ExportController::class . '::exportFoodSummary')
                                 ->setName('admin-export-food');
-                            $app->get('/patrols', ExportController::class . '::exportFoodPatrolsAndTroops') // also used for troops
+                            // also used for troops
+                            $app->get('/patrols', ExportController::class . '::exportFoodPatrolsAndTroops')
                                 ->setName('admin-export-patrols-food');
                         });
 
@@ -563,24 +610,40 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry');
 
-                $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::entryParticipantFromWebApp')
+                $app->map(
+                    ['POST', 'OPTIONS'],
+                    '/participant/{participantId}',
+                    EntryController::class . '::entryParticipantFromWebApp',
+                )
                     ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-participant-from-web-app');
 
-                $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::entryGroupFromWebApp')
+                $app->map(
+                    ['POST', 'OPTIONS'],
+                    '/group/{participantId}',
+                    EntryController::class . '::entryGroupFromWebApp',
+                )
                     ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('entry-group-from-web-app');
             });
 
             $app->group('/leave', function (RouteCollectorProxy $app) {
-                $app->map(['POST', 'OPTIONS'], '/participant/{participantId}', EntryController::class . '::leaveParticipantFromWebApp')
+                $app->map(
+                    ['POST', 'OPTIONS'],
+                    '/participant/{participantId}',
+                    EntryController::class . '::leaveParticipantFromWebApp',
+                )
                     ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-participant-from-web-app');
 
-                $app->map(['POST', 'OPTIONS'], '/group/{participantId}', EntryController::class . '::leaveGroupFromWebApp')
+                $app->map(
+                    ['POST', 'OPTIONS'],
+                    '/group/{participantId}',
+                    EntryController::class . '::leaveGroupFromWebApp',
+                )
                     ->add(EntryApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-group-from-web-app');
@@ -594,7 +657,11 @@ class Route
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('vendor-bearer-check');
 
-                $app->map(['GET', 'OPTIONS'], '/participant/{tieCode}', ParticipantVendorController::class . '::retrieveParticipantByTieCode')
+                $app->map(
+                    ['GET', 'OPTIONS'],
+                    '/participant/{tieCode}',
+                    ParticipantVendorController::class . '::retrieveParticipantByTieCode',
+                )
                     ->add(VendorApiKeyMiddleware::class)
                     ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('vendor-participant-by-tie-code');
@@ -608,7 +675,10 @@ class Route
                     });
 
                     $app->group('/approving', function (RouteCollectorProxy $app) {
-                        $app->post('/approveParticipant/{participantId}', AdminJsonController::class . '::approveParticipant')
+                        $app->post(
+                            '/approveParticipant/{participantId}',
+                            AdminJsonController::class . '::approveParticipant',
+                        )
                             ->setName('admin-approve-json');
                     });
 

@@ -21,7 +21,10 @@ readonly class FinancesStatisticsService
         $payments = $this->paymentRepository->getNotCanceledEventPayments($event);
 
         $tiers = $event->getEventType()->getFinanceTiers($event);
-        $showScarves = array_filter($tiers, static fn (FinanceTier $tier): bool => $tier instanceof ScarfFinanceTier) !== [];
+        $showScarves = array_filter(
+            $tiers,
+            static fn (FinanceTier $tier): bool => $tier instanceof ScarfFinanceTier,
+        ) !== [];
 
         $months = [];
         $paidTotal = [];

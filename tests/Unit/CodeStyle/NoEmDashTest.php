@@ -14,8 +14,13 @@ class NoEmDashTest extends TestCase
 
     public function testNoPhpLineContainsEmDash(): void
     {
+        $paths = [
+            ...ProjectFiles::withExtension('src', 'php'),
+            ...ProjectFiles::withExtension('tests', 'php'),
+        ];
+
         $hits = [];
-        foreach ([...ProjectFiles::withExtension('src', 'php'), ...ProjectFiles::withExtension('tests', 'php')] as $path) {
+        foreach ($paths as $path) {
             if (str_contains($path, '/tests/temp/')) {
                 continue;
             }

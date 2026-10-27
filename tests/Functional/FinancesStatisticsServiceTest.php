@@ -85,10 +85,34 @@ class FinancesStatisticsServiceTest extends AppTestCase
         $event = $eventRepository->get($event->id);
 
         $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '450', '2026-05-10');
-        $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '600', '2026-05-12', 'Kč', Participant::SCARF_YES);
+        $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '600',
+            '2026-05-12',
+            'Kč',
+            Participant::SCARF_YES,
+        );
         $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '600', '2026-06-01');
-        $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '750', '2026-06-02', 'Kč', Participant::SCARF_YES);
-        $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '500', '2026-06-03', 'Kč', Participant::SCARF_YES);
+        $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '750',
+            '2026-06-02',
+            'Kč',
+            Participant::SCARF_YES,
+        );
+        $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '500',
+            '2026-06-03',
+            'Kč',
+            Participant::SCARF_YES,
+        );
         $this->createFinancesPayment($app, $event, PaymentStatus::Waiting, '600', null, 'Kč', Participant::SCARF_YES);
 
         $report = $service->createFinancesReport($event);
@@ -129,7 +153,15 @@ class FinancesStatisticsServiceTest extends AppTestCase
         $event = $eventRepository->get($event->id);
 
         $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '450', '2026-05-10');
-        $this->createFinancesPayment($app, $event, PaymentStatus::Paid, '600', '2026-05-12', 'Kč', Participant::SCARF_YES);
+        $this->createFinancesPayment(
+            $app,
+            $event,
+            PaymentStatus::Paid,
+            '600',
+            '2026-05-12',
+            'Kč',
+            Participant::SCARF_YES,
+        );
 
         $report = $service->createFinancesReport($event);
 

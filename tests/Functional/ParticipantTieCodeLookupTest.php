@@ -43,7 +43,10 @@ class ParticipantTieCodeLookupTest extends AppTestCase
 
         $otherUser = $userService->registerEmailUser('tie-other-' . uniqid('', true) . '@example.com', $otherEvent);
         $otherParticipant = $userService->createParticipantSetRole($otherUser, 'ist');
-        $authorizedUser = $userService->registerEmailUser('tie-authorized-' . uniqid('', true) . '@example.com', $authorizedEvent);
+        $authorizedUser = $userService->registerEmailUser(
+            'tie-authorized-' . uniqid('', true) . '@example.com',
+            $authorizedEvent,
+        );
         $authorizedParticipant = $userService->createParticipantSetRole($authorizedUser, 'ist');
 
         $otherTieCode = $istRepository->get($otherParticipant->id)->tieCode;

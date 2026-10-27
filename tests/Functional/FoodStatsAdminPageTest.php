@@ -54,8 +54,10 @@ class FoodStatsAdminPageTest extends AppTestCase
         }
     }
 
-    private function enterAndTrackForCleanup(ParticipantService $participantService, Participant $participant): Participant
-    {
+    private function enterAndTrackForCleanup(
+        ParticipantService $participantService,
+        Participant $participant,
+    ): Participant {
         $participantService->setAsEntered($participant);
         $this->enteredParticipants[] = $participant;
         $this->participantServiceForTeardown = $participantService;

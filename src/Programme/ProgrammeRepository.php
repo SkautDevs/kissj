@@ -103,7 +103,11 @@ class ProgrammeRepository extends Repository
     public function getForUpdate(int $programmeId): ?Programme
     {
         $lockClause = $this->connection->getDriver() instanceof PostgreDriver ? ' FOR UPDATE' : '';
-        $row = $this->connection->fetch('SELECT * FROM %n WHERE id = %i' . $lockClause, $this->getTable(), $programmeId);
+        $row = $this->connection->fetch(
+            'SELECT * FROM %n WHERE id = %i' . $lockClause,
+            $this->getTable(),
+            $programmeId,
+        );
         if ($row === null) {
             return null;
         }

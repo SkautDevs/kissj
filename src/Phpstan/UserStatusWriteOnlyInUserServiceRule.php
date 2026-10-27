@@ -54,7 +54,8 @@ class UserStatusWriteOnlyInUserServiceRule implements Rule
 
         return [
             RuleErrorBuilder::message(
-                'Change User::$status only through UserService (setUserOpen/Closed/Approved/Paid/Cancelled), so status transitions stay in one place.',
+                'Change User::$status only through UserService (setUserOpen/Closed/Approved/Paid/Cancelled), so status '
+                    . 'transitions stay in one place.',
             )->identifier('kissj.userStatusWrite')->build(),
         ];
     }

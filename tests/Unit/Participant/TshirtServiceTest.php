@@ -50,8 +50,12 @@ class TshirtServiceTest extends TestCase
             /**
              * @param array<mixed> $parameters
              */
-            public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-            {
+            public function trans(
+                string $id,
+                array $parameters = [],
+                ?string $domain = null,
+                ?string $locale = null,
+            ): string {
                 return $this->translations[$id] ?? $id;
             }
 

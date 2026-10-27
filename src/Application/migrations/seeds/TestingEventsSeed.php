@@ -606,7 +606,9 @@ class TestingEventsSeed extends AbstractSeed
 
         $prefixVariableSymbol = $eventDefinition['prefix_variable_symbol'];
         if (!is_int($prefixVariableSymbol)) {
-            throw new RuntimeException('unexpected prefix_variable_symbol type: ' . get_debug_type($prefixVariableSymbol));
+            throw new RuntimeException(
+                'unexpected prefix_variable_symbol type: ' . get_debug_type($prefixVariableSymbol),
+            );
         }
         $startDay = $eventDefinition['start_day'];
         if (!is_string($startDay)) {
@@ -644,7 +646,9 @@ class TestingEventsSeed extends AbstractSeed
     // mirrors PaymentService::calculatePaymentDueDate(): created_at + 14 days, capped at event start
     private function dueDateFor(string $startDay): string
     {
-        $createdAtPlus14Days = DateTimeUtils::getDateTime(self::CREATED_AT)->modify('+14 days')->format('Y-m-d') . ' 00:00:00';
+        $createdAtPlus14Days = DateTimeUtils::getDateTime(self::CREATED_AT)
+            ->modify('+14 days')
+            ->format('Y-m-d') . ' 00:00:00';
         $eventStart = $startDay . ' 00:00:00';
 
         return min($createdAtPlus14Days, $eventStart);

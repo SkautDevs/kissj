@@ -47,7 +47,9 @@ class TechnicalTeamDownstreamTest extends AppTestCase
             [UserStatus::Paid],
             $event,
         );
-        $idCounts = array_count_values(array_map(fn (Participant $participant): int => $participant->id, $participants));
+        $idCounts = array_count_values(
+            array_map(fn (Participant $participant): int => $participant->id, $participants),
+        );
 
         self::assertSame(1, $idCounts[$leader->id] ?? 0);
         foreach ($members as $member) {
@@ -118,7 +120,8 @@ class TechnicalTeamDownstreamTest extends AppTestCase
         $event = $this->prepareEvent($app);
         [$leader] = $this->createTeam($app, $event, 2);
 
-        $entryParticipants = $this->getService($app, ParticipantRepository::class)->getParticipantsForEntry($event, true);
+        $entryParticipants = $this->getService($app, ParticipantRepository::class)
+            ->getParticipantsForEntry($event, true);
 
         $entryLeader = $entryParticipants['ttl'][$leader->id] ?? null;
         self::assertInstanceOf(EntryParticipant::class, $entryLeader);
@@ -151,7 +154,8 @@ class TechnicalTeamDownstreamTest extends AppTestCase
         $event = $this->prepareEvent($app);
         [$leader, $members] = $this->createTeam($app, $event, 2);
 
-        $rows = $this->getService($app, ExportService::class)->allRegistrationDataToCSV($event, $this->createAdminUser($app));
+        $rows = $this->getService($app, ExportService::class)
+            ->allRegistrationDataToCSV($event, $this->createAdminUser($app));
         $header = $rows[0];
         $idColumn = array_search('id', $header, true);
         $leaderIdColumn = array_search('patrolOrTroopLeaderId', $header, true);
@@ -190,7 +194,10 @@ class TechnicalTeamDownstreamTest extends AppTestCase
         $leaderFlashes = $this->postAsAdmin($event, '/admin/changeRole/' . $leader->id . '/cancel', []);
 
         $translator = $this->getService($this->getTestApp(false), TranslatorInterface::class);
-        self::assertContains($translator->trans('flash.warning.cancelTechnicalTeamParticipantNotSupported'), $memberFlashes);
+        self::assertContains(
+            $translator->trans('flash.warning.cancelTechnicalTeamParticipantNotSupported'),
+            $memberFlashes,
+        );
         self::assertContains($translator->trans('flash.warning.cancelTechnicalTeamLeaderNotSupported'), $leaderFlashes);
         self::assertSame(UserStatus::Paid, $this->getFreshUser($leader->getUserButNotNull())->status);
     }

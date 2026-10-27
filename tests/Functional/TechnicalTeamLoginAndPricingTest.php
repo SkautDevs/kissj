@@ -52,11 +52,15 @@ class TechnicalTeamLoginAndPricingTest extends AppTestCase
 
         self::assertSame(302, $response->getStatusCode());
         self::assertCount(1, $bodies);
-        self::assertSame(1, preg_match('~/tryLogin/([0-9a-f]{32})\?ttl_token=ttl-mail-token~', $bodies[0] ?? '', $matches));
+        self::assertSame(
+            1,
+            preg_match('~/tryLogin/([0-9a-f]{32})\?ttl_token=ttl-mail-token~', $bodies[0] ?? '', $matches),
+        );
 
         unset($_SESSION['ttl_access_granted']);
         $loginResponse = $this->getTestApp(false)->handle(
-            $this->createRequest(self::BASE_URL . '/tryLogin/' . $matches[1])->withQueryParams(['ttl_token' => 'ttl-mail-token']),
+            $this->createRequest(self::BASE_URL . '/tryLogin/' . $matches[1])
+                ->withQueryParams(['ttl_token' => 'ttl-mail-token']),
         );
 
         self::assertSame(302, $loginResponse->getStatusCode());

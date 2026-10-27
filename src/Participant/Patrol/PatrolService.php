@@ -113,7 +113,11 @@ readonly class PatrolService
 
     /**
      * @param list<SkautisMemberData> $members
-     * @param list<array{firstName: string|null, lastName: string|null, birthDate: DateTimeInterface|null}> $existingParticipantsData
+     * @param list<array{
+     *     firstName: string|null,
+     *     lastName: string|null,
+     *     birthDate: DateTimeInterface|null,
+     * }> $existingParticipantsData
      * @return array<int, string|null>
      */
     public static function matchMembersAgainstExisting(

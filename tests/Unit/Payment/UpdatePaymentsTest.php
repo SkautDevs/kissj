@@ -139,8 +139,12 @@ class UpdatePaymentsTest extends TestCase
         return $payment;
     }
 
-    private function assertHasMessage(PaymentResult $result, PaymentMessageSeverity $severity, string $key, ?string $count = null): void
-    {
+    private function assertHasMessage(
+        PaymentResult $result,
+        PaymentMessageSeverity $severity,
+        string $key,
+        ?string $count = null,
+    ): void {
         $match = array_filter(
             $result->messages,
             fn (PaymentResultMessage $m): bool => $m->severity === $severity && $m->translationKey === $key,
@@ -233,7 +237,11 @@ class UpdatePaymentsTest extends TestCase
         $service->updatePayments($event, 10);
 
         for ($i = 0; $i < 10; $i++) {
-            self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayments[$i]->status, "payment {$i} should be processed");
+            self::assertSame(
+                BankPayment::STATUS_UNKNOWN,
+                $bankPayments[$i]->status,
+                "payment {$i} should be processed",
+            );
         }
         self::assertSame(BankPayment::STATUS_FRESH, $bankPayments[10]->status, 'payment beyond the limit stays fresh');
         self::assertSame(BankPayment::STATUS_FRESH, $bankPayments[11]->status, 'payment beyond the limit stays fresh');

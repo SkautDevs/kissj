@@ -64,7 +64,10 @@ class BadgesAllowedOnlyMiddlewareTest extends AppTestCase
 
         return $this->createRequest($path)
             ->withAttribute(RouteContext::ROUTE_PARSER, $app->getRouteCollector()->getRouteParser())
-            ->withAttribute(RouteContext::ROUTING_RESULTS, $app->getRouteResolver()->computeRoutingResults($path, 'GET'))
+            ->withAttribute(
+                RouteContext::ROUTING_RESULTS,
+                $app->getRouteResolver()->computeRoutingResults($path, 'GET'),
+            )
             ->withAttribute('event', $event);
     }
 }

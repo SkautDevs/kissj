@@ -12,7 +12,8 @@ use PHPStan\Testing\RuleTestCase;
  */
 class NoSuperglobalsRuleTest extends RuleTestCase
 {
-    private const string MESSAGE = 'Read request/session/env data through the PSR-7 request, EnvSettings, FlashMessagesBySession or UserRegeneration, not superglobals.';
+    private const string MESSAGE = 'Read request/session/env data through the PSR-7 request, EnvSettings, '
+        . 'FlashMessagesBySession or UserRegeneration, not superglobals.';
 
     protected function getRule(): NoSuperglobalsRule
     {

@@ -132,7 +132,10 @@ class ParticipantRepository extends Repository
         $qb = $this->createFluent();
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
-        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
+        $qb->where(
+            'participant.role IN %in',
+            [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant],
+        );
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.status IN %in', $statuses);
         $qb->where('u.event_id = %i', $event->id);
@@ -165,7 +168,10 @@ class ParticipantRepository extends Repository
         $qb = $this->createFluent();
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
-        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
+        $qb->where(
+            'participant.role IN %in',
+            [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant],
+        );
         $qb->where('u.role = %s', UserRole::Participant);
         $qb->where('u.event_id = %i', $event->id);
         $qb->where('participant.internal_unique_id IS NOT NULL');
@@ -308,7 +314,8 @@ class ParticipantRepository extends Repository
         /** @var int $count */
         $count = $qb->fetchSingle();
 
-        // patrol and technical team participants have no own user - counted through their leader, mirroring getAllParticipantsWithStatus()
+        // patrol and technical team participants have no own user - counted through their leader,
+        // mirroring getAllParticipantsWithStatus()
         $rolesWithoutOwnUser = $this->filterRolesWithoutOwnUser($roles);
         if ($rolesWithoutOwnUser !== []) {
             $qb = $this->connection->select('COUNT(*)')->from($this->getTable());
@@ -451,7 +458,9 @@ class ParticipantRepository extends Repository
         // COUNT(*) needs an explicit alias: postgres names an unaliased aggregate column
         // "count" implicitly, sqlite does not, and fetchPairs() below needs the same name
         // on both drivers
-        $qb = $this->connection->select('date(participant.arrival_date) as ad, COUNT(*) as count')->from($this->getTable());
+        $qb = $this->connection
+            ->select('date(participant.arrival_date) as ad, COUNT(*) as count')
+            ->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('participant.role = %s', ParticipantRole::Ist);
@@ -777,7 +786,10 @@ class ParticipantRepository extends Repository
             $qb->where('u.status = %s', UserStatus::Paid);
         }
 
-        $qb->where('participant.role IN %in', [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant]);
+        $qb->where(
+            'participant.role IN %in',
+            [ParticipantRole::PatrolParticipant, ParticipantRole::TechnicalTeamParticipant],
+        );
 
         $this->addOrdersBy($qb, [new Order('participant.id')]);
 
@@ -949,7 +961,9 @@ class ParticipantRepository extends Repository
         // COUNT(*) needs an explicit alias: postgres names an unaliased aggregate column
         // "count" implicitly, sqlite does not, and fetchPairs() below needs the same name
         // on both drivers
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*) as count')->from($this->getTable());
+        $qb = $this->connection
+            ->select('participant.food_preferences as f, COUNT(*) as count')
+            ->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');
 
         $qb->where('u.role = %s', UserRole::Participant);
@@ -963,7 +977,9 @@ class ParticipantRepository extends Repository
         $rows = $qb->fetchPairs('f', 'count');
 
         // count patrol participants and merge
-        $qb = $this->connection->select('participant.food_preferences as f, COUNT(*) as count')->from($this->getTable());
+        $qb = $this->connection
+            ->select('participant.food_preferences as f, COUNT(*) as count')
+            ->from($this->getTable());
         $qb->join('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = pl.user_id');
 

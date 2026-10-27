@@ -88,7 +88,10 @@ class PatrolAddParticipantTest extends AppTestCase
     public function testAddParticipantIgnoresArbiterDisallowedFields(): void
     {
         $app = $this->getTestApp();
-        [$patrolLeader, $leaderUser] = $this->createPatrolLeader($app->getContainer(), 'pl-disallowed-test@example.com');
+        [$patrolLeader, $leaderUser] = $this->createPatrolLeader(
+            $app->getContainer(),
+            'pl-disallowed-test@example.com',
+        );
         $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
 
         $_SESSION['user'] = ['id' => $leaderUser->id];

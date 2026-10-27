@@ -38,7 +38,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'One');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'One',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -58,8 +65,22 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Two');
-        $recipient = $this->createIst($app, $event, 'transfer-recipient-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Pavel', 'Recipient');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Two',
+        );
+        $recipient = $this->createIst(
+            $app,
+            $event,
+            'transfer-recipient-' . uniqid('', true) . '@example.com',
+            UserStatus::Approved,
+            'Pavel',
+            'Recipient',
+        );
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $recipientParticipant = $participantRepository->getParticipantFromUser($recipient);
@@ -89,7 +110,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Three');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Three',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -121,8 +149,22 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Four');
-        $recipient = $this->createIst($app, $event, 'transfer-recipient-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Pavel', 'Recipient');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Four',
+        );
+        $recipient = $this->createIst(
+            $app,
+            $event,
+            'transfer-recipient-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Pavel',
+            'Recipient',
+        );
 
         $participantRepository = $this->getService($app, ParticipantRepository::class);
         $recipientCode = $participantRepository->getParticipantFromUser($recipient)->tieCode;
@@ -149,7 +191,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $event = $this->getOwnerTransferEvent($app);
 
         // Approved, not Paid: PaidStatusOnlyMiddleware must block before the controller ever runs
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Giver', 'Five');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Approved,
+            'Giver',
+            'Five',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -174,7 +223,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $this->setEventType($app->getContainer(), 'obrok', 'test-event-slug');
         $event = $this->getService($app, EventRepository::class)->get(1);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Six');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Six',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -196,7 +252,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Seven');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Seven',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -218,7 +281,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
             'startDay' => DateTimeUtils::getDateTime('-1 day'),
         ]);
 
-        $giver = $this->createIst($app, $event, 'transfer-giver-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Giver', 'Eight');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-giver-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Giver',
+            'Eight',
+        );
 
         $_SESSION['user'] = ['id' => $giver->id];
         $app = $this->getTestApp(false);
@@ -238,7 +308,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getObrokTestEvent($app);
 
-        $recipient = $this->createIst($app, $event, 'transfer-eligible-' . uniqid('', true) . '@example.com', UserStatus::Approved, 'Approved', 'Recipient');
+        $recipient = $this->createIst(
+            $app,
+            $event,
+            'transfer-eligible-' . uniqid('', true) . '@example.com',
+            UserStatus::Approved,
+            'Approved',
+            'Recipient',
+        );
         $participant = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($recipient);
 
         self::assertTrue($this->eligibleForShowTieCode($app, $participant));
@@ -254,7 +331,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
 
         // Paid participants have already received a ticket, so their code must stay hidden
         // even on an owner-transfer event - proves the clause checks status, not just event type
-        $giver = $this->createIst($app, $event, 'transfer-eligible-' . uniqid('', true) . '@example.com', UserStatus::Paid, 'Paid', 'Giver');
+        $giver = $this->createIst(
+            $app,
+            $event,
+            'transfer-eligible-' . uniqid('', true) . '@example.com',
+            UserStatus::Paid,
+            'Paid',
+            'Giver',
+        );
         $participant = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($giver);
 
         self::assertFalse($this->eligibleForShowTieCode($app, $participant));
@@ -266,7 +350,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getObrokTestEvent($app);
 
-        $ist = $this->createIst($app, $event, 'obrok-ist-code-' . uniqid('', true) . '@example.com', $status, 'Obrok', 'Ist');
+        $ist = $this->createIst(
+            $app,
+            $event,
+            'obrok-ist-code-' . uniqid('', true) . '@example.com',
+            $status,
+            'Obrok',
+            'Ist',
+        );
         $participant = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($ist);
 
         self::assertTrue($this->eligibleForShowTieCode($app, $participant));
@@ -291,7 +382,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp();
         $event = $this->getObrokTestEvent($app);
 
-        $ist = $this->createIst($app, $event, 'obrok-ist-code-' . uniqid('', true) . '@example.com', UserStatus::Open, 'Obrok', 'Ist');
+        $ist = $this->createIst(
+            $app,
+            $event,
+            'obrok-ist-code-' . uniqid('', true) . '@example.com',
+            UserStatus::Open,
+            'Obrok',
+            'Ist',
+        );
         $tieCode = $this->getService($app, ParticipantRepository::class)->getParticipantFromUser($ist)->tieCode;
 
         $_SESSION['user'] = ['id' => $ist->id];
@@ -348,8 +446,11 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $leaderUser->status = UserStatus::Approved;
         $this->getService($app, UserRepository::class)->persist($leaderUser);
 
-        $technicalTeamLeader = $this->getService($app, TechnicalTeamLeaderRepository::class)->get($leaderParticipant->id);
-        self::assertTrue($technicalTeamLeader->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed());
+        $technicalTeamLeader = $this->getService($app, TechnicalTeamLeaderRepository::class)
+            ->get($leaderParticipant->id);
+        self::assertTrue(
+            $technicalTeamLeader->getUserButNotNull()->event->getEventType()->isOwnerTicketTransferAllowed(),
+        );
         self::assertFalse($this->eligibleForShowTieCode($app, $technicalTeamLeader));
     }
 
@@ -376,8 +477,14 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createIst(App $app, Event $event, string $email, UserStatus $status, string $firstName, string $lastName): User
-    {
+    private function createIst(
+        App $app,
+        Event $event,
+        string $email,
+        UserStatus $status,
+        string $firstName,
+        string $lastName,
+    ): User {
         $userService = $this->getService($app, UserService::class);
         $user = $userService->registerEmailUser($email, $event);
         $participant = $userService->createParticipantSetRole($user, 'ist');
