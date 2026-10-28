@@ -51,7 +51,7 @@ class ProgrammeApiController extends AbstractController
         $registrations = $this->programmeRegistrationRepository->findActiveForParticipantOrderedByStart($participant);
 
         return $this->getResponseWithJson($response, new ProgrammeApiParticipantProgrammesDTO(
-            new ProgrammeApiParticipantDTO($participant->nickname === '' ? null : $participant->nickname),
+            new ProgrammeApiParticipantDTO($participant->nickname),
             array_map(
                 fn (ProgrammeRegistration $registration): ProgrammeApiProgrammeDTO
                     => $this->presentProgramme($registration->programme),

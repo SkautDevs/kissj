@@ -29,6 +29,28 @@ class PreferredNameTest extends TestCase
         self::assertSame('Josef', $participant->getPreferredName());
     }
 
+    public function testBlankNicknameIsReadAsNull(): void
+    {
+        $participant = new PatrolParticipant();
+        $participant->firstName = 'Josef';
+        $participant->lastName = 'Šusta';
+        $participant->nickname = '   ';
+
+        self::assertNull($participant->nickname);
+        self::assertSame('Josef Šusta', $participant->getFullName());
+    }
+
+    public function testNicknameIsReadTrimmed(): void
+    {
+        $participant = new PatrolParticipant();
+        $participant->firstName = 'Josef';
+        $participant->lastName = 'Šusta';
+        $participant->nickname = '  Pepa ';
+
+        self::assertSame('Pepa', $participant->nickname);
+        self::assertSame('Josef Šusta - Pepa', $participant->getFullName());
+    }
+
     public function testFullNameIsUsedWithoutNicknameAndFirstName(): void
     {
         $participant = new PatrolParticipant();

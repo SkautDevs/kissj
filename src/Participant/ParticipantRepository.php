@@ -281,7 +281,7 @@ class ParticipantRepository extends Repository
 
     private function getSortableDisplayName(Participant $participant): string
     {
-        if ($participant->nickname !== null && $participant->nickname !== '') {
+        if ($participant->nickname !== null) {
             return $participant->nickname;
         }
 

@@ -30,7 +30,7 @@ use Ramsey\Uuid\Uuid;
  * @property string|null            $contingent
  * @property string|null            $firstName
  * @property string|null            $lastName
- * @property string|null            $nickname
+ * @property string|null            $nickname m:passThru(nicknameFromString)
  * @property string|null            $permanentResidence
  * @property string|null            $telephoneNumber
  * @property string|null            $gender
@@ -268,7 +268,7 @@ class Participant extends EntityDatetime
     {
         return ($this->firstName ?? '')
             . ' ' . ($this->lastName ?? '')
-            . (($this->nickname !== null && $this->nickname !== '') ? ' - ' . $this->nickname : '');
+            . ($this->nickname !== null ? ' - ' . $this->nickname : '');
     }
 
     public function getFirstAndLastName(): string
@@ -278,7 +278,7 @@ class Participant extends EntityDatetime
 
     public function getPreferredName(): string
     {
-        if ($this->nickname !== null && $this->nickname !== '') {
+        if ($this->nickname !== null) {
             return $this->nickname;
         }
 
@@ -405,6 +405,13 @@ class Participant extends EntityDatetime
     public function roleToString(ParticipantRole $role): string
     {
         return $role->value;
+    }
+
+    protected function nicknameFromString(?string $nickname): ?string
+    {
+        $trimmed = trim($nickname ?? '');
+
+        return $trimmed === '' ? null : $trimmed;
     }
 
     public static function normalizeTelephoneNumber(string $raw): string
