@@ -124,7 +124,7 @@ class ExportController extends AbstractController
         array $csvRows,
         string $fileName,
     ): Response {
-        $fileName .= '_' . DateTimeUtils::getDateTime()->format(DATE_ATOM);
+        $fileName .= '_' . DateTimeUtils::formatAtom(DateTimeUtils::getDateTime());
 
         $response = $response->withAddedHeader('Content-Type', 'text/csv');
         $response = $response->withAddedHeader('Content-Disposition', 'attachment; filename="' . $fileName . '.csv";');

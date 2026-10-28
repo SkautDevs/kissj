@@ -25,7 +25,7 @@ class EventRepository extends Repository
     public function findActiveEvents(): array
     {
         return $this->findBy([
-            'end_day' => new Relation(DateTimeUtils::getDateTime('-1 month')->format(DATE_ATOM), '>'),
+            'end_day' => new Relation(DateTimeUtils::formatAtom(DateTimeUtils::getDateTime('-1 month')), '>'),
         ]);
     }
 
@@ -36,8 +36,8 @@ class EventRepository extends Repository
     {
         return $this->findBy([
             'automatic_payment_pairing' => true,
-            'start_registration' => new Relation(DateTimeUtils::getDateTime()->format(DATE_ATOM), '<'),
-            'end_day' => new Relation(DateTimeUtils::getDateTime('-3 month')->format(DATE_ATOM), '>'),
+            'start_registration' => new Relation(DateTimeUtils::formatAtom(DateTimeUtils::getDateTime()), '<'),
+            'end_day' => new Relation(DateTimeUtils::formatAtom(DateTimeUtils::getDateTime('-3 month')), '>'),
         ]);
     }
 

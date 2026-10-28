@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Entry;
 
 use kissj\AbstractController;
+use kissj\Application\DateTimeUtils;
 use kissj\Entry\DTO\EntryAlteredParticipantDTO;
 use kissj\Entry\DTO\EntryAlteredParticipantsDTO;
 use kissj\Entry\DTO\EntryDateTimeDTO;
@@ -103,7 +104,7 @@ class EntryController extends AbstractController
             $this->tshirtService->displayShape($participant->getTshirtShape()),
             $this->tshirtService->displaySize($participant->getTshirtSize()),
             $isFirstEntry ? EntryStatus::ENTRY_STATUS_VALID : EntryStatus::ENTRY_STATUS_USED,
-            $entryDate->format(DATE_ATOM),
+            DateTimeUtils::formatAtom($entryDate),
         ));
     }
 
@@ -120,7 +121,10 @@ class EntryController extends AbstractController
         if ($participant->entryDate !== null) {
             return $this->getResponseWithJson(
                 $response,
-                new EntryDateTimeDTO(EntryStatus::ENTRY_STATUS_USED, $participant->entryDate->format(DATE_ATOM)),
+                new EntryDateTimeDTO(
+                    EntryStatus::ENTRY_STATUS_USED,
+                    DateTimeUtils::formatAtom($participant->entryDate),
+                ),
             );
         }
 
