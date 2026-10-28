@@ -655,8 +655,6 @@ class Route
                     '/participant/{participantId}',
                     EntryController::class . '::leaveParticipantFromWebApp',
                 )
-                    ->add(EntryApiKeyMiddleware::class)
-                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-participant-from-web-app');
 
                 $app->map(
@@ -664,17 +662,13 @@ class Route
                     '/group/{participantId}',
                     EntryController::class . '::leaveGroupFromWebApp',
                 )
-                    ->add(EntryApiKeyMiddleware::class)
-                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('leave-group-from-web-app');
-            });
+            })->add(EntryApiKeyMiddleware::class)->add(AddCorsHeaderForAppDomainsMiddleware::class);
 
             $app->group('/vendor', function (RouteCollectorProxy $app) {
                 $app->map(['POST', 'OPTIONS'], '/bearercheck', function (Response $response) {
                     return $response->withStatus(200);
                 })
-                    ->add(VendorApiKeyMiddleware::class)
-                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('vendor-bearer-check');
 
                 $app->map(
@@ -682,10 +676,8 @@ class Route
                     '/participant/{tieCode}',
                     ParticipantVendorController::class . '::retrieveParticipantByTieCode',
                 )
-                    ->add(VendorApiKeyMiddleware::class)
-                    ->add(AddCorsHeaderForAppDomainsMiddleware::class)
                     ->setName('vendor-participant-by-tie-code');
-            });
+            })->add(VendorApiKeyMiddleware::class)->add(AddCorsHeaderForAppDomainsMiddleware::class);
 
             $app->group('/programme', function (RouteCollectorProxy $app) {
                 $app->get('/list', ProgrammeApiController::class . '::list')
