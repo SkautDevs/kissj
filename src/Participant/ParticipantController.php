@@ -22,6 +22,7 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeService;
@@ -48,6 +49,7 @@ class ParticipantController extends AbstractController
         private readonly Metrics $metrics,
         private readonly PaymentTransferService $paymentTransferService,
         private readonly ProgrammeService $programmeService,
+        private readonly DevicePairingService $devicePairingService,
     ) {
     }
 
@@ -67,6 +69,7 @@ class ParticipantController extends AbstractController
         $templateData['maximalPpCount'] = $participant instanceof PatrolLeader
             ? $user->event->getMaximalPpCount($participant)
             : null;
+        $templateData['devicePairingAvailable'] = $this->devicePairingService->isDeviceAccessAllowed($user);
 
         return $this->view->render(
             $response,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use ArrayObject;
+use DateTimeInterface;
 use kissj\Application\ApplicationGetter;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
@@ -18,6 +19,9 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\Device\DevicePairing;
+use kissj\Programme\Device\DevicePairingRepository;
+use kissj\Programme\Device\DevicePairingStatus;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\User;
@@ -382,6 +386,87 @@ class AppTestCase extends TestCase
         }
 
         return $request;
+    }
+
+    protected function createApiRequest(string $path, string $apiKey, string $method = 'GET'): ServerRequestInterface
+    {
+        return $this->createRequest($path, $method)->withHeader('Authorization', 'Bearer ' . $apiKey);
+    }
+
+    protected function createPairingStartRequest(string $apiKey, ?string $deviceId = null): ServerRequestInterface
+    {
+        $request = $this->createApiRequest('/v3/programme/pairing/start', $apiKey, 'POST');
+        $request->getBody()->write(json_encode(
+            ['deviceId' => $deviceId ?? bin2hex(random_bytes(32))],
+            JSON_THROW_ON_ERROR,
+        ));
+
+        return $request;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function decodeJson(ResponseInterface $response): array
+    {
+        $body = json_decode((string)$response->getBody(), true);
+        self::assertIsArray($body);
+
+        /** @var array<string, mixed> $body */
+        return $body;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function authorizeEventForApi(App $app, string $slug, string $apiKey): Event
+    {
+        $event = $this->getService($app, EventRepository::class)->findBySlug($slug)
+            ?? throw new LogicException('seeded event ' . $slug . ' not found');
+        $this->mutateEventForTest($app->getContainer(), $event, ['apiKeyEvent' => $apiKey]);
+
+        return $event;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createDevicePairing(
+        App $app,
+        Event $event,
+        ?string $userCode = null,
+        DevicePairingStatus $status = DevicePairingStatus::Pending,
+        ?DateTimeInterface $expiresAt = null,
+        ?string $deviceId = null,
+    ): DevicePairing {
+        $pairing = new DevicePairing();
+        $pairing->event = $event;
+        $pairing->deviceId = $deviceId ?? bin2hex(random_bytes(32));
+        $pairing->deviceCode = bin2hex(random_bytes(16));
+        $pairing->userCode = $userCode ?? str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $pairing->status = $status;
+        $pairing->participant = null;
+        $pairing->expiresAt = $expiresAt ?? DateTimeUtils::getDateTime('+1 hour');
+        $pairing->lastPolledAt = null;
+        $this->getService($app, DevicePairingRepository::class)->persist($pairing);
+
+        return $pairing;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createPaidIstOnEvent(App $app, Event $event, string $nickname): Participant
+    {
+        $participant = $this->createParticipantWithRole($app->getContainer(), 'ist', $event);
+        $participant->nickname = $nickname;
+        $this->getService($app, ParticipantRepository::class)->persist($participant);
+
+        $user = $participant->getUserButNotNull();
+        $user->status = UserStatus::Paid;
+        $this->getService($app, UserRepository::class)->persist($user);
+
+        return $participant;
     }
 
     protected function fillPlaceholders(string $pattern): string

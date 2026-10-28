@@ -242,11 +242,14 @@ abstract class AbstractController
     protected function getParsedJsonFromBody(Request $request): array
     {
         try {
-            /** @var array<mixed> $json */
             $json = json_decode((string)$request->getBody(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             $this->sentryCollector->collect($e);
 
+            return [];
+        }
+
+        if (is_array($json) === false) {
             return [];
         }
 

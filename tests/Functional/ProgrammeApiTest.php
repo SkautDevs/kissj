@@ -10,7 +10,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
-use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -26,7 +25,6 @@ use kissj\User\UserStatus;
 use LeanMapper\Connection;
 use LogicException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Tests\AppTestCase;
@@ -531,22 +529,6 @@ class ProgrammeApiTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createPaidIstOnEvent(App $app, Event $event, string $nickname): Participant
-    {
-        $participant = $this->createParticipantWithRole($app->getContainer(), 'ist', $event);
-        $participant->nickname = $nickname;
-        $this->getService($app, ParticipantRepository::class)->persist($participant);
-
-        $user = $participant->getUserButNotNull();
-        $user->status = UserStatus::Paid;
-        $this->getService($app, UserRepository::class)->persist($user);
-
-        return $participant;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     */
     private function createPatrolMemberOnEvent(App $app, Event $event, string $nickname): PatrolParticipant
     {
         $leaderParticipant = $this->createParticipantWithRole($app->getContainer(), 'pl', $event);
@@ -605,20 +587,4 @@ class ProgrammeApiTest extends AppTestCase
         $this->getService($app, UserRepository::class)->persist($user);
     }
 
-    private function createApiRequest(string $path, string $apiKey): ServerRequestInterface
-    {
-        return $this->createRequest($path)->withHeader('Authorization', 'Bearer ' . $apiKey);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function decodeJson(Response $response): array
-    {
-        $body = json_decode((string)$response->getBody(), true);
-        self::assertIsArray($body);
-
-        /** @var array<string, mixed> $body */
-        return $body;
-    }
 }

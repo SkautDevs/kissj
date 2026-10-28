@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Interfaces\RouteParserInterface;
+use Slim\Psr7\Response as ResponsePsr7;
 use Slim\Routing\RouteContext;
 
 abstract class BaseMiddleware implements MiddlewareInterface
@@ -32,7 +33,17 @@ abstract class BaseMiddleware implements MiddlewareInterface
         }
         $url = $this->getRouter($request)->urlFor($routeName, $parameters);
 
-        return (new \Slim\Psr7\Response())->withHeader('Location', $url)->withStatus(302);
+        return (new ResponsePsr7())->withHeader('Location', $url)->withStatus(302);
+    }
+
+    protected function createUnauthorizedResponse(?string $reason = null): Response
+    {
+        $response = (new ResponsePsr7())->withStatus(401);
+        if ($reason !== null) {
+            $response->getBody()->write('Unauthorized - ' . $reason);
+        }
+
+        return $response;
     }
 
     protected function tryGetEvent(Request $request): ?Event

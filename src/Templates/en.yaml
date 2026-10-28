@@ -782,6 +782,11 @@ programme:
         windowEnd: "Registration window end"
         windowSave: "Save window"
         windowStart: "Registration window start"
+        pairings:
+            title: "eventApp"
+            pending: "Pending connections"
+            purge: "Delete pending connections"
+            purgeConfirm: "Delete all pending eventApp connections? Anyone connecting now must start again."
         sections:
             title: "Programme sections"
             open: "Sections"
@@ -811,6 +816,20 @@ programme:
         all: "All programmes"
         eventAppHint: "Sign up for programmes in the event app."
         title: "My programmes"
+    pairing:
+        cardTitle: "Connect the mobile app"
+        cardText: "Enter the code from the event app. Then you sign up for programmes from your phone."
+        cardButton: "Enter code"
+        title: "Mobile app connection"
+        codeLabel: "Code from the app"
+        submit: "Continue"
+        askingTitle: "Connection request"
+        appLabel: "App"
+        appName: "eventApp"
+        eventLabel: "Event"
+        requestedAtLabel: "Request time"
+        approve: "Connect"
+        deny: "Deny"
 flash:
     info:
         participantDeleted: "Participant was deleted"
@@ -829,6 +848,7 @@ flash:
         duePaymentDenied: "Participants denied which missed due payment deadline by mail: %count%"
         generatedPayments: "Generated payments and emails sent: %count%"
         skautisDataPrefilled: "Data from Skautis were prefilled - you still need to fill in the rest of the details"
+        devicePairingDenied: "The connection request was denied."
     success:
         linkSent: "Email sent! Follow the link in it to log in."
         confirmPayment: "Participant payment is confirmed, email about confirmation is sent"
@@ -864,6 +884,8 @@ flash:
         programmeSectionDeleted: "Section deleted."
         programmeUnregistered: "Programme registration cancelled."
         programmeWindowSaved: "Programme registration window saved."
+        devicePaired: "The app is connected."
+        devicePairingsPurged: "Deleted pending app pairings: %count%."
     warning:
         noLock: "Cannot lock the registration - some details are wrong or missing (probably email or date)"
         noLockFields: "Cannot lock the registration – please fill in or fix: %fields%"
@@ -952,6 +974,9 @@ flash:
         programmeParticipantNotFound: "No participant with this ID in this event."
         programmeSectionExclusiveConflicts: "The section is now exclusive. Participants already registered for overlapping programmes of the section: %count%. Their registrations were kept."
         programmeExclusiveConflicts: "The programme is in an exclusive section. Participants registered for overlapping programmes of the section: %count%. Their registrations were kept."
+        devicePairingCodeInvalid: "The code does not match or has already expired."
+        devicePairingCodeUsed: "This code has already been used."
+        devicePairingTooManyAttempts: "Too many failed attempts. Try again in an hour."
     error:
         actionFailed: "Action failed. Please try again."
         adminOnly: "Sorry bro, admins only"

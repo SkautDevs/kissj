@@ -19,6 +19,9 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
+use kissj\Programme\Device\DevicePairing;
+use kissj\Programme\Device\DevicePairingAttempt;
+use kissj\Programme\Device\DeviceSession;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeSection;
@@ -110,6 +113,15 @@ class Mapper implements IMapper
 
             case 'programme_section':
                 return ProgrammeSection::class;
+
+            case 'device_pairing':
+                return DevicePairing::class;
+
+            case 'device_session':
+                return DeviceSession::class;
+
+            case 'device_pairing_attempt':
+                return DevicePairingAttempt::class;
 
             default:
                 throw new \UnexpectedValueException('Got unknown table name: ' . $table);

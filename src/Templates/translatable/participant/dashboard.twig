@@ -31,6 +31,16 @@
 
 {% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, registeredProgrammes: registeredProgrammes, preregisteredProgrammes: preregisteredProgrammes } %}
 
+{% if devicePairingAvailable ?? false %}
+    <div class="card">
+        <h2>{{ 'programme.pairing.cardTitle'|trans }}</h2>
+        <p>{{ 'programme.pairing.cardText'|trans }}</p>
+        <a class="btn" href="{{ url_for('showDevicePairing', {eventSlug: event.slug}) }}">
+            {{- 'programme.pairing.cardButton'|trans -}}
+        </a>
+    </div>
+{% endif %}
+
 <div class="card">
     {% if person is Leader %}
         <div class="card-divide">

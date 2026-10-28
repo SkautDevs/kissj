@@ -41,6 +41,9 @@ use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
+use kissj\Middleware\DevicePairingAllowedOnlyMiddleware;
+use kissj\Middleware\DevicePairingCsrfMiddleware;
+use kissj\Middleware\DeviceSessionMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\EventApiKeyMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
@@ -99,6 +102,11 @@ use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
 use kissj\PdfGenerator\mPdfGenerator;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\Device\DevicePairingAttemptRepository;
+use kissj\Programme\Device\DevicePairingController;
+use kissj\Programme\Device\DevicePairingRepository;
+use kissj\Programme\Device\DevicePairingService;
+use kissj\Programme\Device\DeviceSessionRepository;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
@@ -222,14 +230,13 @@ class Settings
             AdminJsonController::class => autowire(),
             AdminParticipantController::class => autowire(),
             AdminPaymentController::class => autowire(),
-            AdminService::class => autowire(),
             AdminRouteAccessResolver::class => autowire(),
+            AdminService::class => autowire(),
             AdminsOnlyMiddleware::class => autowire(),
             AdminTroopController::class => autowire(),
             BankPaymentRepository::class => autowire(),
             CheckLeaderParticipants::class => autowire(),
             ChoosedRoleOnlyMiddleware::class => autowire(),
-            DealApiKeyMiddleware::class => autowire(),
             ContentArbiterGuest::class => autowire(),
             ContentArbiterIst::class => autowire(),
             ContentArbiterPatrolLeader::class => autowire(),
@@ -238,9 +245,19 @@ class Settings
             ContentArbiterTechnicalTeamParticipant::class => autowire(),
             ContentArbiterTroopLeader::class => autowire(),
             ContentArbiterTroopParticipant::class => autowire(),
+            ContextMiddleware::class => autowire(),
+            DealApiKeyMiddleware::class => autowire(),
+            DevicePairingAllowedOnlyMiddleware::class => autowire(),
+            DevicePairingAttemptRepository::class => autowire(),
+            DevicePairingController::class => autowire(),
+            DevicePairingCsrfMiddleware::class => autowire(),
+            DevicePairingRepository::class => autowire(),
+            DevicePairingService::class => autowire(),
+            DeviceSessionMiddleware::class => autowire(),
+            DeviceSessionRepository::class => autowire(),
             EntryApiKeyMiddleware::class => autowire(),
-            EventApiKeyMiddleware::class => autowire(),
             EntryController::class => autowire(),
+            EventApiKeyMiddleware::class => autowire(),
             EventController::class => autowire(),
             EventInfoMiddleware::class => autowire(),
             EventRepository::class => autowire(),
@@ -253,11 +270,14 @@ class Settings
             FioBankReaderFactory::class => autowire(),
             GuestRepository::class => autowire(),
             HealthController::class => autowire(),
+            HttpContextMiddleware::class => autowire(),
             IstRepository::class => autowire(),
             LanguageNegotiator::class => autowire(),
             LocalizationResolverMiddleware::class => autowire(),
             LockedStatusOnlyMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
+            Mailer::class => autowire(),
+            Metrics::class => autowire(),
             MonologContextMiddleware::class => autowire(),
             NonChoosedRoleOnlyMiddleware::class => autowire(),
             NonLoggedOnlyMiddleware::class => autowire(),
@@ -276,11 +296,6 @@ class Settings
             PatrolLeadersOnlyMiddleware::class => autowire(),
             PatrolParticipantRepository::class => autowire(),
             PatrolService::class => autowire(),
-            TechnicalTeamController::class => autowire(),
-            TechnicalTeamService::class => autowire(),
-            TechnicalTeamLeadersOnlyMiddleware::class => autowire(),
-            TechnicalTeamLeaderRepository::class => autowire(),
-            TechnicalTeamParticipantRepository::class => autowire(),
             PaymentRepository::class => autowire(),
             PaymentService::class => autowire(),
             PaymentTransferService::class => autowire(),
@@ -294,15 +309,16 @@ class Settings
             ProgrammeSectionAdminController::class => autowire(),
             ProgrammeSectionRepository::class => autowire(),
             ProgrammeService::class => autowire(),
-            Mailer::class => autowire(),
-            Metrics::class => autowire(),
             QrCodeService::class => autowire(),
-            ContextMiddleware::class => autowire(),
-            HttpContextMiddleware::class => autowire(),
-            TransactionMiddleware::class => autowire(),
             SkautisController::class => autowire(),
             SkautisService::class => autowire(),
             TatraBankPaymentService::class => autowire(),
+            TechnicalTeamController::class => autowire(),
+            TechnicalTeamLeaderRepository::class => autowire(),
+            TechnicalTeamLeadersOnlyMiddleware::class => autowire(),
+            TechnicalTeamParticipantRepository::class => autowire(),
+            TechnicalTeamService::class => autowire(),
+            TransactionMiddleware::class => autowire(),
             TroopController::class => autowire(),
             TroopLeaderRepository::class => autowire(),
             TroopLeadersOnlyMiddleware::class => autowire(),

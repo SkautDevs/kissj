@@ -251,7 +251,7 @@ readonly class ProgrammeService
         $this->metrics->count(
             MetricName::ProgrammesRegistrationRefused,
             1,
-            [...$attributes, 'error' => $result->error->value],
+            [...$attributes, 'error' => $result->error->value, 'action' => $successMetric->value],
         );
     }
 

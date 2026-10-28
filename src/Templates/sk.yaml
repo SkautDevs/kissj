@@ -782,6 +782,11 @@ programme:
         windowEnd: "Koniec registračného okna"
         windowSave: "Uložiť okno"
         windowStart: "Začiatok registračného okna"
+        pairings:
+            title: "eventApp"
+            pending: "Čakajúce prepojenia"
+            purge: "Zmazať čakajúce prepojenia"
+            purgeConfirm: "Zmazať všetky čakajúce prepojenia s eventApp? Kto sa práve prepája, musí začať znova."
         sections:
             title: "Sekcie programu"
             open: "Sekcie"
@@ -811,6 +816,20 @@ programme:
         all: "Všetky programy"
         eventAppHint: "Na programy sa prihlásiš v aplikácii akcie."
         title: "Moje programy"
+    pairing:
+        cardTitle: "Prepojiť mobilnú aplikáciu"
+        cardText: "Zadaj kód z aplikácie akcie. Potom sa z telefónu prihlásiš na programy."
+        cardButton: "Zadať kód"
+        title: "Prepojenie mobilnej aplikácie"
+        codeLabel: "Kód z aplikácie"
+        submit: "Pokračovať"
+        askingTitle: "Žiadosť o prepojenie"
+        appLabel: "Aplikácia"
+        appName: "eventApp"
+        eventLabel: "Akcia"
+        requestedAtLabel: "Čas žiadosti"
+        approve: "Prepojiť"
+        deny: "Zamietnuť"
 flash:
     info:
         participantDeleted: "Účastník bol vymazaný"
@@ -829,6 +848,7 @@ flash:
         duePaymentDenied: "Participants denied which missed due payment deadline by mail: %count%"
         generatedPayments: "Vygenerovaných platieb a rozoslaných emailov: %count%"
         skautisDataPrefilled: "Dáta zo Skautisu boli predvyplnené - je stále potrebné doplniť zvyšok údajov"
+        devicePairingDenied: "Žiadosť o prepojenie bola zamietnutá."
     success:
         linkSent: "E-mail odoslaný! Klikni na link v ňom pre prihlásenie."
         confirmPayment: "Platba účastníka bola potvrdená, e-mail o potvrdení bol odoslaný"
@@ -864,6 +884,8 @@ flash:
         programmeSectionDeleted: "Sekcia bola vymazaná."
         programmeUnregistered: "Registrácia programu zrušená."
         programmeWindowSaved: "Registračné okno programov bolo uložené."
+        devicePaired: "Aplikácia je prepojená."
+        devicePairingsPurged: "Zmazané čakajúce prepojenia s aplikáciou: %count%."
     warning:
         noLock: "Nie je možné uzamknúť registráciu - nejaký z údajov je nesprávny alebo chýbajúci (možno nejaký dátum)"
         noLockFields: "Registráciu nie je možné uzamknúť – doplň alebo oprav: %fields%"
@@ -952,6 +974,9 @@ flash:
         programmeParticipantNotFound: "V tejto akcii nie je účastník s týmto ID."
         programmeSectionExclusiveConflicts: "Sekcia je teraz výlučná. Počet účastníkov, ktorí už majú v sekcii časovo prekrývajúce sa programy: %count%. Ich prihlášky zostali bez zmeny."
         programmeExclusiveConflicts: "Program je vo výlučnej sekcii. Počet účastníkov, ktorí majú v sekcii časovo prekrývajúce sa programy: %count%. Ich prihlášky zostali bez zmeny."
+        devicePairingCodeInvalid: "Kód nesedí alebo už vypršal."
+        devicePairingCodeUsed: "Tento kód už bol použitý."
+        devicePairingTooManyAttempts: "Príliš veľa neúspešných pokusov. Skús to o hodinu."
     error:
         actionFailed: "Akcia zlyhala. Skúste to prosím znova."
         adminOnly: "Sorry bro, sem môžu len admini"

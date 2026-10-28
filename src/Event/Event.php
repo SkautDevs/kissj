@@ -147,6 +147,11 @@ class Event extends EntityDatetime
         return $this->programmeRegistrationStart <= $now && $now < $this->programmeRegistrationEnd;
     }
 
+    public function hasProgrammeApi(): bool
+    {
+        return $this->apiKeyEvent !== null;
+    }
+
     /**
      * @return list<ParticipantRole>
      */

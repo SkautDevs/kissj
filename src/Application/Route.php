@@ -18,6 +18,9 @@ use kissj\Middleware\ApiEventRequiredMiddleware;
 use kissj\Middleware\BadgesAllowedOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
+use kissj\Middleware\DevicePairingAllowedOnlyMiddleware;
+use kissj\Middleware\DeviceSessionMiddleware;
+use kissj\Middleware\DevicePairingCsrfMiddleware;
 use kissj\Middleware\EventApiKeyMiddleware;
 use kissj\Middleware\EventRequiredMiddleware;
 use kissj\Middleware\VendorApiKeyMiddleware;
@@ -46,6 +49,7 @@ use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
+use kissj\Programme\Device\DevicePairingController;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
@@ -310,6 +314,17 @@ class Route
                         })->add(TicketTransferCsrfMiddleware::class)
                             ->add(PaidStatusOnlyMiddleware::class)
                             ->add(OwnerTicketTransferAllowedOnlyMiddleware::class);
+
+                        $app->group('/pairing', function (RouteCollectorProxy $app) {
+                            $app->get('', DevicePairingController::class . '::showForm')
+                                ->setName('showDevicePairing');
+
+                            $app->post('', DevicePairingController::class . '::check')
+                                ->setName('checkDevicePairing');
+
+                            $app->post('/confirm', DevicePairingController::class . '::confirm')
+                                ->setName('confirmDevicePairing');
+                        })->add(DevicePairingCsrfMiddleware::class)->add(DevicePairingAllowedOnlyMiddleware::class);
                     });
 
                     $app->group('/programmes', function (RouteCollectorProxy $app) {
@@ -560,6 +575,9 @@ class Route
                     $app->post('/window', ProgrammeAdminController::class . '::saveWindow')
                         ->setName('admin-programme-window');
 
+                    $app->post('/pairings/purge', ProgrammeAdminController::class . '::purgePendingPairings')
+                        ->setName('admin-programme-pairings-purge');
+
                     $app->get('/sections', ProgrammeSectionAdminController::class . '::overview')
                         ->setName('admin-programme-sections');
 
@@ -690,6 +708,24 @@ class Route
                     ProgrammeApiController::class . '::programmeParticipants',
                 )
                     ->setName('programme-api-programme-participants');
+
+                $app->post('/pairing/start', ProgrammeApiController::class . '::pairingStart')
+                    ->setName('programme-api-pairing-start');
+
+                $app->post('/pairing/poll', ProgrammeApiController::class . '::pairingPoll')
+                    ->setName('programme-api-pairing-poll');
+
+                $app->get('/participant/session', ProgrammeApiController::class . '::participantBySession')
+                    ->setName('programme-api-participant-by-session')
+                    ->add(DeviceSessionMiddleware::class);
+
+                $app->post('/{programmeId:[0-9]+}/register', ProgrammeApiController::class . '::register')
+                    ->setName('programme-api-register')
+                    ->add(DeviceSessionMiddleware::class);
+
+                $app->post('/{programmeId:[0-9]+}/unregister', ProgrammeApiController::class . '::unregister')
+                    ->setName('programme-api-unregister')
+                    ->add(DeviceSessionMiddleware::class);
             })->add(EventApiKeyMiddleware::class);
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
