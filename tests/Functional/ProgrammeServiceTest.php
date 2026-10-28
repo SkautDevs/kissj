@@ -325,8 +325,7 @@ class ProgrammeServiceTest extends AppTestCase
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $programme = $this->createProgramme($app, 'deleted before assign', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'deleted-assign-ist@example.com');
-        $staleProgramme = $programmeRepository->getForUpdate($programme->id);
-        self::assertNotNull($staleProgramme);
+        $staleProgramme = $programmeRepository->get($programme->id);
 
         $service->deleteProgramme($programme);
         $result = $service->adminAssign($staleProgramme, $ist);

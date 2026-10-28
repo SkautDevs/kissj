@@ -218,7 +218,7 @@ readonly class DevicePairingService
 
     private function lockUndecidedPairing(DevicePairing $pairing): ?DevicePairing
     {
-        $lockedPairing = $this->devicePairingRepository->getForUpdate($pairing->id);
+        $lockedPairing = $this->devicePairingRepository->findWithLock($pairing->id);
         if (
             $lockedPairing === null
             || $lockedPairing->status !== DevicePairingStatus::Pending
@@ -233,7 +233,7 @@ readonly class DevicePairingService
     private function pollUnderLock(int $pairingId): DevicePairingPollResult
     {
         $now = DateTimeUtils::getDateTime();
-        $pairing = $this->devicePairingRepository->getForUpdate($pairingId);
+        $pairing = $this->devicePairingRepository->findWithLock($pairingId);
         if ($pairing === null || $pairing->isExpired($now)) {
             return DevicePairingPollResult::withoutSession(DevicePairingPollStatus::Expired);
         }

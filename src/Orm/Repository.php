@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Orm;
 
+use Dibi\Drivers\PostgreDriver;
 use Dibi\Row;
 use kissj\Participant\Participant;
 use LeanMapper\Entity;
@@ -17,6 +18,8 @@ use LogicException;
  */
 class Repository extends BaseRepository
 {
+    private static int $transactionDepth = 0;
+
     public function initEvents(): void
     {
         $this->onBeforeCreate[] = $this->ensureUniqueTieCodeBeforeCreate(...);
@@ -116,6 +119,51 @@ class Repository extends BaseRepository
         return $this->createEntity($row);
     }
 
+    public function findWithLock(int $id): ?Entity
+    {
+        $this->assertInTransaction();
+
+        /** @var ?(Row&iterable<string, mixed>) $row */
+        $row = $this->connection->fetch(
+            'SELECT * FROM %n WHERE id = %i' . $this->getLockClause('FOR UPDATE'),
+            $this->getTable(),
+            $id,
+        );
+        if ($row === null) {
+            return null;
+        }
+
+        return $this->createEntity($row);
+    }
+
+    protected function lockRow(int $id): void
+    {
+        $this->assertInTransaction();
+
+        $this->connection->query(
+            'SELECT id FROM %n WHERE id = %i' . $this->getLockClause('FOR NO KEY UPDATE'),
+            $this->getTable(),
+            $id,
+        );
+    }
+
+    protected function assertInTransaction(): void
+    {
+        if (self::$transactionDepth === 0) {
+            throw new LogicException('Row lock outside a transaction would be released right away');
+        }
+    }
+
+    protected function getLockClause(string $lockMode): string
+    {
+        return $this->isPostgres() ? ' ' . $lockMode : '';
+    }
+
+    protected function isPostgres(): bool
+    {
+        return $this->connection->getDriver() instanceof PostgreDriver;
+    }
+
     /**
      * @param array<string,Entity|Relation|bool|int|float|string> $criteria
      */
@@ -169,15 +217,11 @@ class Repository extends BaseRepository
      */
     public function transactional(callable $callback): mixed
     {
-        $this->connection->begin();
+        self::$transactionDepth++;
         try {
-            $result = $callback();
-            $this->connection->commit();
-
-            return $result;
-        } catch (\Throwable $e) {
-            $this->connection->rollback();
-            throw $e;
+            return $this->connection->transaction(static fn (): mixed => $callback());
+        } finally {
+            self::$transactionDepth--;
         }
     }
 

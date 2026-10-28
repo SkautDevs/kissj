@@ -32,7 +32,7 @@ readonly class ProgrammeService
 
         $result = $this->programmeRepository->transactional(
             function () use ($participant, $programmeId): ProgrammeRegistrationResult {
-                $programme = $this->programmeRepository->getForUpdate($programmeId);
+                $programme = $this->programmeRepository->findWithLock($programmeId);
 
                 if (
                     $programme === null
@@ -87,7 +87,7 @@ readonly class ProgrammeService
 
         $result = $this->programmeRepository->transactional(
             function () use ($participant, $programmeId): ProgrammeRegistrationResult {
-                $programme = $this->programmeRepository->getForUpdate($programmeId);
+                $programme = $this->programmeRepository->findWithLock($programmeId);
 
                 if (
                     $programme === null
@@ -129,7 +129,7 @@ readonly class ProgrammeService
 
         return $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeRegistrationResult {
-                $lockedProgramme = $this->programmeRepository->getForUpdate($programme->id);
+                $lockedProgramme = $this->programmeRepository->findWithLock($programme->id);
                 if ($lockedProgramme === null || $lockedProgramme->isDeleted()) {
                     return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
                 }
@@ -149,7 +149,7 @@ readonly class ProgrammeService
     {
         return $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeRegistrationResult {
-                $this->programmeRepository->getForUpdate($programme->id);
+                $this->programmeRepository->findWithLock($programme->id);
                 $registration = $this->programmeRegistrationRepository->findActive($programme, $participant);
                 if ($registration === null) {
                     return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotAssigned);

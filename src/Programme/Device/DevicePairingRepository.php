@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace kissj\Programme\Device;
 
 use DateTimeInterface;
-use Dibi\Drivers\PostgreDriver;
-use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Orm\Order;
@@ -20,6 +18,7 @@ use kissj\Orm\Repository;
  * @method DevicePairing getOneBy(mixed[] $criteria)
  * @method DevicePairing[] findBy(mixed[] $criteria, Order[] $orders = [])
  * @method DevicePairing|null findOneBy(mixed[] $criteria, Order[] $orders = [])
+ * @method DevicePairing|null findWithLock(int $pairingId)
  */
 class DevicePairingRepository extends Repository
 {
@@ -47,25 +46,6 @@ class DevicePairingRepository extends Repository
         return $this->findOneBy(['device_code' => $deviceCode, 'event' => $event]);
     }
 
-    public function getForUpdate(int $pairingId): ?DevicePairing
-    {
-        $lockClause = $this->connection->getDriver() instanceof PostgreDriver ? ' FOR UPDATE' : '';
-        $row = $this->connection->fetch(
-            'SELECT * FROM %n WHERE id = %i' . $lockClause,
-            $this->getTable(),
-            $pairingId,
-        );
-        if ($row === null) {
-            return null;
-        }
-
-        /** @var Row&iterable<string, mixed> $row */
-        /** @var DevicePairing $pairing */
-        $pairing = $this->createEntity($row);
-
-        return $pairing;
-    }
-
     public function countPendingUnexpired(Event $event, DateTimeInterface $now): int
     {
         return $this->countBy([
@@ -77,7 +57,9 @@ class DevicePairingRepository extends Repository
 
     public function lockForEvent(Event $event): void
     {
-        if ($this->connection->getDriver() instanceof PostgreDriver === false) {
+        $this->assertInTransaction();
+
+        if ($this->isPostgres() === false) {
             return;
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Programme;
 
-use Dibi\Drivers\PostgreDriver;
 use Dibi\Fluent;
 use Dibi\Row;
 use kissj\Event\Event;
@@ -19,6 +18,7 @@ use kissj\Participant\ParticipantRole;
  * @method Programme getOneBy(mixed[] $criteria)
  * @method Programme[] findBy(mixed[] $criteria, Order[] $orders = [])
  * @method Programme|null findOneBy(mixed[] $criteria, Order[] $orders = [])
+ * @method Programme|null findWithLock(int $programmeId)
  */
 class ProgrammeRepository extends Repository
 {
@@ -121,25 +121,6 @@ class ProgrammeRepository extends Repository
         if ($programme === null) {
             throw new EntityNotFoundException('Programme not found for event');
         }
-
-        return $programme;
-    }
-
-    public function getForUpdate(int $programmeId): ?Programme
-    {
-        $lockClause = $this->connection->getDriver() instanceof PostgreDriver ? ' FOR UPDATE' : '';
-        $row = $this->connection->fetch(
-            'SELECT * FROM %n WHERE id = %i' . $lockClause,
-            $this->getTable(),
-            $programmeId,
-        );
-        if ($row === null) {
-            return null;
-        }
-
-        /** @var Row&iterable<string, mixed> $row */
-        /** @var Programme $programme */
-        $programme = $this->createEntity($row);
 
         return $programme;
     }
