@@ -37,6 +37,35 @@
 
 {% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, registeredProgrammes: registeredProgrammes, preregisteredProgrammes: preregisteredProgrammes } %}
 
+{% if devicePairingAvailable ?? false %}
+    <div class="card" id="devicePairing">
+        <h2>{{ 'programme.pairing.cardTitle'|trans }}</h2>
+        <p>{{ 'programme.pairing.cardText'|trans }}</p>
+        <form
+                method="POST"
+                action="{{ url_for('pairDevice', {eventSlug: event.slug}) }}"
+                class="form-group form-group-middle"
+        >
+            <label for="code">{{ 'programme.pairing.codeLabel'|trans }}:</label>
+            <input
+                    id="code"
+                    name="code"
+                    type="text"
+                    class="form-control"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="123 456"
+                    pattern=" *\d{3}[ \-]*\d{3} *"
+                    title="{{ 'programme.pairing.codeFormat'|trans }}"
+                    required
+            ><br>
+            <input name="csrfName" value="{{ csrfName }}" type="hidden">
+            <input name="csrfValue" value="{{ csrfValue }}" type="hidden">
+            <input type="submit" value="{{ 'programme.pairing.submit'|trans }}" class="btn btn-small">
+        </form>
+    </div>
+{% endif %}
+
 <div class="card">
     {% if person is Leader %}
         <div class="card-divide">

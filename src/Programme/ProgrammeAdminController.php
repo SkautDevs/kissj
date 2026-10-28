@@ -13,9 +13,12 @@ use kissj\Event\EventRepository;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Device\DevicePairingRepository;
+use kissj\Programme\Device\DevicePairingService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Exception\HttpNotFoundException;
 
 class ProgrammeAdminController extends AbstractController
 {
@@ -27,6 +30,8 @@ class ProgrammeAdminController extends AbstractController
         private readonly UploadFileHandler $uploadFileHandler,
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
         private readonly ParticipantRepository $participantRepository,
+        private readonly DevicePairingRepository $devicePairingRepository,
+        private readonly DevicePairingService $devicePairingService,
     ) {
     }
 
@@ -36,7 +41,23 @@ class ProgrammeAdminController extends AbstractController
             'programmes' => $this->programmeRepository->findActiveForEvent($event),
             'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
             'event' => $event,
+            'pendingPairingCount' => $event->hasProgrammeApi()
+                ? $this->devicePairingRepository->countPendingUnexpired($event, DateTimeUtils::getDateTime())
+                : null,
+            'maxPendingPairings' => DevicePairingService::MAX_PENDING_PER_EVENT,
         ]);
+    }
+
+    public function purgePendingPairings(Request $request, Response $response, Event $event): Response
+    {
+        if ($event->hasProgrammeApi() === false) {
+            throw new HttpNotFoundException($request);
+        }
+
+        $count = $this->devicePairingService->purgePending($event);
+        $this->flashMessages->success('flash.success.devicePairingsPurged', ['%count%' => (string)$count]);
+
+        return $this->redirect($request, $response, 'admin-programmes');
     }
 
     public function saveWindow(Request $request, Response $response, Event $event): Response

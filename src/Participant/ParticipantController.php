@@ -22,6 +22,7 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
+use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeService;
@@ -50,11 +51,17 @@ class ParticipantController extends AbstractController
         private readonly PaymentTransferService $paymentTransferService,
         private readonly ProgrammeService $programmeService,
         private readonly UserService $userService,
+        private readonly DevicePairingService $devicePairingService,
     ) {
     }
 
-    public function showDashboard(Request $request, Response $response, User $user): Response
-    {
+    public function showDashboard(
+        Request $request,
+        Response $response,
+        User $user,
+        string $csrfName,
+        string $csrfValue,
+    ): Response {
         $participant = $this->participantRepository->getParticipantFromUser($user);
 
         if ($user->status === UserStatus::Open && $this->participantService->isParticipantOrEventFull($participant)) {
@@ -71,6 +78,9 @@ class ParticipantController extends AbstractController
             : null;
         $templateData['roleChangeOffered'] = $user->status === UserStatus::Open
             && count($this->userService->getSelectableRolesWithCurrent($user, $participant->getRoleOrFail())) > 1;
+        $templateData['devicePairingAvailable'] = $this->devicePairingService->isDeviceAccessAllowed($user);
+        $templateData['csrfName'] = $csrfName;
+        $templateData['csrfValue'] = $csrfValue;
 
         return $this->view->render(
             $response,

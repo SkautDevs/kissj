@@ -8,6 +8,11 @@ enum MetricName: string
 {
     case EmailsSent = 'emails.sent';
 
+    case PairingsApproved = 'pairings.approved';
+    case PairingsPurged = 'pairings.purged';
+    case PairingsRefused = 'pairings.refused';
+    case PairingsStarted = 'pairings.started';
+
     case ParticipantsAdminEdited = 'participants.admin_edited';
 
     case PaymentsBankFetchFailed = 'payments.bank_fetch_failed';
