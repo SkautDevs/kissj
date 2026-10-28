@@ -8,6 +8,7 @@ use Dibi\Fluent;
 use Dibi\Row;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 use kissj\User\UserStatus;
@@ -15,6 +16,11 @@ use LogicException;
 
 /**
  * @table programme_registration
+ *
+ * @method ProgrammeRegistration get(int $registrationId)
+ * @method ProgrammeRegistration getOneBy(mixed[] $criteria)
+ * @method ProgrammeRegistration[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method ProgrammeRegistration|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
 class ProgrammeRegistrationRepository extends Repository
 {
@@ -152,13 +158,9 @@ class ProgrammeRegistrationRepository extends Repository
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
 
-        $registrations = [];
-        foreach ($this->createEntities($rows) as $registration) {
-            if ($registration instanceof ProgrammeRegistration) {
-                $registrations[] = $registration;
-            }
-        }
+        /** @var array<int, ProgrammeRegistration> $registrations */
+        $registrations = $this->createEntities($rows);
 
-        return $registrations;
+        return array_values($registrations);
     }
 }

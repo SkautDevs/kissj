@@ -126,7 +126,7 @@ class ParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
-        /** @var list<Participant> $participants */
+        /** @var array<int, Participant> $participants */
         $participants = $this->createEntities($rows);
 
         $qb = $this->createFluent();
@@ -141,7 +141,7 @@ class ParticipantRepository extends Repository
         $qb->where('u.event_id = %i', $event->id);
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
-        /** @var list<Participant> $patrolParticipants */
+        /** @var array<int, Participant> $patrolParticipants */
         $patrolParticipants = $this->createEntities($rows);
 
         return $this->dedupeParticipantsById([...$participants, ...$patrolParticipants]);
@@ -162,7 +162,7 @@ class ParticipantRepository extends Repository
         $qb->where('participant.internal_unique_id IS NOT NULL');
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
-        /** @var list<Participant> $participants */
+        /** @var array<int, Participant> $participants */
         $participants = $this->createEntities($rows);
 
         $qb = $this->createFluent();
@@ -177,7 +177,7 @@ class ParticipantRepository extends Repository
         $qb->where('participant.internal_unique_id IS NOT NULL');
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
-        /** @var list<Participant> $patrolParticipants */
+        /** @var array<int, Participant> $patrolParticipants */
         $patrolParticipants = $this->createEntities($rows);
 
         return $this->dedupeParticipantsById([...$participants, ...$patrolParticipants]);

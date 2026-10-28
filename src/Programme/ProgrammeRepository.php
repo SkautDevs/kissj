@@ -8,10 +8,17 @@ use Dibi\Drivers\PostgreDriver;
 use Dibi\Fluent;
 use Dibi\Row;
 use kissj\Event\Event;
+use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\ParticipantRole;
 use RuntimeException;
 
+/**
+ * @method Programme get(int $programmeId)
+ * @method Programme getOneBy(mixed[] $criteria)
+ * @method Programme[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method Programme|null findOneBy(mixed[] $criteria, Order[] $orders = [])
+ */
 class ProgrammeRepository extends Repository
 {
     /**
@@ -81,7 +88,7 @@ class ProgrammeRepository extends Repository
     {
         $programme = $this->findOneBy(['id' => $programmeId]);
         if (
-            $programme instanceof Programme === false
+            $programme === null
             || $programme->isDeleted()
             || $programme->event->id !== $event->id
         ) {
