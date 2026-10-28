@@ -8,6 +8,8 @@ use kissj\Application\DateTimeUtils;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\UserStatus;
 
 readonly class ProgrammeService
@@ -15,103 +17,130 @@ readonly class ProgrammeService
     public function __construct(
         private ProgrammeRepository $programmeRepository,
         private ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private Metrics $metrics,
     ) {
     }
 
     public function register(Participant $participant, int $programmeId): ProgrammeRegistrationResult
     {
-        return $this->programmeRepository->transactional(
+        $refusal = $this->findSelfServiceRefusal($participant);
+        if ($refusal !== null) {
+            $this->countOutcome($participant, $refusal, MetricName::ProgrammesRegistered);
+
+            return $refusal;
+        }
+
+        $result = $this->programmeRepository->transactional(
             function () use ($participant, $programmeId): ProgrammeRegistrationResult {
                 $programme = $this->programmeRepository->getForUpdate($programmeId);
 
                 if (
                     $programme === null
                     || $programme->isDeleted()
-                    || $programme->isPreregistered
                     || $programme->event->id !== $participant->getUserButNotNull()->event->id
                 ) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeNotFound');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
+                }
+
+                if ($programme->isPreregistered) {
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPossible);
                 }
 
                 if ($programme->isForRole($participant->getRoleOrFail()) === false) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeWrongRole');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::WrongRole);
                 }
 
                 if ($this->programmeRegistrationRepository->findActive($programme, $participant) !== null) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeAlreadyRegistered');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::AlreadyRegistered);
                 }
 
                 foreach ($this->programmeRegistrationRepository->findActiveForParticipant($participant) as $existing) {
                     if ($programme->isExclusiveWith($existing->programme)) {
-                        return new ProgrammeRegistrationResult(false, 'flash.error.programmeConflict');
+                        return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Conflict);
                     }
                 }
 
                 $taken = $this->programmeRegistrationRepository->countActiveForProgramme($programme);
                 if ($taken >= $programme->capacity) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeFull');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Full);
                 }
 
                 $this->createRegistration($programme, $participant);
 
-                return new ProgrammeRegistrationResult(
-                    true,
-                    'flash.success.programmeRegistered',
-                    $programme->capacity - $taken - 1,
-                );
+                return ProgrammeRegistrationResult::success('flash.success.programmeRegistered');
             },
         );
+
+        $this->countOutcome($participant, $result, MetricName::ProgrammesRegistered);
+
+        return $result;
     }
 
     public function unregister(Participant $participant, int $programmeId): ProgrammeRegistrationResult
     {
-        return $this->programmeRepository->transactional(
+        $refusal = $this->findSelfServiceRefusal($participant);
+        if ($refusal !== null) {
+            $this->countOutcome($participant, $refusal, MetricName::ProgrammesUnregistered);
+
+            return $refusal;
+        }
+
+        $result = $this->programmeRepository->transactional(
             function () use ($participant, $programmeId): ProgrammeRegistrationResult {
                 $programme = $this->programmeRepository->getForUpdate($programmeId);
 
-                if ($programme === null || $programme->event->id !== $participant->getUserButNotNull()->event->id) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeNotFound');
+                if (
+                    $programme === null
+                    || $programme->isDeleted()
+                    || $programme->event->id !== $participant->getUserButNotNull()->event->id
+                ) {
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
+                }
+
+                if ($programme->isPreregistered) {
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPossible);
                 }
 
                 $registration = $this->programmeRegistrationRepository->findActive($programme, $participant);
                 if ($registration === null) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeNotRegistered');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotRegistered);
                 }
 
                 $this->programmeRegistrationRepository->softDelete($registration);
 
-                $activeCount = $this->programmeRegistrationRepository->countActiveForProgramme($programme);
-                $remaining = $programme->capacity - $activeCount;
-
-                return new ProgrammeRegistrationResult(true, 'flash.success.programmeUnregistered', $remaining);
+                return ProgrammeRegistrationResult::success('flash.success.programmeUnregistered');
             },
         );
+
+        $this->countOutcome($participant, $result, MetricName::ProgrammesUnregistered);
+
+        return $result;
     }
 
     public function adminAssign(Programme $programme, Participant $participant): ProgrammeRegistrationResult
     {
         if ($programme->isPreregistered) {
-            return new ProgrammeRegistrationResult(false, 'flash.warning.programmePreregisteredNoAssign');
+            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::PreregisteredNoAssign);
         }
 
         if ($participant->getUserButNotNull()->status === UserStatus::Cancelled) {
-            return new ProgrammeRegistrationResult(false, 'flash.warning.programmeCancelledNoAssign');
+            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::CancelledNoAssign);
         }
 
         return $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeRegistrationResult {
                 $lockedProgramme = $this->programmeRepository->getForUpdate($programme->id);
                 if ($lockedProgramme === null || $lockedProgramme->isDeleted()) {
-                    return new ProgrammeRegistrationResult(false, 'flash.error.programmeNotFound');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
                 }
 
                 if ($this->programmeRegistrationRepository->findActive($programme, $participant) !== null) {
-                    return new ProgrammeRegistrationResult(false, 'flash.warning.programmeAlreadyAssigned');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::AlreadyAssigned);
                 }
 
                 $this->createRegistration($programme, $participant);
 
-                return new ProgrammeRegistrationResult(true, 'flash.success.programmeParticipantAssigned');
+                return ProgrammeRegistrationResult::success('flash.success.programmeParticipantAssigned');
             },
         );
     }
@@ -123,12 +152,12 @@ readonly class ProgrammeService
                 $this->programmeRepository->getForUpdate($programme->id);
                 $registration = $this->programmeRegistrationRepository->findActive($programme, $participant);
                 if ($registration === null) {
-                    return new ProgrammeRegistrationResult(false, 'flash.warning.programmeNotAssigned');
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotAssigned);
                 }
 
                 $this->programmeRegistrationRepository->softDelete($registration);
 
-                return new ProgrammeRegistrationResult(true, 'flash.success.programmeParticipantRemoved');
+                return ProgrammeRegistrationResult::success('flash.success.programmeParticipantRemoved');
             },
         );
     }
@@ -189,6 +218,40 @@ readonly class ProgrammeService
                 static fn (ParticipantRole $role): string => $role->value,
                 $programme->getTargetRoles(),
             ),
+        );
+    }
+
+    private function findSelfServiceRefusal(Participant $participant): ?ProgrammeRegistrationResult
+    {
+        $user = $participant->getUserButNotNull();
+        if ($user->status !== UserStatus::Paid) {
+            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPaid);
+        }
+
+        if ($user->event->isProgrammeRegistrationOpen() === false) {
+            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Closed);
+        }
+
+        return null;
+    }
+
+    private function countOutcome(
+        Participant $participant,
+        ProgrammeRegistrationResult $result,
+        MetricName $successMetric,
+    ): void {
+        $attributes = ['event' => $participant->getUserButNotNull()->event->slug];
+
+        if ($result->error === null) {
+            $this->metrics->count($successMetric, 1, $attributes);
+
+            return;
+        }
+
+        $this->metrics->count(
+            MetricName::ProgrammesRegistrationRefused,
+            1,
+            [...$attributes, 'error' => $result->error->value],
         );
     }
 

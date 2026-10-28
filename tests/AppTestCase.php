@@ -703,6 +703,18 @@ class AppTestCase extends TestCase
         $this->mutatedEventRestore = null;
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function openProgrammeRegistrationWindow(App $app, string $slug = 'test-event-slug'): void
+    {
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => $slug]);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'programmeRegistrationStart' => DateTimeUtils::getDateTime('-1 hour'),
+            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('+1 hour'),
+        ]);
+    }
+
     protected function createPaidIst(ContainerInterface $container, string $firstName, string $lastName): Participant
     {
         return $this->createIst($container, $firstName, $lastName, UserStatus::Paid);
