@@ -32,6 +32,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testAttendanceHtmlListsParticipantsAndSkipsPreregistered(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $pdfGenerator = $this->getService($app, PdfGenerator::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
@@ -45,7 +46,7 @@ class ProgrammeExportTest extends AppTestCase
         $ist->firstName = 'Printed';
         $ist->lastName = 'Person';
         $this->getService($app, IstRepository::class)->persist($ist);
-        self::assertTrue($service->register($ist, $workshop->id)->success);
+        self::assertNull($service->register($ist, $workshop->id)->error);
 
         $sheets = [];
         foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
@@ -67,6 +68,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testProgrammeCsvContainsActiveRegistrationsOnly(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $exportService = $this->getService($app, ExportService::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -77,9 +79,9 @@ class ProgrammeExportTest extends AppTestCase
         $this->createProgramme($app, 'csv ceremony', null, 1, '2027-06-05 08:00', '2027-06-05 09:00', null, true);
         $active = $this->createPaidIstWithEmail($app, 'csv-active@example.com');
         $gone = $this->createPaidIstWithEmail($app, 'csv-gone@example.com');
-        self::assertTrue($service->register($active, $workshop->id)->success);
-        self::assertTrue($service->register($gone, $workshop->id)->success);
-        self::assertTrue($service->unregister($gone, $workshop->id)->success);
+        self::assertNull($service->register($active, $workshop->id)->error);
+        self::assertNull($service->register($gone, $workshop->id)->error);
+        self::assertNull($service->unregister($gone, $workshop->id)->error);
 
         $rows = $exportService->programmeRegistrationsToCSV($event);
 
@@ -95,14 +97,15 @@ class ProgrammeExportTest extends AppTestCase
     public function testSectionSubtitleIsShownInCsvAndAttendance(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $section = $this->createProgrammeSection($app->getContainer(), $event, 'Vapro');
         $section->subtitle = '1. blok';
         $this->getService($app, ProgrammeSectionRepository::class)->persist($section);
         $programme = $this->createProgramme($app, 'subtitled workshop', $section, 5);
-        self::assertTrue($service->register($this->createPaidIstWithEmail($app, 'csv-sub@example.com'), $programme->id)
-            ->success);
+        self::assertNull($service->register($this->createPaidIstWithEmail($app, 'csv-sub@example.com'), $programme->id)
+            ->error);
 
         $rows = $this->getService($app, ExportService::class)->programmeRegistrationsToCSV($event);
         $html = $this->getService($app, PdfGenerator::class)->buildProgrammeAttendanceHtml($event, [[
@@ -118,6 +121,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testGroupedActiveRegistrationsExcludeSoftDeletedAndForeignProgrammes(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -127,9 +131,9 @@ class ProgrammeExportTest extends AppTestCase
         $empty = $this->createProgramme($app, 'grouped empty', null, 5);
         $active = $this->createPaidIstWithEmail($app, 'grouped-active@example.com');
         $gone = $this->createPaidIstWithEmail($app, 'grouped-gone@example.com');
-        self::assertTrue($service->register($active, $workshop->id)->success);
-        self::assertTrue($service->register($gone, $workshop->id)->success);
-        self::assertTrue($service->unregister($gone, $workshop->id)->success);
+        self::assertNull($service->register($active, $workshop->id)->error);
+        self::assertNull($service->register($gone, $workshop->id)->error);
+        self::assertNull($service->unregister($gone, $workshop->id)->error);
 
         $grouped = $registrationRepository->findActiveForEventGroupedByProgramme($event);
 

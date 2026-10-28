@@ -6,10 +6,19 @@ namespace kissj\Programme;
 
 readonly class ProgrammeRegistrationResult
 {
-    public function __construct(
-        public bool $success,
+    private function __construct(
         public string $translationKey,
-        public ?int $remainingCapacity = null,
+        public ?ProgrammeRegistrationError $error,
     ) {
+    }
+
+    public static function success(string $translationKey): self
+    {
+        return new self($translationKey, null);
+    }
+
+    public static function failure(ProgrammeRegistrationError $error): self
+    {
+        return new self($error->flashKey(), $error);
     }
 }

@@ -13,10 +13,13 @@ use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistrationError;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeService;
+use kissj\Telemetry\MetricName;
+use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -32,6 +35,7 @@ class ProgrammeServiceTest extends AppTestCase
     public function testCapacityIsEnforced(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'small workshop', null, 1);
 
@@ -39,11 +43,9 @@ class ProgrammeServiceTest extends AppTestCase
         $second = $this->createPaidIstWithEmail($app, 'second-ist@example.com');
 
         $resultFirst = $service->register($first, $programme->id);
-        self::assertTrue($resultFirst->success);
-        self::assertSame(0, $resultFirst->remainingCapacity);
+        self::assertNull($resultFirst->error);
 
         $resultSecond = $service->register($second, $programme->id);
-        self::assertFalse($resultSecond->success);
         self::assertSame('flash.error.programmeFull', $resultSecond->translationKey);
     }
 
@@ -54,7 +56,7 @@ class ProgrammeServiceTest extends AppTestCase
         $programme = $this->createProgramme($app, 'dashboard workshop', null, 3);
         $preregistered = $this->createProgramme($app, 'dashboard ceremony', null, 3, isPreregistered: true);
         $ist = $this->createPaidIstWithEmail($app, 'dashboard-paid-ist@example.com');
-        self::assertTrue($service->adminAssign($programme, $ist)->success);
+        self::assertNull($service->adminAssign($programme, $ist)->error);
 
         $registrations = $service->getDashboardRegistrations($ist);
         self::assertCount(1, $registrations);
@@ -80,31 +82,33 @@ class ProgrammeServiceTest extends AppTestCase
     public function testUnregisterFreesSpotAndReRegisterWorks(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'reusable workshop', null, 1);
         $ist = $this->createPaidIstWithEmail($app, 'reuse-ist@example.com');
 
-        self::assertTrue($service->register($ist, $programme->id)->success);
-        self::assertTrue($service->unregister($ist, $programme->id)->success);
-        self::assertTrue($service->register($ist, $programme->id)->success);
+        self::assertNull($service->register($ist, $programme->id)->error);
+        self::assertNull($service->unregister($ist, $programme->id)->error);
+        self::assertNull($service->register($ist, $programme->id)->error);
     }
 
     public function testDuplicateRegistrationRejected(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'once only', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'dup-ist@example.com');
 
-        self::assertTrue($service->register($ist, $programme->id)->success);
+        self::assertNull($service->register($ist, $programme->id)->error);
         $duplicate = $service->register($ist, $programme->id);
-        self::assertFalse($duplicate->success);
         self::assertSame('flash.error.programmeAlreadyRegistered', $duplicate->translationKey);
     }
 
     public function testSameExclusiveSectionOverlapRejectedOthersAllowed(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $workshops = $this->createProgrammeSection($app->getContainer(), $event, 'workshops', true);
@@ -126,21 +130,21 @@ class ProgrammeServiceTest extends AppTestCase
 
         $ist = $this->createPaidIstWithEmail($app, 'overlap-ist@example.com');
 
-        self::assertTrue($service->register($ist, $morning->id)->success);
+        self::assertNull($service->register($ist, $morning->id)->error);
 
         $conflict = $service->register($ist, $overlapping->id);
-        self::assertFalse($conflict->success);
         self::assertSame('flash.error.programmeConflict', $conflict->translationKey);
 
-        self::assertTrue($service->register($ist, $touching->id)->success);
-        self::assertTrue($service->register($ist, $otherGroup->id)->success);
-        self::assertTrue($service->register($ist, $ungrouped->id)->success);
-        self::assertTrue($service->register($ist, $sameOpen->id)->success);
+        self::assertNull($service->register($ist, $touching->id)->error);
+        self::assertNull($service->register($ist, $otherGroup->id)->error);
+        self::assertNull($service->register($ist, $ungrouped->id)->error);
+        self::assertNull($service->register($ist, $sameOpen->id)->error);
     }
 
     public function testWrongRoleRejected(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $tlOnly = $this->createProgramme(
             $app,
@@ -154,13 +158,13 @@ class ProgrammeServiceTest extends AppTestCase
         $ist = $this->createPaidIstWithEmail($app, 'wrong-role-ist@example.com');
 
         $result = $service->register($ist, $tlOnly->id);
-        self::assertFalse($result->success);
         self::assertSame('flash.error.programmeWrongRole', $result->translationKey);
     }
 
     public function testPreregisteredCannotBeRegistered(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $ceremony = $this->createProgramme(
             $app,
@@ -175,13 +179,28 @@ class ProgrammeServiceTest extends AppTestCase
         $ist = $this->createPaidIstWithEmail($app, 'ceremony-ist@example.com');
 
         $result = $service->register($ist, $ceremony->id);
-        self::assertFalse($result->success);
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
+        self::assertSame('flash.error.programmeNotPossible', $result->translationKey);
+    }
+
+    public function testPreregisteredCannotBeUnregistered(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
+        $service = $this->getService($app, ProgrammeService::class);
+        $ceremony = $this->createProgramme($app, 'closing ceremony', null, 1, isPreregistered: true);
+        $ist = $this->createPaidIstWithEmail($app, 'ceremony-unregister-ist@example.com');
+
+        $result = $service->unregister($ist, $ceremony->id);
+
+        self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
+        self::assertSame('flash.error.programmeNotPossible', $result->translationKey);
     }
 
     public function testPreregisteredDoesNotConflict(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $main = $this->createProgrammeSection($app->getContainer(), $event, 'main', true);
@@ -197,26 +216,27 @@ class ProgrammeServiceTest extends AppTestCase
         );
         $ist = $this->createPaidIstWithEmail($app, 'during-ceremony-ist@example.com');
 
-        self::assertTrue($service->register($ist, $workshop->id)->success);
+        self::assertNull($service->register($ist, $workshop->id)->error);
     }
 
     public function testAdminAssignBypassesEverythingAndRemoveWorks(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $full = $this->createProgramme($app, 'full one', null, 1);
         $blocker = $this->createPaidIstWithEmail($app, 'blocker-ist@example.com');
-        self::assertTrue($service->register($blocker, $full->id)->success);
+        self::assertNull($service->register($blocker, $full->id)->error);
 
         $overridden = $this->createPaidIstWithEmail($app, 'override-ist@example.com');
         $assigned = $service->adminAssign($full, $overridden);
-        self::assertTrue($assigned->success);
+        self::assertNull($assigned->error);
         self::assertSame('flash.success.programmeParticipantAssigned', $assigned->translationKey);
         self::assertSame(2, $registrationRepository->countActiveForProgramme($full));
 
         $removed = $service->adminRemove($full, $overridden);
-        self::assertTrue($removed->success);
+        self::assertNull($removed->error);
         self::assertSame('flash.success.programmeParticipantRemoved', $removed->translationKey);
         self::assertSame(1, $registrationRepository->countActiveForProgramme($full));
     }
@@ -232,8 +252,7 @@ class ProgrammeServiceTest extends AppTestCase
         $first = $service->adminAssign($programme, $ist);
         $second = $service->adminAssign($programme, $ist);
 
-        self::assertTrue($first->success);
-        self::assertFalse($second->success);
+        self::assertNull($first->error);
         self::assertSame('flash.warning.programmeAlreadyAssigned', $second->translationKey);
         self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
     }
@@ -247,7 +266,6 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminRemove($programme, $ist);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.warning.programmeNotAssigned', $result->translationKey);
     }
 
@@ -269,7 +287,6 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($ceremony, $ist);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.warning.programmePreregisteredNoAssign', $result->translationKey);
     }
 
@@ -287,7 +304,6 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($programme, $ist);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.warning.programmeCancelledNoAssign', $result->translationKey);
     }
 
@@ -305,7 +321,6 @@ class ProgrammeServiceTest extends AppTestCase
         $service->deleteProgramme($programme);
         $result = $service->adminAssign($staleProgramme, $ist);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.error.programmeNotFound', $result->translationKey);
         self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
     }
@@ -313,18 +328,19 @@ class ProgrammeServiceTest extends AppTestCase
     public function testRegisterOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $ist = $this->createPaidIstWithEmail($app, 'nonexistent-register-ist@example.com');
 
         $result = $service->register($ist, PHP_INT_MAX);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.error.programmeNotFound', $result->translationKey);
     }
 
     public function testRegisterOnSoftDeletedProgrammeReturnsNotFound(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'deleted before register', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'deleted-register-ist@example.com');
@@ -332,49 +348,100 @@ class ProgrammeServiceTest extends AppTestCase
         $service->deleteProgramme($programme);
         $result = $service->register($ist, $programme->id);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.error.programmeNotFound', $result->translationKey);
     }
 
     public function testUnregisterOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $ist = $this->createPaidIstWithEmail($app, 'nonexistent-unregister-ist@example.com');
 
         $result = $service->unregister($ist, PHP_INT_MAX);
 
-        self::assertFalse($result->success);
         self::assertSame('flash.error.programmeNotFound', $result->translationKey);
     }
 
-    public function testUnregisterOnSoftDeletedProgrammeDoesNotThrow(): void
+    public function testUnregisterOnSoftDeletedProgrammeReturnsNotFound(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'deleted before unregister', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'deleted-unregister-ist@example.com');
-        self::assertTrue($service->register($ist, $programme->id)->success);
+        self::assertNull($service->register($ist, $programme->id)->error);
 
-        // deleteProgramme() already cascades the soft-delete to active registrations, so
-        // the registration is gone by the time unregister() runs - it correctly falls
-        // through to "not registered" rather than needing an explicit isDeleted check
         $service->deleteProgramme($programme);
         $result = $service->unregister($ist, $programme->id);
 
-        self::assertFalse($result->success);
-        self::assertSame('flash.error.programmeNotRegistered', $result->translationKey);
+        self::assertSame(ProgrammeRegistrationError::NotFound, $result->error);
+        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+    }
+
+    public function testUnpaidParticipantIsRefusedFirst(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeService::class);
+        $user = $this->registerUser($app, 'not-paid-ist@example.com');
+        $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
+
+        foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
+            self::assertSame('notPaid', $result->error?->value);
+            self::assertSame('flash.error.programmeNotPaid', $result->translationKey);
+        }
+    }
+
+    public function testRefusedWritesAreCountedAsRefusals(): void
+    {
+        $app = $this->getTestApp();
+        $user = $this->registerUser($app, 'counted-refusal-ist@example.com');
+        $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
+        $metrics = $this->createMock(Metrics::class);
+        $metrics->expects(self::exactly(2))
+            ->method('count')
+            ->willReturnCallback(static function (MetricName $name, int $value, array $attributes): void {
+                self::assertSame('programmes.registration_refused', $name->value);
+                self::assertSame(1, $value);
+                self::assertSame(['event' => self::TEST_EVENT_SLUG, 'error' => 'notPaid'], $attributes);
+            });
+        $service = new ProgrammeService(
+            $this->getService($app, ProgrammeRepository::class),
+            $this->getService($app, ProgrammeRegistrationRepository::class),
+            $metrics,
+        );
+
+        $service->register($ist, PHP_INT_MAX);
+        $service->unregister($ist, PHP_INT_MAX);
+    }
+
+    public function testClosedWindowIsRefusedBeforeProgrammeLookup(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeService::class);
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'programmeRegistrationStart' => DateTimeUtils::getDateTime('-2 hours'),
+            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('-1 hour'),
+        ]);
+        $ist = $this->createPaidIstWithEmail($app, 'closed-window-ist@example.com');
+
+        foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
+            self::assertSame('closed', $result->error?->value);
+            self::assertSame('flash.error.programmeClosed', $result->translationKey);
+        }
     }
 
     public function testDeleteProgrammeCascades(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $programme = $this->createProgramme($app, 'doomed', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'doomed-ist@example.com');
-        self::assertTrue($service->register($ist, $programme->id)->success);
+        self::assertNull($service->register($ist, $programme->id)->error);
 
         $service->deleteProgramme($programme);
 
@@ -413,12 +480,13 @@ class ProgrammeServiceTest extends AppTestCase
     public function testCancelParticipantFreesProgrammes(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $participantService = $this->getService($app, ParticipantService::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $programme = $this->createProgramme($app, 'freed on cancel', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'cancelled-ist@example.com');
-        self::assertTrue($service->register($ist, $programme->id)->success);
+        self::assertNull($service->register($ist, $programme->id)->error);
 
         $participantService->cancelParticipant($ist);
 
