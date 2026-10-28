@@ -54,11 +54,6 @@ class ParticipantVendorController extends AbstractController
             return $response->withStatus(500);
         }
 
-        return $this->getResponseWithJson(
-            $response,
-            [
-                'participant' => $body,
-            ],
-        );
+        return $this->getResponseWithJson($response, new VendoredParticipantResponseDTO($body));
     }
 }

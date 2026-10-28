@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use DateTimeImmutable;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\Ist\IstRepository;
@@ -50,8 +51,7 @@ class ApiTest extends AppTestCase
         self::assertSame(403, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertEquals('invalid', $body['status']);
-        self::assertEquals('participant not found', $body['reason']);
+        self::assertSame(['status' => 'invalid', 'reason' => 'participant not found'], $body);
     }
 
     public function testEntryWithInvalidEventSecret(): void
@@ -96,9 +96,22 @@ class ApiTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
+        self::assertSame(
+            [
+                'eventName',
+                'fullName',
+                'email',
+                'ageAtEventStart',
+                'tshirtShape',
+                'tshirtSize',
+                'status',
+                'entryDateTime',
+            ],
+            array_keys($body),
+        );
         self::assertEquals('valid', $body['status']);
-        self::assertArrayHasKey('fullName', $body);
-        self::assertArrayHasKey('email', $body);
+        self::assertIsString($body['entryDateTime']);
+        self::assertNotFalse(DateTimeImmutable::createFromFormat(DATE_ATOM, $body['entryDateTime']));
     }
 
     public function testEntrySecondTime(): void
@@ -130,8 +143,20 @@ class ApiTest extends AppTestCase
         self::assertSame(200, $response2->getStatusCode());
         $body = json_decode((string)$response2->getBody(), true);
         self::assertIsArray($body);
+        self::assertSame(
+            [
+                'eventName',
+                'fullName',
+                'email',
+                'ageAtEventStart',
+                'tshirtShape',
+                'tshirtSize',
+                'status',
+                'entryDateTime',
+            ],
+            array_keys($body),
+        );
         self::assertEquals('used', $body['status']);
-        self::assertArrayHasKey('entryDateTime', $body);
     }
 
     /**
@@ -295,7 +320,7 @@ class ApiTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertArrayHasKey('eventName', $body);
+        self::assertSame(['eventName', 'eventSlug', 'roles'], array_keys($body));
         self::assertIsArray($body['roles']);
         self::assertIsArray($body['roles']['ist']);
         $ist = $body['roles']['ist'][$participant->id];
@@ -397,8 +422,7 @@ class ApiTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertArrayHasKey('adminNote', $body);
-        self::assertEquals($noteText, $body['adminNote']);
+        self::assertSame(['adminNote' => $noteText], $body);
 
         // Verify note was persisted
         $participantRepository = $this->getService($app, ParticipantRepository::class);
@@ -539,8 +563,7 @@ class ApiTest extends AppTestCase
         self::assertSame(409, $response->getStatusCode());
         $body = json_decode((string)$response->getBody(), true);
         self::assertIsArray($body);
-        self::assertArrayHasKey('translationKey', $body);
-        self::assertArrayHasKey('translationMessage', $body);
+        self::assertSame(['translationKey', 'translationMessage'], array_keys($body));
         self::assertSame('flash.warning.paymentAlreadyPaid', $body['translationKey']);
     }
 

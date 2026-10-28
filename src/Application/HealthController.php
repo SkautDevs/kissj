@@ -23,9 +23,9 @@ class HealthController extends AbstractController
         } catch (Throwable $throwable) {
             $this->logger->error('Healthcheck database ping failed', ['exception' => $throwable]);
 
-            return $this->getResponseWithJson($response, ['status' => 'error'], 500);
+            return $this->getResponseWithJson($response, new HealthStatusDTO('error'), 500);
         }
 
-        return $this->getResponseWithJson($response, ['status' => 'ok']);
+        return $this->getResponseWithJson($response, new HealthStatusDTO('ok'));
     }
 }

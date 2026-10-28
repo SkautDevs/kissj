@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Programme;
 
 use kissj\AbstractController;
+use kissj\Application\JsonWarningDTO;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -54,10 +55,7 @@ class ProgrammeJsonController extends AbstractController
     {
         return $this->getResponseWithJson(
             $response,
-            [
-                'translationKey' => $translationKey,
-                'translationMessage' => $this->translator->trans($translationKey),
-            ],
+            new JsonWarningDTO($translationKey, $this->translator->trans($translationKey)),
             409,
         );
     }

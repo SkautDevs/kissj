@@ -6,7 +6,6 @@ namespace kissj;
 
 use DI\Attribute\Inject;
 use GuzzleHttp\Utils;
-use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -116,10 +115,7 @@ abstract class AbstractController
             ->withStatus(302);
     }
 
-    /**
-     * @param array<string,int|string|EntryStatus|null|array<mixed>>|object $json
-     */
-    protected function getResponseWithJson(Response $response, array|object $json, int $statusCode = 200): Response
+    protected function getResponseWithJson(Response $response, object $json, int $statusCode = 200): Response
     {
         $encodedJson = Utils::jsonEncode($json);
         $response->getBody()->write($encodedJson);

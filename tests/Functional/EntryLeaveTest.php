@@ -80,11 +80,13 @@ class EntryLeaveTest extends AppTestCase
         self::assertNotNull($alreadyLeftStamp);
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/group/' . $leader->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/group/' . $leader->id));
 
         self::assertSame(200, $response->getStatusCode());
-        /** @var array{alteredParticipantIds: list<int>} $body */
+        /** @var array<string, mixed> $body */
         $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(['status', 'alteredParticipantIds'], array_keys($body));
+        self::assertSame('left', $body['status']);
         self::assertEqualsCanonicalizing(
             [$leader->id, $present->id],
             $body['alteredParticipantIds'],
@@ -114,10 +116,10 @@ class EntryLeaveTest extends AppTestCase
         [$leader] = $this->makePatrolInMixedStates($app);
 
         $app = $this->getTestApp(false);
-        $app->handle($this->leaveRequest('/v3/leave/group/' . $leader->id));
+        $app->handle($this->webAppRequest('/v3/leave/group/' . $leader->id));
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/group/' . $leader->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/group/' . $leader->id));
 
         self::assertSame(200, $response->getStatusCode());
         /** @var array{alteredParticipantIds: list<int>} $body */
@@ -134,11 +136,15 @@ class EntryLeaveTest extends AppTestCase
         // would also pass for an id the API cannot see at all, which is a different branch of
         // the same error message
         $app = $this->getTestApp(false);
-        $individualResponse = $app->handle($this->leaveRequest('/v3/leave/participant/' . $ist->id));
+        $individualResponse = $app->handle($this->webAppRequest('/v3/leave/participant/' . $ist->id));
         self::assertSame(200, $individualResponse->getStatusCode());
+        self::assertSame(
+            ['status' => 'left', 'alteredParticipantId' => $ist->id],
+            json_decode((string)$individualResponse->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/group/' . $ist->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/group/' . $ist->id));
 
         self::assertSame(403, $response->getStatusCode());
         self::assertStringContainsString('one or more participants not found', (string)$response->getBody());
@@ -150,10 +156,13 @@ class EntryLeaveTest extends AppTestCase
         [, , $neverEntered] = $this->makePatrolInMixedStates($app);
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/participant/' . $neverEntered->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/participant/' . $neverEntered->id));
 
         self::assertSame(403, $response->getStatusCode());
-        self::assertStringContainsString('participant not entered', (string)$response->getBody());
+        self::assertSame(
+            ['status' => 'invalid', 'reason' => 'participant not entered'],
+            json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
 
         $app = $this->getTestApp(false);
         $ppRepository = $this->getService($app, PatrolParticipantRepository::class);
@@ -172,9 +181,13 @@ class EntryLeaveTest extends AppTestCase
         self::assertNotNull($stamp);
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/participant/' . $alreadyLeft->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/participant/' . $alreadyLeft->id));
 
         self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            ['status' => 'valid', 'entryDateTime' => null],
+            json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
 
         $app = $this->getTestApp(false);
         $ppRepository = $this->getService($app, PatrolParticipantRepository::class);
@@ -198,7 +211,7 @@ class EntryLeaveTest extends AppTestCase
         self::assertNull($legacyLeftFromDb->entryDate, 'fixture must carry a leaveDate without an entryDate');
 
         $app = $this->getTestApp(false);
-        $response = $app->handle($this->leaveRequest('/v3/leave/participant/' . $legacyLeft->id));
+        $response = $app->handle($this->webAppRequest('/v3/leave/participant/' . $legacyLeft->id));
 
         self::assertSame(200, $response->getStatusCode());
 
@@ -207,7 +220,40 @@ class EntryLeaveTest extends AppTestCase
         self::assertSame($stamp, $ppRepository->get($legacyLeft->id)->leaveDate?->format(DATE_ATOM));
     }
 
-    private function leaveRequest(string $path): ServerRequestInterface
+    public function testWebAppEntryAnswersIndividualRepeatedAndGroupEntry(): void
+    {
+        $app = $this->getTestApp();
+        [$leader, , $neverEntered, , $legacyLeft] = $this->makePatrolInMixedStates($app);
+        $participantService = $this->getService($app, ParticipantService::class);
+        $this->trackForCleanup($participantService, $neverEntered);
+        $this->trackForCleanup($participantService, $legacyLeft);
+
+        $app = $this->getTestApp(false);
+        $response = $app->handle($this->webAppRequest('/v3/entry/participant/' . $neverEntered->id));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            ['status' => 'valid', 'alteredParticipantId' => $neverEntered->id],
+            json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
+
+        $app = $this->getTestApp(false);
+        $response = $app->handle($this->webAppRequest('/v3/entry/participant/' . $neverEntered->id));
+        self::assertSame(200, $response->getStatusCode());
+        /** @var array<string, mixed> $body */
+        $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(['status', 'entryDateTime'], array_keys($body));
+        self::assertSame('used', $body['status']);
+
+        $app = $this->getTestApp(false);
+        $response = $app->handle($this->webAppRequest('/v3/entry/group/' . $leader->id));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            ['status' => 'valid', 'alteredParticipantIds' => [$legacyLeft->id]],
+            json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
+    }
+
+    private function webAppRequest(string $path): ServerRequestInterface
     {
         return (new ServerRequestFactory())
             ->createServerRequest('POST', $path)

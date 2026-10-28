@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace kissj\Entry;
 
 use kissj\AbstractController;
+use kissj\Entry\DTO\EntryAlteredParticipantDTO;
+use kissj\Entry\DTO\EntryAlteredParticipantsDTO;
+use kissj\Entry\DTO\EntryDateTimeDTO;
+use kissj\Entry\DTO\EntryErrorDTO;
+use kissj\Entry\DTO\EntryListDTO;
+use kissj\Entry\DTO\EntryTicketDTO;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -14,6 +20,7 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\TshirtService;
 use kissj\User\UserStatus;
+use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -49,11 +56,7 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            [
-                'eventName' => $authorizedEvent->readableName,
-                'eventSlug' => $authorizedEvent->slug,
-                'roles' => $participants,
-            ],
+            new EntryListDTO($authorizedEvent->readableName, $authorizedEvent->slug, $participants),
         );
     }
 
@@ -86,33 +89,22 @@ class EntryController extends AbstractController
             return $this->createErrorEntryResponse($response, 'participant not paid');
         }
 
-        $participantInfo = [
-            'eventName' => $event->readableName,
-            'fullName' => $participant->getFullName(),
-            'email' => $participant->email,
-            'ageAtEventStart' => $participant->getAgeAtStartOfEvent(),
-            'tshirtShape' => $this->tshirtService->displayShape($participant->getTshirtShape()),
-            'tshirtSize' => $this->tshirtService->displaySize($participant->getTshirtSize()),
-        ];
-
-        if ($participant->entryDate !== null) {
-            return $this->getResponseWithJson(
-                $response,
-                $participantInfo + [
-                    'status' => EntryStatus::ENTRY_STATUS_USED,
-                    'entryDateTime' => $participant->entryDate->format(DATE_ATOM),
-                ],
-            );
+        $isFirstEntry = $participant->entryDate === null;
+        if ($isFirstEntry) {
+            $this->participantService->setAsEntered($participant);
         }
+        $entryDate = $participant->entryDate ?? throw new LogicException('entry date missing after entry');
 
-        $this->participantService->setAsEntered($participant);
-
-        return $this->getResponseWithJson(
-            $response,
-            $participantInfo + [
-                'status' => EntryStatus::ENTRY_STATUS_VALID,
-            ],
-        );
+        return $this->getResponseWithJson($response, new EntryTicketDTO(
+            $event->readableName,
+            $participant->getFullName(),
+            $participant->email,
+            $participant->getAgeAtStartOfEvent(),
+            $this->tshirtService->displayShape($participant->getTshirtShape()),
+            $this->tshirtService->displaySize($participant->getTshirtSize()),
+            $isFirstEntry ? EntryStatus::ENTRY_STATUS_VALID : EntryStatus::ENTRY_STATUS_USED,
+            $entryDate->format(DATE_ATOM),
+        ));
     }
 
     public function entryParticipantFromWebApp(
@@ -128,10 +120,7 @@ class EntryController extends AbstractController
         if ($participant->entryDate !== null) {
             return $this->getResponseWithJson(
                 $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_USED,
-                    'entryDateTime' => $participant->entryDate->format(DATE_ATOM),
-                ],
+                new EntryDateTimeDTO(EntryStatus::ENTRY_STATUS_USED, $participant->entryDate->format(DATE_ATOM)),
             );
         }
 
@@ -139,10 +128,7 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            [
-                'status' => EntryStatus::ENTRY_STATUS_VALID,
-                'alteredParticipantId' => $participant->id,
-            ],
+            new EntryAlteredParticipantDTO(EntryStatus::ENTRY_STATUS_VALID, $participant->id),
         );
     }
 
@@ -159,10 +145,7 @@ class EntryController extends AbstractController
         if ($participant->leaveDate !== null) {
             return $this->getResponseWithJson(
                 $response,
-                [
-                    'status' => EntryStatus::ENTRY_STATUS_VALID,
-                    'entryDateTime' => null,
-                ],
+                new EntryDateTimeDTO(EntryStatus::ENTRY_STATUS_VALID, null),
             );
         }
 
@@ -174,10 +157,7 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            [
-                'status' => EntryStatus::ENTRY_STATUS_LEAVED,
-                'alteredParticipantId' => $participant->id,
-            ],
+            new EntryAlteredParticipantDTO(EntryStatus::ENTRY_STATUS_LEAVED, $participant->id),
         );
     }
 
@@ -269,10 +249,7 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            [
-                'status' => EntryStatus::ENTRY_STATUS_VALID,
-                'alteredParticipantIds' => $alteredParticipantIds,
-            ],
+            new EntryAlteredParticipantsDTO(EntryStatus::ENTRY_STATUS_VALID, $alteredParticipantIds),
         );
     }
 
@@ -300,10 +277,7 @@ class EntryController extends AbstractController
 
         return $this->getResponseWithJson(
             $response,
-            [
-                'status' => EntryStatus::ENTRY_STATUS_LEAVED,
-                'alteredParticipantIds' => $alteredParticipantIds,
-            ],
+            new EntryAlteredParticipantsDTO(EntryStatus::ENTRY_STATUS_LEAVED, $alteredParticipantIds),
         );
     }
 
@@ -313,10 +287,7 @@ class EntryController extends AbstractController
     ): Response {
         return $this->getResponseWithJson(
             $response,
-            [
-                'status' => EntryStatus::ENTRY_STATUS_INVALID,
-                'reason' => $reason,
-            ],
+            new EntryErrorDTO(EntryStatus::ENTRY_STATUS_INVALID, $reason),
             403,
         );
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
+use kissj\Application\JsonWarningDTO;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\ParticipantRepository;
@@ -79,7 +80,7 @@ class AdminJsonController extends AbstractController
             $this->getParameterFromBody($request, 'adminNote'),
         );
 
-        return $this->getResponseWithJson($response, ['adminNote' => $participant->adminNote]);
+        return $this->getResponseWithJson($response, new AdminNoteDTO($participant->adminNote));
     }
 
     private function successfulJsonResponse(Response $response): Response
@@ -91,10 +92,7 @@ class AdminJsonController extends AbstractController
     {
         return $this->getResponseWithJson(
             $response,
-            [
-                'translationKey' => $translationKey,
-                'translationMessage' => $this->translator->trans($translationKey),
-            ],
+            new JsonWarningDTO($translationKey, $this->translator->trans($translationKey)),
             409,
         );
     }
