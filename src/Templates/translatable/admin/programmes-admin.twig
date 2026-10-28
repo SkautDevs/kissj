@@ -42,6 +42,20 @@
         </a>
     </div>
 
+    {% if pendingPairingCount is not null %}
+        <div class="card">
+            <h2>{{ 'programme.admin.pairings.title'|trans }}</h2>
+            {{ 'programme.admin.pairings.pending'|trans }}: <b>{{ pendingPairingCount }} / {{ maxPendingPairings }}</b>
+            <br/>
+            <br/>
+            <form method="post" action="{{ url_for('admin-programme-pairings-purge', {eventSlug: event.slug}) }}"
+                  onsubmit="return confirm('{{ 'programme.admin.pairings.purgeConfirm'|trans|e('js') }}')">
+                <input type="submit" class="btn btn-small btn-grey"
+                       value="{{ 'programme.admin.pairings.purge'|trans }}">
+            </form>
+        </div>
+    {% endif %}
+
     {% set previousDay = null %}
     {% for programme in programmes %}
         {% set day = programme.start|date('j. n. Y') %}

@@ -414,13 +414,23 @@ class ProgrammeServiceTest extends AppTestCase
         $user = $this->registerUser($app, 'counted-refusal-ist@example.com');
         $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
         $metrics = $this->createMock(Metrics::class);
+        $expectedActions = ['programmes.registered', 'programmes.unregistered'];
         $metrics->expects(self::exactly(2))
             ->method('count')
-            ->willReturnCallback(static function (MetricName $name, int $value, array $attributes): void {
-                self::assertSame('programmes.registration_refused', $name->value);
-                self::assertSame(1, $value);
-                self::assertSame(['event' => self::TEST_EVENT_SLUG, 'error' => 'notPaid'], $attributes);
-            });
+            ->willReturnCallback(
+                static function (MetricName $name, int $value, array $attributes) use (&$expectedActions): void {
+                    self::assertSame('programmes.registration_refused', $name->value);
+                    self::assertSame(1, $value);
+                    self::assertSame(
+                        [
+                            'event' => self::TEST_EVENT_SLUG,
+                            'error' => 'notPaid',
+                            'action' => array_shift($expectedActions),
+                        ],
+                        $attributes,
+                    );
+                },
+            );
         $service = new ProgrammeService(
             $this->getService($app, ProgrammeRepository::class),
             $this->getService($app, ProgrammeRegistrationRepository::class),

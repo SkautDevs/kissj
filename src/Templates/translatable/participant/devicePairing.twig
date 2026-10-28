@@ -1,0 +1,40 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'programme.pairing.title'|trans }}</h2>
+
+        {% if pairing %}
+            <h3>{{ 'programme.pairing.askingTitle'|trans }}</h3>
+            {{ 'programme.pairing.appLabel'|trans }}: <b>{{ 'programme.pairing.appName'|trans }}</b><br/>
+            {{ 'programme.pairing.eventLabel'|trans }}: <b>{{ event.readableName }}</b><br/>
+            {{ 'programme.pairing.requestedAtLabel'|trans }}: <b>{{ pairing.createdAt|date('j. n. Y H:i') }}</b>
+            <br/><br/>
+
+            <form method="POST" action="{{ url_for('confirmDevicePairing', {'eventSlug': event.slug}) }}">
+                <input name="code" type="hidden" value="{{ pairing.userCode }}">
+                <input name="csrfName" value="{{ csrfName }}" type="hidden">
+                <input name="csrfValue" value="{{ csrfValue }}" type="hidden">
+                <button class="btn btn-small" type="submit" name="decision" value="approve">
+                    {{- 'programme.pairing.approve'|trans -}}
+                </button>
+                <button class="btn btn-grey btn-small" type="submit" name="decision" value="deny">
+                    {{- 'programme.pairing.deny'|trans -}}
+                </button>
+            </form><br/>
+        {% else %}
+            <form method="POST" action="{{ url_for('checkDevicePairing', {'eventSlug': event.slug}) }}">
+                <label for="code">{{ 'programme.pairing.codeLabel'|trans }}</label>
+                <input id="code" name="code" type="text" inputmode="numeric" autocomplete="off"
+                       placeholder="123-456" required>
+                <input name="csrfName" value="{{ csrfName }}" type="hidden">
+                <input name="csrfValue" value="{{ csrfValue }}" type="hidden"><br/><br/>
+                <input class="btn btn-small" type="submit" value="{{ 'programme.pairing.submit'|trans }}">
+            </form>
+            <br/>
+        {% endif %}
+
+        <a href="{{ url_for('dashboard', {'eventSlug': event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'changeDetails.back'|trans }}</a>
+    </div>
+{% endblock %}

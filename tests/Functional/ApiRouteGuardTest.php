@@ -53,6 +53,11 @@ class ApiRouteGuardTest extends AppTestCase
         'programme-api-list' => 'event',
         'programme-api-participant-by-tie-code' => 'event',
         'programme-api-programme-participants' => 'event',
+        'programme-api-pairing-start' => 'event',
+        'programme-api-pairing-poll' => 'event',
+        'programme-api-participant-by-session' => 'event',
+        'programme-api-register' => 'event',
+        'programme-api-unregister' => 'event',
         'admin-change-note' => 'adminSession',
         'admin-approve-json' => 'adminSession',
         'admin-confirm-payment-json' => 'adminSession',
@@ -231,7 +236,7 @@ class ApiRouteGuardTest extends AppTestCase
         return [null, ...$wrongKeys, self::UNKNOWN_KEY];
     }
 
-    private function createApiRequest(string $path, string $method, ?string $apiKey): Request
+    private function createGuardRequest(string $path, string $method, ?string $apiKey): Request
     {
         $request = $this->createRequest($path, $method);
         if ($apiKey === null) {
@@ -257,7 +262,7 @@ class ApiRouteGuardTest extends AppTestCase
             return $routeMismatch;
         }
 
-        $request = $this->createApiRequest($path, $method, $apiKey);
+        $request = $this->createGuardRequest($path, $method, $apiKey);
         $expectedAuthorization = $apiKey === null ? '' : 'Bearer ' . $apiKey;
         if ($request->getHeaderLine('Authorization') !== $expectedAuthorization) {
             return sprintf('%s: request carries Authorization "%s"', $label, $request->getHeaderLine('Authorization'));
