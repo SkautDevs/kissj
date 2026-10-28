@@ -193,18 +193,18 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertTrue($reloaded->isPreregistered);
     }
 
-    public function testTamperedRoleValuesAreSkippedNotFatal(): void
+    public function testUnknownRoleValueFailsTheStandardWay(): void
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'tampered-role-admin@example.com');
         $section = $this->createProgrammeSection($app->getContainer(), $this->getEvent($app), 'tampered');
 
-        $uniqueName = 'tampered role programme ' . bin2hex(random_bytes(4));
-        $response = $app->handle($this->createRequest(
+        $this->expectException(\ValueError::class);
+        $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
             [
-                'name' => $uniqueName,
+                'name' => 'tampered role programme',
                 'description' => 'desc',
                 'place' => 'tent A',
                 'start' => '2027-06-05T10:00',
@@ -214,15 +214,6 @@ class ProgrammeAdminTest extends AppTestCase
                 'roles' => ['ist', 'not-a-role'],
             ],
         ));
-        self::assertSame(302, $response->getStatusCode());
-
-        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
-        $eventRepository = $this->getService($app, EventRepository::class);
-        $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        $programme = $this->findByName($programmeRepository, $event, $uniqueName);
-
-        self::assertNotNull($programme);
-        self::assertSame([ParticipantRole::Ist], $programme->getTargetRoles());
     }
 
     public function testAdminSetsProgrammeWindow(): void

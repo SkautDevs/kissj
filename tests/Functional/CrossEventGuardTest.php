@@ -52,11 +52,6 @@ class CrossEventGuardTest extends AppTestCase
 
     private const array WITHOUT_ROLE_ROUTE_NAMES = ['chooseRole', 'setRole'];
 
-    private const array NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME = [
-        'admin-cancel-participant' => 'flash.error.participantNotCancelled',
-        'admin-add-new-payment' => 'flash.warning.participantNotFoundAddPaymentNotPossible',
-    ];
-
     private const array NOT_FOUND_STATUS_ROUTE_NAMES = ['admin-programme-image'];
 
     private const array REQUEST_BODY = [
@@ -485,11 +480,6 @@ class CrossEventGuardTest extends AppTestCase
         }
 
         if ($status === 404 && in_array($route->getName(), self::NOT_FOUND_STATUS_ROUTE_NAMES, true)) {
-            return null;
-        }
-
-        $flashKey = self::NOT_FOUND_FLASH_KEYS_BY_ROUTE_NAME[$route->getName() ?? ''] ?? null;
-        if ($flashKey !== null && $this->hasFlash($requestApp, $flashKey)) {
             return null;
         }
 

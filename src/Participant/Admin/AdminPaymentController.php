@@ -328,10 +328,8 @@ class AdminPaymentController extends AbstractController
         $price = (int)$this->getParameterFromBody($request, 'price', true);
         $reason = $this->getParameterFromBody($request, 'reason', true);
 
-        $participant = $this->participantRepository->findParticipantById($participantId, $event);
-        if ($participant === null) {
-            $this->flashMessages->warning('flash.warning.participantNotFoundAddPaymentNotPossible');
-        } elseif ($participant instanceof TechnicalTeamParticipant) {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+        if ($participant instanceof TechnicalTeamParticipant) {
             $this->flashMessages->warning('flash.warning.technicalTeamParticipantCannotHavePayment');
         } elseif ($participant->hasOwnUser() === false) {
             $this->flashMessages->warning('flash.warning.patrolParticipantCannotHavePayment');

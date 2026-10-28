@@ -168,10 +168,7 @@ abstract class AbstractController
 
     protected function getParameterFromBody(Request $request, string $parameterName, bool $escapeValue = false): string
     {
-        $parsedBody = $request->getParsedBody();
-        if (!is_array($parsedBody)) {
-            throw new \RuntimeException('getParsedBody() did not returned array');
-        }
+        $parsedBody = $this->getParsedBodyArray($request);
 
         if (!array_key_exists($parameterName, $parsedBody)) {
             throw new \RuntimeException('body does not contain parameter ' . $parameterName);
@@ -190,14 +187,43 @@ abstract class AbstractController
         return $parameter;
     }
 
+    /**
+     * @return list<string>
+     */
+    protected function getStringListFromBody(Request $request, string $parameterName): array
+    {
+        $values = $this->getParsedBodyArray($request)[$parameterName] ?? [];
+        if (is_array($values) === false) {
+            throw new \RuntimeException('body parameter ' . $parameterName . ' is not a list');
+        }
+
+        $list = [];
+        foreach ($values as $value) {
+            if (is_string($value) === false) {
+                throw new \RuntimeException('body parameter ' . $parameterName . ' contains a non-string value');
+            }
+            $list[] = $value;
+        }
+
+        return $list;
+    }
+
     protected function isCheckboxCheckedInBody(Request $request, string $parameterName): bool
+    {
+        return array_key_exists($parameterName, $this->getParsedBodyArray($request));
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function getParsedBodyArray(Request $request): array
     {
         $parsedBody = $request->getParsedBody();
         if (is_array($parsedBody) === false) {
-            throw new \RuntimeException('getParsedBody() did not returned array');
+            throw new \RuntimeException('getParsedBody() did not return an array');
         }
 
-        return array_key_exists($parameterName, $parsedBody);
+        return $parsedBody;
     }
 
     protected function getParameterFromQuery(Request $request, string $parameterName): string

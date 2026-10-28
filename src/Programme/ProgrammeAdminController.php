@@ -213,13 +213,7 @@ class ProgrammeAdminController extends AbstractController
         int $participantId,
     ): Response {
         $programme = $this->programmeRepository->getActiveById($programmeId, $event);
-        $participant = $this->participantRepository->findParticipantById($participantId, $event);
-        if ($participant === null) {
-            $this->flashMessages->warning('flash.warning.programmeParticipantNotFound');
-
-            return $this->redirectToDetail($request, $response, $programmeId);
-        }
-
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
         $result = $this->programmeService->adminRemove($programme, $participant);
         $this->flash($result);
 
@@ -282,21 +276,7 @@ class ProgrammeAdminController extends AbstractController
      */
     private function rolesFromRequest(Request $request): array
     {
-        $parsedBody = $request->getParsedBody();
-        $roleValues = is_array($parsedBody) && is_array($parsedBody['roles'] ?? null) ? $parsedBody['roles'] : [];
-        $roles = [];
-        foreach ($roleValues as $roleValue) {
-            if (is_string($roleValue) === false) {
-                continue;
-            }
-            $role = ParticipantRole::tryFrom($roleValue);
-            if ($role === null) {
-                continue;
-            }
-            $roles[] = $role;
-        }
-
-        return $roles;
+        return array_map(ParticipantRole::from(...), $this->getStringListFromBody($request, 'roles'));
     }
 
     private function saveImage(Programme $programme, Request $request): void

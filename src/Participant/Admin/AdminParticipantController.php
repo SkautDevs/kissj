@@ -10,7 +10,6 @@ use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopParticipant;
-use RuntimeException;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
@@ -318,7 +317,7 @@ class AdminParticipantController extends AbstractController
         Event $event,
         int $participantId,
     ): Response {
-        $participant = $this->participantRepository->findParticipantById($participantId, $event);
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
 
         if ($participant instanceof PatrolLeader) {
             $this->flashMessages->warning('flash.warning.cancelPatrolLeaderNotSupported');
@@ -330,14 +329,9 @@ class AdminParticipantController extends AbstractController
             $this->flashMessages->warning('flash.warning.cancelTechnicalTeamLeaderNotSupported');
         } elseif ($participant instanceof TechnicalTeamParticipant) {
             $this->flashMessages->warning('flash.warning.cancelTechnicalTeamParticipantNotSupported');
-        } elseif ($participant instanceof Participant) {
+        } else {
             $this->participantService->cancelParticipant($participant);
             $this->flashMessages->success('flash.success.participantCancelled');
-        } else {
-            $this->flashMessages->error('flash.error.participantNotCancelled');
-            $this->sentryCollector->collect(
-                new RuntimeException('Participant with ID ' . $participantId . ' during cancellation not found'),
-            );
         }
 
         return $this->redirect(

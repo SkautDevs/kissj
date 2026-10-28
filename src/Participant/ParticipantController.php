@@ -250,10 +250,9 @@ class ParticipantController extends AbstractController
     public function transferTicket(Request $request, Response $response, User $user): Response
     {
         $from = $this->participantRepository->getParticipantFromUser($user);
-        $parsedBody = $request->getParsedBody();
-        $tieCode = is_array($parsedBody) ? ($parsedBody['tieCode'] ?? null) : null;
+        $tieCode = $this->getParameterFromBody($request, 'tieCode');
 
-        if (!is_string($tieCode) || $tieCode === '') {
+        if ($tieCode === '') {
             $this->flashMessages->error('flash.error.transferFailed');
 
             return $this->redirect($request, $response, 'showTransferTicket');

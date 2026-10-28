@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\User\User;
 use kissj\User\UserLoginType;
@@ -44,6 +45,21 @@ class AdminRoleManagementCapacityTest extends AppTestCase
 
         self::assertSame(302, $response->getStatusCode());
         self::assertSame(500, $this->readTotalCapacity());
+    }
+
+    public function testRoleCheckboxIsSavedCheckedAndUnchecked(): void
+    {
+        $app = $this->getTestApp();
+        $this->loginAsEventAdmin($app->getContainer());
+        $istBody = ['role' => 'ist', 'maximalClosedIstsCount' => '20'];
+
+        $this->getTestApp(false)->handle(
+            $this->createRequest(self::ROLE_MANAGEMENT_URL, 'POST', $istBody + ['allowIsts' => '1']),
+        );
+        self::assertTrue($this->readTestSlugEvent()->allowIsts);
+
+        $this->getTestApp(false)->handle($this->createRequest(self::ROLE_MANAGEMENT_URL, 'POST', $istBody));
+        self::assertFalse($this->readTestSlugEvent()->allowIsts);
     }
 
     public function testZeroCapacityRendersAsZeroNotBlank(): void
@@ -195,9 +211,14 @@ class AdminRoleManagementCapacityTest extends AppTestCase
 
     private function readTotalCapacity(): ?int
     {
+        return $this->readTestSlugEvent()->maximalClosedParticipantsCount;
+    }
+
+    private function readTestSlugEvent(): Event
+    {
         $eventRepository = $this->getService($this->getTestApp(false), EventRepository::class);
 
-        return $this->getTestSlugEvent($eventRepository)->maximalClosedParticipantsCount;
+        return $this->getTestSlugEvent($eventRepository);
     }
 
     private function loginAsEventAdmin(ContainerInterface $container): void

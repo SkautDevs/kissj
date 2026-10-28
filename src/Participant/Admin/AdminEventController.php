@@ -283,19 +283,18 @@ class AdminEventController extends AbstractController
             throw new \RuntimeException('getParsedBody() did not return array');
         }
 
-        /** @var string $roleValue */
-        $roleValue = $body['role'] ?? '';
+        $roleValue = $this->getParameterFromBody($request, 'role');
 
         $saved = match ($roleValue) {
             'total' => $this->saveTotal($event, $body),
-            'pl' => $this->savePatrolLeader($event, $body),
+            'pl' => $this->savePatrolLeader($event, $body, $request),
             'pp' => $this->savePatrolParticipant($event, $body),
-            'tl' => $this->saveTroopLeader($event, $body),
+            'tl' => $this->saveTroopLeader($event, $body, $request),
             'tp' => $this->saveTroopParticipant($event, $body),
-            'ist' => $this->saveIst($event, $body),
-            'guest' => $this->saveGuest($event, $body),
-            'ot' => $this->saveOrganizingTeam($event, $body),
-            'ttl' => $this->saveTechnicalTeamLeader($event, $body),
+            'ist' => $this->saveIst($event, $body, $request),
+            'guest' => $this->saveGuest($event, $body, $request),
+            'ot' => $this->saveOrganizingTeam($event, $body, $request),
+            'ttl' => $this->saveTechnicalTeamLeader($event, $body, $request),
             default => throw new \RuntimeException('Unknown role: ' . $roleValue),
         };
 
@@ -330,14 +329,14 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function savePatrolLeader(Event $event, array $body): bool
+    private function savePatrolLeader(Event $event, array $body, Request $request): bool
     {
         $maximalPatrols = $body['maximalClosedPatrolsCount'] ?? '';
         if (!$this->areCapacitiesValid($maximalPatrols)) {
             return false;
         }
 
-        $event->allowPatrols = isset($body['allowPatrols']);
+        $event->allowPatrols = $this->isCheckboxCheckedInBody($request, 'allowPatrols');
         $event->maximalClosedPatrolsCount = $this->parseNullableInt($maximalPatrols);
 
         return true;
@@ -363,14 +362,14 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function saveTroopLeader(Event $event, array $body): bool
+    private function saveTroopLeader(Event $event, array $body, Request $request): bool
     {
         $maximalTroopLeaders = $body['maximalClosedTroopLeadersCount'] ?? '';
         if (!$this->areCapacitiesValid($maximalTroopLeaders)) {
             return false;
         }
 
-        $event->allowTroops = isset($body['allowTroops']);
+        $event->allowTroops = $this->isCheckboxCheckedInBody($request, 'allowTroops');
         $event->maximalClosedTroopLeadersCount = $this->parseNullableInt($maximalTroopLeaders);
 
         return true;
@@ -398,14 +397,14 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function saveIst(Event $event, array $body): bool
+    private function saveIst(Event $event, array $body, Request $request): bool
     {
         $maximalIsts = $body['maximalClosedIstsCount'] ?? '';
         if (!$this->areCapacitiesValid($maximalIsts)) {
             return false;
         }
 
-        $event->allowIsts = isset($body['allowIsts']);
+        $event->allowIsts = $this->isCheckboxCheckedInBody($request, 'allowIsts');
         $event->maximalClosedIstsCount = $this->parseNullableInt($maximalIsts);
 
         return true;
@@ -414,14 +413,14 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function saveGuest(Event $event, array $body): bool
+    private function saveGuest(Event $event, array $body, Request $request): bool
     {
         $maximalGuests = $body['maximalClosedGuestsCount'] ?? '';
         if (!$this->areCapacitiesValid($maximalGuests)) {
             return false;
         }
 
-        $event->allowGuests = isset($body['allowGuests']);
+        $event->allowGuests = $this->isCheckboxCheckedInBody($request, 'allowGuests');
         $event->maximalClosedGuestsCount = $this->parseNullableInt($maximalGuests);
 
         return true;
@@ -430,14 +429,14 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function saveOrganizingTeam(Event $event, array $body): bool
+    private function saveOrganizingTeam(Event $event, array $body, Request $request): bool
     {
         $maximalOrganizingTeam = $body['maximalClosedOrganizingTeamCount'] ?? '';
         if (!$this->areCapacitiesValid($maximalOrganizingTeam)) {
             return false;
         }
 
-        $event->allowOrganizingTeam = isset($body['allowOrganizingTeam']);
+        $event->allowOrganizingTeam = $this->isCheckboxCheckedInBody($request, 'allowOrganizingTeam');
         $event->maximalClosedOrganizingTeamCount = $this->parseNullableInt($maximalOrganizingTeam);
 
         return true;
@@ -446,9 +445,9 @@ class AdminEventController extends AbstractController
     /**
      * @param array<mixed> $body
      */
-    private function saveTechnicalTeamLeader(Event $event, array $body): bool
+    private function saveTechnicalTeamLeader(Event $event, array $body, Request $request): bool
     {
-        $event->allowTechnicalTeams = isset($body['allowTechnicalTeams']);
+        $event->allowTechnicalTeams = $this->isCheckboxCheckedInBody($request, 'allowTechnicalTeams');
 
         return true;
     }
