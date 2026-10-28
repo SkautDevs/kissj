@@ -32,6 +32,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testAttendanceHtmlListsParticipantsAndSkipsPreregistered(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $pdfGenerator = $this->getService($app, PdfGenerator::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
@@ -67,6 +68,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testProgrammeCsvContainsActiveRegistrationsOnly(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $exportService = $this->getService($app, ExportService::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -95,6 +97,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testSectionSubtitleIsShownInCsvAndAttendance(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $section = $this->createProgrammeSection($app->getContainer(), $event, 'Vapro');
@@ -118,6 +121,7 @@ class ProgrammeExportTest extends AppTestCase
     public function testGroupedActiveRegistrationsExcludeSoftDeletedAndForeignProgrammes(): void
     {
         $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
