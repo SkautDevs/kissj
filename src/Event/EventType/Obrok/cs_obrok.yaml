@@ -47,8 +47,8 @@ detail:
     preferredPosition-ist-helptext: "Vyber, co by tě bavilo. Volba je orientační, přesné rozdělení prací proběhne blíž před akcí."
     language-helptext: "Chceš dělat buddyho zahraničním servisákům? Napiš sem, jakými jazyky mluvíš."
     notice-helptext: "Bereš s sebou dítě do školky? Napiš sem jeho jméno a datum narození. Vyplňuje jen jeden z rodičů."
+    parentalConsent: "Souhlas zákonného zástupce s účastí na akci"
     parentalConsent-helptext: "PDF nebo obrázek, max 10 MB. Vzor ke stažení najdeš na <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
-    hospitalConsent-helptext: "PDF nebo obrázek, max 10 MB. Vzor ke stažení najdeš na <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
 
 deal:
     sfh: "Safe From Harm"

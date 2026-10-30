@@ -65,9 +65,6 @@ class EventTypeObrok extends EventType
         $ca->languages->required = false;
         $ca->languages->helpText = 'detail.language-helptext';
         $ca->parentalConsent->allowed = true;
-        $ca->hospitalConsent->allowed = true;
-        $ca->childWorkCert->allowed = true;
-        $ca->adultEventCert->allowed = true;
         $ca->notes->helpText = 'detail.notice-helptext';
 
         return $ca;
@@ -84,11 +81,9 @@ class EventTypeObrok extends EventType
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = true;
         $ca->parentalConsent->allowed = true;
-        $ca->hospitalConsent->allowed = true;
         $ca->emergencyContact->allowed = true;
         $ca->emergencyContact->ageGroup = AgeGroup::Under18;
         $ca->emergencyContact->editableAfterLock = true;
-        $ca->adultEventCert->allowed = true;
         $ca->arrivalDate->allowed = true;
 
         return $ca;
@@ -105,11 +100,9 @@ class EventTypeObrok extends EventType
         $ca->medicaments->allowed = true;
         $ca->printedHandbook->allowed = true;
         $ca->parentalConsent->allowed = true;
-        $ca->hospitalConsent->allowed = true;
         $ca->emergencyContact->allowed = true;
         $ca->emergencyContact->ageGroup = AgeGroup::Under18;
         $ca->emergencyContact->editableAfterLock = true;
-        $ca->adultEventCert->allowed = true;
         $ca->arrivalDate->allowed = true;
 
         return $ca;

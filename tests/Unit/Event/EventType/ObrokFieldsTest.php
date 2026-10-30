@@ -113,12 +113,37 @@ class ObrokFieldsTest extends TestCase
         self::assertSame('detail.notice-helptext', $ca->notes->helpText);
     }
 
-    public function testIstConsentsLinkTemplate(): void
+    public function testRolesUploadOnlyUnder18ParentalConsent(): void
     {
-        $ca = (new EventTypeObrok())->getContentArbiterIst();
+        $eventType = new EventTypeObrok();
 
-        self::assertSame('detail.parentalConsent-helptext', $ca->parentalConsent->helpText);
-        self::assertSame('detail.hospitalConsent-helptext', $ca->hospitalConsent->helpText);
+        foreach ([
+            $eventType->getContentArbiterIst(),
+            $eventType->getContentArbiterTroopLeader(),
+            $eventType->getContentArbiterTroopParticipant(),
+        ] as $ca) {
+            self::assertTrue($ca->parentalConsent->allowed);
+            self::assertTrue($ca->parentalConsent->required);
+            self::assertFalse($ca->parentalConsent->editableAfterLock);
+            self::assertSame(AgeGroup::Under18, $ca->parentalConsent->ageGroup);
+            self::assertSame('detail.parentalConsent-helptext', $ca->parentalConsent->helpText);
+            self::assertFalse($ca->hospitalConsent->allowed);
+            self::assertFalse($ca->childWorkCert->allowed);
+            self::assertFalse($ca->adultEventCert->allowed);
+        }
+    }
+
+    public function testParentalConsentUsesGuardianWording(): void
+    {
+        $translations = Yaml::parseFile(__DIR__ . '/../../../../src/Event/EventType/Obrok/cs_obrok.yaml');
+        self::assertIsArray($translations);
+        self::assertIsArray($translations['detail']);
+
+        self::assertSame(
+            'Souhlas zákonného zástupce s účastí na akci',
+            $translations['detail']['parentalConsent'],
+        );
+        self::assertArrayNotHasKey('hospitalConsent-helptext', $translations['detail']);
     }
 
     public function testTroopRolesHaveUnder18GuardianContact(): void
@@ -130,8 +155,6 @@ class ObrokFieldsTest extends TestCase
             self::assertTrue($ca->emergencyContact->required);
             self::assertTrue($ca->emergencyContact->editableAfterLock);
             self::assertSame(AgeGroup::Under18, $ca->emergencyContact->ageGroup);
-            self::assertSame('detail.parentalConsent-helptext', $ca->parentalConsent->helpText);
-            self::assertSame('detail.hospitalConsent-helptext', $ca->hospitalConsent->helpText);
         }
     }
 
