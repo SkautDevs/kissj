@@ -104,6 +104,34 @@ class ObrokFieldsTest extends TestCase
         self::assertTrue($ca->languages->allowed);
         self::assertFalse($ca->languages->required);
         self::assertSame('detail.language-helptext', $ca->languages->helpText);
+        self::assertSame('detail.language-ist-placeholder', $ca->languages->placeholder);
+    }
+
+    public function testGuestLanguagesKeepGeneralPlaceholder(): void
+    {
+        $ca = (new EventTypeObrok())->getContentArbiterGuest();
+
+        self::assertSame('detail.language-placeholder', $ca->languages->placeholder);
+    }
+
+    public function testBuddyAndKindergartenCopy(): void
+    {
+        $translations = Yaml::parseFile(__DIR__ . '/../../../../src/Event/EventType/Obrok/cs_obrok.yaml');
+        self::assertIsArray($translations);
+        self::assertIsArray($translations['detail']);
+
+        self::assertSame(
+            'Bereš s sebou děti do školky? Napiš sem jejich počet a věk, případně jméno partnera, pokud bude na akci.'
+            . ' Vyplňuje jen jeden z rodičů.'
+            . ' Údaje jsou orientační, finální přihlášení do školky proběhne blíž před akcí.',
+            $translations['detail']['notice-helptext'],
+        );
+        self::assertSame(
+            'Chceš dělat buddyho zahraničním servisákům? Napiš sem „ano“ a jaké jazyky zvládáš a na jaké úrovni.',
+            $translations['detail']['language-helptext'],
+        );
+        self::assertSame('ano, angličtina B1, němčina pasivně', $translations['detail']['language-ist-placeholder']);
+        self::assertArrayNotHasKey('language-placeholder', $translations['detail']);
     }
 
     public function testIstNotesHaveKindergartenHelpText(): void

@@ -45,8 +45,9 @@ detail:
     foodGlutenFree: "bez lepku (může obsahovat stopové množství)"
     arrivalDate-ist-helptext: "Datum příjezdu můžeš měnit i po odeslání přihlášky. Servisáci, kteří budou na akci od pondělí do neděle 17:00, dostanou vrácenou část poplatku."
     preferredPosition-ist-helptext: "Vyber, co by tě bavilo. Volba je orientační, přesné rozdělení prací proběhne blíž před akcí."
-    language-helptext: "Chceš dělat buddyho zahraničním servisákům? Napiš sem, jakými jazyky mluvíš."
-    notice-helptext: "Bereš s sebou dítě do školky? Napiš sem jeho jméno a datum narození. Vyplňuje jen jeden z rodičů."
+    language-helptext: "Chceš dělat buddyho zahraničním servisákům? Napiš sem „ano“ a jaké jazyky zvládáš a na jaké úrovni."
+    language-ist-placeholder: "ano, angličtina B1, němčina pasivně"
+    notice-helptext: "Bereš s sebou děti do školky? Napiš sem jejich počet a věk, případně jméno partnera, pokud bude na akci. Vyplňuje jen jeden z rodičů. Údaje jsou orientační, finální přihlášení do školky proběhne blíž před akcí."
     parentalConsent: "Souhlas zákonného zástupce s účastí na akci"
     parentalConsent-helptext: "PDF nebo obrázek, max 10 MB. Vzor ke stažení najdeš na <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
 

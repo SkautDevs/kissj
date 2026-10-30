@@ -64,6 +64,7 @@ class EventTypeObrok extends EventType
         $ca->languages->allowed = true;
         $ca->languages->required = false;
         $ca->languages->helpText = 'detail.language-helptext';
+        $ca->languages->placeholder = 'detail.language-ist-placeholder';
         $ca->parentalConsent->allowed = true;
         $ca->notes->helpText = 'detail.notice-helptext';
 

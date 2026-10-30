@@ -28,7 +28,8 @@ class ObrokChangeDetailsRenderTest extends AppTestCase
         $body = (string) $response->getBody();
         self::assertStringContainsString('dostanou vrácenou část poplatku', $body);
         self::assertStringContainsString('Chceš dělat buddyho zahraničním servisákům?', $body);
-        self::assertStringContainsString('Bereš s sebou dítě do školky?', $body);
+        self::assertStringContainsString('Bereš s sebou děti do školky?', $body);
+        self::assertStringContainsString('ano, angličtina B1, němčina pasivně', $body);
         self::assertStringContainsString('href="https://obrok.skaut.cz/souhlas"', $body);
         self::assertStringContainsString('PDF nebo obrázek, max 10 MB', $body);
         self::assertStringNotContainsString('PDF s potvrzením najdeš na našem webu', $body);
