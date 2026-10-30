@@ -51,6 +51,16 @@ class EventTypeObrok extends EventType
         $ca->food->allowed = true;
         $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
         $ca->arrivalDate->allowed = true;
+        $ca->arrivalDate->helpText = 'detail.arrivalDate-ist-helptext';
+        $ca->departureDate->allowed = true;
+        $ca->skills->allowed = true;
+        $ca->skills->required = false;
+        $ca->skills->editableAfterLock = true;
+        $ca->preferredPosition->allowed = true;
+        $ca->preferredPosition->required = false;
+        $ca->preferredPosition->editableAfterLock = true;
+        $ca->preferredPosition->helpText = 'detail.preferredPosition-ist-helptext';
+        $ca->preferredPosition->options = ContentArbiterItem::selfMappedOptions($this->getPositionOptions());
         $ca->languages->allowed = true;
         $ca->languages->required = false;
         $ca->languages->helpText = 'detail.language-helptext';
@@ -79,6 +89,7 @@ class EventTypeObrok extends EventType
         $ca->emergencyContact->ageGroup = AgeGroup::Under18;
         $ca->emergencyContact->editableAfterLock = true;
         $ca->adultEventCert->allowed = true;
+        $ca->arrivalDate->allowed = true;
 
         return $ca;
     }
@@ -99,6 +110,7 @@ class EventTypeObrok extends EventType
         $ca->emergencyContact->ageGroup = AgeGroup::Under18;
         $ca->emergencyContact->editableAfterLock = true;
         $ca->adultEventCert->allowed = true;
+        $ca->arrivalDate->allowed = true;
 
         return $ca;
     }

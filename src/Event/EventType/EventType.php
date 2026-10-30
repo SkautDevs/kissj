@@ -241,6 +241,7 @@ abstract class EventType
     public function getPositionOptions(): array
     {
         return [
+            'detail.position.registration',
             'detail.position.photo',
             'detail.position.kitchen',
             'detail.position.security',

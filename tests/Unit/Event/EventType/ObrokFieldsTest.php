@@ -16,7 +16,85 @@ class ObrokFieldsTest extends TestCase
     {
         $ca = (new EventTypeObrok())->getContentArbiterIst();
 
+        self::assertSame('detail.arrivalDate-ist-helptext', $ca->arrivalDate->helpText);
+    }
+
+    public function testIstDepartureDateIsRequiredAndEditableAfterLock(): void
+    {
+        $ca = (new EventTypeObrok())->getContentArbiterIst();
+
+        self::assertTrue($ca->departureDate->allowed);
+        self::assertTrue($ca->departureDate->required);
+        self::assertTrue($ca->departureDate->editableAfterLock);
+        self::assertSame('detail.departureDate-helptext', $ca->departureDate->helpText);
+    }
+
+    public function testIstSkillsAreOptionalAndEditableAfterLock(): void
+    {
+        $ca = (new EventTypeObrok())->getContentArbiterIst();
+
+        self::assertTrue($ca->skills->allowed);
+        self::assertFalse($ca->skills->required);
+        self::assertTrue($ca->skills->editableAfterLock);
+    }
+
+    public function testIstPreferredPositionIsOptionalWithRegistrationFirst(): void
+    {
+        $ca = (new EventTypeObrok())->getContentArbiterIst();
+
+        self::assertTrue($ca->preferredPosition->allowed);
+        self::assertFalse($ca->preferredPosition->required);
+        self::assertTrue($ca->preferredPosition->editableAfterLock);
+        self::assertSame('detail.preferredPosition-ist-helptext', $ca->preferredPosition->helpText);
+        self::assertSame(
+            [
+                'detail.position.registration' => 'detail.position.registration',
+                'detail.position.photo' => 'detail.position.photo',
+                'detail.position.kitchen' => 'detail.position.kitchen',
+                'detail.position.security' => 'detail.position.security',
+                'detail.position.hygiene' => 'detail.position.hygiene',
+                'detail.position.programme' => 'detail.position.programme',
+            ],
+            $ca->preferredPosition->options,
+        );
+    }
+
+    public function testTroopRolesHaveArrivalDateWithGeneralHelpText(): void
+    {
+        $eventType = new EventTypeObrok();
+
+        foreach ([$eventType->getContentArbiterTroopLeader(), $eventType->getContentArbiterTroopParticipant()] as $ca) {
+            self::assertTrue($ca->arrivalDate->allowed);
+            self::assertTrue($ca->arrivalDate->required);
+            self::assertTrue($ca->arrivalDate->editableAfterLock);
+            self::assertSame('detail.arrivalDate-helptext', $ca->arrivalDate->helpText);
+            self::assertFalse($ca->food->allowed);
+        }
+    }
+
+    public function testGuestArrivalDateHasGeneralHelpText(): void
+    {
+        $ca = (new EventTypeObrok())->getContentArbiterGuest();
+
         self::assertSame('detail.arrivalDate-helptext', $ca->arrivalDate->helpText);
+    }
+
+    public function testIstOnlyHelpTextsDoNotOverrideGeneralKeys(): void
+    {
+        $translations = Yaml::parseFile(__DIR__ . '/../../../../src/Event/EventType/Obrok/cs_obrok.yaml');
+        self::assertIsArray($translations);
+        self::assertIsArray($translations['detail']);
+
+        self::assertArrayNotHasKey('arrivalDate-helptext', $translations['detail']);
+        self::assertIsString($translations['detail']['arrivalDate-ist-helptext']);
+        self::assertStringStartsWith(
+            'Datum příjezdu můžeš měnit i po odeslání přihlášky. Servisáci',
+            $translations['detail']['arrivalDate-ist-helptext'],
+        );
+        self::assertSame(
+            'Vyber, co by tě bavilo. Volba je orientační, přesné rozdělení prací proběhne blíž před akcí.',
+            $translations['detail']['preferredPosition-ist-helptext'],
+        );
     }
 
     public function testIstLanguagesAreOptionalWithBuddyHelpText(): void
