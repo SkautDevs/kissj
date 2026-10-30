@@ -29,6 +29,16 @@ class EventTypeObrok extends EventType
     }
 
     #[\Override]
+    public function getPaidMailTranslationPrefix(Participant $participant): string
+    {
+        if ($participant instanceof Ist) {
+            return 'email.payment-successful-ist';
+        }
+
+        return parent::getPaidMailTranslationPrefix($participant);
+    }
+
+    #[\Override]
     public function getContentArbiterIst(): ContentArbiterIst
     {
         $ca = parent::getContentArbiterIst();

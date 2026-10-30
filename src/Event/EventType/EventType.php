@@ -317,6 +317,11 @@ abstract class EventType
         return true;
     }
 
+    public function getPaidMailTranslationPrefix(Participant $participant): string
+    {
+        return 'email.payment-successful';
+    }
+
     public function isMultiplePaymentsAllowed(): bool
     {
         return false;

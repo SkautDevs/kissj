@@ -179,6 +179,9 @@ readonly class Mailer
             $user->email,
             $this->translator->trans('email.payment-successful.subject'),
             'payment-successful',
+            [
+                'textPrefix' => $user->event->getEventType()->getPaidMailTranslationPrefix($participant),
+            ],
             embeds: $this->getEmbeddedQr($participant),
             participant: $participant,
         );
