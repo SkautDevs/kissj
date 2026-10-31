@@ -247,6 +247,7 @@ abstract class EventType
             'detail.position.security',
             'detail.position.hygiene',
             'detail.position.programme',
+            'detail.position.other',
         ];
     }
 

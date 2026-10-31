@@ -54,6 +54,7 @@ class ObrokFieldsTest extends TestCase
                 'detail.position.security' => 'detail.position.security',
                 'detail.position.hygiene' => 'detail.position.hygiene',
                 'detail.position.programme' => 'detail.position.programme',
+                'detail.position.other' => 'detail.position.other',
             ],
             $ca->preferredPosition->options,
         );
@@ -220,9 +221,22 @@ class ObrokFieldsTest extends TestCase
         self::assertIsArray($translations['detail']);
 
         self::assertSame(
-            'Preferuji tištěný handbook namísto digitálního',
+            'Preferuji tištěný handbook místo digitálního',
             $translations['detail']['printedHandbook-detail'],
         );
+    }
+
+    public function testHealthPlaceholderOmitsMedicaments(): void
+    {
+        $obrok = Yaml::parseFile(__DIR__ . '/../../../../src/Event/EventType/Obrok/cs_obrok.yaml');
+        $base = Yaml::parseFile(__DIR__ . '/../../../../src/Templates/cs.yaml');
+        self::assertIsArray($obrok);
+        self::assertIsArray($obrok['detail']);
+        self::assertIsArray($base);
+        self::assertIsArray($base['detail']);
+
+        self::assertSame('alergie, dlouhodobé problémy', $obrok['detail']['issues-placeholder']);
+        self::assertSame('alergie, pravidelné léky, dlouhodobé problémy', $base['detail']['issues-placeholder']);
     }
 
     public function testNoLinksToOldObrokWebsite(): void

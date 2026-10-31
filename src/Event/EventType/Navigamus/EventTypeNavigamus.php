@@ -153,6 +153,7 @@ class EventTypeNavigamus extends EventType
             'detail.position.site',
             'detail.position.security',
             'detail.position.programme',
+            'detail.position.other',
         ];
     }
 

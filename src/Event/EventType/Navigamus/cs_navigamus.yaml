@@ -7,6 +7,8 @@ chooseRole:
 detail:
     patrolNamePlaceholder: "stejný název jako pro předprogram, pokud se účastníte"
     contingentTitle: "Preferované loďstvo"
+    position:
+        other: "jiné - prosím upřesni v poznámce"
     subcamp:
         without: "nesdílíme materiál přes více oddílů - nemáme preferenci"
         orange: "🟧 oranžová"
