@@ -11,7 +11,7 @@
         {% if not useShortNaming %}
             {{ forms.renderDetail(item, person.getValueForField(item.slug), person, event) }}
         {% endif %}
-    {% elseif item.type.value == 'tshirtComposite' or item.type.value == 'checkbox' %}
+    {% elseif item.type.value == 'tshirtComposite' %}
         {{ forms.renderDetail(item, null, person, event) }}
     {% else %}
         {{ forms.renderDetail(item, person.getValueForField(item.slug), person, event) }}
