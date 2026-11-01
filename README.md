@@ -189,6 +189,18 @@ Backlog is in project GitHub issues, roadmap is in project GitHub milestones
  - run build `docker build . -f deploy/container_images/php/Containerfile-ubi -t quay.io/kissj/php-ubi`
  - pull new images from server `docker-compose pull`
 
+### How to get Skautis AppID
+
+ - request it by the [form](https://napoveda.skaut.cz/agenda/skautis/technicke-informace/ziskani-app-id/)
+ - URL aplikace: `https://kissj.net`
+ - URL po přihlášení: `https://kissj.net/v2/kissj/skautisRedirect` (no trailing slash)
+ - URL po odhlášení: `https://kissj.net/v2/kissj/events`
+ - one AppID serves all events on the host, Skautis sends the event slug back in `ReturnUrl`
+ - production needs a production AppID (`is.skaut.cz`), staging needs a test AppID (`test-is.skaut.cz`)
+   with `https://staging.kissj.net` URLs, matching `SKAUTIS_USE_TEST`
+ - put the AppID into `skautis_app_id` in the `event` table
+ - and voilá, its working!
+
 ### External deals usage
 
 Kissj can be used to collect data from external deals, momentarily from Google Forms.
