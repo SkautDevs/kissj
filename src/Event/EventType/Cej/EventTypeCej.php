@@ -313,9 +313,7 @@ class EventTypeCej extends EventType
             UserRole::ContingentAdminRo => [self::CONTINGENT_ROMANIA],
             UserRole::ContingentAdminEu => [self::CONTINGENT_EUROPEAN],
             UserRole::Participant,
-            UserRole::ProgrammeAdmin,
-            UserRole::ContingentAdminGb,
-            UserRole::ContingentAdminSw => [],
+            UserRole::ProgrammeAdmin => [],
         };
     }
 

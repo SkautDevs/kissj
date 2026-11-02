@@ -16,8 +16,6 @@ enum UserRole: string
     case ContingentAdminHu = 'contingentAdminHu';
     case ContingentAdminEu = 'contingentAdminEu';
     case ContingentAdminRo = 'contingentAdminRo';
-    case ContingentAdminGb = 'contingentAdminGb';
-    case ContingentAdminSw = 'contingentAdminSw';
 
     /**
      * @return list<UserRole>
@@ -33,8 +31,6 @@ enum UserRole: string
             self::ContingentAdminHu,
             self::ContingentAdminEu,
             self::ContingentAdminRo,
-            self::ContingentAdminGb,
-            self::ContingentAdminSw,
         ];
     }
 
@@ -52,8 +48,6 @@ enum UserRole: string
             self::Participant,
             self::IstAdmin,
             self::ProgrammeAdmin,
-            self::ContingentAdminGb,
-            self::ContingentAdminSw,
                 => false,
         };
     }
@@ -72,8 +66,6 @@ enum UserRole: string
             self::Participant,
             self::IstAdmin,
             self::ProgrammeAdmin,
-            self::ContingentAdminGb,
-            self::ContingentAdminSw,
                 => false,
         };
     }
@@ -92,8 +84,6 @@ enum UserRole: string
             self::ContingentAdminHu,
             self::ContingentAdminEu,
             self::ContingentAdminRo,
-            self::ContingentAdminGb,
-            self::ContingentAdminSw,
                 => false,
         };
     }

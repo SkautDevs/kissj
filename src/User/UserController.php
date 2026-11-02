@@ -246,8 +246,6 @@ class UserController extends AbstractController
             UserRole::ContingentAdminHu,
             UserRole::ContingentAdminEu,
             UserRole::ContingentAdminRo,
-            UserRole::ContingentAdminGb,
-            UserRole::ContingentAdminSw,
             => $this->redirect($request, $response, 'admin-dashboard', $routerEventSlug),
         };
     }
