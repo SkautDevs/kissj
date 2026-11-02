@@ -15,6 +15,7 @@ use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\Event\EventType\Ospz\EventTypeOspz;
+use kissj\Event\EventType\Sfm\EventTypeSfm;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -163,6 +164,7 @@ class EmailTranslationKeysTest extends TestCase
             'nsj' => new EventTypeNsj(),
             'obrok' => new EventTypeObrok(),
             'ospz' => new EventTypeOspz(),
+            'sfm' => new EventTypeSfm(),
             'wsj' => new EventTypeWsj(),
             'default' => new EventTypeDefault(),
         ];

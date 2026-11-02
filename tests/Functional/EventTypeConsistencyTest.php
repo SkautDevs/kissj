@@ -17,6 +17,7 @@ use kissj\Event\EventType\Navigamus\EventTypeNavigamus;
 use kissj\Event\EventType\Nsj\EventTypeNsj;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\Event\EventType\Ospz\EventTypeOspz;
+use kissj\Event\EventType\Sfm\EventTypeSfm;
 use kissj\Event\EventType\Wsj\EventTypeWsj;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -46,6 +47,7 @@ class EventTypeConsistencyTest extends AppTestCase
         'wsj' => EventTypeWsj::class,
         'obrok' => EventTypeObrok::class,
         'ospz' => EventTypeOspz::class,
+        'sfm' => EventTypeSfm::class,
         'jj' => EventTypeJj::class,
     ];
 
