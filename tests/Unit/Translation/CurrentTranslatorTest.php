@@ -7,6 +7,9 @@ namespace Tests\Unit\Translation;
 use kissj\Translation\CurrentTranslator;
 use kissj\Translation\TranslatorFactory;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\MessageCatalogueInterface;
+use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -71,8 +74,42 @@ class CurrentTranslatorTest extends TestCase
         self::assertSame('Odeslat registraci', $translator->trans('closeRegistration.title'));
     }
 
-    private function makeTranslator(TranslatorInterface&LocaleAwareInterface $delegate): CurrentTranslator
+    public function testTransGenderedUsesGenderedVariantDefinedInCurrentLocale(): void
     {
+        $translator = new CurrentTranslator(new TranslatorFactory('cs', null, false));
+        $translator->setLocale('cs');
+
+        self::assertSame(
+            'Pokud máš otázky, mohl bys odpovědi na ně najít na našem webu',
+            $translator->transGendered('email.layout.ifQuestion', '.man'),
+        );
+    }
+
+    public function testTransGenderedIgnoresGenderedVariantFromFallbackLocale(): void
+    {
+        $translator = new CurrentTranslator(new TranslatorFactory('cs', null, false));
+        $translator->setLocale('en');
+
+        self::assertSame(
+            'If you have any questions, you may seek the answer at our webpage',
+            $translator->transGendered('email.layout.ifQuestion', '.man'),
+        );
+    }
+
+    public function testTransGenderedWithEmptySuffixTranslatesNeutralKey(): void
+    {
+        $translator = new CurrentTranslator(new TranslatorFactory('cs', null, false));
+        $translator->setLocale('cs');
+
+        self::assertSame(
+            'Pokud máš otázky, můžeš odpovědi na ně najít na našem webu',
+            $translator->transGendered('email.layout.ifQuestion', ''),
+        );
+    }
+
+    private function makeTranslator(
+        TranslatorInterface&LocaleAwareInterface&TranslatorBagInterface $delegate,
+    ): CurrentTranslator {
         $translator = new CurrentTranslator(new TranslatorFactory('cs', null, false));
         $translator->setDelegate($delegate);
 
@@ -80,7 +117,7 @@ class CurrentTranslatorTest extends TestCase
     }
 }
 
-class RecordingTranslator implements TranslatorInterface, LocaleAwareInterface
+class RecordingTranslator implements TranslatorInterface, LocaleAwareInterface, TranslatorBagInterface
 {
     /** @var list<array{string, array<array-key, mixed>, ?string, ?string}> */
     public array $calls = [];
@@ -112,5 +149,18 @@ class RecordingTranslator implements TranslatorInterface, LocaleAwareInterface
     public function setLocale(string $locale): void
     {
         $this->locale = $locale;
+    }
+
+    public function getCatalogue(?string $locale = null): MessageCatalogueInterface
+    {
+        return new MessageCatalogue($locale ?? $this->locale, ['messages' => $this->translations]);
+    }
+
+    /**
+     * @return list<MessageCatalogueInterface>
+     */
+    public function getCatalogues(): array
+    {
+        return [$this->getCatalogue()];
     }
 }

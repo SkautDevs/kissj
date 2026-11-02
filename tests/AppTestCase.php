@@ -513,8 +513,8 @@ class AppTestCase extends TestCase
 
     /**
      * Several food-stats/export tests were written against the shared dev database's
-     * 'obrok37' fixture and pin its event type (EventTypeObrok::getLanguages() returns only
-     * 'cs', which those tests rely on for locale-independent assertions). Clone-and-relabel
+     * 'obrok37' fixture and pin its event type (Czech is EventTypeObrok's first language and test
+     * requests send no Accept-Language, so those tests can assert Czech text). Clone-and-relabel
      * like the helpers above, but also flip event_type - it has no entity setter (see
      * createTestEventFromDefault) so that needs the same raw-SQL route as setEventType().
      *

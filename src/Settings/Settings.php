@@ -481,25 +481,7 @@ class Settings
             $view->addExtension(new TranslationExtension($translator));
             $view->addExtension(new TwigExtension());
 
-            $view->getEnvironment()->addFilter(new TwigFilter(
-                'transGendered',
-                static function (string $key, string $suffix, array $params = []) use ($translator): string {
-                    if ($suffix === '') {
-                        return $translator->trans($key, $params);
-                    }
-
-                    // first try to translate genderized trans
-                    $gendered = $key . $suffix;
-                    $result = $translator->trans($gendered, $params);
-
-                    if ($result !== $gendered) {
-                        return $result;
-                    }
-
-                    // when result is the same, genderized translation is not found and trans key is returned
-                    return $translator->trans($key, $params);
-                },
-            ));
+            $view->getEnvironment()->addFilter(new TwigFilter('transGendered', $translator->transGendered(...)));
 
             return $view;
         };

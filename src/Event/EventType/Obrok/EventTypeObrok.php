@@ -143,6 +143,7 @@ class EventTypeObrok extends EventType
     {
         return [
             'cs' => __DIR__ . '/cs_obrok.yaml',
+            'en' => __DIR__ . '/en_obrok.yaml',
         ];
     }
 
@@ -208,6 +209,7 @@ class EventTypeObrok extends EventType
     {
         return [
             'cs' => '🇨🇿 Česky',
+            'en' => '🇬🇧 English',
         ];
     }
 

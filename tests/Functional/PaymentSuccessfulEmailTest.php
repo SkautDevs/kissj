@@ -9,6 +9,7 @@ use kissj\Event\EventRepository;
 use kissj\Mailer\Mailer;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Translation\CurrentTranslator;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -35,8 +36,6 @@ class PaymentSuccessfulEmailTest extends AppTestCase
         $app = $this->getTestApp();
         $html = $this->sendPaidMailForObrokParticipant($app, 'ist');
 
-        self::assertStringContainsString('těšíme se na tebe v servis týmu', $html);
-        self::assertStringContainsString('kód pro přednostní přihlášení patrol', $html);
         self::assertStringContainsString('<strong>Co bude dál?</strong>', $html);
         self::assertStringContainsString(
             'těšíme se na tebe v servis týmu! Ve své registraci najdeš i kód pro přednostní přihlášení patrol.',
@@ -52,6 +51,23 @@ class PaymentSuccessfulEmailTest extends AppTestCase
         self::assertStringNotContainsString('email.payment-successful-ist', $html);
     }
 
+    public function testObrokIstMailInEnglish(): void
+    {
+        $app = $this->getTestApp();
+        $html = $this->sendPaidMailForObrokParticipant($app, 'ist', 'en');
+
+        self::assertStringContainsString('<a href="mailto:servis@obrok.skaut.cz">servis@obrok.skaut.cz</a>', $html);
+        self::assertStringContainsString('<strong>What happens next?</strong>', $html);
+        self::assertStringContainsString(
+            'In your registration you will also find the code for priority registration of patrols.',
+            $html,
+        );
+        self::assertStringNotContainsString('servis týmu', $html);
+        self::assertStringNotContainsString('email.payment-successful-ist', $html);
+        self::assertStringContainsString('If you have any questions, you may seek the answer at our webpage', $html);
+        self::assertStringNotContainsString('mohl bys', $html);
+    }
+
     public function testObrokTroopLeaderMailKeepsObrokText(): void
     {
         $app = $this->getTestApp();
@@ -61,10 +77,19 @@ class PaymentSuccessfulEmailTest extends AppTestCase
         self::assertStringNotContainsString('servis týmu', $html);
     }
 
+    public function testObrokTroopLeaderMailInEnglish(): void
+    {
+        $app = $this->getTestApp();
+        $html = $this->sendPaidMailForObrokParticipant($app, 'tl', 'en');
+
+        self::assertStringContainsString('Thank you for registering for Obrok', $html);
+        self::assertStringNotContainsString('Děkujeme, že ses přihlásil na Obrok', $html);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */
-    private function sendPaidMailForObrokParticipant(App $app, string $role): string
+    private function sendPaidMailForObrokParticipant(App $app, string $role, ?string $locale = null): string
     {
         $container = $app->getContainer();
         $this->containerForCleanup = $container;
@@ -75,6 +100,9 @@ class PaymentSuccessfulEmailTest extends AppTestCase
         $this->initializeMailerSettings($app, $event);
 
         $app->handle($this->createRequest('/v2/event/test-event-slug'));
+        if ($locale !== null) {
+            $this->getService($app, CurrentTranslator::class)->setLocale($locale);
+        }
 
         $created = $this->createParticipantWithRole($container, $role, $event);
         $created->gender = 'man';

@@ -1,0 +1,58 @@
+userCustomHelp:
+    statusApproved: "Your registration has been approved. Now you just need to pay the registration fee for your troop."
+    statusApprovedTp: "Your registration has been approved. Now only your troop leader needs to pay the registration fee."
+email:
+    payment-successful:
+        enjoy: "Thank you for registering for Obrok and paying the registration fee. Enjoy the wait for the event, and above all get your tent, backpack and good mood ready!"
+    payment-successful-ist:
+        received: "Your payment for"
+        thanks: " has reached us. Thank you, we are looking forward to having you in the service team! In your registration you will also find the code for priority registration of patrols."
+        qrInfo: "Save this QR code and keep it handy, you will need it to enter the event:"
+        enjoy: "<strong>What happens next?</strong><br/>We will send you more information by email, including the choice of the job you will do at Obrok. It will not be right away, so do not worry if you do not hear from us for a while. In the meantime, please keep an eye on your inbox (and your spam folder, just in case) so you do not miss anything.<br/><br/>If you have any questions, write to us at <a href=\"mailto:servis@obrok.skaut.cz\">servis@obrok.skaut.cz</a>.<br/><br/>Until then, enjoy the wait for the event, and above all get your tent, backpack and good mood ready!"
+flash:
+    warning:
+        fullRegistration: "We are full and you are below the line, so we cannot register you yet. Try again later, maybe someone will not pay the registration fee in time."
+        noLock: "Cannot lock the registration - some details are wrong or missing (maybe the troop name is missing?)"
+login:
+    registrationFor: "Registration for "
+    email: "Email"
+    sendMeEmail: "Send login email"
+    howItWorks: "How does logging in work?"
+    submitEmail: "Log in with your skautIS account"
+    followButton: "Fill in your details"
+    fillDetails: "Connect with your troop"
+    sentForApproval: "Send your registration for approval"
+    waitForApproval: "Wait for approval, and if you are a troop leader, also for payment details"
+    pay: "Pay and go to Obrok!"
+    more: "More information about registration"
+    skautis: "Log in via skautIS"
+login-help:
+    text: "<h2>The kissj login system</h2><h3>How does it actually work?</h3><p>At Obrok, you log in to the kissj registration system with your skautIS account.</p><p>After you log in with your skautIS account, kissj takes you to a page where you can fill in your registration.</p><p>You stay logged in until you log out manually.</p><p>After you log out, nobody can access your information, not even from the same device.</p><h3>How do I connect with my troop?</h3><p>When you log in, you get a personal code. Send it to your troop leader, fill in all the required information and then lock your registration.</p><p>Your troop leader adds you to their troop when they log in. Once everyone is added to the troop, the troop leader locks their registration too.</p><h3>Still not sure what to do?</h3><p>Have a look at the <a href='https://obrok.skaut.cz'>Obrok website</a>, where we have prepared a detailed <a href='https://obrok.skaut.cz/registrace'>registration guide</a> for you.</p><h3>Questions?</h3><p>If you run into a problem with logging in, write an email to the event organisers, they will surely do their best to help you.</p>"
+    backToLogin: "Back to login"
+
+role:
+    guest: "coming with a special unit"
+
+detail:
+    patrolName: "Troop name"
+    patrolNamePlaceholder: "Name of your troop"
+    emergencyContact: "Parent or legal guardian contact (name + phone)"
+    emergencyContact-placeholder: "Jana Nováková, +420 603 123 456"
+    printedHandbook-detail: "I prefer a printed handbook instead of a digital one"
+    issues-placeholder: "allergies, long-term health problems"
+    foodLactoseFree: "lactose free (may contain traces)"
+    foodGlutenFree: "gluten free (may contain traces)"
+    arrivalDate-ist-helptext: "You can change your arrival date even after sending your registration. Service team members who stay at the event from Monday until Sunday 17:00 will get part of the fee refunded."
+    preferredPosition-ist-helptext: "Choose what you would enjoy. Your choice is indicative, the exact job assignment will happen closer to the event."
+    language-helptext: "Would you like to be a buddy for international service team members? Write \"yes\" here and which languages you speak and at what level."
+    language-ist-placeholder: "yes, English B1, passive German"
+    notice-helptext: "Are you bringing children to the kindergarten? Write their number and ages here, and your partner's name if they will be at the event. Only one of the parents fills this in. The details are indicative, the final kindergarten registration will happen closer to the event."
+    parentalConsent: "Parental consent for participation in the event"
+    parentalConsent-helptext: "PDF or image, max 10 MB. You can download the template at <a href=\"https://obrok.skaut.cz/souhlas\" target=\"_blank\">obrok.skaut.cz/souhlas</a>."
+
+deal:
+    sfh: "Safe From Harm"
+    sfh-missing: "Safe From Harm is missing, please fill it in"
+    sfh-button: "Fill in the Safe From Harm questionnaire"
+    sfh-doneBadly: "Safe From Harm is filled in, but unfortunately not correctly (%date%). Please try to fill it in again"
+    sfh-done: "Safe From Harm is filled in, thank you!"

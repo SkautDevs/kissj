@@ -126,8 +126,8 @@ class FoodStatsAdminPageTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string)$response->getBody();
-        // obrok37 is event type 'obrok', whose getLanguages() exposes only 'cs', so the
-        // localization middleware always renders Czech regardless of Accept-Language.
+        // obrok37 is event type 'obrok', whose first language is 'cs', and this request sends no
+        // Accept-Language, so the localization middleware renders Czech.
 
         // 'aktuálně přítomní na akci' and 'celkem' are static template markup that renders
         // regardless of the data passed in, so they alone can't prove data actually reached
