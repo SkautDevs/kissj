@@ -38,6 +38,16 @@ class PaymentSuccessfulEmailTest extends AppTestCase
         self::assertStringContainsString('těšíme se na tebe v servis týmu', $html);
         self::assertStringContainsString('kód pro přednostní přihlášení patrol', $html);
         self::assertStringContainsString('<strong>Co bude dál?</strong>', $html);
+        self::assertStringContainsString(
+            'těšíme se na tebe v servis týmu! Ve své registraci najdeš i kód pro přednostní přihlášení patrol.',
+            $html,
+        );
+        self::assertStringContainsString(
+            '<p>Ulož si tenhle QR kód, ať ho máš po ruce, protože ho budeš potřebovat při vstupu na akci:</p>',
+            $html,
+        );
+        self::assertStringContainsString('<a href="mailto:servis@obrok.skaut.cz">servis@obrok.skaut.cz</a>', $html);
+        self::assertStringContainsString('Do té doby si užij čekání na akci', $html);
         self::assertStringNotContainsString('Děkujeme, že ses přihlásil na Obrok', $html);
         self::assertStringNotContainsString('email.payment-successful-ist', $html);
     }
