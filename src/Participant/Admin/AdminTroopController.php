@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
+use kissj\Authorization\AllowContingentAdmins;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\AbstractController;
 use kissj\Event\Event;
@@ -24,6 +25,7 @@ class AdminTroopController extends AbstractController
     ) {
     }
 
+    #[AllowContingentAdmins]
     public function showTroopManagement(
         Response $response,
         Event $event,
@@ -42,6 +44,7 @@ class AdminTroopController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function tieTogether(
         Request $request,
         Response $response,
@@ -63,6 +66,7 @@ class AdminTroopController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function untie(
         Request $request,
         Response $response,
@@ -82,6 +86,7 @@ class AdminTroopController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function swapTroopLeader(
         Request $request,
         Response $response,

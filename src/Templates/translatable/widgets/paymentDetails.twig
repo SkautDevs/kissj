@@ -1,9 +1,11 @@
 <h4>{{ person.getFullName }}</h4>
 {{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b><br/>
-<a
-    href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
-    class="btn btn-small btn-mini"
->{{ 'mend-admin.addPayment' | trans }}</a></br>
+{% if canAccessRoute('admin-show-add-new-payment') %}
+    <a
+        href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
+        class="btn btn-small btn-mini"
+    >{{ 'mend-admin.addPayment' | trans }}</a></br>
+{% endif %}
 {% if ca.contingent.allowed %}
     {{ 'detail.contingentTitle' | trans }}: <b>{{ person.getContingent|trans }}</b><br/>
 {% endif %}{% if ca.notes.allowed %}

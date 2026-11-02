@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Functional;
+namespace Tests\Unit\User;
 
 use kissj\User\UserRole;
-use Tests\AppTestCase;
+use PHPUnit\Framework\TestCase;
 
-class RemovedContingentAdminRolesTest extends AppTestCase
+class RemovedContingentAdminRolesTest extends TestCase
 {
     public function testRemovedRolesAreGone(): void
     {

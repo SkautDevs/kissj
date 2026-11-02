@@ -44,8 +44,6 @@ class CrossEventGuardTest extends AppTestCase
         '/v3/event/{eventSlug}/admin',
     ];
 
-    private const string BANK_PAYMENT_PATTERN_FRAGMENT = '/payments/auto/setPayment';
-
     private const array FILLER_PLACEHOLDERS = [
         '{dealSlug}' => '1',
     ];
@@ -360,7 +358,7 @@ class CrossEventGuardTest extends AppTestCase
         if ($hasParticipantId) {
             return CrossEventIdKind::Participant;
         }
-        if ($hasPaymentId && str_contains($pattern, self::BANK_PAYMENT_PATTERN_FRAGMENT)) {
+        if (str_contains($pattern, '{bankPaymentId}')) {
             return CrossEventIdKind::BankPayment;
         }
         if ($hasPaymentId) {
@@ -372,13 +370,11 @@ class CrossEventGuardTest extends AppTestCase
 
     private function fillIdPlaceholders(string $pattern, CrossEventForeignFixture $fixture): string
     {
-        $paymentId = $this->classifyId($pattern) === CrossEventIdKind::BankPayment
-            ? $fixture->bankPaymentId
-            : $fixture->paymentId;
         $filled = strtr($pattern, [
             '{eventSlug}' => self::OWN_EVENT_SLUG,
             '{participantId}' => (string)$fixture->participantId,
-            '{paymentId}' => (string)$paymentId,
+            '{paymentId}' => (string)$fixture->paymentId,
+            '{bankPaymentId}' => (string)$fixture->bankPaymentId,
             '{programmeId}' => (string)$fixture->programmeId,
             '{sectionId}' => (string)$fixture->programmeSectionId,
             '{direction:up|down}' => 'up',

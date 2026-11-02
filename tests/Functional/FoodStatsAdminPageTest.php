@@ -110,15 +110,7 @@ class FoodStatsAdminPageTest extends AppTestCase
         $userRepository->persist($user);
         $this->enterAndTrackForCleanup($participantService, $participant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        // createAdminUser() builds the admin against event 1, but LoggedOnlyMiddleware logs the
-        // user out when their event does not match the event in the URL, so it must be repointed.
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
+        $app = $this->loginAdminForEvent($app, $event);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/admin/foodStats',
@@ -159,13 +151,7 @@ class FoodStatsAdminPageTest extends AppTestCase
 
         // admin session must exist before the "before" snapshot below, since that request
         // needs to reach the admin-only foodStats page too
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
+        $app = $this->loginAdminForEvent($app, $event);
 
         // the shared dev DB may already hold other "other diet" participants, so the count is
         // asserted as a delta across a fixture entry rather than against a fixed or
@@ -260,13 +246,7 @@ class FoodStatsAdminPageTest extends AppTestCase
         $userRepository->persist($user);
         $this->enterAndTrackForCleanup($participantService, $participant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
+        $app = $this->loginAdminForEvent($app, $event);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/admin/foodStats',
@@ -327,13 +307,7 @@ class FoodStatsAdminPageTest extends AppTestCase
         $userRepository->persist($user);
         $this->enterAndTrackForCleanup($participantService, $participant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
+        $app = $this->loginAdminForEvent($app, $event);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/admin/foodStats',
@@ -407,13 +381,7 @@ class FoodStatsAdminPageTest extends AppTestCase
         $userRepository->persist($ppUser);
         $this->enterAndTrackForCleanup($participantService, $patrolParticipant);
 
-        $adminUser = $this->createAdminUser($app);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-        $app = $this->getTestApp(false);
+        $app = $this->loginAdminForEvent($app, $event);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/' . $event->slug . '/admin/foodStats',

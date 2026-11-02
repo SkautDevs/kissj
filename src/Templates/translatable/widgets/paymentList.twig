@@ -14,26 +14,34 @@
         {% endif %}
         <br/>
         {% if payment.status.value == 'waiting' %}
-            <a href="{{ url_for('admin-cancel-payment-show',
-                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-               class="btn btn-grey btn-small">{{ 'payments-admin.cancel' | trans }}</a>
-            <br/>
-            <br/>
-            <a href="{{ url_for('admin-show-change-payment-price',
-                {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-               class="btn btn-grey btn-small">{{ 'payments-admin.changePrice' | trans }}</a>
-            <br/>
-            <br/>
-            <form method="post"
-                  action="{{ url_for('admin-confirm-payment', {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                  class="js-ajax-submit"
-                  data-ajax-action="{{ url_for('admin-confirm-payment-json', {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
-                  data-remove-target=".payment"
-                  data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
-                <input type="submit"
-                       value="{{ 'payments-admin.confirm' | trans }}"
-                       class="btn btn-small">
-            </form><br/>
+            {% if canAccessRoute('admin-cancel-payment-show') %}
+                <a href="{{ url_for('admin-cancel-payment-show',
+                    {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{{ 'payments-admin.cancel' | trans }}</a>
+                <br/>
+                <br/>
+            {% endif %}
+            {% if canAccessRoute('admin-show-change-payment-price') %}
+                <a href="{{ url_for('admin-show-change-payment-price',
+                    {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                   class="btn btn-grey btn-small">{{ 'payments-admin.changePrice' | trans }}</a>
+                <br/>
+                <br/>
+            {% endif %}
+            {% if canAccessRoute('admin-confirm-payment') %}
+                <form method="post"
+                      action="{{ url_for('admin-confirm-payment',
+                          {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                      class="js-ajax-submit"
+                      data-ajax-action="{{ url_for('admin-confirm-payment-json',
+                          {'paymentId': payment.id, 'eventSlug': event.slug}) }}"
+                      data-remove-target=".payment"
+                      data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
+                    <input type="submit"
+                           value="{{ 'payments-admin.confirm' | trans }}"
+                           class="btn btn-small">
+                </form><br/>
+            {% endif %}
         {% endif %}
     </div>
 {% endfor %}

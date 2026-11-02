@@ -6,6 +6,8 @@ namespace kissj\Entry;
 
 use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
+use kissj\Authorization\AllowContingentAdmins;
+use kissj\Authorization\AllowIstAdmin;
 use kissj\Entry\DTO\EntryAlteredParticipantDTO;
 use kissj\Entry\DTO\EntryAlteredParticipantsDTO;
 use kissj\Entry\DTO\EntryDateTimeDTO;
@@ -165,6 +167,8 @@ class EntryController extends AbstractController
         );
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function entryFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
@@ -181,6 +185,8 @@ class EntryController extends AbstractController
         );
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function unentryFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
@@ -197,6 +203,8 @@ class EntryController extends AbstractController
         );
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function unleaveFromAdmin(Request $request, Response $response, Event $event, int $participantId): Response
     {
         $participant = $this->participantRepository->getParticipantById($participantId, $event);

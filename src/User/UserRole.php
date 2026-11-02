@@ -22,9 +22,15 @@ enum UserRole: string
      */
     public static function adminRoles(): array
     {
+        return [self::Admin, self::IstAdmin, ...self::contingentAdminRoles()];
+    }
+
+    /**
+     * @return list<UserRole>
+     */
+    public static function contingentAdminRoles(): array
+    {
         return [
-            self::Admin,
-            self::IstAdmin,
             self::ContingentAdminCs,
             self::ContingentAdminSk,
             self::ContingentAdminPl,
@@ -32,42 +38,6 @@ enum UserRole: string
             self::ContingentAdminEu,
             self::ContingentAdminRo,
         ];
-    }
-
-    public function isEligibleToHandlePayments(): bool
-    {
-        return match ($this) {
-            self::Admin,
-            self::ContingentAdminCs,
-            self::ContingentAdminPl,
-            self::ContingentAdminHu,
-            self::ContingentAdminEu,
-            self::ContingentAdminRo,
-            self::ContingentAdminSk
-                => true,
-            self::Participant,
-            self::IstAdmin,
-            self::ProgrammeAdmin,
-                => false,
-        };
-    }
-
-    public function isEligibleToManageTroops(): bool
-    {
-        return match ($this) {
-            self::Admin,
-            self::ContingentAdminCs,
-            self::ContingentAdminPl,
-            self::ContingentAdminHu,
-            self::ContingentAdminEu,
-            self::ContingentAdminRo,
-            self::ContingentAdminSk
-                => true,
-            self::Participant,
-            self::IstAdmin,
-            self::ProgrammeAdmin,
-                => false,
-        };
     }
 
     public function isEligibleToManageProgrammes(): bool

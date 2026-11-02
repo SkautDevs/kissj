@@ -21,10 +21,4 @@ class UserRoleProgrammeTest extends TestCase
         self::assertFalse(UserRole::IstAdmin->isEligibleToManageProgrammes());
         self::assertFalse(UserRole::Participant->isEligibleToManageProgrammes());
     }
-
-    public function testProgrammeAdminCannotHandlePaymentsOrTroops(): void
-    {
-        self::assertFalse(UserRole::ProgrammeAdmin->isEligibleToHandlePayments());
-        self::assertFalse(UserRole::ProgrammeAdmin->isEligibleToManageTroops());
-    }
 }

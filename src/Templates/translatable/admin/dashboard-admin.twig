@@ -147,13 +147,15 @@
             <div>
                 <a href="{{ url_for('admin-show-open', {'eventSlug': event.slug}) }}"
                    class="btn">{{ 'dashboard-admin.open' | trans }}</a><br/>
-                <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
-                   class="btn">{{ 'dashboard-admin.approving' | trans }}</a><br/>
-                {% if user.role.isEligibleToHandlePayments and event.automaticPaymentPairing %}
+                {% if canAccessRoute('admin-show-approving') %}
+                    <a href="{{ url_for('admin-show-approving', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.approving' | trans }}</a><br/>
+                {% endif %}
+                {% if event.automaticPaymentPairing and canAccessRoute('admin-show-auto-payments') %}
                     <a href="{{ url_for('admin-show-auto-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.newPayments' | trans }}</a><br/>
                 {% endif %}
-                {% if user.role.isEligibleToHandlePayments %}
+                {% if canAccessRoute('admin-show-payments') %}
                     <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.confirmPayments' | trans }}</a><br/>
                 {% endif %}
@@ -161,23 +163,23 @@
                    class="btn">{{ 'dashboard-admin.showPaid' | trans }}</a><br/>
             </div>
             <div>
-                {% if event.allowTroops and user.role.isEligibleToManageTroops %}
+                {% if event.allowTroops and canAccessRoute('admin-troop-management') %}
                     <a href="{{ url_for('admin-troop-management', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.troopManagement' | trans }}</a><br/>    
                 {% endif %}
-                {% if event.eventType.showFoodStats() %}
+                {% if event.eventType.showFoodStats() and canAccessRoute('admin-food-stats') %}
                     <a href="{{ url_for('admin-food-stats', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.foodCount' | trans }}</a><br/>
                 {% endif %}
-                {% if user.role.isEligibleToHandlePayments %}
+                {% if canAccessRoute('admin-finances') %}
                     <a href="{{ url_for('admin-finances', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.financesReport' | trans }}</a><br/>
                 {% endif %}
-                {% if event.allowOrganizingTeam %}
+                {% if event.allowOrganizingTeam and canAccessRoute('admin-organizing-team') %}
                     <a href="{{ url_for('admin-organizing-team', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.organizingTeam' | trans }}</a><br/>
                 {% endif %}
-                {% if event.allowTechnicalTeams %}
+                {% if event.allowTechnicalTeams and canAccessRoute('admin-technical-teams') %}
                     <a href="{{ url_for('admin-technical-teams', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.technicalTeams' | trans }}</a><br/>
                 {% endif %}
@@ -185,31 +187,39 @@
                     <a href="{{ url_for('admin-programmes', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.programmes' | trans }}</a><br/>
                 {% endif %}
-                <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
-                   class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>
-                {% if event.eventType.getSubcamps() is not empty %}
+                {% if canAccessRoute('admin-role-management') %}
+                    <a href="{{ url_for('admin-role-management', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.roleManagement' | trans }}</a><br/>
+                {% endif %}
+                {% if event.eventType.getSubcamps() is not empty and canAccessRoute('admin-values-import') %}
                     <a href="{{ url_for('admin-values-import', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'adminValues.import.headline' | trans }}</a><br/>
                 {% endif %}
-                <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
-                   class="btn">{{ 'dashboard-admin.exportMedData' | trans }}</a><br/>
-                <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
-                   class="btn">{{ 'dashboard-admin.exportEmailsPaid' | trans }}</a><br/>
-                <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"
-                   class="btn">{{ 'dashboard-admin.exportFullData' | trans }}</a><br/>
-                {% if event.allowPatrols %}
+                {% if canAccessRoute('admin-export-health') %}
+                    <a href="{{ url_for('admin-export-health', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.exportMedData' | trans }}</a><br/>
+                {% endif %}
+                {% if canAccessRoute('admin-export-paid') %}
+                    <a href="{{ url_for('admin-export-paid', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.exportEmailsPaid' | trans }}</a><br/>
+                {% endif %}
+                {% if canAccessRoute('admin-export-full') %}
+                    <a href="{{ url_for('admin-export-full', {'eventSlug': event.slug}) }}"
+                       class="btn">{{ 'dashboard-admin.exportFullData' | trans }}</a><br/>
+                {% endif %}
+                {% if event.allowPatrols and canAccessRoute('admin-export-patrols-roster') %}
                     <a href="{{ url_for('admin-export-patrols-roster', {'eventSlug': event.slug}) }}"
                        target="_blank"
                        class="btn">{{ 'dashboard-admin.exportPatrolsRoster' | trans }}</a><br/>
                 {% endif %}
-                {% if user.isTopAdmin and event.eventType.isBadgeGenerationAllowed %}
+                {% if event.eventType.isBadgeGenerationAllowed and canAccessRoute('admin-badges-form') %}
                     <a href="{{ url_for('admin-badges-form', {'eventSlug': event.slug}) }}"
                        class="btn">{{ 'dashboard-admin.generateBadges' | trans }}</a><br/>
                 {% endif %}
             </div>
         </div>
     </div>
-    {% if user.role.isEligibleToHandlePayments %}
+    {% if canAccessRoute('admin-show-transfer-payment') %}
         <div class="card card-half">
             <form method="GET" action="{{ url_for('admin-show-transfer-payment', {'eventSlug': event.slug}) }}" class="form-group">
                 <label class="form-group">{{ 'dashboard-admin.emailFrom' | trans }}:<br/>

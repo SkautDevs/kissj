@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace kissj\Deal;
 
 use kissj\AbstractController;
+use kissj\Authorization\AllowContingentAdmins;
+use kissj\Authorization\AllowIstAdmin;
 use kissj\Participant\ParticipantRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -48,6 +50,8 @@ class DealController extends AbstractController
         return $response->withStatus(201);
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function setDealAsDone(
         Request $request,
         Response $response,

@@ -8,10 +8,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\User\User;
-use kissj\User\UserLoginType;
 use kissj\User\UserRepository;
-use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
@@ -26,8 +23,7 @@ class AdminUnleaveParticipantTest extends AppTestCase
         $app = $this->getTestApp();
         $container = $app->getContainer();
 
-        $adminUser = $this->createEventAdmin($container);
-        $_SESSION['user'] = ['id' => $adminUser->id];
+        $this->loginAdminForEvent($app, $this->getTestSlugEvent($this->getService($app, EventRepository::class)));
 
         $participant = $this->createIstWithLeaveDate($container, UserStatus::Paid);
 
@@ -52,8 +48,7 @@ class AdminUnleaveParticipantTest extends AppTestCase
         $app = $this->getTestApp();
         $container = $app->getContainer();
 
-        $adminUser = $this->createEventAdmin($container);
-        $_SESSION['user'] = ['id' => $adminUser->id];
+        $this->loginAdminForEvent($app, $this->getTestSlugEvent($this->getService($app, EventRepository::class)));
 
         $participant = $this->createIstWithLeaveDate($container, UserStatus::Paid);
 
@@ -69,8 +64,7 @@ class AdminUnleaveParticipantTest extends AppTestCase
         $app = $this->getTestApp();
         $container = $app->getContainer();
 
-        $adminUser = $this->createEventAdmin($container);
-        $_SESSION['user'] = ['id' => $adminUser->id];
+        $this->loginAdminForEvent($app, $this->getTestSlugEvent($this->getService($app, EventRepository::class)));
 
         $participant = $this->createIstWithLeaveDate($container, UserStatus::Open);
 
@@ -109,23 +103,5 @@ class AdminUnleaveParticipantTest extends AppTestCase
         $participantRepository->persist($participant);
 
         return $participant;
-    }
-
-    private function createEventAdmin(ContainerInterface $container): User
-    {
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-        /** @var EventRepository $eventRepository */
-        $eventRepository = $container->get(EventRepository::class);
-
-        $user = new User();
-        $user->event = $this->getTestSlugEvent($eventRepository);
-        $user->role = UserRole::Admin;
-        $user->email = 'admin-unleave-' . bin2hex(random_bytes(4)) . '@example.com';
-        $user->loginType = UserLoginType::Email;
-        $user->status = UserStatus::Open;
-        $userRepository->persist($user);
-
-        return $user;
     }
 }

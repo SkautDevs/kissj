@@ -963,7 +963,6 @@ flash:
     error:
         actionFailed: "Akce se nezdařila. Zkuste to prosím znovu."
         adminOnly: "Sorry bro, pouze pro administrátory"
-        adminPaymentsOnly: "Sorry bro, pouze pro administrátory s pravomocí plateb"
         plOnly: "Pardon, nejsi přihlášený jako vedoucí patroly"
         ttlOnly: "Tato stránka je jen pro vedoucí technického týmu."
         tlOnly: "Pardon, nejsi přihlášený jako vedoucí skupiny"

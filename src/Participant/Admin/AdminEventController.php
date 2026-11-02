@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
+use kissj\Authorization\AllowContingentAdmins;
+use kissj\Authorization\AllowIstAdmin;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Event\EventService;
@@ -33,6 +35,8 @@ class AdminEventController extends AbstractController
     ) {
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function showDashboard(
         Response $response,
         Event $event,
@@ -97,6 +101,7 @@ class AdminEventController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function showDetailedFoodStats(
         Response $response,
         Event $event,
@@ -119,6 +124,7 @@ class AdminEventController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function showFinances(
         Response $response,
         Event $event,

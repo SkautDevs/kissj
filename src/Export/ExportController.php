@@ -7,6 +7,7 @@ namespace kissj\Export;
 use Exception;
 use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
+use kissj\Authorization\AllowContingentAdmins;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -41,6 +42,7 @@ class ExportController extends AbstractController
     ) {
     }
 
+    #[AllowContingentAdmins]
     public function exportHealthData(
         Response $response,
         User $user,
@@ -52,6 +54,7 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_health');
     }
 
+    #[AllowContingentAdmins]
     public function exportPaidData(
         Response $response,
         User $user,
@@ -63,6 +66,7 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_paid');
     }
 
+    #[AllowContingentAdmins]
     public function exportFullData(
         Response $response,
         User $user,
@@ -81,6 +85,7 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_programmes');
     }
 
+    #[AllowContingentAdmins]
     public function exportFoodSummary(
         Response $response,
         User $user,
@@ -94,6 +99,7 @@ class ExportController extends AbstractController
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_food');
     }
 
+    #[AllowContingentAdmins]
     public function exportFoodPatrolsAndTroops(
         Response $response,
         User $user,
@@ -145,6 +151,7 @@ class ExportController extends AbstractController
         return $response->withBody($body);
     }
 
+    #[AllowContingentAdmins]
     public function exportPatrolsRoster(
         Request $request,
         Response $response,

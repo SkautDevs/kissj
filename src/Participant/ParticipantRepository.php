@@ -350,6 +350,31 @@ class ParticipantRepository extends Repository
         $qb->where('participant.contingent = %s', $contingent);
     }
 
+    public function isParticipantVisibleToAdmin(int $participantId, User $adminUser): bool
+    {
+        if ($adminUser->isTopAdmin()) {
+            return true;
+        }
+
+        $participant = $this->findOneBy(['id' => $participantId]);
+        if ($participant === null) {
+            return false;
+        }
+
+        $qb = $this->createFluent();
+        $qb->join('user')->as('u')->on('u.id = participant.user_id');
+        $qb->where('u.event_id = %i', $adminUser->event->id);
+        $qb->where('participant.id = %i', match (true) {
+            $participant instanceof PatrolParticipant => $participant->patrolLeader->id,
+            $participant instanceof TroopParticipant => $participant->troopLeader->id ?? $participant->id,
+            $participant instanceof TechnicalTeamParticipant => $participant->technicalTeamLeader->id,
+            default => $participant->id,
+        });
+        $this->addFilterAdminParticipants($qb, $adminUser);
+
+        return $qb->fetch() !== null;
+    }
+
     private function addFilterAdminParticipants(Fluent $qb, User $adminUser): void
     {
         switch ($adminUser->role) {

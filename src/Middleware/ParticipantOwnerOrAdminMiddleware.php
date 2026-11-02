@@ -36,7 +36,9 @@ class ParticipantOwnerOrAdminMiddleware extends BaseMiddleware
         }
 
         $isOwner = $participant->getUserButNotNull()->id === $user->id;
-        if ($isOwner || $user->isAdmin()) {
+        $isAllowedAdmin = $user->isAdmin()
+            && $this->participantRepository->isParticipantVisibleToAdmin($participant->id, $user);
+        if ($isOwner || $isAllowedAdmin) {
             $request = $request->withAttribute('participant', $participant);
 
             return $handler->handle($request);

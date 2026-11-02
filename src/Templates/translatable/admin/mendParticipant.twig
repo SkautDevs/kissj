@@ -20,26 +20,35 @@
             <br/>
             {% if event.eventType.getSubcamps() is not empty %}
                 {% set currentSubcamp = participant.getValueForField('subcamp') %}
-                <h3>{{ 'adminValues.headline' | trans }}</h3>
-                <form method="POST"
-                      action="{{ url_for('admin-values-change', {'eventSlug': event.slug, 'participantId': participant.id}) }}">
-                    <label>{{ 'adminValues.subcamp' | trans }}:
-                        <select name="subcamp">
-                            <option value=""></option>
-                            {% for subcamp in event.eventType.getSubcamps() %}
-                                <option value="{{ subcamp }}" {{ currentSubcamp == subcamp ? 'selected' }}>{{ subcamp | trans }}</option>
-                            {% endfor %}
-                        </select>
-                    </label><br/>
-                    <label>{{ 'adminValues.internalUniqueId' | trans }}:
-                        <input type="text" name="internalUniqueId" value="{{ participant.getValueForField('internalUniqueId') }}">
-                    </label><br/>
-                    <label>{{ 'adminValues.internalCommonId' | trans }}:
-                        <input type="text" name="internalCommonId" value="{{ participant.getValueForField('internalCommonId') }}">
-                    </label><br/>
-                    <input type="submit" class="btn btn-small" value="{{ 'adminValues.save' | trans }}">
-                </form>
-                <br/>
+                {% if canAccessRoute('admin-values-change') %}
+                    <h3>{{ 'adminValues.headline' | trans }}</h3>
+                    <form method="POST"
+                          action="{{ url_for('admin-values-change',
+                              {'eventSlug': event.slug, 'participantId': participant.id}) }}">
+                        <label>{{ 'adminValues.subcamp' | trans }}:
+                            <select name="subcamp">
+                                <option value=""></option>
+                                {% for subcamp in event.eventType.getSubcamps() %}
+                                    <option value="{{ subcamp }}" {{ currentSubcamp == subcamp ? 'selected' }}>
+                                        {{- subcamp | trans -}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label><br/>
+                        <label>{{ 'adminValues.internalUniqueId' | trans }}:
+                            <input type="text"
+                                   name="internalUniqueId"
+                                   value="{{ participant.getValueForField('internalUniqueId') }}">
+                        </label><br/>
+                        <label>{{ 'adminValues.internalCommonId' | trans }}:
+                            <input type="text"
+                                   name="internalCommonId"
+                                   value="{{ participant.getValueForField('internalCommonId') }}">
+                        </label><br/>
+                        <input type="submit" class="btn btn-small" value="{{ 'adminValues.save' | trans }}">
+                    </form>
+                    <br/>
+                {% endif %}
             {% endif %}
             {{ include('widgets/detailsForAdmin.twig', {person: participant, ca: ca}) }}
             <br/>
@@ -107,20 +116,28 @@
         <br/>
         {% include 'widgets/paymentList.twig' with {'payments': participant.getPayments} %}
         {% if userStatus == 'cancelled' %}
-            <form
-                    method="POST"
-                    action="{{ url_for('admin-uncancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
-            >
-                <input type="submit" class="btn" value="{{ 'mend-admin.uncancelParticipant' | trans }}">
-            </form>
-            <br/>
+            {% if canAccessRoute('admin-uncancel-participant') %}
+                <form
+                        method="POST"
+                        action="{{ url_for('admin-uncancel-participant',
+                            {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                >
+                    <input type="submit" class="btn" value="{{ 'mend-admin.uncancelParticipant' | trans }}">
+                </form>
+                <br/>
+            {% endif %}
         {% endif %}
 
         {% if participant is TroopParticipant and participant.troopLeader is not null and participant.userButNotNull.status == participant.troopLeader.userButNotNull.status %}
-            <form method="POST" action="{{ url_for('admin-swap-troop-leader', {eventSlug: event.slug, participantId: participant.id}) }}" style="display:inline">
-                <input type="submit" class="btn" value="{{ 'mend-admin.swapLeader' | trans }}">
-            </form>
-            <br/>
+            {% if canAccessRoute('admin-swap-troop-leader') %}
+                <form method="POST"
+                      action="{{ url_for('admin-swap-troop-leader',
+                          {eventSlug: event.slug, participantId: participant.id}) }}"
+                      style="display:inline">
+                    <input type="submit" class="btn" value="{{ 'mend-admin.swapLeader' | trans }}">
+                </form>
+                <br/>
+            {% endif %}
         {% endif %}
 
         {% if userStatus == 'paid' %}
@@ -131,23 +148,29 @@
             </a>
             <br/>
             {% if participant is hasUser %}
-                <a
-                    href="{{ url_for('admin-show-add-new-payment', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
-                    class="btn"
-                >
-                    {{ 'mend-admin.addPayment' | trans }}
-                </a>
-                <br/>
+                {% if canAccessRoute('admin-show-add-new-payment') %}
+                    <a
+                        href="{{ url_for('admin-show-add-new-payment',
+                            {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                        class="btn"
+                    >
+                        {{ 'mend-admin.addPayment' | trans }}
+                    </a>
+                    <br/>
+                {% endif %}
             {% endif %}
             {% if participant is hasUser and participant is not PatrolLeader and participant is not TechnicalTeamLeader %}
                 {# PatrolParticipant shares the leader's user - cancelling would cancel the whole patrol #}
-                <form
-                        method="POST"
-                        action="{{ url_for('admin-cancel-participant', {'eventSlug': event.slug, 'participantId': participant.id}) }}"
-                >
-                    <input type="submit" class="btn" value="{{ 'mend-admin.cancelParticipant' | trans }}">
-                </form>
-                <br/>
+                {% if canAccessRoute('admin-cancel-participant') %}
+                    <form
+                            method="POST"
+                            action="{{ url_for('admin-cancel-participant',
+                                {'eventSlug': event.slug, 'participantId': participant.id}) }}"
+                    >
+                        <input type="submit" class="btn" value="{{ 'mend-admin.cancelParticipant' | trans }}">
+                    </form>
+                    <br/>
+                {% endif %}
             {% elseif participant is PatrolLeader or participant is TechnicalTeamLeader %}
                 {{ 'mend-admin.leaderCancelNotSupported' | trans }}
                 <br/>

@@ -12,11 +12,9 @@ use kissj\ParticipantVendor\ParticipantVendorController;
 use kissj\Event\EventController;
 use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
-use kissj\Middleware\AdminPaymentsOnlyMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\AdminValuesAllowedOnlyMiddleware;
 use kissj\Middleware\BadgesAllowedOnlyMiddleware;
-use kissj\Middleware\TopAdminsOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\EventApiKeyMiddleware;
@@ -442,12 +440,12 @@ class Route
                                 ->setName('admin-update-payments');
 
                             $app->post(
-                                '/setPaymentPaired/{paymentId}',
+                                '/setPaymentPaired/{bankPaymentId}',
                                 AdminPaymentController::class . '::markBankPaymentPaired',
                             )->setName('admin-set-payment-paired');
 
                             $app->post(
-                                '/setPaymentUnrelated/{paymentId}',
+                                '/setPaymentUnrelated/{bankPaymentId}',
                                 AdminPaymentController::class . '::markBankPaymentUnrelated',
                             )->setName('admin-set-payment-unrelated');
                         });
@@ -469,7 +467,7 @@ class Route
 
                         $app->post('/generateMorePayments', AdminPaymentController::class . '::generateMorePayments')
                             ->setName('admin-generate-more-payments');
-                    })->add(AdminPaymentsOnlyMiddleware::class);
+                    });
 
                     $app->group('/troopManagement', function (RouteCollectorProxy $app) {
                         $app->get('', AdminTroopController::class . '::showTroopManagement')
@@ -488,8 +486,7 @@ class Route
                     })->add(ShowFoodStatsAllowedOnly::class);
 
                     $app->get('/finances', AdminEventController::class . '::showFinances')
-                        ->setName('admin-finances')
-                        ->add(AdminPaymentsOnlyMiddleware::class);
+                        ->setName('admin-finances');
 
                     $app->group('/export', function (RouteCollectorProxy $app) {
                         $app->get('/health', ExportController::class . '::exportHealthData')
@@ -511,7 +508,7 @@ class Route
                                 ->setName('admin-export-full-badges');
                             $app->get('/generate-blank', ExportController::class . '::exportBlankBadges')
                                 ->setName('admin-export-blank-badges');
-                        })->add(BadgesAllowedOnlyMiddleware::class)->add(TopAdminsOnlyMiddleware::class);
+                        })->add(BadgesAllowedOnlyMiddleware::class);
 
                         $app->group('/food', function (RouteCollectorProxy $app) {
                             $app->get('/summary', ExportController::class . '::exportFoodSummary')
@@ -711,7 +708,7 @@ class Route
                     $app->group('/payments', function (RouteCollectorProxy $app) {
                         $app->post('/confirmPayment/{paymentId}', AdminJsonController::class . '::confirmPayment')
                             ->setName('admin-confirm-payment-json');
-                    })->add(AdminPaymentsOnlyMiddleware::class);
+                    });
                 })->add(AdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
 
                 $app->group('/admin/programmes', function (RouteCollectorProxy $app) {

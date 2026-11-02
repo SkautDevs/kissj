@@ -19,9 +19,11 @@
     {{ 'detail.notice' | trans }}: <b>{{ person.getNotes }}</b><br/>
 {% endif %}
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
-<a 
-    href="{{ url_for('admin-show-role', {'participantId' : person.id, 'eventSlug': event.slug}) }}"
-    class="btn btn-small btn-mini"
->
-    {{ 'stats-admin.changeRole' | trans }}
-</a>
+{% if canAccessRoute('admin-show-role') %}
+    <a 
+        href="{{ url_for('admin-show-role', {'participantId' : person.id, 'eventSlug': event.slug}) }}"
+        class="btn btn-small btn-mini"
+    >
+        {{ 'stats-admin.changeRole' | trans }}
+    </a>
+{% endif %}

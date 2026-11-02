@@ -8,6 +8,7 @@ use Aws\S3\S3Client;
 use Dotenv\Dotenv;
 use kissj\Application\DateTimeUtils;
 use kissj\Application\HealthController;
+use kissj\Authorization\AdminRouteAccessResolver;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
@@ -154,6 +155,7 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\DebugExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 use function DI\autowire;
 use function DI\get;
@@ -214,6 +216,7 @@ class Settings
             AdminParticipantController::class => autowire(),
             AdminPaymentController::class => autowire(),
             AdminService::class => autowire(),
+            AdminRouteAccessResolver::class => autowire(),
             AdminsOnlyMiddleware::class => autowire(),
             AdminTroopController::class => autowire(),
             BankPaymentRepository::class => autowire(),
@@ -454,6 +457,7 @@ class Settings
             CurrentTranslator $translator,
             FlashMessagesBySession $flashMessages,
             EnvSettings $env,
+            AdminRouteAccessResolver $routeAccessResolver,
         ) {
             $view = Twig::create(
                 [
@@ -476,6 +480,12 @@ class Settings
             // a request-scoped resolver (proxy pattern, like CurrentTranslator) or move
             // registration into middleware that runs per request and resets on the way out.
             $view->getEnvironment()->addGlobal('user', $user);
+
+            $view->getEnvironment()->addFunction(new TwigFunction(
+                'canAccessRoute',
+                static fn (string $routeName): bool => $user !== null
+                    && $routeAccessResolver->canAccessRoute($user, $routeName),
+            ));
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
             $view->addExtension(new TranslationExtension($translator));

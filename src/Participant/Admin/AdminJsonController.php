@@ -6,6 +6,8 @@ namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
 use kissj\Application\JsonWarningDTO;
+use kissj\Authorization\AllowContingentAdmins;
+use kissj\Authorization\AllowIstAdmin;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\ParticipantRepository;
@@ -27,6 +29,7 @@ class AdminJsonController extends AbstractController
     ) {
     }
 
+    #[AllowContingentAdmins]
     public function approveParticipant(
         Response $response,
         Event $event,
@@ -43,6 +46,7 @@ class AdminJsonController extends AbstractController
         return $this->successfulJsonResponse($response);
     }
 
+    #[AllowContingentAdmins]
     public function confirmPayment(
         Response $response,
         Event $event,
@@ -67,6 +71,8 @@ class AdminJsonController extends AbstractController
         return $this->successfulJsonResponse($response);
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function changeAdminNote(
         Request $request,
         Response $response,

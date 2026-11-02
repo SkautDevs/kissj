@@ -38,11 +38,15 @@
                     <td>{{ p.getMessage }}</td>
                     <td>{{ p.getStatus }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin-set-payment-paired', {'paymentId': p.getId, 'eventSlug': event.slug}) }}">
+                        <form method="POST"
+                              action="{{ url_for('admin-set-payment-paired',
+                                  {'bankPaymentId': p.getId, 'eventSlug': event.slug}) }}">
                             <label>VS: <input type="text" name="notice" required></label>
                             <input type="submit" class="btn btn-mini" value="{{ 'paymentsAuto-admin.markPaymentPaired' | trans }}">
                         </form>
-                        <form method="POST" action="{{ url_for('admin-set-payment-unrelated', {'paymentId': p.getId, 'eventSlug': event.slug}) }}">
+                        <form method="POST"
+                              action="{{ url_for('admin-set-payment-unrelated',
+                                  {'bankPaymentId': p.getId, 'eventSlug': event.slug}) }}">
                             <input type="submit" class="btn btn-grey btn-mini" value="{{ 'paymentsAuto-admin.markPaymentUnrelated' | trans }}">
                         </form>
                     </td>

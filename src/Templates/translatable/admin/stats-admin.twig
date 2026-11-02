@@ -3,7 +3,7 @@
 {% block content %}
     <div class="card">
         <h2>{{ 'stats-admin.stats' | trans }} {{ event.readableName }}</h2>
-        {% if event.eventType.isMultiplePaymentsAllowed %}
+        {% if event.eventType.isMultiplePaymentsAllowed and canAccessRoute('admin-generate-more-payments') %}
             <form method="POST" action="{{ url_for('admin-generate-more-payments', {'eventSlug': event.slug} ) }}">
                 <input class="btn btn-small" type="submit" 
                        value="{{ 'stats-admin.generate-more-payments' | trans }}">

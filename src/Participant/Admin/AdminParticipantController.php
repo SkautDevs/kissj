@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kissj\Participant\Admin;
 
+use kissj\Authorization\AllowContingentAdmins;
+use kissj\Authorization\AllowIstAdmin;
 use kissj\Participant\ParticipantException;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
@@ -36,6 +38,8 @@ class AdminParticipantController extends AbstractController
     ) {
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function showPaid(
         Response $response,
         Event $event,
@@ -52,6 +56,8 @@ class AdminParticipantController extends AbstractController
         ]);
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function showOpen(
         Response $response,
         Event $event,
@@ -69,6 +75,7 @@ class AdminParticipantController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function showApproving(
         Response $response,
         Event $event,
@@ -85,6 +92,7 @@ class AdminParticipantController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function approveParticipant(
         Request $request,
         Response $response,
@@ -110,6 +118,7 @@ class AdminParticipantController extends AbstractController
         return $this->redirect($request, $response, 'admin-show-approving');
     }
 
+    #[AllowContingentAdmins]
     public function showDenyParticipant(
         Response $response,
         Event $event,
@@ -120,6 +129,7 @@ class AdminParticipantController extends AbstractController
         return $this->view->render($response, 'admin/deny-admin.twig', ['participant' => $participant]);
     }
 
+    #[AllowContingentAdmins]
     public function denyParticipant(
         Request $request,
         Response $response,
@@ -146,6 +156,8 @@ class AdminParticipantController extends AbstractController
         return $this->redirect($request, $response, 'admin-show-approving');
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function showParticipantDetails(
         Response $response,
         Event $event,
@@ -166,6 +178,8 @@ class AdminParticipantController extends AbstractController
         );
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function changeParticipantDetails(
         Request $request,
         Response $response,
@@ -259,6 +273,7 @@ class AdminParticipantController extends AbstractController
         return $this->renderAdminValuesImport($response, $report, $csv, $apply);
     }
 
+    #[AllowContingentAdmins]
     public function showRole(
         Response $response,
         Event $event,
@@ -275,6 +290,7 @@ class AdminParticipantController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function changeRole(
         Request $request,
         Response $response,
@@ -311,6 +327,7 @@ class AdminParticipantController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function cancel(
         Request $request,
         Response $response,
@@ -344,6 +361,7 @@ class AdminParticipantController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function uncancel(
         Request $request,
         Response $response,
@@ -373,6 +391,8 @@ class AdminParticipantController extends AbstractController
         );
     }
 
+    #[AllowIstAdmin]
+    #[AllowContingentAdmins]
     public function mendParticipant(
         Response $response,
         Event $event,

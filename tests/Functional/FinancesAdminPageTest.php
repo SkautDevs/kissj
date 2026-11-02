@@ -4,36 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Payment\PaymentStatus;
-use kissj\User\UserRepository;
 use kissj\User\UserRole;
-use kissj\User\UserStatus;
-use Psr\Container\ContainerInterface;
-use Slim\App;
 use Tests\AppTestCase;
 
 class FinancesAdminPageTest extends AppTestCase
 {
-    /**
-     * @param App<ContainerInterface> $app
-     * @return App<ContainerInterface>
-     */
-    private function loginAdminForEvent(App $app, Event $event, UserRole $role = UserRole::Admin): App
-    {
-        $userRepository = $this->getService($app, UserRepository::class);
-        $adminUser = $this->createAdminUser($app, $role);
-        $adminUser->status = UserStatus::Open;
-        $adminUser->event = $event;
-        $userRepository->persist($adminUser);
-
-        $_SESSION['user'] = ['id' => $adminUser->id];
-
-        return $this->getTestApp(false);
-    }
-
     public function testFinancesPageShowsMonthlySumsAndWaitingTotal(): void
     {
         $app = $this->getTestApp();

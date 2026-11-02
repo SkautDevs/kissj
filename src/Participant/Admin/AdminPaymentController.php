@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Participant\Admin;
 
 use kissj\AbstractController;
+use kissj\Authorization\AllowContingentAdmins;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
@@ -38,6 +39,7 @@ class AdminPaymentController extends AbstractController
     ) {
     }
 
+    #[AllowContingentAdmins]
     public function showPayments(
         Response $response,
         Event $event,
@@ -59,6 +61,7 @@ class AdminPaymentController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function showCancelPayment(
         Response $response,
         Event $event,
@@ -69,6 +72,7 @@ class AdminPaymentController extends AbstractController
         return $this->view->render($response, 'admin/cancelPayment-admin.twig', ['payment' => $payment]);
     }
 
+    #[AllowContingentAdmins]
     public function cancelPayment(
         Request $request,
         Response $response,
@@ -89,6 +93,7 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function showChangePaymentPrice(
         Request $request,
         Response $response,
@@ -106,6 +111,7 @@ class AdminPaymentController extends AbstractController
         return $this->view->render($response, 'admin/changePaymentPrice.twig', ['payment' => $payment]);
     }
 
+    #[AllowContingentAdmins]
     public function changePaymentPrice(
         Request $request,
         Response $response,
@@ -140,6 +146,7 @@ class AdminPaymentController extends AbstractController
         return $this->redirect($request, $response, 'admin-show-payments');
     }
 
+    #[AllowContingentAdmins]
     public function cancelAllDuePayments(
         Request $request,
         Response $response,
@@ -154,6 +161,7 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function confirmPayment(
         Request $request,
         Response $response,
@@ -172,6 +180,7 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function showAutoPayments(
         Response $response,
         Event $event,
@@ -187,6 +196,7 @@ class AdminPaymentController extends AbstractController
         return $this->view->render($response, 'admin/paymentsAuto-admin.twig', $arguments);
     }
 
+    #[AllowContingentAdmins]
     public function updatePayments(
         Request $request,
         Response $response,
@@ -201,15 +211,16 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function markBankPaymentPaired(
         Request $request,
         Response $response,
         Event $event,
-        int $paymentId,
+        int $bankPaymentId,
     ): Response {
         $notice = $this->getParameterFromBody($request, 'notice', true);
-        $this->paymentService->setBankPaymentPaired($paymentId, $event);
-        $this->logger->info('Bank payment marked as paired', ['bankPaymentId' => $paymentId, 'notice' => $notice]);
+        $this->paymentService->setBankPaymentPaired($bankPaymentId, $event);
+        $this->logger->info('Bank payment marked as paired', ['bankPaymentId' => $bankPaymentId, 'notice' => $notice]);
         $this->metrics->count(MetricName::PaymentsMarkedPaired, 1);
         $this->flashMessages->info('flash.info.markedAsPaired');
 
@@ -220,14 +231,15 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function markBankPaymentUnrelated(
         Request $request,
         Response $response,
         Event $event,
-        int $paymentId,
+        int $bankPaymentId,
     ): Response {
-        $this->paymentService->setBankPaymentUnrelated($paymentId, $event);
-        $this->logger->info('Bank payment marked as unrelated', ['bankPaymentId' => $paymentId]);
+        $this->paymentService->setBankPaymentUnrelated($bankPaymentId, $event);
+        $this->logger->info('Bank payment marked as unrelated', ['bankPaymentId' => $bankPaymentId]);
         $this->metrics->count(MetricName::PaymentsMarkedUnrelated, 1);
         $this->flashMessages->info('flash.info.markedAsUnrelated');
 
@@ -238,6 +250,7 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function showTransferPayment(
         Request $request,
         Response $response,
@@ -265,6 +278,7 @@ class AdminPaymentController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function transferPayment(
         Request $request,
         Response $response,
@@ -307,6 +321,7 @@ class AdminPaymentController extends AbstractController
         );
     }
 
+    #[AllowContingentAdmins]
     public function showAddNewPayment(
         Response $response,
         Event $event,
@@ -319,6 +334,7 @@ class AdminPaymentController extends AbstractController
         ]);
     }
 
+    #[AllowContingentAdmins]
     public function addNewPayment(
         Request $request,
         Response $response,
@@ -349,6 +365,7 @@ class AdminPaymentController extends AbstractController
     }
 
     // TODO shift into "approved" event to generate multiple payments, with different dates even
+    #[AllowContingentAdmins]
     public function generateMorePayments(
         Request $request,
         Response $response,

@@ -955,7 +955,6 @@ flash:
     error:
         actionFailed: "Action failed. Please try again."
         adminOnly: "Sorry bro, admins only"
-        adminPaymentsOnly: "Sorry bro, admins with payment eligibility only"
         plOnly: "Sorry, you are not logged as Patrol Leader"
         ttlOnly: "This page is for technical team leaders only."
         tlOnly: "Sorry, you are not logged as Troop Leader"

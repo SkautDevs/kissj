@@ -955,7 +955,6 @@ flash:
     error:
         actionFailed: "Akcia zlyhala. Skúste to prosím znova."
         adminOnly: "Sorry bro, sem môžu len admini"
-        adminPaymentsOnly: "Sorry bro, sem môžu len admini s pravomocí plateb"
         plOnly: "Prepáč, ale nie si prihlásený/á ako Patrol líder"
         ttlOnly: "Táto stránka je len pre vedúcich technického tímu."
         tlOnly: "Pardon, nie si prihlásený ako vedúci skupiny"

@@ -35,6 +35,7 @@ use Monolog\Logger;
 use Phinx\Console\PhinxApplication;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Slim\App;
@@ -895,6 +896,23 @@ class AppTestCase extends TestCase
 
     /**
      * @param App<ContainerInterface> $app
+     * @return App<ContainerInterface>
+     */
+    protected function loginAdminForEvent(App $app, Event $event, UserRole $role = UserRole::Admin): App
+    {
+        $userRepository = $this->getService($app, UserRepository::class);
+        $adminUser = $this->createAdminUser($app, $role);
+        $adminUser->status = UserStatus::Open;
+        $adminUser->event = $event;
+        $userRepository->persist($adminUser);
+
+        $_SESSION['user'] = ['id' => $adminUser->id];
+
+        return $this->getTestApp(false);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
      */
     protected function createUser(App $app, Event $event, UserStatus $status): User
     {
@@ -937,6 +955,15 @@ class AppTestCase extends TestCase
     protected function urlFor(App $app, string $routeName, Event $event): string
     {
         return $app->getRouteCollector()->getRouteParser()->urlFor($routeName, ['eventSlug' => $event->slug]);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function assertRedirectedToAdminDashboard(App $app, Event $event, ResponseInterface $response): void
+    {
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame($this->urlFor($app, 'admin-dashboard', $event), $response->getHeaderLine('Location'));
     }
 
     /**
