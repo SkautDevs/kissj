@@ -85,6 +85,7 @@
                 type="text"
                 name="{{ item.slug }}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
+                {% if item.required %}required="required"{% endif %}
             >{{ value }}</textarea>
             {{ forms.renderHelpText(item) }}
         </div>
