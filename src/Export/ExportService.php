@@ -6,6 +6,7 @@ namespace kissj\Export;
 
 use kissj\Event\Event;
 use kissj\Orm\Order;
+use kissj\Participant\Guest\Guest;
 use kissj\Participant\Ist\Ist;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
@@ -238,7 +239,7 @@ readonly class ExportService
                 ],
             };
 
-            if ($participant instanceof Ist) {
+            if ($participant instanceof Ist || $participant instanceof Guest) {
                 $istPart = [
                     $participant->skills ?? '',
                     $this->getPreferredPositionTranslated($participant),
@@ -358,7 +359,7 @@ readonly class ExportService
         return $this->translator->trans($participant->getOwnOrLeaderContingent() ?? '');
     }
 
-    public function getPreferredPositionTranslated(Ist $participant): string
+    public function getPreferredPositionTranslated(Ist|Guest $participant): string
     {
         $translated = [];
         /** @var list<string> $preferredPositions */

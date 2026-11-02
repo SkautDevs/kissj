@@ -7,6 +7,7 @@ namespace Tests\Functional;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Export\ExportService;
+use kissj\Participant\Guest\Guest;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
@@ -142,5 +143,41 @@ class ExportTest extends AppTestCase
 
         self::assertSame('zulu' . $suffix, $reloaded->getOwnOrLeaderContingent());
         self::assertSame('zulu' . $suffix, $exportService->getContingentTranslated($reloaded));
+    }
+
+    public function testFullExportContainsGuestSkillsAndDriversLicense(): void
+    {
+        $app = $this->getTestApp();
+        $container = $app->getContainer();
+
+        $exportService = $this->getService($app, ExportService::class);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
+
+        $suffix = bin2hex(random_bytes(4));
+
+        $created = $this->createParticipantWithRole($container, 'guest', $event);
+        $guest = $participantRepository->getParticipantById($created->id, $event);
+        self::assertInstanceOf(Guest::class, $guest);
+        $guest->skills = 'guest skills ' . $suffix;
+        $guest->driversLicense = 'guest license ' . $suffix;
+        $participantRepository->persist($guest);
+
+        $user = $guest->getUserButNotNull();
+        $user->status = UserStatus::Paid;
+        $userRepository->persist($user);
+
+        $rows = $exportService->allRegistrationDataToCSV($event, $this->createAdminUser($app));
+
+        $skillsColumn = array_search('istSkills', $rows[0], true);
+        $driversLicenseColumn = array_search('driverLicense', $rows[0], true);
+        self::assertIsInt($skillsColumn);
+        self::assertIsInt($driversLicenseColumn);
+
+        $guestRows = array_values(array_filter($rows, fn (array $row): bool => $row[0] === (string)$guest->id));
+        self::assertCount(1, $guestRows);
+        self::assertSame('guest skills ' . $suffix, $guestRows[0][$skillsColumn]);
+        self::assertSame('guest license ' . $suffix, $guestRows[0][$driversLicenseColumn]);
     }
 }
