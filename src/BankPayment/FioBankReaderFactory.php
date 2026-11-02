@@ -3,7 +3,6 @@
 namespace kissj\BankPayment;
 
 use h4kuna\Fio\FioRead;
-use h4kuna\Fio\FioFactory;
 use kissj\Event\Event;
 
 /**
@@ -14,7 +13,7 @@ class FioBankReaderFactory
     public function getFioRead(Event $event): FioRead
     {
         $fioAccountName = 'fio-account-' . $event->slug;
-        $fioFactory = new FioFactory([
+        $fioFactory = new StrictFioFactory([
             $fioAccountName => [
                 'account' => $event->accountNumber,
                 'token' => $event->bankApiKey ?? '',
