@@ -62,7 +62,6 @@ class ImageUtilsTest extends TestCase
             default => self::fail('unsupported test image format: ' . $format),
         };
         $bytes = (string)ob_get_clean();
-        imagedestroy($image);
         self::assertTrue($encoded);
 
         return $bytes;

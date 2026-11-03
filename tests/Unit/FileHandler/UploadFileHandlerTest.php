@@ -344,7 +344,6 @@ class UploadFileHandlerTest extends TestCase
         }
         ob_start();
         imagepng($image);
-        imagedestroy($image);
 
         return (string)ob_get_clean();
     }

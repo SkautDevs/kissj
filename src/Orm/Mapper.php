@@ -151,10 +151,9 @@ class Mapper implements IMapper
     }
 
     /**
-     * @param ?Caller $caller
      * @return string[]
      */
-    public function getImplicitFilters(string $entityClass, Caller $caller = null): array
+    public function getImplicitFilters(string $entityClass, ?Caller $caller = null): array
     {
         return [];
     }

@@ -6,6 +6,7 @@
          colors="true"
          failOnWarning="true"
          failOnRisky="true"
+         failOnDeprecation="true"
          displayDetailsOnTestsThatTriggerDeprecations="true"
          displayDetailsOnTestsThatTriggerWarnings="true">
     <testsuites>
@@ -23,7 +24,7 @@
              second layer only - AppTestCase::forceSqliteDbType() stays. -->
         <env name="DB_TYPE" value="sqlite" force="true"/>
     </php>
-    <source>
+    <source baseline="phpunit-baseline.xml">
         <include>
             <directory suffix=".php">src</directory>
         </include>

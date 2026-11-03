@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<files version="1">
+ <file path="vendor/bacon/bacon-qr-code/src/Common/ReedSolomonCodec.php">
+  <line number="225" hash="486ec280e0f591b9ff4ddde5357a48779e4ab2a0">
+   <issue><![CDATA[BaconQrCode\Common\ReedSolomonCodec::decode(): Implicitly marking parameter $erasures as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/bacon/bacon-qr-code/src/Encoder/Encoder.php">
+  <line number="158" hash="4cca1b588164935ea8151728535b277246d42b6c">
+   <issue><![CDATA[BaconQrCode\Encoder\Encoder::chooseMode(): Implicitly marking parameter $encoding as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/Builder/Builder.php">
+  <line number="246" hash="24be55f5e12224bc2ddc8ef190b770cf2a543139">
+   <issue><![CDATA[Endroid\QrCode\Builder\Builder::buildObject(): Implicitly marking parameter $optionsPrefix as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/Label/Label.php">
+  <line number="25" hash="774ac80b53100f057fbeb3cd0f8c5401d87d7234">
+   <issue><![CDATA[Endroid\QrCode\Label\Label::__construct(): Implicitly marking parameter $font as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="26" hash="e1b6664fb5ea2e7efffa8d3ab1a678576c2488d6">
+   <issue><![CDATA[Endroid\QrCode\Label\Label::__construct(): Implicitly marking parameter $alignment as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="27" hash="9d24af1bdc2a990442f41da853d1ea00ea9cb7a6">
+   <issue><![CDATA[Endroid\QrCode\Label\Label::__construct(): Implicitly marking parameter $margin as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="28" hash="7c53b6d9c4e6eacf44e90e84d713bdcd08a0c95b">
+   <issue><![CDATA[Endroid\QrCode\Label\Label::__construct(): Implicitly marking parameter $textColor as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/QrCode.php">
+  <line number="26" hash="5b73e5d14b6760ca21bf725d0b1033da9f7937c5">
+   <issue><![CDATA[Endroid\QrCode\QrCode::__construct(): Implicitly marking parameter $encoding as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="27" hash="b3f257bfb296a13e14ab42859201431ac0de94b4">
+   <issue><![CDATA[Endroid\QrCode\QrCode::__construct(): Implicitly marking parameter $errorCorrectionLevel as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="30" hash="fc923c8e0010f6725a89e4f699d31efcadd18aaa">
+   <issue><![CDATA[Endroid\QrCode\QrCode::__construct(): Implicitly marking parameter $roundBlockSizeMode as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="31" hash="b9d7390a02f3d5dc1f78e7d04c08d7a2d4b203c2">
+   <issue><![CDATA[Endroid\QrCode\QrCode::__construct(): Implicitly marking parameter $foregroundColor as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="32" hash="f2c8af70521ff9ffb6b33c593d2c271d05d110c9">
+   <issue><![CDATA[Endroid\QrCode\QrCode::__construct(): Implicitly marking parameter $backgroundColor as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/Writer/AbstractGdWriter.php">
+  <line number="23" hash="23c04969b83d39085534a2d8b880b945c168632b">
+   <issue><![CDATA[Endroid\QrCode\Writer\AbstractGdWriter::write(): Implicitly marking parameter $label as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+   <issue><![CDATA[Endroid\QrCode\Writer\AbstractGdWriter::write(): Implicitly marking parameter $logo as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/Writer/PngWriter.php">
+  <line number="18" hash="23c04969b83d39085534a2d8b880b945c168632b">
+   <issue><![CDATA[Endroid\QrCode\Writer\PngWriter::write(): Implicitly marking parameter $label as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+   <issue><![CDATA[Endroid\QrCode\Writer\PngWriter::write(): Implicitly marking parameter $logo as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/endroid/qr-code/src/Writer/WriterInterface.php">
+  <line number="15" hash="6ff233a523b8c6f3e925d791f324b7ddaf876391">
+   <issue><![CDATA[Endroid\QrCode\Writer\WriterInterface::write(): Implicitly marking parameter $label as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+   <issue><![CDATA[Endroid\QrCode\Writer\WriterInterface::write(): Implicitly marking parameter $logo as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+ <file path="vendor/skautis/skautis/src/User.php">
+  <line number="43" hash="332c1290edbdaa536d2843c8a05c6f4ed8a8510d">
+   <issue><![CDATA[Skautis\User::__construct(): Implicitly marking parameter $session as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="96" hash="7ef918a8079d7b59b89e0780a5ecbfa1e1360a90">
+   <issue><![CDATA[Skautis\User::setLoginData(): Implicitly marking parameter $logoutDate as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+  <line number="112" hash="d386812ff5117e9abded34a56f8f1a3337ad5cb2">
+   <issue><![CDATA[Skautis\User::updateLoginData(): Implicitly marking parameter $logoutDate as nullable is deprecated, the explicit nullable type must be used instead]]></issue>
+  </line>
+ </file>
+</files>

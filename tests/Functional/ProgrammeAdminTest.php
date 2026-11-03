@@ -1008,7 +1008,6 @@ class ProgrammeAdminTest extends AppTestCase
         $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
         $image = imagecreatetruecolor(1, 1);
         imagepng($image, $uploadPath);
-        imagedestroy($image);
 
         return $uploadPath;
     }

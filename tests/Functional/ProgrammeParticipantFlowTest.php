@@ -125,7 +125,6 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
         $image = imagecreatetruecolor(1, 1);
         imagepng($image, $uploadPath);
-        imagedestroy($image);
 
         $ist = $this->createPaidIstWithEmail($app, 'image-flow-ist@example.com');
         $app = $this->loginAs($app, $ist->getUserButNotNull());

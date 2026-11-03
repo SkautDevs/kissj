@@ -7,6 +7,7 @@ namespace Tests\Unit\Export;
 use kissj\Export\CsvCellFlattener;
 use League\Csv\Writer;
 use PHPUnit\Framework\TestCase;
+use SplTempFileObject;
 
 class CsvCellFlattenerTest extends TestCase
 {
@@ -40,7 +41,7 @@ class CsvCellFlattenerTest extends TestCase
 
     public function testWriterWithFormatterProducesSingleLineRecord(): void
     {
-        $csv = Writer::createFromFileObject(new \SplTempFileObject());
+        $csv = Writer::from(new SplTempFileObject());
         $csv->setDelimiter(',');
         $csv->addFormatter(new CsvCellFlattener());
         $csv->insertOne(["multi\r\n\r\nline", 'plain']);

@@ -26,6 +26,7 @@ use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Psr7\Stream;
+use SplTempFileObject;
 
 class ExportController extends AbstractController
 {
@@ -138,7 +139,7 @@ class ExportController extends AbstractController
         $response = $response->withAddedHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         $response = $response->withAddedHeader('Pragma', 'no-cache');
 
-        $csv = Writer::createFromFileObject(new \SplTempFileObject());
+        $csv = Writer::from(new SplTempFileObject());
         $csv->setDelimiter(',');
         $csv->setOutputBOM(ByteSequence::BOM_UTF8);
         $csv->addFormatter(new CsvCellFlattener());
