@@ -13,6 +13,7 @@ use kissj\Entry\EntryParticipant;
 use kissj\Entry\EntryStatus;
 use kissj\Event\Event;
 use kissj\Event\EventType\Cej\EventTypeCej;
+use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\Admin\StatisticUserValueObject;
@@ -700,7 +701,7 @@ class ParticipantRepository extends Repository
     {
         $participant = $this->findParticipantById($participantId, $event);
         if ($participant === null) {
-            throw new RuntimeException(sprintf('Participant with ID %s not found', $participantId));
+            throw new EntityNotFoundException(sprintf('Participant with ID %s not found', $participantId));
         }
 
         return $participant;

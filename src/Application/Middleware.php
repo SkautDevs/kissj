@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Application;
 
 use kissj\ErrorHandlerGetter;
+use kissj\Middleware\EntityNotFoundMiddleware;
 use kissj\Middleware\EventInfoMiddleware;
 use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
@@ -33,6 +34,9 @@ class Middleware
     {
         // CONTENT LENGTH
         $app->add(new ContentLengthMiddleware());
+
+        // ENTITY NOT FOUND
+        $app->add(EntityNotFoundMiddleware::class);
 
         // LOCALIZATION RESOLVER
         // https://github.com/willdurand/Negotiation

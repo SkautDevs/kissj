@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace kissj\BankPayment;
 
 use kissj\Event\Event;
+use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
-use RuntimeException;
 
 /**
  * @method BankPayment get(int $bankPaymentId)
@@ -21,7 +21,7 @@ class BankPaymentRepository extends Repository
     {
         $bankPayment = $this->findOneBy(['id' => $bankPaymentId, 'event' => $event]);
         if ($bankPayment === null) {
-            throw new RuntimeException(sprintf('Bank payment with ID %s not found', $bankPaymentId));
+            throw new EntityNotFoundException(sprintf('Bank payment with ID %s not found', $bankPaymentId));
         }
 
         return $bankPayment;

@@ -6,10 +6,10 @@ namespace kissj\Payment;
 
 use Dibi\Row;
 use kissj\Event\Event;
+use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 use LeanMapper\Fluent;
-use RuntimeException;
 
 class PaymentRepository extends Repository
 {
@@ -24,7 +24,7 @@ class PaymentRepository extends Repository
         /** @var ?(Row&iterable<string, mixed>) $row */
         $row = $qb->fetch();
         if ($row === null) {
-            throw new RuntimeException(sprintf('Payment with ID %s not found', $paymentId));
+            throw new EntityNotFoundException(sprintf('Payment with ID %s not found', $paymentId));
         }
 
         /** @var Payment $payment */

@@ -23,7 +23,6 @@ use kissj\User\UserRole;
 use kissj\User\UserStatus;
 use LogicException;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Slim\App;
 use Slim\Interfaces\RouteInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -49,8 +48,6 @@ class CrossEventGuardTest extends AppTestCase
     ];
 
     private const array WITHOUT_ROLE_ROUTE_NAMES = ['chooseRole', 'setRole'];
-
-    private const array NOT_FOUND_STATUS_ROUTE_NAMES = ['admin-programme-image'];
 
     private const array REQUEST_BODY = [
         'reason' => 'cross-event',
@@ -387,17 +384,6 @@ class CrossEventGuardTest extends AppTestCase
         return $filled;
     }
 
-    private function getExpectedNotFoundMessage(string $pattern, CrossEventForeignFixture $fixture): string
-    {
-        return match ($this->classifyId($pattern)) {
-            CrossEventIdKind::Participant => sprintf('Participant with ID %d not found', $fixture->participantId),
-            CrossEventIdKind::Payment => sprintf('Payment with ID %d not found', $fixture->paymentId),
-            CrossEventIdKind::BankPayment => sprintf('Bank payment with ID %d not found', $fixture->bankPaymentId),
-            CrossEventIdKind::Programme => 'Programme not found for event',
-            CrossEventIdKind::ProgrammeSection => 'Programme section not found for event',
-        };
-    }
-
     /**
      * @param App<ContainerInterface> $app
      */
@@ -423,7 +409,7 @@ class CrossEventGuardTest extends AppTestCase
         $programmeBefore = $this->getProgrammeRow($fixture);
         $sectionBefore = $this->getProgrammeSectionRow($fixture);
 
-        $rejection = $this->findRejectionFailure($route, $method, $path, $admin, $label, $fixture);
+        $rejection = $this->findRejectionFailure($method, $path, $admin, $label);
 
         if ($this->getParticipantRow($fixture) !== $participantBefore) {
             return sprintf('%s: foreign participant changed', $label);
@@ -447,25 +433,13 @@ class CrossEventGuardTest extends AppTestCase
         return $rejection;
     }
 
-    private function findRejectionFailure(
-        RouteInterface $route,
-        string $method,
-        string $path,
-        User $admin,
-        string $label,
-        CrossEventForeignFixture $fixture,
-    ): ?string {
+    private function findRejectionFailure(string $method, string $path, User $admin, string $label): ?string
+    {
         $_SESSION = ['user' => ['id' => $admin->id]];
         $requestApp = $this->getTestApp(false);
         try {
             $body = $method === 'POST' ? self::REQUEST_BODY : [];
             $response = $requestApp->handle($this->createRequest($path, $method, $body));
-        } catch (RuntimeException $exception) {
-            if ($exception->getMessage() === $this->getExpectedNotFoundMessage($route->getPattern(), $fixture)) {
-                return null;
-            }
-
-            return sprintf('%s: threw %s: %s', $label, $exception::class, $exception->getMessage());
         } catch (Throwable $exception) {
             return sprintf('%s: threw %s: %s', $label, $exception::class, $exception->getMessage());
         }
@@ -475,7 +449,7 @@ class CrossEventGuardTest extends AppTestCase
             return sprintf('%s: got %d', $label, $status);
         }
 
-        if ($status === 404 && in_array($route->getName(), self::NOT_FOUND_STATUS_ROUTE_NAMES, true)) {
+        if ($status === 404) {
             return null;
         }
 

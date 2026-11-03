@@ -23,7 +23,6 @@ use kissj\User\UserService;
 use kissj\User\UserStatus;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Slim\App;
 use Tests\AppTestCase;
 
@@ -317,13 +316,13 @@ class ProgrammeSectionAdminTest extends AppTestCase
         $otherEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
         $foreign = $this->createProgrammeSection($app->getContainer(), $otherEvent, 'foreign section');
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Programme section not found for event');
-        $app->handle($this->createRequest(
+        $response = $app->handle($this->createRequest(
             self::SECTIONS_URL . '/' . $foreign->id . $routeSuffix,
             'POST',
             ['name' => 'hijacked', 'subtitle' => 'hijacked', 'isExclusive' => '1'],
         ));
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     /**

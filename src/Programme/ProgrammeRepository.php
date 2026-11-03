@@ -8,10 +8,10 @@ use Dibi\Drivers\PostgreDriver;
 use Dibi\Fluent;
 use Dibi\Row;
 use kissj\Event\Event;
+use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\ParticipantRole;
-use RuntimeException;
 
 /**
  * @method Programme get(int $programmeId)
@@ -102,7 +102,7 @@ class ProgrammeRepository extends Repository
     {
         $programme = $this->findActiveById($programmeId, $event);
         if ($programme === null) {
-            throw new RuntimeException('Programme not found for event');
+            throw new EntityNotFoundException('Programme not found for event');
         }
 
         return $programme;

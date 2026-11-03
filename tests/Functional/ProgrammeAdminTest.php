@@ -289,15 +289,15 @@ class ProgrammeAdminTest extends AppTestCase
         $foreignEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
         $foreignSection = $this->createProgrammeSection($app->getContainer(), $foreignEvent, 'foreign');
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Programme section not found for event');
-        $app->handle($this->createRequest(
+        $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/new',
             'POST',
             $this->programmeBody($app, 'foreign section', '2027-06-05T10:00', '2027-06-05T12:00', [
                 'sectionId' => (string)$foreignSection->id,
             ]),
         ));
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testProgrammeEditRejectsSectionOfAnotherEvent(): void
@@ -308,15 +308,15 @@ class ProgrammeAdminTest extends AppTestCase
         $foreignEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
         $foreignSection = $this->createProgrammeSection($app->getContainer(), $foreignEvent, 'foreign');
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Programme section not found for event');
-        $app->handle($this->createRequest(
+        $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
             'POST',
             $this->programmeBody($app, $programme->name, '2027-06-05T10:00', '2027-06-05T12:00', [
                 'sectionId' => (string)$foreignSection->id,
             ]),
         ));
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testCreateRejectsEndBeforeStart(): void

@@ -7,11 +7,11 @@ namespace kissj\Programme;
 use Dibi\ForeignKeyConstraintViolationException;
 use Dibi\Row;
 use kissj\Event\Event;
+use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Programme\DTO\ProgrammeSectionCountsDTO;
 use kissj\User\UserStatus;
-use RuntimeException;
 
 /**
  * @table programme_section
@@ -46,7 +46,7 @@ class ProgrammeSectionRepository extends Repository
     {
         $section = $this->findOneBy(['id' => $sectionId, 'event' => $event]);
         if ($section === null) {
-            throw new RuntimeException('Programme section not found for event');
+            throw new EntityNotFoundException('Programme section not found for event');
         }
 
         return $section;
