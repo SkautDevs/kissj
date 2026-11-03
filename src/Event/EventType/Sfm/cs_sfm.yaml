@@ -1,6 +1,18 @@
 detail:
     unit: "Ve kterém středisku aktuálně aktivně působíš?"
     skills: "Co teď děláš ve svém roverském kmeni/oddíle/středisku?"
+    position-title: "Jaké skautské vzdělávání jsi zatím absolvoval nebo absolvovala?"
+    sfmTraining:
+        patrolLeader: "rádcovské"
+        candidate: "čekatelské"
+        leader: "vůdcovské"
+        instructor: "instruktorské"
+        unitMinimum: "kurz střediskového minima"
+    birthPlace: "Jiné skautské vzdělávání"
+    language: "Jakých celostátních nebo velkých akcí ses zúčastnil nebo zúčastnila v posledních třech letech (2024, 2025, 2026)?"
+    sfmEvents-helptext: "Například: Celostátní kolo Svojsíkova závodu, Celostátní kolo Závodu vlčat a světlušek, Mosty přes Jarugu, Napříč Prahou – Přes 3 jezy, Setkání výchovných zpravodajů, Ústřice, Poradní skála, Elixír, Ústřední lesní škola, Mikulášský víkend, Roverská porada, SkaRe, Intercamp, Středoevropské jamboree, Hra družin, Korbo, Obrok, Navigamus, Roverway, Helpdesk.<br><br>Pokud ses některé akce zúčastnil nebo zúčastnila víckrát, nebo jsi tam měl nebo měla jinou roli než účastnickou, napiš to prosím také."
+    foodOther: "jiné - prosím upřesni v poslední otázce"
+    food-helptext: "v případě jiné diety, která není uvedena výše, uveď svou preferenci do poslední otázky"
     notice: "Je něco, co by ses nás chtěl nebo chtěla zeptat?"
     swimSkill: "Vyber jedno téma"
     scarf: "1. preferované téma"

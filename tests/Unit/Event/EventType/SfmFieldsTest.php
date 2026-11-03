@@ -6,6 +6,7 @@ namespace Tests\Unit\Event\EventType;
 
 use Closure;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\EventType\Sfm\EventTypeSfm;
 use kissj\Translation\TranslatorFactory;
@@ -102,6 +103,67 @@ class SfmFieldsTest extends TestCase
         self::assertSame(155, (new EventTypeSfm())->getContentArbiterGuest()->skills->order);
     }
 
+    public function testTrainingQuestionIsOptionalCheckboxList(): void
+    {
+        $item = (new EventTypeSfm())->getContentArbiterGuest()->preferredPosition;
+
+        self::assertTrue($item->allowed);
+        self::assertFalse($item->required);
+        self::assertSame(156, $item->order);
+        self::assertNull($item->helpText);
+        self::assertFalse($item->editableAfterLock);
+        self::assertSame([
+            'detail.sfmTraining.patrolLeader' => 'detail.sfmTraining.patrolLeader',
+            'detail.sfmTraining.candidate' => 'detail.sfmTraining.candidate',
+            'detail.sfmTraining.leader' => 'detail.sfmTraining.leader',
+            'detail.sfmTraining.instructor' => 'detail.sfmTraining.instructor',
+            'detail.sfmTraining.unitMinimum' => 'detail.sfmTraining.unitMinimum',
+        ], $item->options);
+    }
+
+    public function testOtherTrainingQuestionIsOptionalText(): void
+    {
+        $item = (new EventTypeSfm())->getContentArbiterGuest()->birthPlace;
+
+        self::assertTrue($item->allowed);
+        self::assertFalse($item->required);
+        self::assertSame(157, $item->order);
+        self::assertNull($item->placeholder);
+        self::assertSame(ContentArbiterItemType::Text, $item->type);
+    }
+
+    public function testEventsQuestionIsOptionalTextareaWithHelpText(): void
+    {
+        $item = (new EventTypeSfm())->getContentArbiterGuest()->languages;
+
+        self::assertTrue($item->allowed);
+        self::assertFalse($item->required);
+        self::assertSame(158, $item->order);
+        self::assertNull($item->placeholder);
+        self::assertSame(ContentArbiterItemType::Textarea, $item->type);
+        self::assertSame('detail.sfmEvents-helptext', $item->helpText);
+    }
+
+    public function testMedicamentsStayUnasked(): void
+    {
+        self::assertFalse((new EventTypeSfm())->getContentArbiterGuest()->medicaments->allowed);
+    }
+
+    public function testFoodIsStandardRequiredSelect(): void
+    {
+        $item = (new EventTypeSfm())->getContentArbiterGuest()->food;
+
+        self::assertTrue($item->allowed);
+        self::assertTrue($item->required);
+        self::assertSame([
+            'detail.foodWithout' => 'detail.foodWithout',
+            'detail.foodVegetarian' => 'detail.foodVegetarian',
+            'detail.foodLactoseFree' => 'detail.foodLactoseFree',
+            'detail.foodGlutenFree' => 'detail.foodGlutenFree',
+            'detail.foodOther' => 'detail.foodOther',
+        ], $item->options);
+    }
+
     public function testScriptSyncsTopicSelects(): void
     {
         $scriptName = (new EventTypeSfm())->getScriptNameWithoutLeadingSlash();
@@ -145,5 +207,29 @@ class SfmFieldsTest extends TestCase
             $translator->trans('detail.skills'),
         );
         self::assertSame('Je něco, co by ses nás chtěl nebo chtěla zeptat?', $translator->trans('detail.notice'));
+        self::assertSame(
+            'Jaké skautské vzdělávání jsi zatím absolvoval nebo absolvovala?',
+            $translator->trans('detail.position-title'),
+        );
+        self::assertSame('rádcovské', $translator->trans('detail.sfmTraining.patrolLeader'));
+        self::assertSame('čekatelské', $translator->trans('detail.sfmTraining.candidate'));
+        self::assertSame('vůdcovské', $translator->trans('detail.sfmTraining.leader'));
+        self::assertSame('instruktorské', $translator->trans('detail.sfmTraining.instructor'));
+        self::assertSame('kurz střediskového minima', $translator->trans('detail.sfmTraining.unitMinimum'));
+        self::assertSame('Jiné skautské vzdělávání', $translator->trans('detail.birthPlace'));
+        self::assertSame(
+            'Jakých celostátních nebo velkých akcí ses zúčastnil nebo zúčastnila v posledních třech letech'
+            . ' (2024, 2025, 2026)?',
+            $translator->trans('detail.language'),
+        );
+        self::assertSame('jiné - prosím upřesni v poslední otázce', $translator->trans('detail.foodOther'));
+        self::assertSame(
+            'v případě jiné diety, která není uvedena výše, uveď svou preferenci do poslední otázky',
+            $translator->trans('detail.food-helptext'),
+        );
+        $eventsHelp = $translator->trans('detail.sfmEvents-helptext');
+        self::assertStringContainsString('Celostátní kolo Svojsíkova závodu', $eventsHelp);
+        self::assertStringContainsString('Helpdesk', $eventsHelp);
+        self::assertStringContainsString('víckrát', $eventsHelp);
     }
 }

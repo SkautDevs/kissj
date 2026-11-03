@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Event\EventType\Sfm;
 
 use kissj\Event\ContentArbiter\ContentArbiterItem;
+use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\EventType\EventTypeDefault;
 
@@ -20,6 +21,30 @@ class EventTypeSfm extends EventTypeDefault
         $ca->skills->placeholder = null;
         $ca->skills->order = 155;
         $ca->notes->placeholder = null;
+
+        $ca->preferredPosition->allowed = true;
+        $ca->preferredPosition->required = false;
+        $ca->preferredPosition->order = 156;
+        $ca->preferredPosition->helpText = null;
+        $ca->preferredPosition->options = ContentArbiterItem::selfMappedOptions([
+            'detail.sfmTraining.patrolLeader',
+            'detail.sfmTraining.candidate',
+            'detail.sfmTraining.leader',
+            'detail.sfmTraining.instructor',
+            'detail.sfmTraining.unitMinimum',
+        ]);
+        $ca->birthPlace->allowed = true;
+        $ca->birthPlace->required = false;
+        $ca->birthPlace->order = 157;
+        $ca->birthPlace->placeholder = null;
+        $ca->languages->allowed = true;
+        $ca->languages->required = false;
+        $ca->languages->order = 158;
+        $ca->languages->placeholder = null;
+        $ca->languages->type = ContentArbiterItemType::Textarea;
+        $ca->languages->helpText = 'detail.sfmEvents-helptext';
+        $ca->food->allowed = true;
+        $ca->food->options = ContentArbiterItem::selfMappedOptions($this->getFoodOptions());
 
         $this->askForTopic($ca->swimming, 291, $this->getGroupOneTopics());
         $ca->swimming->helpText = 'detail.sfmTopic.group1-helptext';
