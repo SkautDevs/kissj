@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Telemetry\Sentry;
 
 use Sentry\Event;
+use Sentry\Logs\Log;
 
 readonly class UrlRedactor
 {
@@ -13,6 +14,11 @@ readonly class UrlRedactor
     public static function redact(string $value): string
     {
         $value = preg_replace('~/tryLogin/[^/?#]+~', '/tryLogin/' . self::REDACTED, $value);
+        if ($value === null) {
+            return self::REDACTED;
+        }
+
+        $value = preg_replace('~\\\\/tryLogin\\\\/[^\\\\"?#]+~', '\\\\/tryLogin\\\\/' . self::REDACTED, $value);
         if ($value === null) {
             return self::REDACTED;
         }
@@ -77,6 +83,20 @@ readonly class UrlRedactor
         }
 
         return $event;
+    }
+
+    public static function scrubLog(Log $log): Log
+    {
+        $log->setBody(self::redact($log->getBody()));
+
+        foreach ($log->attributes()->all() as $key => $attribute) {
+            $value = $attribute->getValue();
+            if (is_string($value)) {
+                $log->setAttribute($key, self::redact($value));
+            }
+        }
+
+        return $log;
     }
 
     /**

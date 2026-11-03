@@ -44,7 +44,7 @@
 		"ramsey/uuid": "^4.7",
 		"robmorgan/phinx": "^0.15.5",
 		"selective/basepath": "^2.1",
-		"sentry/sentry": "^4.1",
+		"sentry/sentry": "^4.31",
 		"skautis/skautis": "^2.1",
 		"slim/csrf": "^1.5",
 		"slim/psr7": "^1.1",

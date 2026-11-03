@@ -139,7 +139,9 @@ use Redis;
 use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
 use Sentry\Event as SentryEvent;
+use Sentry\Logs\Logs as SentryLogs;
 use Sentry\Monolog\Handler as SentryHandler;
+use Sentry\Monolog\LogsHandler as SentryLogsHandler;
 use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
 use SessionHandlerInterface;
@@ -197,9 +199,11 @@ class Settings
             'traces_sample_rate' => $env->sentryTracesSampleRate,
             'profiles_sample_rate' => $env->sentryProfilesSampleRate,
             'release' => 'kissj@' . $env->gitHash,
+            'log_flush_threshold' => 100,
             'before_send' => $beforeSend,
             // transactions dispatch to their own callback and ship request data on every sampled request
             'before_send_transaction' => $beforeSend,
+            'before_send_log' => UrlRedactor::scrubLog(...),
         ])->getClient();
         SentrySdk::init()->bindClient($sentryClient);
 
@@ -207,6 +211,7 @@ class Settings
         SentrySdk::setCurrentHub($sentryHub);
         register_shutdown_function(static function (): void {
             (new Metrics())->flush();
+            SentryLogs::getInstance()->flush();
         });
 
         // autowired classes are not compiled automatically, hence here we about to tell them to DI
@@ -352,7 +357,10 @@ class Settings
                 new StreamHandler('php://stdout', $env->loggerLevel),
             );
             $logger->pushHandler(
-                new SentryHandler($sentryHub, Level::Info),
+                new SentryHandler($sentryHub, Level::Warning),
+            );
+            $logger->pushHandler(
+                new SentryLogsHandler(Level::Info),
             );
 
             if ($env->debug) {

@@ -7,6 +7,8 @@ namespace Tests\Unit\Telemetry\Sentry;
 use kissj\Telemetry\Sentry\UrlRedactor;
 use PHPUnit\Framework\TestCase;
 use Sentry\Event;
+use Sentry\Logs\Log;
+use Sentry\Logs\LogLevel;
 
 class UrlRedactorTest extends TestCase
 {
@@ -233,5 +235,32 @@ class UrlRedactorTest extends TestCase
 
         self::assertNull($scrubbed->getMessage());
         self::assertSame([], $scrubbed->getRequest());
+    }
+
+    public function testScrubLogRedactsBodyAndStringAttributes(): void
+    {
+        $log = new Log(1.0, 'trace', LogLevel::info(), 'Visited /login?ot_token=xyz');
+        $log->setAttribute('url', '/v2/kissj/tryLogin/abc123');
+        $log->setAttribute('count', 3);
+
+        $scrubbed = UrlRedactor::scrubLog($log);
+
+        self::assertSame('Visited /login?ot_token=' . UrlRedactor::REDACTED, $scrubbed->getBody());
+        self::assertSame(
+            '/v2/kissj/tryLogin/' . UrlRedactor::REDACTED,
+            $scrubbed->attributes()->get('url')?->getValue(),
+        );
+        self::assertSame(3, $scrubbed->attributes()->get('count')?->getValue());
+    }
+
+    public function testRedactsLoginTokenInJsonEscapedUrl(): void
+    {
+        $encoded = json_encode(['/v2/e/tryLogin/abc123']);
+        self::assertIsString($encoded);
+
+        self::assertSame(
+            '["\\/v2\\/e\\/tryLogin\\/' . UrlRedactor::REDACTED . '"]',
+            UrlRedactor::redact($encoded),
+        );
     }
 }
