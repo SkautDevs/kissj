@@ -133,6 +133,7 @@ use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 use Negotiation\LanguageNegotiator;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Redis;
 use Sentry\Client as SentryClient;
@@ -457,7 +458,7 @@ class Settings
             CurrentTranslator $translator,
             FlashMessagesBySession $flashMessages,
             EnvSettings $env,
-            AdminRouteAccessResolver $routeAccessResolver,
+            ContainerInterface $container,
         ) {
             $view = Twig::create(
                 [
@@ -483,8 +484,18 @@ class Settings
 
             $view->getEnvironment()->addFunction(new TwigFunction(
                 'canAccessRoute',
-                static fn (string $routeName): bool => $user !== null
-                    && $routeAccessResolver->canAccessRoute($user, $routeName),
+                static function (string $routeName) use ($user, $container): bool {
+                    if ($user === null) {
+                        return false;
+                    }
+
+                    $routeAccessResolver = $container->get(AdminRouteAccessResolver::class);
+                    if ($routeAccessResolver instanceof AdminRouteAccessResolver === false) {
+                        throw new LogicException('AdminRouteAccessResolver is not registered in the container');
+                    }
+
+                    return $routeAccessResolver->canAccessRoute($user, $routeName);
+                },
             ));
 
             $view->addExtension(new DebugExtension()); // not needed to disable in production
