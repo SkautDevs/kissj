@@ -295,7 +295,8 @@ class TestingEventsSeed extends AbstractSeed
         if (is_dir($uploadFolder) === false && mkdir($uploadFolder, 0775, true) === false) {
             throw new RuntimeException('cannot create upload folder ' . $uploadFolder);
         }
-        if (file_exists($uploadFolder . $hashedName) === false
+        if (
+            file_exists($uploadFolder . $hashedName) === false
             && copy(__DIR__ . '/programmes/images/' . $imageName, $uploadFolder . $hashedName) === false
         ) {
             throw new RuntimeException('cannot copy programme image ' . $imageName);

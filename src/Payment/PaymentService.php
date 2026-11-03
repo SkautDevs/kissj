@@ -226,7 +226,8 @@ class PaymentService
                 $payment = $participantKeydPayments[$bankPayment->variableSymbol ?? ''];
                 $paymentCurrency = Payment::normalizeCurrency($payment->currency);
                 $bankCurrency = Payment::normalizeCurrency($bankPayment->currency);
-                if ($payment->price === $bankPayment->price
+                if (
+                    $payment->price === $bankPayment->price
                     && $paymentCurrency !== null
                     && $paymentCurrency === $bankCurrency
                 ) {

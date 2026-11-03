@@ -22,7 +22,8 @@ class AbstractContentArbiterTest extends TestCase
         $reflection = new \ReflectionClass(AbstractContentArbiter::class);
         $expectedCount = 0;
         foreach ($reflection->getProperties() as $property) {
-            if ($property->getType() instanceof \ReflectionNamedType
+            if (
+                $property->getType() instanceof \ReflectionNamedType
                 && $property->getType()->getName() === ContentArbiterItem::class
             ) {
                 $expectedCount++;

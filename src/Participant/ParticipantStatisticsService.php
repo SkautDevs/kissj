@@ -164,8 +164,10 @@ readonly class ParticipantStatisticsService
         $otherFoodParticipants = [];
 
         foreach ($deduplicatedParticipants as $participant) {
-            if (EntryStatus::entryFromDatetime($participant->entryDate, $participant->leaveDate)
-                !== EntryStatus::ENTRY_STATUS_USED) {
+            if (
+                EntryStatus::entryFromDatetime($participant->entryDate, $participant->leaveDate)
+                !== EntryStatus::ENTRY_STATUS_USED
+            ) {
                 continue;
             }
 
