@@ -29,8 +29,15 @@ class EventInfoMiddleware extends BaseMiddleware
         $routeContext = RouteContext::fromRequest($request);
         $route = $routeContext->getRoute();
 
-        $eventSlug = $route?->getArgument('eventSlug') ?? '';
-        $event = $this->eventRepository->findBySlug($eventSlug);
+        $eventSlug = $route?->getArgument('eventSlug');
+        $event = $this->eventRepository->findBySlug($eventSlug ?? '');
+        if (
+            $eventSlug !== null
+            && $event === null
+        ) {
+            return $this->createRedirectResponse($request, 'eventList');
+        }
+
         $request = $request->withAttribute('event', $event);
 
         if ($event instanceof Event) {
