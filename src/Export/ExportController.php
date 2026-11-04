@@ -19,7 +19,7 @@ use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
-use League\Csv\ByteSequence;
+use League\Csv\Bom;
 use League\Csv\EscapeFormula;
 use League\Csv\Writer;
 use LogicException;
@@ -141,9 +141,9 @@ class ExportController extends AbstractController
 
         $csv = Writer::from(new SplTempFileObject());
         $csv->setDelimiter(',');
-        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+        $csv->setOutputBOM(Bom::Utf8);
         $csv->addFormatter(new CsvCellFlattener());
-        $csv->addFormatter(new EscapeFormula());
+        $csv->addFormatter((new EscapeFormula())->escapeRecord(...));
         $csv->insertAll($csvRows);
 
         $body = $response->getBody();
