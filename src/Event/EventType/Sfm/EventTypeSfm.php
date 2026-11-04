@@ -51,6 +51,8 @@ class EventTypeSfm extends EventTypeDefault
         $this->askForTopic($ca->scarf, 292, $this->getGroupTwoTopics());
         $ca->scarf->helpText = 'detail.sfmTopic.group2-helptext';
         $this->askForTopic($ca->driver, 293, $this->getGroupTwoTopics());
+        $ca->arrivalDate->allowed = false;
+        $ca->departureDate->allowed = false;
 
         return $ca;
     }
