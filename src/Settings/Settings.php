@@ -140,7 +140,8 @@ use Sentry\Client as SentryClient;
 use Sentry\ClientBuilder;
 use Sentry\Event as SentryEvent;
 use Sentry\Logs\Logs as SentryLogs;
-use Sentry\Monolog\Handler as SentryHandler;
+use Sentry\Monolog\ExceptionToSentryIssueHandler;
+use Sentry\Monolog\LogToSentryIssueHandler;
 use Sentry\Monolog\LogsHandler as SentryLogsHandler;
 use Sentry\SentrySdk;
 use Sentry\State\Hub as SentryHub;
@@ -357,7 +358,10 @@ class Settings
                 new StreamHandler('php://stdout', $env->loggerLevel),
             );
             $logger->pushHandler(
-                new SentryHandler($sentryHub, Level::Warning),
+                new ExceptionToSentryIssueHandler($sentryHub, Level::Warning),
+            );
+            $logger->pushHandler(
+                new LogToSentryIssueHandler($sentryHub, Level::Warning),
             );
             $logger->pushHandler(
                 new SentryLogsHandler(Level::Info),

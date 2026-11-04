@@ -15,15 +15,23 @@ use Psr\Container\ContainerInterface;
 use Sentry\Client as SentryClient;
 use Sentry\Logs\Log;
 use Sentry\Logs\LogLevel;
-use Sentry\Monolog\Handler as SentryHandler;
+use Sentry\Monolog\ExceptionToSentryIssueHandler;
 use Sentry\Monolog\LogsHandler;
+use Sentry\Monolog\LogToSentryIssueHandler;
 use Tests\AppTestCase;
 
 class LoggerHandlersTest extends AppTestCase
 {
-    public function testSentryIssueHandlerStartsAtWarning(): void
+    public function testSentryExceptionHandlerStartsAtWarning(): void
     {
-        $handler = $this->findHandler(SentryHandler::class);
+        $handler = $this->findHandler(ExceptionToSentryIssueHandler::class);
+
+        self::assertSame(Level::Warning, $handler->getLevel());
+    }
+
+    public function testSentryLogIssueHandlerStartsAtWarning(): void
+    {
+        $handler = $this->findHandler(LogToSentryIssueHandler::class);
 
         self::assertSame(Level::Warning, $handler->getLevel());
     }

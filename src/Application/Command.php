@@ -12,7 +12,7 @@ readonly class Command
     {
         /** @var UpdatePaymentsCommand $updatePaymentsCommand */
         $updatePaymentsCommand = $container->get(UpdatePaymentsCommand::class);
-        $app->add($updatePaymentsCommand);
+        $app->addCommand($updatePaymentsCommand);
 
         return $app;
     }
