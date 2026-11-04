@@ -178,6 +178,7 @@ class AppTestCase extends TestCase
             $this->provideCleanDatabase($runTempPath);
         }
 
+        error_reporting((int)get_cfg_var('error_reporting'));
         $app = (new ApplicationGetter())->getApp(
             __DIR__ . '/',
             'env.testing',
