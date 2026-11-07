@@ -433,6 +433,12 @@ abstract class EventType
         return false;
     }
 
+    public function isCapacityCountedPerContingent(): bool
+    {
+        return $this->getContingents() !== []
+            && $this->countContingentsTogetherForCapacity() === false;
+    }
+
     public function isOwnerTicketTransferAllowed(): bool
     {
         return false;

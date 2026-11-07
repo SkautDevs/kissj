@@ -40,6 +40,7 @@ class ApiRouteGuardTest extends AppTestCase
 
     private const array GUARD_BY_ROUTE_NAME = [
         'health' => 'public',
+        'event-stats-api' => 'public',
         'entry' => 'public',
         'deal-catch-data-from-google-form' => 'deal',
         'entry-list' => 'entry',

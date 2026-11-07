@@ -693,6 +693,9 @@ class Route
             })->add(EventApiKeyMiddleware::class);
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
+                $app->get('/stats', EventController::class . '::stats')
+                    ->setName('event-stats-api');
+
                 $app->group('/admin', function (RouteCollectorProxy $app) {
                     $app->group('/{participantId}', function (RouteCollectorProxy $app) {
                         $app->post('/adminNote', AdminJsonController::class . '::changeAdminNote')

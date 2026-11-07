@@ -49,6 +49,8 @@ class CrossEventGuardTest extends AppTestCase
 
     private const array WITHOUT_ROLE_ROUTE_NAMES = ['chooseRole', 'setRole'];
 
+    private const array PUBLIC_ROUTE_NAMES = ['event-stats-api'];
+
     private const array REQUEST_BODY = [
         'reason' => 'cross-event',
         'notice' => 'cross-event',
@@ -73,8 +75,15 @@ class CrossEventGuardTest extends AppTestCase
         $failures = [];
         $checkedCount = 0;
         $checkedRouteNames = [];
+        $skippedPublicRouteNames = [];
         foreach ($app->getRouteCollector()->getRoutes() as $route) {
             if ($this->isEventScopedRoute($route->getPattern()) === false) {
+                continue;
+            }
+
+            if (in_array($route->getName(), self::PUBLIC_ROUTE_NAMES, true)) {
+                $skippedPublicRouteNames[] = $route->getName();
+
                 continue;
             }
 
@@ -102,6 +111,9 @@ class CrossEventGuardTest extends AppTestCase
             $checkedCount,
             'too few routes checked, the route list or prefixes are broken',
         );
+        foreach (self::PUBLIC_ROUTE_NAMES as $routeName) {
+            self::assertContains($routeName, $skippedPublicRouteNames, 'public route does not exist: ' . $routeName);
+        }
         foreach (self::WITHOUT_ROLE_ROUTE_NAMES as $routeName) {
             self::assertContains($routeName, $checkedRouteNames, 'without role route does not exist: ' . $routeName);
         }

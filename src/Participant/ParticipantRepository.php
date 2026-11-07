@@ -503,6 +503,23 @@ class ParticipantRepository extends Repository
         return $rows;
     }
 
+    public function countEntered(Event $event): int
+    {
+        $qb = $this->getQueryBuilderCountForPaidParticipants($event);
+        $qb->where('participant.entry_date IS NOT NULL');
+
+        /** @var string $countParticipants */
+        $countParticipants = $qb->fetchSingle();
+
+        $qb = $this->getQueryBuilderCountForPaidPatrolParticipants($event);
+        $qb->where('participant.entry_date IS NOT NULL');
+
+        /** @var string $countPatrolParticipants */
+        $countPatrolParticipants = $qb->fetchSingle();
+
+        return (int)$countParticipants + (int)$countPatrolParticipants;
+    }
+
     /**
      * @return array<string,int>
      */
