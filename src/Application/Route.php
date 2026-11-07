@@ -14,10 +14,12 @@ use kissj\Export\ExportController;
 use kissj\Middleware\AddCorsHeaderForAppDomainsMiddleware;
 use kissj\Middleware\AdminsOnlyMiddleware;
 use kissj\Middleware\AdminValuesAllowedOnlyMiddleware;
+use kissj\Middleware\ApiEventRequiredMiddleware;
 use kissj\Middleware\BadgesAllowedOnlyMiddleware;
 use kissj\Middleware\DealApiKeyMiddleware;
 use kissj\Middleware\EntryApiKeyMiddleware;
 use kissj\Middleware\EventApiKeyMiddleware;
+use kissj\Middleware\EventRequiredMiddleware;
 use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
@@ -605,7 +607,7 @@ class Route
                     $app->get('/{programmeId}/image', ProgrammeController::class . '::adminImage')
                         ->setName('admin-programme-image');
                 })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
-            });
+            })->add(EventRequiredMiddleware::class);
         });
 
         $app->group($app->getBasePath() . '/v3', function (RouteCollectorProxy $app) {
@@ -718,7 +720,7 @@ class Route
                     $app->post('/{programmeId}/remove/{participantId}', ProgrammeJsonController::class . '::remove')
                         ->setName('admin-programme-remove-json');
                 })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
-            });
+            })->add(ApiEventRequiredMiddleware::class);
         });
 
         $app->get($app->getBasePath() . '/{eventSlug}', EventController::class . '::landingPrettyUrl')

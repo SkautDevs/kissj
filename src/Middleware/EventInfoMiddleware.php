@@ -31,12 +31,6 @@ class EventInfoMiddleware extends BaseMiddleware
 
         $eventSlug = $route?->getArgument('eventSlug');
         $event = $this->eventRepository->findBySlug($eventSlug ?? '');
-        if (
-            $eventSlug !== null
-            && $event === null
-        ) {
-            return $this->createRedirectResponse($request, 'eventList');
-        }
 
         $request = $request->withAttribute('event', $event);
 

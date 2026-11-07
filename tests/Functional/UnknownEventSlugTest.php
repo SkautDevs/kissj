@@ -24,6 +24,16 @@ class UnknownEventSlugTest extends AppTestCase
         self::assertStringEndsWith('/v2/kissj/events', $response->getHeaderLine('Location'));
     }
 
+    public function testUnknownSlugOnApiRouteReturnsNotFound(): void
+    {
+        $response = $this->getTestApp()->handle(
+            $this->createRequest('/v3/event/no-such-event/admin/1/adminNote', 'POST'),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+        self::assertSame('', (string)$response->getBody());
+    }
+
     public function testKnownSlugLoginStillRenders(): void
     {
         $response = $this->getTestApp()->handle($this->createRequest('/v2/event/test-event-slug/login'));
