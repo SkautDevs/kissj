@@ -18,6 +18,7 @@ use kissj\User\UserService;
 use Psr\Log\LoggerInterface;
 use Skautis\Exception as SkautisException;
 use Skautis\Skautis;
+use Skautis\Wsdl\AuthenticationException;
 use Throwable;
 
 /**
@@ -45,15 +46,13 @@ class SkautisService
 
         // should call LoginUpdateRefresh to refresh 30 minutes granted for Skautis login
         // docs: https://napoveda.skaut.cz/programatori/uzivatel#obnoveni-aktivity-uzivatele-ve-skautisu
-        $loginId = $this->skautis->getUser()->getLoginId();
-        if ($loginId !== null) {
-            try {
-                $this->skautis->UserManagement->LoginUpdateRefresh([
-                    'ID' => $loginId,
-                ]);
-            } catch (SkautisException $t) {
-                $this->logger->warning('Failed to refresh Skautis login', ['exception' => $t]);
-            }
+        try {
+            $this->skautis->getUser()->updateLogoutTime();
+        } catch (AuthenticationException $e) {
+            $this->skautis->getUser()->resetLoginData();
+            $this->logger->info('Skautis login expired, login data reset', ['exception' => $e]);
+        } catch (SkautisException $t) {
+            $this->logger->warning('Failed to refresh Skautis login', ['exception' => $t]);
         }
     }
 
@@ -167,6 +166,12 @@ class SkautisService
 
     public function prefillDataFromSkautis(Participant $participant): Participant
     {
+        if ($this->isUserLoggedIn() === false) {
+            $this->flashMessages->error('flash.error.skautisUserNotLoggedIn');
+
+            return $participant;
+        }
+
         $skautisUserData = $this->getUserDetailsFromLoggedSkautisUser();
         if ($skautisUserData === null) {
             $this->flashMessages->error('flash.error.skautisUserError');
