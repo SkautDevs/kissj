@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Event\EventType;
 
 use kissj\Event\ContentArbiter\AgeGroup;
+use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\Obrok\EventTypeObrok;
 use kissj\Participant\Troop\TroopLeader;
 use PHPUnit\Framework\TestCase;
@@ -36,9 +37,10 @@ class ObrokFieldsTest extends TestCase
         self::assertTrue($ca->skills->allowed);
         self::assertFalse($ca->skills->required);
         self::assertTrue($ca->skills->editableAfterLock);
+        self::assertSame('detail.skills-ist-helptext', $ca->skills->helpText);
     }
 
-    public function testIstPreferredPositionIsOptionalWithRegistrationFirst(): void
+    public function testIstPreferredPositionIsOptional(): void
     {
         $ca = (new EventTypeObrok())->getContentArbiterIst();
 
@@ -46,17 +48,46 @@ class ObrokFieldsTest extends TestCase
         self::assertFalse($ca->preferredPosition->required);
         self::assertTrue($ca->preferredPosition->editableAfterLock);
         self::assertSame('detail.preferredPosition-ist-helptext', $ca->preferredPosition->helpText);
+    }
+
+    public function testIstPositionOptions(): void
+    {
+        self::assertSame([
+            'detail.position.programme',
+            'detail.position.security',
+            'detail.position.kitchen',
+            'detail.position.hygiene',
+            'detail.position.fireWatch',
+            'detail.position.warehouse',
+            'detail.position.driver',
+            'detail.position.electrician',
+            'detail.position.subcampChief',
+            'detail.position.registration',
+            'detail.position.kindergarten',
+            'detail.position.other',
+        ], array_keys((new EventTypeObrok())->getContentArbiterIst()->preferredPosition->options));
+    }
+
+    public function testIstDriverIsRequiredSelectWithObrokOptions(): void
+    {
+        $driver = (new EventTypeObrok())->getContentArbiterIst()->driver;
+
+        self::assertTrue($driver->allowed);
+        self::assertTrue($driver->required);
+        self::assertTrue($driver->editableAfterLock);
+        self::assertSame('detail.driver-ist-helptext', $driver->helpText);
+        self::assertSame([
+            'dont' => 'detail.driver-dont',
+            'license without car' => 'detail.driver-licenseWithoutCar',
+            'license with car' => 'detail.driver-licenseWithCar',
+        ], $driver->options);
+    }
+
+    public function testDefaultDriverOptionsStayKmBased(): void
+    {
         self::assertSame(
-            [
-                'detail.position.registration' => 'detail.position.registration',
-                'detail.position.photo' => 'detail.position.photo',
-                'detail.position.kitchen' => 'detail.position.kitchen',
-                'detail.position.security' => 'detail.position.security',
-                'detail.position.hygiene' => 'detail.position.hygiene',
-                'detail.position.programme' => 'detail.position.programme',
-                'detail.position.other' => 'detail.position.other',
-            ],
-            $ca->preferredPosition->options,
+            ['dont', 'less 10000 km', 'more 10000 km'],
+            array_keys((new EventTypeDefault())->getContentArbiterIst()->driver->options),
         );
     }
 

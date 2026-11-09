@@ -56,6 +56,15 @@ class EventTypeObrok extends EventType
         $ca->skills->allowed = true;
         $ca->skills->required = false;
         $ca->skills->editableAfterLock = true;
+        $ca->skills->helpText = 'detail.skills-ist-helptext';
+        $ca->driver->allowed = true;
+        $ca->driver->editableAfterLock = true;
+        $ca->driver->helpText = 'detail.driver-ist-helptext';
+        $ca->driver->options = [
+            'dont' => 'detail.driver-dont',
+            'license without car' => 'detail.driver-licenseWithoutCar',
+            'license with car' => 'detail.driver-licenseWithCar',
+        ];
         $ca->preferredPosition->allowed = true;
         $ca->preferredPosition->required = false;
         $ca->preferredPosition->editableAfterLock = true;
@@ -225,6 +234,28 @@ class EventTypeObrok extends EventType
             'detail.foodLactoseFree',
             'detail.foodGlutenFree',
             'detail.foodOther',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getPositionOptions(): array
+    {
+        return [
+            'detail.position.programme',
+            'detail.position.security',
+            'detail.position.kitchen',
+            'detail.position.hygiene',
+            'detail.position.fireWatch',
+            'detail.position.warehouse',
+            'detail.position.driver',
+            'detail.position.electrician',
+            'detail.position.subcampChief',
+            'detail.position.registration',
+            'detail.position.kindergarten',
+            'detail.position.other',
         ];
     }
 

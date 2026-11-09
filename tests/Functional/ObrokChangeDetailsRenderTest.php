@@ -34,7 +34,7 @@ class ObrokChangeDetailsRenderTest extends AppTestCase
         self::assertStringContainsString('PDF nebo obrázek, max 10 MB', $body);
         self::assertStringContainsString('Psychická omezení', $body);
         self::assertStringContainsString('placeholder="alergie, dlouhodobé problémy"', $body);
-        self::assertStringContainsString('jiné - prosím upřesni v dovednostech', $body);
+        self::assertStringContainsString('Jiné - prosím upřesni v dovednostech', $body);
         self::assertStringContainsString('Preferuji tištěný handbook místo digitálního', $body);
         self::assertStringNotContainsString('PDF s potvrzením najdeš na našem webu', $body);
         self::assertSame(1, substr_count($body, 'v případě jiné diety'));
