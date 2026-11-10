@@ -29,13 +29,35 @@ class CountryTest extends TestCase
     public static function skautisStateProvider(): array
     {
         return [
-            // exact strings skautIS returns in the person State field
-            'czech' => ['Česká republika', Country::CzechRepublic],
-            'slovak' => ['Slovensko', Country::Slovakia],
-            'null' => [null, Country::Other],
-            'empty string' => ['', Country::Other],
-            'english name is not accepted' => ['Czech Republic', Country::Other],
-            'unknown value' => ['Polsko', Country::Other],
+            'czech Česká republika' => ['Česká republika', Country::CzechRepublic],
+            'czech Česká Republika' => ['Česká Republika', Country::CzechRepublic],
+            'czech Česká bRepublika' => ['Česká bRepublika', Country::CzechRepublic],
+            'czech Cz' => ['Cz', Country::CzechRepublic],
+            'czech CZ' => ['CZ', Country::CzechRepublic],
+            'czech ČR' => ['ČR', Country::CzechRepublic],
+            'czech CZE' => ['CZE', Country::CzechRepublic],
+            'czech Česko' => ['Česko', Country::CzechRepublic],
+            'czech ČESKO' => ['ČESKO', Country::CzechRepublic],
+            'czech Czechia' => ['Czechia', Country::CzechRepublic],
+            'czech Czech Republic' => ['Czech Republic', Country::CzechRepublic],
+            'czech ceska republika' => ['ceska republika', Country::CzechRepublic],
+            'czech padded Česká rep.' => [' Česká rep. ', Country::CzechRepublic],
+            'slovak Slovensko' => ['Slovensko', Country::Slovakia],
+            'slovak Slovenská republika' => ['Slovenská republika', Country::Slovakia],
+            'slovak SR' => ['SR', Country::Slovakia],
+            'slovak SK' => ['SK', Country::Slovakia],
+            'slovak SVK' => ['SVK', Country::Slovakia],
+            'slovak Slovakia' => ['Slovakia', Country::Slovakia],
+            'slovak Slovak Republic' => ['Slovak Republic', Country::Slovakia],
+            'other null' => [null, Country::Other],
+            'other empty string' => ['', Country::Other],
+            'other whitespace only' => ['  ', Country::Other],
+            'other ...' => ['...', Country::Other],
+            'other Polsko' => ['Polsko', Country::Other],
+            'other Slovinsko' => ['Slovinsko', Country::Other],
+            'other Slovenia' => ['Slovenia', Country::Other],
+            'other Slovenija' => ['Slovenija', Country::Other],
+            'other Чехия' => ['Чехия', Country::Other],
         ];
     }
 }
