@@ -177,8 +177,8 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
             'POST',
             [
                 'tieCode' => $recipientCode,
-                'csrf_name' => 'csrf_forged',
-                'csrf_value' => base64_encode(random_bytes(64)),
+                'csrfName' => 'csrfForged',
+                'csrfValue' => base64_encode(random_bytes(64)),
             ],
         ));
 
@@ -213,9 +213,9 @@ class OwnerTicketTransferByTieCodeTest extends AppTestCase
 
         $body = (string) $response->getBody();
         self::assertSame(200, $response->getStatusCode());
-        self::assertStringContainsString('name="csrf_name"', $body);
-        self::assertStringContainsString('name="csrf_value"', $body);
-        self::assertMatchesRegularExpression('/name="csrf_value" value="[^"]+"/', $body);
+        self::assertStringContainsString('name="csrfName"', $body);
+        self::assertStringContainsString('name="csrfValue"', $body);
+        self::assertMatchesRegularExpression('/name="csrfValue" value="[^"]+"/', $body);
     }
 
     public function testTransferFailsGracefullyWhenGiverHasNoPaidPayment(): void

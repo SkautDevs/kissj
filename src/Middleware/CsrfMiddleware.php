@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace kissj\Middleware;
 
 use kissj\FlashMessages\FlashMessagesBySession;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Csrf\Guard;
@@ -32,6 +33,18 @@ abstract class CsrfMiddleware extends Guard
                 );
             },
         );
+    }
+
+    #[Override]
+    public function getTokenNameKey(): string
+    {
+        return 'csrfName';
+    }
+
+    #[Override]
+    public function getTokenValueKey(): string
+    {
+        return 'csrfValue';
     }
 
     abstract protected function getFailureRedirectRouteName(): string;
