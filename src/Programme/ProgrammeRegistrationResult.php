@@ -7,7 +7,6 @@ namespace kissj\Programme;
 readonly class ProgrammeRegistrationResult
 {
     private function __construct(
-        public bool $success,
         public string $translationKey,
         public ?ProgrammeRegistrationError $error,
     ) {
@@ -15,11 +14,11 @@ readonly class ProgrammeRegistrationResult
 
     public static function success(string $translationKey): self
     {
-        return new self(true, $translationKey, null);
+        return new self($translationKey, null);
     }
 
     public static function failure(ProgrammeRegistrationError $error): self
     {
-        return new self(false, $error->flashKey(), $error);
+        return new self($error->flashKey(), $error);
     }
 }
