@@ -7,6 +7,7 @@ namespace Tests\Unit\Translation;
 use kissj\Event\EventType\EventType;
 use kissj\Event\EventType\EventTypeDefault;
 use kissj\Event\EventType\Korbo\EventTypeKorbo;
+use kissj\Event\EventType\Sfm\EventTypeSfm;
 use kissj\Translation\TranslatorFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -110,6 +111,48 @@ class TranslatorFactoryTest extends TestCase
             $base->trans('email.payment-successful.enjoy.man'),
             $korbo->trans('email.payment-successful.enjoy.man'),
         );
+    }
+
+    public function testSfmOverridesClosedRegistrationTexts(): void
+    {
+        $factory = new TranslatorFactory('cs', null, false);
+
+        $sfm = $factory->createForEventType(new EventTypeSfm());
+        $base = $factory->createBase();
+
+        $start = 'Díky, že máš zájem se zúčastnit Skautského fóra mladých. Evidujeme tvoji přihlášku. '
+            . 'O účasti budeme rozhodovat po uzavření přihlášek, tedy nejdříve v půlce prosince. ';
+
+        self::assertSame(
+            $start . 'Do té doby tě prosíme o trpělivost a o to, abys nám dala vědět, '
+            . 'pokud by ses už akce nechtěla zúčastnit.',
+            $sfm->trans('email.closed.successfullySent.woman'),
+        );
+        self::assertSame(
+            $start . 'Do té doby tě prosíme o trpělivost a o to, abys nám dal vědět, '
+            . 'pokud by ses už akce nechtěl zúčastnit.',
+            $sfm->trans('email.closed.successfullySent.man'),
+        );
+        self::assertSame(
+            $start . 'Do té doby tě prosíme o trpělivost. Pokud se už akce nebudeš chtít zúčastnit, '
+            . 'dej nám prosím vědět.',
+            $sfm->trans('email.closed.successfullySent'),
+        );
+        self::assertSame(
+            'Evidujeme tvoji přihlášku. O účasti budeme rozhodovat po uzavření přihlášek, '
+            . 'tedy nejdříve v půlce prosince. Pokud se už akce nebudeš chtít zúčastnit, napiš nám na e-mail ',
+            $sfm->trans('userCustomHelp.statusClosedGuest'),
+        );
+        self::assertStringNotContainsString('Skautského fóra mladých', $base->trans('email.closed.successfullySent'));
+        self::assertStringNotContainsString(
+            'Skautského fóra mladých',
+            $base->trans('email.closed.successfullySent.man'),
+        );
+        self::assertStringNotContainsString(
+            'Skautského fóra mladých',
+            $base->trans('email.closed.successfullySent.woman'),
+        );
+        self::assertStringNotContainsString('v půlce prosince', $base->trans('userCustomHelp.statusClosedGuest'));
     }
 
     public function testFactoryReturnsIndependentInstancesPerCall(): void

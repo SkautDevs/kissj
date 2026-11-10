@@ -212,6 +212,10 @@ class EmailTranslationKeysTest extends TestCase
             'cs denial requirements'         => ['src/Templates/cs.yaml',              'email.denial.requirements'],
             'korbo layout ifQuestion'        => ['src/Event/EventType/Korbo/cs.yaml',  'email.layout.ifQuestion'],
             'korbo closed successfullySent'  => ['src/Event/EventType/Korbo/cs.yaml',  'email.closed.successfullySent'],
+            'sfm closed successfullySent'    => [
+                'src/Event/EventType/Sfm/cs_sfm.yaml',
+                'email.closed.successfullySent',
+            ],
             'obrok payment-successful enjoy' => [
                 'src/Event/EventType/Obrok/cs_obrok.yaml',
                 'email.payment-successful.enjoy',
