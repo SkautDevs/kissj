@@ -126,8 +126,8 @@ class ProgrammeAdminTest extends AppTestCase
         $mover = $this->createProgramme($app, 'moves into exclusive', $open, 5);
         $service = $this->getService($app, ProgrammeService::class);
         $doubleBooked = $this->createPaidIstWithEmail($app, 'double-booked-mover@example.com');
-        self::assertTrue($service->adminAssign($stayer, $doubleBooked)->success);
-        self::assertTrue($service->adminAssign($mover, $doubleBooked)->success);
+        self::assertNull($service->adminAssign($stayer, $doubleBooked)->error);
+        self::assertNull($service->adminAssign($mover, $doubleBooked)->error);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $mover->id . '/edit',

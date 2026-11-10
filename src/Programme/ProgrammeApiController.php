@@ -163,17 +163,11 @@ class ProgrammeApiController extends AbstractController
 
     private function presentRegistrationResult(Response $response, ProgrammeRegistrationResult $result): Response
     {
-        if ($result->success) {
+        if ($result->error === null) {
             return $this->getResponseWithJson($response, new ProgrammeApiOkDTO(true));
         }
 
-        return $this->getResponseWithJson(
-            $response,
-            new ProgrammeApiErrorDTO(
-                ($result->error ?? throw new LogicException('Failed programme registration has no error'))->value,
-            ),
-            400,
-        );
+        return $this->getResponseWithJson($response, new ProgrammeApiErrorDTO($result->error->value), 400);
     }
 
     private function presentSection(ProgrammeSection $section): ProgrammeApiSectionDTO
