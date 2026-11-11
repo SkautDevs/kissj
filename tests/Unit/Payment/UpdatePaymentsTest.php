@@ -365,7 +365,7 @@ class UpdatePaymentsTest extends TestCase
         $service = $this->service();
         $service->shouldReceive('confirmPayment')->never();
 
-        $result = $service->updatePayments($event);
+        $service->updatePayments($event);
 
         self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
     }
@@ -384,7 +384,7 @@ class UpdatePaymentsTest extends TestCase
         $service = $this->service($this->mockLoggerExpectingCurrencyMismatchWarning('Kc$', 'CZK'));
         $service->shouldReceive('confirmPayment')->never();
 
-        $result = $service->updatePayments($event);
+        $service->updatePayments($event);
 
         self::assertSame(BankPayment::STATUS_UNKNOWN, $bankPayment->status);
     }

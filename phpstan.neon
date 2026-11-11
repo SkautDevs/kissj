@@ -38,6 +38,9 @@ parameters:
 	shipmonkRules:
 		enforceReadonlyPublicProperty:
 			enabled: false
+		forbidCheckedExceptionInCallable:
+			allowedCheckedExceptionCallables:
+				'Slim\Routing\RouteCollectorProxy::get': 1
 
 rules:
 	- kissj\Phpstan\NoConstructorUseDatetimeRule

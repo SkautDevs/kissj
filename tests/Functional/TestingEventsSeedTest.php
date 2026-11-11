@@ -43,8 +43,6 @@ class TestingEventsSeedTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         /** @var UserRepository $userRepository */
         $userRepository = $this->getService($app, UserRepository::class);
-        /** @var ParticipantRepository $participantRepository */
-        $participantRepository = $this->getService($app, ParticipantRepository::class);
 
         $eventCountBefore = count($eventRepository->findAll());
 
@@ -313,7 +311,7 @@ class TestingEventsSeedTest extends AppTestCase
             $obrokProgrammes,
             fn (Programme $programme): bool => $programme->isForRole(ParticipantRole::TroopLeader),
         );
-        self::assertNotEmpty($targetingTroopLeader);
+        self::assertNotSame([], $targetingTroopLeader);
 
         $miquik = $eventRepository->findBySlug('miquik3026');
         self::assertNotNull($miquik);

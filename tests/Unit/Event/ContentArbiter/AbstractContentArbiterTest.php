@@ -216,7 +216,7 @@ class AbstractContentArbiterTest extends TestCase
     {
         $ca = new ContentArbiterIst();
 
-        self::assertEmpty($ca->getEditableAfterLockItems());
+        self::assertSame([], $ca->getEditableAfterLockItems());
     }
 
     public function testGetEditableAfterLockItemsReturnsDatesWhenAllowed(): void

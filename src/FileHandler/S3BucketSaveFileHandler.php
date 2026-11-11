@@ -6,6 +6,7 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
 use kissj\Telemetry\Sentry\Collector;
+use LogicException;
 use Slim\Psr7\UploadedFile;
 
 class S3BucketSaveFileHandler extends SaveFileHandler
@@ -40,7 +41,8 @@ class S3BucketSaveFileHandler extends SaveFileHandler
                 'Bucket' => $this->s3bucket,
                 'Key' => $newFilename,
                 'Body' => $uploadedFile->getStream(),
-                'ContentType' => $uploadedFile->getClientMediaType(),
+                'ContentType' => $uploadedFile->getClientMediaType()
+                    ?? throw new LogicException('Uploaded file has no media type'),
             ]);
         } catch (S3Exception $e) {
             $this->sentryCollector->collect($e);

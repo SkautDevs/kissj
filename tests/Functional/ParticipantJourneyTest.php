@@ -535,7 +535,7 @@ class ParticipantJourneyTest extends AppTestCase
 
         // Store the leader's tie code for verification
         $leaderTieCode = $troopLeader->tieCode;
-        self::assertNotEmpty($leaderTieCode, 'Leader should have a tie code');
+        self::assertNotSame('', $leaderTieCode, 'Leader should have a tie code');
 
         // Step 2: Register Troop Participant 1
         $participant1User = $this->registerUser($app, $participant1Email);
@@ -559,7 +559,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopParticipantRepository->persist($troopParticipant1);
 
         $participant1TieCode = $troopParticipant1->tieCode;
-        self::assertNotEmpty($participant1TieCode, 'Participant 1 should have a tie code');
+        self::assertNotSame('', $participant1TieCode, 'Participant 1 should have a tie code');
 
         // Step 3: Register Troop Participant 2
         $participant2User = $this->registerUser($app, $participant2Email);
@@ -582,7 +582,7 @@ class ParticipantJourneyTest extends AppTestCase
         $troopParticipantRepository->persist($troopParticipant2);
 
         $participant2TieCode = $troopParticipant2->tieCode;
-        self::assertNotEmpty($participant2TieCode, 'Participant 2 should have a tie code');
+        self::assertNotSame('', $participant2TieCode, 'Participant 2 should have a tie code');
 
         // Step 4: Tie participants to leader
         $troopService = $this->getService($app, TroopService::class);

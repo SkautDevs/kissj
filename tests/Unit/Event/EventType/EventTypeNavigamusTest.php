@@ -47,7 +47,7 @@ class EventTypeNavigamusTest extends TestCase
         );
         preg_match_all("~url\\('(/[^']+)'\\)~", $stylesheet, $matches);
 
-        self::assertNotEmpty($matches[1]);
+        self::assertNotSame([], $matches[1]);
         foreach ($matches[1] as $assetPath) {
             self::assertFileExists(__DIR__ . '/../../../../public' . $assetPath);
         }

@@ -250,7 +250,7 @@ class BadgeTest extends AppTestCase
 
         $repo = $this->getService($app, ParticipantRepository::class);
         $participants = $repo->getParticipantsForBadges($event, [ParticipantRole::Ist]);
-        self::assertNotEmpty($participants);
+        self::assertNotSame([], $participants);
 
         $pdf = $this->getService($app, PdfGenerator::class);
 
@@ -326,7 +326,7 @@ class BadgeTest extends AppTestCase
         // every relative url() found must actually exist once joined to the base path -
         // this is what proves the images load, not merely that the CSS text looks right
         preg_match_all('~url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)~i', $html, $matches);
-        self::assertNotEmpty($matches[1]);
+        self::assertNotSame([], $matches[1]);
         foreach ($matches[1] as $url) {
             self::assertFileExists($mpdf->basepath . $url);
         }
@@ -480,7 +480,7 @@ class BadgeTest extends AppTestCase
         $mpdf = $this->getService($app, Mpdf::class);
         self::assertIsString($mpdf->basepath);
         preg_match_all('~url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)~i', $html, $matches);
-        self::assertNotEmpty($matches[1]);
+        self::assertNotSame([], $matches[1]);
         foreach ($matches[1] as $url) {
             self::assertFileExists($mpdf->basepath . $url);
         }

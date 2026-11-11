@@ -26,7 +26,7 @@ class RouteNamesTest extends AppTestCase
     {
         $names = $this->routeNames();
 
-        self::assertNotEmpty($names);
+        self::assertNotSame([], $names);
         self::assertSame(
             array_values(array_unique($names)),
             $names,

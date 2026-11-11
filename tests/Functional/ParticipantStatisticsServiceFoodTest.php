@@ -329,10 +329,6 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsAreSortedByContingentThenName(): void
     {
         $app = $this->getTestApp();
-        $userService = $this->getService($app, UserService::class);
-        $userRepository = $this->getService($app, UserRepository::class);
-        $participantRepository = $this->getService($app, ParticipantRepository::class);
-        $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
         $event = $this->getObrokTestEvent($app);
@@ -384,7 +380,6 @@ class ParticipantStatisticsServiceFoodTest extends AppTestCase
     public function testOtherFoodDetailsHideContingentWhenNobodyHasOne(): void
     {
         $app = $this->getTestApp();
-        $participantService = $this->getService($app, ParticipantService::class);
         $statisticsService = $this->getService($app, ParticipantStatisticsService::class);
 
         $event = $this->getObrokTestEvent($app);

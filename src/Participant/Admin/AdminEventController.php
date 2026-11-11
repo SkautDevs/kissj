@@ -300,7 +300,7 @@ class AdminEventController extends AbstractController
             'ist' => $this->saveIst($event, $body, $request),
             'guest' => $this->saveGuest($event, $body, $request),
             'ot' => $this->saveOrganizingTeam($event, $body, $request),
-            'ttl' => $this->saveTechnicalTeamLeader($event, $body, $request),
+            'ttl' => $this->saveTechnicalTeamLeader($event, $request),
             default => throw new \RuntimeException('Unknown role: ' . $roleValue),
         };
 
@@ -448,10 +448,7 @@ class AdminEventController extends AbstractController
         return true;
     }
 
-    /**
-     * @param array<mixed> $body
-     */
-    private function saveTechnicalTeamLeader(Event $event, array $body, Request $request): bool
+    private function saveTechnicalTeamLeader(Event $event, Request $request): bool
     {
         $event->allowTechnicalTeams = $this->isCheckboxCheckedInBody($request, 'allowTechnicalTeams');
 

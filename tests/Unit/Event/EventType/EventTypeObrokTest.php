@@ -57,7 +57,7 @@ class EventTypeObrokTest extends TestCase
         self::assertIsString($css);
         preg_match_all("/url\\('(\\.\\.\\/[^']+)'\\)/", $css, $matches);
 
-        self::assertNotEmpty($matches[1]);
+        self::assertNotSame([], $matches[1]);
         foreach ($matches[1] as $relativeUrl) {
             self::assertFileExists(dirname($stylesheet) . '/' . $relativeUrl);
         }

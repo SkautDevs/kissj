@@ -13,7 +13,7 @@ class RegistrationCloseResultTest extends TestCase
     {
         $result = RegistrationCloseResult::startChecking();
         self::assertTrue($result->isValid);
-        self::assertEmpty($result->warnings);
+        self::assertSame([], $result->warnings);
     }
 
     public function testWithWarningMakesResultInvalid(): void
