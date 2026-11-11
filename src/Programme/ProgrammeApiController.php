@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace kissj\Programme;
 
 use kissj\AbstractController;
-use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
-use kissj\Participant\ParticipantRole;
 use kissj\Programme\DTO\ProgrammeApiListDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantProgrammesDTO;
-use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
 use kissj\Programme\DTO\ProgrammeApiTieCodesDTO;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -24,6 +21,7 @@ class ProgrammeApiController extends AbstractController
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
         private readonly ParticipantRepository $participantRepository,
+        private readonly ProgrammeService $programmeService,
     ) {
     }
 
@@ -35,7 +33,7 @@ class ProgrammeApiController extends AbstractController
                 $this->programmeSectionRepository->findForEvent($authorizedEvent),
             ),
             array_map(
-                $this->presentProgramme(...),
+                $this->programmeService->presentProgramme(...),
                 $this->programmeRepository->findActiveForEvent($authorizedEvent),
             ),
         ));
@@ -48,14 +46,11 @@ class ProgrammeApiController extends AbstractController
             return $response->withStatus(404);
         }
 
-        $registrations = $this->programmeRegistrationRepository->findActiveForParticipantOrderedByStart($participant);
-
         return $this->getResponseWithJson($response, new ProgrammeApiParticipantProgrammesDTO(
             new ProgrammeApiParticipantDTO($participant->nickname),
             array_map(
-                fn (ProgrammeRegistration $registration): ProgrammeApiProgrammeDTO
-                    => $this->presentProgramme($registration->programme),
-                $registrations,
+                $this->programmeService->presentProgramme(...),
+                $this->programmeRepository->findActiveForParticipant($participant),
             ),
         ));
     }
@@ -78,23 +73,5 @@ class ProgrammeApiController extends AbstractController
     private function presentSection(ProgrammeSection $section): ProgrammeApiSectionDTO
     {
         return new ProgrammeApiSectionDTO($section->id, $section->name, $section->subtitle);
-    }
-
-    private function presentProgramme(Programme $programme): ProgrammeApiProgrammeDTO
-    {
-        return new ProgrammeApiProgrammeDTO(
-            $programme->id,
-            $programme->name,
-            $programme->section->id,
-            $programme->description,
-            $programme->place,
-            DateTimeUtils::formatAtom($programme->start),
-            DateTimeUtils::formatAtom($programme->end),
-            $programme->isPreregistered,
-            array_map(
-                static fn (ParticipantRole $role): string => $role->value,
-                $programme->getTargetRoles(),
-            ),
-        );
     }
 }

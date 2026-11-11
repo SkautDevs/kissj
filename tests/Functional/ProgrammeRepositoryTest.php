@@ -6,6 +6,7 @@ namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
@@ -143,6 +144,46 @@ class ProgrammeRepositoryTest extends AppTestCase
         self::assertSame($second->id, $active->id);
     }
 
+    public function testFindActiveForParticipantListsOwnActiveProgrammesByStart(): void
+    {
+        $app = $this->getTestApp();
+        $userService = $this->getService($app, UserService::class);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $participant = $userService->createParticipantSetRole(
+            $this->registerUser($app, 'find-for-participant-own@example.com'),
+            'ist',
+        );
+        $otherParticipant = $userService->createParticipantSetRole(
+            $this->registerUser($app, 'find-for-participant-other@example.com'),
+            'ist',
+        );
+
+        $later = $this->createProgramme($app, 'participant later', null, [ParticipantRole::Ist]);
+        $earlier = $this->createProgramme($app, 'participant earlier', null, [ParticipantRole::Ist]);
+        $earlier->start = DateTimeUtils::getDateTime('2027-06-05 08:00');
+        $programmeRepository->persist($earlier);
+        $deleted = $this->createProgramme($app, 'participant deleted', null, [ParticipantRole::Ist]);
+        $unregistered = $this->createProgramme($app, 'participant unregistered', null, [ParticipantRole::Ist]);
+        $foreign = $this->createProgramme($app, 'participant foreign', null, [ParticipantRole::Ist]);
+
+        $this->registerParticipant($app, $later, $participant);
+        $this->registerParticipant($app, $earlier, $participant);
+        $this->registerParticipant($app, $deleted, $participant);
+        $this->getService($app, ProgrammeRegistrationRepository::class)
+            ->softDelete($this->registerParticipant($app, $unregistered, $participant));
+        $this->registerParticipant($app, $foreign, $otherParticipant);
+        $deleted->deletedAt = DateTimeUtils::getDateTime();
+        $programmeRepository->persist($deleted);
+
+        self::assertSame(
+            [$earlier->id, $later->id],
+            array_map(
+                static fn (Programme $programme): int => $programme->id,
+                $programmeRepository->findActiveForParticipant($participant),
+            ),
+        );
+    }
+
     public function testFindActivePreregisteredForRoleFiltersInRepository(): void
     {
         $app = $this->getTestApp();
@@ -201,6 +242,22 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programmeRepository->persist($programme);
 
         return $programme;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function registerParticipant(
+        App $app,
+        Programme $programme,
+        Participant $participant,
+    ): ProgrammeRegistration {
+        $registration = new ProgrammeRegistration();
+        $registration->programme = $programme;
+        $registration->participant = $participant;
+        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+
+        return $registration;
     }
 
     /**
