@@ -11,6 +11,7 @@ use kissj\Event\Event;
 use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
+use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 
 /**
@@ -31,6 +32,22 @@ class ProgrammeRepository extends Repository
         $qb->where('deleted_at IS NULL');
         $qb->orderBy('start')->asc();
         $qb->orderBy('id')->asc();
+
+        return $this->hydrateProgrammes($qb->fetchAll());
+    }
+
+    /**
+     * @return list<Programme>
+     */
+    public function findActiveForParticipant(Participant $participant): array
+    {
+        $qb = $this->createFluent();
+        $qb->join('programme_registration')->as('r')->on('r.programme_id = programme.id');
+        $qb->where('r.participant_id = %i', $participant->id);
+        $qb->where('r.deleted_at IS NULL');
+        $qb->where('programme.deleted_at IS NULL');
+        $qb->orderBy('programme.start')->asc();
+        $qb->orderBy('programme.id')->asc();
 
         return $this->hydrateProgrammes($qb->fetchAll());
     }

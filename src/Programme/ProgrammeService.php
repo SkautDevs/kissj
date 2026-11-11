@@ -6,6 +6,8 @@ namespace kissj\Programme;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRole;
+use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\User\UserStatus;
 
 readonly class ProgrammeService
@@ -170,6 +172,24 @@ readonly class ProgrammeService
         }
 
         return $this->programmeRepository->findActivePreregisteredForRole($user->event, $participant->getRoleOrFail());
+    }
+
+    public function presentProgramme(Programme $programme): ProgrammeApiProgrammeDTO
+    {
+        return new ProgrammeApiProgrammeDTO(
+            $programme->id,
+            $programme->name,
+            $programme->section->id,
+            $programme->description,
+            $programme->place,
+            DateTimeUtils::formatAtom($programme->start),
+            DateTimeUtils::formatAtom($programme->end),
+            $programme->isPreregistered,
+            array_map(
+                static fn (ParticipantRole $role): string => $role->value,
+                $programme->getTargetRoles(),
+            ),
+        );
     }
 
     private function createRegistration(Programme $programme, Participant $participant): void

@@ -65,22 +65,6 @@ class ProgrammeRegistrationRepository extends Repository
     /**
      * @return list<ProgrammeRegistration>
      */
-    public function findActiveForParticipantOrderedByStart(Participant $participant): array
-    {
-        $qb = $this->createFluent();
-        $qb->join('programme')->as('p')->on('p.id = programme_registration.programme_id');
-        $qb->where('programme_registration.participant_id = %i', $participant->id);
-        $qb->where('programme_registration.deleted_at IS NULL');
-        $qb->where('p.deleted_at IS NULL');
-        $qb->orderBy('p.start')->asc();
-        $qb->orderBy('p.id')->asc();
-
-        return $this->fetchRegistrations($qb);
-    }
-
-    /**
-     * @return list<ProgrammeRegistration>
-     */
     public function findActiveForProgramme(Programme $programme): array
     {
         $qb = $this->createFluent();
