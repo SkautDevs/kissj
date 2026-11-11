@@ -6,10 +6,13 @@ namespace kissj\Programme;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
+use kissj\User\User;
+use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 
 readonly class ProgrammeService
@@ -17,21 +20,25 @@ readonly class ProgrammeService
     public function __construct(
         private ProgrammeRepository $programmeRepository,
         private ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private ParticipantRepository $participantRepository,
+        private UserRepository $userRepository,
         private Metrics $metrics,
     ) {
     }
 
     public function register(Participant $participant, int $programmeId): ProgrammeRegistrationResult
     {
-        $refusal = $this->findSelfServiceRefusal($participant);
-        if ($refusal !== null) {
-            $this->countOutcome($participant, $refusal, MetricName::ProgrammesRegistered);
-
-            return $refusal;
-        }
-
         $result = $this->programmeRepository->transactional(
             function () use ($participant, $programmeId): ProgrammeRegistrationResult {
+                $this->participantRepository->lock($participant);
+
+                $refusal = $this->findSelfServiceRefusal(
+                    $this->userRepository->get($participant->getUserButNotNull()->id),
+                );
+                if ($refusal !== null) {
+                    return $refusal;
+                }
+
                 $programme = $this->programmeRepository->findWithLock($programmeId);
 
                 if (
@@ -78,7 +85,7 @@ readonly class ProgrammeService
 
     public function unregister(Participant $participant, int $programmeId): ProgrammeRegistrationResult
     {
-        $refusal = $this->findSelfServiceRefusal($participant);
+        $refusal = $this->findSelfServiceRefusal($participant->getUserButNotNull());
         if ($refusal !== null) {
             $this->countOutcome($participant, $refusal, MetricName::ProgrammesUnregistered);
 
@@ -123,12 +130,15 @@ readonly class ProgrammeService
             return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::PreregisteredNoAssign);
         }
 
-        if ($participant->getUserButNotNull()->status === UserStatus::Cancelled) {
-            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::CancelledNoAssign);
-        }
-
         return $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeRegistrationResult {
+                $this->participantRepository->lock($participant);
+
+                $user = $this->userRepository->get($participant->getUserButNotNull()->id);
+                if ($user->status === UserStatus::Cancelled) {
+                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::CancelledNoAssign);
+                }
+
                 $lockedProgramme = $this->programmeRepository->findWithLock($programme->id);
                 if ($lockedProgramme === null || $lockedProgramme->isDeleted()) {
                     return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
@@ -221,9 +231,8 @@ readonly class ProgrammeService
         );
     }
 
-    private function findSelfServiceRefusal(Participant $participant): ?ProgrammeRegistrationResult
+    private function findSelfServiceRefusal(User $user): ?ProgrammeRegistrationResult
     {
-        $user = $participant->getUserButNotNull();
         if ($user->status !== UserStatus::Paid) {
             return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPaid);
         }

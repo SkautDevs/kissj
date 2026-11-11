@@ -540,8 +540,13 @@ readonly class ParticipantService
             );
         }
 
-        $this->userService->setUserCancelled($participant->getUserButNotNull());
-        $this->programmeService->freeAllProgrammes($participant);
+        $this->participantRepository->transactional(
+            function () use ($participant): void {
+                $this->participantRepository->lock($participant);
+                $this->userService->setUserCancelled($participant->getUserButNotNull());
+                $this->programmeService->freeAllProgrammes($participant);
+            },
+        );
 
         return $participant;
     }

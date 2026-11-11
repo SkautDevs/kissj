@@ -7,6 +7,7 @@ namespace Tests\Functional;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
@@ -90,6 +91,35 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertNull($service->register($ist, $programme->id)->error);
         self::assertNull($service->unregister($ist, $programme->id)->error);
         self::assertNull($service->register($ist, $programme->id)->error);
+    }
+
+    public function testRegisterLocksParticipantRow(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
+        $programme = $this->createProgramme($app, 'locking workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'locking-ist@example.com');
+        $participantRepository = $this->createMock(ParticipantRepository::class);
+        $participantRepository->expects(self::once())->method('lock')->with($ist);
+        $service = new ProgrammeService(
+            $this->getService($app, ProgrammeRepository::class),
+            $this->getService($app, ProgrammeRegistrationRepository::class),
+            $participantRepository,
+            $this->getService($app, UserRepository::class),
+            $this->getService($app, Metrics::class),
+        );
+
+        self::assertNull($service->register($ist, $programme->id)->error);
+    }
+
+    public function testRegisterRechecksPaidStatusFromDatabase(): void
+    {
+        $this->assertStaleStatusRefused(UserStatus::Open, 'stale-open-ist@example.com');
+    }
+
+    public function testRegisterOfCancelledParticipantRechecksStatusFromDatabase(): void
+    {
+        $this->assertStaleStatusRefused(UserStatus::Cancelled, 'stale-cancelled-ist@example.com');
     }
 
     public function testDuplicateRegistrationRejected(): void
@@ -307,6 +337,24 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertSame('flash.warning.programmeCancelledNoAssign', $result->translationKey);
     }
 
+    public function testAdminAssignRechecksCancelledStatusFromDatabase(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeService::class);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $programme = $this->createProgramme($app, 'stale assign workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'stale-assign-ist@example.com');
+        $freshUser = $userRepository->get($ist->getUserButNotNull()->id);
+        self::assertTrue($userRepository->claimStatusChange($freshUser, UserStatus::Paid, UserStatus::Cancelled));
+        self::assertSame(UserStatus::Paid, $ist->getUserButNotNull()->status);
+
+        $result = $service->adminAssign($programme, $ist);
+
+        self::assertSame('flash.warning.programmeCancelledNoAssign', $result->translationKey);
+        self::assertSame(0, $this->getService($app, ProgrammeRegistrationRepository::class)
+            ->countActiveForProgramme($programme));
+    }
+
     public function testAdminAssignOnProgrammeDeletedMeanwhileReturnsNotFound(): void
     {
         $app = $this->getTestApp();
@@ -417,6 +465,8 @@ class ProgrammeServiceTest extends AppTestCase
         $service = new ProgrammeService(
             $this->getService($app, ProgrammeRepository::class),
             $this->getService($app, ProgrammeRegistrationRepository::class),
+            $this->getService($app, ParticipantRepository::class),
+            $this->getService($app, UserRepository::class),
             $metrics,
         );
 
@@ -537,6 +587,26 @@ class ProgrammeServiceTest extends AppTestCase
         $programmeRepository->persist($programme);
 
         return $programme;
+    }
+
+    private function assertStaleStatusRefused(UserStatus $databaseStatus, string $email): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeRegistrationWindow($app);
+        $service = $this->getService($app, ProgrammeService::class);
+        $programme = $this->createProgramme($app, 'stale workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, $email);
+        $userRepository = $this->getService($app, UserRepository::class);
+        $freshUser = $userRepository->get($ist->getUserButNotNull()->id);
+        self::assertTrue($userRepository->claimStatusChange($freshUser, UserStatus::Paid, $databaseStatus));
+        self::assertNotSame($freshUser, $ist->getUserButNotNull());
+        self::assertSame(UserStatus::Paid, $ist->getUserButNotNull()->status);
+
+        $result = $service->register($ist, $programme->id);
+
+        self::assertSame('notPaid', $result->error?->value);
+        self::assertSame(0, $this->getService($app, ProgrammeRegistrationRepository::class)
+            ->countActiveForProgramme($programme));
     }
 
     /**

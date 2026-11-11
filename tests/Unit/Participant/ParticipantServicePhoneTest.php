@@ -182,6 +182,8 @@ class ParticipantServicePhoneTest extends TestCase
             new ProgrammeService(
                 Mockery::mock(ProgrammeRepository::class),
                 Mockery::mock(ProgrammeRegistrationRepository::class),
+                Mockery::mock(ParticipantRepository::class),
+                Mockery::mock(UserRepository::class),
                 new Metrics(),
             ),
         );

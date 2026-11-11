@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use ArrayObject;
 use kissj\Event\EventRepository;
+use kissj\Mailer\Mailer;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
+use kissj\Participant\Troop\TroopParticipantRepository;
+use kissj\Participant\TshirtService;
+use kissj\Payment\PaymentService;
+use kissj\Programme\ProgrammeService;
+use kissj\Telemetry\Metrics;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use LogicException;
+use RuntimeException;
 use Slim\App;
 use Tests\AppTestCase;
 
@@ -52,6 +61,57 @@ class CancelPatrolParticipantTest extends AppTestCase
             $leaderUserAfter->status,
             'Cancelling one patrol participant must not cancel the patrol leader\'s user (whole patrol would vanish '
                 . 'from the entry app)',
+        );
+    }
+
+    public function testCancelLocksParticipantInsideTransactionBeforeStatusChange(): void
+    {
+        $app = $this->getTestApp();
+        $userService = $this->getService($app, UserService::class);
+        $user = $userService->registerEmailUser(
+            'cancel-lock@example.com',
+            $this->getService($app, EventRepository::class)->get(1),
+        );
+        $ist = $userService->createParticipantSetRole($user, 'ist');
+        $events = new ArrayObject();
+        $lockingRepository = $this->createMock(ParticipantRepository::class);
+        $lockingRepository->expects(self::once())
+            ->method('lock')
+            ->with($ist)
+            ->willReturnCallback(static function () use ($events): void {
+                self::assertSame(['transaction'], $events->getArrayCopy());
+
+                throw new RuntimeException('locked first');
+            });
+        $lockingRepository->method('transactional')
+            ->willReturnCallback(static function (callable $callback) use ($events): mixed {
+                $events->append('transaction');
+
+                return $callback();
+            });
+        $service = new ParticipantService(
+            $lockingRepository,
+            $this->getService($app, TroopParticipantRepository::class),
+            $this->getService($app, PaymentService::class),
+            $userService,
+            $this->getService($app, Mailer::class),
+            $this->getService($app, Metrics::class),
+            $this->getService($app, TshirtService::class),
+            $this->getService($app, EventRepository::class),
+            $this->getService($app, UserRepository::class),
+            $this->getService($app, ProgrammeService::class),
+        );
+
+        try {
+            $service->cancelParticipant($ist);
+            self::fail('The participant lock must run before the status change');
+        } catch (RuntimeException $exception) {
+            self::assertSame('locked first', $exception->getMessage());
+        }
+
+        self::assertNotSame(
+            UserStatus::Cancelled,
+            $this->getService($app, UserRepository::class)->get($user->id)->status,
         );
     }
 

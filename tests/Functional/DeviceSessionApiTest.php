@@ -8,7 +8,12 @@ use DateTimeImmutable;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
+use kissj\Participant\Admin\PaymentTransferService;
+use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Payment\PaymentRepository;
+use kissj\Payment\PaymentService;
+use kissj\Payment\PaymentStatus;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSession;
@@ -53,6 +58,39 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertIsArray($listed);
         self::assertSame($programme->id, $listed['id']);
         self::assertSame('session programme', $listed['name']);
+    }
+
+    public function testSessionOfTransferSenderStaysValidWithNoProgrammes(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
+        $paymentService = $this->getService($app, PaymentService::class);
+        $sender = $this->createPaidIstOnEvent($app, $event, 'Sender');
+        $payment = $paymentService->createAndPersistNewEventPayment($sender);
+        $payment->status = PaymentStatus::Paid;
+        $this->getService($app, PaymentRepository::class)->persist($payment);
+        $recipient = $this->createPaidIstOnEvent($app, $event, 'Recipient');
+        $this->setUserStatus($app, $recipient, UserStatus::Approved);
+        $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
+        $token = $this->createSession($app, $sender);
+        self::assertSame(
+            200,
+            $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST')->getStatusCode(),
+        );
+
+        $this->initializeMailerSettings($app, $event);
+        $this->captureSentMessageRecipients($app);
+        $participantRepository = $this->getService($app, ParticipantRepository::class);
+        $this->getService($app, PaymentTransferService::class)->transferPayment(
+            $participantRepository->getParticipantFromUser($sender->getUserButNotNull()),
+            $participantRepository->getParticipantFromUser($recipient->getUserButNotNull()),
+        );
+
+        $response = $this->handle($this->getTestApp(false), '/v3/programme/participant/session', $token);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame([], $this->decodeJson($response)['programmes']);
     }
 
     public function testMissingUnknownAndExpiredSessionIs401(): void
