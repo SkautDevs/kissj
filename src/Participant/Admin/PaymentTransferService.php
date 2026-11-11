@@ -17,6 +17,7 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\UserRepository;
@@ -33,6 +34,7 @@ readonly class PaymentTransferService
         private Mailer $mailer,
         private LoggerInterface $logger,
         private Metrics $metrics,
+        private ProgrammeService $programmeService,
     ) {
     }
 
@@ -132,6 +134,7 @@ readonly class PaymentTransferService
     /**
      *  - Move the paid payment From To
      *  - Cancel all waiting payments To (the ticket-transfer email covers it, no separate cancel email)
+     *  - Free the programme registrations of From
      *  - Set From as open (his payment-transfer email is sent after commit)
      *  - Set To as paid (his ticket-transfer email carrying the entry QR code is sent after commit)
      *  - Handle scarf correction on To
@@ -141,6 +144,8 @@ readonly class PaymentTransferService
         $userFrom = $participantFrom->getUserButNotNull();
         $userTo = $participantTo->getUserButNotNull();
 
+        $this->participantRepository->lockInIdOrder($participantFrom, $participantTo);
+
         if (!$this->userRepository->claimStatusChange($userFrom, UserStatus::Paid, UserStatus::Open)) {
             throw new \RuntimeException('Transfer aborted - the sender is no longer in paid status');
         }
@@ -148,6 +153,8 @@ readonly class PaymentTransferService
         if (!$this->userRepository->claimStatusChange($userTo, UserStatus::Approved, UserStatus::Paid)) {
             throw new \RuntimeException('Transfer aborted - the recipient is no longer in approved status');
         }
+
+        $this->programmeService->freeAllProgrammes($participantFrom);
 
         $transferredPayment = $this->handlePayments($participantFrom, $participantTo);
 

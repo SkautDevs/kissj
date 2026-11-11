@@ -36,6 +36,18 @@ use RuntimeException;
  */
 class ParticipantRepository extends Repository
 {
+    public function lock(Participant $participant): void
+    {
+        $this->lockRow($participant->id);
+    }
+
+    public function lockInIdOrder(Participant ...$participants): void
+    {
+        usort($participants, static fn (Participant $a, Participant $b): int => $a->id <=> $b->id);
+
+        array_map(fn (Participant $participant) => $this->lockRow($participant->id), $participants);
+    }
+
     /**
      * @param list<ParticipantRole>$roles
      * @param list<UserStatus>$statuses

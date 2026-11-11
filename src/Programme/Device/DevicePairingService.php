@@ -9,6 +9,7 @@ use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
@@ -26,6 +27,7 @@ readonly class DevicePairingService
         private DevicePairingRepository $devicePairingRepository,
         private DevicePairingAttemptRepository $devicePairingAttemptRepository,
         private DeviceSessionRepository $deviceSessionRepository,
+        private ParticipantRepository $participantRepository,
         private LoggerInterface $logger,
         private Metrics $metrics,
     ) {
@@ -100,6 +102,8 @@ readonly class DevicePairingService
     ): ?DevicePairingRefusal {
         $result = $this->devicePairingRepository->transactional(
             function () use ($enteredCode, $event, $participant): DevicePairing|DevicePairingRefusal {
+                $this->participantRepository->lock($participant);
+
                 if ($this->isLockedOut($participant)) {
                     return DevicePairingRefusal::TooManyAttempts;
                 }

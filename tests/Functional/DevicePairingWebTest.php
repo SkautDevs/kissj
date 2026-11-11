@@ -9,11 +9,14 @@ use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Middleware\DevicePairingCsrfMiddleware;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRepository;
 use kissj\Programme\Device\DevicePairingAttemptRepository;
 use kissj\Programme\Device\DevicePairingRefusal;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DevicePairingStatus;
+use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Telemetry\Metrics;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
 use kissj\User\User;
@@ -24,6 +27,7 @@ use kissj\User\UserStatus;
 use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Exception\HttpNotFoundException;
@@ -115,6 +119,24 @@ class DevicePairingWebTest extends AppTestCase
         $this->assertRedirectsToDashboard($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeInvalid'), $this->flashed($app));
         self::assertSame(1, $this->countAttempts($app, $participant));
+    }
+
+    public function testCodeCheckLocksParticipantRow(): void
+    {
+        $app = $this->getTestApp();
+        $participant = $this->createPaidIstParticipant($app);
+        $participantRepository = $this->createMock(ParticipantRepository::class);
+        $participantRepository->expects(self::once())->method('lock')->with($participant);
+        $service = new DevicePairingService(
+            $this->getService($app, DevicePairingRepository::class),
+            $this->getService($app, DevicePairingAttemptRepository::class),
+            $this->getService($app, DeviceSessionRepository::class),
+            $participantRepository,
+            $this->getService($app, LoggerInterface::class),
+            $this->getService($app, Metrics::class),
+        );
+
+        $service->approveEnteredCode('000000', $participant->getUserButNotNull()->event, $participant);
     }
 
     public function testEnteredCodeIsNormalisedAndGarbageCounts(): void
