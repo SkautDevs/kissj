@@ -9,6 +9,7 @@ use kissj\Authorization\AllowContingentAdmins;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
+use kissj\Participant\ParticipantException;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
@@ -54,6 +55,7 @@ class AdminPaymentController extends AbstractController
                     'ist' => 'payments-admin.allIstsPaid',
                     'pl' => 'payments-admin.allPatrolsPaid',
                     'tl' => 'payments-admin.allTroopLeadersPaid',
+                    'tp' => 'payments-admin.noApprovedTroopParticipants',
                     'ttl' => 'payments-admin.allTechnicalTeamsPaid',
                     'ot' => 'payments-admin.allOrganizingTeamPaid',
                 ],
@@ -91,6 +93,48 @@ class AdminPaymentController extends AbstractController
             $response,
             'admin-show-payments',
         );
+    }
+
+    #[AllowContingentAdmins]
+    public function showReturnToApproval(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        if ($participant->canReturnToApproval() === false) {
+            $this->flashMessages->warning('flash.warning.cannotReturnToApproval');
+
+            return $this->redirect($request, $response, 'admin-show-payments');
+        }
+
+        return $this->view->render($response, 'admin/returnToApproval-admin.twig', ['participant' => $participant]);
+    }
+
+    #[AllowContingentAdmins]
+    public function returnToApproval(
+        Request $request,
+        Response $response,
+        Event $event,
+        int $participantId,
+    ): Response {
+        $reason = $this->getParameterFromBody($request, 'reason', true);
+        $participant = $this->participantRepository->getParticipantById($participantId, $event);
+
+        try {
+            $this->participantService->returnToApproval($participant, $reason);
+            $this->flashMessages->success('flash.success.returnedToApproval');
+            $this->logger->info('Returned participant to approval', [
+                'participantId' => $participantId,
+                'reason' => $reason,
+            ]);
+        } catch (ParticipantException $e) {
+            $this->flashMessages->warning($e->translationKey);
+        }
+
+        return $this->redirect($request, $response, 'admin-show-payments');
     }
 
     #[AllowContingentAdmins]

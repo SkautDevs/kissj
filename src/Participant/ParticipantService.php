@@ -21,6 +21,7 @@ use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Payment\Payment;
+use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
@@ -46,6 +47,7 @@ readonly class ParticipantService
         private EventRepository $eventRepository,
         private UserRepository $userRepository,
         private ProgrammeService $programmeService,
+        private PaymentRepository $paymentRepository,
     ) {
     }
 
@@ -484,6 +486,39 @@ readonly class ParticipantService
         $this->userService->setUserOpen($participant->getUserButNotNull());
 
         return $participant;
+    }
+
+    /**
+     * @throws ParticipantException
+     */
+    public function returnToApproval(Participant $participant, string $reason): void
+    {
+        if ($participant->canReturnToApproval() === false) {
+            throw new ParticipantException('flash.warning.cannotReturnToApproval');
+        }
+
+        $this->userRepository->transactional(function () use ($participant, $reason): void {
+            $user = $participant->getUserButNotNull();
+            if ($this->userRepository->claimStatusChange($user, UserStatus::Approved, UserStatus::Closed) === false) {
+                throw new ParticipantException('flash.warning.cannotReturnToApproval');
+            }
+
+            if ($this->paymentRepository->countWaitingPayments($participant) > 0) {
+                throw new ParticipantException('flash.warning.cannotReturnToApproval');
+            }
+
+            if ($participant instanceof TroopLeader) {
+                foreach ($participant->troopParticipants as $troopParticipant) {
+                    $this->userRepository->claimStatusChange(
+                        $troopParticipant->getUserButNotNull(),
+                        UserStatus::Approved,
+                        UserStatus::Closed,
+                    );
+                }
+            }
+
+            $this->mailer->sendReturnedToApproval($participant, $reason);
+        });
     }
 
     /**

@@ -1,6 +1,6 @@
 <h4>{{ person.getFullName }}</h4>
 {{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b><br/>
-{% if canAccessRoute('admin-show-add-new-payment') %}
+{% if person is not TroopParticipant and canAccessRoute('admin-show-add-new-payment') %}
     <a
         href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"
         class="btn btn-small btn-mini"
@@ -14,3 +14,9 @@
 {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}
 <br>
 {% include 'widgets/paymentList.twig' with {'payments': person.getPayments} %}
+{% if person.canReturnToApproval and canAccessRoute('admin-return-to-approval-show') %}
+    <a
+        href="{{ url_for('admin-return-to-approval-show', {'participantId': person.id, 'eventSlug': event.slug}) }}"
+        class="btn btn-small"
+    >{{ 'payments-admin.returnToApproval' | trans }}</a>
+{% endif %}

@@ -1,0 +1,7 @@
+{% extends "emails/_mail-layout.twig" %}
+
+{% block content %}
+    <p>{{ 'email.returned-to-approval.returned' | trans({'%event.getReadableName%': event.getReadableName}) }}
+    {{ 'email.returned-to-approval.reason' | trans }}: {{ reason }}.</p>
+    <p>{{ 'email.returned-to-approval.nothingToDo' | trans }}</p>
+{% endblock %}

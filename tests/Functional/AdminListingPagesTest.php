@@ -152,7 +152,7 @@ class AdminListingPagesTest extends AppTestCase
         self::assertStringNotContainsString('TroopParticipant' . $suffix, $body);
     }
 
-    public function testPaymentsSectionsPinnedToFourRolesAndShowsEmptyStateMessage(): void
+    public function testPaymentsSectionsPinnedToFiveRolesAndShowsEmptyStateMessage(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -171,9 +171,9 @@ class AdminListingPagesTest extends AppTestCase
         $body = $this->fetchBody(self::BASE_URL . '/admin/payments');
 
         // payments-admin.twig renders one static page-header <h2> plus exactly one <h2> per
-        // section (title or empty-state) - counting pins the role list (ist/pl/tl/ot, no tp,
-        // no guest) without depending on translated text
-        self::assertSame(5, substr_count($body, '<h2>'));
+        // section (title or empty-state) - counting pins the role list (ist/pl/tl/tp/ot, no
+        // guest) without depending on translated text
+        self::assertSame(6, substr_count($body, '<h2>'));
         // no approved troop leader exists for this event, so the empty-state message must show
         self::assertStringContainsString('Všichni vedoucí mají zaplaceno!', $body);
     }

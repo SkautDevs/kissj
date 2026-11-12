@@ -148,6 +148,19 @@ readonly class Mailer
         );
     }
 
+    public function sendReturnedToApproval(Participant $participant, string $reason): void
+    {
+        $this->sendMailFromTemplate(
+            $participant->getUserButNotNull()->email,
+            $this->translator->trans('email.returned-to-approval.subject'),
+            'returned-to-approval',
+            [
+                'reason' => $reason,
+            ],
+            participant: $participant,
+        );
+    }
+
     public function sendPaymentPriceChanged(Participant $participant, Payment $payment, string $reason): void
     {
         $this->sendMailWithPayment(

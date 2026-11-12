@@ -420,6 +420,18 @@ class Route
                             ->setName('admin-cancel-payment');
 
                         $app->get(
+                            '/returnToApproval/{participantId}',
+                            AdminPaymentController::class . '::showReturnToApproval',
+                        )
+                            ->setName('admin-return-to-approval-show');
+
+                        $app->post(
+                            '/returnToApproval/{participantId}',
+                            AdminPaymentController::class . '::returnToApproval',
+                        )
+                            ->setName('admin-return-to-approval');
+
+                        $app->get(
                             '/changePrice/{paymentId}',
                             AdminPaymentController::class . '::showChangePaymentPrice',
                         )

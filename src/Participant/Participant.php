@@ -358,6 +358,14 @@ class Participant extends EntityDatetime
         }));
     }
 
+    public function canReturnToApproval(): bool
+    {
+        return $this->getUserButNotNull()->status === UserStatus::Approved
+            && $this->hasOwnUser()
+            && $this->countWaitingPayments() === 0
+            && $this->countPaidPayments() === 0;
+    }
+
     public function countPaidPayments(): int
     {
         // TODO optimalize

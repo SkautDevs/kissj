@@ -82,6 +82,11 @@ class PaymentRepository extends Repository
         return $payments;
     }
 
+    public function countWaitingPayments(Participant $participant): int
+    {
+        return $this->countBy(['participant' => $participant, 'status' => PaymentStatus::Waiting->value]);
+    }
+
     /**
      * @return Payment[]
      */

@@ -1,0 +1,21 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card card-half">
+        <h2>{{ 'returnToApproval-admin.title' | trans }}</h2>
+        <p>{{ 'returnToApproval-admin.wantReturn' | trans }}<b> {{ participant.getFullName }}</b>?</p>
+        <form method="post" action="{{ url_for('admin-return-to-approval',
+            {'participantId' : participant.id, 'eventSlug': event.slug}) }}">
+            <div class="form-group">
+                <label>{{ 'returnToApproval-admin.reason' | trans }}<br/><br/>
+                    <input type="text" name="reason" id="form-reason" class="form-control form-wide"
+                           required="required"></label>
+            </div>
+            <br/>
+            <a href="{{ url_for('admin-show-payments', {'eventSlug': event.slug}) }}"
+               class="btn btn-small btn-grey">{{ 'returnToApproval-admin.back' | trans }}</a><br/><br/>
+            <input type="submit" value="{{ 'returnToApproval-admin.submit' | trans }}"
+                   class="btn btn-small">
+        </form>
+    </div>
+{% endblock %}
