@@ -6,6 +6,7 @@ namespace kissj\Event\EventType\Navigamus;
 
 use kissj\Application\DateTimeUtils;
 use kissj\Event\ContentArbiterIst;
+use kissj\Event\ContentArbiterOrganizingTeam;
 use kissj\Event\ContentArbiterPatrolLeader;
 use kissj\Event\ContentArbiterPatrolParticipant;
 use kissj\Event\ContentArbiter\ContentArbiterItem;
@@ -79,6 +80,16 @@ class EventTypeNavigamus extends EventType
         $caPp->unit->allowed = true;
 
         return $caPp;
+    }
+
+    #[\Override]
+    public function getContentArbiterOrganizingTeam(): ContentArbiterOrganizingTeam
+    {
+        $caOt = parent::getContentArbiterOrganizingTeam();
+        $caOt->arrivalDate->allowed = true;
+        $caOt->departureDate->allowed = true;
+
+        return $caOt;
     }
 
     /**
