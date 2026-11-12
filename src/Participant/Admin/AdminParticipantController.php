@@ -307,6 +307,7 @@ class AdminParticipantController extends AbstractController
             RoleChangeResult::PatrolHasParticipants,
             RoleChangeResult::TroopHasParticipants,
             RoleChangeResult::TechnicalTeamHasParticipants,
+            RoleChangeResult::TroopParticipantInTroop,
             RoleChangeResult::SameRole,
             RoleChangeResult::NotOpen => $this->flashMessages->warning($roleChangeResult->value),
         };

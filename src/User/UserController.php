@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace kissj\User;
 
 use Exception;
+use LogicException;
 use kissj\AbstractController;
 use kissj\Application\CookieHandler;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\RoleChangeResult;
 use kissj\Skautis\SkautisService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -163,7 +165,11 @@ class UserController extends AbstractController
 
     public function chooseRole(User $user, Request $request, Response $response): Response
     {
-        $roles = $this->getSelectableRoles($user);
+        if ($user->status === UserStatus::Open) {
+            return $this->showOwnRoleChange($user, $request, $response);
+        }
+
+        $roles = $this->userService->getSelectableRoles($user);
         if (count($roles) === 1) {
             return $this->createParticipantWithRole($user, $roles[0], $request, $response);
         }
@@ -175,45 +181,108 @@ class UserController extends AbstractController
         return $this->view->render($response, 'kissj/choose-role.twig', [
             'event' => $user->event,
             'roles' => $roles,
+            'currentRole' => null,
         ]);
     }
 
     public function setRole(User $user, Request $request, Response $response): Response
     {
         $postedRole = $this->getParameterFromBody($request, 'role');
-        $role = ParticipantRole::tryFrom($postedRole);
-        $selectableRoles = $this->getSelectableRoles($user);
+        if ($user->status === UserStatus::Open) {
+            return $this->changeOwnRole($user, $postedRole, $request, $response);
+        }
 
-        if ($role === null || in_array($role, $selectableRoles, true) === false) {
-            $this->flashMessages->error(match ($postedRole) {
-                ParticipantRole::OrganizingTeam->value => 'flash.error.otAccessDenied',
-                ParticipantRole::TechnicalTeamLeader->value,
-                ParticipantRole::TechnicalTeamParticipant->value => 'flash.error.ttlAccessDenied',
-                default => 'flash.error.roleNotAvailable',
-            });
-
-            return $this->redirect($request, $response, 'chooseRole');
+        $role = $this->userService->findSelectableRole($user, $postedRole);
+        if ($role === null) {
+            return $this->rejectUnavailableRole($postedRole, $request, $response);
         }
 
         return $this->createParticipantWithRole($user, $role, $request, $response);
     }
 
-    /**
-     * @return list<ParticipantRole>
-     */
-    private function getSelectableRoles(User $user): array
+    private function rejectUnavailableRole(string $postedRole, Request $request, Response $response): Response
     {
-        return $user->event->getSelectableRoles($this->isOtAccessGranted(), $this->isTtlAccessGranted($user));
+        $this->flashMessages->error(match ($postedRole) {
+            ParticipantRole::OrganizingTeam->value => 'flash.error.otAccessDenied',
+            ParticipantRole::TechnicalTeamLeader->value,
+            ParticipantRole::TechnicalTeamParticipant->value => 'flash.error.ttlAccessDenied',
+            default => 'flash.error.roleNotAvailable',
+        });
+
+        return $this->redirect($request, $response, 'chooseRole');
     }
 
-    private function isOtAccessGranted(): bool
+    private function showOwnRoleChange(User $user, Request $request, Response $response): Response
     {
-        return (bool)($_SESSION['ot_access_granted'] ?? false);
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+        $block = $this->participantService->findOwnRoleChangeBlock($participant);
+        if ($block !== null) {
+            return $this->redirectWithOwnRoleChangeWarning($block, $request, $response);
+        }
+
+        $currentRole = $participant->getRoleOrFail();
+        $roles = $this->userService->getSelectableRolesWithCurrent($user, $currentRole);
+        if (count($roles) === 1) {
+            return $this->redirect($request, $response, 'getDashboard');
+        }
+
+        return $this->view->render($response, 'kissj/choose-role.twig', [
+            'event' => $user->event,
+            'roles' => $roles,
+            'currentRole' => $currentRole,
+        ]);
     }
 
-    private function isTtlAccessGranted(User $user): bool
+    private function changeOwnRole(User $user, string $postedRole, Request $request, Response $response): Response
     {
-        return ($_SESSION['ttl_access_granted'] ?? null) === $user->event->id;
+        $participant = $this->participantRepository->getParticipantFromUser($user);
+        $fromRole = $participant->getRoleOrFail();
+        if ($postedRole === $fromRole->value) {
+            return $this->redirect($request, $response, 'getDashboard');
+        }
+
+        $result = $this->participantService->tryChangeOwnRole($participant, $postedRole);
+        if ($result === RoleChangeResult::RoleNotValid) {
+            return $this->rejectUnavailableRole($postedRole, $request, $response);
+        }
+
+        if ($result !== RoleChangeResult::Success) {
+            return $this->redirectWithOwnRoleChangeWarning($result, $request, $response);
+        }
+
+        $role = $participant->getRoleOrFail();
+        $this->logger->info('Participant changed own role', [
+            'participantId' => $participant->id,
+            'fromRole' => $fromRole->value,
+            'toRole' => $role->value,
+        ]);
+        $this->flashMessages->success(
+            'flash.success.ownRoleChanged',
+            ['%role%' => $this->translator->trans('role.' . $role->value)],
+        );
+
+        return $this->redirect($request, $response, 'getDashboard');
+    }
+
+    private function redirectWithOwnRoleChangeWarning(
+        RoleChangeResult $result,
+        Request $request,
+        Response $response,
+    ): Response {
+        $this->flashMessages->warning(match ($result) {
+            RoleChangeResult::PatrolHasParticipants,
+            RoleChangeResult::TroopHasParticipants,
+            RoleChangeResult::TechnicalTeamHasParticipants => 'flash.warning.ownRoleLeaderHasParticipants',
+            RoleChangeResult::TroopParticipantInTroop => $result->value,
+            RoleChangeResult::NotOpen => 'flash.warning.ownRoleNotOpen',
+            RoleChangeResult::Success,
+            RoleChangeResult::SameRole,
+            RoleChangeResult::RoleNotValid => throw new LogicException(
+                'Unexpected own role change result ' . $result->name,
+            ),
+        });
+
+        return $this->redirect($request, $response, 'getDashboard');
     }
 
     private function createParticipantWithRole(

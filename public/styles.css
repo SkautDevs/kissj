@@ -246,6 +246,14 @@ input.btn {
 	margin: 1px 0;
 }
 
+.heading-with-action h2 {
+	display: inline-block;
+}
+
+.heading-with-action .btn {
+	margin-left: 6px;
+}
+
 .two-cards {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
@@ -524,6 +532,10 @@ tr:nth-child(even) {
 
 .text-small {
 	font-size: .8rem;
+}
+
+.text-regular {
+	font-size: 1rem;
 }
 
 .text-muted {

@@ -14,6 +14,7 @@ use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantService;
+use kissj\Participant\RoleChangeResult;
 use kissj\Participant\Troop\TroopParticipantRepository;
 use kissj\Participant\TshirtService;
 use kissj\Payment\PaymentRepository;
@@ -95,6 +96,34 @@ class ParticipantCloseRegistrationRaceTest extends AppTestCase
         self::assertSame(UserStatus::Closed, $reloaded->getUserButNotNull()->status);
         self::assertNotNull($reloaded->registrationCloseDate);
         self::assertCount(1, array_keys($recipients->getArrayCopy(), $ourIst->email, true));
+    }
+
+    public function testCloseValidatesRoleChangedSinceEntityWasLoaded(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->findBySlug('test-event-slug');
+        self::assertInstanceOf(Event::class, $event);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'allowIsts' => true,
+            'allowGuests' => true,
+            'maximalClosedIstsCount' => null,
+            'startRegistration' => DateTimeUtils::getDateTime('-1 day'),
+        ]);
+        $this->initializeMailerSettings($app, $event);
+        $staleIst = $this->createFilledOpenIst($app, $event);
+        $service = $this->getService($app, ParticipantService::class);
+        $copy = $this->getService($app, ParticipantRepository::class)->getOneBy(['id' => $staleIst->id]);
+        self::assertSame(RoleChangeResult::Success, $service->tryChangeOwnRole($copy, 'guest'));
+        $this->mutateEventForTest($app->getContainer(), $event, ['maximalClosedGuestsCount' => 0]);
+        self::assertTrue($service->isCloseRegistrationValid($staleIst)->isValid);
+
+        $result = $service->closeRegistration($staleIst);
+
+        self::assertFalse($result->isValid);
+        self::assertContains('flash.warning.fullRegistration', array_column($result->warnings, 'key'));
+        $reloaded = $this->getService($app, ParticipantRepository::class)->getOneBy(['id' => $staleIst->id]);
+        self::assertSame('guest', $reloaded->role?->value);
+        self::assertSame(UserStatus::Open, $reloaded->getUserButNotNull()->status);
     }
 
     /**

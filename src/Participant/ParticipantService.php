@@ -388,31 +388,34 @@ readonly class ParticipantService
     {
         $user = $participant->getUserButNotNull();
         $result = RegistrationCloseResult::startChecking();
-        $closedNow = $this->participantRepository->transactional(function () use ($participant, $user, &$result): bool {
-            $this->eventRepository->lockForCapacity($user->event);
+        $closedParticipant = $this->participantRepository->transactional(
+            function () use ($participant, $user, &$result): ?Participant {
+                $this->eventRepository->lockForCapacity($user->event);
 
-            if ($this->userRepository->get($user->id)->status !== UserStatus::Open) {
-                return false;
-            }
+                if ($this->userRepository->get($user->id)->status !== UserStatus::Open) {
+                    return null;
+                }
 
-            $result = $this->isCloseRegistrationValid($participant);
-            if ($result->isValid === false) {
-                return false;
-            }
+                $freshParticipant = $this->participantRepository->getOneBy(['id' => $participant->id]);
+                $result = $this->isCloseRegistrationValid($freshParticipant);
+                if ($result->isValid === false) {
+                    return null;
+                }
 
-            $participant->registrationCloseDate = DateTimeUtils::getDateTime();
-            $this->participantRepository->persist($participant);
-            $this->userService->setUserClosed($user);
+                $freshParticipant->registrationCloseDate = DateTimeUtils::getDateTime();
+                $this->participantRepository->persist($freshParticipant);
+                $this->userService->setUserClosed($user);
 
-            return true;
-        });
+                return $freshParticipant;
+            },
+        );
 
-        if ($closedNow) {
-            $this->mailer->sendRegistrationClosed($user, $participant);
+        if ($closedParticipant !== null) {
+            $this->mailer->sendRegistrationClosed($user, $closedParticipant);
             $this->metrics->count(
                 MetricName::RegistrationsLocked,
                 1,
-                ['role' => $participant->role->value ?? 'unknown'],
+                ['role' => $closedParticipant->role->value ?? 'unknown'],
             );
         }
 
@@ -663,6 +666,30 @@ readonly class ParticipantService
         }
 
         return $this->applyRoleChange($participant, $role);
+    }
+
+    public function tryChangeOwnRole(Participant $participant, string $roleFromBody): RoleChangeResult
+    {
+        $blocked = $this->findOwnRoleChangeBlock($participant);
+        if ($blocked !== null) {
+            return $blocked;
+        }
+
+        $role = $this->userService->findSelectableRole($participant->getUserButNotNull(), $roleFromBody);
+        if ($role === null) {
+            return RoleChangeResult::RoleNotValid;
+        }
+
+        return $this->applyRoleChange($participant, $role);
+    }
+
+    public function findOwnRoleChangeBlock(Participant $participant): ?RoleChangeResult
+    {
+        if ($participant instanceof TroopParticipant && $participant->troopLeader !== null) {
+            return RoleChangeResult::TroopParticipantInTroop;
+        }
+
+        return $this->findLeaderWithMembersBlock($participant);
     }
 
     private function findLeaderWithMembersBlock(Participant $participant): ?RoleChangeResult

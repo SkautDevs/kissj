@@ -29,6 +29,7 @@ use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
+use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -50,6 +51,7 @@ class ParticipantController extends AbstractController
         private readonly PaymentTransferService $paymentTransferService,
         private readonly TicketTransferCsrfMiddleware $csrfGuard,
         private readonly ProgrammeService $programmeService,
+        private readonly UserService $userService,
     ) {
     }
 
@@ -69,6 +71,8 @@ class ParticipantController extends AbstractController
         $templateData['maximalPpCount'] = $participant instanceof PatrolLeader
             ? $user->event->getMaximalPpCount($participant)
             : null;
+        $templateData['roleChangeOffered'] = $user->status === UserStatus::Open
+            && count($this->userService->getSelectableRolesWithCurrent($user, $participant->getRoleOrFail())) > 1;
 
         return $this->view->render(
             $response,

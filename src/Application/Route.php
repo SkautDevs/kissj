@@ -24,7 +24,7 @@ use kissj\Middleware\VendorApiKeyMiddleware;
 use kissj\Middleware\CheckLeaderParticipants;
 use kissj\Middleware\ChoosedRoleOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
-use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
+use kissj\Middleware\RoleChoosableOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
@@ -118,12 +118,12 @@ class Route
 
                 $app->get('/chooseRole', UserController::class . '::chooseRole')
                     ->add(LoggedOnlyMiddleware::class)
-                    ->add(NonChoosedRoleOnlyMiddleware::class)
+                    ->add(RoleChoosableOnlyMiddleware::class)
                     ->setName('chooseRole');
 
                 $app->post('/setRole', UserController::class . '::setRole')
                     ->add(LoggedOnlyMiddleware::class)
-                    ->add(NonChoosedRoleOnlyMiddleware::class)
+                    ->add(RoleChoosableOnlyMiddleware::class)
                     ->setName('setRole');
 
                 $app->group('', function (RouteCollectorProxy $app) {

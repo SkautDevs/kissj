@@ -48,7 +48,6 @@ use kissj\Middleware\LocalizationResolverMiddleware;
 use kissj\Middleware\LockedStatusOnlyMiddleware;
 use kissj\Middleware\LoggedOnlyMiddleware;
 use kissj\Middleware\MonologContextMiddleware;
-use kissj\Middleware\NonChoosedRoleOnlyMiddleware;
 use kissj\Middleware\NonLoggedOnlyMiddleware;
 use kissj\Middleware\OpenStatusOnlyMiddleware;
 use kissj\Middleware\OwnerTicketTransferAllowedOnlyMiddleware;
@@ -56,6 +55,7 @@ use kissj\Middleware\PaidCancelledStatusOnlyMiddleware;
 use kissj\Middleware\PaidStatusOnlyMiddleware;
 use kissj\Middleware\PatrolLeadersOnlyMiddleware;
 use kissj\Middleware\ProgrammeAdminsOnlyMiddleware;
+use kissj\Middleware\RoleChoosableOnlyMiddleware;
 use kissj\Middleware\TechnicalTeamLeadersOnlyMiddleware;
 use kissj\Telemetry\Sentry\ContextMiddleware;
 use kissj\Telemetry\Sentry\HttpContextMiddleware;
@@ -259,7 +259,6 @@ class Settings
             LockedStatusOnlyMiddleware::class => autowire(),
             LoggedOnlyMiddleware::class => autowire(),
             MonologContextMiddleware::class => autowire(),
-            NonChoosedRoleOnlyMiddleware::class => autowire(),
             NonLoggedOnlyMiddleware::class => autowire(),
             OpenStatusOnlyMiddleware::class => autowire(),
             OwnerTicketTransferAllowedOnlyMiddleware::class => autowire(),
@@ -297,6 +296,7 @@ class Settings
             Mailer::class => autowire(),
             Metrics::class => autowire(),
             QrCodeService::class => autowire(),
+            RoleChoosableOnlyMiddleware::class => autowire(),
             ContextMiddleware::class => autowire(),
             HttpContextMiddleware::class => autowire(),
             TransactionMiddleware::class => autowire(),

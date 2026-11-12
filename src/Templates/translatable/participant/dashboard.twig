@@ -6,12 +6,18 @@
     {% include celebrationTemplate %}
 {% endif %}
 <div class="card">
-    <h2>
-        {{ ('role.' ~ person.role.value)|trans }}
-        {% if person is TechnicalTeamLeader %}{{ person.getTechnicalTeamName }}{% elseif person is Leader %}{{ person.getPatrolName }}{% endif %}
-        -
-        {{ 'dashboard.details' | trans }}
-    </h2>
+    <div class="heading-with-action">
+        <h2>
+            {{ ('role.' ~ person.role.value)|trans }}
+            {% if person is TechnicalTeamLeader %}{{ person.getTechnicalTeamName }}{% elseif person is Leader %}{{ person.getPatrolName }}{% endif %}
+            -
+            {{ 'dashboard.details' | trans }}
+        </h2>
+        {% if roleChangeOffered %}
+            <a class="btn btn-small btn-mini" href="{{ url_for('chooseRole', {'eventSlug': event.slug}) }}">
+                {{ 'dashboard.changeRole' | trans }}</a>
+        {% endif %}
+    </div>
     {% include('widgets/userCustomHelp.twig') %}
     
     {% if person is eligibleForShowTieCode %}

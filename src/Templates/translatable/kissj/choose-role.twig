@@ -7,11 +7,19 @@
             {% for role in roles %}
                 <form method="POST" action="{{ url_for('setRole', {'eventSlug': event.slug}) }}">
                     <input type="hidden" name="role" value="{{ role.value }}">
-                    <input type="submit" class="btn form-wide{{ role.value in ['ot', 'ttl'] ? ' btn-highlight' }}"
-                           value="{{ ('chooseRole.registerAs' ~ role.value|capitalize)|trans }}">
+                    <button type="submit" class="btn form-wide{{ role.value in ['ot', 'ttl'] ? ' btn-highlight' }}">
+                        {{ ('chooseRole.registerAs' ~ role.value|capitalize)|trans }}
+                        {%- if role is same as(currentRole) -%}
+                            <br><span class="text-regular">{{ 'chooseRole.currentRole' | trans }}</span>
+                        {%- endif %}
+                    </button>
                 </form>
                 <br/>
             {% endfor %}
+            {% if currentRole %}
+                <a class="btn btn-small" href="{{ url_for('getDashboard', {'eventSlug': event.slug}) }}">
+                    {{ 'chooseRole.back' | trans }}</a>
+            {% endif %}
         </div>
 
         <div class="card">

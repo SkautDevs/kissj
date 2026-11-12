@@ -123,6 +123,38 @@ readonly class UserService
         unset($_SESSION['ttl_access_granted']);
     }
 
+    /**
+     * @return list<ParticipantRole>
+     */
+    public function getSelectableRoles(User $user): array
+    {
+        return $user->event->getSelectableRoles(
+            (bool)($_SESSION['ot_access_granted'] ?? false),
+            ($_SESSION['ttl_access_granted'] ?? null) === $user->event->id,
+        );
+    }
+
+    public function findSelectableRole(User $user, string $roleFromBody): ?ParticipantRole
+    {
+        $role = ParticipantRole::tryFrom($roleFromBody);
+
+        return in_array($role, $this->getSelectableRoles($user), true) ? $role : null;
+    }
+
+    /**
+     * @return list<ParticipantRole>
+     */
+    public function getSelectableRolesWithCurrent(User $user, ParticipantRole $currentRole): array
+    {
+        $selectableRoles = $this->getSelectableRoles($user);
+        $roles = array_values(array_filter(
+            $user->event->getSelectableRoles(true, true),
+            fn (ParticipantRole $role): bool => $role === $currentRole || in_array($role, $selectableRoles, true),
+        ));
+
+        return in_array($currentRole, $roles, true) ? $roles : [...$roles, $currentRole];
+    }
+
     public function invalidateAllLoginTokens(User $user): void
     {
         foreach ($this->loginTokenRepository->findAllNonusedTokens($user) as $token) {
