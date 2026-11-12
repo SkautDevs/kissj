@@ -18,9 +18,3 @@ parameters:
 			count: 1
 			path: src/Participant/Participant.php
 
-		-
-			message: '#^Property kissj\\Participant\\Patrol\\PatrolParticipant\:\:\$patrolLeader \(kissj\\Participant\\Patrol\\PatrolLeader\) does not accept null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Participant/ParticipantService.php
-

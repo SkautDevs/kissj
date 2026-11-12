@@ -285,7 +285,7 @@ class AdminParticipantController extends AbstractController
             'person' => $participant,
             'roles' => array_filter(
                 $event->getAvailableRoles(),
-                static fn (ParticipantRole $role): bool => $role !== ParticipantRole::TechnicalTeamParticipant,
+                static fn (ParticipantRole $role): bool => $role->hasOwnUser(),
             ),
         ]);
     }

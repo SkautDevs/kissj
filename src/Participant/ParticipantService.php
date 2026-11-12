@@ -646,48 +646,61 @@ readonly class ParticipantService
             return RoleChangeResult::RoleNotValid;
         }
 
-        if ($role === ParticipantRole::TechnicalTeamParticipant || $participant instanceof TechnicalTeamParticipant) {
+        if (
+            $role->hasOwnUser() === false
+            || $participant->hasOwnUser() === false
+        ) {
             return RoleChangeResult::RoleNotValid;
         }
 
-        if ($participant instanceof TechnicalTeamLeader) {
-            if ($participant->getTechnicalTeamParticipantsCount() > 0) {
-                return RoleChangeResult::TechnicalTeamHasParticipants;
-            }
-        }
-
-        if ($participant instanceof PatrolLeader) {
-            if ($participant->getPatrolParticipantsCount() > 0) {
-                return RoleChangeResult::PatrolHasParticipants;
-            }
-        }
-
-        if ($participant instanceof TroopLeader) {
-            if ($participant->getTroopParticipantsCount() > 0) {
-                return RoleChangeResult::TroopHasParticipants;
-            }
+        $blocked = $this->findLeaderWithMembersBlock($participant);
+        if ($blocked !== null) {
+            return $blocked;
         }
 
         if ($role === $participant->role) {
             return RoleChangeResult::SameRole;
         }
 
-        if ($participant->getUserButNotNull()->status !== UserStatus::Open) {
-            return RoleChangeResult::NotOpen;
-        }
+        return $this->applyRoleChange($participant, $role);
+    }
 
-        if ($participant instanceof PatrolParticipant) {
-            $participant->patrolLeader = null;
-        }
+    private function findLeaderWithMembersBlock(Participant $participant): ?RoleChangeResult
+    {
+        return match (true) {
+            $participant instanceof TechnicalTeamLeader
+                && $participant->getTechnicalTeamParticipantsCount() > 0
+                => RoleChangeResult::TechnicalTeamHasParticipants,
+            $participant instanceof PatrolLeader
+                && $participant->getPatrolParticipantsCount() > 0 => RoleChangeResult::PatrolHasParticipants,
+            $participant instanceof TroopLeader
+                && $participant->getTroopParticipantsCount() > 0 => RoleChangeResult::TroopHasParticipants,
+            default => null,
+        };
+    }
 
-        if ($participant instanceof TroopParticipant) {
-            $participant->troopLeader = null;
-        }
+    private function applyRoleChange(Participant $participant, ParticipantRole $role): RoleChangeResult
+    {
+        $user = $participant->getUserButNotNull();
 
-        $participant->role = $role;
-        $this->participantRepository->persist($participant);
+        return $this->participantRepository->transactional(
+            function () use ($participant, $role, $user): RoleChangeResult {
+                $this->eventRepository->lockForCapacity($user->event);
 
-        return RoleChangeResult::Success;
+                if ($this->userRepository->get($user->id)->status !== UserStatus::Open) {
+                    return RoleChangeResult::NotOpen;
+                }
+
+                if ($participant instanceof TroopParticipant) {
+                    $participant->troopLeader = null;
+                }
+
+                $participant->role = $role;
+                $this->participantRepository->persist($participant);
+
+                return RoleChangeResult::Success;
+            },
+        );
     }
 
     public function setAdminNote(Participant $participant, string $adminNote): Participant

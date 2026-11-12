@@ -15,6 +15,10 @@ use kissj\FlashMessages\FlashMessagesBySession;
 use kissj\Mailer\MailerSettings;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Troop\TroopLeader;
+use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
@@ -850,6 +854,40 @@ class AppTestCase extends TestCase
         );
 
         return $userService->createParticipantSetRole($user, $role);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function getFreshParticipant(App $app, Participant $participant): Participant
+    {
+        return $this->getService($app, ParticipantRepository::class)->getOneBy(['id' => $participant->id]);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function tieToPatrol(App $app, Participant $member, Participant $leader): void
+    {
+        $freshMember = $this->getFreshParticipant($app, $member);
+        self::assertInstanceOf(PatrolParticipant::class, $freshMember);
+        $freshLeader = $this->getFreshParticipant($app, $leader);
+        self::assertInstanceOf(PatrolLeader::class, $freshLeader);
+        $freshMember->patrolLeader = $freshLeader;
+        $this->getService($app, ParticipantRepository::class)->persist($freshMember);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function tieToTroop(App $app, Participant $member, Participant $leader): void
+    {
+        $freshMember = $this->getFreshParticipant($app, $member);
+        self::assertInstanceOf(TroopParticipant::class, $freshMember);
+        $freshLeader = $this->getFreshParticipant($app, $leader);
+        self::assertInstanceOf(TroopLeader::class, $freshLeader);
+        $freshMember->troopLeader = $freshLeader;
+        $this->getService($app, ParticipantRepository::class)->persist($freshMember);
     }
 
     private function createIst(
