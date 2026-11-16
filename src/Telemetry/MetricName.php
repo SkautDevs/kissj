@@ -35,4 +35,6 @@ enum MetricName: string
     case RegistrationsDenied = 'registrations.denied';
     case RegistrationsEditedAfterLock = 'registrations.edited_after_lock';
     case RegistrationsLocked = 'registrations.locked';
+
+    case SessionsRevoked = 'sessions.revoked';
 }

@@ -23,6 +23,7 @@ use kissj\Programme\DTO\ProgrammeApiTieCodesDTO;
 use kissj\Programme\Device\DevicePairing;
 use kissj\Programme\Device\DevicePairingPollStatus;
 use kissj\Programme\Device\DevicePairingService;
+use kissj\Programme\Device\DeviceSession;
 use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -83,6 +84,18 @@ class ProgrammeApiController extends AbstractController
             $response,
             $this->programmeService->unregister($sessionParticipant, $programmeId),
         );
+    }
+
+    public function revokeSession(Request $request, Response $response): Response
+    {
+        $session = $request->getAttribute('deviceSession');
+        if ($session instanceof DeviceSession === false) {
+            throw new LogicException('Session revoke runs without device session');
+        }
+
+        $this->devicePairingService->revokeSession($session);
+
+        return $this->getResponseWithJson($response, new ProgrammeApiOkDTO(true));
     }
 
     public function programmeParticipants(Response $response, Event $authorizedEvent, int $programmeId): Response
