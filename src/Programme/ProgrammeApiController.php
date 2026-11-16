@@ -17,6 +17,7 @@ use kissj\Programme\DTO\ProgrammeApiParticipantProgrammesDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingApprovedDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStartDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStatusDTO;
+use kissj\Programme\DTO\ProgrammeApiRegistrationWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
 use kissj\Programme\DTO\ProgrammeApiTieCodesDTO;
 use kissj\Programme\Device\DevicePairing;
@@ -49,6 +50,7 @@ class ProgrammeApiController extends AbstractController
                 $this->programmeService->presentProgramme(...),
                 $this->programmeRepository->findActiveForEvent($authorizedEvent),
             ),
+            $this->presentRegistrationWindow($authorizedEvent),
         ));
     }
 
@@ -168,6 +170,17 @@ class ProgrammeApiController extends AbstractController
         }
 
         return $this->getResponseWithJson($response, new ProgrammeApiErrorDTO($result->error->value), 400);
+    }
+
+    private function presentRegistrationWindow(Event $event): ProgrammeApiRegistrationWindowDTO
+    {
+        $start = $event->programmeRegistrationStart;
+        $end = $event->programmeRegistrationEnd;
+
+        return new ProgrammeApiRegistrationWindowDTO(
+            $start === null ? null : DateTimeUtils::formatAtom($start),
+            $end === null ? null : DateTimeUtils::formatAtom($end),
+        );
     }
 
     private function presentSection(ProgrammeSection $section): ProgrammeApiSectionDTO
