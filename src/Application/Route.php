@@ -707,9 +707,6 @@ class Route
                 $app->get('/list', ProgrammeApiController::class . '::list')
                     ->setName('programme-api-list');
 
-                $app->get('/participant/tie/{tieCode}', ProgrammeApiController::class . '::participantByTieCode')
-                    ->setName('programme-api-participant-by-tie-code');
-
                 $app->get(
                     '/{programmeId:[0-9]+}/participants',
                     ProgrammeApiController::class . '::programmeParticipants',

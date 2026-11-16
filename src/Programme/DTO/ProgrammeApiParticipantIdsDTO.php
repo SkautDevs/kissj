@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace kissj\Programme\DTO;
 
-readonly class ProgrammeApiTieCodesDTO
+readonly class ProgrammeApiParticipantIdsDTO
 {
     /**
-     * @param list<string> $tieCodes
+     * @param list<int> $participantIds
      */
     public function __construct(
-        public array $tieCodes,
+        public array $participantIds,
     ) {
     }
 }

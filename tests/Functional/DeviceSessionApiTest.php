@@ -19,6 +19,7 @@ use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSession;
 use kissj\Programme\Device\DeviceSessionRepository;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
@@ -51,13 +52,93 @@ class DeviceSessionApiTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = $this->decodeJson($response);
-        self::assertSame(['nickname' => 'Session Jana'], $body['participant']);
+        self::assertSame(['id' => $participant->id, 'nickname' => 'Session Jana'], $body['participant']);
         self::assertIsArray($body['programmes']);
         self::assertCount(1, $body['programmes']);
         $listed = $body['programmes'][0];
         self::assertIsArray($listed);
         self::assertSame($programme->id, $listed['id']);
         self::assertSame('session programme', $listed['name']);
+    }
+
+    public function testSessionReadOrdersProgrammesByStartAndLeavesOutSoftDeletedRegistrations(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $section = $this->createSection($app, $event, false);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Ordered');
+        $later = $this->createProgramme($app, $event, $section, start: '2027-06-04 10:00');
+        $earlier = $this->createProgramme($app, $event, $section, start: '2027-06-04 08:00');
+        $removed = $this->createProgramme($app, $event, $section, start: '2027-06-04 09:00');
+        $this->register($app, $later, $participant);
+        $this->register($app, $earlier, $participant);
+        $this->getService($app, ProgrammeRegistrationRepository::class)
+            ->softDelete($this->register($app, $removed, $participant));
+        $token = $this->createSession($app, $participant);
+
+        $response = $this->handle($app, '/v3/programme/participant/session', $token);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = $this->decodeJson($response);
+        self::assertIsArray($body['programmes']);
+        self::assertSame([$earlier->id, $later->id], array_column($body['programmes'], 'id'));
+        $earlierProgramme = $body['programmes'][0];
+        self::assertIsArray($earlierProgramme);
+        self::assertSame('2027-06-04T08:00:00+02:00', $earlierProgramme['start']);
+        self::assertSame($section->id, $earlierProgramme['sectionId']);
+    }
+
+    public function testSessionReadSendsEmptyNicknameAsNull(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $participant = $this->createPaidIstOnEvent($app, $event, '');
+        $token = $this->createSession($app, $participant);
+
+        $response = $this->handle($app, '/v3/programme/participant/session', $token);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            ['participant' => ['id' => $participant->id, 'nickname' => null], 'programmes' => []],
+            $this->decodeJson($response),
+        );
+    }
+
+    public function testSessionReadQueryCountDoesNotGrowWithRegistrations(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $sections = [$this->createSection($app, $event, false), $this->createSection($app, $event, false)];
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Counted');
+        $token = $this->createSession($app, $participant);
+        $queryCounter = $this->attachQueryCounter($app);
+        $request = $this->createApiRequest('/v3/programme/participant/session', self::API_KEY)
+            ->withHeader(self::SESSION_HEADER, $token);
+
+        foreach ([0, 1] as $index) {
+            $this->register(
+                $app,
+                $this->createProgramme($app, $event, $sections[$index], start: '2027-06-07 08:00'),
+                $participant,
+            );
+        }
+        $queriesWithTwoRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
+
+        foreach ([2, 3, 4] as $index) {
+            $this->register(
+                $app,
+                $this->createProgramme($app, $event, $sections[$index % 2], start: '2027-06-07 09:00'),
+                $participant,
+            );
+        }
+        $queriesWithFiveRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
+
+        $response = $app->handle($request);
+        self::assertSame(200, $response->getStatusCode());
+        $programmes = $this->decodeJson($response)['programmes'];
+        self::assertIsArray($programmes);
+        self::assertCount(5, $programmes);
+        self::assertSame($queriesWithTwoRegistrations, $queriesWithFiveRegistrations);
     }
 
     public function testSessionOfTransferSenderStaysValidWithNoProgrammes(): void
@@ -320,6 +401,38 @@ class DeviceSessionApiTest extends AppTestCase
         );
     }
 
+    public function testPatrolMemberSessionReadsTheMembersProgrammes(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $member = $this->createPatrolMemberOnEvent($app, $event, 'Vlk');
+        $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
+        $this->register($app, $programme, $member);
+        $token = $this->createSession($app, $member);
+
+        $response = $this->handle($app, '/v3/programme/participant/session', $token);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = $this->decodeJson($response);
+        self::assertSame(['id' => $member->id, 'nickname' => 'Vlk'], $body['participant']);
+        self::assertIsArray($body['programmes']);
+        self::assertSame([$programme->id], array_column($body['programmes'], 'id'));
+    }
+
+    public function testPatrolMemberSessionOfCancelledLeaderIs401(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $member = $this->createPatrolMemberOnEvent($app, $event, 'Liška');
+        $token = $this->createSession($app, $member);
+        $this->setUserStatus($app, $member, UserStatus::Cancelled);
+
+        $response = $this->handle($app, '/v3/programme/participant/session', $token);
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame('', (string)$response->getBody());
+    }
+
     public function testRevokeWithoutSessionIs401(): void
     {
         $app = $this->getTestApp();
@@ -359,7 +472,7 @@ class DeviceSessionApiTest extends AppTestCase
 
         $read = $this->handle($app, '/v3/programme/participant/session', $token);
         self::assertSame(200, $read->getStatusCode());
-        self::assertSame(['nickname' => 'Flow'], $this->decodeJson($read)['participant']);
+        self::assertSame(['id' => $participant->id, 'nickname' => 'Flow'], $this->decodeJson($read)['participant']);
 
         $register = $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST');
         self::assertSame('{"ok":true}', (string)$register->getBody());
@@ -385,6 +498,17 @@ class DeviceSessionApiTest extends AppTestCase
         return $app->handle(
             $this->createApiRequest($path, self::API_KEY, $method)->withHeader(self::SESSION_HEADER, $token),
         );
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function poll(App $app, string $deviceCode): Response
+    {
+        $request = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $request->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
+
+        return $app->handle($request);
     }
 
     /**
@@ -433,17 +557,6 @@ class DeviceSessionApiTest extends AppTestCase
 
     /**
      * @param App<ContainerInterface> $app
-     */
-    private function poll(App $app, string $deviceCode): Response
-    {
-        $request = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
-        $request->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
-
-        return $app->handle($request);
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
      * @param list<ParticipantRole> $roles
      */
     private function createProgramme(
@@ -453,14 +566,15 @@ class DeviceSessionApiTest extends AppTestCase
         bool $preregistered = false,
         array $roles = [ParticipantRole::Ist],
         int $capacity = 10,
+        string $start = '2027-06-03 10:00',
     ): Programme {
         $programme = new Programme();
         $programme->name = 'session programme';
         $programme->description = 'description';
         $programme->place = 'main field';
         $programme->imageFilename = null;
-        $programme->start = DateTimeUtils::getDateTime('2027-06-03 10:00');
-        $programme->end = DateTimeUtils::getDateTime('2027-06-03 12:00');
+        $programme->start = DateTimeUtils::getDateTime($start);
+        $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');
         $programme->capacity = $capacity;
         $programme->isPreregistered = $preregistered;
         $programme->event = $event;
@@ -471,4 +585,16 @@ class DeviceSessionApiTest extends AppTestCase
         return $programme;
     }
 
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function register(App $app, Programme $programme, Participant $participant): ProgrammeRegistration
+    {
+        $registration = new ProgrammeRegistration();
+        $registration->programme = $programme;
+        $registration->participant = $participant;
+        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+
+        return $registration;
+    }
 }
