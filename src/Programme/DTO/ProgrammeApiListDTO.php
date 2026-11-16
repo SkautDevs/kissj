@@ -13,6 +13,7 @@ readonly class ProgrammeApiListDTO
     public function __construct(
         public array $sections,
         public array $programmes,
+        public ProgrammeApiRegistrationWindowDTO $registration,
     ) {
     }
 }

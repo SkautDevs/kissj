@@ -49,7 +49,26 @@ class ProgrammeApiTest extends AppTestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
-        self::assertSame('{"sections":[],"programmes":[]}', (string)$response->getBody());
+        self::assertSame(
+            '{"sections":[],"programmes":[],"registration":{"start":null,"end":null}}',
+            (string)$response->getBody(),
+        );
+    }
+
+    public function testListCarriesTheRegistrationWindow(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'programmeRegistrationStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
+            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('2027-05-19 00:00:00'),
+        ]);
+
+        $body = $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY)));
+
+        self::assertIsArray($body['registration']);
+        self::assertSame('2027-03-15T18:00:00+01:00', $body['registration']['start']);
+        self::assertSame('2027-05-19T00:00:00+02:00', $body['registration']['end']);
     }
 
     public function testListContainsSectionsInOrderAndProgrammesIncludingPreregistered(): void
@@ -460,6 +479,20 @@ class ProgrammeApiTest extends AppTestCase
             self::assertSame(404, $response->getStatusCode(), (string)$programmeId);
             self::assertSame('', (string)$response->getBody(), (string)$programmeId);
         }
+    }
+
+    public function testListSendsAHalfSetRegistrationWindowAsItIs(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $this->mutateEventForTest($app->getContainer(), $event, [
+            'programmeRegistrationStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
+            'programmeRegistrationEnd' => null,
+        ]);
+
+        $body = $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY)));
+
+        self::assertSame(['start' => '2027-03-15T18:00:00+01:00', 'end' => null], $body['registration']);
     }
 
     public function testMissingKeyIs401(): void
