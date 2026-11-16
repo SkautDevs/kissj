@@ -50,6 +50,12 @@ class DevicePairing extends EntityDatetime
         return $expiresAt <= $now;
     }
 
+    public function expire(DateTimeInterface $now): void
+    {
+        // back by the grace too, so a consumed pairing stops reissuing its session at once
+        $this->expiresAt = DateTimeImmutable::createFromInterface($now)->sub(new DateInterval(self::APPROVED_GRACE));
+    }
+
     public function isPolledTooSoon(DateTimeInterface $now): bool
     {
         if ($this->lastPolledAt === null) {

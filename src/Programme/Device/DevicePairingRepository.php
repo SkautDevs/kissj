@@ -46,6 +46,11 @@ class DevicePairingRepository extends Repository
         return $this->findOneBy(['device_code' => $deviceCode, 'event' => $event]);
     }
 
+    public function findByDeviceSession(DeviceSession $deviceSession): ?DevicePairing
+    {
+        return $this->findOneBy(['device_session' => $deviceSession]);
+    }
+
     public function countPendingUnexpired(Event $event, DateTimeInterface $now): int
     {
         return $this->countBy([

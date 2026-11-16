@@ -260,6 +260,73 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertSame('', (string)$response->getBody());
     }
 
+    public function testRevokeDeletesTheSession(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Revoked');
+        $token = $this->createSession($app, $participant);
+        $otherDeviceToken = $this->createSession($app, $participant);
+        $otherParticipantToken = $this->createSession($app, $this->createPaidIstOnEvent($app, $event, 'Untouched'));
+
+        $response = $this->handle($app, '/v3/programme/session/revoke', $token, 'POST');
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(['ok' => true], $this->decodeJson($response));
+        foreach (
+            [
+                $this->handle($app, '/v3/programme/participant/session', $token),
+                $this->handle($app, '/v3/programme/session/revoke', $token, 'POST'),
+            ] as $afterRevoke
+        ) {
+            self::assertSame(401, $afterRevoke->getStatusCode());
+            self::assertSame('', (string)$afterRevoke->getBody());
+        }
+        foreach ([$otherDeviceToken, $otherParticipantToken] as $untouchedToken) {
+            self::assertSame(
+                200,
+                $this->handle($app, '/v3/programme/participant/session', $untouchedToken)->getStatusCode(),
+            );
+        }
+    }
+
+    public function testRevokedSessionIsNotReissuedByItsPairing(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Reissue');
+        $pairing = $this->createDevicePairing($app, $event);
+        $this->getService($app, DevicePairingService::class)->approve($pairing, $participant);
+        $approved = $this->decodeJson($this->poll($app, $pairing->deviceCode));
+        self::assertSame('approved', $approved['status']);
+        $token = $approved['sessionToken'];
+        self::assertIsString($token);
+
+        self::assertSame(200, $this->handle($app, '/v3/programme/session/revoke', $token, 'POST')->getStatusCode());
+        $pairingRepository = $this->getService($app, DevicePairingRepository::class);
+        $stored = $pairingRepository->get($pairing->id);
+        $stored->lastPolledAt = DateTimeUtils::getDateTime('-6 seconds');
+        $pairingRepository->persist($stored);
+        $late = $this->poll($app, $pairing->deviceCode);
+
+        self::assertSame('{"status":"expired"}', (string)$late->getBody());
+        self::assertCount(
+            0,
+            $this->getService($app, DeviceSessionRepository::class)->findBy(['participant' => $participant]),
+        );
+    }
+
+    public function testRevokeWithoutSessionIs401(): void
+    {
+        $app = $this->getTestApp();
+        $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+
+        $response = $this->handle($app, '/v3/programme/session/revoke', '', 'POST');
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame('', (string)$response->getBody());
+    }
+
     public function testFullFlowFromStartToRegister(): void
     {
         $app = $this->getTestApp();
@@ -354,6 +421,17 @@ class DeviceSessionApiTest extends AppTestCase
     private function createSection(App $app, Event $event, bool $exclusive): ProgrammeSection
     {
         return $this->createProgrammeSection($app->getContainer(), $event, 'session section', $exclusive);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function poll(App $app, string $deviceCode): Response
+    {
+        $request = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $request->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
+
+        return $app->handle($request);
     }
 
     /**

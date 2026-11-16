@@ -147,6 +147,30 @@ readonly class DevicePairingService
         return true;
     }
 
+    public function revokeSession(DeviceSession $session): void
+    {
+        $participant = $session->participant;
+        $this->devicePairingRepository->transactional(function () use ($session): void {
+            $pairingId = $this->devicePairingRepository->findByDeviceSession($session)?->id;
+            $pairing = $pairingId === null ? null : $this->devicePairingRepository->findWithLock($pairingId);
+            if ($pairing !== null) {
+                // within its grace minute the pairing would issue a new session to whoever polls its device code
+                $pairing->expire(DateTimeUtils::getDateTime());
+                $pairing->deviceSession = null;
+                $this->devicePairingRepository->persist($pairing);
+            }
+
+            $this->deviceSessionRepository->delete($session);
+        });
+
+        $this->logger->info('Device session revoked', ['participantId' => $participant->id]);
+        $this->metrics->count(
+            MetricName::SessionsRevoked,
+            1,
+            ['event' => $participant->getUserButNotNull()->event->slug],
+        );
+    }
+
     public function deny(DevicePairing $pairing): bool
     {
         if ($this->settle($pairing, DevicePairingStatus::Denied, null) === false) {

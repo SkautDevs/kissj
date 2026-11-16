@@ -53,6 +53,10 @@ class DeviceSessionMiddleware extends BaseMiddleware
             $this->deviceSessionRepository->persist($session);
         }
 
-        return $handler->handle($request->withAttribute('sessionParticipant', $session->participant));
+        return $handler->handle(
+            $request
+                ->withAttribute('sessionParticipant', $session->participant)
+                ->withAttribute('deviceSession', $session),
+        );
     }
 }

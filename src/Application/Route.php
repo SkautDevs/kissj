@@ -738,6 +738,10 @@ class Route
                 $app->post('/{programmeId:[0-9]+}/unregister', ProgrammeApiController::class . '::unregister')
                     ->setName('programme-api-unregister')
                     ->add(DeviceSessionMiddleware::class);
+
+                $app->post('/session/revoke', ProgrammeApiController::class . '::revokeSession')
+                    ->setName('programme-api-session-revoke')
+                    ->add(DeviceSessionMiddleware::class);
             })->add(EventApiKeyMiddleware::class);
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
