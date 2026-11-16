@@ -51,7 +51,6 @@ class ApiRouteGuardTest extends AppTestCase
         'vendor-bearer-check' => 'vendor',
         'vendor-participant-by-tie-code' => 'vendor',
         'programme-api-list' => 'event',
-        'programme-api-participant-by-tie-code' => 'event',
         'programme-api-programme-participants' => 'event',
         'programme-api-pairing-start' => 'event',
         'programme-api-pairing-poll' => 'event',

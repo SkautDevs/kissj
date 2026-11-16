@@ -6,6 +6,7 @@ namespace Tests;
 
 use ArrayObject;
 use DateTimeInterface;
+use Dibi\Event as DibiEvent;
 use kissj\Application\ApplicationGetter;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
@@ -17,7 +18,9 @@ use kissj\Mailer\MailerSettings;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\Patrol\PatrolLeader;
+use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipant;
+use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
@@ -422,6 +425,37 @@ class AppTestCase extends TestCase
 
     /**
      * @param App<ContainerInterface> $app
+     * @return ArrayObject<int, string>
+     */
+    protected function attachQueryCounter(App $app): ArrayObject
+    {
+        /** @var ArrayObject<int, string> $queryCounter */
+        $queryCounter = new ArrayObject();
+        $this->getService($app, Connection::class)->onEvent[] = static function (DibiEvent $dibiEvent) use (
+            $queryCounter,
+        ): void {
+            if (($dibiEvent->type & DibiEvent::QUERY) !== 0) {
+                $queryCounter->append($dibiEvent->sql);
+            }
+        };
+
+        return $queryCounter;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     * @param ArrayObject<int, string> $queryCounter
+     */
+    protected function countQueriesOf(App $app, ArrayObject $queryCounter, ServerRequestInterface $request): int
+    {
+        $queryCountBefore = $queryCounter->count();
+        $app->handle($request);
+
+        return $queryCounter->count() - $queryCountBefore;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
      */
     protected function authorizeEventForApi(App $app, string $slug, string $apiKey): Event
     {
@@ -471,6 +505,26 @@ class AppTestCase extends TestCase
         $this->getService($app, UserRepository::class)->persist($user);
 
         return $participant;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createPatrolMemberOnEvent(App $app, Event $event, string $nickname): PatrolParticipant
+    {
+        $leaderParticipant = $this->createParticipantWithRole($app->getContainer(), 'pl', $event);
+        $leaderUser = $leaderParticipant->getUserButNotNull();
+        $leaderUser->status = UserStatus::Paid;
+        $this->getService($app, UserRepository::class)->persist($leaderUser);
+
+        $member = new PatrolParticipant();
+        $member->patrolLeader = $this->getService($app, PatrolLeaderRepository::class)->get($leaderParticipant->id);
+        $member->firstName = 'Member';
+        $member->lastName = 'Of Patrol';
+        $member->nickname = $nickname;
+        $this->getService($app, PatrolParticipantRepository::class)->persist($member);
+
+        return $member;
     }
 
     protected function fillPlaceholders(string $pattern): string

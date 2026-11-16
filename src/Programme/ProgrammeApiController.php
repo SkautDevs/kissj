@@ -8,18 +8,17 @@ use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
-use kissj\Participant\ParticipantRepository;
 use kissj\Programme\DTO\ProgrammeApiErrorDTO;
 use kissj\Programme\DTO\ProgrammeApiListDTO;
 use kissj\Programme\DTO\ProgrammeApiOkDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantDTO;
+use kissj\Programme\DTO\ProgrammeApiParticipantIdsDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantProgrammesDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingApprovedDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStartDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStatusDTO;
 use kissj\Programme\DTO\ProgrammeApiRegistrationWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
-use kissj\Programme\DTO\ProgrammeApiTieCodesDTO;
 use kissj\Programme\Device\DevicePairing;
 use kissj\Programme\Device\DevicePairingPollStatus;
 use kissj\Programme\Device\DevicePairingService;
@@ -34,7 +33,6 @@ class ProgrammeApiController extends AbstractController
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
-        private readonly ParticipantRepository $participantRepository,
         private readonly DevicePairingService $devicePairingService,
         private readonly ProgrammeService $programmeService,
     ) {
@@ -53,16 +51,6 @@ class ProgrammeApiController extends AbstractController
             ),
             $this->presentRegistrationWindow($authorizedEvent),
         ));
-    }
-
-    public function participantByTieCode(Response $response, Event $authorizedEvent, string $tieCode): Response
-    {
-        $participant = $this->participantRepository->findOneNotCancelledByTieCodeAndEvent($tieCode, $authorizedEvent);
-        if ($participant === null) {
-            return $response->withStatus(404);
-        }
-
-        return $this->getResponseWithJson($response, $this->presentParticipantProgrammes($participant));
     }
 
     public function participantBySession(Response $response, Participant $sessionParticipant): Response
@@ -105,9 +93,9 @@ class ProgrammeApiController extends AbstractController
             return $response->withStatus(404);
         }
 
-        return $this->getResponseWithJson($response, new ProgrammeApiTieCodesDTO(
+        return $this->getResponseWithJson($response, new ProgrammeApiParticipantIdsDTO(
             array_map(
-                static fn (ProgrammeRegistration $registration): string => $registration->participant->tieCode,
+                static fn (ProgrammeRegistration $registration): int => $registration->participant->id,
                 $this->programmeRegistrationRepository->findActiveNotCancelledForProgramme($programme),
             ),
         ));
@@ -168,7 +156,7 @@ class ProgrammeApiController extends AbstractController
     private function presentParticipantProgrammes(Participant $participant): ProgrammeApiParticipantProgrammesDTO
     {
         return new ProgrammeApiParticipantProgrammesDTO(
-            new ProgrammeApiParticipantDTO($participant->nickname),
+            new ProgrammeApiParticipantDTO($participant->id, $participant->nickname),
             array_map(
                 $this->programmeService->presentProgramme(...),
                 $this->programmeRepository->findActiveForParticipant($participant),

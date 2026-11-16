@@ -643,18 +643,6 @@ class ParticipantRepository extends Repository
         return $this->fetchOneByTieCode($this->createTieCodeFluent($tieCode, $authorizedEvent));
     }
 
-    public function findOneNotCancelledByTieCodeAndEvent(string $tieCode, Event $authorizedEvent): ?Participant
-    {
-        $qb = $this->createFluent();
-        $qb->leftJoin('participant')->as('pl')->on('pl.id = participant.patrol_leader_id');
-        $qb->join('user')->as('u')->on('u.id = COALESCE(participant.user_id, pl.user_id)');
-        $qb->where('u.event_id = %i', $authorizedEvent->id);
-        $qb->where('u.status != %s', UserStatus::Cancelled->value);
-        $qb->where('participant.tie_code = %s', strtoupper($tieCode));
-
-        return $this->fetchOneByTieCode($qb);
-    }
-
     private function createTieCodeFluent(string $tieCode, Event $authorizedEvent): Fluent
     {
         // scoped in the query - a transfer recipient must belong to the authorized event

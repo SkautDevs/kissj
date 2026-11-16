@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
-use ArrayObject;
-use Dibi\Event as DibiEvent;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
-use kissj\Participant\Patrol\PatrolLeaderRepository;
-use kissj\Participant\Patrol\PatrolParticipant;
-use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
@@ -22,11 +17,10 @@ use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
-use LeanMapper\Connection;
 use LogicException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Slim\Exception\HttpNotFoundException;
 use Tests\AppTestCase;
 
 class ProgrammeApiTest extends AppTestCase
@@ -187,55 +181,6 @@ class ProgrammeApiTest extends AppTestCase
         self::assertSame($queriesWithTwoProgrammes, $queriesWithFiveProgrammes);
     }
 
-    public function testParticipantByTieCodeQueryCountDoesNotGrowWithRegistrations(): void
-    {
-        $app = $this->getTestApp();
-        $container = $app->getContainer();
-        $event = $this->getTypedTestEvent($app, 'default', self::QUERY_COUNT_EVENT_SLUG);
-        $this->mutateEventForTest($container, $event, ['apiKeyEvent' => self::QUERY_COUNT_EVENT_API_KEY]);
-        $sections = [
-            $this->createProgrammeSection($container, $event, 'api tie query count first'),
-            $this->createProgrammeSection($container, $event, 'api tie query count second'),
-        ];
-        $participant = $this->createPaidIstOnEvent($app, $event, 'Counted');
-        $queryCounter = $this->attachQueryCounter($app);
-        $request = $this->createApiRequest(
-            '/v3/programme/participant/tie/' . $participant->tieCode,
-            self::QUERY_COUNT_EVENT_API_KEY,
-        );
-
-        foreach ([0, 1] as $index) {
-            $programme = $this->createProgramme(
-                $app,
-                $event,
-                $sections[$index],
-                'api tie count ' . $index,
-                '2027-06-07 08:00',
-            );
-            $this->register($app, $programme, $participant);
-        }
-        $queriesWithTwoRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
-
-        foreach ([2, 3, 4] as $index) {
-            $programme = $this->createProgramme(
-                $app,
-                $event,
-                $sections[$index % 2],
-                'api tie count ' . $index,
-                '2027-06-07 09:00',
-            );
-            $this->register($app, $programme, $participant);
-        }
-        $queriesWithFiveRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
-
-        $response = $app->handle($request);
-        self::assertSame(200, $response->getStatusCode());
-        $programmes = $this->decodeJson($response)['programmes'];
-        self::assertIsArray($programmes);
-        self::assertCount(5, $programmes);
-        self::assertSame($queriesWithTwoRegistrations, $queriesWithFiveRegistrations);
-    }
-
     public function testProgrammeParticipantsQueryCountDoesNotGrowWithParticipants(): void
     {
         $app = $this->getTestApp();
@@ -262,13 +207,16 @@ class ProgrammeApiTest extends AppTestCase
 
         $response = $app->handle($request);
         self::assertSame(200, $response->getStatusCode());
-        $tieCodes = $this->decodeJson($response)['tieCodes'];
-        self::assertIsArray($tieCodes);
-        self::assertCount(5, $tieCodes);
+        $body = $this->decodeJson($response);
+        self::assertArrayNotHasKey('tieCodes', $body);
+        $participantIds = $body['participantIds'];
+        self::assertIsArray($participantIds);
+        self::assertCount(5, $participantIds);
+        self::assertContainsOnlyInt($participantIds);
         self::assertSame($queriesWithTwoParticipants, $queriesWithFiveParticipants);
     }
 
-    public function testPatrolMemberIsFoundByTieCodeAndListedAmongParticipants(): void
+    public function testPatrolMemberIsListedAmongParticipants(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -278,25 +226,16 @@ class ProgrammeApiTest extends AppTestCase
         $member = $this->createPatrolMemberOnEvent($app, $event, 'Vlk');
         $this->register($app, $programme, $member);
 
-        $tieResponse = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . $member->tieCode,
-            self::API_KEY,
-        ));
         $participantsResponse = $app->handle($this->createApiRequest(
             '/v3/programme/' . $programme->id . '/participants',
             self::API_KEY,
         ));
 
-        self::assertSame(200, $tieResponse->getStatusCode());
-        $body = $this->decodeJson($tieResponse);
-        self::assertSame(['nickname' => 'Vlk'], $body['participant']);
-        self::assertIsArray($body['programmes']);
-        self::assertSame([$programme->id], array_column($body['programmes'], 'id'));
         self::assertSame(200, $participantsResponse->getStatusCode());
-        self::assertSame(['tieCodes' => [$member->tieCode]], $this->decodeJson($participantsResponse));
+        self::assertSame(['participantIds' => [$member->id]], $this->decodeJson($participantsResponse));
     }
 
-    public function testPatrolMemberOfCancelledLeaderIsHidden(): void
+    public function testPatrolMemberOfCancelledLeaderIsNotListed(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -307,103 +246,16 @@ class ProgrammeApiTest extends AppTestCase
         $this->register($app, $programme, $member);
         $this->cancel($app, $member);
 
-        $tieResponse = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . $member->tieCode,
-            self::API_KEY,
-        ));
         $participantsResponse = $app->handle($this->createApiRequest(
             '/v3/programme/' . $programme->id . '/participants',
             self::API_KEY,
         ));
 
-        self::assertSame(404, $tieResponse->getStatusCode());
         self::assertSame(200, $participantsResponse->getStatusCode());
-        self::assertSame(['tieCodes' => []], $this->decodeJson($participantsResponse));
+        self::assertSame(['participantIds' => []], $this->decodeJson($participantsResponse));
     }
 
-    public function testParticipantByTieCodeReturnsNicknameAndRegistrations(): void
-    {
-        $app = $this->getTestApp();
-        $container = $app->getContainer();
-        $event = $this->getAuthorizedEvent($app);
-        $section = $this->createProgrammeSection($container, $event, 'api tie section');
-
-        $participant = $this->createPaidIstOnEvent($app, $event, 'Jana');
-        $later = $this->createProgramme($app, $event, $section, 'api tie later', '2027-06-04 10:00');
-        $earlier = $this->createProgramme($app, $event, $section, 'api tie earlier', '2027-06-04 08:00');
-        $removed = $this->createProgramme($app, $event, $section, 'api tie removed', '2027-06-04 09:00');
-        $this->register($app, $later, $participant);
-        $this->register($app, $earlier, $participant);
-        $this->getService($app, ProgrammeRegistrationRepository::class)
-            ->softDelete($this->register($app, $removed, $participant));
-
-        $response = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . strtolower($participant->tieCode),
-            self::API_KEY,
-        ));
-
-        self::assertSame(200, $response->getStatusCode());
-        $body = $this->decodeJson($response);
-        self::assertSame(['nickname' => 'Jana'], $body['participant']);
-        self::assertIsArray($body['programmes']);
-        self::assertSame([$earlier->id, $later->id], array_column($body['programmes'], 'id'));
-        $earlierProgramme = $body['programmes'][0];
-        self::assertIsArray($earlierProgramme);
-        self::assertSame('2027-06-04T08:00:00+02:00', $earlierProgramme['start']);
-        self::assertSame($section->id, $earlierProgramme['sectionId']);
-    }
-
-    public function testParticipantWithEmptyNicknameIsSentAsNull(): void
-    {
-        $app = $this->getTestApp();
-        $event = $this->getAuthorizedEvent($app);
-        $participant = $this->createPaidIstOnEvent($app, $event, '');
-
-        $response = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . $participant->tieCode,
-            self::API_KEY,
-        ));
-
-        self::assertSame(200, $response->getStatusCode());
-        self::assertSame(['participant' => ['nickname' => null], 'programmes' => []], $this->decodeJson($response));
-    }
-
-    public function testParticipantByUnknownTieCodeIs404(): void
-    {
-        $app = $this->getTestApp();
-        $this->getAuthorizedEvent($app);
-        $otherEvent = $this->getTypedTestEvent($app, 'default', self::OTHER_EVENT_SLUG);
-        $foreignParticipant = $this->createPaidIstOnEvent($app, $otherEvent, 'Foreign');
-
-        $unknown = $app->handle($this->createApiRequest('/v3/programme/participant/tie/unknown-tie-0', self::API_KEY));
-        $foreign = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . $foreignParticipant->tieCode,
-            self::API_KEY,
-        ));
-
-        self::assertSame(404, $unknown->getStatusCode());
-        self::assertSame('', (string)$unknown->getBody());
-        self::assertSame(404, $foreign->getStatusCode());
-        self::assertSame('', (string)$foreign->getBody());
-    }
-
-    public function testCancelledParticipantByTieCodeIs404(): void
-    {
-        $app = $this->getTestApp();
-        $event = $this->getAuthorizedEvent($app);
-        $participant = $this->createPaidIstOnEvent($app, $event, 'Cancelled');
-        $this->cancel($app, $participant);
-
-        $response = $app->handle($this->createApiRequest(
-            '/v3/programme/participant/tie/' . $participant->tieCode,
-            self::API_KEY,
-        ));
-
-        self::assertSame(404, $response->getStatusCode());
-        self::assertSame('', (string)$response->getBody());
-    }
-
-    public function testProgrammeParticipantsReturnsTieCodes(): void
+    public function testProgrammeParticipantsReturnsParticipantIds(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -425,7 +277,7 @@ class ProgrammeApiTest extends AppTestCase
         ));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame(['tieCodes' => [$first->tieCode, $second->tieCode]], $this->decodeJson($response));
+        self::assertSame(['participantIds' => [$first->id, $second->id]], $this->decodeJson($response));
     }
 
     public function testProgrammeParticipantsExcludesCancelledParticipants(): void
@@ -448,7 +300,7 @@ class ProgrammeApiTest extends AppTestCase
         ));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame(['tieCodes' => [$active->tieCode]], $this->decodeJson($response));
+        self::assertSame(['participantIds' => [$active->id]], $this->decodeJson($response));
     }
 
     public function testProgrammeParticipantsOfUnknownOrForeignProgrammeIs404(): void
@@ -493,6 +345,20 @@ class ProgrammeApiTest extends AppTestCase
         $body = $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY)));
 
         self::assertSame(['start' => '2027-03-15T18:00:00+01:00', 'end' => null], $body['registration']);
+    }
+
+    public function testTheTieReadIsGone(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Gone');
+
+        // Slim's 404 for a route that does not exist reaches the test as its exception
+        $this->expectException(HttpNotFoundException::class);
+        $app->handle($this->createApiRequest(
+            '/v3/programme/participant/tie/' . $participant->tieCode,
+            self::API_KEY,
+        ));
     }
 
     public function testMissingKeyIs401(): void
@@ -557,57 +423,6 @@ class ProgrammeApiTest extends AppTestCase
         $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
 
         return $registration;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     */
-    private function createPatrolMemberOnEvent(App $app, Event $event, string $nickname): PatrolParticipant
-    {
-        $leaderParticipant = $this->createParticipantWithRole($app->getContainer(), 'pl', $event);
-        $leaderUser = $leaderParticipant->getUserButNotNull();
-        $leaderUser->status = UserStatus::Paid;
-        $this->getService($app, UserRepository::class)->persist($leaderUser);
-
-        $member = new PatrolParticipant();
-        $member->patrolLeader = $this->getService($app, PatrolLeaderRepository::class)->get($leaderParticipant->id);
-        $member->firstName = 'Member';
-        $member->lastName = 'Of Patrol';
-        $member->nickname = $nickname;
-        $this->getService($app, PatrolParticipantRepository::class)->persist($member);
-
-        return $member;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     * @return ArrayObject<int, string>
-     */
-    private function attachQueryCounter(App $app): ArrayObject
-    {
-        /** @var ArrayObject<int, string> $queryCounter */
-        $queryCounter = new ArrayObject();
-        $this->getService($app, Connection::class)->onEvent[] = static function (DibiEvent $dibiEvent) use (
-            $queryCounter,
-        ): void {
-            if (($dibiEvent->type & DibiEvent::QUERY) !== 0) {
-                $queryCounter->append($dibiEvent->sql);
-            }
-        };
-
-        return $queryCounter;
-    }
-
-    /**
-     * @param App<ContainerInterface> $app
-     * @param ArrayObject<int, string> $queryCounter
-     */
-    private function countQueriesOf(App $app, ArrayObject $queryCounter, ServerRequestInterface $request): int
-    {
-        $queryCountBefore = $queryCounter->count();
-        $app->handle($request);
-
-        return $queryCounter->count() - $queryCountBefore;
     }
 
     /**
