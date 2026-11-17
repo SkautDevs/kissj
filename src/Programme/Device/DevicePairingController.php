@@ -28,9 +28,11 @@ class DevicePairingController extends AbstractController
         );
         if ($refusal !== null) {
             $this->flashMessages->warning($refusal->flashKey());
-        } else {
-            $this->flashMessages->success('flash.success.devicePaired');
+
+            return $this->redirect($request, $response, 'dashboard', [], ['pairingRetry' => '1']);
         }
+
+        $this->flashMessages->success('flash.success.devicePaired');
 
         return $this->redirect($request, $response, 'dashboard');
     }

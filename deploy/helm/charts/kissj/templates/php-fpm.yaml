@@ -115,6 +115,9 @@ spec:
           - name: DEFAULT_LOCALE
             value: {{ .Values.app.locale | quote }}
 
+          - name: EVENT_APP_URL
+            value: {{ .Values.app.event_app_url | quote }}
+
           - name: LOGGER_LEVEL
             value: {{ .Values.app.log_level | quote }}
 

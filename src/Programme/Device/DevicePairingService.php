@@ -10,6 +10,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
+use kissj\Settings\EnvSettings;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
@@ -30,12 +31,30 @@ readonly class DevicePairingService
         private ParticipantRepository $participantRepository,
         private LoggerInterface $logger,
         private Metrics $metrics,
+        private EnvSettings $envSettings,
     ) {
     }
 
     public function isDeviceAccessAllowed(User $user): bool
     {
         return $user->event->hasProgrammeApi() && $user->status !== UserStatus::Cancelled;
+    }
+
+    public function countConnectedDevices(Participant $participant): int
+    {
+        $now = DateTimeUtils::getDateTime();
+
+        return $this->deviceSessionRepository->countActiveForParticipant($participant, $now)
+            + $this->devicePairingRepository->countApprovedForParticipant($participant, $now);
+    }
+
+    public function eventAppUrl(Event $event): ?string
+    {
+        if ($this->envSettings->eventAppUrl === '') {
+            return null;
+        }
+
+        return rtrim($this->envSettings->eventAppUrl, '/') . '/' . $event->slug . '/';
     }
 
     public function start(Event $event, string $deviceId): ?DevicePairing

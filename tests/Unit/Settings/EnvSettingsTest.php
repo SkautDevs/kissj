@@ -47,6 +47,7 @@ class EnvSettingsTest extends TestCase
             'REDIS_PORT' => '6379',
             'REDIS_PASSWORD' => 'redispass',
             'CORS_ALLOWED_ORIGINS' => 'https://a.example.org,https://b.example.org',
+            'EVENT_APP_URL' => 'https://app.example.org',
         ];
     }
 
@@ -82,6 +83,7 @@ class EnvSettingsTest extends TestCase
         self::assertSame(6379, $env->redisPort);
         self::assertSame('redispass', $env->redisPassword);
         self::assertSame(['https://a.example.org', 'https://b.example.org'], $env->corsAllowedOrigins);
+        self::assertSame('https://app.example.org', $env->eventAppUrl);
     }
 
     public function testBoolsKeepExactStringSemantics(): void
@@ -123,6 +125,36 @@ class EnvSettingsTest extends TestCase
         self::assertSame(1.0, $env->sentryProfilesSampleRate);
         self::assertSame('postgresql', $env->dbType);
         self::assertSame(AddCorsHeaderForAppDomainsMiddleware::DEFAULT_ALLOWED_ORIGINS, $env->corsAllowedOrigins);
+    }
+
+    public function testMissingEventAppUrlMapsToEmptyString(): void
+    {
+        $values = $this->validEnv();
+        unset($values['EVENT_APP_URL']);
+
+        self::assertSame('', EnvSettings::fromArray($values, '.env')->eventAppUrl);
+    }
+
+    public function testEventAppUrlWithoutHttpSchemeThrows(): void
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('EVENT_APP_URL');
+        EnvSettings::fromArray(['EVENT_APP_URL' => 'app.example.org'] + $this->validEnv(), '.env');
+    }
+
+    public function testEventAppUrlWithHttpSchemeOrEmptyIsAccepted(): void
+    {
+        self::assertSame(
+            'https://app.example.org',
+            EnvSettings::fromArray(['EVENT_APP_URL' => 'https://app.example.org'] + $this->validEnv(), '.env')
+                ->eventAppUrl,
+        );
+        self::assertSame(
+            'http://app.example.org',
+            EnvSettings::fromArray(['EVENT_APP_URL' => 'http://app.example.org'] + $this->validEnv(), '.env')
+                ->eventAppUrl,
+        );
+        self::assertSame('', EnvSettings::fromArray(['EVENT_APP_URL' => ''] + $this->validEnv(), '.env')->eventAppUrl);
     }
 
     public function testCorsOriginsAreTrimmedAndEmptiesDropped(): void

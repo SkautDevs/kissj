@@ -78,7 +78,13 @@ class ParticipantController extends AbstractController
             : null;
         $templateData['roleChangeOffered'] = $user->status === UserStatus::Open
             && count($this->userService->getSelectableRolesWithCurrent($user, $participant->getRoleOrFail())) > 1;
-        $templateData['devicePairingAvailable'] = $this->devicePairingService->isDeviceAccessAllowed($user);
+        $devicePairingAvailable = $this->devicePairingService->isDeviceAccessAllowed($user);
+        $templateData['devicePairingAvailable'] = $devicePairingAvailable;
+        if ($devicePairingAvailable) {
+            $templateData['connectedDevices'] = $this->devicePairingService->countConnectedDevices($participant);
+            $templateData['eventAppUrl'] = $this->devicePairingService->eventAppUrl($user->event);
+            $templateData['pairingFormOpen'] = ($request->getQueryParams()['pairingRetry'] ?? null) === '1';
+        }
         $templateData['csrfName'] = $csrfName;
         $templateData['csrfValue'] = $csrfValue;
 

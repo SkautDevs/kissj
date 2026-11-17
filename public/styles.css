@@ -174,6 +174,10 @@ main {
 	flex-wrap: wrap;
 }
 
+.card-double-layout-center {
+	justify-content: center;
+}
+
 .card-double {
 	width: 46%;
 	margin-right: 2%;

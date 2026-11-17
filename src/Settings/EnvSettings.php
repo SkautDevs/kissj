@@ -43,6 +43,7 @@ readonly class EnvSettings
         public int $redisPort,
         public string $redisPassword,
         public array $corsAllowedOrigins,
+        public string $eventAppUrl,
     ) {
     }
 
@@ -54,6 +55,15 @@ readonly class EnvSettings
         $dbType = self::string($env, 'DB_TYPE', 'postgresql');
         if ($dbType === 'sqlite' && $envFilename !== 'env.testing') {
             throw new ValidationException('DB_TYPE=sqlite is supported only for the test suite (env.testing).');
+        }
+
+        $eventAppUrl = self::string($env, 'EVENT_APP_URL', '');
+        if (
+            $eventAppUrl !== ''
+            && str_starts_with($eventAppUrl, 'https://') === false
+            && str_starts_with($eventAppUrl, 'http://') === false
+        ) {
+            throw new ValidationException('EVENT_APP_URL must start with https:// or http://.');
         }
 
         $corsAllowedOrigins = array_values(array_filter(
@@ -92,6 +102,7 @@ readonly class EnvSettings
             corsAllowedOrigins: $corsAllowedOrigins === []
                 ? AddCorsHeaderForAppDomainsMiddleware::DEFAULT_ALLOWED_ORIGINS
                 : $corsAllowedOrigins,
+            eventAppUrl: $eventAppUrl,
         );
     }
 

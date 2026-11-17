@@ -833,8 +833,12 @@ programme:
         title: "My programmes"
     pairing:
         cardTitle: "Connect the mobile app"
-        cardText: "Enter the code from the event app. Then you sign up for programmes from your phone."
-        codeLabel: "Code from the app"
+        connectedTitle: "Mobile app"
+        connectedCount: "Connected devices: %count%"
+        openApp: "Open the app"
+        connectAnother: "Connect another device"
+        appName: "the event app"
+        cardText: "Enter the code from %app%. This lets you sign up for programmes:"
         codeFormat: "six digits"
         submit: "Connect"
 flash:

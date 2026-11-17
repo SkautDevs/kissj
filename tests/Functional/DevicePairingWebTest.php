@@ -16,6 +16,7 @@ use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DevicePairingStatus;
 use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Settings\EnvSettings;
 use kissj\Telemetry\Metrics;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
@@ -38,8 +39,104 @@ class DevicePairingWebTest extends AppTestCase
     private const string TEST_EVENT_SLUG = 'test-event-slug';
     private const string PAIRING_PATH = '/v2/event/test-event-slug/participant/pairing';
     private const string DASHBOARD_PATH = '/v2/event/test-event-slug/participant/dashboard';
+    private const string DASHBOARD_RETRY_PATH = '/v2/event/test-event-slug/participant/dashboard?pairingRetry=1';
     private const string ADMIN_PROGRAMMES_PATH = '/v2/event/test-event-slug/admin/programmes';
     private const string PURGE_PATH = '/v2/event/test-event-slug/admin/programmes/pairings/purge';
+
+    public function testDashboardWithoutDeviceShowsFormAndAppLink(): void
+    {
+        $this->setEnv('EVENT_APP_URL', 'https://app.example.org/');
+        $app = $this->getTestApp();
+        $this->setEventKey($app, 'pairing-web-event-key');
+        $participant = $this->createPaidIstParticipant($app);
+        $app = $this->loginAs($app, $participant->getUserButNotNull());
+
+        $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+
+        self::assertStringContainsString('href="https://app.example.org/test-event-slug/"', $body);
+        self::assertStringContainsString($this->translate($app, 'programme.pairing.cardTitle'), $body);
+        self::assertStringContainsString(
+            '<label for="code">' . explode('%app%', $this->translate($app, 'programme.pairing.cardText'))[0],
+            $body,
+        );
+        self::assertStringContainsString('action="/v2/event/test-event-slug/participant/pairing"', $body);
+        self::assertStringNotContainsString('<details', $body);
+    }
+
+    public function testDashboardAfterPairingShowsConnectedCountAndCollapsedForm(): void
+    {
+        $this->setEnv('EVENT_APP_URL', 'https://app.example.org/');
+        $app = $this->getTestApp();
+        $this->setEventKey($app, 'pairing-web-event-key');
+        $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
+        $participant = $this->createPaidIstParticipant($app);
+        $refusal = $this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant);
+        self::assertNull($refusal);
+        $app = $this->loginAs($app, $participant->getUserButNotNull());
+
+        $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+
+        self::assertStringContainsString(
+            str_replace('%count%', '1', $this->translate($app, 'programme.pairing.connectedCount')),
+            $body,
+        );
+        self::assertStringContainsString($this->translate($app, 'programme.pairing.openApp'), $body);
+        self::assertStringContainsString('href="https://app.example.org/test-event-slug/"', $body);
+        self::assertStringContainsString('<details', $body);
+        self::assertStringContainsString($this->translate($app, 'programme.pairing.connectAnother'), $body);
+        self::assertStringContainsString('action="/v2/event/test-event-slug/participant/pairing"', $body);
+        self::assertStringContainsString('id="devicePairing"', $body);
+    }
+
+    public function testFailedCodeKeepsConnectAnotherFormOpen(): void
+    {
+        $app = $this->getTestApp();
+        $this->setEventKey($app, 'pairing-web-event-key');
+        $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
+        $participant = $this->createPaidIstParticipant($app);
+        $this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant);
+        $app = $this->loginAs($app, $participant->getUserButNotNull());
+
+        $response = $this->post($app, self::PAIRING_PATH, ['code' => '000000']);
+
+        $this->assertRedirectsToDashboardWithFormOpen($response);
+        $retryRequest = $this->createRequest(self::DASHBOARD_PATH)->withQueryParams(['pairingRetry' => '1']);
+        $retryBody = (string)$app->handle($retryRequest)->getBody();
+        self::assertStringContainsString('<details open>', $retryBody);
+        $plainBody = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+        self::assertStringContainsString('<details>', $plainBody);
+    }
+
+    public function testDashboardWithoutEventAppUrlHasNoAppLink(): void
+    {
+        $this->setEnv('EVENT_APP_URL', '');
+        $app = $this->getTestApp();
+        $this->setEventKey($app, 'pairing-web-event-key');
+        $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
+        $participant = $this->createPaidIstParticipant($app);
+        $notConnected = $this->createPaidIstParticipant($app);
+        $this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant);
+
+        $connectedApp = $this->loginAs($app, $participant->getUserButNotNull());
+        $connectedBody = (string)$connectedApp->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+        self::assertStringContainsString(
+            str_replace('%count%', '1', $this->translate($connectedApp, 'programme.pairing.connectedCount')),
+            $connectedBody,
+        );
+        self::assertStringNotContainsString(
+            $this->translate($connectedApp, 'programme.pairing.openApp'),
+            $connectedBody,
+        );
+
+        $freshApp = $this->loginAs($this->getTestApp(false), $notConnected->getUserButNotNull());
+        $freshBody = (string)$freshApp->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+        self::assertStringContainsString($this->translate($freshApp, 'programme.pairing.appName'), $freshBody);
+        self::assertStringNotContainsString('href="https://app.', $freshBody);
+        self::assertStringNotContainsString('target="_blank" rel="noopener"', $freshBody);
+    }
 
     public function testCardAndPairingOnlyWithEventKey(): void
     {
@@ -116,7 +213,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '000000']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeInvalid'), $this->flashed($app));
         self::assertSame(1, $this->countAttempts($app, $participant));
     }
@@ -134,6 +231,7 @@ class DevicePairingWebTest extends AppTestCase
             $participantRepository,
             $this->getService($app, LoggerInterface::class),
             $this->getService($app, Metrics::class),
+            $this->getService($app, EnvSettings::class),
         );
 
         $service->approveEnteredCode('000000', $participant->getUserButNotNull()->event, $participant);
@@ -157,7 +255,7 @@ class DevicePairingWebTest extends AppTestCase
 
         foreach (['48329', '48a291'] as $index => $entered) {
             $response = $this->post($app, self::PAIRING_PATH, ['code' => $entered]);
-            $this->assertRedirectsToDashboard($response);
+            $this->assertRedirectsToDashboardWithFormOpen($response);
             self::assertSame($index + 1, $this->countAttempts($app, $participant), $entered);
         }
     }
@@ -173,7 +271,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '715302']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeInvalid'), $this->flashed($app));
         self::assertSame(1, $this->countAttempts($app, $participant));
     }
@@ -207,7 +305,7 @@ class DevicePairingWebTest extends AppTestCase
         $this->flashed($app);
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '572940']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeUsed'), $this->flashed($app));
         $stored = $this->getService($app, DevicePairingRepository::class)->get($pairing->id);
         self::assertSame('approved', $stored->status->value);
@@ -226,7 +324,7 @@ class DevicePairingWebTest extends AppTestCase
         $this->getService($app, DevicePairingService::class)->start($event, $pairing->deviceId);
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '618304']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeUsed'), $this->flashed($app));
         $stored = $this->getService($app, DevicePairingRepository::class)->get($pairing->id);
         self::assertSame('replaced', $stored->status->value);
@@ -283,7 +381,7 @@ class DevicePairingWebTest extends AppTestCase
         $this->getService($app, DevicePairingService::class)->poll($pairing->deviceCode, $event);
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '730915']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeUsed'), $this->flashed($app));
         $stored = $this->getService($app, DevicePairingRepository::class)->get($pairing->id);
         self::assertSame('consumed', $stored->status->value);
@@ -300,7 +398,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '730916']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeUsed'), $this->flashed($app));
         self::assertSame(0, $this->countAttempts($app, $participant));
     }
@@ -340,7 +438,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '730917']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains($this->translate($app, 'flash.warning.devicePairingCodeInvalid'), $this->flashed($app));
         self::assertSame(1, $this->countAttempts($app, $participant));
     }
@@ -361,7 +459,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '730918']);
 
-        $this->assertRedirectsToDashboard($response);
+        $this->assertRedirectsToDashboardWithFormOpen($response);
         self::assertContains(
             $this->translate($app, 'flash.warning.devicePairingTooManyAttempts'),
             $this->flashed($app),
@@ -404,7 +502,7 @@ class DevicePairingWebTest extends AppTestCase
 
         $lockedOut = $this->post($app, self::PAIRING_PATH, ['code' => '935126']);
 
-        $this->assertRedirectsToDashboard($lockedOut);
+        $this->assertRedirectsToDashboardWithFormOpen($lockedOut);
         self::assertContains(
             $this->translate($app, 'flash.warning.devicePairingTooManyAttempts'),
             $this->flashed($app),
@@ -481,6 +579,12 @@ class DevicePairingWebTest extends AppTestCase
     {
         self::assertSame(302, $response->getStatusCode());
         self::assertSame(self::DASHBOARD_PATH, $response->getHeaderLine('Location'));
+    }
+
+    private function assertRedirectsToDashboardWithFormOpen(ResponseInterface $response): void
+    {
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame(self::DASHBOARD_RETRY_PATH, $response->getHeaderLine('Location'));
     }
 
     /**

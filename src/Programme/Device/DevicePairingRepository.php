@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace kissj\Programme\Device;
 
+use DateInterval;
+use DateTimeImmutable;
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Relation;
 use kissj\Orm\Repository;
+use kissj\Participant\Participant;
 
 /**
  * @table device_pairing
@@ -57,6 +60,18 @@ class DevicePairingRepository extends Repository
             'event' => $event,
             'status' => DevicePairingStatus::Pending->value,
             'expires_at' => new Relation(DateTimeUtils::formatAtom($now), '>'),
+        ]);
+    }
+
+    public function countApprovedForParticipant(Participant $participant, DateTimeInterface $now): int
+    {
+        $graceBoundary = DateTimeImmutable::createFromInterface($now)
+            ->sub(new DateInterval(DevicePairing::APPROVED_GRACE));
+
+        return $this->countBy([
+            'participant' => $participant,
+            'status' => DevicePairingStatus::Approved->value,
+            'expires_at' => new Relation(DateTimeUtils::formatAtom($graceBoundary), '>'),
         ]);
     }
 

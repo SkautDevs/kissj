@@ -27,7 +27,7 @@ class DevicePairing extends EntityDatetime
 {
     public const string LIFETIME = 'PT1H'; // 1 hour
     public const int POLL_INTERVAL_SECONDS = 5;
-    private const string APPROVED_GRACE = 'PT1M'; // 1 minute
+    public const string APPROVED_GRACE = 'PT1M'; // 1 minute
     private const int POLL_JITTER_SECONDS = 1;
 
     public function statusFromString(string $status): DevicePairingStatus

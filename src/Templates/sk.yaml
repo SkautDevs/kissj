@@ -833,8 +833,12 @@ programme:
         title: "Moje programy"
     pairing:
         cardTitle: "Prepojiť mobilnú aplikáciu"
-        cardText: "Zadaj kód z aplikácie akcie. Potom sa z telefónu prihlásiš na programy."
-        codeLabel: "Kód z aplikácie"
+        connectedTitle: "Mobilná aplikácia"
+        connectedCount: "Prepojené zariadenia: %count%"
+        openApp: "Otvoriť aplikáciu"
+        connectAnother: "Prepojiť ďalšie zariadenie"
+        appName: "aplikácie akcie"
+        cardText: "Zadaj kód z %app%. Tým sa prihlásiš na programy:"
         codeFormat: "šesť číslic"
         submit: "Prepojiť"
 flash:

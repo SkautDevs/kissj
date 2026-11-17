@@ -36,6 +36,7 @@ php:
 app:
   url: example.net
   locale: cs
+  event_app_url: ""
 
   log_level: DEBUG
   debug: false

@@ -94,6 +94,9 @@ class AppTestCase extends TestCase
     /** @var array{container: ContainerInterface, eventId: int, originals: array<string, mixed>}|null */
     private ?array $mutatedEventRestore = null;
 
+    /** @var array<string, string|null> */
+    private array $originalEnv = [];
+
     private ?TestHandler $testLogHandler = null;
 
     /** @var list<array{level: Level, fragment: string}> */
@@ -124,6 +127,7 @@ class AppTestCase extends TestCase
         }
 
         $this->restoreMutatedEventFields();
+        $this->restoreEnv();
 
         // Restore original handlers after test completes
         // This cleans up any handlers registered by Whoops or other middleware
@@ -153,6 +157,27 @@ class AppTestCase extends TestCase
         $this->connectionsToClose = [];
 
         parent::tearDown();
+    }
+
+    protected function setEnv(string $name, string $value): void
+    {
+        if (array_key_exists($name, $this->originalEnv) === false) {
+            $original = $_ENV[$name] ?? null;
+            $this->originalEnv[$name] = is_string($original) ? $original : null;
+        }
+        $_ENV[$name] = $value;
+    }
+
+    private function restoreEnv(): void
+    {
+        foreach ($this->originalEnv as $name => $original) {
+            if ($original === null) {
+                unset($_ENV[$name]);
+            } else {
+                $_ENV[$name] = $original;
+            }
+        }
+        $this->originalEnv = [];
     }
 
     /**
