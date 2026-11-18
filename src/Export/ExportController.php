@@ -167,11 +167,15 @@ class ExportController extends AbstractController
 
         $patrolsRoster = $this->participantService->getPatrolsRoster($event);
 
-        return $this->streamPdf($response, $this->pdfGenerator->generatePatrolRoster(
-            $event,
-            $patrolsRoster,
-            $event->eventType->getRosterTemplateName(),
-        ));
+        return $this->streamPdf(
+            $response,
+            $this->pdfGenerator->generatePatrolRoster(
+                $event,
+                $patrolsRoster,
+                $event->eventType->getRosterTemplateName(),
+            ),
+            $event->slug . '_patrols_roster',
+        );
     }
 
     public function showBadgesForm(Response $response, Event $event): Response
@@ -211,7 +215,16 @@ class ExportController extends AbstractController
         $participants = $this->participantRepository->getParticipantsForBadges($event, $selectedRoles);
         $this->logger->info('Generated badges', ['eventSlug' => $event->slug, 'userId' => $user->id]);
 
-        return $this->streamPdf($response, $this->pdfGenerator->generateBadges($event, $participants));
+        $roleShorthands = implode('-', array_map(
+            static fn (ParticipantRole $role): string => $role->value,
+            $selectedRoles,
+        ));
+
+        return $this->streamPdf(
+            $response,
+            $this->pdfGenerator->generateBadges($event, $participants),
+            $event->slug . '_badges_' . $roleShorthands,
+        );
     }
 
     public function exportBlankBadges(Request $request, Response $response, Event $event): Response
@@ -220,14 +233,22 @@ class ExportController extends AbstractController
         $count = is_numeric($rawCount) ? (int)$rawCount : 0;
         $count = max(1, min($count, self::BLANK_BADGES_MAX_COUNT));
 
-        return $this->streamPdf($response, $this->pdfGenerator->generateBlankBadges($event, $count));
+        return $this->streamPdf(
+            $response,
+            $this->pdfGenerator->generateBlankBadges($event, $count),
+            $event->slug . '_badges_blank',
+        );
     }
 
     public function exportProgrammesPrint(Response $response, Event $event): Response
     {
         $sheets = $this->buildAttendanceSheets($event, null);
 
-        return $this->streamPdf($response, $this->pdfGenerator->generateProgrammeAttendance($event, $sheets));
+        return $this->streamPdf(
+            $response,
+            $this->pdfGenerator->generateProgrammeAttendance($event, $sheets),
+            $event->slug . '_programmes',
+        );
     }
 
     public function printProgramme(Response $response, Event $event, int $programmeId): Response
@@ -235,7 +256,11 @@ class ExportController extends AbstractController
         $this->programmeRepository->getActiveById($programmeId, $event);
         $sheets = $this->buildAttendanceSheets($event, $programmeId);
 
-        return $this->streamPdf($response, $this->pdfGenerator->generateProgrammeAttendance($event, $sheets));
+        return $this->streamPdf(
+            $response,
+            $this->pdfGenerator->generateProgrammeAttendance($event, $sheets),
+            $event->slug . '_programme_' . $programmeId,
+        );
     }
 
     /**
@@ -262,7 +287,7 @@ class ExportController extends AbstractController
         return $sheets;
     }
 
-    private function streamPdf(Response $response, string $pdf): Response
+    private function streamPdf(Response $response, string $pdf, string $fileName): Response
     {
         $stream = fopen('php://temp', 'rb+');
         if ($stream === false) {
@@ -275,6 +300,11 @@ class ExportController extends AbstractController
         fwrite($stream, $pdf);
         rewind($stream);
 
-        return $response->withHeader('Content-Type', 'application/pdf')->withBody(new Stream($stream));
+        $timestamp = DateTimeUtils::getDateTime()->format('Y-m-d_H-i-s');
+
+        return $response
+            ->withHeader('Content-Type', 'application/pdf')
+            ->withHeader('Content-Disposition', 'inline; filename="' . $fileName . '_' . $timestamp . '.pdf"')
+            ->withBody(new Stream($stream));
     }
 }
