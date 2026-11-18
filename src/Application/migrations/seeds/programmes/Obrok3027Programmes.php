@@ -183,7 +183,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'prihlaseni k Ucastnickym aktivitam - zahajeni druhe vlny + prihlasovani na Open mike druha vlna + prihlasovani do Obrok kapely + na kadernictvi',
+            'name' => 'prihlaseni k Ucastnickym aktivitam - zahajeni druhe vlny + prihlasovani na Open mike druha '
+                . 'vlna + prihlasovani do Obrok kapely + na kadernictvi',
             'description' => '',
             'place' => 'Plaza',
             'start' => '2027-05-19 12:00:00',
@@ -315,7 +316,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-19 12:00:00',
@@ -987,7 +989,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-20 08:45:00',
@@ -1011,7 +1014,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-20 15:00:00',
@@ -1743,7 +1747,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-21 08:45:00',
@@ -1755,7 +1760,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-21 15:00:00',
@@ -1827,7 +1833,10 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => '´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´k',
+            'name' => '´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´'
+                . '´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´'
+                . '´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´'
+                . '´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´k',
             'description' => '',
             'place' => 'Dopro hudební stan',
             'start' => '2027-05-21 20:30:00',
@@ -2379,7 +2388,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-22 08:45:00',
@@ -2391,7 +2401,8 @@ class Obrok3027Programmes
             'section' => 'V areálu',
         ],
         [
-            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj potrav. banka landart galerie',
+            'name' => 'stálá místa: fotokotek slacklines volejbal workoout hriste lanove aktivity hamakový háj '
+                . 'potrav. banka landart galerie',
             'description' => '',
             'place' => 'Dopro - aktivity celou dobu',
             'start' => '2027-05-22 15:00:00',
