@@ -34,13 +34,16 @@ class AdminListingPagesTest extends AppTestCase
         $_SESSION['user'] = ['id' => $adminUser->id];
 
         $suffix = bin2hex(random_bytes(4));
-        $this->createPaidIst($container, 'Paid', 'PaidIst' . $suffix);
+        $paidIst = $this->createPaidIst($container, 'Paid', 'PaidIst' . $suffix);
         $this->createOpenIst($container, 'Open', 'OpenIst' . $suffix);
 
         $body = $this->fetchBody(self::BASE_URL . '/admin/showPaid');
 
         self::assertStringContainsString('PaidIst' . $suffix, $body);
         self::assertStringNotContainsString('OpenIst' . $suffix, $body);
+        self::assertStringContainsString('data-copy="' . $paidIst->getUserButNotNull()->email . '"', $body);
+        self::assertStringContainsString('⎘', $body);
+        self::assertStringContainsString('/js/copy-to-clipboard.js', $body);
     }
 
     public function testOpenPageListsOpenParticipants(): void

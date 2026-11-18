@@ -234,6 +234,8 @@
         {% else %}
             {{ 'detail.uploadFileMissing'|trans }}
         {% endif %}<br/>
+    {% elseif item.type.value == 'email' %}
+        {{ item.label|trans }}: <b>{{ value }}</b>{% include 'widgets/copyEmail.twig' with {'email': value} %}<br/>
     {% else %}
         {{ item.label|trans }}: <b>{{ value }}</b><br/>
     {% endif %}
