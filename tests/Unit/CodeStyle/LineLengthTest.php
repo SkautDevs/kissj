@@ -21,10 +21,7 @@ class LineLengthTest extends TestCase
 
         $hits = [];
         foreach ($paths as $path) {
-            if (
-                str_contains($path, '/tests/temp/')
-                || str_contains($path, '/src/Application/migrations/seeds/programmes/')
-            ) {
+            if (str_contains($path, '/tests/temp/')) {
                 continue;
             }
 
