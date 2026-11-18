@@ -106,6 +106,7 @@ detail:
     genderOther: "Iné"
     email: "Email"
     emailPlaceholder: "preferovaný kontaktný email"
+    copyEmail: "Skopírovať e-mail"
     phone: "Telefónne číslo"
     phonePlaceholder: "číslice vrátane medzinárodnej predvoľby"
     address: "Adresa trvalého bydliska"

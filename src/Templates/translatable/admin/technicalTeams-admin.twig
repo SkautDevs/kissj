@@ -38,7 +38,7 @@
                         <td>
                             <a href="{{ url_for('admin-mend-participant', {'eventSlug': event.slug, 'participantId': ttl.id}) }}">{{ ttl.getFullName() }}</a>
                         </td>
-                        <td>{{ ttl.getUserButNotNull().email }}</td>
+                        <td>{{ ttl.getUserButNotNull().email }}{% include 'widgets/copyEmail.twig' with {'email': ttl.getUserButNotNull().email} %}</td>
                         <td>{{ ttl.getTelephoneNumber }}</td>
                         <td>{{ ('dashboard.userStatus.' ~ ttl.getUserButNotNull().status.value) | trans }}</td>
                         <td>{{ ttl.getTechnicalTeamParticipantsCount() + 1 }}</td>

@@ -106,6 +106,7 @@ detail:
     genderOther: "Other"
     email: "Email"
     emailPlaceholder: "your preferred contact mail"
+    copyEmail: "Copy email"
     phone: "Phone number"
     phonePlaceholder: "digits including country dial-in code"
     address: "Permanent Address"

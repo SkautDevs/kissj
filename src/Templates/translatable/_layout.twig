@@ -84,5 +84,6 @@
 {% if event.eventType.getScriptNameWithoutLeadingSlash is not null %}
     <script src="{{ base_path() }}/{{ event.eventType.getScriptNameWithoutLeadingSlash }}" defer></script>
 {% endif %}
+<script src="{{ base_path() }}/js/copy-to-clipboard.js" defer></script>
 </body>
 </html>

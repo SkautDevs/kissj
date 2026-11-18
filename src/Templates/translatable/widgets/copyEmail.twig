@@ -1,0 +1,9 @@
+{% if email is not empty %}
+    <button
+        type="button"
+        class="copy-btn"
+        data-copy="{{ email }}"
+        title="{{ 'detail.copyEmail' | trans }}"
+        aria-label="{{ 'detail.copyEmail' | trans }}"
+    >⎘</button>
+{% endif %}

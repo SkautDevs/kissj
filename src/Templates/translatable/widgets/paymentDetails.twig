@@ -1,5 +1,5 @@
 <h4>{{ person.getFullName }}</h4>
-{{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b><br/>
+{{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b>{% include 'widgets/copyEmail.twig' with {'email': person.user.getEmail} %}<br/>
 {% if person is not TroopParticipant and canAccessRoute('admin-show-add-new-payment') %}
     <a
         href="{{ url_for('admin-show-add-new-payment', {'participantId': person.id, 'eventSlug': event.slug}) }}"

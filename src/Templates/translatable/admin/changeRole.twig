@@ -5,7 +5,7 @@
     <h2>{{ 'stats-admin.changeRole' | trans }}</h2>
     <div>
         <h4>{{ person.getFullName }}</h4>
-        {{ 'detail.email' | trans }}: <b>{{ person.getEmail }}</b><br/>
+        {{ 'detail.email' | trans }}: <b>{{ person.getEmail }}</b>{% include 'widgets/copyEmail.twig' with {'email': person.getEmail} %}<br/>
         {{ 'detail.notice' | trans }}: <b>{{ person.getNotes }}</b><br/>
         {% include 'widgets/adminNotice.twig' with {'participantId': person.id} %}<br/>
     </div>

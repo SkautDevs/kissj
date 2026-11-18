@@ -10,7 +10,7 @@
     - <b>{{ person.getContingent|trans }}</b>
 {% endif %}
 {% if person is hasUser %}
-    - {{ person.user.email }}
+    - {{ person.user.email }}{% include 'widgets/copyEmail.twig' with {'email': person.user.email} %}
 {% endif %}
 
 <a
