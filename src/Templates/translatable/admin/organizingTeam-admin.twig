@@ -32,7 +32,7 @@
                 {% for p in organizingTeamParticipants %}
                     <tr>
                         <td>{{ p.getFullName() }}</td>
-                        <td>{{ p.getUserButNotNull().email }}</td>
+                        <td>{{ p.getUserButNotNull().email }}{% include 'widgets/copyEmail.twig' with {'email': p.getUserButNotNull().email} %}</td>
                         <td>{{ p.getUserButNotNull().status.value }}</td>
                     </tr>
                 {% endfor %}

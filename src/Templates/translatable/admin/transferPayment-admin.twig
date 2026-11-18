@@ -9,7 +9,7 @@
                 <p>{{ 'transferPayment-admin.sellerInfo' | trans }}</p>
                 {% if from %}
                     {{ include('widgets/details.twig', {person: from, ca: event.eventType.getContentArbiterIst}) }}
-                    {{ 'detail.email' | trans }}: <b>{{ emailFrom }}</b><br/>
+                    {{ 'detail.email' | trans }}: <b>{{ emailFrom }}</b>{% include 'widgets/copyEmail.twig' with {'email': emailFrom} %}<br/>
                     {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ from.user.status.value)|trans }}</b><br/>
                     {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~  from.role.value)|trans }}</b>
                     {% if to is TroopLeader %}
@@ -24,7 +24,7 @@
                 <p>{{ 'transferPayment-admin.buyerInfo' | trans }}</p>
                 {% if to %}
                     {{ include('widgets/details.twig', {person: to, ca: event.eventType.getContentArbiterIst}) }}
-                    {{ 'detail.email' | trans }}: <b>{{ emailTo }}</b><br/>
+                    {{ 'detail.email' | trans }}: <b>{{ emailTo }}</b>{% include 'widgets/copyEmail.twig' with {'email': emailTo} %}<br/>
                     {{ 'payments-admin.status' | trans }}: <b>{{ ('dashboard.userStatus.' ~ to.user.status.value)|trans }}</b><br/>
                     {{ 'stats-admin.role' | trans }}: <b>{{ ('role.' ~  to.role.value)|trans }}</b>
                     {% if to is TroopLeader %}

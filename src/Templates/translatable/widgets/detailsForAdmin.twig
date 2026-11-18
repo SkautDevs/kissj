@@ -14,7 +14,7 @@
     </b></i><br/>
 {% endif %}
 {% if not ca.email.allowed and person is hasUser %}
-    <i>{{ 'detail.email' | trans }}: <b>{{ person.user.email }}</b></i><br/>
+    <i>{{ 'detail.email' | trans }}: <b>{{ person.user.email }}</b>{% include 'widgets/copyEmail.twig' with {'email': person.user.email} %}</i><br/>
 {% endif %}
 {% if person is hasUser and person.user.status.value != 'open' and person.getRegistrationCloseDate %}
     <i>{{ 'detail.closed-at' | trans }}: <b>{{ person.getRegistrationCloseDate.format('d. m. Y, H:i:s') }}</b></i><br/>
