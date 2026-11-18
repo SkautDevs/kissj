@@ -33,6 +33,7 @@
 		"aws/aws-sdk-php": "^3.158",
 		"dflydev/fig-cookies": "^3.0",
 		"endroid/qr-code": "^4.4",
+		"giggsey/libphonenumber-for-php": "^9.0",
 		"guzzlehttp/guzzle": "^7.8",
 		"h4kuna/fio": "^3.0",
 		"league/csv": "^9.15",
