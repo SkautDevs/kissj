@@ -325,7 +325,7 @@ class ParticipantJourneyTest extends AppTestCase
         $ist->country = 'CZ';
         $ist->contingent = 'detail.contingent.czechia';
         $ist->permanentResidence = 'Test Street 1';
-        $ist->telephoneNumber = '+420123456789';
+        $ist->telephoneNumber = '+420603123456';
         $ist->scoutUnit = 'Test Unit';
         $ist->foodPreferences = 'none';
         $ist->healthProblems = '';
@@ -457,7 +457,7 @@ class ParticipantJourneyTest extends AppTestCase
         $guest->permanentResidence = '123 Guest Street, Guest City';
         $guest->gender = 'other';
         $guest->birthDate = DateTimeUtils::getDateTime('1985-08-20');
-        $guest->telephoneNumber = '+420123456789';
+        $guest->telephoneNumber = '+420603123456';
         $guest->arrivalDate = DateTimeUtils::getDateTime('2026-07-01');
         $guest->departureDate = DateTimeUtils::getDateTime('2026-07-10');
         $guest->healthProblems = 'None';

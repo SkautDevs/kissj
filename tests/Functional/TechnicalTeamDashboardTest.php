@@ -445,7 +445,7 @@ class TechnicalTeamDashboardTest extends AppTestCase
         $leader->firstName = 'Lead';
         $leader->lastName = 'Er';
         $leader->email = 'ttl-leader-contact@example.com';
-        $leader->telephoneNumber = '+420123456789';
+        $leader->telephoneNumber = '+420603123456';
         $leader->foodPreferences = 'detail.foodNoEventFood';
         $leader->arrivalDate = DateTimeUtils::getDateTime('2027-07-01');
         $leader->departureDate = DateTimeUtils::getDateTime('2027-07-03');
