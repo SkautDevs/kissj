@@ -370,6 +370,25 @@ class ProgrammeImageAdminTest extends AppTestCase
         }
     }
 
+    public function testDeleteSkipsStoredFilenameNotMadeByTheApp(): void
+    {
+        $app = $this->createLoggedAdmin('image-admin-delete-guard@example.com');
+        $programme = $this->createProgramme($app, $this->getEvent($app));
+        // the file exists next to the upload folder, so only the name check keeps it from being deleted
+        self::assertFileExists(self::UPLOAD_FOLDER . '../composer.json');
+        $image = $this->persistImage($app, $programme, '../composer.json', 0);
+        $this->expectLog(Level::Warning, 'Programme image file not deleted, unexpected filename');
+
+        $response = $app->handle($this->createRequest(
+            self::PROGRAMMES_URL . '/' . $programme->id . '/images/' . $image->id . '/delete',
+            'POST',
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        self::assertNull($this->getService($app, ProgrammeImageRepository::class)->findOneBy(['id' => $image->id]));
+        self::assertFileExists(self::UPLOAD_FOLDER . '../composer.json');
+    }
+
     /**
      * @return array<string, array{string, string}>
      */

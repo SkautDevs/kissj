@@ -197,6 +197,7 @@ class ProgrammeImageRouteTest extends AppTestCase
             $thumb = $this->get($app, '/v3/programme/image/' . $image->filename . '/thumb');
 
             self::assertSame(404, $thumb->getStatusCode());
+            self::assertSame('public, max-age=3600', $thumb->getHeaderLine('Cache-Control'));
             self::assertNull($this->getService($app, ProgrammeImageRepository::class)->get($image->id)->thumbFilename);
 
             $full = $this->get($app, '/v3/programme/image/' . $image->filename);

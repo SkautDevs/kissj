@@ -66,10 +66,10 @@ readonly class ProgrammeImageService
         $this->programmeImageRepository->delete($image);
 
         if ($thumbFilename !== null) {
-            $this->saveFileHandler->deleteFile($thumbFilename);
+            $this->deleteStoredFile($thumbFilename);
         }
         if ($this->programmeImageRepository->countByFilename($filename) === 0) {
-            $this->saveFileHandler->deleteFile($filename);
+            $this->deleteStoredFile($filename);
         }
     }
 
@@ -149,6 +149,17 @@ readonly class ProgrammeImageService
         }
 
         throw new LogicException('Image ' . $image->id . ' is missing in its own programme');
+    }
+
+    private function deleteStoredFile(string $filename): void
+    {
+        if ($this->isGeneratedFilename($filename) === false) {
+            $this->logger->warning('Programme image file not deleted, unexpected filename', ['filename' => $filename]);
+
+            return;
+        }
+
+        $this->saveFileHandler->deleteFile($filename);
     }
 
     private function open(ProgrammeImage $image, string $filename): ?File

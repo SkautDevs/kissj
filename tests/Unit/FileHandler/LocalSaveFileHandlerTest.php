@@ -7,6 +7,7 @@ namespace Tests\Unit\FileHandler;
 use kissj\FileHandler\LocalSaveFileHandler;
 use kissj\Programme\Image\ProgrammeImageProcessor;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tests\Support\ImageFixtures;
 
 class LocalSaveFileHandlerTest extends TestCase
@@ -51,5 +52,21 @@ class LocalSaveFileHandlerTest extends TestCase
         $handler->deleteFile(str_repeat('0', 32));
 
         self::assertFileDoesNotExist($this->uploadFolder . $filename);
+    }
+
+    public function testDeleteFileThrowsWhenThePathStaysAfterUnlink(): void
+    {
+        $handler = new LocalSaveFileHandler($this->uploadFolder);
+        $directoryName = str_repeat('a', 32);
+        mkdir($this->uploadFolder . $directoryName);
+
+        try {
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('Cannot delete file: ' . $directoryName);
+
+            $handler->deleteFile($directoryName);
+        } finally {
+            rmdir($this->uploadFolder . $directoryName);
+        }
     }
 }

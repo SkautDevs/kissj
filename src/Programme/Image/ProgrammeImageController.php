@@ -27,9 +27,17 @@ class ProgrammeImageController extends AbstractController
     public function thumb(Response $response, string $filename): Response
     {
         $image = $this->programmeImageRepository->findServableByFilename($filename);
-        $file = $image === null ? null : $this->programmeImageService->openThumb($image);
+        if ($image === null) {
+            return $response->withStatus(404);
+        }
 
-        return $file === null ? $response->withStatus(404) : $this->withImageHeaders($response, $file);
+        $file = $this->programmeImageService->openThumb($image);
+        if ($file === null) {
+            // an over-cap, undecodable or missing original: without a cache every request would read it again
+            return $response->withStatus(404)->withHeader('Cache-Control', 'public, max-age=3600');
+        }
+
+        return $this->withImageHeaders($response, $file);
     }
 
     /**

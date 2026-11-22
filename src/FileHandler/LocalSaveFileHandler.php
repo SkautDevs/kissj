@@ -48,10 +48,14 @@ class LocalSaveFileHandler extends SaveFileHandler
         return $newFilename;
     }
 
+    /**
+     * A file that is already gone counts as deleted, so a concurrent delete raises no warning.
+     */
     public function deleteFile(string $filename): void
     {
-        if (file_exists($this->uploadFolder . $filename)) {
-            unlink($this->uploadFolder . $filename);
+        $path = $this->uploadFolder . $filename;
+        if (!@unlink($path) && file_exists($path)) {
+            throw new RuntimeException('Cannot delete file: ' . $filename);
         }
     }
 }
