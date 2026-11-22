@@ -166,7 +166,6 @@ class ProgrammeExportTest extends AppTestCase
         $programme->name = $name;
         $programme->description = 'description';
         $programme->programmePlace = null;
-        $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;

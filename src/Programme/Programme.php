@@ -14,7 +14,6 @@ use kissj\Programme\Place\ProgrammePlace;
  * @property int                    $id
  * @property string                 $name
  * @property string                 $description
- * @property string|null            $imageFilename
  * @property DateTimeInterface      $start m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface      $end m:passThru(dateFromString|dateToString)
  * @property int                    $capacity

@@ -299,6 +299,60 @@ class UploadFileHandlerTest extends TestCase
         self::assertNull($result);
     }
 
+    public function testMultipleImagesAreResolvedInOrder(): void
+    {
+        $first = $this->imageUploadWithStream($this->streamWith($this->pngBytes()));
+        $second = $this->imageUploadWithStream($this->streamWith($this->pngBytes()));
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['images' => [$first, $second]]);
+
+        $this->flashMessages->shouldNotReceive('warning');
+
+        self::assertSame([$first, $second], $this->handler->resolveUploadedImages($request, 'images'));
+    }
+
+    public function testSingleImageUnderTheKeyIsResolvedAsList(): void
+    {
+        $uploadedFile = $this->imageUploadWithStream($this->streamWith($this->pngBytes()));
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['images' => $uploadedFile]);
+
+        self::assertSame([$uploadedFile], $this->handler->resolveUploadedImages($request, 'images'));
+    }
+
+    public function testNoFileChosenGivesEmptyListWithoutFlash(): void
+    {
+        $noFile = Mockery::mock(UploadedFile::class);
+        $noFile->allows('getError')->andReturns(UPLOAD_ERR_NO_FILE);
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['images' => [$noFile]]);
+        $requestWithoutKey = Mockery::mock(Request::class);
+        $requestWithoutKey->allows('getUploadedFiles')->andReturns([]);
+
+        $this->flashMessages->shouldNotReceive('warning');
+
+        self::assertSame([], $this->handler->resolveUploadedImages($request, 'images'));
+        self::assertSame([], $this->handler->resolveUploadedImages($requestWithoutKey, 'images'));
+    }
+
+    public function testInvalidFileIsDroppedAndOthersKept(): void
+    {
+        $disguisedText = $this->imageUploadWithStream($this->streamWith('just some text, not a picture'));
+        $valid = $this->imageUploadWithStream($this->streamWith($this->pngBytes()));
+
+        $request = Mockery::mock(Request::class);
+        $request->allows('getUploadedFiles')->andReturns(['images' => [$disguisedText, $valid]]);
+
+        $this->flashMessages->shouldReceive('warning')
+            ->once()
+            ->with('flash.warning.invalidFileType');
+
+        self::assertSame([$valid], $this->handler->resolveUploadedImages($request, 'images'));
+    }
+
     public function testResolveByCustomKeyMissingReturnsNull(): void
     {
         $request = Mockery::mock(Request::class);

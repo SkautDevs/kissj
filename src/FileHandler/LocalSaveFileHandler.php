@@ -37,4 +37,21 @@ class LocalSaveFileHandler extends SaveFileHandler
 
         return $uploadedFile;
     }
+
+    public function saveContents(string $contents, string $contentType): string
+    {
+        $newFilename = $this->getNewFilename();
+        if (file_put_contents($this->uploadFolder . $newFilename, $contents) === false) {
+            throw new RuntimeException('Cannot write file: ' . $newFilename);
+        }
+
+        return $newFilename;
+    }
+
+    public function deleteFile(string $filename): void
+    {
+        if (file_exists($this->uploadFolder . $filename)) {
+            unlink($this->uploadFolder . $filename);
+        }
+    }
 }

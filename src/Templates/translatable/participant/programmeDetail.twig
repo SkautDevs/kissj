@@ -4,7 +4,7 @@
     <div class="card">
         <h1>{{ programme.name }}</h1>
 
-        {% if programme.getImageFilename() %}
+        {% if hasImage %}
             <img src="{{ url_for('programme-image', {eventSlug: event.slug, programmeId: programme.id}) }}" alt="{{ programme.name }}">
         {% endif %}
 

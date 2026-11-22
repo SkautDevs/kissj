@@ -7,6 +7,8 @@ namespace kissj\Programme;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Participant\ParticipantRepository;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Image\ProgrammeImageService;
 use kissj\User\User;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -16,6 +18,8 @@ class ProgrammeController extends AbstractController
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
         private readonly ParticipantRepository $participantRepository,
+        private readonly ProgrammeImageRepository $programmeImageRepository,
+        private readonly ProgrammeImageService $programmeImageService,
     ) {
     }
 
@@ -48,6 +52,7 @@ class ProgrammeController extends AbstractController
         return $this->view->render($response, 'participant/programmeDetail.twig', [
             'programme' => $programme,
             'isRegistered' => $isRegistered,
+            'hasImage' => $this->programmeImageRepository->findFirstForProgramme($programme) !== null,
             'event' => $event,
         ]);
     }
@@ -70,15 +75,11 @@ class ProgrammeController extends AbstractController
 
     private function serveImage(Response $response, ?Programme $programme): Response
     {
-        if (
-            $programme === null
-            || $programme->imageFilename === null
-            || preg_match('/^[a-f0-9]{32}$/', $programme->imageFilename) !== 1
-        ) {
+        $image = $programme === null ? null : $this->programmeImageRepository->findFirstForProgramme($programme);
+        $file = $image === null ? null : $this->programmeImageService->openFull($image);
+        if ($file === null) {
             return $response->withStatus(404);
         }
-
-        $file = $this->fileHandler->getFile($programme->imageFilename);
 
         return $this->withUntrustedFileSecurityHeaders($response)
             ->withHeader('Content-Type', $file->mimeContentType)

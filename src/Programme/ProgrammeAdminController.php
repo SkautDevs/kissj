@@ -15,6 +15,9 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Image\ProgrammeImageService;
+use kissj\Programme\Image\ProgrammeImageUploadRefusal;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
@@ -37,13 +40,18 @@ class ProgrammeAdminController extends AbstractController
         private readonly DevicePairingService $devicePairingService,
         private readonly ProgrammePlaceRepository $programmePlaceRepository,
         private readonly ProgrammePlaceService $programmePlaceService,
+        private readonly ProgrammeImageRepository $programmeImageRepository,
+        private readonly ProgrammeImageService $programmeImageService,
     ) {
     }
 
     public function overview(Response $response, Event $event): Response
     {
+        $programmes = $this->programmeRepository->findActiveForEvent($event);
+
         return $this->view->render($response, 'admin/programmes-admin.twig', [
-            'programmes' => $this->programmeRepository->findActiveForEvent($event),
+            'programmes' => $programmes,
+            'imagesByProgramme' => $this->programmeImageRepository->findForProgrammes($programmes),
             'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
             'event' => $event,
             'pendingPairingCount' => $event->hasProgrammeApi()
@@ -96,6 +104,10 @@ class ProgrammeAdminController extends AbstractController
 
     public function create(Request $request, Response $response, Event $event): Response
     {
+        if ($this->isBodyDroppedAsTooLarge($request)) {
+            return $this->redirect($request, $response, 'admin-programme-new');
+        }
+
         $start = $this->parseDatetime($this->getParameterFromBody($request, 'start'));
         $end = $this->parseDatetime($this->getParameterFromBody($request, 'end'));
         if ($start === null || $end === null || $end <= $start) {
@@ -107,13 +119,12 @@ class ProgrammeAdminController extends AbstractController
         $programme = new Programme();
         $programme->event = $event;
         $programme->section = $this->getSectionFromRequest($request, $event);
-        $programme->imageFilename = null;
         $programme->start = $start;
         $programme->end = $end;
         $this->fillFromRequest($programme, $request, $event);
 
         $this->programmeRepository->persist($programme);
-        $this->saveImage($programme, $request);
+        $this->addUploadedImages($programme, $request);
         $this->flashMessages->success('flash.success.programmeSaved');
 
         return $this->redirect($request, $response, 'admin-programmes');
@@ -127,6 +138,15 @@ class ProgrammeAdminController extends AbstractController
     public function update(Request $request, Response $response, Event $event, int $programmeId): Response
     {
         $programme = $this->programmeRepository->getActiveById($programmeId, $event);
+        if ($this->isBodyDroppedAsTooLarge($request)) {
+            return $this->redirect(
+                $request,
+                $response,
+                'admin-programme-edit',
+                ['programmeId' => (string)$programmeId],
+            );
+        }
+
         $start = $this->parseDatetime($this->getParameterFromBody($request, 'start'));
         $end = $this->parseDatetime($this->getParameterFromBody($request, 'end'));
         if ($start === null || $end === null || $end <= $start) {
@@ -152,7 +172,7 @@ class ProgrammeAdminController extends AbstractController
                 $this->programmeRegistrationRepository->softDeleteAllActiveForProgramme($programme);
             }
         });
-        $this->saveImage($programme, $request);
+        $this->addUploadedImages($programme, $request);
         $this->warnAboutExclusiveConflicts($programme);
         $this->flashMessages->success('flash.success.programmeSaved');
 
@@ -208,6 +228,7 @@ class ProgrammeAdminController extends AbstractController
             'registrations' => $registrations,
             'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
             'irregularRegistrationIds' => $irregularRegistrationIds,
+            'hasImage' => $this->programmeImageRepository->findFirstForProgramme($programme) !== null,
             'event' => $event,
         ]);
     }
@@ -264,6 +285,7 @@ class ProgrammeAdminController extends AbstractController
             'sections' => $this->programmeSectionRepository->findForEvent($event),
             'places' => $this->programmePlaceRepository->findForEvent($event),
             'selectedPlaceId' => $programme?->programmePlace?->id,
+            'images' => $programme === null ? [] : $this->programmeImageRepository->findForProgramme($programme),
             'allRoles' => ParticipantRole::all(),
             'event' => $event,
         ]);
@@ -323,15 +345,43 @@ class ProgrammeAdminController extends AbstractController
         return array_map(ParticipantRole::from(...), $this->getStringListFromBody($request, 'roles'));
     }
 
-    private function saveImage(Programme $programme, Request $request): void
+    /**
+     * PHP drops the whole body of a POST over post_max_size, which several photos uploaded without
+     * the resize script can reach, so the form fields arrive empty.
+     */
+    private function isBodyDroppedAsTooLarge(Request $request): bool
     {
-        $uploadedImage = $this->uploadFileHandler->resolveUploadedImage($request, 'image');
-        if ($uploadedImage === null) {
-            return;
+        $parsedBody = $request->getParsedBody();
+        if ($parsedBody !== null && $parsedBody !== []) {
+            return false;
         }
 
-        $programme->imageFilename = $this->fileHandler->saveUploadedFile($uploadedImage);
-        $this->programmeRepository->persist($programme);
+        $postMaxSize = ini_parse_quantity((string)ini_get('post_max_size'));
+        if ($postMaxSize <= 0 || (int)$request->getHeaderLine('Content-Length') <= $postMaxSize) {
+            return false;
+        }
+
+        $this->flashMessages->error(
+            'flash.error.programmeRequestTooLarge',
+            ['%max%' => max(1, intdiv($postMaxSize, 1_048_576)) . ' MB'],
+        );
+
+        return true;
+    }
+
+    private function addUploadedImages(Programme $programme, Request $request): void
+    {
+        foreach ($this->uploadFileHandler->resolveUploadedImages($request, 'images') as $uploadedImage) {
+            $refusal = $this->programmeImageService->addUpload($programme, $uploadedImage);
+            if ($refusal === ProgrammeImageUploadRefusal::TooManyPixels) {
+                $this->flashMessages->warning(
+                    'flash.warning.programmeImageTooManyPixels',
+                    ['%name%' => $uploadedImage->getClientFilename() ?? ''],
+                );
+            } elseif ($refusal === ProgrammeImageUploadRefusal::Undecodable) {
+                $this->flashMessages->warning('flash.warning.invalidFileType');
+            }
+        }
     }
 
     private function redirectToDetail(Request $request, Response $response, int $programmeId): Response

@@ -4,7 +4,7 @@
     {% set routeParams = {eventSlug: event.slug, programmeId: programme.id} %}
     <div class="card">
         <h2>{{ programme.name }}</h2>
-        {% if programme.getImageFilename() %}
+        {% if hasImage %}
             <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', routeParams) }}"
                  alt="{{ programme.name }}">
             <br/>

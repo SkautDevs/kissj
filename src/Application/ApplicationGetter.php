@@ -50,7 +50,12 @@ class ApplicationGetter
         }
         $app->setBasePath($env->basePath);
 
-        if (session_status() === PHP_SESSION_NONE) { // because of PhpUnit handling sessions poorly
+        // the session starts before routing, so no middleware or route could keep it from starting
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        if (
+            session_status() === PHP_SESSION_NONE // because of PhpUnit handling sessions poorly
+            && SessionStartPolicy::isSessionless(is_string($requestUri) ? $requestUri : '') === false
+        ) {
             $sessionHandler = $container->get(SessionHandlerInterface::class);
             if ($sessionHandler instanceof RedisSessionHandler) {
                 // temporary fix for not deployed Redis in infrastructure, remove if when deployed

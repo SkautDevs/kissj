@@ -27,6 +27,48 @@ readonly class UploadFileHandler
 
     public function resolveUploadedFile(Request $request, string $slug): ?UploadedFile
     {
+        $uploadedFile = $this->getSingleUploadedFile($request, $slug);
+
+        return $uploadedFile === null ? null : $this->checkUploadedFile($uploadedFile, $slug);
+    }
+
+    public function resolveUploadedImage(Request $request, string $slug): ?UploadedFile
+    {
+        $uploadedFile = $this->getSingleUploadedFile($request, $slug);
+
+        return $uploadedFile === null ? null : $this->checkUploadedImage($uploadedFile, $slug);
+    }
+
+    /**
+     * Each refused file is dropped with its own flash, the others are kept.
+     *
+     * @return list<UploadedFile>
+     */
+    public function resolveUploadedImages(Request $request, string $slug): array
+    {
+        $uploaded = $request->getUploadedFiles()[$slug] ?? [];
+        $candidates = $uploaded instanceof UploadedFile ? [$uploaded] : $uploaded;
+        if (is_array($candidates) === false) {
+            return [];
+        }
+
+        $images = [];
+        foreach ($candidates as $candidate) {
+            if ($candidate instanceof UploadedFile === false) {
+                continue;
+            }
+
+            $image = $this->checkUploadedImage($candidate, $slug);
+            if ($image !== null) {
+                $images[] = $image;
+            }
+        }
+
+        return $images;
+    }
+
+    private function getSingleUploadedFile(Request $request, string $slug): ?UploadedFile
+    {
         $uploadedFiles = $request->getUploadedFiles();
         if (!array_key_exists($slug, $uploadedFiles) || !$uploadedFiles[$slug] instanceof UploadedFile) {
             // problem - too big file -> not save anything, because always got nulls in request fields
@@ -35,12 +77,33 @@ readonly class UploadFileHandler
             return null;
         }
 
-        $errorNum = $uploadedFiles[$slug]->getError();
+        return $uploadedFiles[$slug];
+    }
+
+    private function checkUploadedImage(UploadedFile $uploadedFile, string $slug): ?UploadedFile
+    {
+        if ($this->checkUploadedFile($uploadedFile, $slug) === null) {
+            return null;
+        }
+
+        $stream = $uploadedFile->getStream();
+        $isSupportedImage = ImageUtils::isSupportedRasterImage((string)$stream);
+        $stream->rewind();
+        if ($isSupportedImage === false) {
+            $this->flashMessages->warning('flash.warning.invalidFileType');
+
+            return null;
+        }
+
+        return $uploadedFile;
+    }
+
+    private function checkUploadedFile(UploadedFile $uploadedFile, string $slug): ?UploadedFile
+    {
+        $errorNum = $uploadedFile->getError();
 
         switch ($errorNum) {
             case UPLOAD_ERR_OK:
-                $uploadedFile = $uploadedFiles[$slug];
-
                 // check for too-big files
                 $fileSize = $uploadedFile->getSize();
                 if ($fileSize === null) {
@@ -72,24 +135,5 @@ readonly class UploadFileHandler
 
                 return null;
         }
-    }
-
-    public function resolveUploadedImage(Request $request, string $slug): ?UploadedFile
-    {
-        $uploadedFile = $this->resolveUploadedFile($request, $slug);
-        if ($uploadedFile === null) {
-            return null;
-        }
-
-        $stream = $uploadedFile->getStream();
-        $isSupportedImage = ImageUtils::isSupportedRasterImage((string)$stream);
-        $stream->rewind();
-        if ($isSupportedImage === false) {
-            $this->flashMessages->warning('flash.warning.invalidFileType');
-
-            return null;
-        }
-
-        return $uploadedFile;
     }
 }

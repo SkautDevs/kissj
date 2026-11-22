@@ -38,6 +38,13 @@ abstract class SaveFileHandler
 
     abstract public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile;
 
+    /**
+     * @return string the new filename, from getNewFilename()
+     */
+    abstract public function saveContents(string $contents, string $contentType): string;
+
+    abstract public function deleteFile(string $filename): void;
+
     protected function getNewFilename(): string
     {
         return \bin2hex(\random_bytes(16));

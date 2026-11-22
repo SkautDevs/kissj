@@ -1,6 +1,7 @@
 {% extends "_layout.twig" %}
 
 {% block content %}
+    <script src="{{ base_path() }}/js/programme-image-resize.js" defer></script>
     <div class="card text-left">
         <h2>{{ programme ? programme.name : 'programme.admin.new'|trans }}</h2>
 
@@ -96,16 +97,13 @@
                     {% endfor %}
                 </div>
                 <div class="form-group">
-                    <label for="image">{{ 'programme.admin.formImage'|trans }}:</label>
+                    <label for="images">{{ 'programme.admin.formImages'|trans }}:</label>
                     <br/>
-                    {% if programme and programme.getImageFilename() %}
-                        {% set imageParams = {eventSlug: event.slug, programmeId: programme.id} %}
-                        <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', imageParams) }}"
-                             alt="{{ programme.name }}">
-                        <br/>
-                    {% endif %}
-                    <input class="form-control form-wide" type="file" id="image" name="image"
-                           accept="image/jpeg,image/png,image/gif">
+                    <input class="form-control form-wide" type="file" id="images" name="images[]" multiple
+                           accept="image/jpeg,image/png,image/gif"
+                           data-resize-max-edge="1600" data-resize-quality="0.9">
+                    <br/>
+                    <small>{{ 'programme.admin.formImagesHint'|trans }}</small>
                 </div>
                 <div class="text-center">
                     <br/>
@@ -120,4 +118,41 @@
             </form>
         {% endif %}
     </div>
+
+    {% if programme %}
+        <div class="card text-left">
+            <h3>{{ 'programme.admin.images.title'|trans }}</h3>
+            {% for image in images %}
+                {% set imageParams = {eventSlug: event.slug, programmeId: programme.id, imageId: image.id} %}
+                <div class="form-group">
+                    <img class="programme-thumbnail" src="{{ url_for('admin-programme-image-thumb', imageParams) }}"
+                         alt="{{ image.alt }}">
+                    <form method="post" action="{{ url_for('admin-programme-image-update', imageParams) }}">
+                        <label for="alt-{{ image.id }}">{{ 'programme.admin.images.alt'|trans }}:</label>
+                        <br/>
+                        <input class="form-control form-wide" type="text" id="alt-{{ image.id }}" name="alt"
+                               value="{{ image.alt }}">
+                        <input type="submit" class="btn btn-small" value="{{ 'programme.admin.images.save'|trans }}">
+                    </form>
+                    <form method="post" style="display: inline"
+                          action="{{ url_for('admin-programme-image-move', imageParams|merge({direction: 'up'})) }}">
+                        <input type="submit" class="btn btn-small btn-grey"
+                               value="{{ 'programme.admin.images.moveUp'|trans }}">
+                    </form>
+                    <form method="post" style="display: inline"
+                          action="{{ url_for('admin-programme-image-move', imageParams|merge({direction: 'down'})) }}">
+                        <input type="submit" class="btn btn-small btn-grey"
+                               value="{{ 'programme.admin.images.moveDown'|trans }}">
+                    </form>
+                    <form method="post" style="display: inline"
+                          action="{{ url_for('admin-programme-image-delete', imageParams) }}">
+                        <input type="submit" class="btn btn-small btn-grey"
+                               value="{{ 'programme.admin.images.delete'|trans }}">
+                    </form>
+                </div>
+            {% else %}
+                <p>{{ 'programme.admin.images.none'|trans }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

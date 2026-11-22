@@ -10,6 +10,8 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
@@ -831,9 +833,17 @@ class ProgrammeAdminTest extends AppTestCase
         }
         self::assertSame(1 + count($days) + count($programmes), substr_count($body, 'class="card"'));
 
-        $imagePath = '/v2/event/test-event-slug/admin/programmes/%d/image';
-        self::assertStringContainsString(sprintf($imagePath, $programmeWithImage->id), $body);
-        self::assertStringNotContainsString(sprintf($imagePath, $programmeNextDay->id), $body);
+        $image = $this->getService($app, ProgrammeImageRepository::class)->findFirstForProgramme($programmeWithImage);
+        self::assertNotNull($image);
+        self::assertStringContainsString(
+            'src="/v2/event/test-event-slug/admin/programmes/' . $programmeWithImage->id . '/images/' . $image->id
+            . '/thumb"',
+            $body,
+        );
+        self::assertStringNotContainsString(
+            '/v2/event/test-event-slug/admin/programmes/' . $programmeNextDay->id . '/image',
+            $body,
+        );
     }
 
     public function testDetailShowsRegistrantsInCardWithMendLinkForAdmin(): void
@@ -892,14 +902,16 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString('card text-left', $body);
         self::assertStringContainsString('class="programme-thumbnail"', $body);
+        $image = $this->getService($app, ProgrammeImageRepository::class)->findFirstForProgramme($programme);
+        self::assertNotNull($image);
         self::assertStringContainsString(
-            'src="/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/image"',
+            'src="/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/images/' . $image->id . '/thumb"',
             $body,
         );
         self::assertStringContainsString('form-control form-wide', $body);
         self::assertStringContainsString('class="btn btn-small" type="submit"', $body);
         self::assertStringContainsString('btn btn-small btn-grey', $body);
-        self::assertStringContainsString('name="image"', $body);
+        self::assertStringContainsString('name="images[]"', $body);
     }
 
     public function testNewFormRendersWithoutThumbnail(): void
@@ -1102,7 +1114,6 @@ class ProgrammeAdminTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description';
-        $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = $capacity;
@@ -1145,12 +1156,16 @@ class ProgrammeAdminTest extends AppTestCase
     private function attachImage(App $app, Programme $programme): string
     {
         $storedFilename = bin2hex(random_bytes(16));
-        $programme->imageFilename = $storedFilename;
-        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+        $image = new ProgrammeImage();
+        $image->programme = $programme;
+        $image->filename = $storedFilename;
+        $image->thumbFilename = null;
+        $image->alt = '';
+        $image->sortOrder = 0;
+        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
 
         $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
-        $image = imagecreatetruecolor(1, 1);
-        imagepng($image, $uploadPath);
+        imagepng(imagecreatetruecolor(1, 1), $uploadPath);
 
         return $uploadPath;
     }

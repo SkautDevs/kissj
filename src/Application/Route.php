@@ -50,6 +50,8 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Programme\Device\DevicePairingController;
+use kissj\Programme\Image\ProgrammeImageAdminController;
+use kissj\Programme\Image\ProgrammeImageController;
 use kissj\Programme\Place\ProgrammePlaceAdminController;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
@@ -644,6 +646,26 @@ class Route
 
                     $app->get('/{programmeId}/image', ProgrammeController::class . '::adminImage')
                         ->setName('admin-programme-image');
+
+                    $app->post(
+                        '/{programmeId}/images/{imageId}/edit',
+                        ProgrammeImageAdminController::class . '::update',
+                    )->setName('admin-programme-image-update');
+
+                    $app->post(
+                        '/{programmeId}/images/{imageId}/move/{direction:up|down}',
+                        ProgrammeImageAdminController::class . '::move',
+                    )->setName('admin-programme-image-move');
+
+                    $app->post(
+                        '/{programmeId}/images/{imageId}/delete',
+                        ProgrammeImageAdminController::class . '::delete',
+                    )->setName('admin-programme-image-delete');
+
+                    $app->get(
+                        '/{programmeId}/images/{imageId}/thumb',
+                        ProgrammeImageAdminController::class . '::thumb',
+                    )->setName('admin-programme-image-thumb');
                 })->add(ProgrammeAdminsOnlyMiddleware::class)->add(LoggedOnlyMiddleware::class);
             })->add(EventRequiredMiddleware::class);
         });
@@ -748,6 +770,13 @@ class Route
                     ->setName('programme-api-session-revoke')
                     ->add(DeviceSessionMiddleware::class);
             })->add(EventApiKeyMiddleware::class);
+
+            // public: the random filename is the capability, see SessionStartPolicy for the session bypass
+            $app->get('/programme/image/{filename:[a-f0-9]{32}}', ProgrammeImageController::class . '::full')
+                ->setName('programme-api-image');
+
+            $app->get('/programme/image/{filename:[a-f0-9]{32}}/thumb', ProgrammeImageController::class . '::thumb')
+                ->setName('programme-api-image-thumb');
 
             $app->group('/event/{eventSlug}', function (RouteCollectorProxy $app) {
                 $app->get('/stats', EventController::class . '::stats')

@@ -8,11 +8,14 @@ use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPaymentRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
+use kissj\FileHandler\SaveFileHandler;
 use kissj\FlashMessages\FlashMessagesInterface;
 use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
@@ -30,11 +33,13 @@ use Slim\App;
 use Slim\Interfaces\RouteInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tests\AppTestCase;
+use Tests\Support\ImageFixtures;
 use Throwable;
 
 class CrossEventGuardTest extends AppTestCase
 {
     private const string OWN_EVENT_SLUG = 'test-event-slug';
+    private const string UPLOAD_FOLDER = __DIR__ . '/../../uploads/';
 
     private const array EVENT_ROUTE_PREFIXES = [
         '/v2/event/{eventSlug}/',
@@ -66,6 +71,19 @@ class CrossEventGuardTest extends AppTestCase
         'internalCommonId' => 'cross-event',
         'firstName' => 'cross-event',
     ];
+
+    /** @var list<string> */
+    private array $storedFilenames = [];
+
+    protected function tearDown(): void
+    {
+        foreach ($this->storedFilenames as $filename) {
+            @unlink(self::UPLOAD_FOLDER . $filename);
+        }
+        $this->storedFilenames = [];
+
+        parent::tearDown();
+    }
 
     public function testUserOfOtherEventIsLoggedOutOnEveryEventRoute(): void
     {
@@ -268,7 +286,30 @@ class CrossEventGuardTest extends AppTestCase
             $programme->id,
             $programme->section->id,
             $this->getProgrammePlace($programme)->id,
+            $this->createProgrammeImage($app, $programme)->id,
         );
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createProgrammeImage(App $app, Programme $programme): ProgrammeImage
+    {
+        // real files, so that an image route without event scoping would answer 200 instead of 404
+        $fileHandler = $this->getService($app, SaveFileHandler::class);
+        $filename = $fileHandler->saveContents(ImageFixtures::png(40, 30), 'image/png');
+        $thumbFilename = $fileHandler->saveContents(ImageFixtures::png(20, 20), 'image/png');
+        $this->storedFilenames = [$filename, $thumbFilename];
+
+        $image = new ProgrammeImage();
+        $image->programme = $programme;
+        $image->filename = $filename;
+        $image->thumbFilename = $thumbFilename;
+        $image->alt = 'cross-event';
+        $image->sortOrder = 0;
+        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
+
+        return $image;
     }
 
     /**
@@ -281,7 +322,6 @@ class CrossEventGuardTest extends AppTestCase
         $programme->description = 'cross-event';
         $placeService = $this->getService($app, ProgrammePlaceService::class);
         $placeService->assignPlace($programme, $placeService->findOrCreateByName($event, 'cross-event'));
-        $programme->imageFilename = 'abcdef0123456789abcdef0123456789';
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;
@@ -400,6 +440,7 @@ class CrossEventGuardTest extends AppTestCase
             '{programmeId}' => (string)$fixture->programmeId,
             '{sectionId}' => (string)$fixture->programmeSectionId,
             '{placeId}' => (string)$fixture->programmePlaceId,
+            '{imageId}' => (string)$fixture->programmeImageId,
             '{direction:up|down}' => 'up',
             ...self::FILLER_PLACEHOLDERS,
         ]);
@@ -509,6 +550,8 @@ class CrossEventGuardTest extends AppTestCase
                 ->get($fixture->programmeSectionId)->getRowData(),
             'programme place' => $this->getService($app, ProgrammePlaceRepository::class)
                 ->get($fixture->programmePlaceId)->getRowData(),
+            'programme image' => $this->getService($app, ProgrammeImageRepository::class)
+                ->get($fixture->programmeImageId)->getRowData(),
         ];
     }
 }

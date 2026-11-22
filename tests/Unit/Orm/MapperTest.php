@@ -20,6 +20,7 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
+use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
@@ -173,5 +174,7 @@ class MapperTest extends TestCase
         self::assertSame(ProgrammeRegistration::class, $mapper->getEntityClass('programme_registration'));
         self::assertSame('programme_place', $mapper->getTable(ProgrammePlace::class));
         self::assertSame(ProgrammePlace::class, $mapper->getEntityClass('programme_place'));
+        self::assertSame('programme_image', $mapper->getTable(ProgrammeImage::class));
+        self::assertSame(ProgrammeImage::class, $mapper->getEntityClass('programme_image'));
     }
 }

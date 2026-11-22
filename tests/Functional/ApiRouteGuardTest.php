@@ -58,6 +58,8 @@ class ApiRouteGuardTest extends AppTestCase
         'programme-api-register' => 'event',
         'programme-api-unregister' => 'event',
         'programme-api-session-revoke' => 'event',
+        'programme-api-image' => 'public',
+        'programme-api-image-thumb' => 'public',
         'admin-change-note' => 'adminSession',
         'admin-approve-json' => 'adminSession',
         'admin-confirm-payment-json' => 'adminSession',

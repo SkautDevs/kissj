@@ -398,7 +398,6 @@ class ProgrammeApiTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description of ' . $name . "\nsecond line";
-        $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');
         $programme->capacity = 10;

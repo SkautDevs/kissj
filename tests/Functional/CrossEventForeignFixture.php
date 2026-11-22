@@ -14,6 +14,7 @@ readonly class CrossEventForeignFixture
         public int $programmeId,
         public int $programmeSectionId,
         public int $programmePlaceId,
+        public int $programmeImageId,
     ) {
     }
 }

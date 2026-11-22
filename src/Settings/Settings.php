@@ -107,6 +107,11 @@ use kissj\Programme\Device\DevicePairingController;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Programme\Image\ProgrammeImageAdminController;
+use kissj\Programme\Image\ProgrammeImageController;
+use kissj\Programme\Image\ProgrammeImageProcessor;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Image\ProgrammeImageService;
 use kissj\Programme\Place\ProgrammePlaceAdminController;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
@@ -305,6 +310,11 @@ class Settings
             ProgrammeAdminsOnlyMiddleware::class => autowire(),
             ProgrammeApiController::class => autowire(),
             ProgrammeController::class => autowire(),
+            ProgrammeImageAdminController::class => autowire(),
+            ProgrammeImageController::class => autowire(),
+            ProgrammeImageProcessor::class => autowire(),
+            ProgrammeImageRepository::class => autowire(),
+            ProgrammeImageService::class => autowire(),
             ProgrammeJsonController::class => autowire(),
             ProgrammePlaceAdminController::class => autowire(),
             ProgrammePlaceRepository::class => autowire(),

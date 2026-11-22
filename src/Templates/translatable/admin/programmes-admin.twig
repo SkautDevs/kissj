@@ -73,8 +73,10 @@
         {% set routeParams = {eventSlug: event.slug, programmeId: programme.id} %}
         <div class="card">
             <h3><a href="{{ url_for('admin-programme-detail', routeParams) }}">{{ programme.name }}</a></h3>
-            {% if programme.getImageFilename() %}
-                <img class="programme-thumbnail" src="{{ url_for('admin-programme-image', routeParams) }}"
+            {% set firstImage = (imagesByProgramme[programme.id] ?? [])|first %}
+            {% if firstImage %}
+                {% set thumbParams = routeParams|merge({imageId: firstImage.id}) %}
+                <img class="programme-thumbnail" src="{{ url_for('admin-programme-image-thumb', thumbParams) }}"
                      alt="{{ programme.name }}">
                 <br/>
             {% endif %}

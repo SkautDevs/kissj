@@ -23,6 +23,20 @@ readonly class UrlRedactor
             return self::REDACTED;
         }
 
+        $value = preg_replace('~/programme/image/[a-f0-9]{32}~', '/programme/image/' . self::REDACTED, $value);
+        if ($value === null) {
+            return self::REDACTED;
+        }
+
+        $value = preg_replace(
+            '~\\\\/programme\\\\/image\\\\/[a-f0-9]{32}~',
+            '\\\\/programme\\\\/image\\\\/' . self::REDACTED,
+            $value,
+        );
+        if ($value === null) {
+            return self::REDACTED;
+        }
+
         $value = preg_replace('~(^|[?&])(ot_token|ttl_token)=[^&#]*~', '${1}${2}=' . self::REDACTED, $value);
         if ($value === null) {
             return self::REDACTED;

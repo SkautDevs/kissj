@@ -253,6 +253,29 @@ class UrlRedactorTest extends TestCase
         self::assertSame(3, $scrubbed->attributes()->get('count')?->getValue());
     }
 
+    public function testRedactsProgrammeImageName(): void
+    {
+        self::assertSame(
+            'https://kissj.net/v3/programme/image/' . UrlRedactor::REDACTED,
+            UrlRedactor::redact('https://kissj.net/v3/programme/image/0123456789abcdef0123456789abcdef'),
+        );
+    }
+
+    public function testRedactsProgrammeImageNameAndKeepsThumbSuffix(): void
+    {
+        self::assertSame(
+            'GET /v3/programme/image/' . UrlRedactor::REDACTED . '/thumb',
+            UrlRedactor::redact('GET /v3/programme/image/0123456789abcdef0123456789abcdef/thumb'),
+        );
+    }
+
+    public function testRedactingAProgrammeImageNameIsIdempotent(): void
+    {
+        $once = UrlRedactor::redact('/v3/programme/image/0123456789abcdef0123456789abcdef/thumb');
+
+        self::assertSame($once, UrlRedactor::redact($once));
+    }
+
     public function testRedactsLoginTokenInJsonEscapedUrl(): void
     {
         $encoded = json_encode(['/v2/e/tryLogin/abc123']);
@@ -261,6 +284,36 @@ class UrlRedactorTest extends TestCase
         self::assertSame(
             '["\\/v2\\/e\\/tryLogin\\/' . UrlRedactor::REDACTED . '"]',
             UrlRedactor::redact($encoded),
+        );
+    }
+
+    public function testRedactsJsonEscapedProgrammeImageName(): void
+    {
+        $encoded = json_encode(['/v3/programme/image/0123456789abcdef0123456789abcdef']);
+        self::assertIsString($encoded);
+
+        self::assertSame(
+            '["\\/v3\\/programme\\/image\\/' . UrlRedactor::REDACTED . '"]',
+            UrlRedactor::redact($encoded),
+        );
+    }
+
+    public function testRedactsJsonEscapedProgrammeImageNameAndKeepsThumbSuffix(): void
+    {
+        $encoded = json_encode(['/v3/programme/image/0123456789abcdef0123456789abcdef/thumb']);
+        self::assertIsString($encoded);
+
+        self::assertSame(
+            '["\\/v3\\/programme\\/image\\/' . UrlRedactor::REDACTED . '\\/thumb"]',
+            UrlRedactor::redact($encoded),
+        );
+    }
+
+    public function testRedactsOnlyTheProgrammeImageNameInFreeText(): void
+    {
+        self::assertSame(
+            'GET /v3/programme/image/' . UrlRedactor::REDACTED . ' HTTP/1.1',
+            UrlRedactor::redact('GET /v3/programme/image/0123456789abcdef0123456789abcdef HTTP/1.1'),
         );
     }
 }

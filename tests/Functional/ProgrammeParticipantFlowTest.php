@@ -8,6 +8,8 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Participant;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
@@ -118,13 +120,17 @@ class ProgrammeParticipantFlowTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $programme = $this->createProgramme($app, 'image workshop', null, 3);
-        $storedFilename = bin2hex(random_bytes(16)); // 32-hex, passes the image route guard
-        $programme->imageFilename = $storedFilename;
-        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+        $storedFilename = bin2hex(random_bytes(16));
+        $image = new ProgrammeImage();
+        $image->programme = $programme;
+        $image->filename = $storedFilename;
+        $image->thumbFilename = null;
+        $image->alt = '';
+        $image->sortOrder = 0;
+        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
 
         $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
-        $image = imagecreatetruecolor(1, 1);
-        imagepng($image, $uploadPath);
+        imagepng(imagecreatetruecolor(1, 1), $uploadPath);
 
         $ist = $this->createPaidIstWithEmail($app, 'image-flow-ist@example.com');
         $app = $this->loginAs($app, $ist->getUserButNotNull());
@@ -136,6 +142,12 @@ class ProgrammeParticipantFlowTest extends AppTestCase
             self::assertSame(200, $response->getStatusCode());
             self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
             self::assertStringContainsString("script-src 'none'", $response->getHeaderLine('Content-Security-Policy'));
+
+            $detail = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes/' . $programme->id));
+            self::assertStringContainsString(
+                'src="/v2/event/test-event-slug/programmes/' . $programme->id . '/image"',
+                (string)$detail->getBody(),
+            );
         } finally {
             @unlink($uploadPath);
         }
@@ -287,7 +299,6 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description';
-        $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;

@@ -7,6 +7,7 @@ use Aws\S3\S3Client;
 use GuzzleHttp\Psr7\Utils;
 use kissj\Telemetry\Sentry\Collector;
 use LogicException;
+use Psr\Http\Message\StreamInterface;
 use Slim\Psr7\UploadedFile;
 
 class S3BucketSaveFileHandler extends SaveFileHandler
@@ -36,20 +37,51 @@ class S3BucketSaveFileHandler extends SaveFileHandler
 
     public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile
     {
+        $this->put(
+            $newFilename,
+            $uploadedFile->getStream(),
+            $uploadedFile->getClientMediaType() ?? throw new LogicException('Uploaded file has no media type'),
+        );
+
+        return $uploadedFile;
+    }
+
+    public function saveContents(string $contents, string $contentType): string
+    {
+        $newFilename = $this->getNewFilename();
+        $this->put($newFilename, $contents, $contentType);
+
+        return $newFilename;
+    }
+
+    public function deleteFile(string $filename): void
+    {
+        // S3 answers a delete of a missing key with success too
         try {
-            $this->s3client->putObject([
+            $this->s3client->deleteObject([
                 'Bucket' => $this->s3bucket,
-                'Key' => $newFilename,
-                'Body' => $uploadedFile->getStream(),
-                'ContentType' => $uploadedFile->getClientMediaType()
-                    ?? throw new LogicException('Uploaded file has no media type'),
+                'Key' => $filename,
             ]);
         } catch (S3Exception $e) {
             $this->sentryCollector->collect($e);
 
             throw $e;
         }
+    }
 
-        return $uploadedFile;
+    private function put(string $key, StreamInterface|string $body, string $contentType): void
+    {
+        try {
+            $this->s3client->putObject([
+                'Bucket' => $this->s3bucket,
+                'Key' => $key,
+                'Body' => $body,
+                'ContentType' => $contentType,
+            ]);
+        } catch (S3Exception $e) {
+            $this->sentryCollector->collect($e);
+
+            throw $e;
+        }
     }
 }

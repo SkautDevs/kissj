@@ -28,4 +28,36 @@ class S3BucketSaveFileHandlerTest extends TestCase
 
         $handler->saveFile(new UploadedFile('php://memory', 'file.png', null, 0), 'new-file.png');
     }
+
+    public function testSaveContentsPutsTheBytesWithTheContentType(): void
+    {
+        $putKey = null;
+        $s3client = Mockery::mock(S3Client::class);
+        $s3client->shouldReceive('putObject')
+            ->once()
+            ->with(Mockery::on(static function (array $arguments) use (&$putKey): bool {
+                $putKey = $arguments['Key'];
+
+                return $arguments['Bucket'] === 'bucket'
+                    && $arguments['Body'] === 'webp bytes'
+                    && $arguments['ContentType'] === 'image/webp';
+            }));
+        $handler = new S3BucketSaveFileHandler($s3client, 'bucket', new Collector(Mockery::mock(Hub::class)));
+
+        $filename = $handler->saveContents('webp bytes', 'image/webp');
+
+        self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/D', $filename);
+        self::assertSame($filename, $putKey);
+    }
+
+    public function testDeleteFileDeletesTheObject(): void
+    {
+        $s3client = Mockery::mock(S3Client::class);
+        $s3client->shouldReceive('deleteObject')
+            ->once()
+            ->with(['Bucket' => 'bucket', 'Key' => 'abc']);
+        $handler = new S3BucketSaveFileHandler($s3client, 'bucket', new Collector(Mockery::mock(Hub::class)));
+
+        $handler->deleteFile('abc');
+    }
 }
