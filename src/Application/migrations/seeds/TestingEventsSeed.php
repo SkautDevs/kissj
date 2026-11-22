@@ -311,14 +311,13 @@ class TestingEventsSeed extends AbstractSeed
     private function insertProgrammes(string $slug, int $eventId, array $sectionIds): int
     {
         $programmes = self::PROGRAMMES_BY_SLUG[$slug];
-        $imagesEnabled = $this->areProgrammeImagesEnabled($programmes);
+        $placeIds = $this->ensureProgrammePlaces($eventId, array_column($programmes, 'place'));
         $programmeRows = [];
         foreach ($programmes as $programme) {
-            $image = $programme['image'] ?? null;
             $programmeRows[] = [
                 'name' => $programme['name'],
                 'description' => $programme['description'],
-                'image_filename' => $imagesEnabled && $image !== null ? $this->storeProgrammeImage($image) : null,
+                'place_id' => $placeIds[$programme['place']] ?? null,
                 'start' => $programme['start'],
                 'end' => $programme['end'],
                 'capacity' => $programme['capacity'],
@@ -333,7 +332,98 @@ class TestingEventsSeed extends AbstractSeed
         }
         $this->table('programme')->insert($programmeRows)->saveData();
 
+        if ($this->areProgrammeImagesEnabled($programmes)) {
+            $this->insertProgrammeImages($eventId, $programmes);
+        }
+
         return count($programmes);
+    }
+
+    /**
+     * @param list<string> $names
+     * @return array<string, int> place id by name
+     */
+    private function ensureProgrammePlaces(int $eventId, array $names): array
+    {
+        $placeIds = $this->findPlaceIdsByName($eventId);
+        $missingRows = [];
+        foreach (array_unique($names) as $name) {
+            if ($name === '' || array_key_exists($name, $placeIds)) {
+                continue;
+            }
+            $missingRows[] = [
+                'event_id' => $eventId,
+                'name' => $name,
+                'created_at' => self::CREATED_AT,
+                'updated_at' => self::CREATED_AT,
+            ];
+        }
+        if ($missingRows !== []) {
+            $this->table('programme_place')->insert($missingRows)->saveData();
+            $placeIds = $this->findPlaceIdsByName($eventId);
+        }
+
+        return $placeIds;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function findPlaceIdsByName(int $eventId): array
+    {
+        $placeIds = [];
+        /** @var list<array<array-key, mixed>> $rows */
+        $rows = $this->fetchAll(sprintf('SELECT id, name FROM programme_place WHERE event_id = %d', $eventId));
+        foreach ($rows as $row) {
+            $name = $row['name'];
+            if (is_string($name) === false) {
+                throw new RuntimeException('unexpected place name type: ' . get_debug_type($name));
+            }
+            $placeIds[$name] = $this->rowId($row);
+        }
+
+        return $placeIds;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $programmes
+     */
+    private function insertProgrammeImages(int $eventId, array $programmes): void
+    {
+        // a single multi-row insert assigns ids in row order, so the ids pair with the seed list
+        /** @var list<array<array-key, mixed>> $rows */
+        $rows = $this->fetchAll(sprintf('SELECT id FROM programme WHERE event_id = %d ORDER BY id', $eventId));
+        if (count($rows) !== count($programmes)) {
+            throw new LogicException(sprintf(
+                'expected %d programmes for event %d, found %d',
+                count($programmes),
+                $eventId,
+                count($rows),
+            ));
+        }
+
+        $imageRows = [];
+        foreach ($programmes as $index => $programme) {
+            $image = $programme['image'] ?? null;
+            if ($image === null) {
+                continue;
+            }
+            if (is_string($image) === false) {
+                throw new RuntimeException('unexpected programme image type: ' . get_debug_type($image));
+            }
+            $imageRows[] = [
+                'programme_id' => $this->rowId($rows[$index]),
+                'filename' => $this->storeProgrammeImage($image),
+                'thumb_filename' => null,
+                'alt' => '',
+                'sort_order' => 0,
+                'created_at' => self::CREATED_AT,
+                'updated_at' => self::CREATED_AT,
+            ];
+        }
+        if ($imageRows !== []) {
+            $this->table('programme_image')->insert($imageRows)->saveData();
+        }
     }
 
     /**

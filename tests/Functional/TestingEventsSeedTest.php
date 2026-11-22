@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Application\migrations\seeds\programmes\Korbo3026Programmes;
+use kissj\Application\migrations\seeds\programmes\Miquik3026Programmes;
+use kissj\Application\migrations\seeds\programmes\Navigamus3027Programmes;
+use kissj\Application\migrations\seeds\programmes\Obrok3027Programmes;
 use kissj\Event\EventRepository;
 use kissj\Event\EventType\EventTypeDefault;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
@@ -336,10 +343,9 @@ class TestingEventsSeedTest extends AppTestCase
     public function testSeedsSkautImagesOnThreeOfFourObrokProgrammes(): void
     {
         $app = $this->getTestApp();
-        /** @var EventRepository $eventRepository */
         $eventRepository = $this->getService($app, EventRepository::class);
-        /** @var ProgrammeRepository $programmeRepository */
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $imageRepository = $this->getService($app, ProgrammeImageRepository::class);
 
         $this->runSeed();
 
@@ -354,25 +360,119 @@ class TestingEventsSeedTest extends AppTestCase
         }
         self::assertCount(20, $sourceBytesByHash);
 
+        // seed entries are not unique by name and start, so compare the image multiset per key
+        $expectedByKey = [];
+        foreach (Obrok3027Programmes::PROGRAMMES as $entry) {
+            $image = $entry['image'];
+            $expectedByKey[$entry['name'] . '|' . $entry['start'] . '|' . $entry['place']][]
+                = $image === null ? '' : md5($image);
+        }
+        $actualByKey = [];
         $withImage = 0;
         foreach ($programmeRepository->findActiveForEvent($obrok) as $programme) {
-            if ($programme->imageFilename === null) {
+            $images = $imageRepository->findForProgramme($programme);
+            self::assertLessThanOrEqual(1, count($images), $programme->name);
+            $key = $programme->name . '|' . $programme->start->format('Y-m-d H:i:s') . '|' . $programme->getPlaceName();
+            $actualByKey[$key][] = $images === [] ? '' : $images[0]->filename;
+            if ($images === []) {
                 continue;
             }
             $withImage++;
-            self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $programme->imageFilename);
-            self::assertArrayHasKey($programme->imageFilename, $sourceBytesByHash);
+            $image = $images[0];
+            self::assertArrayHasKey($image->filename, $sourceBytesByHash);
             self::assertSame(
-                $sourceBytesByHash[$programme->imageFilename],
-                file_get_contents(__DIR__ . '/../../uploads/' . $programme->imageFilename),
+                $sourceBytesByHash[$image->filename],
+                file_get_contents(__DIR__ . '/../../uploads/' . $image->filename),
             );
+            self::assertNull($image->thumbFilename);
+            self::assertSame('', $image->alt);
+            self::assertSame(0, $image->sortOrder);
         }
         self::assertSame(153, $withImage);
+        self::assertSame($this->sortedLists($expectedByKey), $this->sortedLists($actualByKey));
+
+        foreach (['navigamus3027', 'korbo3026', 'miquik3026'] as $slug) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
+                self::assertSame([], $imageRepository->findForProgramme($programme), $programme->name);
+            }
+        }
+    }
+
+    public function testSeedsPlacesWithoutCoordinates(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $placeRepository = $this->getService($app, ProgrammePlaceRepository::class);
+        $expectedPlaceCounts = ['obrok3027' => 22, 'korbo3026' => 6, 'miquik3026' => 13, 'navigamus3027' => 6];
+        $seedEntries = [
+            'obrok3027' => Obrok3027Programmes::PROGRAMMES,
+            'korbo3026' => Korbo3026Programmes::PROGRAMMES,
+            'miquik3026' => Miquik3026Programmes::PROGRAMMES,
+            'navigamus3027' => Navigamus3027Programmes::PROGRAMMES,
+        ];
+
+        $this->runSeed();
+
+        foreach ($expectedPlaceCounts as $slug => $placeCount) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            $places = $placeRepository->findForEvent($event);
+            self::assertCount($placeCount, $places, $slug);
+            foreach ($places as $place) {
+                self::assertNull($place->lat, $place->name);
+                self::assertNull($place->lng, $place->name);
+            }
+            $expectedPlaceByKey = [];
+            foreach ($seedEntries[$slug] as $entry) {
+                $expectedPlaceByKey[$entry['name'] . '|' . $entry['start']][] = trim($entry['place']);
+            }
+            $actualPlaceByKey = [];
+            foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
+                $actualPlaceByKey[$programme->name . '|' . $programme->start->format('Y-m-d H:i:s')][]
+                    = $programme->getPlaceName();
+                if ($programme->programmePlace === null) {
+                    continue;
+                }
+                self::assertSame($event->id, $programme->programmePlace->event->id);
+            }
+            self::assertSame($this->sortedLists($expectedPlaceByKey), $this->sortedLists($actualPlaceByKey), $slug);
+        }
+
+        // this reseed takes the early return; testSeedRefillReusesExistingPlaces covers the reuse path
+        $this->runSeed();
+
+        foreach ($expectedPlaceCounts as $slug => $placeCount) {
+            $event = $eventRepository->findBySlug($slug);
+            self::assertNotNull($event);
+            self::assertCount($placeCount, $placeRepository->findForEvent($event), $slug);
+        }
+    }
+
+    public function testSeedRefillReusesExistingPlaces(): void
+    {
+        $app = $this->getTestApp();
+        $eventRepository = $this->getService($app, EventRepository::class);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $placeRepository = $this->getService($app, ProgrammePlaceRepository::class);
+
+        $this->runSeed();
 
         $navigamus = $eventRepository->findBySlug('navigamus3027');
         self::assertNotNull($navigamus);
+        $placeIdsBefore = $this->placeIds($placeRepository->findForEvent($navigamus));
         foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
-            self::assertNull($programme->imageFilename);
+            $programmeRepository->delete($programme);
+        }
+
+        $this->runSeed();
+
+        self::assertSame($placeIdsBefore, $this->placeIds($placeRepository->findForEvent($navigamus)));
+        foreach ($programmeRepository->findActiveForEvent($navigamus) as $programme) {
+            self::assertNotNull($programme->programmePlace, $programme->name);
+            self::assertContains($programme->programmePlace->id, $placeIdsBefore);
         }
     }
 
@@ -618,6 +718,30 @@ class TestingEventsSeedTest extends AppTestCase
         }
 
         return $exclusivityByName;
+    }
+
+    /**
+     * @param list<ProgrammePlace> $places
+     * @return list<int>
+     */
+    private function placeIds(array $places): array
+    {
+        return array_map(fn (ProgrammePlace $place): int => $place->id, $places);
+    }
+
+    /**
+     * @param array<string, list<string>> $listsByKey
+     * @return array<string, list<string>>
+     */
+    private function sortedLists(array $listsByKey): array
+    {
+        foreach ($listsByKey as $key => $list) {
+            sort($list);
+            $listsByKey[$key] = $list;
+        }
+        ksort($listsByKey);
+
+        return $listsByKey;
     }
 
     private function countSections(EventRepository $eventRepository, ProgrammeSectionRepository $sectionRepository): int
