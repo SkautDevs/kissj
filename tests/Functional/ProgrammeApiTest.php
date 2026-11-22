@@ -9,6 +9,11 @@ use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
@@ -18,9 +23,11 @@ use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Exception\HttpNotFoundException;
+use Slim\Psr7\Uri;
 use Tests\AppTestCase;
 
 class ProgrammeApiTest extends AppTestCase
@@ -32,6 +39,8 @@ class ProgrammeApiTest extends AppTestCase
     private const string OTHER_EVENT_SLUG = 'programme-api-other-event';
     private const string QUERY_COUNT_EVENT_SLUG = 'programme-api-query-count-event';
     private const string QUERY_COUNT_EVENT_API_KEY = 'programme-api-query-count-event-key';
+    private const string PLACES_EVENT_SLUG = 'programme-api-places-event';
+    private const string PLACES_EVENT_API_KEY = 'programme-api-places-event-key';
 
     public function testListIsEmptyForEventWithoutProgrammes(): void
     {
@@ -44,7 +53,7 @@ class ProgrammeApiTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
         self::assertSame(
-            '{"sections":[],"programmes":[],"registration":{"start":null,"end":null}}',
+            '{"sections":[],"places":[],"programmes":[],"registration":{"start":null,"end":null}}',
             (string)$response->getBody(),
         );
     }
@@ -142,11 +151,166 @@ class ProgrammeApiTest extends AppTestCase
             'sectionId' => $firstCreated->id,
             'description' => "description of api list preregistered\nsecond line",
             'place' => '',
+            'placeId' => null,
             'start' => '2027-06-03T09:00:00+02:00',
             'end' => '2027-06-03T11:00:00+02:00',
             'isPreregistered' => true,
             'targetRoles' => ['ist', 'guest'],
+            'images' => [],
         ], $body['programmes'][$preregisteredKey]);
+    }
+
+    public function testListCarriesEveryPlaceOfTheEventSortedByName(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getTypedTestEvent($app, 'default', self::PLACES_EVENT_SLUG);
+        $this->mutateEventForTest($app->getContainer(), $event, ['apiKeyEvent' => self::PLACES_EVENT_API_KEY]);
+        $placeService = $this->getService($app, ProgrammePlaceService::class);
+        $placeRepository = $this->getService($app, ProgrammePlaceRepository::class);
+
+        $beta = $placeService->findOrCreateByName($event, 'beta');
+        $beta->lat = 50.340847;
+        $beta->lng = 15.935361;
+        $placeRepository->persist($beta);
+        $alpha = $placeService->findOrCreateByName($event, 'alpha');
+        $gamma = $placeService->findOrCreateByName($event, 'gamma');
+        $placeService->findOrCreateByName($this->getTypedTestEvent($app, 'default', self::OTHER_EVENT_SLUG), 'aaa');
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api places section');
+        $this->createProgramme($app, $event, $section, 'api places programme', '2027-06-03 09:00', place: $beta);
+        $this->createProgramme($app, $event, $section, 'api places other', '2027-06-03 10:00', place: $alpha);
+
+        $request = $this->createApiRequest('/v3/programme/list', self::PLACES_EVENT_API_KEY);
+
+        $body = $this->decodeJson($app->handle($request));
+
+        self::assertSame([
+            ['id' => $alpha->id, 'name' => 'alpha', 'lat' => null, 'lng' => null],
+            ['id' => $beta->id, 'name' => 'beta', 'lat' => 50.340847, 'lng' => 15.935361],
+            ['id' => $gamma->id, 'name' => 'gamma', 'lat' => null, 'lng' => null],
+        ], $body['places']);
+    }
+
+    public function testProgrammeCarriesPlaceIdAndPlaceName(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $beta = $this->getService($app, ProgrammePlaceService::class)->findOrCreateByName($event, 'beta');
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api place id section');
+        $programme = $this->createProgramme($app, $event, $section, 'api place id', '2027-06-03 09:00', place: $beta);
+
+        $listed = $this->findListedProgramme(
+            $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY))),
+            $programme,
+        );
+
+        self::assertSame('beta', $listed['place']);
+        self::assertSame($beta->id, $listed['placeId']);
+    }
+
+    public function testImageUrlsFollowTheRequestScheme(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api images section');
+        $programme = $this->createProgramme($app, $event, $section, 'api images', '2027-06-03 09:00');
+        $second = str_repeat('b', 32);
+        $first = str_repeat('a', 32);
+        $this->createImage($app, $programme, $second, '', 1);
+        $this->createImage($app, $programme, $first, 'Stan', 0);
+        $request = $this->createApiRequest('/v3/programme/list', self::API_KEY)
+            ->withUri(new Uri('https', 'kissj.example', 443, '/v3/programme/list'));
+
+        $listed = $this->findListedProgramme($this->decodeJson($app->handle($request)), $programme);
+
+        self::assertSame([
+            [
+                'url' => 'https://kissj.example/v3/programme/image/' . $first,
+                'thumbUrl' => 'https://kissj.example/v3/programme/image/' . $first . '/thumb',
+                'alt' => 'Stan',
+            ],
+            [
+                'url' => 'https://kissj.example/v3/programme/image/' . $second,
+                'thumbUrl' => 'https://kissj.example/v3/programme/image/' . $second . '/thumb',
+                'alt' => '',
+            ],
+        ], $listed['images']);
+    }
+
+    public function testImageUrlsAreHttpsWhenTheProxyForwardsHttps(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api forwarded section');
+        $programme = $this->createProgramme($app, $event, $section, 'api forwarded programme', '2027-06-03 08:00');
+        $this->createImage($app, $programme, str_repeat('c', 32), '', 0);
+        $request = $this->createApiRequest('/v3/programme/list', self::API_KEY)
+            ->withUri(new Uri('http', 'kissj.example', 80, '/v3/programme/list'));
+
+        $forwarded = $this->decodeJson($app->handle($request->withHeader('X-Forwarded-Proto', 'HTTPS, http')));
+        $direct = $this->decodeJson($app->handle($request));
+
+        $expectedUrl = 'https://kissj.example/v3/programme/image/' . str_repeat('c', 32);
+        self::assertSame(
+            [['url' => $expectedUrl, 'thumbUrl' => $expectedUrl . '/thumb', 'alt' => '']],
+            $this->findListedProgramme($forwarded, $programme)['images'],
+        );
+        $plainUrl = 'http://kissj.example/v3/programme/image/' . str_repeat('c', 32);
+        self::assertSame(
+            [['url' => $plainUrl, 'thumbUrl' => $plainUrl . '/thumb', 'alt' => '']],
+            $this->findListedProgramme($direct, $programme)['images'],
+        );
+    }
+
+    public function testImageUrlsKeepANonStandardPortWhenForwardedAsHttps(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api port section');
+        $programme = $this->createProgramme($app, $event, $section, 'api port programme', '2027-06-03 08:00');
+        $this->createImage($app, $programme, str_repeat('d', 32), '', 0);
+        $request = $this->createApiRequest('/v3/programme/list', self::API_KEY)
+            ->withUri(new Uri('http', 'kissj.example', 8080, '/v3/programme/list'))
+            ->withHeader('X-Forwarded-Proto', 'https');
+
+        $body = $this->decodeJson($app->handle($request));
+
+        $expectedUrl = 'https://kissj.example:8080/v3/programme/image/' . str_repeat('d', 32);
+        self::assertSame(
+            [['url' => $expectedUrl, 'thumbUrl' => $expectedUrl . '/thumb', 'alt' => '']],
+            $this->findListedProgramme($body, $programme)['images'],
+        );
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function provideIngressSchemeHeaders(): array
+    {
+        return [
+            'X-Forwarded-Scheme' => ['X-Forwarded-Scheme'],
+            'X-Scheme' => ['X-Scheme'],
+        ];
+    }
+
+    #[DataProvider('provideIngressSchemeHeaders')]
+    public function testImageUrlsAreHttpsWhenTheIngressSchemeHeaderSaysHttps(string $headerName): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getAuthorizedEvent($app);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'api ingress section');
+        $programme = $this->createProgramme($app, $event, $section, 'api ingress programme', '2027-06-03 08:00');
+        $this->createImage($app, $programme, str_repeat('e', 32), '', 0);
+        $request = $this->createApiRequest('/v3/programme/list', self::API_KEY)
+            ->withUri(new Uri('http', 'kissj.example', 80, '/v3/programme/list'))
+            ->withHeader($headerName, 'https');
+
+        $body = $this->decodeJson($app->handle($request));
+
+        $expectedUrl = 'https://kissj.example/v3/programme/image/' . str_repeat('e', 32);
+        self::assertSame(
+            [['url' => $expectedUrl, 'thumbUrl' => $expectedUrl . '/thumb', 'alt' => '']],
+            $this->findListedProgramme($body, $programme)['images'],
+        );
     }
 
     public function testListQueryCountDoesNotGrowWithProgrammeCount(): void
@@ -159,17 +323,37 @@ class ProgrammeApiTest extends AppTestCase
             $this->createProgrammeSection($container, $event, 'api query count first'),
             $this->createProgrammeSection($container, $event, 'api query count second'),
         ];
+        $placeService = $this->getService($app, ProgrammePlaceService::class);
+        $places = [
+            $placeService->findOrCreateByName($event, 'api query count first place'),
+            $placeService->findOrCreateByName($event, 'api query count second place'),
+        ];
         $queryCounter = $this->attachQueryCounter($app);
         $request = $this->createApiRequest('/v3/programme/list', self::QUERY_COUNT_EVENT_API_KEY);
 
         foreach ([0, 1] as $index) {
-            $this->createProgramme($app, $event, $sections[$index], 'api query count ' . $index, '2027-06-06 08:00');
+            $programme = $this->createProgramme(
+                $app,
+                $event,
+                $sections[$index],
+                'api query count ' . $index,
+                '2027-06-06 08:00',
+                place: $places[$index],
+            );
+            $this->createImage($app, $programme, md5('api query count ' . $index), '', 0);
         }
         $queriesWithTwoProgrammes = $this->countQueriesOf($app, $queryCounter, $request);
 
         foreach ([2, 3, 4] as $index) {
-            $section = $sections[$index % 2];
-            $this->createProgramme($app, $event, $section, 'api query count ' . $index, '2027-06-06 09:00');
+            $programme = $this->createProgramme(
+                $app,
+                $event,
+                $sections[$index % 2],
+                'api query count ' . $index,
+                '2027-06-06 09:00',
+                place: $places[$index % 2],
+            );
+            $this->createImage($app, $programme, md5('api query count ' . $index), '', 0);
         }
         $queriesWithFiveProgrammes = $this->countQueriesOf($app, $queryCounter, $request);
 
@@ -394,6 +578,7 @@ class ProgrammeApiTest extends AppTestCase
         string $name,
         string $start,
         bool $isPreregistered = false,
+        ?ProgrammePlace $place = null,
     ): Programme {
         $programme = new Programme();
         $programme->name = $name;
@@ -405,9 +590,39 @@ class ProgrammeApiTest extends AppTestCase
         $programme->event = $event;
         $programme->section = $section;
         $programme->setTargetRoles([ParticipantRole::Ist, ParticipantRole::Guest]);
+        $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createImage(App $app, Programme $programme, string $filename, string $alt, int $sortOrder): void
+    {
+        $image = new ProgrammeImage();
+        $image->programme = $programme;
+        $image->filename = $filename;
+        $image->thumbFilename = null;
+        $image->alt = $alt;
+        $image->sortOrder = $sortOrder;
+        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     * @return array<mixed>
+     */
+    private function findListedProgramme(array $body, Programme $programme): array
+    {
+        self::assertIsArray($body['programmes']);
+        $key = array_search($programme->id, array_column($body['programmes'], 'id'), true);
+        self::assertIsInt($key);
+        $listed = $body['programmes'][$key];
+        self::assertIsArray($listed);
+
+        return $listed;
     }
 
     /**

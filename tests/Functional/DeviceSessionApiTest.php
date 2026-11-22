@@ -18,6 +18,9 @@ use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSession;
 use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
@@ -29,6 +32,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
+use Slim\Psr7\Uri;
 use Tests\AppTestCase;
 
 class DeviceSessionApiTest extends AppTestCase
@@ -59,6 +63,46 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertIsArray($listed);
         self::assertSame($programme->id, $listed['id']);
         self::assertSame('session programme', $listed['name']);
+    }
+
+    public function testParticipantReadCarriesPlaceIdAndImagesButNoPlaces(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Placed');
+        $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
+        $place = $this->getService($app, ProgrammePlaceService::class)->findOrCreateByName($event, 'session place');
+        $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
+        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+        $filename = str_repeat('c', 32);
+        $image = new ProgrammeImage();
+        $image->programme = $programme;
+        $image->filename = $filename;
+        $image->thumbFilename = null;
+        $image->alt = 'Ohniště';
+        $image->sortOrder = 0;
+        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
+        $this->register($app, $programme, $participant);
+        $request = $this->createApiRequest('/v3/programme/participant/session', self::API_KEY)
+            ->withUri(new Uri('https', 'kissj.example', 443, '/v3/programme/participant/session'))
+            ->withHeader(self::SESSION_HEADER, $this->createSession($app, $participant));
+
+        $response = $app->handle($request);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = $this->decodeJson($response);
+        self::assertFalse(array_key_exists('places', $body));
+        self::assertIsArray($body['programmes']);
+        self::assertCount(1, $body['programmes']);
+        $listed = $body['programmes'][0];
+        self::assertIsArray($listed);
+        self::assertSame('session place', $listed['place']);
+        self::assertSame($place->id, $listed['placeId']);
+        self::assertSame([[
+            'url' => 'https://kissj.example/v3/programme/image/' . $filename,
+            'thumbUrl' => 'https://kissj.example/v3/programme/image/' . $filename . '/thumb',
+            'alt' => 'Ohniště',
+        ]], $listed['images']);
     }
 
     public function testSessionReadOrdersProgrammesByStartAndLeavesOutSoftDeletedRegistrations(): void

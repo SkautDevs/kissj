@@ -8,6 +8,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\DTO\ProgrammeApiImageDTO;
 use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
@@ -213,7 +214,10 @@ readonly class ProgrammeService
         return $this->programmeRepository->findActivePreregisteredForRole($user->event, $participant->getRoleOrFail());
     }
 
-    public function presentProgramme(Programme $programme): ProgrammeApiProgrammeDTO
+    /**
+     * @param list<ProgrammeApiImageDTO> $images
+     */
+    public function presentProgramme(Programme $programme, array $images): ProgrammeApiProgrammeDTO
     {
         return new ProgrammeApiProgrammeDTO(
             $programme->id,
@@ -221,6 +225,7 @@ readonly class ProgrammeService
             $programme->section->id,
             $programme->description,
             $programme->getPlaceName(),
+            $programme->programmePlace?->id,
             DateTimeUtils::formatAtom($programme->start),
             DateTimeUtils::formatAtom($programme->end),
             $programme->isPreregistered,
@@ -228,6 +233,7 @@ readonly class ProgrammeService
                 static fn (ParticipantRole $role): string => $role->value,
                 $programme->getTargetRoles(),
             ),
+            $images,
         );
     }
 

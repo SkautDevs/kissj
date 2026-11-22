@@ -8,6 +8,7 @@ readonly class ProgrammeApiProgrammeDTO
 {
     /**
      * @param list<string> $targetRoles
+     * @param list<ProgrammeApiImageDTO> $images
      */
     public function __construct(
         public int $id,
@@ -15,10 +16,12 @@ readonly class ProgrammeApiProgrammeDTO
         public int $sectionId,
         public string $description,
         public string $place,
+        public ?int $placeId,
         public string $start,
         public string $end,
         public bool $isPreregistered,
         public array $targetRoles,
+        public array $images,
     ) {
     }
 }

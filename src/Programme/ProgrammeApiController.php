@@ -9,6 +9,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Programme\DTO\ProgrammeApiErrorDTO;
+use kissj\Programme\DTO\ProgrammeApiImageDTO;
 use kissj\Programme\DTO\ProgrammeApiListDTO;
 use kissj\Programme\DTO\ProgrammeApiOkDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantDTO;
@@ -17,15 +18,22 @@ use kissj\Programme\DTO\ProgrammeApiParticipantProgrammesDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingApprovedDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStartDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStatusDTO;
+use kissj\Programme\DTO\ProgrammeApiPlaceDTO;
+use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\Programme\DTO\ProgrammeApiRegistrationWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
 use kissj\Programme\Device\DevicePairing;
 use kissj\Programme\Device\DevicePairingPollStatus;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSession;
+use kissj\Programme\Image\ProgrammeImage;
+use kissj\Programme\Image\ProgrammeImageRepository;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
 use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\UriInterface;
 
 class ProgrammeApiController extends AbstractController
 {
@@ -35,10 +43,12 @@ class ProgrammeApiController extends AbstractController
         private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
         private readonly DevicePairingService $devicePairingService,
         private readonly ProgrammeService $programmeService,
+        private readonly ProgrammePlaceRepository $programmePlaceRepository,
+        private readonly ProgrammeImageRepository $programmeImageRepository,
     ) {
     }
 
-    public function list(Response $response, Event $authorizedEvent): Response
+    public function list(Request $request, Response $response, Event $authorizedEvent): Response
     {
         return $this->getResponseWithJson($response, new ProgrammeApiListDTO(
             array_map(
@@ -46,16 +56,23 @@ class ProgrammeApiController extends AbstractController
                 $this->programmeSectionRepository->findForEvent($authorizedEvent),
             ),
             array_map(
-                $this->programmeService->presentProgramme(...),
-                $this->programmeRepository->findActiveForEvent($authorizedEvent),
+                $this->presentPlace(...),
+                $this->programmePlaceRepository->findForEvent($authorizedEvent),
             ),
+            $this->presentProgrammes($request, $this->programmeRepository->findActiveForEvent($authorizedEvent)),
             $this->presentRegistrationWindow($authorizedEvent),
         ));
     }
 
-    public function participantBySession(Response $response, Participant $sessionParticipant): Response
-    {
-        return $this->getResponseWithJson($response, $this->presentParticipantProgrammes($sessionParticipant));
+    public function participantBySession(
+        Request $request,
+        Response $response,
+        Participant $sessionParticipant,
+    ): Response {
+        return $this->getResponseWithJson(
+            $response,
+            $this->presentParticipantProgrammes($request, $sessionParticipant),
+        );
     }
 
     public function register(Response $response, Participant $sessionParticipant, int $programmeId): Response
@@ -153,14 +170,76 @@ class ProgrammeApiController extends AbstractController
 
     }
 
-    private function presentParticipantProgrammes(Participant $participant): ProgrammeApiParticipantProgrammesDTO
-    {
+    private function presentParticipantProgrammes(
+        Request $request,
+        Participant $participant,
+    ): ProgrammeApiParticipantProgrammesDTO {
         return new ProgrammeApiParticipantProgrammesDTO(
             new ProgrammeApiParticipantDTO($participant->id, $participant->nickname),
-            array_map(
-                $this->programmeService->presentProgramme(...),
-                $this->programmeRepository->findActiveForParticipant($participant),
+            $this->presentProgrammes($request, $this->programmeRepository->findActiveForParticipant($participant)),
+        );
+    }
+
+    /**
+     * @param list<Programme> $programmes
+     * @return list<ProgrammeApiProgrammeDTO>
+     */
+    private function presentProgrammes(Request $request, array $programmes): array
+    {
+        $imagesByProgramme = $this->programmeImageRepository->findForProgrammes($programmes);
+        $router = $this->getRouter($request);
+        $imageBaseUri = $this->getImageBaseUri($request);
+        $presentImage = static fn (ProgrammeImage $image): ProgrammeApiImageDTO => new ProgrammeApiImageDTO(
+            $router->fullUrlFor($imageBaseUri, 'programme-api-image', ['filename' => $image->filename]),
+            $router->fullUrlFor($imageBaseUri, 'programme-api-image-thumb', ['filename' => $image->filename]),
+            $image->alt,
+        );
+
+        return array_map(
+            fn (Programme $programme): ProgrammeApiProgrammeDTO => $this->programmeService->presentProgramme(
+                $programme,
+                array_map($presentImage, $imagesByProgramme[$programme->id] ?? []),
             ),
+            $programmes,
+        );
+    }
+
+    /**
+     * TLS ends at the ingress, so PHP sees plain http, and eventApp drops image URLs that are not https.
+     * Caddy overwrites X-Forwarded-Proto with its own scheme, so the ingress's X-Forwarded-Scheme and X-Scheme,
+     * which Caddy passes through, are read too.
+     */
+    private function getImageBaseUri(Request $request): UriInterface
+    {
+        $uri = $request->getUri();
+        if ($this->isForwardedAsHttps($request) === false) {
+            return $uri;
+        }
+
+        $httpsUri = $uri->withScheme('https');
+
+        return $uri->getPort() === null ? $httpsUri->withPort(null) : $httpsUri;
+    }
+
+    private function isForwardedAsHttps(Request $request): bool
+    {
+        foreach (['X-Forwarded-Proto', 'X-Forwarded-Scheme', 'X-Scheme'] as $headerName) {
+            $firstValue = explode(',', $request->getHeaderLine($headerName))[0];
+            if (strtolower(trim($firstValue)) === 'https') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function presentPlace(ProgrammePlace $place): ProgrammeApiPlaceDTO
+    {
+        return new ProgrammeApiPlaceDTO(
+            $place->id,
+            $place->name,
+            $place->lat === null ? null : (float)$place->lat,
+            $place->lng === null ? null : (float)$place->lng,
         );
     }
 
