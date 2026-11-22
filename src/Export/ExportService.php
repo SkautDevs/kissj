@@ -342,7 +342,7 @@ readonly class ExportService
                     $programme->section->getLabel(),
                     $programme->start->format('Y-m-d H:i'),
                     $programme->end->format('Y-m-d H:i'),
-                    $programme->place,
+                    $programme->getPlaceName(),
                     $participant->getFullName(),
                     $participant->getUserButNotNull()->email,
                     $participant->getRoleOrFail()->value,

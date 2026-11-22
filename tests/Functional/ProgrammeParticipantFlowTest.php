@@ -287,7 +287,6 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description';
-        $programme->place = 'somewhere';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);

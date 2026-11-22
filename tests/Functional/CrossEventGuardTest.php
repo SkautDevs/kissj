@@ -13,6 +13,9 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSectionRepository;
@@ -264,6 +267,7 @@ class CrossEventGuardTest extends AppTestCase
             $bankPayment->id,
             $programme->id,
             $programme->section->id,
+            $this->getProgrammePlace($programme)->id,
         );
     }
 
@@ -275,7 +279,8 @@ class CrossEventGuardTest extends AppTestCase
         $programme = new Programme();
         $programme->name = 'cross-event';
         $programme->description = 'cross-event';
-        $programme->place = 'cross-event';
+        $placeService = $this->getService($app, ProgrammePlaceService::class);
+        $placeService->assignPlace($programme, $placeService->findOrCreateByName($event, 'cross-event'));
         $programme->imageFilename = 'abcdef0123456789abcdef0123456789';
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
@@ -287,6 +292,11 @@ class CrossEventGuardTest extends AppTestCase
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;
+    }
+
+    private function getProgrammePlace(Programme $programme): ProgrammePlace
+    {
+        return $programme->programmePlace ?? throw new LogicException('cross-event programme has no place');
     }
 
     /**
@@ -358,6 +368,9 @@ class CrossEventGuardTest extends AppTestCase
         if (str_contains($pattern, '{sectionId}')) {
             return CrossEventIdKind::ProgrammeSection;
         }
+        if (str_contains($pattern, '{placeId}')) {
+            return CrossEventIdKind::ProgrammePlace;
+        }
 
         $hasParticipantId = str_contains($pattern, '{participantId}');
         $hasPaymentId = str_contains($pattern, '{paymentId}');
@@ -386,6 +399,7 @@ class CrossEventGuardTest extends AppTestCase
             '{bankPaymentId}' => (string)$fixture->bankPaymentId,
             '{programmeId}' => (string)$fixture->programmeId,
             '{sectionId}' => (string)$fixture->programmeSectionId,
+            '{placeId}' => (string)$fixture->programmePlaceId,
             '{direction:up|down}' => 'up',
             ...self::FILLER_PLACEHOLDERS,
         ]);
@@ -414,32 +428,14 @@ class CrossEventGuardTest extends AppTestCase
             return $routeMismatch;
         }
 
-        $participantBefore = $this->getParticipantRow($fixture);
-        $userBefore = $this->getUserRow($fixture);
-        $paymentBefore = $this->getPaymentRow($fixture);
-        $bankPaymentBefore = $this->getBankPaymentRow($fixture);
-        $programmeBefore = $this->getProgrammeRow($fixture);
-        $sectionBefore = $this->getProgrammeSectionRow($fixture);
+        $rowsBefore = $this->getForeignRows($fixture);
 
         $rejection = $this->findRejectionFailure($method, $path, $admin, $label);
 
-        if ($this->getParticipantRow($fixture) !== $participantBefore) {
-            return sprintf('%s: foreign participant changed', $label);
-        }
-        if ($this->getUserRow($fixture) !== $userBefore) {
-            return sprintf('%s: foreign user changed', $label);
-        }
-        if ($this->getPaymentRow($fixture) !== $paymentBefore) {
-            return sprintf('%s: foreign payment changed', $label);
-        }
-        if ($this->getBankPaymentRow($fixture) !== $bankPaymentBefore) {
-            return sprintf('%s: foreign bank payment changed', $label);
-        }
-        if ($this->getProgrammeRow($fixture) !== $programmeBefore) {
-            return sprintf('%s: foreign programme changed', $label);
-        }
-        if ($this->getProgrammeSectionRow($fixture) !== $sectionBefore) {
-            return sprintf('%s: foreign programme section changed', $label);
+        foreach ($this->getForeignRows($fixture) as $record => $rowAfter) {
+            if ($rowAfter !== $rowsBefore[$record]) {
+                return sprintf('%s: foreign %s changed', $label, $record);
+            }
         }
 
         return $rejection;
@@ -489,56 +485,30 @@ class CrossEventGuardTest extends AppTestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * One app for all reads: each test app holds a database connection until tearDown,
+     * and this runs twice for every id-taking admin route.
+     *
+     * @return array<string, array<string, mixed>>
      */
-    private function getParticipantRow(CrossEventForeignFixture $fixture): array
+    private function getForeignRows(CrossEventForeignFixture $fixture): array
     {
-        return $this->getService($this->getTestApp(false), ParticipantRepository::class)
-            ->get($fixture->participantId)->getRowData();
-    }
+        $app = $this->getTestApp(false);
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function getUserRow(CrossEventForeignFixture $fixture): array
-    {
-        return $this->getService($this->getTestApp(false), UserRepository::class)
-            ->get($fixture->userId)->getRowData();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getPaymentRow(CrossEventForeignFixture $fixture): array
-    {
-        return $this->getService($this->getTestApp(false), PaymentRepository::class)
-            ->get($fixture->paymentId)->getRowData();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getBankPaymentRow(CrossEventForeignFixture $fixture): array
-    {
-        return $this->getService($this->getTestApp(false), BankPaymentRepository::class)
-            ->get($fixture->bankPaymentId)->getRowData();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getProgrammeRow(CrossEventForeignFixture $fixture): array
-    {
-        return $this->getService($this->getTestApp(false), ProgrammeRepository::class)
-            ->get($fixture->programmeId)->getRowData();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getProgrammeSectionRow(CrossEventForeignFixture $fixture): array
-    {
-        return $this->getService($this->getTestApp(false), ProgrammeSectionRepository::class)
-            ->get($fixture->programmeSectionId)->getRowData();
+        return [
+            'participant' => $this->getService($app, ParticipantRepository::class)
+                ->get($fixture->participantId)->getRowData(),
+            'user' => $this->getService($app, UserRepository::class)
+                ->get($fixture->userId)->getRowData(),
+            'payment' => $this->getService($app, PaymentRepository::class)
+                ->get($fixture->paymentId)->getRowData(),
+            'bank payment' => $this->getService($app, BankPaymentRepository::class)
+                ->get($fixture->bankPaymentId)->getRowData(),
+            'programme' => $this->getService($app, ProgrammeRepository::class)
+                ->get($fixture->programmeId)->getRowData(),
+            'programme section' => $this->getService($app, ProgrammeSectionRepository::class)
+                ->get($fixture->programmeSectionId)->getRowData(),
+            'programme place' => $this->getService($app, ProgrammePlaceRepository::class)
+                ->get($fixture->programmePlaceId)->getRowData(),
+        ];
     }
 }

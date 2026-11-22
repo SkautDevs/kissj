@@ -15,6 +15,9 @@ use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\User\UserStatus;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -32,6 +35,8 @@ class ProgrammeAdminController extends AbstractController
         private readonly ParticipantRepository $participantRepository,
         private readonly DevicePairingRepository $devicePairingRepository,
         private readonly DevicePairingService $devicePairingService,
+        private readonly ProgrammePlaceRepository $programmePlaceRepository,
+        private readonly ProgrammePlaceService $programmePlaceService,
     ) {
     }
 
@@ -105,7 +110,7 @@ class ProgrammeAdminController extends AbstractController
         $programme->imageFilename = null;
         $programme->start = $start;
         $programme->end = $end;
-        $this->fillFromRequest($programme, $request);
+        $this->fillFromRequest($programme, $request, $event);
 
         $this->programmeRepository->persist($programme);
         $this->saveImage($programme, $request);
@@ -138,7 +143,7 @@ class ProgrammeAdminController extends AbstractController
         $programme->start = $start;
         $programme->end = $end;
         $programme->section = $this->getSectionFromRequest($request, $event);
-        $this->fillFromRequest($programme, $request);
+        $this->fillFromRequest($programme, $request, $event);
 
         $this->programmeRepository->transactional(function () use ($programme): void {
             $this->programmeRepository->persist($programme);
@@ -257,20 +262,38 @@ class ProgrammeAdminController extends AbstractController
         return $this->view->render($response, 'admin/programmeEdit-admin.twig', [
             'programme' => $programme,
             'sections' => $this->programmeSectionRepository->findForEvent($event),
+            'places' => $this->programmePlaceRepository->findForEvent($event),
+            'selectedPlaceId' => $programme?->programmePlace?->id,
             'allRoles' => ParticipantRole::all(),
             'event' => $event,
         ]);
     }
 
-    private function fillFromRequest(Programme $programme, Request $request): void
+    private function fillFromRequest(Programme $programme, Request $request, Event $event): void
     {
         $programme->name = $this->getParameterFromBody($request, 'name');
         $programme->description = $this->getParameterFromBody($request, 'description');
-        $programme->place = $this->getParameterFromBody($request, 'place');
         $programme->capacity = max(1, (int)$this->getParameterFromBody($request, 'capacity'));
         $programme->isPreregistered = $this->isCheckboxCheckedInBody($request, 'isPreregistered');
 
         $programme->setTargetRoles($this->rolesFromRequest($request));
+        // last, so that a refused form does not leave a newly created place behind
+        $this->programmePlaceService->assignPlace($programme, $this->placeFromRequest($request, $event));
+    }
+
+    private function placeFromRequest(Request $request, Event $event): ?ProgrammePlace
+    {
+        $newPlaceName = trim($this->getOptionalParameterFromBody($request, 'newPlaceName'));
+        if ($newPlaceName !== '') {
+            return $this->programmePlaceService->findOrCreateByName($event, $newPlaceName);
+        }
+
+        $placeId = $this->getOptionalParameterFromBody($request, 'placeId');
+        if ($placeId === '') {
+            return null;
+        }
+
+        return $this->programmePlaceRepository->getForEventById((int)$placeId, $event);
     }
 
     private function getSectionFromRequest(Request $request, Event $event): ProgrammeSection

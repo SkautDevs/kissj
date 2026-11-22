@@ -318,7 +318,6 @@ class TestingEventsSeed extends AbstractSeed
             $programmeRows[] = [
                 'name' => $programme['name'],
                 'description' => $programme['description'],
-                'place' => $programme['place'],
                 'image_filename' => $imagesEnabled && $image !== null ? $this->storeProgrammeImage($image) : null,
                 'start' => $programme['start'],
                 'end' => $programme['end'],

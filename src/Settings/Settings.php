@@ -107,6 +107,9 @@ use kissj\Programme\Device\DevicePairingController;
 use kissj\Programme\Device\DevicePairingRepository;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Programme\Place\ProgrammePlaceAdminController;
+use kissj\Programme\Place\ProgrammePlaceRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
@@ -303,6 +306,9 @@ class Settings
             ProgrammeApiController::class => autowire(),
             ProgrammeController::class => autowire(),
             ProgrammeJsonController::class => autowire(),
+            ProgrammePlaceAdminController::class => autowire(),
+            ProgrammePlaceRepository::class => autowire(),
+            ProgrammePlaceService::class => autowire(),
             ProgrammeRegistrationRepository::class => autowire(),
             ProgrammeRepository::class => autowire(),
             ProgrammeSectionAdminController::class => autowire(),

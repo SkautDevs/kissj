@@ -182,6 +182,15 @@ abstract class AbstractController
         return $parameter;
     }
 
+    protected function getOptionalParameterFromBody(Request $request, string $parameterName): string
+    {
+        if (array_key_exists($parameterName, $this->getParsedBodyArray($request)) === false) {
+            return '';
+        }
+
+        return $this->getParameterFromBody($request, $parameterName);
+    }
+
     /**
      * @return list<string>
      */

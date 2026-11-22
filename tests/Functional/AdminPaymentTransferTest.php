@@ -318,7 +318,6 @@ class AdminPaymentTransferTest extends AppTestCase
         $programme = new Programme();
         $programme->name = 'transfer programme';
         $programme->description = 'description';
-        $programme->place = 'main field';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime('2027-06-03 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-03 12:00');

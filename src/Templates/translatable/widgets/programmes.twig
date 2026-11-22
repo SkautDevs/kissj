@@ -5,13 +5,13 @@
 
         <ul>
             {% for programme in preregisteredProgrammes %}
-                <li>{{ programme.name }}, {{ programme.start|date('j. n. Y H:i') }}, {{ programme.place }}</li>
+                <li>{{ programme.name }}, {{ programme.start|date('j. n. Y H:i') }}, {{ programme.getPlaceName() }}</li>
             {% endfor %}
             {% for registration in registeredProgrammes %}
                 <li>
                     {{ registration.programme.name }},
                     {{ registration.programme.start|date('j. n. Y H:i') }},
-                    {{ registration.programme.place }}
+                    {{ registration.programme.getPlaceName() }}
                 </li>
             {% endfor %}
         </ul>

@@ -5,7 +5,7 @@
         <h1>{{ sheet.programme.name }}</h1>
         <p>
             {{ sheet.programme.start|date('j. n. Y H:i') }} – {{ sheet.programme.end|date('j. n. Y H:i') }},
-            {{ sheet.programme.place }}
+            {{ sheet.programme.getPlaceName() }}
             ({{ sheet.programme.section.getLabel() }})
         </p>
         <p>{{ sheet.registrations|length }}/{{ sheet.programme.capacity }}</p>

@@ -50,6 +50,7 @@ use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
 use kissj\Programme\Device\DevicePairingController;
+use kissj\Programme\Place\ProgrammePlaceAdminController;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
 use kissj\Programme\ProgrammeController;
@@ -601,6 +602,18 @@ class Route
                         '/sections/{sectionId}/move/{direction:up|down}',
                         ProgrammeSectionAdminController::class . '::move',
                     )->setName('admin-programme-section-move');
+
+                    $app->get('/places', ProgrammePlaceAdminController::class . '::overview')
+                        ->setName('admin-programme-places');
+
+                    $app->post('/places', ProgrammePlaceAdminController::class . '::create')
+                        ->setName('admin-programme-place-create');
+
+                    $app->post('/places/{placeId}/edit', ProgrammePlaceAdminController::class . '::update')
+                        ->setName('admin-programme-place-update');
+
+                    $app->post('/places/{placeId}/delete', ProgrammePlaceAdminController::class . '::delete')
+                        ->setName('admin-programme-place-delete');
 
                     $app->get('/new', ProgrammeAdminController::class . '::showCreate')
                         ->setName('admin-programme-new');

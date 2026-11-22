@@ -571,7 +571,6 @@ class DeviceSessionApiTest extends AppTestCase
         $programme = new Programme();
         $programme->name = 'session programme';
         $programme->description = 'description';
-        $programme->place = 'main field';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');

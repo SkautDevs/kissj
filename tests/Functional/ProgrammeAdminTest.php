@@ -10,6 +10,9 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\Place\ProgrammePlace;
+use kissj\Programme\Place\ProgrammePlaceRepository;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeRegistrationRepository;
@@ -46,7 +49,7 @@ class ProgrammeAdminTest extends AppTestCase
             [
                 'name' => $uniqueName,
                 'description' => 'desc',
-                'place' => 'tent A',
+                'newPlaceName' => 'tent A',
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '15',
@@ -82,7 +85,7 @@ class ProgrammeAdminTest extends AppTestCase
             [
                 'name' => $uniqueName . ' renamed',
                 'description' => 'desc',
-                'place' => 'tent B',
+                'newPlaceName' => 'tent B',
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
@@ -135,7 +138,7 @@ class ProgrammeAdminTest extends AppTestCase
             [
                 'name' => 'moves into exclusive',
                 'description' => 'desc',
-                'place' => 'tent A',
+                'newPlaceName' => 'tent A',
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
@@ -173,7 +176,7 @@ class ProgrammeAdminTest extends AppTestCase
             [
                 'name' => $programme->name,
                 'description' => 'desc',
-                'place' => 'tent A',
+                'newPlaceName' => 'tent A',
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
@@ -206,7 +209,7 @@ class ProgrammeAdminTest extends AppTestCase
             [
                 'name' => 'tampered role programme',
                 'description' => 'desc',
-                'place' => 'tent A',
+                'newPlaceName' => 'tent A',
                 'start' => '2027-06-05T10:00',
                 'end' => '2027-06-05T12:00',
                 'capacity' => '15',
@@ -248,7 +251,7 @@ class ProgrammeAdminTest extends AppTestCase
             'POST',
             $this->programmeBody($app, $uniqueName, '2027-06-05T10:00', '2027-06-05T12:00', [
                 'description' => 'a < b',
-                'place' => "O'Brien",
+                'newPlaceName' => "O'Brien",
             ]),
         ));
         self::assertSame(302, $response->getStatusCode());
@@ -260,7 +263,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertNotNull($programme);
         self::assertSame($uniqueName, $programme->name);
         self::assertSame('a < b', $programme->description);
-        self::assertSame("O'Brien", $programme->place);
+        self::assertSame("O'Brien", $programme->getPlaceName());
     }
 
     public function testProgrammeFormIsNotRenderedWhenEventHasNoSection(): void
@@ -317,6 +320,147 @@ class ProgrammeAdminTest extends AppTestCase
         ));
 
         self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testProgrammeFormSelectsExistingPlace(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'place-select-admin@example.com');
+        $place = $this->getService($app, ProgrammePlaceService::class)
+            ->findOrCreateByName($this->getEvent($app), 'Žlutý les');
+        $uniqueName = 'with selected place ' . bin2hex(random_bytes(4));
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/new',
+            'POST',
+            $this->programmeBody($app, $uniqueName, '2027-06-05T10:00', '2027-06-05T12:00', [
+                'placeId' => (string)$place->id,
+                'newPlaceName' => '',
+            ]),
+        ));
+
+        self::assertSame(302, $response->getStatusCode());
+        $programme = $this->findByName(
+            $this->getService($app, ProgrammeRepository::class),
+            $this->getEvent($app),
+            $uniqueName,
+        );
+        self::assertNotNull($programme);
+        self::assertSame($place->id, $programme->programmePlace?->id);
+        self::assertSame($place->name, $programme->getPlaceName());
+    }
+
+    public function testProgrammeFormCreatesNewPlaceInlineAndReusesIt(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'place-inline-admin@example.com');
+        $event = $this->getEvent($app);
+        $existing = $this->getService($app, ProgrammePlaceService::class)->findOrCreateByName($event, 'other place');
+        $names = ['inline place one ' . bin2hex(random_bytes(4)), 'inline place two ' . bin2hex(random_bytes(4))];
+
+        foreach ($names as $name) {
+            $app->handle($this->createRequest(
+                '/v2/event/test-event-slug/admin/programmes/new',
+                'POST',
+                $this->programmeBody($app, $name, '2027-06-05T10:00', '2027-06-05T12:00', [
+                    'placeId' => (string)$existing->id,
+                    'newPlaceName' => ' tent A ',
+                ]),
+            ));
+        }
+
+        $placeRepository = $this->getService($app, ProgrammePlaceRepository::class);
+        $tentA = array_values(array_filter(
+            $placeRepository->findForEvent($event),
+            static fn (ProgrammePlace $place): bool => $place->name === 'tent A',
+        ));
+        self::assertCount(1, $tentA);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        foreach ($names as $name) {
+            $programme = $this->findByName($programmeRepository, $event, $name);
+            self::assertNotNull($programme);
+            self::assertSame($tentA[0]->id, $programme->programmePlace?->id);
+            self::assertSame('tent A', $programme->getPlaceName());
+        }
+    }
+
+    public function testProgrammeFormWithoutPlaceLeavesItEmpty(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'place-none-admin@example.com');
+        $uniqueName = 'without place ' . bin2hex(random_bytes(4));
+
+        $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/new',
+            'POST',
+            $this->programmeBody($app, $uniqueName, '2027-06-05T10:00', '2027-06-05T12:00', [
+                'placeId' => '',
+                'newPlaceName' => '   ',
+            ]),
+        ));
+
+        $programme = $this->findByName(
+            $this->getService($app, ProgrammeRepository::class),
+            $this->getEvent($app),
+            $uniqueName,
+        );
+        self::assertNotNull($programme);
+        self::assertSame('', $programme->getPlaceName());
+        self::assertNull($programme->programmePlace);
+        self::assertSame(
+            [],
+            $this->getService($app, ProgrammePlaceRepository::class)->findForEvent($this->getEvent($app)),
+        );
+    }
+
+    public function testProgrammeFormRejectsPlaceOfAnotherEvent(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'foreign-place-admin@example.com');
+        $foreignEvent = $this->getSmallTestEvent($this->getService($app, EventRepository::class));
+        $foreignPlace = $this->getService($app, ProgrammePlaceService::class)
+            ->findOrCreateByName($foreignEvent, 'foreign place');
+
+        $response = $app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/new',
+            'POST',
+            $this->programmeBody($app, 'foreign place', '2027-06-05T10:00', '2027-06-05T12:00', [
+                'placeId' => (string)$foreignPlace->id,
+                'newPlaceName' => '',
+            ]),
+        ));
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testProgrammeFormRendersPlaceSelect(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'place-select-render-admin@example.com');
+        $event = $this->getEvent($app);
+        $placeService = $this->getService($app, ProgrammePlaceService::class);
+        $assigned = $placeService->findOrCreateByName($event, 'Žlutý les');
+        $other = $placeService->findOrCreateByName($event, 'Modrý les');
+        $programme = $this->createProgramme($app, 'place select render ' . bin2hex(random_bytes(4)), null, 5);
+        $placeService->assignPlace($programme, $assigned);
+        $this->getService($app, ProgrammeRepository::class)->persist($programme);
+
+        $body = (string)$app->handle($this->createRequest(
+            '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
+        ))->getBody();
+
+        self::assertSame(1, preg_match('~<select[^>]*name="placeId"[^>]*>(.*?)</select>~s', $body, $matches));
+        $options = $matches[1];
+        self::assertMatchesRegularExpression(
+            '~<option value="">\s*' . preg_quote($this->translate($app, 'programme.admin.formPlaceNone'), '~') . '~',
+            $options,
+        );
+        self::assertMatchesRegularExpression('~<option value="' . $assigned->id . '"\s+selected>~', $options);
+        self::assertMatchesRegularExpression('~<option value="' . $other->id . '"\s*>~', $options);
+        self::assertStringContainsString('Žlutý les', $options);
+        self::assertStringContainsString('Modrý les', $options);
+        self::assertStringContainsString('name="newPlaceName"', $body);
+        self::assertStringNotContainsString('name="place"', $body);
     }
 
     public function testCreateRejectsEndBeforeStart(): void
@@ -464,7 +608,7 @@ class ProgrammeAdminTest extends AppTestCase
         return array_merge([
             'name' => $name,
             'description' => 'desc',
-            'place' => 'tent A',
+            'newPlaceName' => 'tent A',
             'start' => $start,
             'end' => $end,
             'capacity' => '5',
@@ -958,7 +1102,6 @@ class ProgrammeAdminTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description';
-        $programme->place = 'somewhere';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');

@@ -220,7 +220,7 @@ readonly class ProgrammeService
             $programme->name,
             $programme->section->id,
             $programme->description,
-            $programme->place,
+            $programme->getPlaceName(),
             DateTimeUtils::formatAtom($programme->start),
             DateTimeUtils::formatAtom($programme->end),
             $programme->isPreregistered,

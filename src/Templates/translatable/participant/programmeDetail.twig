@@ -10,7 +10,7 @@
 
         <p>{{ programme.description|nl2br }}</p>
         <p>{{ programme.start|date('j. n. Y H:i') }} - {{ programme.end|date('j. n. Y H:i') }}</p>
-        <p>{{ programme.place }}</p>
+        <p>{{ programme.getPlaceName() }}</p>
 
         {% if programme.isPreregistered %}
             <p>{{ 'programme.list.preregistered'|trans }}</p>

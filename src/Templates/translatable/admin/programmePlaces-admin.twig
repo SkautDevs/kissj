@@ -1,0 +1,45 @@
+{% extends "_layout.twig" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ 'programme.admin.places.title'|trans }}</h2>
+        <a href="{{ url_for('admin-programmes', {eventSlug: event.slug}) }}"
+           class="btn btn-grey btn-small">{{ 'programme.admin.places.back'|trans }}</a>
+    </div>
+
+    <div class="card text-left">
+        <h3>{{ 'programme.admin.places.add'|trans }}</h3>
+        <form method="post" action="{{ url_for('admin-programme-place-create', {eventSlug: event.slug}) }}">
+            <input class="form-control" type="text" name="name" required
+                   placeholder="{{ 'programme.admin.places.colName'|trans }}">
+            <input class="form-control" type="text" name="coordinates"
+                   placeholder="{{ 'programme.admin.places.colCoordinates'|trans }}">
+            <input type="submit" class="btn btn-small" value="{{ 'programme.admin.places.add'|trans }}">
+        </form>
+    </div>
+
+    {% for place in places %}
+        {% set routeParams = {eventSlug: event.slug, placeId: place.id} %}
+        <div class="card text-left">
+            <form method="post" action="{{ url_for('admin-programme-place-update', routeParams) }}">
+                <input class="form-control" type="text" name="name" required value="{{ place.name }}"
+                       placeholder="{{ 'programme.admin.places.colName'|trans }}">
+                <input class="form-control" type="text" name="coordinates" value="{{ place.getCoordinatesInput() }}"
+                       placeholder="{{ 'programme.admin.places.colCoordinates'|trans }}">
+                <br/>
+                {{ 'programme.admin.places.colCount'|trans }}: <b>{{ counts[place.id].active }}</b>
+                {% if counts[place.id].deleted > 0 %}
+                    {{ 'programme.admin.places.deletedCount'|trans({'%count%': counts[place.id].deleted}) }}
+                {% endif %}
+                <br/>
+                <input type="submit" class="btn btn-small" value="{{ 'programme.admin.places.save'|trans }}">
+            </form>
+            <br/>
+            <form method="post" action="{{ url_for('admin-programme-place-delete', routeParams) }}"
+                  style="display: inline">
+                <input type="submit" class="btn btn-small btn-grey"
+                       value="{{ 'programme.admin.places.delete'|trans }}">
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}

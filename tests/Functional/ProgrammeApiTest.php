@@ -141,7 +141,7 @@ class ProgrammeApiTest extends AppTestCase
             'name' => 'api list preregistered',
             'sectionId' => $firstCreated->id,
             'description' => "description of api list preregistered\nsecond line",
-            'place' => 'main field',
+            'place' => '',
             'start' => '2027-06-03T09:00:00+02:00',
             'end' => '2027-06-03T11:00:00+02:00',
             'isPreregistered' => true,
@@ -398,7 +398,6 @@ class ProgrammeApiTest extends AppTestCase
         $programme = new Programme();
         $programme->name = $name;
         $programme->description = 'description of ' . $name . "\nsecond line";
-        $programme->place = 'main field';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');

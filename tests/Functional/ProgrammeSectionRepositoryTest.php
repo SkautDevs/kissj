@@ -103,7 +103,6 @@ class ProgrammeSectionRepositoryTest extends AppTestCase
         $programme = new Programme();
         $programme->name = 'section counted programme';
         $programme->description = 'description';
-        $programme->place = 'somewhere';
         $programme->imageFilename = null;
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');

@@ -12,7 +12,7 @@
         <div>
             {{ 'programme.admin.colTime'|trans }}:
             <b>{{ programme.start|date('j. n. Y H:i') }} – {{ programme.end|date('j. n. Y H:i') }}</b><br/>
-            {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.place }}</b><br/>
+            {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.getPlaceName() }}</b><br/>
             {{ 'programme.admin.colOccupancy'|trans }}:
             <b>{{ (occupancy[programme.id] ?? 0) }}/{{ programme.capacity }}</b><br/>
             <br/>

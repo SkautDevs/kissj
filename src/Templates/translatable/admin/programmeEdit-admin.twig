@@ -34,10 +34,20 @@
                               name="description">{{ programme ? programme.description : '' }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="place">{{ 'programme.admin.formPlace'|trans }}:</label>
+                    <label for="placeId">{{ 'programme.admin.formPlace'|trans }}:</label>
                     <br/>
-                    <input class="form-control form-wide" type="text" id="place" name="place" required
-                           value="{{ programme ? programme.place : '' }}">
+                    <select class="form-control form-wide" id="placeId" name="placeId">
+                        <option value="">{{ 'programme.admin.formPlaceNone'|trans }}</option>
+                        {% for place in places %}
+                            <option value="{{ place.id }}" {{ selectedPlaceId == place.id ? 'selected' : '' }}>
+                                {{- place.name -}}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <br/>
+                    <label for="newPlaceName">{{ 'programme.admin.formPlaceNew'|trans }}:</label>
+                    <br/>
+                    <input class="form-control form-wide" type="text" id="newPlaceName" name="newPlaceName" value="">
                 </div>
                 <div class="form-group">
                     <label for="start">{{ 'programme.admin.formStart'|trans }}:</label>

@@ -22,6 +22,7 @@ use kissj\Payment\Payment;
 use kissj\Programme\Device\DevicePairing;
 use kissj\Programme\Device\DevicePairingAttempt;
 use kissj\Programme\Device\DeviceSession;
+use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRegistration;
 use kissj\Programme\ProgrammeSection;
@@ -113,6 +114,9 @@ class Mapper implements IMapper
 
             case 'programme_section':
                 return ProgrammeSection::class;
+
+            case 'programme_place':
+                return ProgrammePlace::class;
 
             case 'device_pairing':
                 return DevicePairing::class;
