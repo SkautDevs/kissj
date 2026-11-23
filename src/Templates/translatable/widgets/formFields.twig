@@ -26,6 +26,7 @@
                 value="{{ value }}"
                 {% if item.pattern %}pattern="{{ item.pattern }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
+                {% if item.helpText %}aria-describedby="{{ item.slug }}-help"{% endif %}
             >
             {{ forms.renderHelpText(item) }}
         </div>
@@ -53,6 +54,7 @@
                 value="{% if value %}{{ value|date('Y-m-d') }}{% elseif item.slug == 'arrivalDate' %}{{ event.startDay|date('Y-m-d') }}{% elseif item.slug == 'departureDate' %}{{ event.endDay|date('Y-m-d') }}{% elseif item.defaultValue %}{{ item.defaultValue }}{% endif %}"
                 {% if item.required %}required="required"{% endif %}
                 {% if item.slug == 'birthDate' %}data-event-start-day="{{ event.startDay.getTimestamp() }}"{% endif %}
+                {% if item.helpText %}aria-describedby="{{ item.slug }}-help"{% endif %}
             >
             {{ forms.renderHelpText(item) }}
         </div>
@@ -64,6 +66,7 @@
                 class="form-control form-wide"
                 name="{{ item.slug }}"
                 {% if item.required %}required="required"{% endif %}
+                {% if item.helpText %}aria-describedby="{{ item.slug }}-help"{% endif %}
             >
                 {% for dbValue, transKey in item.options %}
                     <option
@@ -82,10 +85,10 @@
             <textarea
                 id="{{ item.slug }}"
                 class="form-control form-wide"
-                type="text"
                 name="{{ item.slug }}"
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 {% if item.required %}required="required"{% endif %}
+                {% if item.helpText %}aria-describedby="{{ item.slug }}-help"{% endif %}
             >{{ value }}</textarea>
             {{ forms.renderHelpText(item) }}
         </div>
@@ -96,10 +99,9 @@
                 {% if not item.appliesToAge(personDetails.getAgeAtStartOfEvent) %}style="display:none"{% endif %}
             {% endif %}
         >
-            <label>{{ item.label|trans }}:
-                <input id="{{ item.slug }}" class="form-control form-group-inline" type="file" name="{{ item.slug }}"
-                        {% if not value %} {% endif %}>
-            </label>
+            <label for="{{ item.slug }}">{{ item.label|trans }}:</label>
+            <input id="{{ item.slug }}" class="form-control form-group-inline" type="file" name="{{ item.slug }}"
+                   {% if item.helpText %}aria-describedby="{{ item.slug }}-help"{% endif %}>
             {% if value %}
                 {% set storedFilename = personDetails.getUploadedFilename(item.slug) %}
                 <b>
@@ -113,8 +115,8 @@
         </div>
     {% elseif item.type.value == 'checkbox' %}
         {% if item.slug == 'preferredPosition' %}
-            <div class="form-group">
-                <label for="position">{{ 'detail.position-title' | trans }}:</label>
+            <fieldset class="form-group"{% if item.helpText %} aria-describedby="{{ item.slug }}-help"{% endif %}>
+                <legend>{{ 'detail.position-title' | trans }}:</legend>
                 {% for dbValue, transKey in item.options %}
                     <label class="form-control">
                         <input type="checkbox" name="preferredPosition[]" value="{{ dbValue }}"
@@ -123,7 +125,7 @@
                     </label>
                 {% endfor %}
                 {{ forms.renderHelpText(item) }}
-            </div>
+            </fieldset>
         {% elseif item.slug == 'printedHandbook' %}
             <div class="form-group">
                 <label for="{{ item.slug }}">{{ 'detail.printedHandbook-detail' | trans }}: </label>
@@ -192,7 +194,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro renderHelpText(item) %}{% if item.helpText %}<div class="help-text">{{ item.helpText|trans|raw }}</div>{% endif %}{% endmacro %}
+{% macro renderHelpText(item) %}{% if item.helpText %}<div id="{{ item.slug }}-help" class="help-text">{{ item.helpText|trans|raw }}</div>{% endif %}{% endmacro %}
 
 {#
     Renders a read-only detail display for details.twig.

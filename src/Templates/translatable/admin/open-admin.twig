@@ -46,7 +46,7 @@
                         <h4>{{ person.getFullName }}</h4>
                         {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
                     {% elseif section.role.value == 'guest' or section.role.value == 'ot' %}
-                        <h4>{{ person.getFullName }}</h4>
+                        <h3>{{ person.getFullName }}</h3>
                         {% include 'widgets/detailsMinimal.twig' with {'person': person, 'ca': section.contentArbiter} %}
                         <br/>
                     {% else %}

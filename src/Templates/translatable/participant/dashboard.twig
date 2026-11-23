@@ -73,13 +73,16 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if userStatus == 'open' %}
-                                    <a href="{{ url_for('p-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                                class="material-icons">edit</i></a>
-                                    <a href="{{ url_for('p-showDelete', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                                class="material-icons">delete</i></a>
+                                    <a href="{{ url_for('p-showChangeDetails', {'participantId': p.id, 'eventSlug': event.slug}) }}"
+                                       aria-label="{{ 'dashboard.editParticipant' | trans({'%name%': p.getFullName}) }}"><i
+                                                class="material-icons" aria-hidden="true">edit</i></a>
+                                    <a href="{{ url_for('p-showDelete', {'participantId': p.id, 'eventSlug': event.slug}) }}"
+                                       aria-label="{{ 'dashboard.deleteParticipant' | trans({'%name%': p.getFullName}) }}"><i
+                                                class="material-icons" aria-hidden="true">delete</i></a>
                                 {% else %}
-                                    <a href="{{ url_for('p-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                                class="material-icons">search</i></a>
+                                    <a href="{{ url_for('p-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"
+                                       aria-label="{{ 'dashboard.showParticipant' | trans({'%name%': p.getFullName}) }}"><i
+                                                class="material-icons" aria-hidden="true">search</i></a>
                                 {% endif %}
                             {% elseif person is TechnicalTeamLeader %}
                                 {{ 'role.ttp' | trans }} <b>{{ p.getFullName }}</b>
@@ -98,10 +101,11 @@
                                 {% endif %}
                             {% elseif person is TroopLeader %}
                                 {% set participantUserStatus = p.user.status.value %}
+                                {% set participantLabel = p.isFullNameNotEmpty ? p.getFullName : ('dashboard.withoutFullName' | trans) %}
                                 <span class="{% if participantUserStatus == 'open' %}highlight{% endif %}">
                                     {% if p.user.loginType.value == 'skautis' and p.user.skautisHasMembership == false %}
-                                        <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
-                                        {{ '_layout.skautisAccountNotConnected' | trans }} ❌
+                                        <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="SkautIS">
+                                        {{ '_layout.skautisAccountNotConnected' | trans }} <span aria-hidden="true">❌</span>
                                     {% endif %}
                                     {% if p.isFullNameNotEmpty %}
                                         <b>{{ p.getFullName }}</b>
@@ -110,11 +114,13 @@
                                     {% endif %}
                                     - {{ ('dashboard.userStatus.' ~ participantUserStatus)|trans }}
                                 </span>
-                                <a href="{{ url_for('tp-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                            class="material-icons">search</i></a>
+                                <a href="{{ url_for('tp-show', {'participantId': p.id, 'eventSlug': event.slug}) }}"
+                                   aria-label="{{ 'dashboard.showParticipant' | trans({'%name%': participantLabel}) }}"><i
+                                            class="material-icons" aria-hidden="true">search</i></a>
                                 {% if userStatus == 'open' %}
-                                    <a href="{{ url_for('tp-showUntie', {'participantId': p.id, 'eventSlug': event.slug}) }}"><i
-                                                class="material-icons">delete</i></a>
+                                    <a href="{{ url_for('tp-showUntie', {'participantId': p.id, 'eventSlug': event.slug}) }}"
+                                       aria-label="{{ 'dashboard.untieParticipant' | trans({'%name%': participantLabel}) }}"><i
+                                                class="material-icons" aria-hidden="true">delete</i></a>
                                 {% endif %}
                             {% endif %}
                         </li>

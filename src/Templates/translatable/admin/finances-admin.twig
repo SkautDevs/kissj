@@ -7,23 +7,23 @@
     </div>
 
     <div class="card">
-        <h3>{{ 'finances-admin.paidHeader' | trans }}</h3>
+        <h2>{{ 'finances-admin.paidHeader' | trans }}</h2>
         <table class="table-wide">
             <thead>
             <tr>
-                <th>{{ 'finances-admin.month' | trans }}</th>
+                <th scope="col">{{ 'finances-admin.month' | trans }}</th>
                 {% for currency in report.paidCurrencies %}
-                    <th>{{ currency }}</th>
+                    <th scope="col">{{ currency }}</th>
                 {% endfor %}
                 {% if report.showScarves %}
-                    <th>{{ 'finances-admin.scarves' | trans }}</th>
+                    <th scope="col">{{ 'finances-admin.scarves' | trans }}</th>
                 {% endif %}
             </tr>
             </thead>
             <tbody>
             {% for month, row in report.months %}
                 <tr>
-                    <th>
+                    <th scope="row">
                         {% if month == monthUnknown %}
                             {{ 'finances-admin.unknownMonth' | trans }}
                         {% else %}
@@ -39,7 +39,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <th>{{ 'finances-admin.total' | trans }} ({{ report.paidCount }})</th>
+                <th scope="row">{{ 'finances-admin.total' | trans }} ({{ report.paidCount }})</th>
                 {% for currency in report.paidCurrencies %}
                     <td>{{ report.paidTotal[currency]|default(0) }}</td>
                 {% endfor %}
@@ -52,16 +52,16 @@
     </div>
 
     <div class="card">
-        <h3>{{ 'finances-admin.waitingHeader' | trans }}</h3>
+        <h2>{{ 'finances-admin.waitingHeader' | trans }}</h2>
         <table class="table-wide">
             <thead>
             <tr>
-                <th>{{ 'finances-admin.waitingCount' | trans }}</th>
+                <th scope="col">{{ 'finances-admin.waitingCount' | trans }}</th>
                 {% for currency in report.waitingCurrencies %}
-                    <th>{{ currency }}</th>
+                    <th scope="col">{{ currency }}</th>
                 {% endfor %}
                 {% if report.showScarves %}
-                    <th>{{ 'finances-admin.scarves' | trans }}</th>
+                    <th scope="col">{{ 'finances-admin.scarves' | trans }}</th>
                 {% endif %}
             </tr>
             </thead>
@@ -81,19 +81,19 @@
 
     {% if report.tiers is not empty %}
         <div class="card">
-            <h3>{{ 'finances-admin.tiersHeader' | trans }}</h3>
+            <h2>{{ 'finances-admin.tiersHeader' | trans }}</h2>
             <table class="table-wide">
                 <thead>
                 <tr>
-                    <th>{{ 'finances-admin.price' | trans }}</th>
-                    <th>{{ 'finances-admin.paidColumn' | trans }}</th>
-                    <th>{{ 'finances-admin.waitingColumn' | trans }}</th>
+                    <th scope="col">{{ 'finances-admin.price' | trans }}</th>
+                    <th scope="col">{{ 'finances-admin.paidColumn' | trans }}</th>
+                    <th scope="col">{{ 'finances-admin.waitingColumn' | trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for stat in report.tiers %}
                     <tr>
-                        <th>
+                        <th scope="row">
                             {% if stat.tier.isUnknown %}
                                 {{ 'finances-admin.otherTier' | trans }}
                             {% else %}

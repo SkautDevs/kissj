@@ -25,7 +25,7 @@
                     <div class="landing-logos-slide"{{ copy > 0 ? ' aria-hidden="true"' : '' }}>
                         {% for pastEvent in allEvents %}
                             <figure class="landing-logo-item">
-                                <img src="{{ pastEvent.logoUrl }}" alt="{{ copy == 0 ? pastEvent.readableName : '' }}" loading="lazy">
+                                <img src="{{ pastEvent.logoUrl }}" alt="" loading="lazy">
                                 <figcaption>{{ pastEvent.readableName }}</figcaption>
                             </figure>
                         {% endfor %}

@@ -10,7 +10,7 @@
         <div class="card">
             <h3>{{ 'organizingTeam-admin.registrationUrl' | trans }}</h3>
             <p>{{ 'organizingTeam-admin.registrationUrlDescription' | trans }}</p>
-            <input type="text" class="form-control form-wide" value="{{ otRegistrationUrl }}" readonly onclick="this.select()">
+            <input type="text" class="form-control form-wide" value="{{ otRegistrationUrl }}" aria-label="{{ 'organizingTeam-admin.registrationUrl' | trans }}" readonly onclick="this.select()">
             <br/>
             <form method="POST" action="{{ url_for('admin-organizing-team-regenerate-token', {'eventSlug': event.slug}) }}">
                 <input type="submit" class="btn btn-grey btn-small" value="{{ 'organizingTeam-admin.regenerateToken' | trans }}">
@@ -23,9 +23,9 @@
             <table>
                 <thead>
                 <tr>
-                    <th>{{ 'organizingTeam-admin.name' | trans }}</th>
-                    <th>{{ 'organizingTeam-admin.email' | trans }}</th>
-                    <th>{{ 'organizingTeam-admin.status' | trans }}</th>
+                    <th scope="col">{{ 'organizingTeam-admin.name' | trans }}</th>
+                    <th scope="col">{{ 'organizingTeam-admin.email' | trans }}</th>
+                    <th scope="col">{{ 'organizingTeam-admin.status' | trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
