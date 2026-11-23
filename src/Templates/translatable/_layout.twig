@@ -30,19 +30,24 @@
 </head>
 
 <body class="wrapper">
+<a href="#main-content" class="skip-link">{{ '_layout.skipToContent' | trans }}</a>
+<header>
 <h1 class="text-center">{{ '_layout.title' | trans }} <span class="event-name">{{ event.readableName }}</span></h1>
 <div class="user text-right">
-    {% for localeSlug, localeText in event.eventType.getLanguages() %}
-        <a href="?locale={{ localeSlug }}">{{ localeText }}</a>{% if not loop.last %} | {% endif%}
-    {% endfor %}
+    <nav class="language-nav" aria-label="{{ '_layout.languageSelection' | trans }}">
+        {% set currentLocale = locale|default('cs') %}
+        {% for localeSlug, localeText in event.eventType.getLanguages() %}
+            <a href="?locale={{ localeSlug }}" lang="{{ localeSlug }}"{% if localeSlug == currentLocale %} aria-current="true"{% endif %}>{{ localeText }}</a>{% if not loop.last %} | {% endif %}
+        {% endfor %}
+    </nav>
     {% if user is not null %}
         | {% if user.loginType.value == 'skautis' %}
-            <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="skautisLogo">
-            {%  if not user.skautisHasMembership %}    
-                {{ '_layout.skautisAccountNotConnected' | trans }} ❌
+            <img src="https://is.skaut.cz/Login/Favicons/favicon-16x16.png" alt="SkautIS">
+            {% if not user.skautisHasMembership %}
+                {{ '_layout.skautisAccountNotConnected' | trans }} <span aria-hidden="true">❌</span>
             {% endif %}
         {% else %}
-            📧
+            <span aria-hidden="true">📧</span>
         {% endif %}
         {{ user.email }}
         | <a href="{{ url_for('logout', {'eventSlug': event.slug}) }}">{{ '_layout.logOut' | trans }}</a>
@@ -51,23 +56,26 @@
         {% set userStatus = "unregistred" %}
     {% endif %}
 </div>
-<ul class="steps">
-    <li class="step is-active">
-        {{ '_layout.titleBar' | trans }}
-    </li>
-    <li class="step {% if userStatus == 'open' or userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.editingBar' | trans }}</li>
-    <li class="step {% if userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.lockedBar' | trans }}</li>
-    <li class="step {% if userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.approvedBar' | trans }}</li>
-    <li class="step {% if userStatus == 'paid' %}is-active{% endif %}">{{ '_layout.payedBar' | trans }}</li>
-</ul>
+<nav aria-label="{{ '_layout.registrationProgress' | trans }}">
+    <ul class="steps">
+        <li class="step is-active"{% if userStatus not in ['open', 'closed', 'approved', 'paid'] %} aria-current="step"{% endif %}>
+            {{ '_layout.titleBar' | trans }}
+        </li>
+        <li class="step {% if userStatus == 'open' or userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}"{% if userStatus == 'open' %} aria-current="step"{% endif %}>{{ '_layout.editingBar' | trans }}</li>
+        <li class="step {% if userStatus == 'closed' or userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}"{% if userStatus == 'closed' %} aria-current="step"{% endif %}>{{ '_layout.lockedBar' | trans }}</li>
+        <li class="step {% if userStatus == 'approved' or userStatus == 'paid' %}is-active{% endif %}"{% if userStatus == 'approved' %} aria-current="step"{% endif %}>{{ '_layout.approvedBar' | trans }}</li>
+        <li class="step {% if userStatus == 'paid' %}is-active{% endif %}"{% if userStatus == 'paid' %} aria-current="step"{% endif %}>{{ '_layout.payedBar' | trans }}</li>
+    </ul>
+</nav>
+</header>
 <div class="flash-wrapper">
     {% for flashMessage in flashMessages.dumpMessagesIntoArray() %}
-        <div class="alert alert-{{ flashMessage['type'] }}">
+        <div class="alert alert-{{ flashMessage['type'] }}" role="{{ flashMessage['type'] in ['error', 'warning'] ? 'alert' : 'status' }}">
             {{ flashMessage['message'] }}
         </div>
     {% endfor %}
 </div>
-<main role="main" class="container">
+<main id="main-content" tabindex="-1" class="container">
     {% block content %}{% endblock %}
 </main>
 <footer>
@@ -75,10 +83,10 @@
         <a href="{{ event.webUrl }}" target="_blank">{{ event.readableName }}</a>
         | <a href="https://devs.skauting.cz/" target="_blank">{{ '_layout.creator' | trans }}</a>
         {# the Ukraine link can be swapped for the formal "Junák – český skaut, z. s." footer when the time comes #}
-        | <a href="https://www.stojimezaukrajinou.cz/" target="_blank">🇺🇦 stojimezaukrajinou.cz</a>
+        | <a href="https://www.stojimezaukrajinou.cz/" target="_blank"><span aria-hidden="true">🇺🇦</span> stojimezaukrajinou.cz</a>
     </span>
     <a href="{{ event.webUrl }}" class="footer-item" target="_blank">
-        <img class="footer-logo" src="{{ event.logoUrl }}" alt="logo of {{ event.readableName }}">
+        <img class="footer-logo" src="{{ event.logoUrl }}" alt="{{ '_layout.eventLogoAlt' | trans({'%eventName%': event.readableName}) }}">
     </a>
 </footer>
 {% if event.eventType.getScriptNameWithoutLeadingSlash is not null %}

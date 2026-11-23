@@ -144,11 +144,11 @@ class AdminListingPagesTest extends AppTestCase
 
         $body = $this->fetchBody(self::BASE_URL . '/admin/showPaid');
 
-        // stats-admin.twig renders exactly one unconditional <h4> per section (even when
+        // stats-admin.twig renders exactly one unconditional <h3> per section (even when
         // empty), so counting them pins the role list without depending on translated text -
         // the default test locale is cs, where role.tp and role.p happen to share one word
         // ("účastník"), which would make a text-based assertion unreliable
-        self::assertSame(5, substr_count($body, '<h4>'));
+        self::assertSame(5, substr_count($body, '<h3>'));
         self::assertStringNotContainsString('TroopParticipant' . $suffix, $body);
     }
 

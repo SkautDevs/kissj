@@ -17,7 +17,7 @@
         <h2>{{ 'stats-admin.paid' | trans }} {{ event.readableName }}</h2>
 
         {% for section in sections %}
-            <h4>{{ section.titleKey | trans }}</h4>
+            <h3>{{ section.titleKey | trans }}</h3>
             {% for person in section.participants %}
                 {% include 'widgets/participantRow.twig' with {'person': person, 'ca': section.contentArbiter} %}<br/>
             {% endfor %}

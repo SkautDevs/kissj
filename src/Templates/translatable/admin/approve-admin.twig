@@ -41,7 +41,7 @@
                             {% endfor %}
                         {% endif %}
                     {% else %}
-                        <h4>{{ person.getFullName }}</h4>
+                        <h3>{{ person.getFullName }}</h3>
                         {% include 'widgets/detailsForAdmin.twig' with {'person': person, 'ca': section.contentArbiter} %}
                         <br/>
                     {% endif %}

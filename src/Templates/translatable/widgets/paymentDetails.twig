@@ -1,4 +1,4 @@
-<h4>{{ person.getFullName }}</h4>
+<h3>{{ person.getFullName }}</h3>
 {{ 'payments-admin.email' | trans }}: <b>{{ person.user.getEmail }}</b><br/>
 {% if person is not TroopParticipant and canAccessRoute('admin-show-add-new-payment') %}
     <a

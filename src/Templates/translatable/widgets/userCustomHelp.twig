@@ -1,4 +1,4 @@
-<h4>
+<h3>
     {% set userRole = person.getRole.value %}
     {% if userStatus == 'open' %}
         {% if userRole == 'pl' %}
@@ -36,7 +36,7 @@
             {{ 'userCustomHelp.statusPaid' | trans({'%event.getReadableName%': event.getReadableName}) }}
         {% endif %}
     {% endif %}
-</h4>
+</h3>
 
 {% if person.getPayments %}
     <h2>{{ 'dashboard.paymentInfo' | trans }}</h2>

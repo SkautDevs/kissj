@@ -65,9 +65,10 @@
         background-image: url('/navigamus27/patternDark.png');
     }
 
-    /* base th pairs var(--color-main) with white text - white on white in this palette */
+    /* base th pairs var(--color-main) with var(--color-card-background) - keep high contrast on purple */
     th {
         background: #2b1977;
+        color: #ffffff;
     }
 
     .alert-info { --color: #221060; color: #ffffff; }
