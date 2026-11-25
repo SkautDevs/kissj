@@ -45,6 +45,19 @@
                         {% include 'widgets/detailsForAdmin.twig' with {'person': person, 'ca': section.contentArbiter} %}
                         <br/>
                     {% endif %}
+                    {% set notApprovedTroopParticipants = section.role.value == 'tl'
+                        ? person.getNotApprovedTroopParticipants
+                        : [] %}
+                    {% if notApprovedTroopParticipants is not empty %}
+                        <p>{{ 'approve-admin.troopParticipantsNotApproved' | trans }}</p>
+                        <ul>
+                            {% for tp in notApprovedTroopParticipants %}
+                                <li>{{ tp.getFullName }} – {{
+                                    ('dashboard.userStatus.' ~ tp.user.status.value) | trans
+                                }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                     <a href="{{ url_for('admin-deny-participant-show', {'participantId': person.getId, 'eventSlug': event.slug}) }}"
                        class="btn btn-grey btn-small">{{ 'approve-admin.deny' | trans }}</a>
                     <br/>
@@ -57,7 +70,8 @@
                           data-error-fallback="{{ 'flash.error.actionFailed' | trans }}">
                         <input type="submit"
                                value="{{ 'approve-admin.approveAndSend' | trans }}"
-                               class="btn btn-small">
+                               class="btn btn-small"
+                               {% if notApprovedTroopParticipants is not empty %}disabled{% endif %}>
                     </form>
                 </div>
             {% endfor %}

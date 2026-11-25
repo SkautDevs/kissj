@@ -574,6 +574,7 @@ approve-admin:
     years: " years)"
     deny: "Deny"
     approveAndSend: "Approve and send email"
+    troopParticipantsNotApproved: "Can be approved only after all troop participants are approved. Not approved yet:"
     none: "No participants with role"
     need: "is in need for approval"
 organizingTeam-admin:
@@ -904,6 +905,7 @@ flash:
         invalidFileType: "Uploaded file type is not allowed. Please upload a PDF or image file (JPEG, PNG, GIF)."
         notApproved: "Participant is not approved, because it already has approved status"
         cannotReturnToApproval: "Participant cannot be returned to approval: not approved or has a waiting payment"
+        troopParticipantsNotApproved: "Troop leader can be approved only after all troop participants are approved"
         registrationNotAllowed: "Lock your registration is not yet allowed. We're opening after %difference%"
         missingSkautisMembership: "To lock your registration, your ScoutIs account must be linked to a real person. If you have linked it recently, please try logging out and back in."
         nullParticipants: "One or both participants was not found in system"

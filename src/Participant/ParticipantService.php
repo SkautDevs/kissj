@@ -449,11 +449,6 @@ readonly class ParticipantService
                 }
             } else {
                 $this->userService->setUserClosed($participant->getUserButNotNull());
-                if ($participant instanceof TroopLeader) {
-                    foreach ($participant->troopParticipants as $tp) {
-                        $this->userService->setUserClosed($tp->getUserButNotNull());
-                    }
-                }
             }
         }
 
@@ -510,16 +505,6 @@ readonly class ParticipantService
                 throw new ParticipantException('flash.warning.cannotReturnToApproval');
             }
 
-            if ($participant instanceof TroopLeader) {
-                foreach ($participant->troopParticipants as $troopParticipant) {
-                    $this->userRepository->claimStatusChange(
-                        $troopParticipant->getUserButNotNull(),
-                        UserStatus::Approved,
-                        UserStatus::Closed,
-                    );
-                }
-            }
-
             $this->mailer->sendReturnedToApproval($participant, $reason);
         });
     }
@@ -531,6 +516,13 @@ readonly class ParticipantService
     {
         if ($participant->getUserButNotNull()->status === UserStatus::Approved) {
             throw new ParticipantException('flash.warning.notApproved');
+        }
+
+        if (
+            $participant instanceof TroopLeader
+            && $participant->getNotApprovedTroopParticipants() !== []
+        ) {
+            throw new ParticipantException('flash.warning.troopParticipantsNotApproved');
         }
 
         if ($participant instanceof TroopParticipant) {

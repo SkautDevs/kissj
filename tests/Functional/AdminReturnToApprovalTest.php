@@ -181,7 +181,7 @@ class AdminReturnToApprovalTest extends AppTestCase
         self::assertSame(0, $this->countRecipient($sentTo, $troopParticipant));
     }
 
-    public function testReturningTroopLeaderClosesItsApprovedTroopParticipants(): void
+    public function testReturningTroopLeaderKeepsItsTroopParticipantsStatus(): void
     {
         $app = $this->getTestApp();
         $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
@@ -204,10 +204,30 @@ class AdminReturnToApprovalTest extends AppTestCase
 
         self::assertSame(302, $response->getStatusCode());
         self::assertSame('closed', $this->freshUser($app, $troopLeader)->status->value);
-        self::assertSame('closed', $this->freshUser($app, $approvedTroopParticipant)->status->value);
+        self::assertSame('approved', $this->freshUser($app, $approvedTroopParticipant)->status->value);
         self::assertSame('open', $this->freshUser($app, $openTroopParticipant)->status->value);
         self::assertSame(1, $this->countRecipient($sentTo, $troopLeader));
         self::assertSame(0, $this->countRecipient($sentTo, $approvedTroopParticipant));
+    }
+
+    public function testCancellingTroopLeaderOnlyWaitingPaymentKeepsTroopParticipantsStatus(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
+        $this->initializeMailerSettings($app, $event);
+        $troopLeader = $this->getService($app, TroopLeaderRepository::class)->get(
+            $this->createApprovedParticipant($app, $event, 'tl')->id,
+        );
+        $approvedTroopParticipant = $this->createTroopParticipantTiedTo($app, $event, $troopLeader);
+        $approvedTroopParticipantUser = $approvedTroopParticipant->getUserButNotNull();
+        $approvedTroopParticipantUser->status = UserStatus::Approved;
+        $this->getService($app, UserRepository::class)->persist($approvedTroopParticipantUser);
+        $payment = $this->createFinancesPayment($app, $event, PaymentStatus::Waiting, '450', participant: $troopLeader);
+
+        $this->getService($app, ParticipantService::class)->cancelPayment($payment, 'wrong amount');
+
+        self::assertSame('closed', $this->freshUser($app, $troopLeader)->status->value);
+        self::assertSame('approved', $this->freshUser($app, $approvedTroopParticipant)->status->value);
     }
 
     public function testFormPageRedirectsWhenParticipantCannotBeReturned(): void

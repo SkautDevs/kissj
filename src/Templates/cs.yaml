@@ -582,6 +582,7 @@ approve-admin:
     years: " let)"
     deny: "Odemknout"
     approveAndSend: "Schválit a poslat e-mail"
+    troopParticipantsNotApproved: "Lze schválit až po schválení všech účastníků skupiny. Zatím neschválení:"
     none: "Žádní účastníci s rolí"
     need: "nevyžadují schválení"
 organizingTeam-admin:
@@ -912,6 +913,7 @@ flash:
         invalidFileType: "Nahraný typ souboru není povolen. Prosím, nahraj PDF nebo obrázek (JPEG, PNG, GIF)."
         notApproved: "Účastník akce nebyl schválen, protože už schválen je"
         cannotReturnToApproval: "Účastníka nejde vrátit ke schválení: není schválený nebo má čekající platbu"
+        troopParticipantsNotApproved: "Vedoucího skupiny lze schválit až po schválení všech účastníků skupiny"
         registrationNotAllowed: "Uzamknout registraci není zatím povoleno. Otevíráme za %difference%"
         missingSkautisMembership: "Pro uzamčení registrace musí být tvůj skautIs účet propojený s reálnou osobou. Pokud jsi ho propojil v nedávné době, zkus se prosím odhlásit a zase přihlásit."
         nullParticipants: "Jeden nebo oba účastníci nebyli nalezeni v systému"
