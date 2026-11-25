@@ -70,9 +70,8 @@ class DevicePairingWebTest extends AppTestCase
         $this->setEventKey($app, 'pairing-web-event-key');
         $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
         $participant = $this->createPaidIstParticipant($app);
-        $refusal = $this->getService($app, DevicePairingService::class)
-            ->approveEnteredCode('390157', $pairing->event, $participant);
-        self::assertNull($refusal);
+        self::assertNull($this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant));
         $app = $this->loginAs($app, $participant->getUserButNotNull());
 
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
@@ -95,8 +94,8 @@ class DevicePairingWebTest extends AppTestCase
         $this->setEventKey($app, 'pairing-web-event-key');
         $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
         $participant = $this->createPaidIstParticipant($app);
-        $this->getService($app, DevicePairingService::class)
-            ->approveEnteredCode('390157', $pairing->event, $participant);
+        self::assertNull($this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant));
         $app = $this->loginAs($app, $participant->getUserButNotNull());
 
         $response = $this->post($app, self::PAIRING_PATH, ['code' => '000000']);
@@ -117,8 +116,8 @@ class DevicePairingWebTest extends AppTestCase
         $pairing = $this->createDevicePairing($app, $this->testEvent($app), '390157');
         $participant = $this->createPaidIstParticipant($app);
         $notConnected = $this->createPaidIstParticipant($app);
-        $this->getService($app, DevicePairingService::class)
-            ->approveEnteredCode('390157', $pairing->event, $participant);
+        self::assertNull($this->getService($app, DevicePairingService::class)
+            ->approveEnteredCode('390157', $pairing->event, $participant));
 
         $connectedApp = $this->loginAs($app, $participant->getUserButNotNull());
         $connectedBody = (string)$connectedApp->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();

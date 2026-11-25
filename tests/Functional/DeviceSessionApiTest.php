@@ -421,11 +421,11 @@ class DeviceSessionApiTest extends AppTestCase
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Reissue');
         $pairing = $this->createDevicePairing($app, $event);
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
+        ));
         $approved = $this->decodeJson($this->poll($app, $pairing->deviceCode));
         self::assertSame('approved', $approved['status']);
         $token = $approved['sessionToken'];
@@ -501,11 +501,11 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertIsString($deviceCode);
         $pairing = $this->getService($app, DevicePairingRepository::class)->findByDeviceCode($deviceCode, $event)
             ?? throw new LogicException('started pairing not found');
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
+        ));
 
         $pollRequest = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
         $pollRequest->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));

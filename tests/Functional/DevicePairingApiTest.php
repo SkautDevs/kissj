@@ -221,11 +221,11 @@ class DevicePairingApiTest extends AppTestCase
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $pairing = $this->createDevicePairing($app, $event);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Pairing');
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
+        ));
 
         $approved = $this->poll($app, $pairing->deviceCode);
 
@@ -259,11 +259,11 @@ class DevicePairingApiTest extends AppTestCase
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $pairing = $this->createDevicePairing($app, $event);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Reissue');
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
+        ));
         $lost = $this->decodeJson($this->poll($app, $pairing->deviceCode));
         $this->movePollBack($app, $pairing);
 
@@ -285,11 +285,11 @@ class DevicePairingApiTest extends AppTestCase
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $pairing = $this->createDevicePairing($app, $event);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Late');
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
+        ));
         $issued = $this->decodeJson($this->poll($app, $pairing->deviceCode));
         $repository = $this->getService($app, DevicePairingRepository::class);
         $consumed = $repository->get($pairing->id);
@@ -309,21 +309,23 @@ class DevicePairingApiTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $pairing = $this->createDevicePairing($app, $event, expiresAt: DateTimeUtils::getDateTime('+1 second'));
+        $pairing = $this->createDevicePairing($app, $event);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Pairing');
-        $this->getService($app, DevicePairingService::class)->approveEnteredCode(
+        self::assertNull($this->getService($app, DevicePairingService::class)->approveEnteredCode(
             $pairing->userCode,
             $pairing->event,
             $participant,
-        );
-        $pairing->expiresAt = DateTimeUtils::getDateTime('-30 seconds');
-        $this->getService($app, DevicePairingRepository::class)->persist($pairing);
+        ));
+        $repository = $this->getService($app, DevicePairingRepository::class);
+        $approved = $repository->get($pairing->id);
+        $approved->expiresAt = DateTimeUtils::getDateTime('-30 seconds');
+        $repository->persist($approved);
 
         $body = $this->decodeJson($this->poll($app, $pairing->deviceCode));
 
         self::assertSame('approved', $body['status']);
         self::assertIsString($body['sessionToken']);
-        $stored = $this->getService($app, DevicePairingRepository::class)->get($pairing->id);
+        $stored = $repository->get($pairing->id);
         self::assertSame(DevicePairingStatus::Consumed, $stored->status);
     }
 
