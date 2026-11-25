@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Application\DateTimeUtils;
+use kissj\Participant\Troop\TroopLeaderRepository;
 use kissj\User\UserService;
 use Tests\AppTestCase;
 
@@ -75,5 +77,81 @@ class ObrokChangeDetailsRenderTest extends AppTestCase
         );
         self::assertStringContainsString('<div class="help-text">', $body);
         self::assertStringNotContainsString('<div>PDF nebo obrázek, max 10 MB', $body);
+    }
+
+    public function testAdultTroopLeaderEmergencyContactIsNotRequired(): void
+    {
+        $tag = $this->inputTag($this->renderTroopLeaderDetails('1990-01-01'), 'emergencyContact');
+
+        self::assertStringContainsString('data-required="true"', $tag);
+        self::assertStringNotContainsString('required="required"', $tag);
+    }
+
+    public function testMinorTroopLeaderEmergencyContactIsRequired(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+        $birthDate = DateTimeUtils::getDateTime($event->startDay->format('Y-m-d'))
+            ->modify('-16 years')
+            ->format('Y-m-d');
+
+        $body = $this->renderTroopLeaderDetails($birthDate);
+
+        $emergencyContact = $this->inputTag($body, 'emergencyContact');
+        self::assertStringContainsString('data-required="true"', $emergencyContact);
+        self::assertStringContainsString('required="required"', $emergencyContact);
+
+        $parentalConsent = $this->inputTag($body, 'parentalConsent');
+        self::assertStringNotContainsString('required', $parentalConsent);
+    }
+
+    public function testTroopLeaderWithoutBirthDateEmergencyContactIsRequired(): void
+    {
+        $tag = $this->inputTag($this->renderTroopLeaderDetails(null), 'emergencyContact');
+
+        self::assertStringContainsString('data-required="true"', $tag);
+        self::assertStringContainsString('required="required"', $tag);
+    }
+
+    public function testBirthDateCarriesEventStartDate(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+
+        $tag = $this->inputTag($this->renderTroopLeaderDetails(null), 'birthDate');
+
+        self::assertStringContainsString('data-event-start-date="' . $event->startDay->format('Y-m-d') . '"', $tag);
+    }
+
+    private function renderTroopLeaderDetails(?string $birthDate): string
+    {
+        $app = $this->getTestApp();
+        $event = $this->getObrokTestEvent($app);
+        $userService = $this->getService($app, UserService::class);
+        $user = $userService->registerEmailUser('obrok-tl-' . uniqid('', true) . '@example.com', $event);
+        $participant = $userService->createParticipantSetRole($user, 'tl');
+
+        if ($birthDate !== null) {
+            $troopLeaderRepository = $this->getService($app, TroopLeaderRepository::class);
+            $troopLeader = $troopLeaderRepository->get($participant->id);
+            $troopLeader->birthDate = DateTimeUtils::getDateTime($birthDate);
+            $troopLeaderRepository->persist($troopLeader);
+        }
+
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest(self::BASE_URL . '/participant/showChangeDetails'));
+
+        self::assertSame(200, $response->getStatusCode());
+
+        return (string) $response->getBody();
+    }
+
+    private function inputTag(string $body, string $id): string
+    {
+        self::assertSame(1, preg_match('/<input\b[^>]*\bid="' . preg_quote($id, '/') . '"[^>]*>/s', $body, $matches));
+
+        return $matches[0];
     }
 }

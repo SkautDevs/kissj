@@ -25,7 +25,9 @@
                 {% if item.placeholder %}placeholder="{{ item.placeholder|trans }}"{% endif %}
                 value="{{ value }}"
                 {% if item.pattern %}pattern="{{ item.pattern }}"{% endif %}
-                {% if item.required %}required="required"{% endif %}
+                {# data-required = configured required, consumed by age-group-toggle.js; required only when the age group applies to the saved age (matches lock validation) #}
+                {% if item.required %}data-required="true"{% endif %}
+                {% if item.required and (not item.ageGroup or item.appliesToAge(personDetails.getAgeAtStartOfEvent)) %}required="required"{% endif %}
             >
             {{ forms.renderHelpText(item) }}
         </div>
@@ -52,7 +54,7 @@
                 name="{{ item.slug }}"
                 value="{% if value %}{{ value|date('Y-m-d') }}{% elseif item.slug == 'arrivalDate' %}{{ event.startDay|date('Y-m-d') }}{% elseif item.slug == 'departureDate' %}{{ event.endDay|date('Y-m-d') }}{% elseif item.defaultValue %}{{ item.defaultValue }}{% endif %}"
                 {% if item.required %}required="required"{% endif %}
-                {% if item.slug == 'birthDate' %}data-event-start-day="{{ event.startDay.getTimestamp() }}"{% endif %}
+                {% if item.slug == 'birthDate' %}data-event-start-date="{{ event.startDay|date('Y-m-d') }}"{% endif %}
             >
             {{ forms.renderHelpText(item) }}
         </div>
