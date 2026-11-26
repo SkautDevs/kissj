@@ -298,7 +298,7 @@ class ProgrammeAdminController extends AbstractController
         $programme->capacity = max(1, (int)$this->getParameterFromBody($request, 'capacity'));
         $programme->isAutoenrolled = $this->isCheckboxCheckedInBody($request, 'isAutoenrolled');
 
-        $programme->setTargetRoles($this->rolesFromRequest($request));
+        $programme->roles = $this->rolesFromRequest($request);
         // last, so that a refused form does not leave a newly created place behind
         $this->programmePlaceService->assignPlace($programme, $this->placeFromRequest($request, $event));
     }

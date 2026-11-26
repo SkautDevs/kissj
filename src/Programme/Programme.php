@@ -18,6 +18,8 @@ use kissj\Programme\Place\ProgrammePlace;
  * @property DateTimeInterface      $end m:passThru(dateFromString|dateToString)
  * @property int                    $capacity
  * @property bool                   $isAutoenrolled
+ * @property array                  $roles m:passThru(rolesFromString|rolesToString)
+ * @phpstan-property list<ParticipantRole> $roles
  * @property ProgrammeSection       $section m:hasOne(section_id)
  * @property ProgrammePlace|null    $programmePlace m:hasOne(place_id)
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)
@@ -30,6 +32,45 @@ class Programme extends EntityDatetime
     public function overlapsWith(self $other): bool
     {
         return $this->start < $other->end && $other->start < $this->end;
+    }
+
+    /**
+     * @param list<string> $roleValues
+     */
+    public static function encodeRoleValues(array $roleValues): string
+    {
+        if ($roleValues === []) {
+            return '';
+        }
+
+        return self::ROLES_DELIMITER . implode(self::ROLES_DELIMITER, $roleValues) . self::ROLES_DELIMITER;
+    }
+
+    /**
+     * @return list<ParticipantRole>
+     */
+    protected function rolesFromString(string $roles): array
+    {
+        return array_map(
+            ParticipantRole::from(...),
+            array_values(array_filter(
+                explode(self::ROLES_DELIMITER, $roles),
+                static fn (string $value): bool => $value !== '',
+            )),
+        );
+    }
+
+    /**
+     * @param list<ParticipantRole> $roles
+     */
+    protected function rolesToString(array $roles): string
+    {
+        return self::encodeRoleValues(array_map(static fn (ParticipantRole $role): string => $role->value, $roles));
+    }
+
+    public function isForRole(ParticipantRole $role): bool
+    {
+        return in_array($role, $this->roles, true);
     }
 
     public function isExclusiveWith(self $other): bool
@@ -47,55 +88,5 @@ class Programme extends EntityDatetime
     public function isDeleted(): bool
     {
         return $this->deletedAt !== null;
-    }
-
-    /**
-     * @return list<ParticipantRole>
-     */
-    public function getTargetRoles(): array
-    {
-        if ($this->row->hasColumn('roles') === false) {
-            return [];
-        }
-
-        /** @var string $rolesFromDb */
-        $rolesFromDb = $this->row->roles;
-        $roles = [];
-        foreach (explode(self::ROLES_DELIMITER, trim($rolesFromDb, self::ROLES_DELIMITER)) as $roleValue) {
-            if ($roleValue === '') {
-                continue;
-            }
-            $roles[] = ParticipantRole::from($roleValue);
-        }
-
-        return $roles;
-    }
-
-    /**
-     * @param list<ParticipantRole> $roles
-     */
-    public function setTargetRoles(array $roles): void
-    {
-        $this->row->roles = self::encodeRoleValues(array_map(
-            static fn (ParticipantRole $role): string => $role->value,
-            $roles,
-        ));
-    }
-
-    /**
-     * @param list<string> $roleValues
-     */
-    public static function encodeRoleValues(array $roleValues): string
-    {
-        if ($roleValues === []) {
-            return '';
-        }
-
-        return self::ROLES_DELIMITER . implode(self::ROLES_DELIMITER, $roleValues) . self::ROLES_DELIMITER;
-    }
-
-    public function isForRole(ParticipantRole $role): bool
-    {
-        return in_array($role, $this->getTargetRoles(), true);
     }
 }

@@ -79,7 +79,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame(15, $programme->capacity);
         self::assertFalse($programme->isAutoenrolled);
         self::assertSame($workshops->id, $programme->section->id);
-        self::assertCount(2, $programme->getTargetRoles());
+        self::assertCount(2, $programme->roles);
 
         $responseEdit = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
@@ -108,7 +108,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame(5, $reloaded->capacity);
         self::assertTrue($reloaded->isAutoenrolled);
         self::assertSame($games->id, $reloaded->section->id);
-        self::assertCount(1, $reloaded->getTargetRoles());
+        self::assertCount(1, $reloaded->roles);
 
         $responseDelete = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/delete',
@@ -1012,7 +1012,7 @@ class ProgrammeAdminTest extends AppTestCase
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'overview-roles-admin@example.com');
         $programme = $this->createProgramme($app, 'overview roles workshop', null, 5);
-        $programme->setTargetRoles([ParticipantRole::Ist, ParticipantRole::TroopLeader]);
+        $programme->roles = [ParticipantRole::Ist, ParticipantRole::TroopLeader];
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         $response = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes'));
@@ -1048,7 +1048,7 @@ class ProgrammeAdminTest extends AppTestCase
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'image-any-role-programme-admin@example.com', UserRole::ProgrammeAdmin);
         $programme = $this->createProgramme($app, 'patrol leaders image workshop', null, 5);
-        $programme->setTargetRoles([ParticipantRole::PatrolLeader]);
+        $programme->roles = [ParticipantRole::PatrolLeader];
         $uploadPath = $this->attachImage($app, $programme);
 
         try {
@@ -1121,7 +1121,7 @@ class ProgrammeAdminTest extends AppTestCase
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $programmeRepository->persist($programme);
 
         return $programme;

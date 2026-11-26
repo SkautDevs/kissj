@@ -665,7 +665,7 @@ class DeviceSessionApiTest extends AppTestCase
         $programme->isAutoenrolled = $autoenrolled;
         $programme->event = $event;
         $programme->section = $section;
-        $programme->setTargetRoles($roles);
+        $programme->roles = $roles;
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;

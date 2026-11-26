@@ -231,7 +231,7 @@ readonly class ProgrammeService
             $programme->isAutoenrolled,
             array_map(
                 static fn (ParticipantRole $role): string => $role->value,
-                $programme->getTargetRoles(),
+                $programme->roles,
             ),
             $images,
         );

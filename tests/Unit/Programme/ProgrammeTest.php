@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Programme;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeSection;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -47,6 +48,33 @@ class ProgrammeTest extends TestCase
             'containment overlaps' =>
                 ['2027-06-05 00:00', '2027-06-06 00:00', '2027-06-05 10:00', '2027-06-05 12:00', true],
         ];
+    }
+
+    public function testRolesAreStoredCommaWrappedAndReadBackInOrder(): void
+    {
+        $programme = new Programme();
+        $programme->roles = [ParticipantRole::Ist, ParticipantRole::Guest];
+
+        self::assertSame(',ist,guest,', $programme->getRowData()['roles']);
+        self::assertSame([ParticipantRole::Ist, ParticipantRole::Guest], $programme->roles);
+    }
+
+    public function testNoRolesAreStoredAsEmptyString(): void
+    {
+        $programme = new Programme();
+        $programme->roles = [];
+
+        self::assertSame('', $programme->getRowData()['roles']);
+        self::assertSame([], $programme->roles);
+    }
+
+    public function testIsForRoleMatchesOnlyListedRoles(): void
+    {
+        $programme = new Programme();
+        $programme->roles = [ParticipantRole::Ist];
+
+        self::assertTrue($programme->isForRole(ParticipantRole::Ist));
+        self::assertFalse($programme->isForRole(ParticipantRole::Guest));
     }
 
     private function createProgramme(string $start, string $end): Programme

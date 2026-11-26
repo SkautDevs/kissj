@@ -109,7 +109,7 @@ class ProgrammeSectionRepositoryTest extends AppTestCase
         $programme->isAutoenrolled = false;
         $programme->event = $section->event;
         $programme->section = $section;
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
 
         return $programme;
     }

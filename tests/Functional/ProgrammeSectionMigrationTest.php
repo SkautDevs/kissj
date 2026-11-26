@@ -103,7 +103,7 @@ class ProgrammeSectionMigrationTest extends AppTestCase
         $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $section;
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $programmeRepository->persist($programme);
 
         return $programme;

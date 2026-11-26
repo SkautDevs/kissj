@@ -91,7 +91,7 @@
                 <b>{{ taken }}/{{ programme.capacity }}{% if taken > programme.capacity %} ⚠{% endif %}</b><br/>
             {% endif %}
             {{ 'programme.admin.formRoles'|trans }}:
-            <b>{{ programme.getTargetRoles()|map(role => ('role.' ~ role.value)|trans)|join(', ') }}</b>
+            <b>{{ programme.roles|map(role => ('role.' ~ role.value)|trans)|join(', ') }}</b>
             <br/>
             <br/>
             <a class="btn btn-small" href="{{ url_for('admin-programme-edit', routeParams) }}">

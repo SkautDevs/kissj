@@ -312,7 +312,7 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertNotNull($obrok);
         $obrokProgrammes = $programmeRepository->findActiveForEvent($obrok);
         foreach ($obrokProgrammes as $programme) {
-            self::assertNotContains(ParticipantRole::PatrolLeader, $programme->getTargetRoles());
+            self::assertNotContains(ParticipantRole::PatrolLeader, $programme->roles);
         }
         $targetingTroopLeader = array_filter(
             $obrokProgrammes,
@@ -761,7 +761,7 @@ class TestingEventsSeedTest extends AppTestCase
      */
     private function sortedRoleValues(Programme $programme): array
     {
-        $values = array_map(fn (ParticipantRole $role): string => $role->value, $programme->getTargetRoles());
+        $values = array_map(fn (ParticipantRole $role): string => $role->value, $programme->roles);
         sort($values);
 
         return $values;
@@ -780,7 +780,7 @@ class TestingEventsSeedTest extends AppTestCase
             $event = $eventRepository->findBySlug((string)$slug);
             self::assertNotNull($event);
             foreach ($programmeRepository->findActiveForEvent($event) as $programme) {
-                $total += count($programme->getTargetRoles());
+                $total += count($programme->roles);
             }
         }
 

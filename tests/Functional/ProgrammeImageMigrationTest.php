@@ -93,7 +93,7 @@ class ProgrammeImageMigrationTest extends AppTestCase
         $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $section;
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;

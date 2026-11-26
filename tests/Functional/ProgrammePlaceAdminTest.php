@@ -313,7 +313,7 @@ class ProgrammePlaceAdminTest extends AppTestCase
         if ($softDeleted) {
             $programme->deletedAt = DateTimeUtils::getDateTime('2027-01-01 10:00');
         }
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;

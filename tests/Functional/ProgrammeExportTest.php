@@ -173,9 +173,8 @@ class ProgrammeExportTest extends AppTestCase
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
-        $programme->setTargetRoles(
-            $roles ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
-        );
+        $programme->roles = $roles
+            ?? [ParticipantRole::Ist, ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant];
         $programmeRepository->persist($programme);
 
         return $programme;

@@ -91,7 +91,7 @@
                     {% for role in allRoles %}
                         <label class="form-control">
                             <input type="checkbox" name="roles[]" value="{{ role.value }}"
-                                   {{ programme and role in programme.getTargetRoles() ? 'checked' : '' }}>
+                                   {{ programme and role in programme.roles ? 'checked' : '' }}>
                             {{ ('role.' ~ role.value)|trans }}
                         </label>
                     {% endfor %}

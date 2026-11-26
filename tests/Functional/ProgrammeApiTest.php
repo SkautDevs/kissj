@@ -589,7 +589,7 @@ class ProgrammeApiTest extends AppTestCase
         $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $event;
         $programme->section = $section;
-        $programme->setTargetRoles([ParticipantRole::Ist, ParticipantRole::Guest]);
+        $programme->roles = [ParticipantRole::Ist, ParticipantRole::Guest];
         $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 

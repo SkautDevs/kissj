@@ -57,7 +57,7 @@ class ProgrammeAutoenrolledMigrationTest extends AppTestCase
         $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $event;
         $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'Program');
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;

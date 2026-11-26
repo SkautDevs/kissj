@@ -328,7 +328,7 @@ class CrossEventGuardTest extends AppTestCase
         $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'cross-event');
-        $programme->setTargetRoles([ParticipantRole::Ist]);
+        $programme->roles = [ParticipantRole::Ist];
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;
