@@ -45,7 +45,7 @@ class ProgrammeJsonController extends AbstractController
     private function resultJsonResponse(Response $response, ProgrammeRegistrationResult $result): Response
     {
         if ($result->error !== null) {
-            return $this->warningJsonResponse($response, $result->translationKey);
+            return $this->warningJsonResponse($response, $result->flashKey());
         }
 
         return $this->getResponseWithJson($response, new stdClass());

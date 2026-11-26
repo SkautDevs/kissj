@@ -47,7 +47,7 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertNull($resultFirst->error);
 
         $resultSecond = $service->register($second, $programme->id);
-        self::assertSame('flash.error.programmeFull', $resultSecond->translationKey);
+        self::assertSame(ProgrammeRegistrationError::Full, $resultSecond->error);
     }
 
     public function testDashboardProgrammesAreShownToPaidParticipant(): void
@@ -132,7 +132,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         self::assertNull($service->register($ist, $programme->id)->error);
         $duplicate = $service->register($ist, $programme->id);
-        self::assertSame('flash.error.programmeAlreadyRegistered', $duplicate->translationKey);
+        self::assertSame(ProgrammeRegistrationError::AlreadyRegistered, $duplicate->error);
     }
 
     public function testSameExclusiveSectionOverlapRejectedOthersAllowed(): void
@@ -163,7 +163,7 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertNull($service->register($ist, $morning->id)->error);
 
         $conflict = $service->register($ist, $overlapping->id);
-        self::assertSame('flash.error.programmeConflict', $conflict->translationKey);
+        self::assertSame(ProgrammeRegistrationError::Conflict, $conflict->error);
 
         self::assertNull($service->register($ist, $touching->id)->error);
         self::assertNull($service->register($ist, $otherGroup->id)->error);
@@ -188,7 +188,7 @@ class ProgrammeServiceTest extends AppTestCase
         $ist = $this->createPaidIstWithEmail($app, 'wrong-role-ist@example.com');
 
         $result = $service->register($ist, $tlOnly->id);
-        self::assertSame('flash.error.programmeWrongRole', $result->translationKey);
+        self::assertSame(ProgrammeRegistrationError::WrongRole, $result->error);
     }
 
     public function testPreregisteredCannotBeRegistered(): void
@@ -210,7 +210,6 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->register($ist, $ceremony->id);
         self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
-        self::assertSame('flash.error.programmeNotPossible', $result->translationKey);
     }
 
     public function testPreregisteredCannotBeUnregistered(): void
@@ -224,7 +223,6 @@ class ProgrammeServiceTest extends AppTestCase
         $result = $service->unregister($ist, $ceremony->id);
 
         self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
-        self::assertSame('flash.error.programmeNotPossible', $result->translationKey);
     }
 
     public function testPreregisteredDoesNotConflict(): void
@@ -262,12 +260,12 @@ class ProgrammeServiceTest extends AppTestCase
         $overridden = $this->createPaidIstWithEmail($app, 'override-ist@example.com');
         $assigned = $service->adminAssign($full, $overridden);
         self::assertNull($assigned->error);
-        self::assertSame('flash.success.programmeParticipantAssigned', $assigned->translationKey);
+        self::assertSame('flash.success.programmeParticipantAssigned', $assigned->flashKey());
         self::assertSame(2, $registrationRepository->countActiveForProgramme($full));
 
         $removed = $service->adminRemove($full, $overridden);
         self::assertNull($removed->error);
-        self::assertSame('flash.success.programmeParticipantRemoved', $removed->translationKey);
+        self::assertSame('flash.success.programmeParticipantRemoved', $removed->flashKey());
         self::assertSame(1, $registrationRepository->countActiveForProgramme($full));
     }
 
@@ -283,7 +281,7 @@ class ProgrammeServiceTest extends AppTestCase
         $second = $service->adminAssign($programme, $ist);
 
         self::assertNull($first->error);
-        self::assertSame('flash.warning.programmeAlreadyAssigned', $second->translationKey);
+        self::assertSame('flash.warning.programmeAlreadyAssigned', $second->flashKey());
         self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
     }
 
@@ -296,7 +294,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminRemove($programme, $ist);
 
-        self::assertSame('flash.warning.programmeNotAssigned', $result->translationKey);
+        self::assertSame('flash.warning.programmeNotAssigned', $result->flashKey());
     }
 
     public function testAdminAssignOnPreregisteredProgrammeReturnsWarning(): void
@@ -317,7 +315,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($ceremony, $ist);
 
-        self::assertSame('flash.warning.programmePreregisteredNoAssign', $result->translationKey);
+        self::assertSame('flash.warning.programmePreregisteredNoAssign', $result->flashKey());
     }
 
     public function testAdminAssignOnCancelledParticipantReturnsWarning(): void
@@ -334,7 +332,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($programme, $ist);
 
-        self::assertSame('flash.warning.programmeCancelledNoAssign', $result->translationKey);
+        self::assertSame('flash.warning.programmeCancelledNoAssign', $result->flashKey());
     }
 
     public function testAdminAssignRechecksCancelledStatusFromDatabase(): void
@@ -350,7 +348,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($programme, $ist);
 
-        self::assertSame('flash.warning.programmeCancelledNoAssign', $result->translationKey);
+        self::assertSame('flash.warning.programmeCancelledNoAssign', $result->flashKey());
         self::assertSame(0, $this->getService($app, ProgrammeRegistrationRepository::class)
             ->countActiveForProgramme($programme));
     }
@@ -368,7 +366,7 @@ class ProgrammeServiceTest extends AppTestCase
         $service->deleteProgramme($programme);
         $result = $service->adminAssign($staleProgramme, $ist);
 
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame('flash.error.programmeNotFound', $result->flashKey());
         self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
     }
 
@@ -381,7 +379,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->register($ist, PHP_INT_MAX);
 
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
     public function testRegisterOnSoftDeletedProgrammeReturnsNotFound(): void
@@ -395,7 +393,7 @@ class ProgrammeServiceTest extends AppTestCase
         $service->deleteProgramme($programme);
         $result = $service->register($ist, $programme->id);
 
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
     public function testUnregisterOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
@@ -407,7 +405,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->unregister($ist, PHP_INT_MAX);
 
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
     public function testUnregisterOnSoftDeletedProgrammeReturnsNotFound(): void
@@ -423,7 +421,7 @@ class ProgrammeServiceTest extends AppTestCase
         $result = $service->unregister($ist, $programme->id);
 
         self::assertSame(ProgrammeRegistrationError::NotFound, $result->error);
-        self::assertSame('flash.error.programmeNotFound', $result->translationKey);
+        self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
     public function testUnpaidParticipantIsRefusedFirst(): void
@@ -435,7 +433,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
             self::assertSame('notPaid', $result->error?->value);
-            self::assertSame('flash.error.programmeNotPaid', $result->translationKey);
+            self::assertSame(ProgrammeRegistrationError::NotPaid, $result->error);
         }
     }
 
@@ -487,7 +485,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
             self::assertSame('closed', $result->error?->value);
-            self::assertSame('flash.error.programmeClosed', $result->translationKey);
+            self::assertSame(ProgrammeRegistrationError::Closed, $result->error);
         }
     }
 

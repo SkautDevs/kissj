@@ -75,7 +75,7 @@ readonly class ProgrammeService
 
                 $this->createRegistration($programme, $participant);
 
-                return ProgrammeRegistrationResult::success('flash.success.programmeRegistered');
+                return ProgrammeRegistrationResult::success();
             },
         );
 
@@ -116,7 +116,7 @@ readonly class ProgrammeService
 
                 $this->programmeRegistrationRepository->softDelete($registration);
 
-                return ProgrammeRegistrationResult::success('flash.success.programmeUnregistered');
+                return ProgrammeRegistrationResult::success();
             },
         );
 

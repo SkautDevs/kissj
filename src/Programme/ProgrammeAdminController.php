@@ -270,12 +270,12 @@ class ProgrammeAdminController extends AbstractController
     private function flash(ProgrammeRegistrationResult $result): void
     {
         if ($result->error === null) {
-            $this->flashMessages->success($result->translationKey);
+            $this->flashMessages->success($result->flashKey());
 
             return;
         }
 
-        $this->flashMessages->warning($result->translationKey);
+        $this->flashMessages->warning($result->flashKey());
     }
 
     private function renderForm(Response $response, Event $event, ?Programme $programme): Response
