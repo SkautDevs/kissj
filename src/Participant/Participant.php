@@ -6,6 +6,7 @@ namespace kissj\Participant;
 
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
+use kissj\Participant\Patrol\PatrolLeader;
 use kissj\Participant\Patrol\PatrolParticipant;
 use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
@@ -218,6 +219,7 @@ class Participant extends EntityDatetime
 
         return $user->status === UserStatus::Paid
             && $this instanceof TechnicalTeamLeader === false
+            && $this instanceof PatrolLeader === false
             && $user->event->isOwnerTicketTransferOpen();
     }
 

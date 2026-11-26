@@ -278,6 +278,29 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $this->assertDashboardTransferLinkInLastCard($event, $leader);
     }
 
+    public function testDashboardHidesTransferLinkForPatrolLeader(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
+
+        $userService = $this->getService($app, UserService::class);
+        $leader = $userService->registerEmailUser('transfer-pl-' . uniqid('', true) . '@example.com', $event);
+        $userService->createParticipantSetRole($leader, 'pl');
+        $leader->status = UserStatus::Paid;
+        $this->getService($app, UserRepository::class)->persist($leader);
+
+        $_SESSION['user'] = ['id' => $leader->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringNotContainsString(
+            $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.dashboardLink'),
+            (string) $response->getBody(),
+        );
+    }
+
     public function testDashboardHidesTransferLinkAfterEventStart(): void
     {
         $app = $this->getTestApp();
