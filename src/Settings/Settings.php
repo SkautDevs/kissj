@@ -118,7 +118,6 @@ use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
-use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeJsonController;
 use kissj\Programme\ProgrammeRepository;
@@ -311,7 +310,6 @@ class Settings
             ProgrammeAdminController::class => autowire(),
             ProgrammeAdminsOnlyMiddleware::class => autowire(),
             ProgrammeApiController::class => autowire(),
-            ProgrammeController::class => autowire(),
             ProgrammeImageAdminController::class => autowire(),
             ProgrammeImageController::class => autowire(),
             ProgrammeImageProcessor::class => autowire(),

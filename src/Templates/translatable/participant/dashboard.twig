@@ -31,7 +31,13 @@
 
 {% include('widgets/deals.twig') with { person: person } %}
 
-{% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, enrolledProgrammes: enrolledProgrammes, autoenrolledProgrammes: autoenrolledProgrammes } %}
+{% include('widgets/programmes.twig') with {
+    event: event,
+    userStatus: userStatus,
+    enrolledProgrammes: enrolledProgrammes,
+    autoenrolledProgrammes: autoenrolledProgrammes,
+    eventAppUrl: eventAppUrl
+} %}
 
 {% if devicePairingAvailable ?? false %}
     {% set appName = 'device.pairing.appName'|trans %}

@@ -846,13 +846,6 @@ programme:
             moveUp: "Výše"
             moveDown: "Níže"
             delete: "Smazat"
-    detail:
-        back: "Zpět na seznam programů"
-    list:
-        empty: "Právě pro tebe nejsou dostupné žádné programy."
-        autoenrolled: "Účastníš se automaticky"
-        enrolled: "Jsi přihlášený"
-        title: "Programy"
     pdf:
         name: "Jméno"
         present: "Přítomen"

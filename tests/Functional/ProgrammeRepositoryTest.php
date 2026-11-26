@@ -23,7 +23,7 @@ class ProgrammeRepositoryTest extends AppTestCase
 {
     private const string TEST_EVENT_SLUG = 'test-event-slug';
 
-    public function testOccupancyRoleFilterAndSoftDelete(): void
+    public function testOccupancyAutoenrolledRoleFilterAndSoftDelete(): void
     {
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -31,18 +31,19 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
-        $istProgramme = $this->createProgramme($app, 'ist night game', null, [ParticipantRole::Ist]);
+        $istProgramme = $this->createProgramme($app, 'ist night game', null, [ParticipantRole::Ist], true);
         $tlProgramme = $this->createProgramme(
             $app,
             'tl workshop',
             null,
             [ParticipantRole::TroopLeader, ParticipantRole::TroopParticipant],
+            true,
         );
 
         // functional tests share one persistent event; assert on the rows we created, not on event-global counts
         $istProgrammeIds = array_map(
             static fn (Programme $programme): int => $programme->id,
-            $programmeRepository->findActiveForRole($event, ParticipantRole::Ist),
+            $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
         self::assertContains($istProgramme->id, $istProgrammeIds);
         self::assertNotContains($tlProgramme->id, $istProgrammeIds);
@@ -69,7 +70,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programmeRepository->persist($istProgramme);
         $activeIstIdsAfterDelete = array_map(
             static fn (Programme $programme): int => $programme->id,
-            $programmeRepository->findActiveForRole($event, ParticipantRole::Ist),
+            $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
         self::assertNotContains($istProgramme->id, $activeIstIdsAfterDelete);
     }

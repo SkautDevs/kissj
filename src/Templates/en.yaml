@@ -838,13 +838,6 @@ programme:
             moveUp: "Up"
             moveDown: "Down"
             delete: "Delete"
-    detail:
-        back: "Back to programme list"
-    list:
-        empty: "No programmes are available for you right now."
-        autoenrolled: "You are automatically enrolled"
-        enrolled: "You are enrolled"
-        title: "Programmes"
     pdf:
         name: "Name"
         present: "Present"

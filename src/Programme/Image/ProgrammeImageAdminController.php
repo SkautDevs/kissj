@@ -50,6 +50,20 @@ class ProgrammeImageAdminController extends AbstractController
         return $this->redirectToEdit($request, $response, $programmeId);
     }
 
+    public function full(Response $response, Event $event, int $programmeId): Response
+    {
+        $programme = $this->programmeRepository->findActiveById($programmeId, $event);
+        $image = $programme === null ? null : $this->programmeImageRepository->findFirstForProgramme($programme);
+        $file = $image === null ? null : $this->programmeImageService->openFull($image);
+        if ($file === null) {
+            return $response->withStatus(404);
+        }
+
+        return $this->withUntrustedFileSecurityHeaders($response)
+            ->withHeader('Content-Type', $file->mimeContentType)
+            ->withBody($file->stream);
+    }
+
     /**
      * Serves events without the programme API too, unlike the public thumb route.
      */

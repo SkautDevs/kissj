@@ -20,8 +20,10 @@
             <p class="programme-eventapp-hint">{{ 'programme.widget.eventAppHint'|trans }}</p>
         {% endif %}
 
-        <a class="btn" href="{{ url_for('programmes', {eventSlug: event.slug}) }}">
-            {{- 'programme.widget.all'|trans -}}
-        </a>
+        {% if eventAppUrl %}
+            <a class="btn" href="{{ eventAppUrl }}" target="_blank" rel="noopener">
+                {{- 'programme.widget.all'|trans -}}
+            </a>
+        {% endif %}
     </div>
 {% endif %}

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace kissj\Programme;
 
-use Dibi\Fluent;
 use Dibi\Row;
 use kissj\Event\Event;
 use kissj\Orm\EntityNotFoundException;
@@ -55,31 +54,16 @@ class ProgrammeRepository extends Repository
     /**
      * @return list<Programme>
      */
-    public function findActiveForRole(Event $event, ParticipantRole $role): array
-    {
-        return $this->hydrateProgrammes($this->createActiveForRoleFluent($event, $role)->fetchAll());
-    }
-
-    /**
-     * @return list<Programme>
-     */
     public function findActiveAutoenrolledForRole(Event $event, ParticipantRole $role): array
-    {
-        $qb = $this->createActiveForRoleFluent($event, $role);
-        $qb->where('programme.is_autoenrolled = %b', true);
-
-        return $this->hydrateProgrammes($qb->fetchAll());
-    }
-
-    private function createActiveForRoleFluent(Event $event, ParticipantRole $role): Fluent
     {
         $qb = $this->createFluent();
         $qb->where('roles LIKE %~like~', Programme::encodeRoleValues([$role->value]));
         $qb->where('event_id = %i', $event->id);
         $qb->where('deleted_at IS NULL');
+        $qb->where('programme.is_autoenrolled = %b', true);
         $qb->orderBy('start')->asc();
 
-        return $qb;
+        return $this->hydrateProgrammes($qb->fetchAll());
     }
 
     /**

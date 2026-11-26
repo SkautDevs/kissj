@@ -56,7 +56,6 @@ use kissj\Programme\Image\ProgrammeImageController;
 use kissj\Programme\Place\ProgrammePlaceAdminController;
 use kissj\Programme\ProgrammeAdminController;
 use kissj\Programme\ProgrammeApiController;
-use kissj\Programme\ProgrammeController;
 use kissj\Programme\ProgrammeJsonController;
 use kissj\Programme\ProgrammeSectionAdminController;
 use kissj\Skautis\SkautisController;
@@ -325,17 +324,6 @@ class Route
                                 ->setName('pairDevice');
                         })->add(DevicePairingCsrfMiddleware::class)->add(DevicePairingAllowedOnlyMiddleware::class);
                     });
-
-                    $app->group('/programmes', function (RouteCollectorProxy $app) {
-                        $app->get('', ProgrammeController::class . '::list')
-                            ->setName('programmes');
-
-                        $app->get('/{programmeId}', ProgrammeController::class . '::detail')
-                            ->setName('programme-detail');
-
-                        $app->get('/{programmeId}/image', ProgrammeController::class . '::image')
-                            ->setName('programme-image');
-                    })->add(PaidStatusOnlyMiddleware::class);
                 })->add(LoggedOnlyMiddleware::class)->add(ChoosedRoleOnlyMiddleware::class);
 
                 $app->group('/admin', function (RouteCollectorProxy $app) {
@@ -645,7 +633,7 @@ class Route
                     $app->get('/{programmeId}/print', ExportController::class . '::printProgramme')
                         ->setName('admin-programme-print');
 
-                    $app->get('/{programmeId}/image', ProgrammeController::class . '::adminImage')
+                    $app->get('/{programmeId}/image', ProgrammeImageAdminController::class . '::full')
                         ->setName('admin-programme-image');
 
                     $app->post(

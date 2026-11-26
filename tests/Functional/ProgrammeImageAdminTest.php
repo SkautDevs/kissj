@@ -214,6 +214,49 @@ class ProgrammeImageAdminTest extends AppTestCase
         self::assertSame('image admin programme', $reloaded->name);
     }
 
+    public function testFullImageServesFirstImageWithSecurityHeaders(): void
+    {
+        $app = $this->createLoggedAdmin('image-admin-full@example.com');
+        $programme = $this->createProgramme($app, $this->getEvent($app));
+        $png = ImageFixtures::png(40, 30);
+        $fileHandler = $this->getService($app, SaveFileHandler::class);
+        $first = $this->rememberStored($fileHandler->saveContents($png, 'image/png'));
+        $second = $this->rememberStored($fileHandler->saveContents(ImageFixtures::png(20, 20), 'image/png'));
+        $this->persistImage($app, $programme, $second, 1);
+        $this->persistImage($app, $programme, $first, 0);
+
+        try {
+            $response = $app->handle($this->createRequest(self::PROGRAMMES_URL . '/' . $programme->id . '/image'));
+
+            self::assertSame(200, $response->getStatusCode());
+            self::assertSame('image/png', $response->getHeaderLine('Content-Type'));
+            self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
+            self::assertStringContainsString("script-src 'none'", $response->getHeaderLine('Content-Security-Policy'));
+            self::assertSame($png, (string)$response->getBody());
+        } finally {
+            $this->removeStoredFiles($app);
+        }
+    }
+
+    public function testFullImageOfProgrammeWithoutImageIs404(): void
+    {
+        $app = $this->createLoggedAdmin('image-admin-full-none@example.com');
+        $programme = $this->createProgramme($app, $this->getEvent($app));
+
+        $response = $app->handle($this->createRequest(self::PROGRAMMES_URL . '/' . $programme->id . '/image'));
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testFullImageOfMissingProgrammeIs404(): void
+    {
+        $app = $this->createLoggedAdmin('image-admin-full-missing@example.com');
+
+        $response = $app->handle($this->createRequest(self::PROGRAMMES_URL . '/999999/image'));
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
     public function testStoredFilenameNotMadeByTheAppIsNotOpened(): void
     {
         $app = $this->createLoggedAdmin('image-admin-filename-guard@example.com');

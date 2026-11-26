@@ -8,8 +8,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Participant;
-use kissj\Programme\Image\ProgrammeImage;
-use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
@@ -28,173 +26,77 @@ use Tests\AppTestCase;
 class ProgrammeParticipantFlowTest extends AppTestCase
 {
     private const string TEST_EVENT_SLUG = 'test-event-slug';
+    private const string DASHBOARD_PATH = '/v2/event/test-event-slug/participant/dashboard';
 
-    public function testPaidParticipantSeesReadOnlyProgrammesWithClosedWindow(): void
+    public function testRemovedParticipantProgrammePagesAnswer404(): void
     {
         $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'visible workshop', null, 3);
-        $this->createProgramme($app, 'opening ceremony', null, 1, '2027-06-05 08:00', '2027-06-05 09:00', null, true);
-        $ist = $this->createPaidIstWithEmail($app, 'flow-ist@example.com');
-        $this->setProgrammeWindow($app, null, null);
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $programme = $this->createProgramme($app, 'removed pages workshop', null, 3);
+        $ist = $this->createPaidIstWithEmail($app, 'flow-removed-ist@example.com');
         $app = $this->loginAs($app, $ist->getUserButNotNull());
-
-        $responseList = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes'));
-        self::assertSame(200, $responseList->getStatusCode());
-        $body = (string)$responseList->getBody();
-        self::assertStringContainsString('visible workshop', $body);
-        self::assertStringContainsString('opening ceremony', $body);
-        self::assertStringContainsString('programme-enrolled', $body);
-        self::assertStringContainsString($this->translate($app, 'programme.list.enrolled'), $body);
-        self::assertStringNotContainsString('programmes/' . $programme->id . '/register', $body);
-        self::assertStringNotContainsString('programmes/' . $programme->id . '/unregister', $body);
-
-        $responseDetail = $app->handle($this->createRequest(
-            '/v2/event/test-event-slug/programmes/' . $programme->id,
-        ));
-        self::assertSame(200, $responseDetail->getStatusCode());
-        $detailBody = (string)$responseDetail->getBody();
-        self::assertStringContainsString('programme-enrolled', $detailBody);
-        self::assertStringContainsString($this->translate($app, 'programme.list.enrolled'), $detailBody);
-        self::assertStringNotContainsString('programmes/' . $programme->id . '/register', $detailBody);
-        self::assertStringNotContainsString('programmes/' . $programme->id . '/unregister', $detailBody);
-    }
-
-    public function testUnpaidParticipantIsRedirectedFromProgrammes(): void
-    {
-        $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'unpaid workshop', null, 3);
-        $user = $this->registerUser($app, 'flow-unpaid-ist@example.com');
-        $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
-        $app = $this->loginAs($app, $user);
 
         foreach (['', '/' . $programme->id, '/' . $programme->id . '/image'] as $suffix) {
-            $response = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes' . $suffix));
-            self::assertSame(302, $response->getStatusCode(), $suffix);
-        }
-    }
-
-    public function testDetailAndImageOfProgrammeForOtherRoleReturn404(): void
-    {
-        $app = $this->getTestApp();
-        $programme = $this->createProgramme(
-            $app,
-            'patrol leaders workshop',
-            null,
-            3,
-            roles: [ParticipantRole::PatrolLeader],
-        );
-        $ist = $this->createPaidIstWithEmail($app, 'flow-other-role-ist@example.com');
-        $app = $this->loginAs($app, $ist->getUserButNotNull());
-
-        $responseDetail = $app->handle($this->createRequest(
-            '/v2/event/test-event-slug/programmes/' . $programme->id,
-        ));
-        self::assertSame(404, $responseDetail->getStatusCode());
-
-        $responseImage = $app->handle($this->createRequest(
-            '/v2/event/test-event-slug/programmes/' . $programme->id . '/image',
-        ));
-        self::assertSame(404, $responseImage->getStatusCode());
-    }
-
-    public function testRegisterRoutesAreGone(): void
-    {
-        $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'gone routes workshop', null, 3);
-        $ist = $this->createPaidIstWithEmail($app, 'flow-gone-ist@example.com');
-        $app = $this->loginAs($app, $ist->getUserButNotNull());
-
-        foreach (['register', 'unregister'] as $action) {
             try {
-                $app->handle($this->createRequest(
-                    '/v2/event/test-event-slug/programmes/' . $programme->id . '/' . $action,
-                    'POST',
-                ));
-                self::fail($action . ' route still exists');
+                $app->handle($this->createRequest('/v2/event/test-event-slug/programmes' . $suffix));
+                self::fail('route still exists: ' . $suffix);
             } catch (HttpNotFoundException $exception) {
-                self::assertSame(404, $exception->getCode(), $action);
+                self::assertSame(404, $exception->getCode(), $suffix);
             }
         }
     }
 
-    public function testProgrammeImageResponseCarriesSecurityHeaders(): void
+    public function testDashboardWidgetLinksToEventApp(): void
     {
+        $this->setEnv('EVENT_APP_URL', 'https://app.example.org/');
         $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'image workshop', null, 3);
-        $storedFilename = bin2hex(random_bytes(16));
-        $image = new ProgrammeImage();
-        $image->programme = $programme;
-        $image->filename = $storedFilename;
-        $image->thumbFilename = null;
-        $image->alt = '';
-        $image->sortOrder = 0;
-        $this->getService($app, ProgrammeImageRepository::class)->persist($image);
-
-        $uploadPath = __DIR__ . '/../../uploads/' . $storedFilename;
-        imagepng(imagecreatetruecolor(1, 1), $uploadPath);
-
-        $ist = $this->createPaidIstWithEmail($app, 'image-flow-ist@example.com');
+        $this->setEventApiKey($app, 'flow-widget-key');
+        $programme = $this->createProgramme($app, 'widget link workshop', null, 3);
+        $ist = $this->createPaidIstWithEmail($app, 'widget-link-ist@example.com');
+        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
-        try {
-            $response = $app->handle($this->createRequest(
-                '/v2/event/test-event-slug/programmes/' . $programme->id . '/image',
-            ));
-            self::assertSame(200, $response->getStatusCode());
-            self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
-            self::assertStringContainsString("script-src 'none'", $response->getHeaderLine('Content-Security-Policy'));
+        $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
 
-            $detail = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes/' . $programme->id));
-            self::assertStringContainsString(
-                'src="/v2/event/test-event-slug/programmes/' . $programme->id . '/image"',
-                (string)$detail->getBody(),
-            );
-        } finally {
-            @unlink($uploadPath);
-        }
+        self::assertStringContainsString('widget link workshop', $body);
+        self::assertMatchesRegularExpression(
+            '~<a class="btn" href="https://app\.example\.org/test-event-slug/" target="_blank" rel="noopener">\s*'
+            . preg_quote($this->translate($app, 'programme.widget.all'), '~') . '\s*</a>~',
+            $body,
+        );
     }
 
-    public function testDetailOfMissingProgrammeReturns404(): void
+    public function testDashboardWidgetHasNoButtonWithoutEventAppUrl(): void
     {
+        $this->setEnv('EVENT_APP_URL', '');
         $app = $this->getTestApp();
-        $ist = $this->createPaidIstWithEmail($app, 'detail-missing-ist@example.com');
+        $this->setEventApiKey($app, 'flow-widget-key');
+        $programme = $this->createProgramme($app, 'widget no url workshop', null, 3);
+        $ist = $this->createPaidIstWithEmail($app, 'widget-no-url-ist@example.com');
+        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
-        // a user-supplied id for a programme that does not exist must be a clean 404,
-        // not a 500 + Sentry event from the repository's RuntimeException
-        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/programmes/999999'));
-        self::assertSame(404, $response->getStatusCode());
+        $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
+
+        self::assertStringContainsString('widget no url workshop', $body);
+        self::assertStringNotContainsString($this->translate($app, 'programme.widget.all'), $body);
     }
 
-    public function testDetailOfDeletedProgrammeReturns404(): void
+    public function testDashboardWidgetHasNoButtonOnEventWithoutApiKey(): void
     {
+        $this->setEnv('EVENT_APP_URL', 'https://app.example.org/');
         $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'deleted workshop', null, 3);
-        $ist = $this->createPaidIstWithEmail($app, 'detail-deleted-ist@example.com');
+        $programme = $this->createProgramme($app, 'widget no key workshop', null, 3);
+        $ist = $this->createPaidIstWithEmail($app, 'widget-no-key-ist@example.com');
+        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
-        $this->getService($app, ProgrammeService::class)->deleteProgramme($programme);
+        $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
 
-        $response = $app->handle($this->createRequest(
-            '/v2/event/test-event-slug/programmes/' . $programme->id,
-        ));
-        self::assertSame(404, $response->getStatusCode());
+        self::assertStringContainsString('widget no key workshop', $body);
+        self::assertStringNotContainsString($this->translate($app, 'programme.widget.all'), $body);
     }
 
-    public function testImageOfMissingProgrammeReturns404(): void
-    {
-        $app = $this->getTestApp();
-        $ist = $this->createPaidIstWithEmail($app, 'image-missing-ist@example.com');
-        $app = $this->loginAs($app, $ist->getUserButNotNull());
-
-        $response = $app->handle($this->createRequest(
-            '/v2/event/test-event-slug/programmes/999999/image',
-        ));
-        self::assertSame(404, $response->getStatusCode());
-    }
-
-    public function testDashboardWidgetLinksPaidParticipantToProgrammesAndHintsEventAppWhenOpen(): void
+    public function testDashboardWidgetHintsEventAppWhenOpen(): void
     {
         $app = $this->getTestApp();
         $this->createProgramme($app, 'widget workshop', null, 3);
@@ -202,11 +104,10 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $this->setProgrammeWindow($app, '-1 day', '+1 day');
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
-        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/participant/dashboard'));
+        $response = $app->handle($this->createRequest(self::DASHBOARD_PATH));
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string)$response->getBody();
-        self::assertStringContainsString('href="/v2/event/test-event-slug/programmes"', $body);
         self::assertStringContainsString('programme-eventapp-hint', $body);
     }
 
@@ -219,11 +120,10 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
-        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/participant/dashboard'));
+        $response = $app->handle($this->createRequest(self::DASHBOARD_PATH));
 
         self::assertSame(200, $response->getStatusCode());
         $body = (string)$response->getBody();
-        self::assertStringContainsString('href="/v2/event/test-event-slug/programmes"', $body);
         self::assertStringNotContainsString('programme-eventapp-hint', $body);
     }
 
@@ -236,13 +136,19 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $this->setProgrammeWindow($app, '-1 day', '+1 day');
         $app = $this->loginAs($app, $user);
 
-        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/participant/dashboard'));
+        $response = $app->handle($this->createRequest(self::DASHBOARD_PATH));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertStringNotContainsString(
-            'href="/v2/event/test-event-slug/programmes"',
-            (string)$response->getBody(),
-        );
+        self::assertStringNotContainsString('programme-eventapp-hint', (string)$response->getBody());
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function setEventApiKey(App $app, string $key): void
+    {
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $this->mutateEventForTest($app->getContainer(), $event, ['apiKeyEvent' => $key]);
     }
 
     /**

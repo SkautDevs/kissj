@@ -80,9 +80,11 @@ class ParticipantController extends AbstractController
             && count($this->userService->getSelectableRolesWithCurrent($user, $participant->getRoleOrFail())) > 1;
         $devicePairingAvailable = $this->devicePairingService->isDeviceAccessAllowed($user);
         $templateData['devicePairingAvailable'] = $devicePairingAvailable;
+        $templateData['eventAppUrl'] = $devicePairingAvailable
+            ? $this->devicePairingService->eventAppUrl($user->event)
+            : null;
         if ($devicePairingAvailable) {
             $templateData['connectedDevices'] = $this->devicePairingService->countConnectedDevices($participant);
-            $templateData['eventAppUrl'] = $this->devicePairingService->eventAppUrl($user->event);
             $templateData['pairingFormOpen'] = ($request->getQueryParams()['pairingRetry'] ?? null) === '1';
         }
         $templateData['csrfName'] = $csrfName;
