@@ -44,7 +44,8 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $body = (string)$responseList->getBody();
         self::assertStringContainsString('visible workshop', $body);
         self::assertStringContainsString('opening ceremony', $body);
-        self::assertStringContainsString('programme-registered', $body);
+        self::assertStringContainsString('programme-enrolled', $body);
+        self::assertStringContainsString($this->translate($app, 'programme.list.enrolled'), $body);
         self::assertStringNotContainsString('programmes/' . $programme->id . '/register', $body);
         self::assertStringNotContainsString('programmes/' . $programme->id . '/unregister', $body);
 
@@ -53,7 +54,8 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         ));
         self::assertSame(200, $responseDetail->getStatusCode());
         $detailBody = (string)$responseDetail->getBody();
-        self::assertStringContainsString('programme-registered', $detailBody);
+        self::assertStringContainsString('programme-enrolled', $detailBody);
+        self::assertStringContainsString($this->translate($app, 'programme.list.enrolled'), $detailBody);
         self::assertStringNotContainsString('programmes/' . $programme->id . '/register', $detailBody);
         self::assertStringNotContainsString('programmes/' . $programme->id . '/unregister', $detailBody);
     }
@@ -250,8 +252,8 @@ class ProgrammeParticipantFlowTest extends AppTestCase
     {
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        $event->programmeRegistrationStart = $start === null ? null : DateTimeUtils::getDateTime($start);
-        $event->programmeRegistrationEnd = $end === null ? null : DateTimeUtils::getDateTime($end);
+        $event->programmeEnrolmentStart = $start === null ? null : DateTimeUtils::getDateTime($start);
+        $event->programmeEnrolmentEnd = $end === null ? null : DateTimeUtils::getDateTime($end);
         $eventRepository->persist($event);
     }
 
@@ -291,7 +293,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
         ?array $roles = null,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
     ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -302,7 +304,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');

@@ -17,7 +17,7 @@ use kissj\Programme\Place\ProgrammePlace;
  * @property DateTimeInterface      $start m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface      $end m:passThru(dateFromString|dateToString)
  * @property int                    $capacity
- * @property bool                   $isPreregistered
+ * @property bool                   $isAutoenrolled
  * @property ProgrammeSection       $section m:hasOne(section_id)
  * @property ProgrammePlace|null    $programmePlace m:hasOne(place_id)
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)

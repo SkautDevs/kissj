@@ -79,8 +79,8 @@ use kissj\Participant\ParticipantRole;
  * @property DateTimeInterface $startDay m:passThru(dateFromString|dateToString)
  * @property DateTimeInterface $endDay m:passThru(dateFromString|dateToString)
  *
- * @property DateTimeInterface|null $programmeRegistrationStart m:passThru(dateFromString|dateToString)
- * @property DateTimeInterface|null $programmeRegistrationEnd m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $programmeEnrolmentStart m:passThru(dateFromString|dateToString)
+ * @property DateTimeInterface|null $programmeEnrolmentEnd m:passThru(dateFromString|dateToString)
  *
  * @property string            $emailFrom
  * @property string            $emailFromName
@@ -136,15 +136,15 @@ class Event extends EntityDatetime
             && DateTimeUtils::getDateTime() < $this->startDay;
     }
 
-    public function isProgrammeRegistrationOpen(): bool
+    public function isProgrammeEnrolmentOpen(): bool
     {
-        if ($this->programmeRegistrationStart === null || $this->programmeRegistrationEnd === null) {
+        if ($this->programmeEnrolmentStart === null || $this->programmeEnrolmentEnd === null) {
             return false;
         }
 
         $now = DateTimeUtils::getDateTime();
 
-        return $this->programmeRegistrationStart <= $now && $now < $this->programmeRegistrationEnd;
+        return $this->programmeEnrolmentStart <= $now && $now < $this->programmeEnrolmentEnd;
     }
 
     public function hasProgrammeApi(): bool

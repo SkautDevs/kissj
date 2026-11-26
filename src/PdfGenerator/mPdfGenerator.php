@@ -14,7 +14,7 @@ use kissj\Participant\Patrol\PatrolsRoster;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Payment\QrCodeService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeEnrolment;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use Mpdf\Mpdf;
@@ -195,7 +195,7 @@ class mPdfGenerator extends PdfGenerator
     }
 
     /**
-     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     * @param list<array{programme: Programme, enrolments: list<ProgrammeEnrolment>}> $sheets
      */
     public function buildProgrammeAttendanceHtml(Event $event, array $sheets): string
     {
@@ -206,7 +206,7 @@ class mPdfGenerator extends PdfGenerator
     }
 
     /**
-     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     * @param list<array{programme: Programme, enrolments: list<ProgrammeEnrolment>}> $sheets
      */
     public function generateProgrammeAttendance(Event $event, array $sheets): string
     {
@@ -218,7 +218,7 @@ class mPdfGenerator extends PdfGenerator
     }
 
     /**
-     * @param list<array{programme: Programme, registrations: list<ProgrammeRegistration>}> $sheets
+     * @param list<array{programme: Programme, enrolments: list<ProgrammeEnrolment>}> $sheets
      * @return array<string, mixed>
      */
     private function buildProgrammeAttendanceTemplateData(Event $event, array $sheets): array

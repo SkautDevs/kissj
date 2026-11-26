@@ -12,10 +12,10 @@
                     {{ programme.getPlaceName() }},
                     {{ programme.section.getLabel() }}
 
-                    {% if programme.isPreregistered %}
-                        <span>{{ 'programme.list.preregistered'|trans }}</span>
+                    {% if programme.isAutoenrolled %}
+                        <span>{{ 'programme.list.autoenrolled'|trans }}</span>
                     {% elseif programme.id in ownProgrammeIds %}
-                        <span class="programme-registered">{{ 'programme.list.registered'|trans }}</span>
+                        <span class="programme-enrolled">{{ 'programme.list.enrolled'|trans }}</span>
                     {% endif %}
                 </li>
             {% else %}

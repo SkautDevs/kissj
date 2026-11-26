@@ -42,7 +42,7 @@ class ProgrammeRepository extends Repository
     public function findActiveForParticipant(Participant $participant): array
     {
         $qb = $this->createFluent();
-        $qb->join('programme_registration')->as('r')->on('r.programme_id = programme.id');
+        $qb->join('programme_enrolment')->as('r')->on('r.programme_id = programme.id');
         $qb->where('r.participant_id = %i', $participant->id);
         $qb->where('r.deleted_at IS NULL');
         $qb->where('programme.deleted_at IS NULL');
@@ -63,10 +63,10 @@ class ProgrammeRepository extends Repository
     /**
      * @return list<Programme>
      */
-    public function findActivePreregisteredForRole(Event $event, ParticipantRole $role): array
+    public function findActiveAutoenrolledForRole(Event $event, ParticipantRole $role): array
     {
         $qb = $this->createActiveForRoleFluent($event, $role);
-        $qb->where('programme.is_preregistered = %b', true);
+        $qb->where('programme.is_autoenrolled = %b', true);
 
         return $this->hydrateProgrammes($qb->fetchAll());
     }
@@ -88,7 +88,7 @@ class ProgrammeRepository extends Repository
     public function getActiveOccupancy(Event $event): array
     {
         $qb = $this->connection->select('pr.programme_id, COUNT(*) AS taken')
-            ->from('programme_registration')->as('pr')
+            ->from('programme_enrolment')->as('pr')
             ->join('programme')->as('p')->on('p.id = pr.programme_id')
             ->where('p.event_id = %i', $event->id)
             ->where('pr.deleted_at IS NULL')

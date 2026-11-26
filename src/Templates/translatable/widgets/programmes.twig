@@ -1,22 +1,22 @@
-{% set hasProgrammes = registeredProgrammes is not empty or preregisteredProgrammes is not empty %}
-{% if userStatus == 'paid' and (hasProgrammes or event.isProgrammeRegistrationOpen) %}
+{% set hasProgrammes = enrolledProgrammes is not empty or autoenrolledProgrammes is not empty %}
+{% if userStatus == 'paid' and (hasProgrammes or event.isProgrammeEnrolmentOpen) %}
     <div class="card">
         <h2>{{ 'programme.widget.title'|trans }}</h2>
 
         <ul>
-            {% for programme in preregisteredProgrammes %}
+            {% for programme in autoenrolledProgrammes %}
                 <li>{{ programme.name }}, {{ programme.start|date('j. n. Y H:i') }}, {{ programme.getPlaceName() }}</li>
             {% endfor %}
-            {% for registration in registeredProgrammes %}
+            {% for enrolment in enrolledProgrammes %}
                 <li>
-                    {{ registration.programme.name }},
-                    {{ registration.programme.start|date('j. n. Y H:i') }},
-                    {{ registration.programme.getPlaceName() }}
+                    {{ enrolment.programme.name }},
+                    {{ enrolment.programme.start|date('j. n. Y H:i') }},
+                    {{ enrolment.programme.getPlaceName() }}
                 </li>
             {% endfor %}
         </ul>
 
-        {% if event.isProgrammeRegistrationOpen %}
+        {% if event.isProgrammeEnrolmentOpen %}
             <p class="programme-eventapp-hint">{{ 'programme.widget.eventAppHint'|trans }}</p>
         {% endif %}
 

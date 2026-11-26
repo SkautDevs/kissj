@@ -31,7 +31,7 @@
 
 {% include('widgets/deals.twig') with { person: person } %}
 
-{% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, registeredProgrammes: registeredProgrammes, preregisteredProgrammes: preregisteredProgrammes } %}
+{% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, enrolledProgrammes: enrolledProgrammes, autoenrolledProgrammes: autoenrolledProgrammes } %}
 
 {% if devicePairingAvailable ?? false %}
     {% set appName = 'programme.pairing.appName'|trans %}

@@ -42,7 +42,7 @@ class ProgrammeJsonController extends AbstractController
         return $this->resultJsonResponse($response, $this->programmeService->adminRemove($programme, $participant));
     }
 
-    private function resultJsonResponse(Response $response, ProgrammeRegistrationResult $result): Response
+    private function resultJsonResponse(Response $response, ProgrammeEnrolmentResult $result): Response
     {
         if ($result->error !== null) {
             return $this->warningJsonResponse($response, $result->flashKey());

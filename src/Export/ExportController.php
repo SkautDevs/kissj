@@ -15,8 +15,8 @@ use kissj\Participant\ParticipantService;
 use kissj\Participant\ParticipantStatisticsService;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
 use League\Csv\Bom;
@@ -39,7 +39,7 @@ class ExportController extends AbstractController
         private readonly PdfGenerator $pdfGenerator,
         private readonly ParticipantService $participantService,
         private readonly ProgrammeRepository $programmeRepository,
-        private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
     ) {
     }
 
@@ -81,7 +81,7 @@ class ExportController extends AbstractController
 
     public function exportProgrammes(Response $response, Event $event): Response
     {
-        $csvRows = $this->exportService->programmeRegistrationsToCSV($event);
+        $csvRows = $this->exportService->programmeEnrolmentsToCSV($event);
 
         return $this->outputCSVresponse($response, $csvRows, $event->slug . '_programmes');
     }
@@ -239,15 +239,15 @@ class ExportController extends AbstractController
     }
 
     /**
-     * @return list<array{programme: Programme, registrations: list<ProgrammeRegistration>}>
+     * @return list<array{programme: Programme, enrolments: list<ProgrammeEnrolment>}>
      */
     private function buildAttendanceSheets(Event $event, ?int $onlyProgrammeId): array
     {
-        $registrationsByProgramme = $this->programmeRegistrationRepository
+        $enrolmentsByProgramme = $this->programmeEnrolmentRepository
             ->findActiveForEventGroupedByProgramme($event);
         $sheets = [];
         foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
-            if ($programme->isPreregistered) {
+            if ($programme->isAutoenrolled) {
                 continue;
             }
             if ($onlyProgrammeId !== null && $programme->id !== $onlyProgrammeId) {
@@ -255,7 +255,7 @@ class ExportController extends AbstractController
             }
             $sheets[] = [
                 'programme' => $programme,
-                'registrations' => $registrationsByProgramme[$programme->id] ?? [],
+                'enrolments' => $enrolmentsByProgramme[$programme->id] ?? [],
             ];
         }
 

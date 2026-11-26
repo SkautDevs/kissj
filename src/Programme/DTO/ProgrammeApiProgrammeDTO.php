@@ -19,7 +19,7 @@ readonly class ProgrammeApiProgrammeDTO
         public ?int $placeId,
         public string $start,
         public string $end,
-        public bool $isPreregistered,
+        public bool $isAutoenrolled,
         public array $targetRoles,
         public array $images,
     ) {

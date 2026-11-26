@@ -258,7 +258,7 @@ class TestingEventsSeed extends AbstractSeed
         $programmeCount = $this->insertProgrammes($slug, $eventId, $sectionIds);
         $this->deleteEmptyLegacySection($eventId);
         $this->execute(sprintf(
-            "UPDATE event SET programme_registration_start = '%s', programme_registration_end = '%s' WHERE id = %d",
+            "UPDATE event SET programme_enrolment_start = '%s', programme_enrolment_end = '%s' WHERE id = %d",
             self::PROGRAMME_WINDOW_START,
             self::PROGRAMME_WINDOW_END,
             $eventId,
@@ -321,7 +321,7 @@ class TestingEventsSeed extends AbstractSeed
                 'start' => $programme['start'],
                 'end' => $programme['end'],
                 'capacity' => $programme['capacity'],
-                'is_preregistered' => $programme['isPreregistered'],
+                'is_autoenrolled' => $programme['isAutoenrolled'],
                 'roles' => Programme::encodeRoleValues($programme['roles']),
                 'deleted_at' => null,
                 'event_id' => $eventId,

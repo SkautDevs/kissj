@@ -15,8 +15,8 @@ use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
@@ -53,28 +53,28 @@ class ProgrammeApiTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
         self::assertSame(
-            '{"sections":[],"places":[],"programmes":[],"registration":{"start":null,"end":null}}',
+            '{"sections":[],"places":[],"programmes":[],"enrolment":{"start":null,"end":null}}',
             (string)$response->getBody(),
         );
     }
 
-    public function testListCarriesTheRegistrationWindow(): void
+    public function testListCarriesTheEnrolmentWindow(): void
     {
         $app = $this->getTestApp();
         $event = $this->getAuthorizedEvent($app);
         $this->mutateEventForTest($app->getContainer(), $event, [
-            'programmeRegistrationStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
-            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('2027-05-19 00:00:00'),
+            'programmeEnrolmentStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
+            'programmeEnrolmentEnd' => DateTimeUtils::getDateTime('2027-05-19 00:00:00'),
         ]);
 
         $body = $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY)));
 
-        self::assertIsArray($body['registration']);
-        self::assertSame('2027-03-15T18:00:00+01:00', $body['registration']['start']);
-        self::assertSame('2027-05-19T00:00:00+02:00', $body['registration']['end']);
+        self::assertIsArray($body['enrolment']);
+        self::assertSame('2027-03-15T18:00:00+01:00', $body['enrolment']['start']);
+        self::assertSame('2027-05-19T00:00:00+02:00', $body['enrolment']['end']);
     }
 
-    public function testListContainsSectionsInOrderAndProgrammesIncludingPreregistered(): void
+    public function testListContainsSectionsInOrderAndProgrammesIncludingAutoenrolled(): void
     {
         $app = $this->getTestApp();
         $container = $app->getContainer();
@@ -92,11 +92,11 @@ class ProgrammeApiTest extends AppTestCase
         $late = $this->createProgramme($app, $event, $firstCreated, 'api list late', '2027-06-03 10:00');
         $early = $this->createProgramme($app, $event, $secondCreated, 'api list early', '2027-06-03 08:00');
         $earlyTwin = $this->createProgramme($app, $event, $secondCreated, 'api list early twin', '2027-06-03 08:00');
-        $preregistered = $this->createProgramme(
+        $autoenrolled = $this->createProgramme(
             $app,
             $event,
             $firstCreated,
-            'api list preregistered',
+            'api list autoenrolled',
             '2027-06-03 09:00',
             true,
         );
@@ -136,28 +136,28 @@ class ProgrammeApiTest extends AppTestCase
         $programmeIds = array_column($body['programmes'], 'id');
         self::assertNotContains($deleted->id, $programmeIds);
         self::assertNotContains($foreign->id, $programmeIds);
-        $ownIds = [$late->id, $early->id, $earlyTwin->id, $preregistered->id];
+        $ownIds = [$late->id, $early->id, $earlyTwin->id, $autoenrolled->id];
         $ownIdsInResponseOrder = array_values(array_filter(
             $programmeIds,
             static fn (mixed $id): bool => in_array($id, $ownIds, true),
         ));
-        self::assertSame([$early->id, $earlyTwin->id, $preregistered->id, $late->id], $ownIdsInResponseOrder);
+        self::assertSame([$early->id, $earlyTwin->id, $autoenrolled->id, $late->id], $ownIdsInResponseOrder);
 
-        $preregisteredKey = array_search($preregistered->id, $programmeIds, true);
-        self::assertIsInt($preregisteredKey);
+        $autoenrolledKey = array_search($autoenrolled->id, $programmeIds, true);
+        self::assertIsInt($autoenrolledKey);
         self::assertSame([
-            'id' => $preregistered->id,
-            'name' => 'api list preregistered',
+            'id' => $autoenrolled->id,
+            'name' => 'api list autoenrolled',
             'sectionId' => $firstCreated->id,
-            'description' => "description of api list preregistered\nsecond line",
+            'description' => "description of api list autoenrolled\nsecond line",
             'place' => '',
             'placeId' => null,
             'start' => '2027-06-03T09:00:00+02:00',
             'end' => '2027-06-03T11:00:00+02:00',
-            'isPreregistered' => true,
+            'isAutoenrolled' => true,
             'targetRoles' => ['ist', 'guest'],
             'images' => [],
-        ], $body['programmes'][$preregisteredKey]);
+        ], $body['programmes'][$autoenrolledKey]);
     }
 
     public function testListCarriesEveryPlaceOfTheEventSortedByName(): void
@@ -380,12 +380,12 @@ class ProgrammeApiTest extends AppTestCase
         );
 
         foreach ([0, 1] as $index) {
-            $this->register($app, $programme, $this->createPaidIstOnEvent($app, $event, 'Counted ' . $index));
+            $this->enrol($app, $programme, $this->createPaidIstOnEvent($app, $event, 'Counted ' . $index));
         }
         $queriesWithTwoParticipants = $this->countQueriesOf($app, $queryCounter, $request);
 
         foreach ([2, 3, 4] as $index) {
-            $this->register($app, $programme, $this->createPaidIstOnEvent($app, $event, 'Counted ' . $index));
+            $this->enrol($app, $programme, $this->createPaidIstOnEvent($app, $event, 'Counted ' . $index));
         }
         $queriesWithFiveParticipants = $this->countQueriesOf($app, $queryCounter, $request);
 
@@ -408,7 +408,7 @@ class ProgrammeApiTest extends AppTestCase
         $section = $this->createProgrammeSection($container, $event, 'api patrol section');
         $programme = $this->createProgramme($app, $event, $section, 'api patrol programme', '2027-06-09 08:00');
         $member = $this->createPatrolMemberOnEvent($app, $event, 'Vlk');
-        $this->register($app, $programme, $member);
+        $this->enrol($app, $programme, $member);
 
         $participantsResponse = $app->handle($this->createApiRequest(
             '/v3/programme/' . $programme->id . '/participants',
@@ -427,7 +427,7 @@ class ProgrammeApiTest extends AppTestCase
         $section = $this->createProgrammeSection($container, $event, 'api cancelled patrol section');
         $programme = $this->createProgramme($app, $event, $section, 'api cancelled patrol', '2027-06-09 10:00');
         $member = $this->createPatrolMemberOnEvent($app, $event, 'Liška');
-        $this->register($app, $programme, $member);
+        $this->enrol($app, $programme, $member);
         $this->cancel($app, $member);
 
         $participantsResponse = $app->handle($this->createApiRequest(
@@ -450,10 +450,10 @@ class ProgrammeApiTest extends AppTestCase
         $first = $this->createPaidIstOnEvent($app, $event, 'First');
         $second = $this->createPaidIstOnEvent($app, $event, 'Second');
         $removed = $this->createPaidIstOnEvent($app, $event, 'Removed');
-        $this->register($app, $programme, $second);
-        $this->register($app, $programme, $first);
-        $this->getService($app, ProgrammeRegistrationRepository::class)
-            ->softDelete($this->register($app, $programme, $removed));
+        $this->enrol($app, $programme, $second);
+        $this->enrol($app, $programme, $first);
+        $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDelete($this->enrol($app, $programme, $removed));
 
         $response = $app->handle($this->createApiRequest(
             '/v3/programme/' . $programme->id . '/participants',
@@ -474,8 +474,8 @@ class ProgrammeApiTest extends AppTestCase
 
         $active = $this->createPaidIstOnEvent($app, $event, 'Active');
         $cancelled = $this->createPaidIstOnEvent($app, $event, 'Cancelled');
-        $this->register($app, $programme, $active);
-        $this->register($app, $programme, $cancelled);
+        $this->enrol($app, $programme, $active);
+        $this->enrol($app, $programme, $cancelled);
         $this->cancel($app, $cancelled);
 
         $response = $app->handle($this->createApiRequest(
@@ -517,18 +517,18 @@ class ProgrammeApiTest extends AppTestCase
         }
     }
 
-    public function testListSendsAHalfSetRegistrationWindowAsItIs(): void
+    public function testListSendsAHalfSetEnrolmentWindowAsItIs(): void
     {
         $app = $this->getTestApp();
         $event = $this->getAuthorizedEvent($app);
         $this->mutateEventForTest($app->getContainer(), $event, [
-            'programmeRegistrationStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
-            'programmeRegistrationEnd' => null,
+            'programmeEnrolmentStart' => DateTimeUtils::getDateTime('2027-03-15 18:00:00'),
+            'programmeEnrolmentEnd' => null,
         ]);
 
         $body = $this->decodeJson($app->handle($this->createApiRequest('/v3/programme/list', self::API_KEY)));
 
-        self::assertSame(['start' => '2027-03-15T18:00:00+01:00', 'end' => null], $body['registration']);
+        self::assertSame(['start' => '2027-03-15T18:00:00+01:00', 'end' => null], $body['enrolment']);
     }
 
     public function testTheTieReadIsGone(): void
@@ -577,7 +577,7 @@ class ProgrammeApiTest extends AppTestCase
         ProgrammeSection $section,
         string $name,
         string $start,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
         ?ProgrammePlace $place = null,
     ): Programme {
         $programme = new Programme();
@@ -586,7 +586,7 @@ class ProgrammeApiTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');
         $programme->capacity = 10;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $event;
         $programme->section = $section;
         $programme->setTargetRoles([ParticipantRole::Ist, ParticipantRole::Guest]);
@@ -628,14 +628,14 @@ class ProgrammeApiTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function register(App $app, Programme $programme, Participant $participant): ProgrammeRegistration
+    private function enrol(App $app, Programme $programme, Participant $participant): ProgrammeEnrolment
     {
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $participant;
-        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->getService($app, ProgrammeEnrolmentRepository::class)->persist($enrolment);
 
-        return $registration;
+        return $enrolment;
     }
 
     /**

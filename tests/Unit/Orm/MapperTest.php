@@ -23,7 +23,7 @@ use kissj\Payment\Payment;
 use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeEnrolment;
 use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Exception\InvalidStateException;
@@ -171,7 +171,7 @@ class MapperTest extends TestCase
 
         self::assertSame('programme', $mapper->getTable(Programme::class));
         self::assertSame(Programme::class, $mapper->getEntityClass('programme'));
-        self::assertSame(ProgrammeRegistration::class, $mapper->getEntityClass('programme_registration'));
+        self::assertSame(ProgrammeEnrolment::class, $mapper->getEntityClass('programme_enrolment'));
         self::assertSame('programme_place', $mapper->getTable(ProgrammePlace::class));
         self::assertSame(ProgrammePlace::class, $mapper->getEntityClass('programme_place'));
         self::assertSame('programme_image', $mapper->getTable(ProgrammeImage::class));

@@ -34,7 +34,7 @@ class ProgrammeAdminController extends AbstractController
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly EventRepository $eventRepository,
         private readonly UploadFileHandler $uploadFileHandler,
-        private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly DevicePairingRepository $devicePairingRepository,
         private readonly DevicePairingService $devicePairingService,
@@ -75,8 +75,8 @@ class ProgrammeAdminController extends AbstractController
 
     public function saveWindow(Request $request, Response $response, Event $event): Response
     {
-        $start = $this->getParameterFromBody($request, 'programmeRegistrationStart');
-        $end = $this->getParameterFromBody($request, 'programmeRegistrationEnd');
+        $start = $this->getParameterFromBody($request, 'programmeEnrolmentStart');
+        $end = $this->getParameterFromBody($request, 'programmeEnrolmentEnd');
 
         $startDate = $start === '' ? null : $this->parseDatetime($start);
         $endDate = $end === '' ? null : $this->parseDatetime($end);
@@ -89,8 +89,8 @@ class ProgrammeAdminController extends AbstractController
             return $this->redirect($request, $response, 'admin-programmes');
         }
 
-        $event->programmeRegistrationStart = $startDate;
-        $event->programmeRegistrationEnd = $endDate;
+        $event->programmeEnrolmentStart = $startDate;
+        $event->programmeEnrolmentEnd = $endDate;
         $this->eventRepository->persist($event);
         $this->flashMessages->success('flash.success.programmeWindowSaved');
 
@@ -168,8 +168,8 @@ class ProgrammeAdminController extends AbstractController
         $this->programmeRepository->transactional(function () use ($programme): void {
             $this->programmeRepository->persist($programme);
 
-            if ($programme->isPreregistered) {
-                $this->programmeRegistrationRepository->softDeleteAllActiveForProgramme($programme);
+            if ($programme->isAutoenrolled) {
+                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme);
             }
         });
         $this->addUploadedImages($programme, $request);
@@ -181,11 +181,11 @@ class ProgrammeAdminController extends AbstractController
 
     private function warnAboutExclusiveConflicts(Programme $programme): void
     {
-        if ($programme->section->isExclusive === false || $programme->isPreregistered) {
+        if ($programme->section->isExclusive === false || $programme->isAutoenrolled) {
             return;
         }
 
-        $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingRegistrations(
+        $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingEnrolments(
             $programme->section,
         );
         if ($conflictCount > 0) {
@@ -208,26 +208,26 @@ class ProgrammeAdminController extends AbstractController
     public function detail(Response $response, Event $event, int $programmeId): Response
     {
         $programme = $this->programmeRepository->getActiveById($programmeId, $event);
-        $registrations = $this->programmeRegistrationRepository->findActiveForProgramme($programme);
+        $enrolments = $this->programmeEnrolmentRepository->findActiveForProgramme($programme);
 
-        $irregularRegistrationIds = [];
-        foreach ($registrations as $registration) {
-            $registrationParticipant = $registration->participant;
-            $role = $registrationParticipant->role;
+        $irregularEnrolmentIds = [];
+        foreach ($enrolments as $enrolment) {
+            $enrolmentParticipant = $enrolment->participant;
+            $role = $enrolmentParticipant->role;
             if (
                 $role === null
                 || $programme->isForRole($role) === false
-                || $registrationParticipant->getUserButNotNull()->status !== UserStatus::Paid
+                || $enrolmentParticipant->getUserButNotNull()->status !== UserStatus::Paid
             ) {
-                $irregularRegistrationIds[] = $registration->id;
+                $irregularEnrolmentIds[] = $enrolment->id;
             }
         }
 
         return $this->view->render($response, 'admin/programmeDetail-admin.twig', [
             'programme' => $programme,
-            'registrations' => $registrations,
+            'enrolments' => $enrolments,
             'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
-            'irregularRegistrationIds' => $irregularRegistrationIds,
+            'irregularEnrolmentIds' => $irregularEnrolmentIds,
             'hasImage' => $this->programmeImageRepository->findFirstForProgramme($programme) !== null,
             'event' => $event,
         ]);
@@ -267,7 +267,7 @@ class ProgrammeAdminController extends AbstractController
         return $this->redirectToDetail($request, $response, $programmeId);
     }
 
-    private function flash(ProgrammeRegistrationResult $result): void
+    private function flash(ProgrammeEnrolmentResult $result): void
     {
         if ($result->error === null) {
             $this->flashMessages->success($result->flashKey());
@@ -296,7 +296,7 @@ class ProgrammeAdminController extends AbstractController
         $programme->name = $this->getParameterFromBody($request, 'name');
         $programme->description = $this->getParameterFromBody($request, 'description');
         $programme->capacity = max(1, (int)$this->getParameterFromBody($request, 'capacity'));
-        $programme->isPreregistered = $this->isCheckboxCheckedInBody($request, 'isPreregistered');
+        $programme->isAutoenrolled = $this->isCheckboxCheckedInBody($request, 'isAutoenrolled');
 
         $programme->setTargetRoles($this->rolesFromRequest($request));
         // last, so that a refused form does not leave a newly created place behind

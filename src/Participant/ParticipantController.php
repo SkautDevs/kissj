@@ -24,7 +24,7 @@ use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeEnrolment;
 use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
@@ -342,7 +342,7 @@ class ParticipantController extends AbstractController
      *     string,
      *     User|Participant|AbstractContentArbiter|bool
      *     |PatrolParticipant[]|TroopParticipant[]|TechnicalTeamParticipant[]
-     *     |Deal[]|ProgrammeRegistration[]|Programme[]
+     *     |Deal[]|ProgrammeEnrolment[]|Programme[]
      * >
      */
     private function getTemplateData(Participant $participant): array
@@ -364,8 +364,8 @@ class ParticipantController extends AbstractController
             'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
             'ownerTicketTransferAllowed' => $participant->canTransferOwnerTicket(),
-            'registeredProgrammes' => $this->programmeService->getDashboardRegistrations($participant),
-            'preregisteredProgrammes' => $this->programmeService->getDashboardPreregisteredProgrammes($participant),
+            'enrolledProgrammes' => $this->programmeService->getDashboardEnrolments($participant),
+            'autoenrolledProgrammes' => $this->programmeService->getDashboardAutoenrolledProgrammes($participant),
         ];
     }
 }

@@ -299,13 +299,13 @@ class TestingEventsSeedTest extends AppTestCase
             $event = $eventRepository->findBySlug($slug);
             self::assertNotNull($event);
             self::assertCount($count, $programmeRepository->findActiveForEvent($event), $slug);
-            self::assertTrue($event->isProgrammeRegistrationOpen(), $slug);
+            self::assertTrue($event->isProgrammeEnrolmentOpen(), $slug);
         }
         foreach (['nsj3025', 'cej3026'] as $slug) {
             $event = $eventRepository->findBySlug($slug);
             self::assertNotNull($event);
             self::assertCount(0, $programmeRepository->findActiveForEvent($event), $slug);
-            self::assertFalse($event->isProgrammeRegistrationOpen(), $slug);
+            self::assertFalse($event->isProgrammeEnrolmentOpen(), $slug);
         }
 
         $obrok = $eventRepository->findBySlug('obrok3027');

@@ -17,12 +17,12 @@
             <b>{{ (occupancy[programme.id] ?? 0) }}/{{ programme.capacity }}</b><br/>
             <br/>
 
-            {% if programme.isPreregistered %}
-                <p>{{ 'programme.admin.preregisteredNote'|trans }}</p>
+            {% if programme.isAutoenrolled %}
+                <p>{{ 'programme.admin.autoenrolledNote'|trans }}</p>
             {% else %}
                 <h3>{{ 'programme.admin.colParticipant'|trans }}</h3>
-                {% for registration in registrations %}
-                    {% set participant = registration.participant %}
+                {% for enrolment in enrolments %}
+                    {% set participant = enrolment.participant %}
                     {% set participantParams = {eventSlug: event.slug, participantId: participant.id} %}
                     {% set roleLabel = participant.getRole() ? ('role.' ~ participant.getRole().value)|trans : '?' %}
                     {% if user.isAdmin() %}
@@ -33,7 +33,7 @@
                         {{ participant.getFullName() }}
                     {% endif %}
                     ({{ roleLabel }})
-                    {% if registration.id in irregularRegistrationIds %}
+                    {% if enrolment.id in irregularEnrolmentIds %}
                         ⚠ {{ 'programme.admin.irregular'|trans }}
                     {% endif %}
                     <form method="post"

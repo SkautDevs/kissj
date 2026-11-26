@@ -17,7 +17,7 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamLeader;
 use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopLeader;
 use kissj\Participant\Troop\TroopParticipant;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\User\User;
 use kissj\User\UserStatus;
@@ -28,7 +28,7 @@ readonly class ExportService
     public function __construct(
         private ParticipantRepository $participantRepository,
         private ProgrammeRepository $programmeRepository,
-        private ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private TranslatorInterface $translator,
     ) {
     }
@@ -315,7 +315,7 @@ readonly class ExportService
     /**
      * @return list<array<string>>
      */
-    public function programmeRegistrationsToCSV(Event $event): array
+    public function programmeEnrolmentsToCSV(Event $event): array
     {
         $rows = [[
             'programme',
@@ -326,17 +326,17 @@ readonly class ExportService
             'participant',
             'email',
             'role',
-            'registered at',
+            'enrolled at',
         ]];
 
-        $registrationsByProgramme = $this->programmeRegistrationRepository
+        $enrolmentsByProgramme = $this->programmeEnrolmentRepository
             ->findActiveForEventGroupedByProgramme($event);
         foreach ($this->programmeRepository->findActiveForEvent($event) as $programme) {
-            if ($programme->isPreregistered) {
+            if ($programme->isAutoenrolled) {
                 continue;
             }
-            foreach ($registrationsByProgramme[$programme->id] ?? [] as $registration) {
-                $participant = $registration->participant;
+            foreach ($enrolmentsByProgramme[$programme->id] ?? [] as $enrolment) {
+                $participant = $enrolment->participant;
                 $rows[] = [
                     $programme->name,
                     $programme->section->getLabel(),
@@ -346,7 +346,7 @@ readonly class ExportService
                     $participant->getFullName(),
                     $participant->getUserButNotNull()->email,
                     $participant->getRoleOrFail()->value,
-                    $registration->createdAt?->format('Y-m-d H:i') ?? '',
+                    $enrolment->createdAt?->format('Y-m-d H:i') ?? '',
                 ];
             }
         }

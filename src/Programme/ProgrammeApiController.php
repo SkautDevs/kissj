@@ -8,6 +8,7 @@ use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
+use kissj\Programme\DTO\ProgrammeApiEnrolmentWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiErrorDTO;
 use kissj\Programme\DTO\ProgrammeApiImageDTO;
 use kissj\Programme\DTO\ProgrammeApiListDTO;
@@ -20,7 +21,6 @@ use kissj\Programme\DTO\ProgrammeApiPairingStartDTO;
 use kissj\Programme\DTO\ProgrammeApiPairingStatusDTO;
 use kissj\Programme\DTO\ProgrammeApiPlaceDTO;
 use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
-use kissj\Programme\DTO\ProgrammeApiRegistrationWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
 use kissj\Programme\Device\DevicePairing;
 use kissj\Programme\Device\DevicePairingPollStatus;
@@ -40,7 +40,7 @@ class ProgrammeApiController extends AbstractController
     public function __construct(
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly ProgrammeRepository $programmeRepository,
-        private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private readonly DevicePairingService $devicePairingService,
         private readonly ProgrammeService $programmeService,
         private readonly ProgrammePlaceRepository $programmePlaceRepository,
@@ -60,7 +60,7 @@ class ProgrammeApiController extends AbstractController
                 $this->programmePlaceRepository->findForEvent($authorizedEvent),
             ),
             $this->presentProgrammes($request, $this->programmeRepository->findActiveForEvent($authorizedEvent)),
-            $this->presentRegistrationWindow($authorizedEvent),
+            $this->presentEnrolmentWindow($authorizedEvent),
         ));
     }
 
@@ -75,19 +75,19 @@ class ProgrammeApiController extends AbstractController
         );
     }
 
-    public function register(Response $response, Participant $sessionParticipant, int $programmeId): Response
+    public function enrol(Response $response, Participant $sessionParticipant, int $programmeId): Response
     {
-        return $this->presentRegistrationResult(
+        return $this->presentEnrolmentResult(
             $response,
-            $this->programmeService->register($sessionParticipant, $programmeId),
+            $this->programmeService->enrol($sessionParticipant, $programmeId),
         );
     }
 
-    public function unregister(Response $response, Participant $sessionParticipant, int $programmeId): Response
+    public function withdraw(Response $response, Participant $sessionParticipant, int $programmeId): Response
     {
-        return $this->presentRegistrationResult(
+        return $this->presentEnrolmentResult(
             $response,
-            $this->programmeService->unregister($sessionParticipant, $programmeId),
+            $this->programmeService->withdraw($sessionParticipant, $programmeId),
         );
     }
 
@@ -112,8 +112,8 @@ class ProgrammeApiController extends AbstractController
 
         return $this->getResponseWithJson($response, new ProgrammeApiParticipantIdsDTO(
             array_map(
-                static fn (ProgrammeRegistration $registration): int => $registration->participant->id,
-                $this->programmeRegistrationRepository->findActiveNotCancelledForProgramme($programme),
+                static fn (ProgrammeEnrolment $enrolment): int => $enrolment->participant->id,
+                $this->programmeEnrolmentRepository->findActiveNotCancelledForProgramme($programme),
             ),
         ));
     }
@@ -243,7 +243,7 @@ class ProgrammeApiController extends AbstractController
         );
     }
 
-    private function presentRegistrationResult(Response $response, ProgrammeRegistrationResult $result): Response
+    private function presentEnrolmentResult(Response $response, ProgrammeEnrolmentResult $result): Response
     {
         if ($result->error === null) {
             return $this->getResponseWithJson($response, new ProgrammeApiOkDTO(true));
@@ -252,12 +252,12 @@ class ProgrammeApiController extends AbstractController
         return $this->getResponseWithJson($response, new ProgrammeApiErrorDTO($result->error->value), 400);
     }
 
-    private function presentRegistrationWindow(Event $event): ProgrammeApiRegistrationWindowDTO
+    private function presentEnrolmentWindow(Event $event): ProgrammeApiEnrolmentWindowDTO
     {
-        $start = $event->programmeRegistrationStart;
-        $end = $event->programmeRegistrationEnd;
+        $start = $event->programmeEnrolmentStart;
+        $end = $event->programmeEnrolmentEnd;
 
-        return new ProgrammeApiRegistrationWindowDTO(
+        return new ProgrammeApiEnrolmentWindowDTO(
             $start === null ? null : DateTimeUtils::formatAtom($start),
             $end === null ? null : DateTimeUtils::formatAtom($end),
         );

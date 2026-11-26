@@ -13,39 +13,39 @@ class EventProgrammeWindowTest extends TestCase
     public function testNullWindowMeansClosed(): void
     {
         $event = new Event();
-        $event->programmeRegistrationStart = null;
-        $event->programmeRegistrationEnd = null;
+        $event->programmeEnrolmentStart = null;
+        $event->programmeEnrolmentEnd = null;
 
-        self::assertFalse($event->isProgrammeRegistrationOpen());
+        self::assertFalse($event->isProgrammeEnrolmentOpen());
     }
 
     public function testOpenInsideWindow(): void
     {
         $event = new Event();
-        $event->programmeRegistrationStart = DateTimeUtils::getDateTime('-1 hour');
-        $event->programmeRegistrationEnd = DateTimeUtils::getDateTime('+1 hour');
+        $event->programmeEnrolmentStart = DateTimeUtils::getDateTime('-1 hour');
+        $event->programmeEnrolmentEnd = DateTimeUtils::getDateTime('+1 hour');
 
-        self::assertTrue($event->isProgrammeRegistrationOpen());
+        self::assertTrue($event->isProgrammeEnrolmentOpen());
     }
 
     public function testClosedBeforeAndAfterWindow(): void
     {
         $event = new Event();
-        $event->programmeRegistrationStart = DateTimeUtils::getDateTime('+1 hour');
-        $event->programmeRegistrationEnd = DateTimeUtils::getDateTime('+2 hours');
-        self::assertFalse($event->isProgrammeRegistrationOpen());
+        $event->programmeEnrolmentStart = DateTimeUtils::getDateTime('+1 hour');
+        $event->programmeEnrolmentEnd = DateTimeUtils::getDateTime('+2 hours');
+        self::assertFalse($event->isProgrammeEnrolmentOpen());
 
-        $event->programmeRegistrationStart = DateTimeUtils::getDateTime('-2 hours');
-        $event->programmeRegistrationEnd = DateTimeUtils::getDateTime('-1 hour');
-        self::assertFalse($event->isProgrammeRegistrationOpen());
+        $event->programmeEnrolmentStart = DateTimeUtils::getDateTime('-2 hours');
+        $event->programmeEnrolmentEnd = DateTimeUtils::getDateTime('-1 hour');
+        self::assertFalse($event->isProgrammeEnrolmentOpen());
     }
 
     public function testHalfSetWindowMeansClosed(): void
     {
         $event = new Event();
-        $event->programmeRegistrationStart = DateTimeUtils::getDateTime('-1 hour');
-        $event->programmeRegistrationEnd = null;
+        $event->programmeEnrolmentStart = DateTimeUtils::getDateTime('-1 hour');
+        $event->programmeEnrolmentEnd = null;
 
-        self::assertFalse($event->isProgrammeRegistrationOpen());
+        self::assertFalse($event->isProgrammeEnrolmentOpen());
     }
 }

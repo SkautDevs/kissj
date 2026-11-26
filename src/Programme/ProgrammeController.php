@@ -16,7 +16,7 @@ class ProgrammeController extends AbstractController
 {
     public function __construct(
         private readonly ProgrammeRepository $programmeRepository,
-        private readonly ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private readonly ParticipantRepository $participantRepository,
         private readonly ProgrammeImageRepository $programmeImageRepository,
         private readonly ProgrammeImageService $programmeImageService,
@@ -28,8 +28,8 @@ class ProgrammeController extends AbstractController
         $participant = $this->participantRepository->getParticipantFromUser($user);
         $programmes = $this->programmeRepository->findActiveForRole($event, $participant->getRoleOrFail());
         $ownProgrammeIds = [];
-        foreach ($this->programmeRegistrationRepository->findActiveForParticipant($participant) as $registration) {
-            $ownProgrammeIds[] = $registration->programme->id;
+        foreach ($this->programmeEnrolmentRepository->findActiveForParticipant($participant) as $enrolment) {
+            $ownProgrammeIds[] = $enrolment->programme->id;
         }
 
         return $this->view->render($response, 'participant/programmes.twig', [
@@ -47,11 +47,11 @@ class ProgrammeController extends AbstractController
             return $response->withStatus(404);
         }
 
-        $isRegistered = $this->programmeRegistrationRepository->findActive($programme, $participant) !== null;
+        $isEnrolled = $this->programmeEnrolmentRepository->findActive($programme, $participant) !== null;
 
         return $this->view->render($response, 'participant/programmeDetail.twig', [
             'programme' => $programme,
-            'isRegistered' => $isRegistered,
+            'isEnrolled' => $isEnrolled,
             'hasImage' => $this->programmeImageRepository->findFirstForProgramme($programme) !== null,
             'event' => $event,
         ]);

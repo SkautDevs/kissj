@@ -9,9 +9,9 @@ use kissj\Event\EventRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Participant;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
-use kissj\Programme\ProgrammeRegistrationRepository;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
 use kissj\User\User;
@@ -28,12 +28,12 @@ class ProgrammeJsonTest extends AppTestCase
 {
     private const string TEST_EVENT_SLUG = 'test-event-slug';
 
-    public function testJsonAssignToPreregisteredProgrammeReturnsConflictInsteadOf500(): void
+    public function testJsonAssignToAutoenrolledProgrammeReturnsConflictInsteadOf500(): void
     {
         $app = $this->getTestApp();
-        $programme = $this->createProgramme($app, 'json ceremony', null, 999, isPreregistered: true);
-        $ist = $this->createPaidIstWithEmail($app, 'json-preregistered-assignee@example.com');
-        $app = $this->createLoggedAdmin($app, 'json-preregistered-admin@example.com');
+        $programme = $this->createProgramme($app, 'json ceremony', null, 999, isAutoenrolled: true);
+        $ist = $this->createPaidIstWithEmail($app, 'json-autoenrolled-assignee@example.com');
+        $app = $this->createLoggedAdmin($app, 'json-autoenrolled-admin@example.com');
 
         $response = $app->handle($this->createRequest(
             '/v3/event/test-event-slug/admin/programmes/' . $programme->id . '/assign/' . $ist->id,
@@ -42,10 +42,10 @@ class ProgrammeJsonTest extends AppTestCase
         self::assertSame(409, $response->getStatusCode());
         $payload = json_decode((string)$response->getBody(), true);
         self::assertIsArray($payload);
-        self::assertSame('flash.warning.programmePreregisteredNoAssign', $payload['translationKey']);
+        self::assertSame('flash.warning.programmeAutoenrolledNoAssign', $payload['translationKey']);
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testJsonAssignAndRemoveReturnEmptyObjectOnSuccess(): void
@@ -54,7 +54,7 @@ class ProgrammeJsonTest extends AppTestCase
         $programme = $this->createProgramme($app, 'json assign-remove workshop', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'json-assign-remove-ist@example.com');
         $app = $this->createLoggedAdmin($app, 'json-assign-remove-admin@example.com');
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
         $assignResponse = $app->handle($this->createRequest(
             '/v3/event/test-event-slug/admin/programmes/' . $programme->id . '/assign/' . $ist->id,
@@ -62,7 +62,7 @@ class ProgrammeJsonTest extends AppTestCase
         ));
         self::assertSame(200, $assignResponse->getStatusCode());
         self::assertSame([], json_decode((string)$assignResponse->getBody(), true));
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
 
         $removeResponse = $app->handle($this->createRequest(
             '/v3/event/test-event-slug/admin/programmes/' . $programme->id . '/remove/' . $ist->id,
@@ -70,7 +70,7 @@ class ProgrammeJsonTest extends AppTestCase
         ));
         self::assertSame(200, $removeResponse->getStatusCode());
         self::assertSame([], json_decode((string)$removeResponse->getBody(), true));
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testJsonAssignCancelledParticipantReturnsConflictInsteadOf500(): void
@@ -93,8 +93,8 @@ class ProgrammeJsonTest extends AppTestCase
         self::assertIsArray($payload);
         self::assertSame('flash.warning.programmeCancelledNoAssign', $payload['translationKey']);
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testJsonAssignUnknownParticipantReturnsConflictInsteadOf500(): void
@@ -137,8 +137,8 @@ class ProgrammeJsonTest extends AppTestCase
         $response = $app->handle($this->createRequest($path, 'POST'));
 
         $this->assertConflictWithKey($response, 'flash.warning.programmeAlreadyAssigned');
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testJsonRemoveNotAssignedParticipantReturnsNotAssignedConflict(): void
@@ -214,7 +214,7 @@ class ProgrammeJsonTest extends AppTestCase
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
         ?array $roles = null,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
     ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -225,7 +225,7 @@ class ProgrammeJsonTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');

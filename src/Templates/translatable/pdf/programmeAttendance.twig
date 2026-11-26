@@ -8,7 +8,7 @@
             {{ sheet.programme.getPlaceName() }}
             ({{ sheet.programme.section.getLabel() }})
         </p>
-        <p>{{ sheet.registrations|length }}/{{ sheet.programme.capacity }}</p>
+        <p>{{ sheet.enrolments|length }}/{{ sheet.programme.capacity }}</p>
 
         <table border="1" cellpadding="4" width="100%">
             <tr>
@@ -17,11 +17,11 @@
                 <th width="20%">{{ 'programme.pdf.role'|trans }}</th>
                 <th width="20%">{{ 'programme.pdf.present'|trans }}</th>
             </tr>
-            {% for registration in sheet.registrations %}
+            {% for enrolment in sheet.enrolments %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ registration.participant.getFullName() }}</td>
-                    <td>{{ registration.participant.getRole() ? registration.participant.getRole().value : '?' }}</td>
+                    <td>{{ enrolment.participant.getFullName() }}</td>
+                    <td>{{ enrolment.participant.getRole() ? enrolment.participant.getRole().value : '?' }}</td>
                     <td></td>
                 </tr>
             {% endfor %}

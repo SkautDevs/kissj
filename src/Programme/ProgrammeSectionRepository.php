@@ -85,13 +85,13 @@ class ProgrammeSectionRepository extends Repository
         return true;
     }
 
-    public function countParticipantsWithOverlappingRegistrations(ProgrammeSection $section): int
+    public function countParticipantsWithOverlappingEnrolments(ProgrammeSection $section): int
     {
         /** @var int $count */
         $count = $this->connection->select('COUNT(DISTINCT pr1.participant_id)')
-            ->from('programme_registration')->as('pr1')
+            ->from('programme_enrolment')->as('pr1')
             ->join('programme')->as('p1')->on('p1.id = pr1.programme_id')
-            ->join('programme_registration')->as('pr2')
+            ->join('programme_enrolment')->as('pr2')
             ->on('pr2.participant_id = pr1.participant_id AND pr2.id <> pr1.id')
             ->join('programme')->as('p2')->on('p2.id = pr2.programme_id')
             ->join('participant')->as('pa')->on('pa.id = pr1.participant_id')

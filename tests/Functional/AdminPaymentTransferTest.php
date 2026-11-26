@@ -17,7 +17,7 @@ use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
@@ -269,7 +269,7 @@ class AdminPaymentTransferTest extends AppTestCase
         self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
     }
 
-    public function testTransferFreesProgrammeRegistrationsOfSender(): void
+    public function testTransferFreesProgrammeEnrolmentsOfSender(): void
     {
         $app = $this->getTestApp();
         $event = $this->getService($app, EventRepository::class)->get(1);
@@ -290,8 +290,8 @@ class AdminPaymentTransferTest extends AppTestCase
         $programme = $this->createProgramme($app, $event);
         $assignment = $this->getService($app, ProgrammeService::class)->adminAssign($programme, $giverParticipant);
         self::assertNull($assignment->error);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
 
         $this->captureSentMessageRecipients($app);
 
@@ -304,10 +304,10 @@ class AdminPaymentTransferTest extends AppTestCase
         $controller->transferPayment($request, new Response(), $event);
 
         self::assertSame(UserStatus::Paid, $userRepository->get($recipient->id)->status);
-        self::assertSame([], $registrationRepository->findActiveForParticipant($giverParticipant));
+        self::assertSame([], $enrolmentRepository->findActiveForParticipant($giverParticipant));
         $recipientParticipant = $participantRepository->getParticipantFromUser($recipient);
-        self::assertSame([], $registrationRepository->findActiveForParticipant($recipientParticipant));
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame([], $enrolmentRepository->findActiveForParticipant($recipientParticipant));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     /**
@@ -321,7 +321,7 @@ class AdminPaymentTransferTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-03 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-03 12:00');
         $programme->capacity = 10;
-        $programme->isPreregistered = false;
+        $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'transfer section');
         $programme->setTargetRoles([ParticipantRole::Ist]);

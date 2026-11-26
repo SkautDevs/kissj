@@ -12,10 +12,10 @@
         <p>{{ programme.start|date('j. n. Y H:i') }} - {{ programme.end|date('j. n. Y H:i') }}</p>
         <p>{{ programme.getPlaceName() }}</p>
 
-        {% if programme.isPreregistered %}
-            <p>{{ 'programme.list.preregistered'|trans }}</p>
-        {% elseif isRegistered %}
-            <p class="programme-registered">{{ 'programme.list.registered'|trans }}</p>
+        {% if programme.isAutoenrolled %}
+            <p>{{ 'programme.list.autoenrolled'|trans }}</p>
+        {% elseif isEnrolled %}
+            <p class="programme-enrolled">{{ 'programme.list.enrolled'|trans }}</p>
         {% endif %}
 
         <a href="{{ url_for('programmes', {eventSlug: event.slug}) }}">{{ 'programme.detail.back'|trans }}</a>

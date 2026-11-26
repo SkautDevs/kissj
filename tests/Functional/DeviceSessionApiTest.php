@@ -22,8 +22,8 @@ use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\User\UserRepository;
@@ -32,6 +32,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
+use Slim\Exception\HttpException;
 use Slim\Psr7\Uri;
 use Tests\AppTestCase;
 
@@ -42,15 +43,15 @@ class DeviceSessionApiTest extends AppTestCase
     private const string OTHER_EVENT_SLUG = 'device-session-other-event';
     private const string SESSION_HEADER = 'X-Kissj-Device-Session';
 
-    public function testSessionReadReturnsNicknameAndRegistrations(): void
+    public function testSessionReadReturnsNicknameAndEnrolments(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Session Jana');
         $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
         $token = $this->createSession($app, $participant);
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
-        $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST');
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
+        $this->handle($app, '/v3/programme/' . $programme->id . '/enrol', $token, 'POST');
 
         $response = $this->handle($app, '/v3/programme/participant/session', $token);
 
@@ -82,7 +83,7 @@ class DeviceSessionApiTest extends AppTestCase
         $image->alt = 'Ohniště';
         $image->sortOrder = 0;
         $this->getService($app, ProgrammeImageRepository::class)->persist($image);
-        $this->register($app, $programme, $participant);
+        $this->enrol($app, $programme, $participant);
         $request = $this->createApiRequest('/v3/programme/participant/session', self::API_KEY)
             ->withUri(new Uri('https', 'kissj.example', 443, '/v3/programme/participant/session'))
             ->withHeader(self::SESSION_HEADER, $this->createSession($app, $participant));
@@ -105,7 +106,7 @@ class DeviceSessionApiTest extends AppTestCase
         ]], $listed['images']);
     }
 
-    public function testSessionReadOrdersProgrammesByStartAndLeavesOutSoftDeletedRegistrations(): void
+    public function testSessionReadOrdersProgrammesByStartAndLeavesOutSoftDeletedEnrolments(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
@@ -114,10 +115,10 @@ class DeviceSessionApiTest extends AppTestCase
         $later = $this->createProgramme($app, $event, $section, start: '2027-06-04 10:00');
         $earlier = $this->createProgramme($app, $event, $section, start: '2027-06-04 08:00');
         $removed = $this->createProgramme($app, $event, $section, start: '2027-06-04 09:00');
-        $this->register($app, $later, $participant);
-        $this->register($app, $earlier, $participant);
-        $this->getService($app, ProgrammeRegistrationRepository::class)
-            ->softDelete($this->register($app, $removed, $participant));
+        $this->enrol($app, $later, $participant);
+        $this->enrol($app, $earlier, $participant);
+        $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDelete($this->enrol($app, $removed, $participant));
         $token = $this->createSession($app, $participant);
 
         $response = $this->handle($app, '/v3/programme/participant/session', $token);
@@ -148,7 +149,7 @@ class DeviceSessionApiTest extends AppTestCase
         );
     }
 
-    public function testSessionReadQueryCountDoesNotGrowWithRegistrations(): void
+    public function testSessionReadQueryCountDoesNotGrowWithEnrolments(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
@@ -160,36 +161,36 @@ class DeviceSessionApiTest extends AppTestCase
             ->withHeader(self::SESSION_HEADER, $token);
 
         foreach ([0, 1] as $index) {
-            $this->register(
+            $this->enrol(
                 $app,
                 $this->createProgramme($app, $event, $sections[$index], start: '2027-06-07 08:00'),
                 $participant,
             );
         }
-        $queriesWithTwoRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
+        $queriesWithTwoEnrolments = $this->countQueriesOf($app, $queryCounter, $request);
 
         foreach ([2, 3, 4] as $index) {
-            $this->register(
+            $this->enrol(
                 $app,
                 $this->createProgramme($app, $event, $sections[$index % 2], start: '2027-06-07 09:00'),
                 $participant,
             );
         }
-        $queriesWithFiveRegistrations = $this->countQueriesOf($app, $queryCounter, $request);
+        $queriesWithFiveEnrolments = $this->countQueriesOf($app, $queryCounter, $request);
 
         $response = $app->handle($request);
         self::assertSame(200, $response->getStatusCode());
         $programmes = $this->decodeJson($response)['programmes'];
         self::assertIsArray($programmes);
         self::assertCount(5, $programmes);
-        self::assertSame($queriesWithTwoRegistrations, $queriesWithFiveRegistrations);
+        self::assertSame($queriesWithTwoEnrolments, $queriesWithFiveEnrolments);
     }
 
     public function testSessionOfTransferSenderStaysValidWithNoProgrammes(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
         $paymentService = $this->getService($app, PaymentService::class);
         $sender = $this->createPaidIstOnEvent($app, $event, 'Sender');
         $payment = $paymentService->createAndPersistNewEventPayment($sender);
@@ -201,7 +202,7 @@ class DeviceSessionApiTest extends AppTestCase
         $token = $this->createSession($app, $sender);
         self::assertSame(
             200,
-            $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST')->getStatusCode(),
+            $this->handle($app, '/v3/programme/' . $programme->id . '/enrol', $token, 'POST')->getStatusCode(),
         );
 
         $this->initializeMailerSettings($app, $event);
@@ -289,28 +290,47 @@ class DeviceSessionApiTest extends AppTestCase
         );
     }
 
-    public function testRegisterAndUnregisterOk(): void
+    public function testEnrolAndWithdrawOk(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
-        $participant = $this->createPaidIstOnEvent($app, $event, 'Registers');
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Enrols');
         $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
         $token = $this->createSession($app, $participant);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
-        $register = $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST');
+        $enrol = $this->handle($app, '/v3/programme/' . $programme->id . '/enrol', $token, 'POST');
 
-        self::assertSame(200, $register->getStatusCode());
-        self::assertSame('application/json', $register->getHeaderLine('Content-Type'));
-        self::assertSame('{"ok":true}', (string)$register->getBody());
-        self::assertNotNull($registrationRepository->findActive($programme, $participant));
+        self::assertSame(200, $enrol->getStatusCode());
+        self::assertSame('application/json', $enrol->getHeaderLine('Content-Type'));
+        self::assertSame('{"ok":true}', (string)$enrol->getBody());
+        self::assertNotNull($enrolmentRepository->findActive($programme, $participant));
 
-        $unregister = $this->handle($app, '/v3/programme/' . $programme->id . '/unregister', $token, 'POST');
+        $withdraw = $this->handle($app, '/v3/programme/' . $programme->id . '/withdraw', $token, 'POST');
 
-        self::assertSame(200, $unregister->getStatusCode());
-        self::assertSame('{"ok":true}', (string)$unregister->getBody());
-        self::assertNull($registrationRepository->findActive($programme, $participant));
+        self::assertSame(200, $withdraw->getStatusCode());
+        self::assertSame('{"ok":true}', (string)$withdraw->getBody());
+        self::assertNull($enrolmentRepository->findActive($programme, $participant));
+    }
+
+    public function testOldRegisterPathsAreGone(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'Old Paths');
+        $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
+        $token = $this->createSession($app, $participant);
+
+        foreach (['register', 'unregister'] as $oldAction) {
+            try {
+                $this->handle($app, '/v3/programme/' . $programme->id . '/' . $oldAction, $token, 'POST');
+                self::fail($oldAction . ' route still exists');
+            } catch (HttpException $exception) {
+                self::assertContains($exception->getCode(), [404, 405], $oldAction);
+            }
+        }
     }
 
     public function testEveryErrorCode(): void
@@ -322,11 +342,11 @@ class DeviceSessionApiTest extends AppTestCase
         $section = $this->createSection($app, $event, true);
         $plain = $this->createProgramme($app, $event, $section);
 
-        $this->assertError($app, 'closed', '/v3/programme/' . $plain->id . '/register', $token);
-        $this->assertError($app, 'closed', '/v3/programme/' . $plain->id . '/unregister', $token);
+        $this->assertError($app, 'closed', '/v3/programme/' . $plain->id . '/enrol', $token);
+        $this->assertError($app, 'closed', '/v3/programme/' . $plain->id . '/withdraw', $token);
 
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
-        $preregistered = $this->createProgramme($app, $event, $section, preregistered: true);
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
+        $autoenrolled = $this->createProgramme($app, $event, $section, autoenrolled: true);
         $guestOnly = $this->createProgramme($app, $event, $section, roles: [ParticipantRole::Guest]);
         $deleted = $this->createProgramme($app, $event, $section);
         $deleted->deletedAt = DateTimeUtils::getDateTime();
@@ -334,24 +354,24 @@ class DeviceSessionApiTest extends AppTestCase
         $otherEvent = $this->getTypedTestEvent($app, 'default', self::OTHER_EVENT_SLUG);
         $foreign = $this->createProgramme($app, $otherEvent, $this->createSection($app, $otherEvent, false));
 
-        $this->assertError($app, 'notFound', '/v3/programme/99999999/register', $token);
-        $this->assertError($app, 'notFound', '/v3/programme/99999999/unregister', $token);
-        $this->assertError($app, 'notFound', '/v3/programme/' . $foreign->id . '/register', $token);
-        $this->assertError($app, 'notFound', '/v3/programme/' . $deleted->id . '/register', $token);
-        $this->assertError($app, 'notFound', '/v3/programme/' . $deleted->id . '/unregister', $token);
-        $this->assertError($app, 'notPossible', '/v3/programme/' . $preregistered->id . '/register', $token);
-        $this->assertError($app, 'notPossible', '/v3/programme/' . $preregistered->id . '/unregister', $token);
-        $this->assertError($app, 'wrongRole', '/v3/programme/' . $guestOnly->id . '/register', $token);
-        $this->assertError($app, 'notRegistered', '/v3/programme/' . $plain->id . '/unregister', $token);
+        $this->assertError($app, 'notFound', '/v3/programme/99999999/enrol', $token);
+        $this->assertError($app, 'notFound', '/v3/programme/99999999/withdraw', $token);
+        $this->assertError($app, 'notFound', '/v3/programme/' . $foreign->id . '/enrol', $token);
+        $this->assertError($app, 'notFound', '/v3/programme/' . $deleted->id . '/enrol', $token);
+        $this->assertError($app, 'notFound', '/v3/programme/' . $deleted->id . '/withdraw', $token);
+        $this->assertError($app, 'notPossible', '/v3/programme/' . $autoenrolled->id . '/enrol', $token);
+        $this->assertError($app, 'notPossible', '/v3/programme/' . $autoenrolled->id . '/withdraw', $token);
+        $this->assertError($app, 'wrongRole', '/v3/programme/' . $guestOnly->id . '/enrol', $token);
+        $this->assertError($app, 'notEnrolled', '/v3/programme/' . $plain->id . '/withdraw', $token);
 
         self::assertSame(
             200,
-            $this->handle($app, '/v3/programme/' . $plain->id . '/register', $token, 'POST')->getStatusCode(),
+            $this->handle($app, '/v3/programme/' . $plain->id . '/enrol', $token, 'POST')->getStatusCode(),
         );
-        $this->assertError($app, 'alreadyRegistered', '/v3/programme/' . $plain->id . '/register', $token);
+        $this->assertError($app, 'alreadyEnrolled', '/v3/programme/' . $plain->id . '/enrol', $token);
 
         $overlapping = $this->createProgramme($app, $event, $section);
-        $this->assertError($app, 'conflict', '/v3/programme/' . $overlapping->id . '/register', $token);
+        $this->assertError($app, 'conflict', '/v3/programme/' . $overlapping->id . '/enrol', $token);
 
         $otherSection = $this->createSection($app, $event, false);
         $capped = $this->createProgramme($app, $event, $otherSection, capacity: 1);
@@ -359,19 +379,19 @@ class DeviceSessionApiTest extends AppTestCase
         $otherToken = $this->createSession($app, $other);
         self::assertSame(
             200,
-            $this->handle($app, '/v3/programme/' . $capped->id . '/register', $otherToken, 'POST')->getStatusCode(),
+            $this->handle($app, '/v3/programme/' . $capped->id . '/enrol', $otherToken, 'POST')->getStatusCode(),
         );
-        $this->assertError($app, 'full', '/v3/programme/' . $capped->id . '/register', $token);
+        $this->assertError($app, 'full', '/v3/programme/' . $capped->id . '/enrol', $token);
 
         $this->setUserStatus($app, $participant, UserStatus::Open);
         $this->mutateEventForTest($app->getContainer(), $event, [
-            'programmeRegistrationStart' => DateTimeUtils::getDateTime('-2 hours'),
-            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('-1 hour'),
+            'programmeEnrolmentStart' => DateTimeUtils::getDateTime('-2 hours'),
+            'programmeEnrolmentEnd' => DateTimeUtils::getDateTime('-1 hour'),
         ]);
-        $this->assertError($app, 'notPaid', '/v3/programme/' . $capped->id . '/register', $token);
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
-        $this->assertError($app, 'notPaid', '/v3/programme/' . $capped->id . '/register', $token);
-        $this->assertError($app, 'notPaid', '/v3/programme/' . $plain->id . '/unregister', $token);
+        $this->assertError($app, 'notPaid', '/v3/programme/' . $capped->id . '/enrol', $token);
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
+        $this->assertError($app, 'notPaid', '/v3/programme/' . $capped->id . '/enrol', $token);
+        $this->assertError($app, 'notPaid', '/v3/programme/' . $plain->id . '/withdraw', $token);
     }
 
     public function testWriteWithoutSessionIs401BeforeAnyCode(): void
@@ -379,7 +399,7 @@ class DeviceSessionApiTest extends AppTestCase
         $app = $this->getTestApp();
         $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
 
-        $response = $app->handle($this->createApiRequest('/v3/programme/1/register', self::API_KEY, 'POST'));
+        $response = $app->handle($this->createApiRequest('/v3/programme/1/enrol', self::API_KEY, 'POST'));
 
         self::assertSame(401, $response->getStatusCode());
         self::assertSame('', (string)$response->getBody());
@@ -451,7 +471,7 @@ class DeviceSessionApiTest extends AppTestCase
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
         $member = $this->createPatrolMemberOnEvent($app, $event, 'Vlk');
         $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
-        $this->register($app, $programme, $member);
+        $this->enrol($app, $programme, $member);
         $token = $this->createSession($app, $member);
 
         $response = $this->handle($app, '/v3/programme/participant/session', $token);
@@ -488,11 +508,11 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertSame('', (string)$response->getBody());
     }
 
-    public function testFullFlowFromStartToRegister(): void
+    public function testFullFlowFromStartToEnrol(): void
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $this->openProgrammeRegistrationWindow($app, self::EVENT_SLUG);
+        $this->openProgrammeEnrolmentWindow($app, self::EVENT_SLUG);
         $participant = $this->createPaidIstOnEvent($app, $event, 'Flow');
         $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
 
@@ -518,8 +538,8 @@ class DeviceSessionApiTest extends AppTestCase
         self::assertSame(200, $read->getStatusCode());
         self::assertSame(['id' => $participant->id, 'nickname' => 'Flow'], $this->decodeJson($read)['participant']);
 
-        $register = $this->handle($app, '/v3/programme/' . $programme->id . '/register', $token, 'POST');
-        self::assertSame('{"ok":true}', (string)$register->getBody());
+        $enrol = $this->handle($app, '/v3/programme/' . $programme->id . '/enrol', $token, 'POST');
+        self::assertSame('{"ok":true}', (string)$enrol->getBody());
     }
 
     /**
@@ -607,7 +627,7 @@ class DeviceSessionApiTest extends AppTestCase
         App $app,
         Event $event,
         ProgrammeSection $section,
-        bool $preregistered = false,
+        bool $autoenrolled = false,
         array $roles = [ParticipantRole::Ist],
         int $capacity = 10,
         string $start = '2027-06-03 10:00',
@@ -618,7 +638,7 @@ class DeviceSessionApiTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($start . ' +2 hours');
         $programme->capacity = $capacity;
-        $programme->isPreregistered = $preregistered;
+        $programme->isAutoenrolled = $autoenrolled;
         $programme->event = $event;
         $programme->section = $section;
         $programme->setTargetRoles($roles);
@@ -630,13 +650,13 @@ class DeviceSessionApiTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function register(App $app, Programme $programme, Participant $participant): ProgrammeRegistration
+    private function enrol(App $app, Programme $programme, Participant $participant): ProgrammeEnrolment
     {
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $participant;
-        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->getService($app, ProgrammeEnrolmentRepository::class)->persist($enrolment);
 
-        return $registration;
+        return $enrolment;
     }
 }

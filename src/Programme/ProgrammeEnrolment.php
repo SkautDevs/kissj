@@ -14,7 +14,7 @@ use kissj\Participant\Participant;
  * @property Participant            $participant m:hasOne
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)
  */
-class ProgrammeRegistration extends EntityDatetime
+class ProgrammeEnrolment extends EntityDatetime
 {
     public function isDeleted(): bool
     {

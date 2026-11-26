@@ -6,18 +6,18 @@ namespace kissj\Programme;
 
 use LogicException;
 
-enum ProgrammeRegistrationError: string
+enum ProgrammeEnrolmentError: string
 {
     case NotPaid = 'notPaid';
     case Closed = 'closed';
     case NotFound = 'notFound';
     case NotPossible = 'notPossible';
     case WrongRole = 'wrongRole';
-    case AlreadyRegistered = 'alreadyRegistered';
-    case NotRegistered = 'notRegistered';
+    case AlreadyEnrolled = 'alreadyEnrolled';
+    case NotEnrolled = 'notEnrolled';
     case Conflict = 'conflict';
     case Full = 'full';
-    case PreregisteredNoAssign = 'preregisteredNoAssign';
+    case AutoenrolledNoAssign = 'autoenrolledNoAssign';
     case CancelledNoAssign = 'cancelledNoAssign';
     case AlreadyAssigned = 'alreadyAssigned';
     case NotAssigned = 'notAssigned';
@@ -26,7 +26,7 @@ enum ProgrammeRegistrationError: string
     {
         return match ($this) {
             self::NotFound => 'flash.error.programmeNotFound',
-            self::PreregisteredNoAssign => 'flash.warning.programmePreregisteredNoAssign',
+            self::AutoenrolledNoAssign => 'flash.warning.programmeAutoenrolledNoAssign',
             self::CancelledNoAssign => 'flash.warning.programmeCancelledNoAssign',
             self::AlreadyAssigned => 'flash.warning.programmeAlreadyAssigned',
             self::NotAssigned => 'flash.warning.programmeNotAssigned',
@@ -34,8 +34,8 @@ enum ProgrammeRegistrationError: string
             self::Closed,
             self::NotPossible,
             self::WrongRole,
-            self::AlreadyRegistered,
-            self::NotRegistered,
+            self::AlreadyEnrolled,
+            self::NotEnrolled,
             self::Conflict,
             self::Full => throw new LogicException('Error ' . $this->value . ' has no flash text'),
         };

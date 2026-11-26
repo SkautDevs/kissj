@@ -13,15 +13,15 @@
         {# bare dot-access on a null LeanMapper magic property crashes Twig's attribute
            resolution (isset() on the entity returns false for null, so it falls through to
            a method-call lookup that doesn't exist) -- the explicit getter call sidesteps that #}
-        {% set windowStart = event.getProgrammeRegistrationStart() %}
-        {% set windowEnd = event.getProgrammeRegistrationEnd() %}
+        {% set windowStart = event.getProgrammeEnrolmentStart() %}
+        {% set windowEnd = event.getProgrammeEnrolmentEnd() %}
         <form method="post" action="{{ url_for('admin-programme-window', {eventSlug: event.slug}) }}">
             <label>{{ 'programme.admin.windowStart'|trans }}
-                <input type="datetime-local" name="programmeRegistrationStart"
+                <input type="datetime-local" name="programmeEnrolmentStart"
                        value="{{ windowStart ? windowStart|date('Y-m-d\\TH:i') : '' }}">
             </label>
             <label>{{ 'programme.admin.windowEnd'|trans }}
-                <input type="datetime-local" name="programmeRegistrationEnd"
+                <input type="datetime-local" name="programmeEnrolmentEnd"
                        value="{{ windowEnd ? windowEnd|date('Y-m-d\\TH:i') : '' }}">
             </label>
             <input type="submit" class="btn btn-small" value="{{ 'programme.admin.windowSave'|trans }}">
@@ -85,8 +85,8 @@
             {{ 'programme.admin.colPlace'|trans }}: <b>{{ programme.getPlaceName() }}</b><br/>
             {{ 'programme.admin.colSection'|trans }}: <b>{{ programme.section.getLabel() }}</b><br/>
             {{ 'programme.admin.colOccupancy'|trans }}:
-            {% if programme.isPreregistered %}
-                <b>{{ 'programme.admin.preregistered'|trans }}</b><br/>
+            {% if programme.isAutoenrolled %}
+                <b>{{ 'programme.admin.autoenrolled'|trans }}</b><br/>
             {% else %}
                 <b>{{ taken }}/{{ programme.capacity }}{% if taken > programme.capacity %} ⚠{% endif %}</b><br/>
             {% endif %}

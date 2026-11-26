@@ -20,7 +20,7 @@ use kissj\Participant\TshirtService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
@@ -142,7 +142,7 @@ class ParticipantServiceInvalidItemsTest extends TestCase
             Mockery::mock(UserRepository::class),
             new ProgrammeService(
                 Mockery::mock(ProgrammeRepository::class),
-                Mockery::mock(ProgrammeRegistrationRepository::class),
+                Mockery::mock(ProgrammeEnrolmentRepository::class),
                 Mockery::mock(ParticipantRepository::class),
                 Mockery::mock(UserRepository::class),
                 new Metrics(),

@@ -25,7 +25,7 @@ use kissj\Programme\Device\DeviceSession;
 use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
+use kissj\Programme\ProgrammeEnrolment;
 use kissj\Programme\ProgrammeSection;
 use kissj\User\LoginToken;
 use kissj\User\User;
@@ -110,8 +110,8 @@ class Mapper implements IMapper
             case 'programme':
                 return Programme::class;
 
-            case 'programme_registration':
-                return ProgrammeRegistration::class;
+            case 'programme_enrolment':
+                return ProgrammeEnrolment::class;
 
             case 'programme_section':
                 return ProgrammeSection::class;

@@ -874,12 +874,12 @@ class AppTestCase extends TestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    protected function openProgrammeRegistrationWindow(App $app, string $slug = 'test-event-slug'): void
+    protected function openProgrammeEnrolmentWindow(App $app, string $slug = 'test-event-slug'): void
     {
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => $slug]);
         $this->mutateEventForTest($app->getContainer(), $event, [
-            'programmeRegistrationStart' => DateTimeUtils::getDateTime('-1 hour'),
-            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('+1 hour'),
+            'programmeEnrolmentStart' => DateTimeUtils::getDateTime('-1 hour'),
+            'programmeEnrolmentEnd' => DateTimeUtils::getDateTime('+1 hour'),
         ]);
     }
 

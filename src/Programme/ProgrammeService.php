@@ -20,17 +20,17 @@ readonly class ProgrammeService
 {
     public function __construct(
         private ProgrammeRepository $programmeRepository,
-        private ProgrammeRegistrationRepository $programmeRegistrationRepository,
+        private ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private ParticipantRepository $participantRepository,
         private UserRepository $userRepository,
         private Metrics $metrics,
     ) {
     }
 
-    public function register(Participant $participant, int $programmeId): ProgrammeRegistrationResult
+    public function enrol(Participant $participant, int $programmeId): ProgrammeEnrolmentResult
     {
         $result = $this->programmeRepository->transactional(
-            function () use ($participant, $programmeId): ProgrammeRegistrationResult {
+            function () use ($participant, $programmeId): ProgrammeEnrolmentResult {
                 $this->participantRepository->lock($participant);
 
                 $refusal = $this->findSelfServiceRefusal(
@@ -47,54 +47,54 @@ readonly class ProgrammeService
                     || $programme->isDeleted()
                     || $programme->event->id !== $participant->getUserButNotNull()->event->id
                 ) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
                 }
 
-                if ($programme->isPreregistered) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPossible);
+                if ($programme->isAutoenrolled) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotPossible);
                 }
 
                 if ($programme->isForRole($participant->getRoleOrFail()) === false) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::WrongRole);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::WrongRole);
                 }
 
-                if ($this->programmeRegistrationRepository->findActive($programme, $participant) !== null) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::AlreadyRegistered);
+                if ($this->programmeEnrolmentRepository->findActive($programme, $participant) !== null) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::AlreadyEnrolled);
                 }
 
-                foreach ($this->programmeRegistrationRepository->findActiveForParticipant($participant) as $existing) {
+                foreach ($this->programmeEnrolmentRepository->findActiveForParticipant($participant) as $existing) {
                     if ($programme->isExclusiveWith($existing->programme)) {
-                        return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Conflict);
+                        return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::Conflict);
                     }
                 }
 
-                $taken = $this->programmeRegistrationRepository->countActiveForProgramme($programme);
+                $taken = $this->programmeEnrolmentRepository->countActiveForProgramme($programme);
                 if ($taken >= $programme->capacity) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Full);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::Full);
                 }
 
-                $this->createRegistration($programme, $participant);
+                $this->createEnrolment($programme, $participant);
 
-                return ProgrammeRegistrationResult::success();
+                return ProgrammeEnrolmentResult::success();
             },
         );
 
-        $this->countOutcome($participant, $result, MetricName::ProgrammesRegistered);
+        $this->countOutcome($participant, $result, MetricName::ProgrammesEnrolled);
 
         return $result;
     }
 
-    public function unregister(Participant $participant, int $programmeId): ProgrammeRegistrationResult
+    public function withdraw(Participant $participant, int $programmeId): ProgrammeEnrolmentResult
     {
         $refusal = $this->findSelfServiceRefusal($participant->getUserButNotNull());
         if ($refusal !== null) {
-            $this->countOutcome($participant, $refusal, MetricName::ProgrammesUnregistered);
+            $this->countOutcome($participant, $refusal, MetricName::ProgrammesWithdrawn);
 
             return $refusal;
         }
 
         $result = $this->programmeRepository->transactional(
-            function () use ($participant, $programmeId): ProgrammeRegistrationResult {
+            function () use ($participant, $programmeId): ProgrammeEnrolmentResult {
                 $programme = $this->programmeRepository->findWithLock($programmeId);
 
                 if (
@@ -102,73 +102,73 @@ readonly class ProgrammeService
                     || $programme->isDeleted()
                     || $programme->event->id !== $participant->getUserButNotNull()->event->id
                 ) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
                 }
 
-                if ($programme->isPreregistered) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPossible);
+                if ($programme->isAutoenrolled) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotPossible);
                 }
 
-                $registration = $this->programmeRegistrationRepository->findActive($programme, $participant);
-                if ($registration === null) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotRegistered);
+                $enrolment = $this->programmeEnrolmentRepository->findActive($programme, $participant);
+                if ($enrolment === null) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotEnrolled);
                 }
 
-                $this->programmeRegistrationRepository->softDelete($registration);
+                $this->programmeEnrolmentRepository->softDelete($enrolment);
 
-                return ProgrammeRegistrationResult::success();
+                return ProgrammeEnrolmentResult::success();
             },
         );
 
-        $this->countOutcome($participant, $result, MetricName::ProgrammesUnregistered);
+        $this->countOutcome($participant, $result, MetricName::ProgrammesWithdrawn);
 
         return $result;
     }
 
-    public function adminAssign(Programme $programme, Participant $participant): ProgrammeRegistrationResult
+    public function adminAssign(Programme $programme, Participant $participant): ProgrammeEnrolmentResult
     {
-        if ($programme->isPreregistered) {
-            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::PreregisteredNoAssign);
+        if ($programme->isAutoenrolled) {
+            return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::AutoenrolledNoAssign);
         }
 
         return $this->programmeRepository->transactional(
-            function () use ($programme, $participant): ProgrammeRegistrationResult {
+            function () use ($programme, $participant): ProgrammeEnrolmentResult {
                 $this->participantRepository->lock($participant);
 
                 $user = $this->userRepository->get($participant->getUserButNotNull()->id);
                 if ($user->status === UserStatus::Cancelled) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::CancelledNoAssign);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::CancelledNoAssign);
                 }
 
                 $lockedProgramme = $this->programmeRepository->findWithLock($programme->id);
                 if ($lockedProgramme === null || $lockedProgramme->isDeleted()) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotFound);
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
                 }
 
-                if ($this->programmeRegistrationRepository->findActive($programme, $participant) !== null) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::AlreadyAssigned);
+                if ($this->programmeEnrolmentRepository->findActive($programme, $participant) !== null) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::AlreadyAssigned);
                 }
 
-                $this->createRegistration($programme, $participant);
+                $this->createEnrolment($programme, $participant);
 
-                return ProgrammeRegistrationResult::success('flash.success.programmeParticipantAssigned');
+                return ProgrammeEnrolmentResult::success('flash.success.programmeParticipantAssigned');
             },
         );
     }
 
-    public function adminRemove(Programme $programme, Participant $participant): ProgrammeRegistrationResult
+    public function adminRemove(Programme $programme, Participant $participant): ProgrammeEnrolmentResult
     {
         return $this->programmeRepository->transactional(
-            function () use ($programme, $participant): ProgrammeRegistrationResult {
+            function () use ($programme, $participant): ProgrammeEnrolmentResult {
                 $this->programmeRepository->findWithLock($programme->id);
-                $registration = $this->programmeRegistrationRepository->findActive($programme, $participant);
-                if ($registration === null) {
-                    return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotAssigned);
+                $enrolment = $this->programmeEnrolmentRepository->findActive($programme, $participant);
+                if ($enrolment === null) {
+                    return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotAssigned);
                 }
 
-                $this->programmeRegistrationRepository->softDelete($registration);
+                $this->programmeEnrolmentRepository->softDelete($enrolment);
 
-                return ProgrammeRegistrationResult::success('flash.success.programmeParticipantRemoved');
+                return ProgrammeEnrolmentResult::success('flash.success.programmeParticipantRemoved');
             },
         );
     }
@@ -177,7 +177,7 @@ readonly class ProgrammeService
     {
         $this->programmeRepository->transactional(
             function () use ($programme): void {
-                $this->programmeRegistrationRepository->softDeleteAllActiveForProgramme($programme);
+                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme);
                 $programme->deletedAt = DateTimeUtils::getDateTime();
                 $this->programmeRepository->persist($programme);
             },
@@ -186,32 +186,32 @@ readonly class ProgrammeService
 
     public function freeAllProgrammes(Participant $participant): void
     {
-        $this->programmeRegistrationRepository->softDeleteAllActiveForParticipant($participant);
+        $this->programmeEnrolmentRepository->softDeleteAllActiveForParticipant($participant);
     }
 
     /**
-     * @return list<ProgrammeRegistration>
+     * @return list<ProgrammeEnrolment>
      */
-    public function getDashboardRegistrations(Participant $participant): array
+    public function getDashboardEnrolments(Participant $participant): array
     {
         if ($participant->getUserButNotNull()->status !== UserStatus::Paid) {
             return [];
         }
 
-        return $this->programmeRegistrationRepository->findActiveForParticipant($participant);
+        return $this->programmeEnrolmentRepository->findActiveForParticipant($participant);
     }
 
     /**
      * @return list<Programme>
      */
-    public function getDashboardPreregisteredProgrammes(Participant $participant): array
+    public function getDashboardAutoenrolledProgrammes(Participant $participant): array
     {
         $user = $participant->getUserButNotNull();
         if ($user->status !== UserStatus::Paid) {
             return [];
         }
 
-        return $this->programmeRepository->findActivePreregisteredForRole($user->event, $participant->getRoleOrFail());
+        return $this->programmeRepository->findActiveAutoenrolledForRole($user->event, $participant->getRoleOrFail());
     }
 
     /**
@@ -228,7 +228,7 @@ readonly class ProgrammeService
             $programme->programmePlace?->id,
             DateTimeUtils::formatAtom($programme->start),
             DateTimeUtils::formatAtom($programme->end),
-            $programme->isPreregistered,
+            $programme->isAutoenrolled,
             array_map(
                 static fn (ParticipantRole $role): string => $role->value,
                 $programme->getTargetRoles(),
@@ -237,14 +237,14 @@ readonly class ProgrammeService
         );
     }
 
-    private function findSelfServiceRefusal(User $user): ?ProgrammeRegistrationResult
+    private function findSelfServiceRefusal(User $user): ?ProgrammeEnrolmentResult
     {
         if ($user->status !== UserStatus::Paid) {
-            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::NotPaid);
+            return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotPaid);
         }
 
-        if ($user->event->isProgrammeRegistrationOpen() === false) {
-            return ProgrammeRegistrationResult::failure(ProgrammeRegistrationError::Closed);
+        if ($user->event->isProgrammeEnrolmentOpen() === false) {
+            return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::Closed);
         }
 
         return null;
@@ -252,7 +252,7 @@ readonly class ProgrammeService
 
     private function countOutcome(
         Participant $participant,
-        ProgrammeRegistrationResult $result,
+        ProgrammeEnrolmentResult $result,
         MetricName $successMetric,
     ): void {
         $attributes = ['event' => $participant->getUserButNotNull()->event->slug];
@@ -264,17 +264,17 @@ readonly class ProgrammeService
         }
 
         $this->metrics->count(
-            MetricName::ProgrammesRegistrationRefused,
+            MetricName::ProgrammesEnrolmentRefused,
             1,
             [...$attributes, 'error' => $result->error->value, 'action' => $successMetric->value],
         );
     }
 
-    private function createRegistration(Programme $programme, Participant $participant): void
+    private function createEnrolment(Programme $programme, Participant $participant): void
     {
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $participant;
-        $this->programmeRegistrationRepository->persist($registration);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->programmeEnrolmentRepository->persist($enrolment);
     }
 }

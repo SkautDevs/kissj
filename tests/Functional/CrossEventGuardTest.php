@@ -325,7 +325,7 @@ class CrossEventGuardTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;
-        $programme->isPreregistered = false;
+        $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'cross-event');
         $programme->setTargetRoles([ParticipantRole::Ist]);

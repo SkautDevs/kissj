@@ -15,43 +15,43 @@ use kissj\User\UserStatus;
 use LogicException;
 
 /**
- * @table programme_registration
+ * @table programme_enrolment
  *
- * @method ProgrammeRegistration get(int $registrationId)
- * @method ProgrammeRegistration getOneBy(mixed[] $criteria)
- * @method ProgrammeRegistration[] findBy(mixed[] $criteria, Order[] $orders = [])
- * @method ProgrammeRegistration|null findOneBy(mixed[] $criteria, Order[] $orders = [])
+ * @method ProgrammeEnrolment get(int $enrolmentId)
+ * @method ProgrammeEnrolment getOneBy(mixed[] $criteria)
+ * @method ProgrammeEnrolment[] findBy(mixed[] $criteria, Order[] $orders = [])
+ * @method ProgrammeEnrolment|null findOneBy(mixed[] $criteria, Order[] $orders = [])
  */
-class ProgrammeRegistrationRepository extends Repository
+class ProgrammeEnrolmentRepository extends Repository
 {
     /**
-     * @return array<int, list<ProgrammeRegistration>>
+     * @return array<int, list<ProgrammeEnrolment>>
      */
     public function findActiveForEventGroupedByProgramme(Event $event): array
     {
         $qb = $this->createFluent();
-        $qb->join('programme')->as('p')->on('p.id = programme_registration.programme_id');
+        $qb->join('programme')->as('p')->on('p.id = programme_enrolment.programme_id');
         $qb->where('p.event_id = %i', $event->id);
         $qb->where('p.deleted_at IS NULL');
-        $qb->where('programme_registration.deleted_at IS NULL');
+        $qb->where('programme_enrolment.deleted_at IS NULL');
 
         $grouped = [];
         foreach ($qb->fetchAll() as $row) {
             /** @var Row&iterable<string, mixed> $row */
             $programmeIdRaw = $row['programme_id'] ?? null;
             if (is_numeric($programmeIdRaw) === false) {
-                throw new LogicException('programme_registration row without numeric programme_id');
+                throw new LogicException('programme_enrolment row without numeric programme_id');
             }
-            /** @var ProgrammeRegistration $registration */
-            $registration = $this->createEntity($row);
-            $grouped[(int)$programmeIdRaw][] = $registration;
+            /** @var ProgrammeEnrolment $enrolment */
+            $enrolment = $this->createEntity($row);
+            $grouped[(int)$programmeIdRaw][] = $enrolment;
         }
 
         return $grouped;
     }
 
     /**
-     * @return list<ProgrammeRegistration>
+     * @return list<ProgrammeEnrolment>
      */
     public function findActiveForParticipant(Participant $participant): array
     {
@@ -59,11 +59,11 @@ class ProgrammeRegistrationRepository extends Repository
         $qb->where('participant_id = %i', $participant->id);
         $qb->where('deleted_at IS NULL');
 
-        return $this->fetchRegistrations($qb);
+        return $this->fetchEnrolments($qb);
     }
 
     /**
-     * @return list<ProgrammeRegistration>
+     * @return list<ProgrammeEnrolment>
      */
     public function findActiveForProgramme(Programme $programme): array
     {
@@ -72,34 +72,34 @@ class ProgrammeRegistrationRepository extends Repository
         $qb->where('deleted_at IS NULL');
         $qb->orderBy('participant_id')->asc();
 
-        return $this->fetchRegistrations($qb);
+        return $this->fetchEnrolments($qb);
     }
 
     /**
-     * @return list<ProgrammeRegistration>
+     * @return list<ProgrammeEnrolment>
      */
     public function findActiveNotCancelledForProgramme(Programme $programme): array
     {
         $qb = $this->createFluent();
-        $qb->join('participant')->as('pa')->on('pa.id = programme_registration.participant_id');
+        $qb->join('participant')->as('pa')->on('pa.id = programme_enrolment.participant_id');
         $qb->leftJoin('participant')->as('pl')->on('pl.id = pa.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = COALESCE(pa.user_id, pl.user_id)');
-        $qb->where('programme_registration.programme_id = %i', $programme->id);
-        $qb->where('programme_registration.deleted_at IS NULL');
+        $qb->where('programme_enrolment.programme_id = %i', $programme->id);
+        $qb->where('programme_enrolment.deleted_at IS NULL');
         $qb->where('u.status != %s', UserStatus::Cancelled->value);
-        $qb->orderBy('programme_registration.participant_id')->asc();
+        $qb->orderBy('programme_enrolment.participant_id')->asc();
 
-        return $this->fetchRegistrations($qb);
+        return $this->fetchEnrolments($qb);
     }
 
-    public function findActive(Programme $programme, Participant $participant): ?ProgrammeRegistration
+    public function findActive(Programme $programme, Participant $participant): ?ProgrammeEnrolment
     {
         $qb = $this->createFluent();
         $qb->where('programme_id = %i', $programme->id);
         $qb->where('participant_id = %i', $participant->id);
         $qb->where('deleted_at IS NULL');
 
-        return $this->fetchRegistrations($qb)[0] ?? null;
+        return $this->fetchEnrolments($qb)[0] ?? null;
     }
 
     public function countActiveForProgramme(Programme $programme): int
@@ -114,37 +114,37 @@ class ProgrammeRegistrationRepository extends Repository
         return $count;
     }
 
-    public function softDelete(ProgrammeRegistration $registration): void
+    public function softDelete(ProgrammeEnrolment $enrolment): void
     {
-        $registration->deletedAt = DateTimeUtils::getDateTime();
-        $this->persist($registration);
+        $enrolment->deletedAt = DateTimeUtils::getDateTime();
+        $this->persist($enrolment);
     }
 
     public function softDeleteAllActiveForParticipant(Participant $participant): void
     {
-        foreach ($this->findActiveForParticipant($participant) as $registration) {
-            $this->softDelete($registration);
+        foreach ($this->findActiveForParticipant($participant) as $enrolment) {
+            $this->softDelete($enrolment);
         }
     }
 
     public function softDeleteAllActiveForProgramme(Programme $programme): void
     {
-        foreach ($this->findActiveForProgramme($programme) as $registration) {
-            $this->softDelete($registration);
+        foreach ($this->findActiveForProgramme($programme) as $enrolment) {
+            $this->softDelete($enrolment);
         }
     }
 
     /**
-     * @return list<ProgrammeRegistration>
+     * @return list<ProgrammeEnrolment>
      */
-    private function fetchRegistrations(Fluent $qb): array
+    private function fetchEnrolments(Fluent $qb): array
     {
         /** @var list<Row> $rows */
         $rows = $qb->fetchAll();
 
-        /** @var array<int, ProgrammeRegistration> $registrations */
-        $registrations = $this->createEntities($rows);
+        /** @var array<int, ProgrammeEnrolment> $enrolments */
+        $enrolments = $this->createEntities($rows);
 
-        return array_values($registrations);
+        return array_values($enrolments);
     }
 }

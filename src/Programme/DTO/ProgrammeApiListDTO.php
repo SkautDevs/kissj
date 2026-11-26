@@ -15,7 +15,7 @@ readonly class ProgrammeApiListDTO
         public array $sections,
         public array $places,
         public array $programmes,
-        public ProgrammeApiRegistrationWindowDTO $registration,
+        public ProgrammeApiEnrolmentWindowDTO $enrolment,
     ) {
     }
 }

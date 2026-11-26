@@ -48,7 +48,7 @@ class SeedProgrammesTest extends TestCase
          *     start: string,
          *     end: string,
          *     capacity: int,
-         *     isPreregistered: bool,
+         *     isAutoenrolled: bool,
          *     roles: list<string>,
          * }> $programmes
          */

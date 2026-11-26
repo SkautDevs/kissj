@@ -758,12 +758,12 @@ class Route
                     ->setName('programme-api-participant-by-session')
                     ->add(DeviceSessionMiddleware::class);
 
-                $app->post('/{programmeId:[0-9]+}/register', ProgrammeApiController::class . '::register')
-                    ->setName('programme-api-register')
+                $app->post('/{programmeId:[0-9]+}/enrol', ProgrammeApiController::class . '::enrol')
+                    ->setName('programme-api-enrol')
                     ->add(DeviceSessionMiddleware::class);
 
-                $app->post('/{programmeId:[0-9]+}/unregister', ProgrammeApiController::class . '::unregister')
-                    ->setName('programme-api-unregister')
+                $app->post('/{programmeId:[0-9]+}/withdraw', ProgrammeApiController::class . '::withdraw')
+                    ->setName('programme-api-withdraw')
                     ->add(DeviceSessionMiddleware::class);
 
                 $app->post('/session/revoke', ProgrammeApiController::class . '::revokeSession')

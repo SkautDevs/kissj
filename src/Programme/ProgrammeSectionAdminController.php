@@ -60,7 +60,7 @@ class ProgrammeSectionAdminController extends AbstractController
         $this->programmeSectionRepository->persist($section);
 
         if ($wasExclusive === false && $section->isExclusive) {
-            $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingRegistrations($section);
+            $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingEnrolments($section);
             if ($conflictCount > 0) {
                 $this->flashMessages->warning(
                     'flash.warning.programmeSectionExclusiveConflicts',

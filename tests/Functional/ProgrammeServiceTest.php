@@ -14,8 +14,8 @@ use kissj\Participant\Patrol\PatrolLeaderRepository;
 use kissj\Participant\Patrol\PatrolParticipantRepository;
 use kissj\Participant\Patrol\PatrolService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistrationError;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolmentError;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeService;
@@ -36,18 +36,18 @@ class ProgrammeServiceTest extends AppTestCase
     public function testCapacityIsEnforced(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'small workshop', null, 1);
 
         $first = $this->createPaidIstWithEmail($app, 'first-ist@example.com');
         $second = $this->createPaidIstWithEmail($app, 'second-ist@example.com');
 
-        $resultFirst = $service->register($first, $programme->id);
+        $resultFirst = $service->enrol($first, $programme->id);
         self::assertNull($resultFirst->error);
 
-        $resultSecond = $service->register($second, $programme->id);
-        self::assertSame(ProgrammeRegistrationError::Full, $resultSecond->error);
+        $resultSecond = $service->enrol($second, $programme->id);
+        self::assertSame(ProgrammeEnrolmentError::Full, $resultSecond->error);
     }
 
     public function testDashboardProgrammesAreShownToPaidParticipant(): void
@@ -55,16 +55,16 @@ class ProgrammeServiceTest extends AppTestCase
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'dashboard workshop', null, 3);
-        $preregistered = $this->createProgramme($app, 'dashboard ceremony', null, 3, isPreregistered: true);
+        $autoenrolled = $this->createProgramme($app, 'dashboard ceremony', null, 3, isAutoenrolled: true);
         $ist = $this->createPaidIstWithEmail($app, 'dashboard-paid-ist@example.com');
         self::assertNull($service->adminAssign($programme, $ist)->error);
 
-        $registrations = $service->getDashboardRegistrations($ist);
-        self::assertCount(1, $registrations);
-        self::assertSame($programme->id, $registrations[0]->programme->id);
+        $enrolments = $service->getDashboardEnrolments($ist);
+        self::assertCount(1, $enrolments);
+        self::assertSame($programme->id, $enrolments[0]->programme->id);
         self::assertContains(
-            $preregistered->id,
-            array_map(fn (Programme $p): int => $p->id, $service->getDashboardPreregisteredProgrammes($ist)),
+            $autoenrolled->id,
+            array_map(fn (Programme $p): int => $p->id, $service->getDashboardAutoenrolledProgrammes($ist)),
         );
     }
 
@@ -72,73 +72,73 @@ class ProgrammeServiceTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $this->createProgramme($app, 'hidden ceremony', null, 3, isPreregistered: true);
+        $this->createProgramme($app, 'hidden ceremony', null, 3, isAutoenrolled: true);
         $user = $this->registerUser($app, 'dashboard-unpaid-ist@example.com');
         $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
 
-        self::assertSame([], $service->getDashboardRegistrations($ist));
-        self::assertSame([], $service->getDashboardPreregisteredProgrammes($ist));
+        self::assertSame([], $service->getDashboardEnrolments($ist));
+        self::assertSame([], $service->getDashboardAutoenrolledProgrammes($ist));
     }
 
-    public function testUnregisterFreesSpotAndReRegisterWorks(): void
+    public function testWithdrawFreesSpotAndReEnrolWorks(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'reusable workshop', null, 1);
         $ist = $this->createPaidIstWithEmail($app, 'reuse-ist@example.com');
 
-        self::assertNull($service->register($ist, $programme->id)->error);
-        self::assertNull($service->unregister($ist, $programme->id)->error);
-        self::assertNull($service->register($ist, $programme->id)->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
+        self::assertNull($service->withdraw($ist, $programme->id)->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
     }
 
-    public function testRegisterLocksParticipantRow(): void
+    public function testEnrolLocksParticipantRow(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $programme = $this->createProgramme($app, 'locking workshop', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'locking-ist@example.com');
         $participantRepository = $this->createMock(ParticipantRepository::class);
         $participantRepository->expects(self::once())->method('lock')->with($ist);
         $service = new ProgrammeService(
             $this->getService($app, ProgrammeRepository::class),
-            $this->getService($app, ProgrammeRegistrationRepository::class),
+            $this->getService($app, ProgrammeEnrolmentRepository::class),
             $participantRepository,
             $this->getService($app, UserRepository::class),
             $this->getService($app, Metrics::class),
         );
 
-        self::assertNull($service->register($ist, $programme->id)->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
     }
 
-    public function testRegisterRechecksPaidStatusFromDatabase(): void
+    public function testEnrolRechecksPaidStatusFromDatabase(): void
     {
         $this->assertStaleStatusRefused(UserStatus::Open, 'stale-open-ist@example.com');
     }
 
-    public function testRegisterOfCancelledParticipantRechecksStatusFromDatabase(): void
+    public function testEnrolOfCancelledParticipantRechecksStatusFromDatabase(): void
     {
         $this->assertStaleStatusRefused(UserStatus::Cancelled, 'stale-cancelled-ist@example.com');
     }
 
-    public function testDuplicateRegistrationRejected(): void
+    public function testDuplicateEnrolmentRejected(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'once only', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'dup-ist@example.com');
 
-        self::assertNull($service->register($ist, $programme->id)->error);
-        $duplicate = $service->register($ist, $programme->id);
-        self::assertSame(ProgrammeRegistrationError::AlreadyRegistered, $duplicate->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
+        $duplicate = $service->enrol($ist, $programme->id);
+        self::assertSame(ProgrammeEnrolmentError::AlreadyEnrolled, $duplicate->error);
     }
 
     public function testSameExclusiveSectionOverlapRejectedOthersAllowed(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $workshops = $this->createProgrammeSection($app->getContainer(), $event, 'workshops', true);
@@ -160,21 +160,21 @@ class ProgrammeServiceTest extends AppTestCase
 
         $ist = $this->createPaidIstWithEmail($app, 'overlap-ist@example.com');
 
-        self::assertNull($service->register($ist, $morning->id)->error);
+        self::assertNull($service->enrol($ist, $morning->id)->error);
 
-        $conflict = $service->register($ist, $overlapping->id);
-        self::assertSame(ProgrammeRegistrationError::Conflict, $conflict->error);
+        $conflict = $service->enrol($ist, $overlapping->id);
+        self::assertSame(ProgrammeEnrolmentError::Conflict, $conflict->error);
 
-        self::assertNull($service->register($ist, $touching->id)->error);
-        self::assertNull($service->register($ist, $otherGroup->id)->error);
-        self::assertNull($service->register($ist, $ungrouped->id)->error);
-        self::assertNull($service->register($ist, $sameOpen->id)->error);
+        self::assertNull($service->enrol($ist, $touching->id)->error);
+        self::assertNull($service->enrol($ist, $otherGroup->id)->error);
+        self::assertNull($service->enrol($ist, $ungrouped->id)->error);
+        self::assertNull($service->enrol($ist, $sameOpen->id)->error);
     }
 
     public function testWrongRoleRejected(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $tlOnly = $this->createProgramme(
             $app,
@@ -187,14 +187,14 @@ class ProgrammeServiceTest extends AppTestCase
         );
         $ist = $this->createPaidIstWithEmail($app, 'wrong-role-ist@example.com');
 
-        $result = $service->register($ist, $tlOnly->id);
-        self::assertSame(ProgrammeRegistrationError::WrongRole, $result->error);
+        $result = $service->enrol($ist, $tlOnly->id);
+        self::assertSame(ProgrammeEnrolmentError::WrongRole, $result->error);
     }
 
-    public function testPreregisteredCannotBeRegistered(): void
+    public function testAutoenrolledCannotBeEnrolled(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $ceremony = $this->createProgramme(
             $app,
@@ -208,31 +208,31 @@ class ProgrammeServiceTest extends AppTestCase
         );
         $ist = $this->createPaidIstWithEmail($app, 'ceremony-ist@example.com');
 
-        $result = $service->register($ist, $ceremony->id);
-        self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
+        $result = $service->enrol($ist, $ceremony->id);
+        self::assertSame(ProgrammeEnrolmentError::NotPossible, $result->error);
     }
 
-    public function testPreregisteredCannotBeUnregistered(): void
+    public function testAutoenrolledCannotBeWithdrawn(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $ceremony = $this->createProgramme($app, 'closing ceremony', null, 1, isPreregistered: true);
-        $ist = $this->createPaidIstWithEmail($app, 'ceremony-unregister-ist@example.com');
+        $ceremony = $this->createProgramme($app, 'closing ceremony', null, 1, isAutoenrolled: true);
+        $ist = $this->createPaidIstWithEmail($app, 'ceremony-withdraw-ist@example.com');
 
-        $result = $service->unregister($ist, $ceremony->id);
+        $result = $service->withdraw($ist, $ceremony->id);
 
-        self::assertSame(ProgrammeRegistrationError::NotPossible, $result->error);
+        self::assertSame(ProgrammeEnrolmentError::NotPossible, $result->error);
     }
 
-    public function testPreregisteredDoesNotConflict(): void
+    public function testAutoenrolledDoesNotConflict(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $main = $this->createProgrammeSection($app->getContainer(), $event, 'main', true);
-        // same exclusive section + same time as ceremony - still must be registrable
+        // same exclusive section + same time as ceremony - still open for enrolment
         $this->createProgramme($app, 'ceremony', $main, 1, '2027-06-05 08:00', '2027-06-05 12:00', null, true);
         $workshop = $this->createProgramme(
             $app,
@@ -244,36 +244,36 @@ class ProgrammeServiceTest extends AppTestCase
         );
         $ist = $this->createPaidIstWithEmail($app, 'during-ceremony-ist@example.com');
 
-        self::assertNull($service->register($ist, $workshop->id)->error);
+        self::assertNull($service->enrol($ist, $workshop->id)->error);
     }
 
     public function testAdminAssignBypassesEverythingAndRemoveWorks(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $full = $this->createProgramme($app, 'full one', null, 1);
         $blocker = $this->createPaidIstWithEmail($app, 'blocker-ist@example.com');
-        self::assertNull($service->register($blocker, $full->id)->error);
+        self::assertNull($service->enrol($blocker, $full->id)->error);
 
         $overridden = $this->createPaidIstWithEmail($app, 'override-ist@example.com');
         $assigned = $service->adminAssign($full, $overridden);
         self::assertNull($assigned->error);
         self::assertSame('flash.success.programmeParticipantAssigned', $assigned->flashKey());
-        self::assertSame(2, $registrationRepository->countActiveForProgramme($full));
+        self::assertSame(2, $enrolmentRepository->countActiveForProgramme($full));
 
         $removed = $service->adminRemove($full, $overridden);
         self::assertNull($removed->error);
         self::assertSame('flash.success.programmeParticipantRemoved', $removed->flashKey());
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($full));
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($full));
     }
 
     public function testAdminAssignCalledTwiceIsIdempotent(): void
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $programme = $this->createProgramme($app, 'double assign', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'double-assign-ist@example.com');
 
@@ -282,7 +282,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         self::assertNull($first->error);
         self::assertSame('flash.warning.programmeAlreadyAssigned', $second->flashKey());
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testAdminRemoveOfNotAssignedParticipantReturnsWarning(): void
@@ -297,7 +297,7 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertSame('flash.warning.programmeNotAssigned', $result->flashKey());
     }
 
-    public function testAdminAssignOnPreregisteredProgrammeReturnsWarning(): void
+    public function testAdminAssignOnAutoenrolledProgrammeReturnsWarning(): void
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
@@ -315,7 +315,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $result = $service->adminAssign($ceremony, $ist);
 
-        self::assertSame('flash.warning.programmePreregisteredNoAssign', $result->flashKey());
+        self::assertSame('flash.warning.programmeAutoenrolledNoAssign', $result->flashKey());
     }
 
     public function testAdminAssignOnCancelledParticipantReturnsWarning(): void
@@ -349,7 +349,7 @@ class ProgrammeServiceTest extends AppTestCase
         $result = $service->adminAssign($programme, $ist);
 
         self::assertSame('flash.warning.programmeCancelledNoAssign', $result->flashKey());
-        self::assertSame(0, $this->getService($app, ProgrammeRegistrationRepository::class)
+        self::assertSame(0, $this->getService($app, ProgrammeEnrolmentRepository::class)
             ->countActiveForProgramme($programme));
     }
 
@@ -358,7 +358,7 @@ class ProgrammeServiceTest extends AppTestCase
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $programme = $this->createProgramme($app, 'deleted before assign', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'deleted-assign-ist@example.com');
         $staleProgramme = $programmeRepository->get($programme->id);
@@ -367,60 +367,60 @@ class ProgrammeServiceTest extends AppTestCase
         $result = $service->adminAssign($staleProgramme, $ist);
 
         self::assertSame('flash.error.programmeNotFound', $result->flashKey());
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
-    public function testRegisterOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
+    public function testEnrolOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $ist = $this->createPaidIstWithEmail($app, 'nonexistent-register-ist@example.com');
+        $ist = $this->createPaidIstWithEmail($app, 'nonexistent-enrol-ist@example.com');
 
-        $result = $service->register($ist, PHP_INT_MAX);
+        $result = $service->enrol($ist, PHP_INT_MAX);
 
         self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
-    public function testRegisterOnSoftDeletedProgrammeReturnsNotFound(): void
+    public function testEnrolOnSoftDeletedProgrammeReturnsNotFound(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $programme = $this->createProgramme($app, 'deleted before register', null, 5);
-        $ist = $this->createPaidIstWithEmail($app, 'deleted-register-ist@example.com');
+        $programme = $this->createProgramme($app, 'deleted before enrol', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'deleted-enrol-ist@example.com');
 
         $service->deleteProgramme($programme);
-        $result = $service->register($ist, $programme->id);
+        $result = $service->enrol($ist, $programme->id);
 
         self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
-    public function testUnregisterOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
+    public function testWithdrawOnNonexistentProgrammeReturnsNotFoundWithoutThrowing(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $ist = $this->createPaidIstWithEmail($app, 'nonexistent-unregister-ist@example.com');
+        $ist = $this->createPaidIstWithEmail($app, 'nonexistent-withdraw-ist@example.com');
 
-        $result = $service->unregister($ist, PHP_INT_MAX);
+        $result = $service->withdraw($ist, PHP_INT_MAX);
 
         self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
-    public function testUnregisterOnSoftDeletedProgrammeReturnsNotFound(): void
+    public function testWithdrawOnSoftDeletedProgrammeReturnsNotFound(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
-        $programme = $this->createProgramme($app, 'deleted before unregister', null, 5);
-        $ist = $this->createPaidIstWithEmail($app, 'deleted-unregister-ist@example.com');
-        self::assertNull($service->register($ist, $programme->id)->error);
+        $programme = $this->createProgramme($app, 'deleted before withdraw', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'deleted-withdraw-ist@example.com');
+        self::assertNull($service->enrol($ist, $programme->id)->error);
 
         $service->deleteProgramme($programme);
-        $result = $service->unregister($ist, $programme->id);
+        $result = $service->withdraw($ist, $programme->id);
 
-        self::assertSame(ProgrammeRegistrationError::NotFound, $result->error);
+        self::assertSame(ProgrammeEnrolmentError::NotFound, $result->error);
         self::assertSame('flash.error.programmeNotFound', $result->flashKey());
     }
 
@@ -431,9 +431,9 @@ class ProgrammeServiceTest extends AppTestCase
         $user = $this->registerUser($app, 'not-paid-ist@example.com');
         $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
 
-        foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
+        foreach ([$service->enrol($ist, PHP_INT_MAX), $service->withdraw($ist, PHP_INT_MAX)] as $result) {
             self::assertSame('notPaid', $result->error?->value);
-            self::assertSame(ProgrammeRegistrationError::NotPaid, $result->error);
+            self::assertSame(ProgrammeEnrolmentError::NotPaid, $result->error);
         }
     }
 
@@ -443,12 +443,12 @@ class ProgrammeServiceTest extends AppTestCase
         $user = $this->registerUser($app, 'counted-refusal-ist@example.com');
         $ist = $this->getService($app, UserService::class)->createParticipantSetRole($user, 'ist');
         $metrics = $this->createMock(Metrics::class);
-        $expectedActions = ['programmes.registered', 'programmes.unregistered'];
+        $expectedActions = ['programmes.enrolled', 'programmes.withdrawn'];
         $metrics->expects(self::exactly(2))
             ->method('count')
             ->willReturnCallback(
                 static function (MetricName $name, int $value, array $attributes) use (&$expectedActions): void {
-                    self::assertSame('programmes.registration_refused', $name->value);
+                    self::assertSame('programmes.enrolment_refused', $name->value);
                     self::assertSame(1, $value);
                     self::assertSame(
                         [
@@ -462,14 +462,14 @@ class ProgrammeServiceTest extends AppTestCase
             );
         $service = new ProgrammeService(
             $this->getService($app, ProgrammeRepository::class),
-            $this->getService($app, ProgrammeRegistrationRepository::class),
+            $this->getService($app, ProgrammeEnrolmentRepository::class),
             $this->getService($app, ParticipantRepository::class),
             $this->getService($app, UserRepository::class),
             $metrics,
         );
 
-        $service->register($ist, PHP_INT_MAX);
-        $service->unregister($ist, PHP_INT_MAX);
+        $service->enrol($ist, PHP_INT_MAX);
+        $service->withdraw($ist, PHP_INT_MAX);
     }
 
     public function testClosedWindowIsRefusedBeforeProgrammeLookup(): void
@@ -478,43 +478,43 @@ class ProgrammeServiceTest extends AppTestCase
         $service = $this->getService($app, ProgrammeService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $this->mutateEventForTest($app->getContainer(), $event, [
-            'programmeRegistrationStart' => DateTimeUtils::getDateTime('-2 hours'),
-            'programmeRegistrationEnd' => DateTimeUtils::getDateTime('-1 hour'),
+            'programmeEnrolmentStart' => DateTimeUtils::getDateTime('-2 hours'),
+            'programmeEnrolmentEnd' => DateTimeUtils::getDateTime('-1 hour'),
         ]);
         $ist = $this->createPaidIstWithEmail($app, 'closed-window-ist@example.com');
 
-        foreach ([$service->register($ist, PHP_INT_MAX), $service->unregister($ist, PHP_INT_MAX)] as $result) {
+        foreach ([$service->enrol($ist, PHP_INT_MAX), $service->withdraw($ist, PHP_INT_MAX)] as $result) {
             self::assertSame('closed', $result->error?->value);
-            self::assertSame(ProgrammeRegistrationError::Closed, $result->error);
+            self::assertSame(ProgrammeEnrolmentError::Closed, $result->error);
         }
     }
 
     public function testDeleteProgrammeCascades(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $programme = $this->createProgramme($app, 'doomed', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'doomed-ist@example.com');
-        self::assertNull($service->register($ist, $programme->id)->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
 
         $service->deleteProgramme($programme);
 
         $reloaded = $programmeRepository->findOneBy(['id' => $programme->id]);
         self::assertInstanceOf(Programme::class, $reloaded);
         self::assertTrue($reloaded->isDeleted());
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
-    public function testDeletingPatrolParticipantRemovesTheirRegistrations(): void
+    public function testDeletingPatrolParticipantRemovesTheirEnrolments(): void
     {
         $app = $this->getTestApp();
         $service = $this->getService($app, ProgrammeService::class);
         $patrolService = $this->getService($app, PatrolService::class);
         $patrolParticipantRepository = $this->getService($app, PatrolParticipantRepository::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $programme = $this->createProgramme(
             $app,
             'patrol member programme',
@@ -527,27 +527,27 @@ class ProgrammeServiceTest extends AppTestCase
         $patrolParticipant = $patrolService->createPatrolParticipant($patrolLeader);
         $patrolParticipantRepository->persist($patrolParticipant);
         $service->adminAssign($programme, $patrolParticipant);
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
 
         $patrolService->deletePatrolParticipant($patrolParticipant);
 
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testCancelParticipantFreesProgrammes(): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $participantService = $this->getService($app, ParticipantService::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $programme = $this->createProgramme($app, 'freed on cancel', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'cancelled-ist@example.com');
-        self::assertNull($service->register($ist, $programme->id)->error);
+        self::assertNull($service->enrol($ist, $programme->id)->error);
 
         $participantService->cancelParticipant($ist);
 
-        self::assertCount(0, $registrationRepository->findActiveForParticipant($ist));
+        self::assertCount(0, $enrolmentRepository->findActiveForParticipant($ist));
     }
 
     /**
@@ -562,7 +562,7 @@ class ProgrammeServiceTest extends AppTestCase
         string $start = '2027-06-05 10:00',
         string $end = '2027-06-05 12:00',
         ?array $roles = null,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
     ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -573,7 +573,7 @@ class ProgrammeServiceTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime($start);
         $programme->end = DateTimeUtils::getDateTime($end);
         $programme->capacity = $capacity;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
@@ -588,7 +588,7 @@ class ProgrammeServiceTest extends AppTestCase
     private function assertStaleStatusRefused(UserStatus $databaseStatus, string $email): void
     {
         $app = $this->getTestApp();
-        $this->openProgrammeRegistrationWindow($app);
+        $this->openProgrammeEnrolmentWindow($app);
         $service = $this->getService($app, ProgrammeService::class);
         $programme = $this->createProgramme($app, 'stale workshop', null, 5);
         $ist = $this->createPaidIstWithEmail($app, $email);
@@ -598,10 +598,10 @@ class ProgrammeServiceTest extends AppTestCase
         self::assertNotSame($freshUser, $ist->getUserButNotNull());
         self::assertSame(UserStatus::Paid, $ist->getUserButNotNull()->status);
 
-        $result = $service->register($ist, $programme->id);
+        $result = $service->enrol($ist, $programme->id);
 
         self::assertSame('notPaid', $result->error?->value);
-        self::assertSame(0, $this->getService($app, ProgrammeRegistrationRepository::class)
+        self::assertSame(0, $this->getService($app, ProgrammeEnrolmentRepository::class)
             ->countActiveForProgramme($programme));
     }
 

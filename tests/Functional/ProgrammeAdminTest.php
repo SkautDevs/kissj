@@ -16,8 +16,8 @@ use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeService;
@@ -77,7 +77,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertNotNull($programme);
         self::assertSame($uniqueName, $programme->name);
         self::assertSame(15, $programme->capacity);
-        self::assertFalse($programme->isPreregistered);
+        self::assertFalse($programme->isAutoenrolled);
         self::assertSame($workshops->id, $programme->section->id);
         self::assertCount(2, $programme->getTargetRoles());
 
@@ -92,7 +92,7 @@ class ProgrammeAdminTest extends AppTestCase
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
                 'sectionId' => (string)$games->id,
-                'isPreregistered' => '1',
+                'isAutoenrolled' => '1',
                 'roles' => ['ist'],
             ],
         ));
@@ -106,7 +106,7 @@ class ProgrammeAdminTest extends AppTestCase
         $reloaded = $programmeRepository->getActiveById($programme->id, $event);
         self::assertSame($uniqueName . ' renamed', $reloaded->name);
         self::assertSame(5, $reloaded->capacity);
-        self::assertTrue($reloaded->isPreregistered);
+        self::assertTrue($reloaded->isAutoenrolled);
         self::assertSame($games->id, $reloaded->section->id);
         self::assertCount(1, $reloaded->getTargetRoles());
 
@@ -120,7 +120,7 @@ class ProgrammeAdminTest extends AppTestCase
         $programmeRepository->getActiveById($programme->id, $event);
     }
 
-    public function testMovingProgrammeIntoExclusiveSectionWarnsAboutOverlappingRegistrations(): void
+    public function testMovingProgrammeIntoExclusiveSectionWarnsAboutOverlappingEnrolments(): void
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'programme-move-exclusive-admin@example.com');
@@ -158,19 +158,19 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertContains($this->translate($app, 'flash.success.programmeSaved'), $flashed);
     }
 
-    public function testFlippingProgrammeToPreregisteredSoftDeletesActiveRegistrations(): void
+    public function testFlippingProgrammeToAutoenrolledSoftDeletesActiveEnrolments(): void
     {
         $app = $this->getTestApp();
-        $app = $this->createLoggedAdmin($app, 'preregistered-toggle-admin@example.com');
-        $programme = $this->createProgramme($app, 'toggle to preregistered', null, 5);
-        $ist = $this->createPaidIstWithEmail($app, 'toggle-preregistered-ist@example.com');
+        $app = $this->createLoggedAdmin($app, 'autoenrolled-toggle-admin@example.com');
+        $programme = $this->createProgramme($app, 'toggle to autoenrolled', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'toggle-autoenrolled-ist@example.com');
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $ist;
-        $registrationRepository->persist($registration);
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $ist;
+        $enrolmentRepository->persist($enrolment);
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
 
         $responseEdit = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/edit',
@@ -183,19 +183,19 @@ class ProgrammeAdminTest extends AppTestCase
                 'end' => '2027-06-05T12:00',
                 'capacity' => '5',
                 'sectionId' => (string)$programme->section->id,
-                'isPreregistered' => '1',
+                'isAutoenrolled' => '1',
                 'roles' => ['ist'],
             ],
         ));
         self::assertSame(302, $responseEdit->getStatusCode());
 
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
 
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $reloaded = $programmeRepository->getActiveById($programme->id, $event);
-        self::assertTrue($reloaded->isPreregistered);
+        self::assertTrue($reloaded->isAutoenrolled);
     }
 
     public function testUnknownRoleValueFailsTheStandardWay(): void
@@ -230,16 +230,16 @@ class ProgrammeAdminTest extends AppTestCase
             '/v2/event/test-event-slug/admin/programmes/window',
             'POST',
             [
-                'programmeRegistrationStart' => '2027-05-01T12:00',
-                'programmeRegistrationEnd' => '2027-05-20T12:00',
+                'programmeEnrolmentStart' => '2027-05-01T12:00',
+                'programmeEnrolmentEnd' => '2027-05-20T12:00',
             ],
         ));
         self::assertSame(302, $response->getStatusCode());
 
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        self::assertNotNull($event->programmeRegistrationStart);
-        self::assertSame('2027-05-01 12:00', $event->programmeRegistrationStart->format('Y-m-d H:i'));
+        self::assertNotNull($event->programmeEnrolmentStart);
+        self::assertSame('2027-05-01 12:00', $event->programmeEnrolmentStart->format('Y-m-d H:i'));
     }
 
     public function testProgrammeTextIsStoredUnescaped(): void
@@ -541,36 +541,36 @@ class ProgrammeAdminTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'window-end-before-start-admin@example.com');
-        $before = $this->getEvent($app)->programmeRegistrationStart?->format('Y-m-d H:i');
-        $endBefore = $this->getEvent($app)->programmeRegistrationEnd?->format('Y-m-d H:i');
+        $before = $this->getEvent($app)->programmeEnrolmentStart?->format('Y-m-d H:i');
+        $endBefore = $this->getEvent($app)->programmeEnrolmentEnd?->format('Y-m-d H:i');
 
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/window',
             'POST',
-            ['programmeRegistrationStart' => '2027-05-20T12:00', 'programmeRegistrationEnd' => '2027-05-01T12:00'],
+            ['programmeEnrolmentStart' => '2027-05-20T12:00', 'programmeEnrolmentEnd' => '2027-05-01T12:00'],
         ));
 
         self::assertSame(302, $response->getStatusCode());
-        self::assertSame($before, $this->getEvent($app)->programmeRegistrationStart?->format('Y-m-d H:i'));
-        self::assertSame($endBefore, $this->getEvent($app)->programmeRegistrationEnd?->format('Y-m-d H:i'));
+        self::assertSame($before, $this->getEvent($app)->programmeEnrolmentStart?->format('Y-m-d H:i'));
+        self::assertSame($endBefore, $this->getEvent($app)->programmeEnrolmentEnd?->format('Y-m-d H:i'));
     }
 
     public function testWindowRejectsUnparsableValue(): void
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'window-garbage-admin@example.com');
-        $before = $this->getEvent($app)->programmeRegistrationStart?->format('Y-m-d H:i');
-        $endBefore = $this->getEvent($app)->programmeRegistrationEnd?->format('Y-m-d H:i');
+        $before = $this->getEvent($app)->programmeEnrolmentStart?->format('Y-m-d H:i');
+        $endBefore = $this->getEvent($app)->programmeEnrolmentEnd?->format('Y-m-d H:i');
 
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/window',
             'POST',
-            ['programmeRegistrationStart' => 'garbage', 'programmeRegistrationEnd' => ''],
+            ['programmeEnrolmentStart' => 'garbage', 'programmeEnrolmentEnd' => ''],
         ));
 
         self::assertSame(302, $response->getStatusCode());
-        self::assertSame($before, $this->getEvent($app)->programmeRegistrationStart?->format('Y-m-d H:i'));
-        self::assertSame($endBefore, $this->getEvent($app)->programmeRegistrationEnd?->format('Y-m-d H:i'));
+        self::assertSame($before, $this->getEvent($app)->programmeEnrolmentStart?->format('Y-m-d H:i'));
+        self::assertSame($endBefore, $this->getEvent($app)->programmeEnrolmentEnd?->format('Y-m-d H:i'));
     }
 
     public function testWindowAllowsOneSideOnly(): void
@@ -581,13 +581,13 @@ class ProgrammeAdminTest extends AppTestCase
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/window',
             'POST',
-            ['programmeRegistrationStart' => '2027-05-01T12:00', 'programmeRegistrationEnd' => ''],
+            ['programmeEnrolmentStart' => '2027-05-01T12:00', 'programmeEnrolmentEnd' => ''],
         ));
 
         self::assertSame(302, $response->getStatusCode());
         $event = $this->getEvent($app);
-        self::assertSame('2027-05-01 12:00', $event->programmeRegistrationStart?->format('Y-m-d H:i'));
-        self::assertNull($event->programmeRegistrationEnd);
+        self::assertSame('2027-05-01 12:00', $event->programmeEnrolmentStart?->format('Y-m-d H:i'));
+        self::assertNull($event->programmeEnrolmentEnd);
     }
 
     /**
@@ -633,8 +633,8 @@ class ProgrammeAdminTest extends AppTestCase
         ));
         self::assertSame(302, $responseAssign->getStatusCode());
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));
 
         $responseDetail = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id,
@@ -646,15 +646,15 @@ class ProgrammeAdminTest extends AppTestCase
             'POST',
         ));
         self::assertSame(302, $responseRemove->getStatusCode());
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
-    public function testAssignToPreregisteredProgrammeIsGracefullyRejected(): void
+    public function testAssignToAutoenrolledProgrammeIsGracefullyRejected(): void
     {
         $app = $this->getTestApp();
-        $app = $this->createLoggedAdmin($app, 'preregistered-assign-admin@example.com');
+        $app = $this->createLoggedAdmin($app, 'autoenrolled-assign-admin@example.com');
         $programme = $this->createProgramme($app, 'ceremony', null, 999, true);
-        $ist = $this->createPaidIstWithEmail($app, 'preregistered-assignee@example.com');
+        $ist = $this->createPaidIstWithEmail($app, 'autoenrolled-assignee@example.com');
 
         $responseAssign = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/assign',
@@ -663,8 +663,8 @@ class ProgrammeAdminTest extends AppTestCase
         ));
         self::assertSame(302, $responseAssign->getStatusCode());
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testAssignCancelledParticipantIsGracefullyRejected(): void
@@ -685,8 +685,8 @@ class ProgrammeAdminTest extends AppTestCase
         ));
         self::assertSame(302, $responseAssign->getStatusCode());
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testAssignUnknownParticipantIdIsGracefullyRejected(): void
@@ -702,8 +702,8 @@ class ProgrammeAdminTest extends AppTestCase
         ));
         self::assertSame(302, $responseAssign->getStatusCode());
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testAssignParticipantOfOtherEventIsRejected(): void
@@ -721,8 +721,8 @@ class ProgrammeAdminTest extends AppTestCase
         ));
         self::assertSame(302, $responseAssign->getStatusCode());
 
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($programme));
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($programme));
     }
 
     public function testDetailRendersParticipantIdInputInsteadOfSelect(): void
@@ -846,12 +846,12 @@ class ProgrammeAdminTest extends AppTestCase
         );
     }
 
-    public function testDetailShowsRegistrantsInCardWithMendLinkForAdmin(): void
+    public function testDetailShowsEnroleesInCardWithMendLinkForAdmin(): void
     {
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'detail-card-admin@example.com');
         $programme = $this->createProgramme($app, 'detail card workshop', null, 5);
-        $ist = $this->createNamedRegistrant($app, $programme, 'detail-card-ist@example.com');
+        $ist = $this->createNamedEnrolee($app, $programme, 'detail-card-ist@example.com');
         $uploadPath = $this->attachImage($app, $programme);
 
         try {
@@ -866,7 +866,7 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertStringNotContainsString('<table', $body);
         self::assertStringContainsString(
-            '<a href="/v2/event/test-event-slug/admin/' . $ist->id . '/mend">Detailo Registrant</a>',
+            '<a href="/v2/event/test-event-slug/admin/' . $ist->id . '/mend">Detailo Enrolee</a>',
             $body,
         );
         self::assertStringContainsString(
@@ -934,7 +934,7 @@ class ProgrammeAdminTest extends AppTestCase
         $app = $this->getTestApp();
         $app = $this->createLoggedAdmin($app, 'detail-card-programme-admin@example.com', UserRole::ProgrammeAdmin);
         $programme = $this->createProgramme($app, 'detail card scoped workshop', null, 5);
-        $ist = $this->createNamedRegistrant($app, $programme, 'detail-card-scoped-ist@example.com');
+        $ist = $this->createNamedEnrolee($app, $programme, 'detail-card-scoped-ist@example.com');
 
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id,
@@ -942,7 +942,7 @@ class ProgrammeAdminTest extends AppTestCase
         $body = (string)$response->getBody();
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertStringContainsString('Detailo Registrant', $body);
+        self::assertStringContainsString('Detailo Enrolee', $body);
         self::assertStringNotContainsString('/admin/' . $ist->id . '/mend', $body);
         self::assertStringContainsString(
             'action="/v2/event/test-event-slug/admin/programmes/' . $programme->id . '/remove/' . $ist->id . '"',
@@ -962,17 +962,17 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertStringNotContainsString('href="/v2/event/test-event-slug/admin/dashboard"', $body);
     }
 
-    public function testDetailOfPreregisteredProgrammeShowsNoteInsteadOfAssignForm(): void
+    public function testDetailOfAutoenrolledProgrammeShowsNoteInsteadOfAssignForm(): void
     {
         $app = $this->getTestApp();
-        $app = $this->createLoggedAdmin($app, 'detail-card-preregistered-admin@example.com');
+        $app = $this->createLoggedAdmin($app, 'detail-card-autoenrolled-admin@example.com');
         $programme = $this->createProgramme($app, 'detail card ceremony', null, 999, true);
 
         $response = $app->handle($this->createRequest(
             '/v2/event/test-event-slug/admin/programmes/' . $programme->id,
         ));
         $body = (string)$response->getBody();
-        $note = $this->getService($app, TranslatorInterface::class)->trans('programme.admin.preregisteredNote');
+        $note = $this->getService($app, TranslatorInterface::class)->trans('programme.admin.autoenrolledNote');
 
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString($note, $body);
@@ -985,17 +985,17 @@ class ProgrammeAdminTest extends AppTestCase
         $app = $this->createLoggedAdmin($app, 'overview-capacity-admin@example.com');
         $overCapacity = $this->createProgramme($app, 'overview over capacity', null, 1);
         $withinCapacity = $this->createProgramme($app, 'overview within capacity', null, 5);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $emails = [
             'capacity-first-ist@example.com' => $overCapacity,
             'capacity-second-ist@example.com' => $overCapacity,
             'capacity-third-ist@example.com' => $withinCapacity,
         ];
         foreach ($emails as $email => $programme) {
-            $registration = new ProgrammeRegistration();
-            $registration->programme = $programme;
-            $registration->participant = $this->createPaidIstWithEmail($app, $email);
-            $registrationRepository->persist($registration);
+            $enrolment = new ProgrammeEnrolment();
+            $enrolment->programme = $programme;
+            $enrolment->participant = $this->createPaidIstWithEmail($app, $email);
+            $enrolmentRepository->persist($enrolment);
         }
 
         $response = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes'));
@@ -1106,7 +1106,7 @@ class ProgrammeAdminTest extends AppTestCase
         string $name,
         ?ProgrammeSection $section,
         int $capacity,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
     ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -1117,7 +1117,7 @@ class ProgrammeAdminTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = $capacity;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
@@ -1130,11 +1130,11 @@ class ProgrammeAdminTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function createNamedRegistrant(App $app, Programme $programme, string $email): Participant
+    private function createNamedEnrolee(App $app, Programme $programme, string $email): Participant
     {
         $ist = $this->createPaidIstWithEmail($app, $email);
         $ist->firstName = 'Detailo';
-        $ist->lastName = 'Registrant';
+        $ist->lastName = 'Enrolee';
         $this->getService($app, ParticipantRepository::class)->persist($ist);
         $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
 
@@ -1177,8 +1177,8 @@ class ProgrammeAdminTest extends AppTestCase
     {
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
-        $event->programmeRegistrationStart = null;
-        $event->programmeRegistrationEnd = null;
+        $event->programmeEnrolmentStart = null;
+        $event->programmeEnrolmentEnd = null;
         $eventRepository->persist($event);
     }
 

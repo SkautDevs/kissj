@@ -27,9 +27,9 @@ enum MetricName: string
     case PdfsGenerated = 'pdfs.generated';
     case PdfsGenerationTime = 'pdfs.generation_time';
 
-    case ProgrammesRegistered = 'programmes.registered';
-    case ProgrammesRegistrationRefused = 'programmes.registration_refused';
-    case ProgrammesUnregistered = 'programmes.unregistered';
+    case ProgrammesEnrolled = 'programmes.enrolled';
+    case ProgrammesEnrolmentRefused = 'programmes.enrolment_refused';
+    case ProgrammesWithdrawn = 'programmes.withdrawn';
 
     case RegistrationsCreated = 'registrations.created';
     case RegistrationsDenied = 'registrations.denied';

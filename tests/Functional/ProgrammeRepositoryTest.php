@@ -9,8 +9,8 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\User\User;
@@ -29,7 +29,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
         $istProgramme = $this->createProgramme($app, 'ist night game', null, [ParticipantRole::Ist]);
         $tlProgramme = $this->createProgramme(
@@ -51,19 +51,19 @@ class ProgrammeRepositoryTest extends AppTestCase
         $userService = $this->getService($app, UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');
 
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $istProgramme;
-        $registration->participant = $participant;
-        $registrationRepository->persist($registration);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $istProgramme;
+        $enrolment->participant = $participant;
+        $enrolmentRepository->persist($enrolment);
 
-        self::assertSame(1, $registrationRepository->countActiveForProgramme($istProgramme));
+        self::assertSame(1, $enrolmentRepository->countActiveForProgramme($istProgramme));
         $occupancy = $programmeRepository->getActiveOccupancy($event);
         self::assertSame(1, $occupancy[$istProgramme->id] ?? 0);
         self::assertArrayNotHasKey($tlProgramme->id, $occupancy);
 
-        $registrationRepository->softDelete($registration);
-        self::assertSame(0, $registrationRepository->countActiveForProgramme($istProgramme));
-        self::assertNull($registrationRepository->findActive($istProgramme, $participant));
+        $enrolmentRepository->softDelete($enrolment);
+        self::assertSame(0, $enrolmentRepository->countActiveForProgramme($istProgramme));
+        self::assertNull($enrolmentRepository->findActive($istProgramme, $participant));
 
         $istProgramme->deletedAt = DateTimeUtils::getDateTime();
         $programmeRepository->persist($istProgramme);
@@ -74,11 +74,11 @@ class ProgrammeRepositoryTest extends AppTestCase
         self::assertNotContains($istProgramme->id, $activeIstIdsAfterDelete);
     }
 
-    public function testFindActiveTargetsOwnRegistrationOnly(): void
+    public function testFindActiveTargetsOwnEnrolmentOnly(): void
     {
         $app = $this->getTestApp();
         $userService = $this->getService($app, UserService::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
         $programme = $this->createProgramme($app, 'find active workshop', null, [ParticipantRole::Ist]);
 
@@ -92,27 +92,27 @@ class ProgrammeRepositoryTest extends AppTestCase
         );
 
         foreach ([$ownParticipant, $otherParticipant] as $participant) {
-            $registration = new ProgrammeRegistration();
-            $registration->programme = $programme;
-            $registration->participant = $participant;
-            $registrationRepository->persist($registration);
+            $enrolment = new ProgrammeEnrolment();
+            $enrolment->programme = $programme;
+            $enrolment->participant = $participant;
+            $enrolmentRepository->persist($enrolment);
         }
 
-        $ownRegistration = $registrationRepository->findActive($programme, $ownParticipant);
-        self::assertNotNull($ownRegistration);
-        self::assertSame($ownParticipant->id, $ownRegistration->participant->id);
+        $ownEnrolment = $enrolmentRepository->findActive($programme, $ownParticipant);
+        self::assertNotNull($ownEnrolment);
+        self::assertSame($ownParticipant->id, $ownEnrolment->participant->id);
 
-        $registrationRepository->softDelete($ownRegistration);
-        self::assertNull($registrationRepository->findActive($programme, $ownParticipant));
-        // the other participant's active registration is untouched by the targeted lookup
-        self::assertNotNull($registrationRepository->findActive($programme, $otherParticipant));
+        $enrolmentRepository->softDelete($ownEnrolment);
+        self::assertNull($enrolmentRepository->findActive($programme, $ownParticipant));
+        // the other participant's active enrolment is untouched by the targeted lookup
+        self::assertNotNull($enrolmentRepository->findActive($programme, $otherParticipant));
     }
 
-    public function testActiveLookupsSkipSoftDeletedRegistrations(): void
+    public function testActiveLookupsSkipSoftDeletedEnrolments(): void
     {
         $app = $this->getTestApp();
         $userService = $this->getService($app, UserService::class);
-        $registrationRepository = $this->getService($app, ProgrammeRegistrationRepository::class);
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
 
         $programme = $this->createProgramme($app, 'soft delete workshop', null, [ParticipantRole::Ist]);
         $participant = $userService->createParticipantSetRole(
@@ -120,26 +120,26 @@ class ProgrammeRepositoryTest extends AppTestCase
             'ist',
         );
 
-        $first = new ProgrammeRegistration();
+        $first = new ProgrammeEnrolment();
         $first->programme = $programme;
         $first->participant = $participant;
-        $registrationRepository->persist($first);
-        $registrationRepository->softDelete($first);
+        $enrolmentRepository->persist($first);
+        $enrolmentRepository->softDelete($first);
 
-        $second = new ProgrammeRegistration();
+        $second = new ProgrammeEnrolment();
         $second->programme = $programme;
         $second->participant = $participant;
-        $registrationRepository->persist($second);
+        $enrolmentRepository->persist($second);
 
-        $forParticipant = $registrationRepository->findActiveForParticipant($participant);
+        $forParticipant = $enrolmentRepository->findActiveForParticipant($participant);
         self::assertCount(1, $forParticipant);
         self::assertSame($second->id, $forParticipant[0]->id);
 
-        $forProgramme = $registrationRepository->findActiveForProgramme($programme);
+        $forProgramme = $enrolmentRepository->findActiveForProgramme($programme);
         self::assertCount(1, $forProgramme);
         self::assertSame($second->id, $forProgramme[0]->id);
 
-        $active = $registrationRepository->findActive($programme, $participant);
+        $active = $enrolmentRepository->findActive($programme, $participant);
         self::assertNotNull($active);
         self::assertSame($second->id, $active->id);
     }
@@ -163,15 +163,15 @@ class ProgrammeRepositoryTest extends AppTestCase
         $earlier->start = DateTimeUtils::getDateTime('2027-06-05 08:00');
         $programmeRepository->persist($earlier);
         $deleted = $this->createProgramme($app, 'participant deleted', null, [ParticipantRole::Ist]);
-        $unregistered = $this->createProgramme($app, 'participant unregistered', null, [ParticipantRole::Ist]);
+        $withdrawn = $this->createProgramme($app, 'participant withdrawn', null, [ParticipantRole::Ist]);
         $foreign = $this->createProgramme($app, 'participant foreign', null, [ParticipantRole::Ist]);
 
-        $this->registerParticipant($app, $later, $participant);
-        $this->registerParticipant($app, $earlier, $participant);
-        $this->registerParticipant($app, $deleted, $participant);
-        $this->getService($app, ProgrammeRegistrationRepository::class)
-            ->softDelete($this->registerParticipant($app, $unregistered, $participant));
-        $this->registerParticipant($app, $foreign, $otherParticipant);
+        $this->enrolParticipant($app, $later, $participant);
+        $this->enrolParticipant($app, $earlier, $participant);
+        $this->enrolParticipant($app, $deleted, $participant);
+        $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDelete($this->enrolParticipant($app, $withdrawn, $participant));
+        $this->enrolParticipant($app, $foreign, $otherParticipant);
         $deleted->deletedAt = DateTimeUtils::getDateTime();
         $programmeRepository->persist($deleted);
 
@@ -184,7 +184,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         );
     }
 
-    public function testFindActivePreregisteredForRoleFiltersInRepository(): void
+    public function testFindActiveAutoenrolledForRoleFiltersInRepository(): void
     {
         $app = $this->getTestApp();
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -195,21 +195,21 @@ class ProgrammeRepositoryTest extends AppTestCase
         $istWorkshop = $this->createProgramme($app, 'ist workshop', null, [ParticipantRole::Ist]);
         $tlCeremony = $this->createProgramme($app, 'tl ceremony', null, [ParticipantRole::TroopLeader], true);
 
-        $preregisteredIstIds = array_map(
+        $autoenrolledIstIds = array_map(
             static fn (Programme $programme): int => $programme->id,
-            $programmeRepository->findActivePreregisteredForRole($event, ParticipantRole::Ist),
+            $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
-        self::assertContains($istCeremony->id, $preregisteredIstIds);
-        self::assertNotContains($istWorkshop->id, $preregisteredIstIds);
-        self::assertNotContains($tlCeremony->id, $preregisteredIstIds);
+        self::assertContains($istCeremony->id, $autoenrolledIstIds);
+        self::assertNotContains($istWorkshop->id, $autoenrolledIstIds);
+        self::assertNotContains($tlCeremony->id, $autoenrolledIstIds);
 
         $istCeremony->deletedAt = DateTimeUtils::getDateTime();
         $programmeRepository->persist($istCeremony);
-        $preregisteredIstIdsAfterDelete = array_map(
+        $autoenrolledIstIdsAfterDelete = array_map(
             static fn (Programme $programme): int => $programme->id,
-            $programmeRepository->findActivePreregisteredForRole($event, ParticipantRole::Ist),
+            $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
-        self::assertNotContains($istCeremony->id, $preregisteredIstIdsAfterDelete);
+        self::assertNotContains($istCeremony->id, $autoenrolledIstIdsAfterDelete);
     }
 
     /**
@@ -221,7 +221,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         string $name,
         ?ProgrammeSection $section,
         array $roles,
-        bool $isPreregistered = false,
+        bool $isAutoenrolled = false,
     ): Programme {
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -232,7 +232,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;
-        $programme->isPreregistered = $isPreregistered;
+        $programme->isAutoenrolled = $isAutoenrolled;
         $programme->event = $eventRepository->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $programme->section = $section
             ?? $this->createProgrammeSection($app->getContainer(), $programme->event, 'Program');
@@ -245,17 +245,17 @@ class ProgrammeRepositoryTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function registerParticipant(
+    private function enrolParticipant(
         App $app,
         Programme $programme,
         Participant $participant,
-    ): ProgrammeRegistration {
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $participant;
-        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+    ): ProgrammeEnrolment {
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->getService($app, ProgrammeEnrolmentRepository::class)->persist($enrolment);
 
-        return $registration;
+        return $enrolment;
     }
 
     /**

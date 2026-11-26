@@ -10,8 +10,8 @@ use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
-use kissj\Programme\ProgrammeRegistration;
-use kissj\Programme\ProgrammeRegistrationRepository;
+use kissj\Programme\ProgrammeEnrolment;
+use kissj\Programme\ProgrammeEnrolmentRepository;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
@@ -79,7 +79,7 @@ class ProgrammeSectionAdminTest extends AppTestCase
         self::assertNull($reloaded->subtitle);
     }
 
-    public function testEnablingExclusivityWarnsAboutOverlappingRegistrations(): void
+    public function testEnablingExclusivityWarnsAboutOverlappingEnrolments(): void
     {
         $app = $this->createLoggedAdmin('section-admin-exclusive-conflict@example.com');
         $container = $app->getContainer();
@@ -96,19 +96,19 @@ class ProgrammeSectionAdminTest extends AppTestCase
         $doubleBooked = $this->createParticipantWithRole($container, 'ist', $event);
         $singleBooked = $this->createParticipantWithRole($container, 'ist', $event);
         $withDeleted = $this->createParticipantWithRole($container, 'ist', $event);
-        $withCancelledRegistration = $this->createParticipantWithRole($container, 'ist', $event);
+        $withCancelledEnrolment = $this->createParticipantWithRole($container, 'ist', $event);
         $cancelled = $this->createParticipantWithRole($container, 'ist', $event);
-        $this->register($app, $first, $doubleBooked);
-        $this->register($app, $second, $doubleBooked);
-        $this->register($app, $first, $singleBooked);
-        $this->register($app, $afternoon, $singleBooked);
-        $this->register($app, $first, $withDeleted);
-        $this->register($app, $deleted, $withDeleted);
-        $this->register($app, $first, $withCancelledRegistration);
-        $this->getService($app, ProgrammeRegistrationRepository::class)
-            ->softDelete($this->register($app, $second, $withCancelledRegistration));
-        $this->register($app, $first, $cancelled);
-        $this->register($app, $second, $cancelled);
+        $this->enrol($app, $first, $doubleBooked);
+        $this->enrol($app, $second, $doubleBooked);
+        $this->enrol($app, $first, $singleBooked);
+        $this->enrol($app, $afternoon, $singleBooked);
+        $this->enrol($app, $first, $withDeleted);
+        $this->enrol($app, $deleted, $withDeleted);
+        $this->enrol($app, $first, $withCancelledEnrolment);
+        $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDelete($this->enrol($app, $second, $withCancelledEnrolment));
+        $this->enrol($app, $first, $cancelled);
+        $this->enrol($app, $second, $cancelled);
         $cancelledUser = $cancelled->getUserButNotNull();
         $cancelledUser->status = UserStatus::Cancelled;
         $this->getService($app, UserRepository::class)->persist($cancelledUser);
@@ -136,7 +136,7 @@ class ProgrammeSectionAdminTest extends AppTestCase
         $event = $this->getEvent($app);
         $section = $this->createProgrammeSection($container, $event, 'clean exclusive');
         $programme = $this->createProgramme($app, $event, $section, false);
-        $this->register($app, $programme, $this->createParticipantWithRole($container, 'ist', $event));
+        $this->enrol($app, $programme, $this->createParticipantWithRole($container, 'ist', $event));
 
         $app->handle($this->createRequest(
             self::SECTIONS_URL . '/' . $section->id . '/edit',
@@ -387,7 +387,7 @@ class ProgrammeSectionAdminTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 5;
-        $programme->isPreregistered = false;
+        $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $section;
         if ($softDeleted) {
@@ -402,14 +402,14 @@ class ProgrammeSectionAdminTest extends AppTestCase
     /**
      * @param App<ContainerInterface> $app
      */
-    private function register(App $app, Programme $programme, Participant $participant): ProgrammeRegistration
+    private function enrol(App $app, Programme $programme, Participant $participant): ProgrammeEnrolment
     {
-        $registration = new ProgrammeRegistration();
-        $registration->programme = $programme;
-        $registration->participant = $participant;
-        $this->getService($app, ProgrammeRegistrationRepository::class)->persist($registration);
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->getService($app, ProgrammeEnrolmentRepository::class)->persist($enrolment);
 
-        return $registration;
+        return $enrolment;
     }
 
     /**

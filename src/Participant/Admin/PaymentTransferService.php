@@ -134,7 +134,7 @@ readonly class PaymentTransferService
     /**
      *  - Move the paid payment From To
      *  - Cancel all waiting payments To (the ticket-transfer email covers it, no separate cancel email)
-     *  - Free the programme registrations of From
+     *  - Free the programme enrolments of From
      *  - Set From as open (his payment-transfer email is sent after commit)
      *  - Set To as paid (his ticket-transfer email carrying the entry QR code is sent after commit)
      *  - Handle scarf correction on To

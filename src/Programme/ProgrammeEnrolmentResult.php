@@ -6,11 +6,11 @@ namespace kissj\Programme;
 
 use LogicException;
 
-readonly class ProgrammeRegistrationResult
+readonly class ProgrammeEnrolmentResult
 {
     private function __construct(
         private ?string $successFlashKey,
-        public ?ProgrammeRegistrationError $error,
+        public ?ProgrammeEnrolmentError $error,
     ) {
     }
 
@@ -19,7 +19,7 @@ readonly class ProgrammeRegistrationResult
         return new self($flashKey, null);
     }
 
-    public static function failure(ProgrammeRegistrationError $error): self
+    public static function failure(ProgrammeEnrolmentError $error): self
     {
         return new self(null, $error);
     }

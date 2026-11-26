@@ -183,7 +183,7 @@ class ProgrammePlaceMigrationTest extends AppTestCase
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 5;
-        $programme->isPreregistered = false;
+        $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $section;
         $programme->setTargetRoles([ParticipantRole::Ist]);
