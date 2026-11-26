@@ -247,7 +247,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         );
     }
 
-    public function testDashboardOffersTransferLinkBeforeEventStart(): void
+    public function testDashboardShowsTransferLinkInTheLastCard(): void
     {
         $app = $this->getTestApp();
         $event = $this->getOwnerTransferEvent($app);
@@ -258,19 +258,24 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
             'transfer-giver-' . uniqid('', true) . '@example.com',
             UserStatus::Paid,
             'Giver',
-            'Seven',
+            'Nine',
         );
 
-        $_SESSION['user'] = ['id' => $giver->id];
-        $app = $this->getTestApp(false);
+        $this->assertDashboardTransferLinkInLastCard($event, $giver);
+    }
 
-        $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'));
+    public function testDashboardShowsTransferLinkInTheLastCardForTroopLeader(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getOwnerTransferEvent($app);
 
-        self::assertSame(200, $response->getStatusCode());
-        self::assertStringContainsString(
-            $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.dashboardLink'),
-            (string) $response->getBody(),
-        );
+        $userService = $this->getService($app, UserService::class);
+        $leader = $userService->registerEmailUser('transfer-tl-' . uniqid('', true) . '@example.com', $event);
+        $userService->createParticipantSetRole($leader, 'tl');
+        $leader->status = UserStatus::Paid;
+        $this->getService($app, UserRepository::class)->persist($leader);
+
+        $this->assertDashboardTransferLinkInLastCard($event, $leader);
     }
 
     public function testDashboardHidesTransferLinkAfterEventStart(): void
@@ -472,6 +477,28 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         }
 
         throw new LogicException('eligibleForShowTieCode test not registered');
+    }
+
+    private function assertDashboardTransferLinkInLastCard(Event $event, User $user): void
+    {
+        $_SESSION['user'] = ['id' => $user->id];
+        $app = $this->getTestApp(false);
+
+        $response = $app->handle($this->createRequest('/v2/event/' . $event->slug . '/participant/dashboard'));
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $linkText = $this->getService($app, TranslatorInterface::class)->trans('ticketTransfer.dashboardLink');
+        $linkPosition = strpos($body, $linkText);
+        $lastCardPosition = strrpos($body, '<div class="card">');
+
+        self::assertNotFalse($linkPosition);
+        self::assertNotFalse($lastCardPosition);
+        self::assertGreaterThan($lastCardPosition, $linkPosition);
+        self::assertStringNotContainsString(
+            '</div>',
+            substr($body, $lastCardPosition, $linkPosition - $lastCardPosition),
+        );
     }
 
     /**

@@ -27,10 +27,6 @@
     {% if event.eventtype.showReceiptToParticipant(person) %}
         <a href="{{ url_for('downloadReceipt', {'eventSlug': event.slug}) }}" target="_blank" class="btn">{{ 'dashboard.downloadReceipt' | trans }}</a><br/>
     {% endif %}
-
-    {% if ownerTicketTransferAllowed %}
-        <a href="{{ url_for('showTransferTicket', {'eventSlug': event.slug}) }}" class="btn">{{ 'ticketTransfer.dashboardLink' | trans }}</a><br/>
-    {% endif %}
 </div>
 
 {% include('widgets/deals.twig') with { person: person } %}
@@ -277,6 +273,13 @@
     <div class="card">
         <a class="btn btn-small" href="{{ url_for(person is PatrolLeader ? 'pl-showCloseRegistration' : (person is TechnicalTeamLeader ? 'ttl-showCloseRegistration' : 'showCloseRegistration'), {'eventSlug': event.slug}) }}">
             {{ 'dashboard.lockRegistration' | trans }}</a>
+    </div>
+{% endif %}
+
+{% if ownerTicketTransferAllowed %}
+    <div class="card">
+        <a class="btn btn-small" href="{{ url_for('showTransferTicket', {'eventSlug': event.slug}) }}">
+            {{ 'ticketTransfer.dashboardLink' | trans }}</a>
     </div>
 {% endif %}
 {% endblock %}
