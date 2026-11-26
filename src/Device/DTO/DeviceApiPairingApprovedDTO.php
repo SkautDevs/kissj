@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace kissj\Programme\DTO;
+namespace kissj\Device\DTO;
 
-readonly class ProgrammeApiPairingApprovedDTO
+readonly class DeviceApiPairingApprovedDTO
 {
     public function __construct(
         public string $status,

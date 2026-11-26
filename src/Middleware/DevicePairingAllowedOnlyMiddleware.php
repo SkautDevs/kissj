@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Middleware;
 
-use kissj\Programme\Device\DevicePairingService;
+use kissj\Device\DevicePairingService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as ResponseHandler;

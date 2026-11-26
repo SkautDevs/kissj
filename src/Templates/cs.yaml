@@ -861,6 +861,7 @@ programme:
         all: "Všechny programy"
         eventAppHint: "Na programy se přihlásíš v aplikaci akce."
         title: "Moje programy"
+device:
     pairing:
         cardTitle: "Propojit mobilní aplikaci"
         connectedTitle: "Mobilní aplikace"

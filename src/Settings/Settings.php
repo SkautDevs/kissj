@@ -13,6 +13,12 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\BankPayment\FioBankPaymentService;
 use kissj\BankPayment\FioBankReaderFactory;
 use kissj\BankPayment\TatraBankPaymentService;
+use kissj\Device\DeviceApiController;
+use kissj\Device\DevicePairingAttemptRepository;
+use kissj\Device\DevicePairingController;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Entry\EntryController;
 use kissj\Event\ContentArbiterGuest;
 use kissj\Event\ContentArbiterIst;
@@ -102,11 +108,6 @@ use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
 use kissj\PdfGenerator\mPdfGenerator;
 use kissj\PdfGenerator\PdfGenerator;
-use kissj\Programme\Device\DevicePairingAttemptRepository;
-use kissj\Programme\Device\DevicePairingController;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DeviceSessionRepository;
 use kissj\Programme\Image\ProgrammeImageAdminController;
 use kissj\Programme\Image\ProgrammeImageController;
 use kissj\Programme\Image\ProgrammeImageProcessor;
@@ -255,6 +256,7 @@ class Settings
             ContentArbiterTroopParticipant::class => autowire(),
             ContextMiddleware::class => autowire(),
             DealApiKeyMiddleware::class => autowire(),
+            DeviceApiController::class => autowire(),
             DevicePairingAllowedOnlyMiddleware::class => autowire(),
             DevicePairingAttemptRepository::class => autowire(),
             DevicePairingController::class => autowire(),

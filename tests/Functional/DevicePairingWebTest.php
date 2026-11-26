@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Device\DevicePairingAttemptRepository;
+use kissj\Device\DevicePairingRefusal;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DevicePairingStatus;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Middleware\DevicePairingCsrfMiddleware;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
-use kissj\Programme\Device\DevicePairingAttemptRepository;
-use kissj\Programme\Device\DevicePairingRefusal;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DevicePairingStatus;
-use kissj\Programme\Device\DeviceSessionRepository;
 use kissj\Settings\EnvSettings;
 use kissj\Telemetry\Metrics;
 use kissj\User\LoginToken;
@@ -54,9 +54,9 @@ class DevicePairingWebTest extends AppTestCase
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
 
         self::assertStringContainsString('href="https://app.example.org/test-event-slug/"', $body);
-        self::assertStringContainsString($this->translate($app, 'programme.pairing.cardTitle'), $body);
+        self::assertStringContainsString($this->translate($app, 'device.pairing.cardTitle'), $body);
         self::assertStringContainsString(
-            '<label for="code">' . explode('%app%', $this->translate($app, 'programme.pairing.cardText'))[0],
+            '<label for="code">' . explode('%app%', $this->translate($app, 'device.pairing.cardText'))[0],
             $body,
         );
         self::assertStringContainsString('action="/v2/event/test-event-slug/participant/pairing"', $body);
@@ -77,13 +77,13 @@ class DevicePairingWebTest extends AppTestCase
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
 
         self::assertStringContainsString(
-            str_replace('%count%', '1', $this->translate($app, 'programme.pairing.connectedCount')),
+            str_replace('%count%', '1', $this->translate($app, 'device.pairing.connectedCount')),
             $body,
         );
-        self::assertStringContainsString($this->translate($app, 'programme.pairing.openApp'), $body);
+        self::assertStringContainsString($this->translate($app, 'device.pairing.openApp'), $body);
         self::assertStringContainsString('href="https://app.example.org/test-event-slug/"', $body);
         self::assertStringContainsString('<details', $body);
-        self::assertStringContainsString($this->translate($app, 'programme.pairing.connectAnother'), $body);
+        self::assertStringContainsString($this->translate($app, 'device.pairing.connectAnother'), $body);
         self::assertStringContainsString('action="/v2/event/test-event-slug/participant/pairing"', $body);
         self::assertStringContainsString('id="devicePairing"', $body);
     }
@@ -122,17 +122,17 @@ class DevicePairingWebTest extends AppTestCase
         $connectedApp = $this->loginAs($app, $participant->getUserButNotNull());
         $connectedBody = (string)$connectedApp->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
         self::assertStringContainsString(
-            str_replace('%count%', '1', $this->translate($connectedApp, 'programme.pairing.connectedCount')),
+            str_replace('%count%', '1', $this->translate($connectedApp, 'device.pairing.connectedCount')),
             $connectedBody,
         );
         self::assertStringNotContainsString(
-            $this->translate($connectedApp, 'programme.pairing.openApp'),
+            $this->translate($connectedApp, 'device.pairing.openApp'),
             $connectedBody,
         );
 
         $freshApp = $this->loginAs($this->getTestApp(false), $notConnected->getUserButNotNull());
         $freshBody = (string)$freshApp->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
-        self::assertStringContainsString($this->translate($freshApp, 'programme.pairing.appName'), $freshBody);
+        self::assertStringContainsString($this->translate($freshApp, 'device.pairing.appName'), $freshBody);
         self::assertStringNotContainsString('href="https://app.', $freshBody);
         self::assertStringNotContainsString('target="_blank" rel="noopener"', $freshBody);
     }

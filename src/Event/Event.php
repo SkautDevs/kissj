@@ -147,7 +147,7 @@ class Event extends EntityDatetime
         return $this->programmeEnrolmentStart <= $now && $now < $this->programmeEnrolmentEnd;
     }
 
-    public function hasProgrammeApi(): bool
+    public function hasEventAppApi(): bool
     {
         return $this->apiKeyEvent !== null;
     }

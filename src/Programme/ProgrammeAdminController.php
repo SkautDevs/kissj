@@ -8,13 +8,13 @@ use DateTimeImmutable;
 use DateTimeZone;
 use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
 use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Image\ProgrammeImageService;
 use kissj\Programme\Image\ProgrammeImageUploadRefusal;
@@ -54,7 +54,7 @@ class ProgrammeAdminController extends AbstractController
             'imagesByProgramme' => $this->programmeImageRepository->findForProgrammes($programmes),
             'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
             'event' => $event,
-            'pendingPairingCount' => $event->hasProgrammeApi()
+            'pendingPairingCount' => $event->hasEventAppApi()
                 ? $this->devicePairingRepository->countPendingUnexpired($event, DateTimeUtils::getDateTime())
                 : null,
             'maxPendingPairings' => DevicePairingService::MAX_PENDING_PER_EVENT,
@@ -63,7 +63,7 @@ class ProgrammeAdminController extends AbstractController
 
     public function purgePendingPairings(Request $request, Response $response, Event $event): Response
     {
-        if ($event->hasProgrammeApi() === false) {
+        if ($event->hasEventAppApi() === false) {
             throw new HttpNotFoundException($request);
         }
 

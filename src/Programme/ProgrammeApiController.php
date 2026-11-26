@@ -16,21 +16,13 @@ use kissj\Programme\DTO\ProgrammeApiOkDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantIdsDTO;
 use kissj\Programme\DTO\ProgrammeApiParticipantProgrammesDTO;
-use kissj\Programme\DTO\ProgrammeApiPairingApprovedDTO;
-use kissj\Programme\DTO\ProgrammeApiPairingStartDTO;
-use kissj\Programme\DTO\ProgrammeApiPairingStatusDTO;
 use kissj\Programme\DTO\ProgrammeApiPlaceDTO;
 use kissj\Programme\DTO\ProgrammeApiProgrammeDTO;
 use kissj\Programme\DTO\ProgrammeApiSectionDTO;
-use kissj\Programme\Device\DevicePairing;
-use kissj\Programme\Device\DevicePairingPollStatus;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DeviceSession;
 use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
-use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\UriInterface;
@@ -41,7 +33,6 @@ class ProgrammeApiController extends AbstractController
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
-        private readonly DevicePairingService $devicePairingService,
         private readonly ProgrammeService $programmeService,
         private readonly ProgrammePlaceRepository $programmePlaceRepository,
         private readonly ProgrammeImageRepository $programmeImageRepository,
@@ -91,18 +82,6 @@ class ProgrammeApiController extends AbstractController
         );
     }
 
-    public function revokeSession(Request $request, Response $response): Response
-    {
-        $session = $request->getAttribute('deviceSession');
-        if ($session instanceof DeviceSession === false) {
-            throw new LogicException('Session revoke runs without device session');
-        }
-
-        $this->devicePairingService->revokeSession($session);
-
-        return $this->getResponseWithJson($response, new ProgrammeApiOkDTO(true));
-    }
-
     public function programmeParticipants(Response $response, Event $authorizedEvent, int $programmeId): Response
     {
         $programme = $this->programmeRepository->findActiveById($programmeId, $authorizedEvent);
@@ -116,58 +95,6 @@ class ProgrammeApiController extends AbstractController
                 $this->programmeEnrolmentRepository->findActiveNotCancelledForProgramme($programme),
             ),
         ));
-    }
-
-    public function pairingStart(Request $request, Response $response, Event $authorizedEvent): Response
-    {
-        $deviceId = $this->getParsedJsonFromBody($request)['deviceId'] ?? null;
-        if (is_string($deviceId) === false || preg_match('/^[0-9a-f]{64}$/D', $deviceId) !== 1) {
-            $response->getBody()->write('Invalid deviceId');
-
-            return $response->withStatus(400)->withHeader('Content-Type', 'text/plain');
-        }
-
-        $pairing = $this->devicePairingService->start($authorizedEvent, $deviceId);
-        if ($pairing === null) {
-            $response->getBody()->write('Too many pending pairings');
-
-            return $response->withStatus(429)->withHeader('Content-Type', 'text/plain');
-        }
-
-        $verificationUrl = $this->getRouter($request)->fullUrlFor(
-            $request->getUri(),
-            'dashboard',
-            ['eventSlug' => $authorizedEvent->slug],
-        ) . '#devicePairing';
-
-        return $this->getResponseWithJson($response, new ProgrammeApiPairingStartDTO(
-            $pairing->deviceCode,
-            $pairing->userCode,
-            $verificationUrl,
-            DateTimeUtils::formatAtom($pairing->expiresAt),
-            DevicePairing::POLL_INTERVAL_SECONDS,
-        ));
-    }
-
-    public function pairingPoll(Request $request, Response $response, Event $authorizedEvent): Response
-    {
-        $deviceCode = $this->getParsedJsonFromBody($request)['deviceCode'] ?? null;
-        $result = $this->devicePairingService->poll(is_string($deviceCode) ? $deviceCode : '', $authorizedEvent);
-
-        if ($result->status !== DevicePairingPollStatus::Approved) {
-            return $this->getResponseWithJson($response, new ProgrammeApiPairingStatusDTO($result->status->value));
-        }
-
-        $programmeApiPairingApprovedDTO = new ProgrammeApiPairingApprovedDTO(
-            $result->status->value,
-            $result->sessionToken ?? throw new LogicException('Approved poll result has no session token'),
-            DateTimeUtils::formatAtom(
-                $result->sessionExpiresAt ?? throw new LogicException('Approved poll result has no expiry'),
-            ),
-        );
-
-        return $this->getResponseWithJson($response, $programmeApiPairingApprovedDTO);
-
     }
 
     private function presentParticipantProgrammes(

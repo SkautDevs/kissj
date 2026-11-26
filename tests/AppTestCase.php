@@ -11,6 +11,9 @@ use kissj\Application\ApplicationGetter;
 use kissj\Application\DateTimeUtils;
 use kissj\BankPayment\BankPayment;
 use kissj\BankPayment\BankPaymentRepository;
+use kissj\Device\DevicePairing;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingStatus;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -26,9 +29,6 @@ use kissj\Participant\Troop\TroopParticipant;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentStatus;
-use kissj\Programme\Device\DevicePairing;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingStatus;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
 use kissj\User\User;
@@ -427,7 +427,7 @@ class AppTestCase extends TestCase
 
     protected function createPairingStartRequest(string $apiKey, ?string $deviceId = null): ServerRequestInterface
     {
-        $request = $this->createApiRequest('/v3/programme/pairing/start', $apiKey, 'POST');
+        $request = $this->createApiRequest('/v3/device/pairing/start', $apiKey, 'POST');
         $request->getBody()->write(json_encode(
             ['deviceId' => $deviceId ?? bin2hex(random_bytes(32))],
             JSON_THROW_ON_ERROR,

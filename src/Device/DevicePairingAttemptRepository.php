@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kissj\Programme\Device;
+namespace kissj\Device;
 
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;

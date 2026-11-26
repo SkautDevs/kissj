@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Functional;
 
+use kissj\Device\DevicePairingAttempt;
+use kissj\Device\DevicePairingAttemptRepository;
 use kissj\Participant\Participant;
-use kissj\Programme\Device\DevicePairingAttempt;
-use kissj\Programme\Device\DevicePairingAttemptRepository;
 use LogicException;
 use RuntimeException;
 use Tests\AppTestCase;

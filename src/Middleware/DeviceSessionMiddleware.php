@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace kissj\Middleware;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DeviceSession;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Event\Event;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DeviceSession;
-use kissj\Programme\Device\DeviceSessionRepository;
 use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

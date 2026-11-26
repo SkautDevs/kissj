@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kissj\Programme\Device;
+namespace kissj\Device;
 
 use DateInterval;
 use DateTimeInterface;
@@ -37,7 +37,7 @@ readonly class DevicePairingService
 
     public function isDeviceAccessAllowed(User $user): bool
     {
-        return $user->event->hasProgrammeApi() && $user->status !== UserStatus::Cancelled;
+        return $user->event->hasEventAppApi() && $user->status !== UserStatus::Cancelled;
     }
 
     public function countConnectedDevices(Participant $participant): int

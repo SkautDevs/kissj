@@ -6,11 +6,11 @@ namespace Tests\Functional;
 
 use DateTimeImmutable;
 use kissj\Application\DateTimeUtils;
-use kissj\Programme\Device\DevicePairing;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DevicePairingStatus;
-use kissj\Programme\Device\DeviceSessionRepository;
+use kissj\Device\DevicePairing;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DevicePairingStatus;
+use kissj\Device\DeviceSessionRepository;
 use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -84,7 +84,7 @@ class DevicePairingApiTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $withoutBody = $this->createApiRequest('/v3/programme/pairing/start', self::API_KEY, 'POST');
+        $withoutBody = $this->createApiRequest('/v3/device/pairing/start', self::API_KEY, 'POST');
         $requests = [$withoutBody];
         $invalidDeviceIds = [
             5,
@@ -94,7 +94,7 @@ class DevicePairingApiTest extends AppTestCase
             str_repeat('a', 64) . "\n",
         ];
         foreach ($invalidDeviceIds as $deviceId) {
-            $request = $this->createApiRequest('/v3/programme/pairing/start', self::API_KEY, 'POST');
+            $request = $this->createApiRequest('/v3/device/pairing/start', self::API_KEY, 'POST');
             $request->getBody()->write(json_encode(['deviceId' => $deviceId], JSON_THROW_ON_ERROR));
             $requests[] = $request;
         }
@@ -191,7 +191,7 @@ class DevicePairingApiTest extends AppTestCase
         $app = $this->getTestApp();
         $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
 
-        $empty = $app->handle($this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST'));
+        $empty = $app->handle($this->createApiRequest('/v3/device/pairing/poll', self::API_KEY, 'POST'));
         $nonString = $this->poll($app, 5);
 
         self::assertSame('{"status":"expired"}', (string)$empty->getBody());
@@ -202,9 +202,9 @@ class DevicePairingApiTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
-        $start = $this->createApiRequest('/v3/programme/pairing/start', self::API_KEY, 'POST');
+        $start = $this->createApiRequest('/v3/device/pairing/start', self::API_KEY, 'POST');
         $start->getBody()->write('5');
-        $poll = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $poll = $this->createApiRequest('/v3/device/pairing/poll', self::API_KEY, 'POST');
         $poll->getBody()->write('"x"');
 
         $started = $app->handle($start);
@@ -345,7 +345,7 @@ class DevicePairingApiTest extends AppTestCase
      */
     private function poll(App $app, mixed $deviceCode): Response
     {
-        $request = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $request = $this->createApiRequest('/v3/device/pairing/poll', self::API_KEY, 'POST');
         $request->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
 
         return $app->handle($request);

@@ -853,6 +853,7 @@ programme:
         all: "All programmes"
         eventAppHint: "Enrol in programmes in the event app."
         title: "My programmes"
+device:
     pairing:
         cardTitle: "Connect the mobile app"
         connectedTitle: "Mobile app"

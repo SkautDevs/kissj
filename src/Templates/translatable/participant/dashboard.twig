@@ -34,7 +34,7 @@
 {% include('widgets/programmes.twig') with { event: event, userStatus: userStatus, enrolledProgrammes: enrolledProgrammes, autoenrolledProgrammes: autoenrolledProgrammes } %}
 
 {% if devicePairingAvailable ?? false %}
-    {% set appName = 'programme.pairing.appName'|trans %}
+    {% set appName = 'device.pairing.appName'|trans %}
     {% set appReference -%}
         {%- if eventAppUrl -%}
             <a href="{{ eventAppUrl }}" target="_blank" rel="noopener">{{ appName }}</a>
@@ -48,7 +48,7 @@
                 action="{{ url_for('pairDevice', {eventSlug: event.slug}) }}"
                 class="form-group form-group-middle"
         >
-            <label for="code">{{ 'programme.pairing.cardText'|trans({'%app%': appReference})|raw }}</label>
+            <label for="code">{{ 'device.pairing.cardText'|trans({'%app%': appReference})|raw }}</label>
             <input
                     id="code"
                     name="code"
@@ -58,29 +58,29 @@
                     autocomplete="off"
                     placeholder="123 456"
                     pattern=" *\d{3}[ \-]*\d{3} *"
-                    title="{{ 'programme.pairing.codeFormat'|trans }}"
+                    title="{{ 'device.pairing.codeFormat'|trans }}"
                     required
             ><br>
             <input name="csrfName" value="{{ csrfName }}" type="hidden">
             <input name="csrfValue" value="{{ csrfValue }}" type="hidden">
-            <input type="submit" value="{{ 'programme.pairing.submit'|trans }}" class="btn btn-small">
+            <input type="submit" value="{{ 'device.pairing.submit'|trans }}" class="btn btn-small">
         </form>
     {% endset %}
     <div class="card-double-layout card-double-layout-center">
         <div class="card card-double" id="devicePairing">
             {% if connectedDevices > 0 %}
-                <h2>{{ 'programme.pairing.connectedTitle'|trans }}</h2>
-                <p class="text-center">{{ 'programme.pairing.connectedCount'|trans({'%count%': connectedDevices}) }}</p>
+                <h2>{{ 'device.pairing.connectedTitle'|trans }}</h2>
+                <p class="text-center">{{ 'device.pairing.connectedCount'|trans({'%count%': connectedDevices}) }}</p>
                 {% if eventAppUrl %}
                     <a class="btn" href="{{ eventAppUrl }}" target="_blank" rel="noopener">
-                        {{ 'programme.pairing.openApp'|trans }}</a>
+                        {{ 'device.pairing.openApp'|trans }}</a>
                 {% endif %}
                 <details{% if pairingFormOpen %} open{% endif %}>
-                    <summary>{{ 'programme.pairing.connectAnother'|trans }}</summary>
+                    <summary>{{ 'device.pairing.connectAnother'|trans }}</summary>
                     {{ pairingForm }}
                 </details>
             {% else %}
-                <h2>{{ 'programme.pairing.cardTitle'|trans }}</h2>
+                <h2>{{ 'device.pairing.cardTitle'|trans }}</h2>
                 {{ pairingForm }}
             {% endif %}
         </div>

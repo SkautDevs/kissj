@@ -853,6 +853,7 @@ programme:
         all: "Všetky programy"
         eventAppHint: "Na programy sa prihlásiš v aplikácii akcie."
         title: "Moje programy"
+device:
     pairing:
         cardTitle: "Prepojiť mobilnú aplikáciu"
         connectedTitle: "Mobilná aplikácia"

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Application\DateTimeUtils;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DevicePairingStatus;
+use kissj\Device\DeviceSession;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DevicePairingStatus;
-use kissj\Programme\Device\DeviceSession;
-use kissj\Programme\Device\DeviceSessionRepository;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Tests\AppTestCase;

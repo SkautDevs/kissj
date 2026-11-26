@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Programme;
+namespace Tests\Unit\Device;
 
-use kissj\Programme\Device\DevicePairingCodes;
+use kissj\Device\DevicePairingCodes;
 use PHPUnit\Framework\TestCase;
 
 class DevicePairingCodesTest extends TestCase

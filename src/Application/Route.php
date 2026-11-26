@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace kissj\Application;
 
 use kissj\Deal\DealController;
+use kissj\Device\DeviceApiController;
+use kissj\Device\DevicePairingController;
 use kissj\Entry\EntryController;
 use kissj\Middleware\ShowFoodStatsAllowedOnly;
 use kissj\Participant\Admin\AdminJsonController;
@@ -49,7 +51,6 @@ use kissj\Participant\ParticipantController;
 use kissj\Participant\Patrol\PatrolController;
 use kissj\Participant\TechnicalTeam\TechnicalTeamController;
 use kissj\Participant\Troop\TroopController;
-use kissj\Programme\Device\DevicePairingController;
 use kissj\Programme\Image\ProgrammeImageAdminController;
 use kissj\Programme\Image\ProgrammeImageController;
 use kissj\Programme\Place\ProgrammePlaceAdminController;
@@ -748,12 +749,6 @@ class Route
                 )
                     ->setName('programme-api-programme-participants');
 
-                $app->post('/pairing/start', ProgrammeApiController::class . '::pairingStart')
-                    ->setName('programme-api-pairing-start');
-
-                $app->post('/pairing/poll', ProgrammeApiController::class . '::pairingPoll')
-                    ->setName('programme-api-pairing-poll');
-
                 $app->get('/participant/session', ProgrammeApiController::class . '::participantBySession')
                     ->setName('programme-api-participant-by-session')
                     ->add(DeviceSessionMiddleware::class);
@@ -765,9 +760,17 @@ class Route
                 $app->post('/{programmeId:[0-9]+}/withdraw', ProgrammeApiController::class . '::withdraw')
                     ->setName('programme-api-withdraw')
                     ->add(DeviceSessionMiddleware::class);
+            })->add(EventApiKeyMiddleware::class);
 
-                $app->post('/session/revoke', ProgrammeApiController::class . '::revokeSession')
-                    ->setName('programme-api-session-revoke')
+            $app->group('/device', function (RouteCollectorProxy $app) {
+                $app->post('/pairing/start', DeviceApiController::class . '::pairingStart')
+                    ->setName('device-api-pairing-start');
+
+                $app->post('/pairing/poll', DeviceApiController::class . '::pairingPoll')
+                    ->setName('device-api-pairing-poll');
+
+                $app->post('/session/revoke', DeviceApiController::class . '::revokeSession')
+                    ->setName('device-api-session-revoke')
                     ->add(DeviceSessionMiddleware::class);
             })->add(EventApiKeyMiddleware::class);
 

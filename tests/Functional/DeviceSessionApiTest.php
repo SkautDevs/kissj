@@ -6,6 +6,10 @@ namespace Tests\Functional;
 
 use DateTimeImmutable;
 use kissj\Application\DateTimeUtils;
+use kissj\Device\DevicePairingRepository;
+use kissj\Device\DevicePairingService;
+use kissj\Device\DeviceSession;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
 use kissj\Participant\Admin\PaymentTransferService;
@@ -14,10 +18,6 @@ use kissj\Participant\ParticipantRole;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentStatus;
-use kissj\Programme\Device\DevicePairingRepository;
-use kissj\Programme\Device\DevicePairingService;
-use kissj\Programme\Device\DeviceSession;
-use kissj\Programme\Device\DeviceSessionRepository;
 use kissj\Programme\Image\ProgrammeImage;
 use kissj\Programme\Image\ProgrammeImageRepository;
 use kissj\Programme\Place\ProgrammePlaceService;
@@ -333,6 +333,30 @@ class DeviceSessionApiTest extends AppTestCase
         }
     }
 
+    public function testOldDevicePathsAreGone(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $token = $this->createSession($app, $this->createPaidIstOnEvent($app, $event, 'Old Device Paths'));
+        $bodies = [
+            'pairing/start' => ['deviceId' => bin2hex(random_bytes(32))],
+            'pairing/poll' => ['deviceCode' => $this->createDevicePairing($app, $event)->deviceCode],
+            'session/revoke' => [],
+        ];
+
+        foreach ($bodies as $oldPath => $body) {
+            $request = $this->createApiRequest('/v3/programme/' . $oldPath, self::API_KEY, 'POST')
+                ->withHeader(self::SESSION_HEADER, $token);
+            $request->getBody()->write(json_encode($body, JSON_THROW_ON_ERROR));
+            try {
+                $app->handle($request);
+                self::fail($oldPath . ' route still exists');
+            } catch (HttpException $exception) {
+                self::assertContains($exception->getCode(), [404, 405], $oldPath);
+            }
+        }
+    }
+
     public function testEveryErrorCode(): void
     {
         $app = $this->getTestApp();
@@ -414,14 +438,14 @@ class DeviceSessionApiTest extends AppTestCase
         $otherDeviceToken = $this->createSession($app, $participant);
         $otherParticipantToken = $this->createSession($app, $this->createPaidIstOnEvent($app, $event, 'Untouched'));
 
-        $response = $this->handle($app, '/v3/programme/session/revoke', $token, 'POST');
+        $response = $this->handle($app, '/v3/device/session/revoke', $token, 'POST');
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame(['ok' => true], $this->decodeJson($response));
         foreach (
             [
                 $this->handle($app, '/v3/programme/participant/session', $token),
-                $this->handle($app, '/v3/programme/session/revoke', $token, 'POST'),
+                $this->handle($app, '/v3/device/session/revoke', $token, 'POST'),
             ] as $afterRevoke
         ) {
             self::assertSame(401, $afterRevoke->getStatusCode());
@@ -451,7 +475,7 @@ class DeviceSessionApiTest extends AppTestCase
         $token = $approved['sessionToken'];
         self::assertIsString($token);
 
-        self::assertSame(200, $this->handle($app, '/v3/programme/session/revoke', $token, 'POST')->getStatusCode());
+        self::assertSame(200, $this->handle($app, '/v3/device/session/revoke', $token, 'POST')->getStatusCode());
         $pairingRepository = $this->getService($app, DevicePairingRepository::class);
         $stored = $pairingRepository->get($pairing->id);
         $stored->lastPolledAt = DateTimeUtils::getDateTime('-6 seconds');
@@ -502,7 +526,7 @@ class DeviceSessionApiTest extends AppTestCase
         $app = $this->getTestApp();
         $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
 
-        $response = $this->handle($app, '/v3/programme/session/revoke', '', 'POST');
+        $response = $this->handle($app, '/v3/device/session/revoke', '', 'POST');
 
         self::assertSame(401, $response->getStatusCode());
         self::assertSame('', (string)$response->getBody());
@@ -527,7 +551,7 @@ class DeviceSessionApiTest extends AppTestCase
             $participant,
         ));
 
-        $pollRequest = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $pollRequest = $this->createApiRequest('/v3/device/pairing/poll', self::API_KEY, 'POST');
         $pollRequest->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
         $poll = $this->decodeJson($app->handle($pollRequest));
         self::assertSame('approved', $poll['status']);
@@ -569,7 +593,7 @@ class DeviceSessionApiTest extends AppTestCase
      */
     private function poll(App $app, string $deviceCode): Response
     {
-        $request = $this->createApiRequest('/v3/programme/pairing/poll', self::API_KEY, 'POST');
+        $request = $this->createApiRequest('/v3/device/pairing/poll', self::API_KEY, 'POST');
         $request->getBody()->write(json_encode(['deviceCode' => $deviceCode], JSON_THROW_ON_ERROR));
 
         return $app->handle($request);

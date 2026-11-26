@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Programme;
+namespace Tests\Unit\Device;
 
 use kissj\Application\DateTimeUtils;
-use kissj\Programme\Device\DeviceSession;
+use kissj\Device\DeviceSession;
 use PHPUnit\Framework\TestCase;
 
 class DeviceSessionTest extends TestCase

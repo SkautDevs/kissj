@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Programme;
+namespace Tests\Unit\Device;
 
 use kissj\Application\DateTimeUtils;
-use kissj\Programme\Device\DevicePairingPollResult;
-use kissj\Programme\Device\DevicePairingPollStatus;
+use kissj\Device\DevicePairingPollResult;
+use kissj\Device\DevicePairingPollStatus;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 
