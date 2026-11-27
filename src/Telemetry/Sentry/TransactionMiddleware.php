@@ -19,7 +19,11 @@ readonly class TransactionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
-        $normalized = preg_replace('@(?<=/)\d+(?=/|$)@', '{id}', $path) ?? $path;
+        $normalized = preg_replace(
+            ['@(?<=/)\d+(?=/|$)@', '@(?<=/)[a-f0-9]{32}(?=/|$)@'],
+            ['{id}', '{file}'],
+            $path,
+        ) ?? $path;
 
         $context = continueTrace(
             $request->getHeaderLine('sentry-trace'),

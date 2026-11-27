@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\FileHandler;
 
+use Aws\Result;
 use Aws\S3\S3Client;
+use GuzzleHttp\Psr7\Utils;
 use kissj\FileHandler\S3BucketSaveFileHandler;
 use kissj\Telemetry\Sentry\Collector;
 use LogicException;
@@ -48,6 +50,23 @@ class S3BucketSaveFileHandlerTest extends TestCase
 
         self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/D', $filename);
         self::assertSame($filename, $putKey);
+    }
+
+    public function testGetFileReadsTheObjectWithOneStorageCall(): void
+    {
+        $s3client = Mockery::mock(S3Client::class);
+        $s3client->shouldReceive('getObject')
+            ->once()
+            ->with(['Bucket' => 'bucket', 'Key' => 'abc'])
+            ->andReturn(new Result(['Body' => Utils::streamFor('webp bytes'), 'ContentType' => 'image/webp']));
+        $s3client->shouldNotReceive('HeadObject');
+        $s3client->shouldNotReceive('registerStreamWrapper');
+        $handler = new S3BucketSaveFileHandler($s3client, 'bucket', new Collector(Mockery::mock(Hub::class)));
+
+        $file = $handler->getFile('abc');
+
+        self::assertSame('webp bytes', $file->stream->getContents());
+        self::assertSame('image/webp', $file->mimeContentType);
     }
 
     public function testDeleteFileDeletesTheObject(): void

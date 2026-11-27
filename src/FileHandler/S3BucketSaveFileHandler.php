@@ -4,7 +4,6 @@ namespace kissj\FileHandler;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use GuzzleHttp\Psr7\Utils;
 use kissj\Telemetry\Sentry\Collector;
 use LogicException;
 use Psr\Http\Message\StreamInterface;
@@ -21,18 +20,16 @@ class S3BucketSaveFileHandler extends SaveFileHandler
 
     public function getFile(string $filename): File
     {
-        $this->s3client->registerStreamWrapper();
-        $file = file_get_contents('s3://'.$this->s3bucket.'/'.$filename);
-        $stream = Utils::streamFor($file);
-
-        // get content type from S3
-        /** @var array{ContentType: string} $headObject */
-        $headObject = $this->s3client->HeadObject([
+        $object = $this->s3client->getObject([
             'Bucket' => $this->s3bucket,
             'Key' => $filename,
         ]);
+        /** @var StreamInterface $body */
+        $body = $object['Body'];
+        /** @var string $contentType */
+        $contentType = $object['ContentType'];
 
-        return new File($stream, $headObject['ContentType']);
+        return new File($body, $contentType);
     }
 
     public function saveFile(UploadedFile $uploadedFile, string $newFilename): UploadedFile
