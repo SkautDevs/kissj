@@ -193,7 +193,7 @@ class Repository extends BaseRepository
             if ($value instanceof Entity) {
                 $columnName = $this->mapper->getRelationshipColumn(
                     $this->table,
-                    $this->mapper->getTable($value::class)
+                    $this->mapper->getTable($value::class),
                 );
                 $qb->where("$columnName = %i", $value->id);
             } elseif ($value instanceof Relation) {

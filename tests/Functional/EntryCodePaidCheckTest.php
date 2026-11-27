@@ -13,6 +13,7 @@ use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Tests\AppTestCase;
@@ -48,7 +49,7 @@ class EntryCodePaidCheckTest extends AppTestCase
         self::assertStringContainsString('"valid"', (string)$response->getBody());
     }
 
-    private function entryCodeRequest(string $entryCode, string $eventSecret): \Psr\Http\Message\ServerRequestInterface
+    private function entryCodeRequest(string $entryCode, string $eventSecret): ServerRequestInterface
     {
         $request = (new ServerRequestFactory())->createServerRequest('POST', '/v3/entry/code/' . $entryCode)
             ->withHeader('Content-Type', 'application/json');

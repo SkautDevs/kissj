@@ -533,7 +533,6 @@ class Route
                             $app->get('/patrols', ExportController::class . '::exportFoodPatrolsAndTroops')
                                 ->setName('admin-export-patrols-food');
                         });
-
                     });
 
                     $app->group('/organizing-team', function (RouteCollectorProxy $app) {

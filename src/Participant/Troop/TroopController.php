@@ -23,7 +23,7 @@ class TroopController extends AbstractController
         Request $request,
         Response $response,
         User $user,
-        Event $event
+        Event $event,
     ): Response {
         $tieCode = $this->getParameterFromBody($request, 'tieCode');
 
@@ -99,7 +99,7 @@ class TroopController extends AbstractController
             [
                 'pDetail' => $this->troopParticipantRepository->get($participantId),
                 'ca' => $user->event->eventType->getContentArbiterTroopParticipant(),
-            ]
+            ],
         );
     }
 

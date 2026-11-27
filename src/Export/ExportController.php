@@ -47,7 +47,7 @@ class ExportController extends AbstractController
     public function exportHealthData(
         Response $response,
         User $user,
-        Event $event
+        Event $event,
     ): Response {
         $csvRows = $this->exportService->healthDataToCSV($event, $user);
         $this->logger->info('Exported health data about participants', ['userId' => $user->id]);
@@ -59,7 +59,7 @@ class ExportController extends AbstractController
     public function exportPaidData(
         Response $response,
         User $user,
-        Event $event
+        Event $event,
     ): Response {
         $csvRows = $this->exportService->paidContactDataToCSV($event, $user);
         $this->logger->info('Exported data about participants which paid', ['userId' => $user->id]);
@@ -71,7 +71,7 @@ class ExportController extends AbstractController
     public function exportFullData(
         Response $response,
         User $user,
-        Event $event
+        Event $event,
     ): Response {
         $csvRows = $this->exportService->allRegistrationDataToCSV($event, $user);
         $this->logger->info('Exported FULL current data about participants', ['userId' => $user->id]);

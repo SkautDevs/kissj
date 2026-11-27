@@ -10,12 +10,12 @@ final class AddIban extends AbstractMigration
     {
         $event = $this->table('event');
         $event
-            ->addColumn('iban', 'string', ['null' => false, 'default' => '',])
+            ->addColumn('iban', 'string', ['null' => false, 'default' => ''])
             ->save();
 
         $payment = $this->table('payment');
         $payment
-            ->addColumn('iban', 'string', ['null' => false, 'default' => '',])
+            ->addColumn('iban', 'string', ['null' => false, 'default' => ''])
             ->addColumn('due', 'datetime', ['default' => 'NOW()', 'null' => false])
             ->save();
     }

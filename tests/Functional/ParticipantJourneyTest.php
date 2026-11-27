@@ -58,7 +58,7 @@ class ParticipantJourneyTest extends AppTestCase
 
         // Step 2: Login with token
         $responseLogin = $app->handle($this->createRequest(
-            self::BASE_URL . '/tryLogin/' . $loginToken->token
+            self::BASE_URL . '/tryLogin/' . $loginToken->token,
         ));
         self::assertSame(302, $responseLogin->getStatusCode());
 
@@ -269,7 +269,7 @@ class ParticipantJourneyTest extends AppTestCase
         $responseSubmitEmail = $app->handle($this->createRequest(
             self::BASE_URL . '/login',
             'POST',
-            ['email' => $email]
+            ['email' => $email],
         ));
         self::assertSame(302, $responseSubmitEmail->getStatusCode());
 
@@ -296,7 +296,7 @@ class ParticipantJourneyTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/dashboard'
+            self::BASE_URL . '/participant/dashboard',
         ));
 
         self::assertSame(200, $response->getStatusCode());
@@ -340,7 +340,7 @@ class ParticipantJourneyTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/dashboard'
+            self::BASE_URL . '/participant/dashboard',
         ));
 
         self::assertSame(200, $response->getStatusCode());
@@ -372,7 +372,7 @@ class ParticipantJourneyTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/dashboard'
+            self::BASE_URL . '/participant/dashboard',
         ));
 
         self::assertSame(200, $response->getStatusCode());
@@ -406,7 +406,7 @@ class ParticipantJourneyTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/dashboard'
+            self::BASE_URL . '/participant/dashboard',
         ));
 
         self::assertSame(200, $response->getStatusCode());
@@ -734,7 +734,7 @@ class ParticipantJourneyTest extends AppTestCase
         $result = $troopService->tryTieTogetherWithMessages(
             $leaderTieCode,
             $participantTieCode,
-            $leaderUser->event
+            $leaderUser->event,
         );
 
         self::assertTrue($result, 'Tying should succeed');
@@ -890,7 +890,7 @@ class ParticipantJourneyTest extends AppTestCase
 
         // Login via token (without ot_token param, so no session flag)
         $app->handle($this->createRequest(
-            self::BASE_URL . '/tryLogin/' . $loginToken->token
+            self::BASE_URL . '/tryLogin/' . $loginToken->token,
         ));
 
         // Attempt to set OT role without session flag

@@ -9,7 +9,7 @@ class RemoveGbSwContingentAdmins extends AbstractMigration
     public function up(): void
     {
         $this->execute(
-            'UPDATE "user" SET role = \'participant\' WHERE role IN (\'contingentAdminGb\', \'contingentAdminSw\')'
+            'UPDATE "user" SET role = \'participant\' WHERE role IN (\'contingentAdminGb\', \'contingentAdminSw\')',
         );
     }
 

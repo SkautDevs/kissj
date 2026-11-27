@@ -244,7 +244,7 @@ class EntryController extends AbstractController
         int $participantId,
     ): Response {
         $groupParticipants = $this->getGroupParticipantsIncludingLeader(
-            $this->participantRepository->findParticipantById($participantId, $authorizedEvent)
+            $this->participantRepository->findParticipantById($participantId, $authorizedEvent),
         );
 
         if ($groupParticipants === null) {
@@ -271,7 +271,7 @@ class EntryController extends AbstractController
         int $participantId,
     ): Response {
         $groupParticipants = $this->getGroupParticipantsIncludingLeader(
-            $this->participantRepository->findParticipantById($participantId, $authorizedEvent)
+            $this->participantRepository->findParticipantById($participantId, $authorizedEvent),
         );
 
         if ($groupParticipants === null) {

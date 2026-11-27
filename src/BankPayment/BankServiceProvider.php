@@ -18,7 +18,7 @@ readonly class BankServiceProvider
     {
         /** @var IBankPaymentService $bankService */
         $bankService = $this->container->get(
-            $this->banks->getBankBySlug($bankSlug)->serviceClass
+            $this->banks->getBankBySlug($bankSlug)->serviceClass,
         );
 
         return $bankService;

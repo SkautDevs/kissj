@@ -74,7 +74,7 @@ readonly class UserService
         $fullLink = $routeParser->fullUrlFor(
             $request->getUri(),
             'loginWithToken',
-            ['token' => $token, 'eventSlug' => $event->slug]
+            ['token' => $token, 'eventSlug' => $event->slug],
         );
         $queryParams = array_filter(
             ['ot_token' => $otToken, 'ttl_token' => $ttlToken],

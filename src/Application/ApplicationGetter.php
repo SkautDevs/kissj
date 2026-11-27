@@ -27,9 +27,9 @@ class ApplicationGetter
      * @return App<ContainerInterface>
      */
     public function getApp(
-        string $envPath = __DIR__.'/../../',
+        string $envPath = __DIR__ . '/../../',
         string $envFilename = '.env',
-        string $tempPath = __DIR__.'/../../temp'
+        string $tempPath = __DIR__ . '/../../temp',
     ): App {
         try {
             $container = $this->buildContainer($envPath, $envFilename, $tempPath);
@@ -72,9 +72,9 @@ class ApplicationGetter
     }
 
     public function getConsoleApp(
-        string $envPath = __DIR__.'/../../',
+        string $envPath = __DIR__ . '/../../',
         string $envFilename = '.env',
-        string $tempPath = __DIR__.'/../../temp'
+        string $tempPath = __DIR__ . '/../../temp',
     ): ConsoleApp {
         $container = $this->buildContainer($envPath, $envFilename, $tempPath);
 

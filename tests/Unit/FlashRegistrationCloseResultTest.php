@@ -25,7 +25,7 @@ class FlashRegistrationCloseResultTest extends TestCase
         $flashMessages->shouldReceive('warning')->andReturnUsing(
             function (string $key, array $params) use (&$flashed): void {
                 $flashed[] = ['key' => $key, 'params' => $params];
-            }
+            },
         );
 
         $controller = new class () extends AbstractController {

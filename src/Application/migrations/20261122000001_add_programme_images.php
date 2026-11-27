@@ -25,7 +25,7 @@ class AddProgrammeImages extends AbstractMigration
             'INSERT INTO programme_image'
             . ' (programme_id, filename, thumb_filename, alt, sort_order, created_at, updated_at)'
             . " SELECT id, image_filename, NULL, '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM programme"
-            . ' WHERE image_filename IS NOT NULL AND LENGTH(image_filename) = 32'
+            . ' WHERE image_filename IS NOT NULL AND LENGTH(image_filename) = 32',
         );
 
         $this->table('programme')
@@ -41,7 +41,7 @@ class AddProgrammeImages extends AbstractMigration
         $this->execute(
             'UPDATE programme SET image_filename = (SELECT pi.filename FROM programme_image pi'
             . ' WHERE pi.programme_id = programme.id ORDER BY pi.sort_order, pi.id LIMIT 1)'
-            . ' WHERE EXISTS (SELECT 1 FROM programme_image pi WHERE pi.programme_id = programme.id)'
+            . ' WHERE EXISTS (SELECT 1 FROM programme_image pi WHERE pi.programme_id = programme.id)',
         );
 
         $this->table('programme_image')->drop()->save();

@@ -43,11 +43,11 @@ class ConvertDatetimesToTimestamptz extends AbstractMigration
 
         $this->execute(
             'ALTER TABLE "event" ALTER COLUMN "start_registration" TYPE timestamptz'
-            . ' USING "start_registration" AT TIME ZONE \'UTC\''
+            . ' USING "start_registration" AT TIME ZONE \'UTC\'',
         );
 
         $this->execute(
-            'ALTER TABLE "participant" ALTER COLUMN "birth_date" TYPE date USING "birth_date"::date'
+            'ALTER TABLE "participant" ALTER COLUMN "birth_date" TYPE date USING "birth_date"::date',
         );
     }
 
@@ -63,11 +63,11 @@ class ConvertDatetimesToTimestamptz extends AbstractMigration
 
         $this->execute(
             'ALTER TABLE "event" ALTER COLUMN "start_registration" TYPE timestamp'
-            . ' USING "start_registration" AT TIME ZONE \'UTC\''
+            . ' USING "start_registration" AT TIME ZONE \'UTC\'',
         );
 
         $this->execute(
-            'ALTER TABLE "participant" ALTER COLUMN "birth_date" TYPE timestamp USING "birth_date"::timestamp'
+            'ALTER TABLE "participant" ALTER COLUMN "birth_date" TYPE timestamp USING "birth_date"::timestamp',
         );
     }
 

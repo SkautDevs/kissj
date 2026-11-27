@@ -26,12 +26,12 @@ class AddProgrammePlaces extends AbstractMigration
         $this->execute(
             'INSERT INTO programme_place (event_id, name, created_at, updated_at)'
             . ' SELECT DISTINCT event_id, TRIM(place), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM programme'
-            . " WHERE TRIM(place) <> ''"
+            . " WHERE TRIM(place) <> ''",
         );
         $this->execute(
             'UPDATE programme SET place_id = (SELECT pp.id FROM programme_place pp'
             . ' WHERE pp.event_id = programme.event_id AND pp.name = TRIM(programme.place))'
-            . " WHERE TRIM(place) <> ''"
+            . " WHERE TRIM(place) <> ''",
         );
 
         $this->table('programme')
@@ -48,7 +48,7 @@ class AddProgrammePlaces extends AbstractMigration
             ->update();
         $this->execute(
             'UPDATE programme SET place = COALESCE((SELECT pp.name FROM programme_place pp'
-            . " WHERE pp.id = programme.place_id), '')"
+            . " WHERE pp.id = programme.place_id), '')",
         );
         $this->table('programme')
             ->changeColumn('place', 'text', ['null' => false])

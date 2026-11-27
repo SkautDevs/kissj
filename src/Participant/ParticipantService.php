@@ -69,8 +69,8 @@ readonly class ParticipantService
      */
     public function updateEditableAfterLockFields(
         Participant $participant,
-        array       $params,
-        array       $editableItems,
+        array $params,
+        array $editableItems,
     ): Participant {
         $this->applyItemsFromParams($participant, $params, $editableItems);
         $this->participantRepository->persist($participant);
@@ -158,7 +158,7 @@ readonly class ParticipantService
 
         $invalidItems = $this->getInvalidItemsForClose(
             $participant,
-            $event->eventType->getContentArbiterForRole($participant->getRoleOrFail())
+            $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
         );
         if ($invalidItems !== []) {
             $fieldLabels = array_map(
@@ -205,8 +205,8 @@ readonly class ParticipantService
     }
 
     private function validateTechnicalTeamLeaderRegistrationClose(
-        TechnicalTeamLeader     $technicalTeamLeader,
-        Event                   $event,
+        TechnicalTeamLeader $technicalTeamLeader,
+        Event $event,
         RegistrationCloseResult $result,
     ): RegistrationCloseResult {
         $contentArbiter = $event->getEventType()->getContentArbiterTechnicalTeamParticipant();
@@ -222,8 +222,8 @@ readonly class ParticipantService
     }
 
     private function validatePatrolLeaderRegistrationClose(
-        PatrolLeader            $patrolLeader,
-        Event                   $event,
+        PatrolLeader $patrolLeader,
+        Event $event,
         RegistrationCloseResult $result,
     ): RegistrationCloseResult {
         $participants = $patrolLeader->patrolParticipants;
@@ -257,8 +257,8 @@ readonly class ParticipantService
     }
 
     private function validateTroopLeaderRegistrationClose(
-        TroopLeader             $troopLeader,
-        Event                   $event,
+        TroopLeader $troopLeader,
+        Event $event,
         RegistrationCloseResult $result,
     ): RegistrationCloseResult {
         $troopParticipants = $troopLeader->troopParticipants;

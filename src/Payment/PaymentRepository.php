@@ -49,7 +49,7 @@ class PaymentRepository extends Repository
         foreach ($waitingEventPayments as $payment) {
             if (array_key_exists($payment->variableSymbol, $finalPayments)) {
                 throw new \RuntimeException(
-                    'More payments with same variable symbol existing: ' . $payment->variableSymbol
+                    'More payments with same variable symbol existing: ' . $payment->variableSymbol,
                 );
             }
             $finalPayments[$payment->variableSymbol] = $payment;

@@ -157,7 +157,7 @@ class AdminEventController extends AbstractController
                 $request->getUri(),
                 'loginAskEmail',
                 ['eventSlug' => $event->slug],
-                ['ot_token' => $otToken]
+                ['ot_token' => $otToken],
             );
         }
 

@@ -15,7 +15,7 @@ class VendoredParticipantType
         public ?string $leaderContact = null,
         public ?string $psychicalHealth = null,
         public ?string $physicalHealth = null,
-        public ?string $medicaments = null
+        public ?string $medicaments = null,
     ) {
     }
 }

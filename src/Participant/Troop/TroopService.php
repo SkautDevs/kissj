@@ -49,7 +49,7 @@ readonly class TroopService
 
     public function troopParticipantBelongsTroopLeader(
         TroopParticipant $troopParticipant,
-        TroopLeader $troopLeader
+        TroopLeader $troopLeader,
     ): bool {
         return $troopParticipant->troopLeader?->id === $troopLeader->id;
     }

@@ -23,7 +23,7 @@ return [
         'migrations' => '%%PHINX_CONFIG_DIR%%/../src/Application/migrations',
         'seeds' => '%%PHINX_CONFIG_DIR%%/../src/Application/migrations/seeds',
     ],
-	'environments' => [
+    'environments' => [
         'default_migration_table' => 'phinx_log',
         'default_environment' => $_ENV['DB_TYPE'],
         'sqlite' => [
@@ -35,13 +35,13 @@ return [
             'charset' => 'utf8',
             'file_handler_type' => $_ENV['FILE_HANDLER_TYPE'] ?? null,
         ],
-		'postgresql' => [
-			'adapter' => 'pgsql',
-			'host' => $_ENV['DATABASE_HOST'],
-			'name' => $_ENV['POSTGRES_DB'],
-			'user' => $_ENV['POSTGRES_USER'],
-			'pass' => $_ENV['POSTGRES_PASSWORD'],
-			'file_handler_type' => $_ENV['FILE_HANDLER_TYPE'] ?? null,
-		],
-	],
+        'postgresql' => [
+            'adapter' => 'pgsql',
+            'host' => $_ENV['DATABASE_HOST'],
+            'name' => $_ENV['POSTGRES_DB'],
+            'user' => $_ENV['POSTGRES_USER'],
+            'pass' => $_ENV['POSTGRES_PASSWORD'],
+            'file_handler_type' => $_ENV['FILE_HANDLER_TYPE'] ?? null,
+        ],
+    ],
 ];

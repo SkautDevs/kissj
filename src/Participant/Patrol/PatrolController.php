@@ -37,7 +37,7 @@ class PatrolController extends AbstractController
             return $this->view->render(
                 $response,
                 'closeRegistration-pl.twig',
-                ['dataProtectionUrl' => $user->event->dataProtectionUrl]
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl],
             );
         }
 
@@ -75,7 +75,7 @@ class PatrolController extends AbstractController
                 'pDetails' => $patrolParticipant,
                 'plDetails' => $patrolLeader,
                 'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
-            ]
+            ],
         );
     }
 
@@ -197,14 +197,14 @@ class PatrolController extends AbstractController
                 'pDetails' => $participant,
                 'plDetails' => $participant->patrolLeader,
                 'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
-            ]
+            ],
         );
     }
 
     public function changeDetailsPatrolParticipant(
         int $participantId,
         Request $request,
-        Response $response
+        Response $response,
     ): Response {
         /** @var array<string, string> $params */
         $params = $request->getParsedBody();
@@ -256,7 +256,7 @@ class PatrolController extends AbstractController
             [
                 'pDetail' => $patrolParticipant,
                 'ca' => $user->event->eventType->getContentArbiterPatrolParticipant(),
-            ]
+            ],
         );
     }
 }

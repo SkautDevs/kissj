@@ -26,42 +26,42 @@ class TwigExtension extends AbstractExtension
         return [
             new TwigTest(
                 'PatrolLeader',
-                fn (Participant $participant): bool => $participant instanceof PatrolLeader
+                fn (Participant $participant): bool => $participant instanceof PatrolLeader,
             ),
             new TwigTest(
                 'PatrolParticipant',
-                fn (Participant $participant): bool => $participant instanceof PatrolParticipant
+                fn (Participant $participant): bool => $participant instanceof PatrolParticipant,
             ),
             new TwigTest(
                 'TroopLeader',
-                fn (Participant $participant): bool => $participant instanceof TroopLeader
+                fn (Participant $participant): bool => $participant instanceof TroopLeader,
             ),
             new TwigTest(
                 'TroopParticipant',
-                fn (Participant $participant): bool => $participant instanceof TroopParticipant
+                fn (Participant $participant): bool => $participant instanceof TroopParticipant,
             ),
             new TwigTest(
                 'TechnicalTeamLeader',
-                fn (Participant $participant): bool => $participant instanceof TechnicalTeamLeader
+                fn (Participant $participant): bool => $participant instanceof TechnicalTeamLeader,
             ),
             new TwigTest(
                 'TechnicalTeamParticipant',
-                fn (Participant $participant): bool => $participant instanceof TechnicalTeamParticipant
+                fn (Participant $participant): bool => $participant instanceof TechnicalTeamParticipant,
             ),
             new TwigTest(
                 'Leader',
                 fn (Participant $participant): bool => $participant instanceof PatrolLeader
                     || $participant instanceof TroopLeader
-                    || $participant instanceof TechnicalTeamLeader
+                    || $participant instanceof TechnicalTeamLeader,
             ),
             new TwigTest(
                 'Troop',
                 fn (Participant $participant): bool => $participant instanceof TroopLeader
-                    || $participant instanceof TroopParticipant
+                    || $participant instanceof TroopParticipant,
             ),
             new TwigTest(
                 'hasUser',
-                fn (Participant $participant): bool => $participant->hasOwnUser()
+                fn (Participant $participant): bool => $participant->hasOwnUser(),
             ),
             new TwigTest(
                 'eligibleForShowTieCode',
@@ -84,7 +84,7 @@ class TwigExtension extends AbstractExtension
                 ) || (
                     $participant instanceof Ist
                     && $participant->getUserButNotNull()->event->getEventType()->isTieCodeShownToIst()
-                )
+                ),
             ),
         ];
     }

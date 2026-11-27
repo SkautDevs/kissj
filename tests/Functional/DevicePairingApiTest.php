@@ -279,7 +279,6 @@ class DevicePairingApiTest extends AppTestCase
         self::assertSame($participant->id, $session->participant->id);
         $stored = $this->getService($app, DevicePairingRepository::class)->get($pairing->id);
         self::assertSame(DevicePairingStatus::Consumed, $stored->status);
-
     }
 
     public function testPollAfterLostApprovedAnswerReissuesTokenOfSameSession(): void

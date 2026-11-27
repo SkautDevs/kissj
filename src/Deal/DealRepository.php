@@ -56,7 +56,7 @@ class DealRepository extends Repository
     public function trySaveNewDealFromGoogleForm(
         array $jsonFromBody,
         Event $authorizedEvent,
-        Collector $sentryCollector
+        Collector $sentryCollector,
     ): ?Deal {
         $tieCode = $jsonFromBody['TIE code'] ?? null;
         $dealSlug = $jsonFromBody['slug'] ?? null;

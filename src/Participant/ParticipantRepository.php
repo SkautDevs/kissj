@@ -536,7 +536,7 @@ class ParticipantRepository extends Repository
      * @return array<string,int>
      */
     public function getEntryStatisticGlobal(
-        Event $event
+        Event $event,
     ): array {
         return [
             'coming' => $this->countEntryComing($event),
@@ -984,7 +984,7 @@ class ParticipantRepository extends Repository
 
     private function getQueryBuilderCountForPaidParticipants(
         Event $event,
-        ?ParticipantRole $participantRole = null
+        ?ParticipantRole $participantRole = null,
     ): Fluent {
         $qb = $this->connection->select('COUNT(participant.id)')->from($this->getTable());
         $qb->join('user')->as('u')->on('u.id = participant.user_id');

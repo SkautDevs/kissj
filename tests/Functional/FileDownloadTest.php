@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use kissj\Event\EventRepository;
+use kissj\Participant\Ist\Ist;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantRepository;
 use kissj\User\User;
@@ -260,15 +261,12 @@ class FileDownloadTest extends AppTestCase
         return $userService->registerEmailUser($email, $event);
     }
 
-    /**
-     * @return \kissj\Participant\Ist\Ist
-     */
     private function createIstWithFile(
         ContainerInterface $container,
         User $user,
         string $fileItemId,
         string $storedFilename,
-    ): \kissj\Participant\Ist\Ist {
+    ): Ist {
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);
         $participant = $userService->createParticipantSetRole($user, 'ist');

@@ -60,7 +60,7 @@ readonly class PatrolService
 
     public function patrolParticipantBelongsPatrolLeader(
         PatrolParticipant $patrolParticipant,
-        PatrolLeader $patrolLeader
+        PatrolLeader $patrolLeader,
     ): bool {
         return $patrolParticipant->patrolLeader->id === $patrolLeader->id;
     }

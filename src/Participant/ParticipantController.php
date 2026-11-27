@@ -177,7 +177,7 @@ class ParticipantController extends AbstractController
             return $this->view->render(
                 $response,
                 'participant/closeRegistration.twig',
-                ['dataProtectionUrl' => $user->event->dataProtectionUrl]
+                ['dataProtectionUrl' => $user->event->dataProtectionUrl],
             );
         }
 

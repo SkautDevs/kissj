@@ -76,7 +76,7 @@ class RenameProgrammeRegistrationToEnrolment extends AbstractMigration
         $this->execute('CREATE INDEX ' . $to . '_participant_idx ON programme_enrolment (participant_id)');
         $this->execute(
             'CREATE UNIQUE INDEX ' . $to . '_active_uidx ON programme_enrolment (programme_id, participant_id)'
-            . ' WHERE deleted_at IS NULL'
+            . ' WHERE deleted_at IS NULL',
         );
     }
 }

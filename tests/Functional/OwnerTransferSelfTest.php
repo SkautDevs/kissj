@@ -63,7 +63,7 @@ class OwnerTransferSelfTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            '/v2/event/' . $event->slug . '/participant/showTransferTicket'
+            '/v2/event/' . $event->slug . '/participant/showTransferTicket',
         )->withQueryParams(['tieCode' => $ownTieCode]));
 
         self::assertSame(200, $response->getStatusCode());

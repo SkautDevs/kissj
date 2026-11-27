@@ -13,7 +13,7 @@ class CurrentTranslator implements TranslatorInterface, LocaleAwareInterface
     private TranslatorInterface&LocaleAwareInterface&TranslatorBagInterface $delegate;
 
     public function __construct(
-        private readonly TranslatorFactory $factory
+        private readonly TranslatorFactory $factory,
     ) {
     }
 

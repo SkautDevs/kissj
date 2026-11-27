@@ -23,7 +23,6 @@ class ParticipantFoodPlan
     /** @var string[] */
     public array $dietTypes;
 
-    /** @var bool */
     private bool $usePatrolAndTroopsAggregator;
 
     /** @var  array<int|string, string> */
@@ -43,18 +42,17 @@ class ParticipantFoodPlan
         $defaultStartDay = DateTimeUtils::getDay($event->startDay);
         $defaultEndDay = DateTimeUtils::getDay($event->endDay);
 
-        $this->dates = $this->getDateRange($participants, $defaultStartDay, $defaultEndDay, );
+        $this->dates = $this->getDateRange($participants, $defaultStartDay, $defaultEndDay);
         $this->dietTypes = array_unique(
             array_filter(
                 array_column($participants, 'foodPreferences'),
-                fn (?string $food) => $food !== null && $food !== Participant::FOOD_NO_EVENT_FOOD
-            )
+                fn (?string $food) => $food !== null && $food !== Participant::FOOD_NO_EVENT_FOOD,
+            ),
         );
 
         $this->usePatrolAndTroopsAggregator = $usePatrolAndTroopsAgreggator;
 
-        $this->aggregatedRows = $this->buildRoleAggregatedPlan($participants, $defaultStartDay, $defaultEndDay, );
-
+        $this->aggregatedRows = $this->buildRoleAggregatedPlan($participants, $defaultStartDay, $defaultEndDay);
     }
 
     /**

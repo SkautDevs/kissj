@@ -220,7 +220,7 @@ class AppTestCase extends TestCase
         $app = (new ApplicationGetter())->getApp(
             __DIR__ . '/',
             'env.testing',
-            $this->getRunTempPath()
+            $this->getRunTempPath(),
         );
 
         $connection = $this->getService($app, Connection::class);
@@ -348,7 +348,7 @@ class AppTestCase extends TestCase
         $app = (new ApplicationGetter())->getApp(
             __DIR__ . '/',
             'env.testing',
-            $this->getRunTempPath()
+            $this->getRunTempPath(),
         );
         $this->getService($app, Logger::class)->setHandlers([new TestHandler()]);
         $eventRepository = $this->getService($app, EventRepository::class);
@@ -417,7 +417,7 @@ class AppTestCase extends TestCase
         string $method = 'GET',
         array $body = [],
         array $serverParams = [],
-        array $cookies = []
+        array $cookies = [],
     ): Request {
         $uri = new Uri('', '', 80, $path);
         $handle = fopen('php://temp', 'wb+');

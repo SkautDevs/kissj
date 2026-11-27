@@ -28,7 +28,7 @@ readonly class Metrics
         MetricName $name,
         float|int $value,
         array $attributes = [],
-        ?Unit $unit = null
+        ?Unit $unit = null,
     ): void {
         traceMetrics()->distribution($name->value, $value, $attributes, $unit);
     }

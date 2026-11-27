@@ -26,7 +26,7 @@ class CookieHandler
                 ->withPath('/')
                 ->withHttpOnly()
                 ->withSecure()
-                ->withSameSite(SameSite::lax())
+                ->withSameSite(SameSite::lax()),
         );
 
         return $response;

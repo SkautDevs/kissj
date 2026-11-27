@@ -94,7 +94,7 @@ abstract class AbstractController
         Response $response,
         string $routeName,
         array $arguments = [],
-        array $queryParams = []
+        array $queryParams = [],
     ): Response {
         $event = $this->tryGetEvent($request);
         if ($event instanceof Event) {

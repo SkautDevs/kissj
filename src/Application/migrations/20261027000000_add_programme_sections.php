@@ -26,7 +26,7 @@ class AddProgrammeSections extends AbstractMigration
         $this->execute(
             'INSERT INTO programme_section (event_id, name, is_exclusive, sort_order, created_at, updated_at)'
             . " SELECT DISTINCT event_id, 'Program', FALSE, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM programme"
-            . ' WHERE exclusive_group_name IS NULL'
+            . ' WHERE exclusive_group_name IS NULL',
         );
         $this->execute(
             'INSERT INTO programme_section (event_id, name, is_exclusive, sort_order, created_at, updated_at)'
@@ -35,18 +35,18 @@ class AddProgrammeSections extends AbstractMigration
             . ' WHERE p.event_id = g.event_id AND p.exclusive_group_name <= g.exclusive_group_name),'
             . ' CURRENT_TIMESTAMP, CURRENT_TIMESTAMP'
             . ' FROM (SELECT DISTINCT event_id, exclusive_group_name FROM programme'
-            . ' WHERE exclusive_group_name IS NOT NULL) g'
+            . ' WHERE exclusive_group_name IS NOT NULL) g',
         );
         $this->execute(
             'UPDATE programme SET section_id = (SELECT s.id FROM programme_section s'
             . " WHERE s.event_id = programme.event_id AND s.is_exclusive = FALSE AND s.name = 'Program')"
-            . ' WHERE exclusive_group_name IS NULL'
+            . ' WHERE exclusive_group_name IS NULL',
         );
         $this->execute(
             'UPDATE programme SET section_id = (SELECT s.id FROM programme_section s'
             . ' WHERE s.event_id = programme.event_id AND s.is_exclusive = TRUE'
             . ' AND s.name = programme.exclusive_group_name)'
-            . ' WHERE exclusive_group_name IS NOT NULL'
+            . ' WHERE exclusive_group_name IS NOT NULL',
         );
 
         $this->table('programme')
@@ -65,7 +65,7 @@ class AddProgrammeSections extends AbstractMigration
 
         $this->execute(
             'UPDATE programme SET exclusive_group_name = (SELECT s.name FROM programme_section s'
-            . ' WHERE s.id = programme.section_id AND s.is_exclusive = TRUE)'
+            . ' WHERE s.id = programme.section_id AND s.is_exclusive = TRUE)',
         );
 
         $this->table('programme')

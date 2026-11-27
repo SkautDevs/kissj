@@ -21,7 +21,7 @@ readonly class ErrorHandlerGetter
     private Collector $sentryCollector;
 
     public function __construct(
-        ContainerInterface $container
+        ContainerInterface $container,
     ) {
         /** @var LoggerInterface $logger */
         $logger = $container->get(Logger::class);

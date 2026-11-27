@@ -86,7 +86,7 @@ class MPdfGenerator extends PdfGenerator
     public function generatePatrolRoster(
         Event $event,
         PatrolsRoster $patrolsRoster,
-        string $templateName
+        string $templateName,
     ): string {
         $templateData = [
             'event' => $event,

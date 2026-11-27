@@ -51,7 +51,7 @@ final class AddProgrammes extends AbstractMigration
         $this->execute(
             'CREATE UNIQUE INDEX programme_registration_active_uidx'
             . ' ON programme_registration (programme_id, participant_id)'
-            . ' WHERE deleted_at IS NULL'
+            . ' WHERE deleted_at IS NULL',
         );
     }
 

@@ -9,6 +9,7 @@ use kissj\Event\ContentArbiter\ContentArbiterItemType;
 use kissj\Event\EventRepository;
 use kissj\Participant\Ist\IstRepository;
 use kissj\Participant\ParticipantService;
+use kissj\User\User;
 use kissj\User\UserService;
 use Psr\Container\ContainerInterface;
 use Tests\AppTestCase;
@@ -122,7 +123,7 @@ class UpdateEditableAfterLockFieldsTest extends AppTestCase
         self::assertNull($refreshed->notes);
     }
 
-    private function registerUser(ContainerInterface $container, string $email): \kissj\User\User
+    private function registerUser(ContainerInterface $container, string $email): User
     {
         /** @var UserService $userService */
         $userService = $container->get(UserService::class);

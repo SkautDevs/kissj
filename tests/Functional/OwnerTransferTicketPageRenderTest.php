@@ -51,7 +51,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/showTransferTicket'
+            self::BASE_URL . '/participant/showTransferTicket',
         ));
 
         self::assertSame(200, $response->getStatusCode());
@@ -90,7 +90,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/showTransferTicket'
+            self::BASE_URL . '/participant/showTransferTicket',
         )->withQueryParams(['tieCode' => $recipientCode]));
 
         self::assertSame(200, $response->getStatusCode());
@@ -123,7 +123,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/showTransferTicket'
+            self::BASE_URL . '/participant/showTransferTicket',
         )->withQueryParams(['tieCode' => 'ZZZZZZ']));
 
         self::assertSame(200, $response->getStatusCode());
@@ -173,7 +173,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            self::BASE_URL . '/participant/showTransferTicket'
+            self::BASE_URL . '/participant/showTransferTicket',
         )->withQueryParams(['tieCode' => $recipientCode]));
 
         self::assertSame(200, $response->getStatusCode());
@@ -204,7 +204,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            '/v2/event/' . $event->slug . '/participant/showTransferTicket'
+            '/v2/event/' . $event->slug . '/participant/showTransferTicket',
         ));
 
         self::assertSame(302, $response->getStatusCode());
@@ -236,7 +236,7 @@ class OwnerTransferTicketPageRenderTest extends AppTestCase
         $app = $this->getTestApp(false);
 
         $response = $app->handle($this->createRequest(
-            '/v2/event/' . $event->slug . '/participant/showTransferTicket'
+            '/v2/event/' . $event->slug . '/participant/showTransferTicket',
         ));
 
         self::assertSame(302, $response->getStatusCode());

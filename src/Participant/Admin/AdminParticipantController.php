@@ -14,7 +14,6 @@ use kissj\Participant\TechnicalTeam\TechnicalTeamParticipant;
 use kissj\Participant\Troop\TroopParticipant;
 use kissj\AbstractController;
 use kissj\Event\Event;
-use kissj\Participant\Participant;
 use kissj\Participant\ParticipantFileService;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -208,8 +207,8 @@ class AdminParticipantController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
+                'participantId' => (string)$participantId,
+            ],
         );
     }
 
@@ -246,8 +245,8 @@ class AdminParticipantController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
+                'participantId' => (string)$participantId,
+            ],
         );
     }
 
@@ -357,8 +356,8 @@ class AdminParticipantController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
+                'participantId' => (string)$participantId,
+            ],
         );
     }
 
@@ -387,8 +386,8 @@ class AdminParticipantController extends AbstractController
             $response,
             'admin-mend-participant',
             [
-				'participantId' => (string)$participantId,
-			],
+                'participantId' => (string)$participantId,
+            ],
         );
     }
 
@@ -405,9 +404,9 @@ class AdminParticipantController extends AbstractController
             $response,
             'admin/mendParticipant.twig',
             [
-				'participant' => $participant,
-				'ca' => $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
-			],
+                'participant' => $participant,
+                'ca' => $event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
+            ],
         );
     }
 

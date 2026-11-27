@@ -11,6 +11,7 @@ use kissj\Participant\Ist\IstRepository;
 use kissj\User\UserService;
 use LeanMapper\Connection;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
@@ -200,7 +201,7 @@ class DealTest extends AppTestCase
         return $istRepository;
     }
 
-    private function loadDashboardAs(Ist $ist): \Psr\Http\Message\ResponseInterface
+    private function loadDashboardAs(Ist $ist): ResponseInterface
     {
         $_SESSION['user'] = ['id' => $ist->getUserButNotNull()->id];
         session_write_close();
@@ -213,7 +214,7 @@ class DealTest extends AppTestCase
     /**
      * @param array<string, string> $answers
      */
-    private function postDealWebhook(string $tieCode, array $answers): \Psr\Http\Message\ResponseInterface
+    private function postDealWebhook(string $tieCode, array $answers): ResponseInterface
     {
         $payload = array_merge($answers, [
             'TIE code' => $tieCode,

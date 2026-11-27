@@ -156,7 +156,7 @@ class Mapper implements IMapper
     public function getRelationshipColumn(
         string $sourceTable,
         string $targetTable,
-        ?string $relationshipName = null
+        ?string $relationshipName = null,
     ): string {
         return $targetTable . '_' . $this->getPrimaryKey($targetTable);
     }

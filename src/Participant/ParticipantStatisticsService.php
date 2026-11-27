@@ -90,7 +90,7 @@ readonly class ParticipantStatisticsService
             $participants,
             function (Participant $participant): bool {
                 return $participant->foodPreferences !== null;
-            }
+            },
         );
 
         return new ParticipantFoodPlan($participantsWithFood, $event, $usePatrolAndTroopsAggregator);
