@@ -7,13 +7,13 @@ namespace kissj\Programme;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Programme\DTO\ProgrammeSectionCountsDTO;
-use LogicException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ProgrammeSectionAdminController extends AbstractController
 {
     public function __construct(
+        private readonly ProgrammeService $programmeService,
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
     ) {
     }
@@ -36,14 +36,17 @@ class ProgrammeSectionAdminController extends AbstractController
 
     public function create(Request $request, Response $response, Event $event): Response
     {
-        $section = new ProgrammeSection();
-        $section->event = $event;
-        $section->sortOrder = $this->programmeSectionRepository->getNextSortOrder($event);
-        if ($this->fillFromRequest($section, $request) === false) {
+        $name = $this->nameFromRequest($request);
+        if ($name === '') {
             return $this->redirectNameRequired($request, $response);
         }
 
-        $this->programmeSectionRepository->persist($section);
+        $this->programmeService->createSection(
+            $event,
+            $name,
+            $this->subtitleFromRequest($request),
+            $this->isCheckboxCheckedInBody($request, 'isExclusive'),
+        );
         $this->flashMessages->success('flash.success.programmeSectionSaved');
 
         return $this->redirectToOverview($request, $response);
@@ -54,10 +57,16 @@ class ProgrammeSectionAdminController extends AbstractController
         $section = $this->programmeSectionRepository->getForEventById($sectionId, $event);
 
         $wasExclusive = $section->isExclusive;
-        if ($this->fillFromRequest($section, $request) === false) {
+        $name = $this->nameFromRequest($request);
+        if ($name === '') {
             return $this->redirectNameRequired($request, $response);
         }
-        $this->programmeSectionRepository->persist($section);
+        $this->programmeService->updateSection(
+            $section,
+            $name,
+            $this->subtitleFromRequest($request),
+            $this->isCheckboxCheckedInBody($request, 'isExclusive'),
+        );
 
         if ($wasExclusive === false && $section->isExclusive) {
             $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingEnrolments($section);
@@ -98,58 +107,24 @@ class ProgrammeSectionAdminController extends AbstractController
         int $sectionId,
         string $direction,
     ): Response {
-        $section = $this->programmeSectionRepository->getForEventById($sectionId, $event);
-
-        $sections = $this->programmeSectionRepository->findForEvent($event);
-        $position = $this->positionOf($sections, $section);
-        $neighbourPosition = $direction === 'up' ? $position - 1 : $position + 1;
-        if (isset($sections[$neighbourPosition]) === false) {
-            return $this->redirectToOverview($request, $response);
-        }
-
-        $sections[$position] = $sections[$neighbourPosition];
-        $sections[$neighbourPosition] = $section;
-        $this->programmeSectionRepository->transactional(function () use ($sections): void {
-            foreach ($sections as $index => $orderedSection) {
-                if ($orderedSection->sortOrder === $index) {
-                    continue;
-                }
-
-                $orderedSection->sortOrder = $index;
-                $this->programmeSectionRepository->persist($orderedSection);
-            }
-        });
+        $this->programmeService->moveSection(
+            $this->programmeSectionRepository->getForEventById($sectionId, $event),
+            $direction,
+        );
 
         return $this->redirectToOverview($request, $response);
     }
 
-    /**
-     * @param list<ProgrammeSection> $sections
-     */
-    private function positionOf(array $sections, ProgrammeSection $section): int
+    private function nameFromRequest(Request $request): string
     {
-        foreach ($sections as $position => $candidate) {
-            if ($candidate->id === $section->id) {
-                return $position;
-            }
-        }
-
-        throw new LogicException('Section ' . $section->id . ' is missing in its own event');
+        return trim($this->getParameterFromBody($request, 'name'));
     }
 
-    private function fillFromRequest(ProgrammeSection $section, Request $request): bool
+    private function subtitleFromRequest(Request $request): ?string
     {
-        $name = trim($this->getParameterFromBody($request, 'name'));
-        if ($name === '') {
-            return false;
-        }
         $subtitle = trim($this->getParameterFromBody($request, 'subtitle'));
 
-        $section->name = $name;
-        $section->subtitle = $subtitle === '' ? null : $subtitle;
-        $section->isExclusive = $this->isCheckboxCheckedInBody($request, 'isExclusive');
-
-        return true;
+        return $subtitle === '' ? null : $subtitle;
     }
 
     private function redirectNameRequired(Request $request, Response $response): Response

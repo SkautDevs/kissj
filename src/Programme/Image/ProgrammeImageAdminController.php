@@ -21,9 +21,10 @@ class ProgrammeImageAdminController extends AbstractController
 
     public function update(Request $request, Response $response, Event $event, int $programmeId, int $imageId): Response
     {
-        $image = $this->getImage($event, $programmeId, $imageId);
-        $image->alt = trim($this->getParameterFromBody($request, 'alt'));
-        $this->programmeImageRepository->persist($image);
+        $this->programmeImageService->updateAlt(
+            $this->getImage($event, $programmeId, $imageId),
+            trim($this->getParameterFromBody($request, 'alt')),
+        );
         $this->flashMessages->success('flash.success.programmeImageSaved');
 
         return $this->redirectToEdit($request, $response, $programmeId);

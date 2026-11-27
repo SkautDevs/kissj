@@ -11,7 +11,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Device\DevicePairingRepository;
 use kissj\Device\DevicePairingService;
 use kissj\Event\Event;
-use kissj\Event\EventRepository;
 use kissj\FileHandler\UploadFileHandler;
 use kissj\Participant\ParticipantRepository;
 use kissj\Participant\ParticipantRole;
@@ -33,7 +32,6 @@ class ProgrammeAdminController extends AbstractController
         private readonly ProgrammeEnrolmentService $programmeEnrolmentService,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
-        private readonly EventRepository $eventRepository,
         private readonly UploadFileHandler $uploadFileHandler,
         private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private readonly ParticipantRepository $participantRepository,
@@ -90,9 +88,7 @@ class ProgrammeAdminController extends AbstractController
             return $this->redirect($request, $response, 'admin-programmes');
         }
 
-        $event->programmeEnrolmentStart = $startDate;
-        $event->programmeEnrolmentEnd = $endDate;
-        $this->eventRepository->persist($event);
+        $this->programmeService->saveEnrolmentWindow($event, $startDate, $endDate);
         $this->flashMessages->success('flash.success.programmeWindowSaved');
 
         return $this->redirect($request, $response, 'admin-programmes');
@@ -117,14 +113,10 @@ class ProgrammeAdminController extends AbstractController
             return $this->redirect($request, $response, 'admin-programme-new');
         }
 
-        $programme = new Programme();
-        $programme->event = $event;
-        $programme->section = $this->getSectionFromRequest($request, $event);
-        $programme->start = $start;
-        $programme->end = $end;
-        $this->fillFromRequest($programme, $request, $event);
-
-        $this->programmeRepository->persist($programme);
+        $programme = $this->programmeService->createProgramme(
+            $event,
+            $this->programmeDataFromRequest($request, $event, $start, $end),
+        );
         $this->addUploadedImages($programme, $request);
         $this->flashMessages->success('flash.success.programmeSaved');
 
@@ -161,18 +153,10 @@ class ProgrammeAdminController extends AbstractController
             );
         }
 
-        $programme->start = $start;
-        $programme->end = $end;
-        $programme->section = $this->getSectionFromRequest($request, $event);
-        $this->fillFromRequest($programme, $request, $event);
-
-        $this->programmeRepository->transactional(function () use ($programme): void {
-            $this->programmeRepository->persist($programme);
-
-            if ($programme->isAutoenrolled) {
-                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme);
-            }
-        });
+        $this->programmeService->updateProgramme(
+            $programme,
+            $this->programmeDataFromRequest($request, $event, $start, $end),
+        );
         $this->addUploadedImages($programme, $request);
         $this->warnAboutExclusiveConflicts($programme);
         $this->flashMessages->success('flash.success.programmeSaved');
@@ -292,16 +276,24 @@ class ProgrammeAdminController extends AbstractController
         ]);
     }
 
-    private function fillFromRequest(Programme $programme, Request $request, Event $event): void
-    {
-        $programme->name = $this->getParameterFromBody($request, 'name');
-        $programme->description = $this->getParameterFromBody($request, 'description');
-        $programme->capacity = max(1, (int)$this->getParameterFromBody($request, 'capacity'));
-        $programme->isAutoenrolled = $this->isCheckboxCheckedInBody($request, 'isAutoenrolled');
-
-        $programme->roles = $this->rolesFromRequest($request);
-        // last, so that a refused form does not leave a newly created place behind
-        $this->programmePlaceService->assignPlace($programme, $this->placeFromRequest($request, $event));
+    private function programmeDataFromRequest(
+        Request $request,
+        Event $event,
+        DateTimeImmutable $start,
+        DateTimeImmutable $end,
+    ): ProgrammeData {
+        return new ProgrammeData(
+            $this->getParameterFromBody($request, 'name'),
+            $this->getParameterFromBody($request, 'description'),
+            $start,
+            $end,
+            max(1, (int)$this->getParameterFromBody($request, 'capacity')),
+            $this->isCheckboxCheckedInBody($request, 'isAutoenrolled'),
+            $this->rolesFromRequest($request),
+            $this->getSectionFromRequest($request, $event),
+            // last, so that a refused form does not leave a newly created place behind
+            $this->placeFromRequest($request, $event),
+        );
     }
 
     private function placeFromRequest(Request $request, Event $event): ?ProgrammePlace

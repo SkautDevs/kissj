@@ -309,7 +309,7 @@ class ProgrammePlaceAdminTest extends AppTestCase
         $programme->isAutoenrolled = false;
         $programme->event = $event;
         $programme->section = $this->createProgrammeSection($app->getContainer(), $event, 'Program');
-        $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
+        $programme->programmePlace = $place;
         if ($softDeleted) {
             $programme->deletedAt = DateTimeUtils::getDateTime('2027-01-01 10:00');
         }

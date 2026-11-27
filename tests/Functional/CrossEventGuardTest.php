@@ -320,8 +320,8 @@ class CrossEventGuardTest extends AppTestCase
         $programme = new Programme();
         $programme->name = 'cross-event';
         $programme->description = 'cross-event';
-        $placeService = $this->getService($app, ProgrammePlaceService::class);
-        $placeService->assignPlace($programme, $placeService->findOrCreateByName($event, 'cross-event'));
+        $programme->programmePlace = $this->getService($app, ProgrammePlaceService::class)
+            ->findOrCreateByName($event, 'cross-event');
         $programme->start = DateTimeUtils::getDateTime('2027-06-05 10:00');
         $programme->end = DateTimeUtils::getDateTime('2027-06-05 12:00');
         $programme->capacity = 10;

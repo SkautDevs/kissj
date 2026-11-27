@@ -55,6 +55,12 @@ readonly class ProgrammeImageService
         return null;
     }
 
+    public function updateAlt(ProgrammeImage $image, string $alt): void
+    {
+        $image->alt = $alt;
+        $this->programmeImageRepository->persist($image);
+    }
+
     /**
      * The full file stays while another image still references it: images imported from the former
      * single image column can share one file.

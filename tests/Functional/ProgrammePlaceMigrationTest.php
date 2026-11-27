@@ -187,7 +187,7 @@ class ProgrammePlaceMigrationTest extends AppTestCase
         $programme->event = $event;
         $programme->section = $section;
         $programme->roles = [ParticipantRole::Ist];
-        $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
+        $programme->programmePlace = $place;
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         return $programme;

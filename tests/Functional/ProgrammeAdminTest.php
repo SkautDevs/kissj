@@ -444,7 +444,7 @@ class ProgrammeAdminTest extends AppTestCase
         $assigned = $placeService->findOrCreateByName($event, 'Žlutý les');
         $other = $placeService->findOrCreateByName($event, 'Modrý les');
         $programme = $this->createProgramme($app, 'place select render ' . bin2hex(random_bytes(4)), null, 5);
-        $placeService->assignPlace($programme, $assigned);
+        $programme->programmePlace = $assigned;
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 
         $body = (string)$app->handle($this->createRequest(

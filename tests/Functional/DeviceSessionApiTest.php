@@ -73,7 +73,7 @@ class DeviceSessionApiTest extends AppTestCase
         $participant = $this->createPaidIstOnEvent($app, $event, 'Placed');
         $programme = $this->createProgramme($app, $event, $this->createSection($app, $event, false));
         $place = $this->getService($app, ProgrammePlaceService::class)->findOrCreateByName($event, 'session place');
-        $this->getService($app, ProgrammePlaceService::class)->assignPlace($programme, $place);
+        $programme->programmePlace = $place;
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
         $filename = str_repeat('c', 32);
         $image = new ProgrammeImage();

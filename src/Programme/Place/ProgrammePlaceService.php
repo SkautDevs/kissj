@@ -6,18 +6,12 @@ namespace kissj\Programme\Place;
 
 use Dibi\UniqueConstraintViolationException;
 use kissj\Event\Event;
-use kissj\Programme\Programme;
 
 readonly class ProgrammePlaceService
 {
     public function __construct(
         private ProgrammePlaceRepository $programmePlaceRepository,
     ) {
-    }
-
-    public function assignPlace(Programme $programme, ?ProgrammePlace $place): void
-    {
-        $programme->programmePlace = $place;
     }
 
     public function findOrCreateByName(Event $event, string $name): ProgrammePlace
