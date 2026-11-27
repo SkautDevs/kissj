@@ -11,6 +11,9 @@ use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\DTO\ProgrammePlaceCountsDTO;
+use kissj\Programme\DTO\ProgrammeSectionCountsDTO;
+use kissj\Programme\Place\ProgrammePlace;
 
 /**
  * @method Programme get(int $programmeId)
@@ -63,25 +66,6 @@ class ProgrammeRepository extends Repository
         return $this->hydrateProgrammes($qb->fetchAll());
     }
 
-    /**
-     * @return array<int, int>
-     */
-    public function getActiveOccupancy(Event $event): array
-    {
-        $qb = $this->connection->select('pr.programme_id, COUNT(*) AS taken')
-            ->from('programme_enrolment')->as('pr')
-            ->join('programme')->as('p')->on('p.id = pr.programme_id')
-            ->where('p.event_id = %i', $event->id)
-            ->where('pr.deleted_at IS NULL')
-            ->where('p.deleted_at IS NULL')
-            ->groupBy('pr.programme_id');
-
-        /** @var array<int, int> $occupancy */
-        $occupancy = $qb->fetchPairs('programme_id', 'taken');
-
-        return $occupancy;
-    }
-
     public function findActiveById(int $programmeId, Event $event): ?Programme
     {
         $programme = $this->findOneBy(['id' => $programmeId]);
@@ -103,6 +87,79 @@ class ProgrammeRepository extends Repository
         }
 
         return $programme;
+    }
+
+    public function countIncludingDeletedForSection(ProgrammeSection $section): int
+    {
+        /** @var int $count */
+        $count = $this->connection->select('COUNT(*)')
+            ->from($this->getTable())
+            ->where('section_id = %i', $section->id)
+            ->fetchSingle();
+
+        return $count;
+    }
+
+    public function countIncludingDeletedForPlace(ProgrammePlace $place): int
+    {
+        /** @var int $count */
+        $count = $this->connection->select('COUNT(*)')
+            ->from($this->getTable())
+            ->where('place_id = %i', $place->id)
+            ->fetchSingle();
+
+        return $count;
+    }
+
+    /**
+     * @return array<int, ProgrammeSectionCountsDTO>
+     */
+    public function countBySection(Event $event): array
+    {
+        /** @var list<Row> $rows */
+        $rows = $this->connection->select('section_id, COUNT(*) AS total, COUNT(deleted_at) AS deleted')
+            ->from($this->getTable())
+            ->where('event_id = %i', $event->id)
+            ->groupBy('section_id')
+            ->fetchAll();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            /** @var array{section_id: int|string, total: int|string, deleted: int|string} $values */
+            $values = $row->toArray();
+            $counts[(int)$values['section_id']] = new ProgrammeSectionCountsDTO(
+                (int)$values['total'] - (int)$values['deleted'],
+                (int)$values['deleted'],
+            );
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @return array<int, ProgrammePlaceCountsDTO>
+     */
+    public function countByPlace(Event $event): array
+    {
+        /** @var list<Row> $rows */
+        $rows = $this->connection->select('place_id, COUNT(*) AS total, COUNT(deleted_at) AS deleted')
+            ->from($this->getTable())
+            ->where('event_id = %i', $event->id)
+            ->where('place_id IS NOT NULL')
+            ->groupBy('place_id')
+            ->fetchAll();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            /** @var array{place_id: int|string, total: int|string, deleted: int|string} $values */
+            $values = $row->toArray();
+            $counts[(int)$values['place_id']] = new ProgrammePlaceCountsDTO(
+                (int)$values['total'] - (int)$values['deleted'],
+                (int)$values['deleted'],
+            );
+        }
+
+        return $counts;
     }
 
     /**

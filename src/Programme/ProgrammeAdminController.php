@@ -51,7 +51,7 @@ class ProgrammeAdminController extends AbstractController
         return $this->view->render($response, 'admin/programmes-admin.twig', [
             'programmes' => $programmes,
             'imagesByProgramme' => $this->programmeImageRepository->findForProgrammes($programmes),
-            'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
+            'occupancy' => $this->programmeEnrolmentRepository->countActiveByProgramme($event),
             'event' => $event,
             'pendingPairingCount' => $event->hasEventAppApi()
                 ? $this->devicePairingRepository->countPendingUnexpired($event, DateTimeUtils::getDateTime())
@@ -170,7 +170,7 @@ class ProgrammeAdminController extends AbstractController
             return;
         }
 
-        $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingEnrolments(
+        $conflictCount = $this->programmeEnrolmentRepository->countParticipantsWithOverlappingInSection(
             $programme->section,
         );
         if ($conflictCount > 0) {
@@ -211,7 +211,7 @@ class ProgrammeAdminController extends AbstractController
         return $this->view->render($response, 'admin/programmeDetail-admin.twig', [
             'programme' => $programme,
             'enrolments' => $enrolments,
-            'occupancy' => $this->programmeRepository->getActiveOccupancy($event),
+            'occupancy' => $this->programmeEnrolmentRepository->countActiveByProgramme($event),
             'irregularEnrolmentIds' => $irregularEnrolmentIds,
             'hasImage' => $this->programmeImageRepository->findFirstForProgramme($programme) !== null,
             'event' => $event,

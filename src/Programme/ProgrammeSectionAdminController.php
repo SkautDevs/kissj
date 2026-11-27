@@ -15,13 +15,15 @@ class ProgrammeSectionAdminController extends AbstractController
     public function __construct(
         private readonly ProgrammeService $programmeService,
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
+        private readonly ProgrammeRepository $programmeRepository,
+        private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
     ) {
     }
 
     public function overview(Response $response, Event $event): Response
     {
         $sections = $this->programmeSectionRepository->findForEvent($event);
-        $countsBySection = $this->programmeSectionRepository->countProgrammesBySection($event);
+        $countsBySection = $this->programmeRepository->countBySection($event);
         $counts = [];
         foreach ($sections as $section) {
             $counts[$section->id] = $countsBySection[$section->id] ?? new ProgrammeSectionCountsDTO(0, 0);
@@ -69,7 +71,7 @@ class ProgrammeSectionAdminController extends AbstractController
         );
 
         if ($wasExclusive === false && $section->isExclusive) {
-            $conflictCount = $this->programmeSectionRepository->countParticipantsWithOverlappingEnrolments($section);
+            $conflictCount = $this->programmeEnrolmentRepository->countParticipantsWithOverlappingInSection($section);
             if ($conflictCount > 0) {
                 $this->flashMessages->warning(
                     'flash.warning.programmeSectionExclusiveConflicts',
@@ -90,7 +92,7 @@ class ProgrammeSectionAdminController extends AbstractController
         if ($this->programmeSectionRepository->deleteUnlessReferenced($section) === false) {
             $this->flashMessages->error(
                 'flash.error.programmeSectionHasProgrammes',
-                ['%count%' => (string)$this->programmeSectionRepository->countProgrammes($section)],
+                ['%count%' => (string)$this->programmeRepository->countIncludingDeletedForSection($section)],
             );
 
             return $this->redirectToOverview($request, $response);

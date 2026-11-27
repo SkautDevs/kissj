@@ -8,6 +8,8 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRole;
+use kissj\Programme\DTO\ProgrammePlaceCountsDTO;
+use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeEnrolment;
 use kissj\Programme\ProgrammeEnrolmentRepository;
@@ -59,7 +61,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $enrolmentRepository->persist($enrolment);
 
         self::assertSame(1, $enrolmentRepository->countActiveForProgramme($istProgramme));
-        $occupancy = $programmeRepository->getActiveOccupancy($event);
+        $occupancy = $enrolmentRepository->countActiveByProgramme($event);
         self::assertSame(1, $occupancy[$istProgramme->id] ?? 0);
         self::assertArrayNotHasKey($tlProgramme->id, $occupancy);
 
@@ -74,6 +76,51 @@ class ProgrammeRepositoryTest extends AppTestCase
             $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
         self::assertNotContains($istProgramme->id, $activeIstIdsAfterDelete);
+    }
+
+    public function testCountProgrammesOfSectionIncludesSoftDeletedAndActiveCountSkipsThem(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'counted');
+        $empty = $this->createProgrammeSection($app->getContainer(), $event, 'empty');
+        $this->createProgramme($app, 'section active', $section, [ParticipantRole::Ist]);
+        $deleted = $this->createProgramme($app, 'section deleted', $section, [ParticipantRole::Ist]);
+        $deleted->deletedAt = DateTimeUtils::getDateTime();
+        $programmeRepository->persist($deleted);
+
+        self::assertSame(2, $programmeRepository->countIncludingDeletedForSection($section));
+        self::assertSame(0, $programmeRepository->countIncludingDeletedForSection($empty));
+        $counts = $programmeRepository->countBySection($event);
+        self::assertSame(1, $counts[$section->id]->active);
+        self::assertSame(1, $counts[$section->id]->deleted);
+        self::assertArrayNotHasKey($empty->id, $counts);
+    }
+
+    public function testCountProgrammesOfPlaceIncludesSoftDeletedAndActiveCountSkipsThem(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
+        $placeService = $this->getService($app, ProgrammePlaceService::class);
+        $section = $this->createProgrammeSection($app->getContainer(), $event, 'Program');
+        $referenced = $placeService->findOrCreateByName($event, 'Referenced');
+        $empty = $placeService->findOrCreateByName($event, 'Empty');
+        $active = $this->createProgramme($app, 'place active', $section, [ParticipantRole::Ist]);
+        $active->programmePlace = $referenced;
+        $programmeRepository->persist($active);
+        $deleted = $this->createProgramme($app, 'place deleted', $section, [ParticipantRole::Ist]);
+        $deleted->programmePlace = $referenced;
+        $deleted->deletedAt = DateTimeUtils::getDateTime();
+        $programmeRepository->persist($deleted);
+
+        self::assertSame(2, $programmeRepository->countIncludingDeletedForPlace($referenced));
+        self::assertSame(0, $programmeRepository->countIncludingDeletedForPlace($empty));
+        self::assertEquals(
+            [$referenced->id => new ProgrammePlaceCountsDTO(1, 1)],
+            $programmeRepository->countByPlace($event),
+        );
     }
 
     public function testCreateEnrolmentIsActiveAndBelongsToProgrammeAndParticipant(): void

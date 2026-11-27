@@ -10,7 +10,6 @@ use kissj\Event\Event;
 use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
-use kissj\Programme\DTO\ProgrammePlaceCountsDTO;
 
 /**
  * @table programme_place
@@ -71,43 +70,6 @@ class ProgrammePlaceRepository extends Repository
         $this->persist($place);
 
         return $place;
-    }
-
-    public function countProgrammes(ProgrammePlace $place): int
-    {
-        /** @var int $count */
-        $count = $this->connection->select('COUNT(*)')
-            ->from('programme')
-            ->where('place_id = %i', $place->id)
-            ->fetchSingle();
-
-        return $count;
-    }
-
-    /**
-     * @return array<int, ProgrammePlaceCountsDTO>
-     */
-    public function countProgrammesByPlace(Event $event): array
-    {
-        /** @var list<Row> $rows */
-        $rows = $this->connection->select('place_id, COUNT(*) AS total, COUNT(deleted_at) AS deleted')
-            ->from('programme')
-            ->where('event_id = %i', $event->id)
-            ->where('place_id IS NOT NULL')
-            ->groupBy('place_id')
-            ->fetchAll();
-
-        $counts = [];
-        foreach ($rows as $row) {
-            /** @var array{place_id: int|string, total: int|string, deleted: int|string} $values */
-            $values = $row->toArray();
-            $counts[(int)$values['place_id']] = new ProgrammePlaceCountsDTO(
-                (int)$values['total'] - (int)$values['deleted'],
-                (int)$values['deleted'],
-            );
-        }
-
-        return $counts;
     }
 
     public function deleteUnlessReferenced(ProgrammePlace $place): bool

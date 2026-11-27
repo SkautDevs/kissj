@@ -7,6 +7,7 @@ namespace kissj\Programme\Place;
 use kissj\AbstractController;
 use kissj\Event\Event;
 use kissj\Programme\DTO\ProgrammePlaceCountsDTO;
+use kissj\Programme\ProgrammeRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -15,13 +16,14 @@ class ProgrammePlaceAdminController extends AbstractController
     public function __construct(
         private readonly ProgrammePlaceRepository $programmePlaceRepository,
         private readonly ProgrammePlaceService $programmePlaceService,
+        private readonly ProgrammeRepository $programmeRepository,
     ) {
     }
 
     public function overview(Response $response, Event $event): Response
     {
         $places = $this->programmePlaceRepository->findForEvent($event);
-        $countsByPlace = $this->programmePlaceRepository->countProgrammesByPlace($event);
+        $countsByPlace = $this->programmeRepository->countByPlace($event);
         $counts = [];
         foreach ($places as $place) {
             $counts[$place->id] = $countsByPlace[$place->id] ?? new ProgrammePlaceCountsDTO(0, 0);
@@ -82,7 +84,7 @@ class ProgrammePlaceAdminController extends AbstractController
         if ($this->programmePlaceRepository->deleteUnlessReferenced($place) === false) {
             $this->flashMessages->error(
                 'flash.error.programmePlaceHasProgrammes',
-                ['%count%' => (string)$this->programmePlaceRepository->countProgrammes($place)],
+                ['%count%' => (string)$this->programmeRepository->countIncludingDeletedForPlace($place)],
             );
 
             return $this->redirectToOverview($request, $response);

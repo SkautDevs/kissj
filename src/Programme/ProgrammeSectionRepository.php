@@ -10,8 +10,6 @@ use kissj\Event\Event;
 use kissj\Orm\EntityNotFoundException;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
-use kissj\Programme\DTO\ProgrammeSectionCountsDTO;
-use kissj\User\UserStatus;
 
 /**
  * @table programme_section
@@ -63,17 +61,6 @@ class ProgrammeSectionRepository extends Repository
         return $nextSortOrder;
     }
 
-    public function countProgrammes(ProgrammeSection $section): int
-    {
-        /** @var int $count */
-        $count = $this->connection->select('COUNT(*)')
-            ->from('programme')
-            ->where('section_id = %i', $section->id)
-            ->fetchSingle();
-
-        return $count;
-    }
-
     public function deleteUnlessReferenced(ProgrammeSection $section): bool
     {
         try {
@@ -83,56 +70,5 @@ class ProgrammeSectionRepository extends Repository
         }
 
         return true;
-    }
-
-    public function countParticipantsWithOverlappingEnrolments(ProgrammeSection $section): int
-    {
-        /** @var int $count */
-        $count = $this->connection->select('COUNT(DISTINCT pr1.participant_id)')
-            ->from('programme_enrolment')->as('pr1')
-            ->join('programme')->as('p1')->on('p1.id = pr1.programme_id')
-            ->join('programme_enrolment')->as('pr2')
-            ->on('pr2.participant_id = pr1.participant_id AND pr2.id <> pr1.id')
-            ->join('programme')->as('p2')->on('p2.id = pr2.programme_id')
-            ->join('participant')->as('pa')->on('pa.id = pr1.participant_id')
-            ->leftJoin('participant')->as('pl')->on('pl.id = pa.patrol_leader_id')
-            ->join('user')->as('u')->on('u.id = COALESCE(pa.user_id, pl.user_id)')
-            ->where('p1.section_id = %i', $section->id)
-            ->where('p2.section_id = %i', $section->id)
-            ->where('pr1.deleted_at IS NULL')
-            ->where('pr2.deleted_at IS NULL')
-            ->where('p1.deleted_at IS NULL')
-            ->where('p2.deleted_at IS NULL')
-            ->where('u.status != %s', UserStatus::Cancelled->value)
-            ->where('p1.start < [p2.end]')
-            ->where('p2.start < [p1.end]')
-            ->fetchSingle();
-
-        return $count;
-    }
-
-    /**
-     * @return array<int, ProgrammeSectionCountsDTO>
-     */
-    public function countProgrammesBySection(Event $event): array
-    {
-        /** @var list<Row> $rows */
-        $rows = $this->connection->select('section_id, COUNT(*) AS total, COUNT(deleted_at) AS deleted')
-            ->from('programme')
-            ->where('event_id = %i', $event->id)
-            ->groupBy('section_id')
-            ->fetchAll();
-
-        $counts = [];
-        foreach ($rows as $row) {
-            /** @var array{section_id: int|string, total: int|string, deleted: int|string} $values */
-            $values = $row->toArray();
-            $counts[(int)$values['section_id']] = new ProgrammeSectionCountsDTO(
-                (int)$values['total'] - (int)$values['deleted'],
-                (int)$values['deleted'],
-            );
-        }
-
-        return $counts;
     }
 }

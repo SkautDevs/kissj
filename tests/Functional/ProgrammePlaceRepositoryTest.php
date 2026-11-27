@@ -9,7 +9,6 @@ use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Orm\EntityNotFoundException;
 use kissj\Participant\ParticipantRole;
-use kissj\Programme\DTO\ProgrammePlaceCountsDTO;
 use kissj\Programme\Place\Coordinates;
 use kissj\Programme\Place\ProgrammePlace;
 use kissj\Programme\Place\ProgrammePlaceRepository;
@@ -86,7 +85,7 @@ class ProgrammePlaceRepositoryTest extends AppTestCase
         self::assertSame('50.340847, 15.935361', $place->getCoordinatesInput());
     }
 
-    public function testCountsAndDeleteRespectProgrammeReferences(): void
+    public function testDeleteUnlessReferencedKeepsPlaceReferencedByProgramme(): void
     {
         $app = $this->getTestApp();
         $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
@@ -97,14 +96,6 @@ class ProgrammePlaceRepositoryTest extends AppTestCase
         $empty = $placeService->findOrCreateByName($event, 'Empty');
 
         $this->persistProgramme($app, $event, $section, $referenced);
-        $this->persistProgramme($app, $event, $section, $referenced, deleted: true);
-
-        self::assertSame(2, $placeRepository->countProgrammes($referenced));
-        self::assertSame(0, $placeRepository->countProgrammes($empty));
-        self::assertEquals(
-            [$referenced->id => new ProgrammePlaceCountsDTO(1, 1)],
-            $placeRepository->countProgrammesByPlace($event),
-        );
 
         self::assertFalse($placeRepository->deleteUnlessReferenced($referenced));
         self::assertTrue($placeRepository->deleteUnlessReferenced($empty));
@@ -176,7 +167,6 @@ class ProgrammePlaceRepositoryTest extends AppTestCase
         Event $event,
         ProgrammeSection $section,
         ProgrammePlace $place,
-        bool $deleted = false,
     ): Programme {
         $programme = new Programme();
         $programme->name = 'placed programme';
@@ -188,9 +178,6 @@ class ProgrammePlaceRepositoryTest extends AppTestCase
         $programme->event = $event;
         $programme->section = $section;
         $programme->roles = [ParticipantRole::Ist];
-        if ($deleted) {
-            $programme->deletedAt = DateTimeUtils::getDateTime();
-        }
         $programme->programmePlace = $place;
         $this->getService($app, ProgrammeRepository::class)->persist($programme);
 

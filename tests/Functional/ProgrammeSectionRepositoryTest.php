@@ -45,29 +45,6 @@ class ProgrammeSectionRepositoryTest extends AppTestCase
         $sectionRepository->getForEventById($foreign->id, $event);
     }
 
-    public function testCountProgrammesIncludesSoftDeletedAndActiveCountSkipsThem(): void
-    {
-        $app = $this->getTestApp();
-        $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
-        $sectionRepository = $this->getService($app, ProgrammeSectionRepository::class);
-        $programmeRepository = $this->getService($app, ProgrammeRepository::class);
-        $section = $this->createProgrammeSection($app->getContainer(), $event, 'counted');
-        $empty = $this->createProgrammeSection($app->getContainer(), $event, 'empty');
-
-        $active = $this->createProgramme($section);
-        $deleted = $this->createProgramme($section);
-        $deleted->deletedAt = DateTimeUtils::getDateTime();
-        $programmeRepository->persist($active);
-        $programmeRepository->persist($deleted);
-
-        self::assertSame(2, $sectionRepository->countProgrammes($section));
-        self::assertSame(0, $sectionRepository->countProgrammes($empty));
-        $counts = $sectionRepository->countProgrammesBySection($event);
-        self::assertSame(1, $counts[$section->id]->active);
-        self::assertSame(1, $counts[$section->id]->deleted);
-        self::assertArrayNotHasKey($empty->id, $counts);
-    }
-
     public function testNextSortOrderFollowsTheHighestSectionOfTheEvent(): void
     {
         $app = $this->getTestApp();

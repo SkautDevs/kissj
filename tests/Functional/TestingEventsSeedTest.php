@@ -602,7 +602,7 @@ class TestingEventsSeedTest extends AppTestCase
         self::assertSame('event-obrok3027', $obrok->apiKeyEvent);
         $obrokCounts = [];
         foreach ($sectionRepository->findForEvent($obrok) as $section) {
-            $obrokCounts[$section->name] = $sectionRepository->countProgrammes($section);
+            $obrokCounts[$section->name] = $programmeRepository->countIncludingDeletedForSection($section);
         }
         self::assertSame(
             [
@@ -654,7 +654,7 @@ class TestingEventsSeedTest extends AppTestCase
             ['Doprovodný program' => true, 'Ceremoniály' => false],
             $this->sectionExclusivityByName($sections),
         );
-        self::assertSame(8, $sectionRepository->countProgrammes($sections[0]));
+        self::assertSame(8, $programmeRepository->countIncludingDeletedForSection($sections[0]));
         self::assertCount(8, $programmeRepository->findActiveForEvent($navigamus));
     }
 

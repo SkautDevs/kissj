@@ -104,6 +104,51 @@ class ProgrammeEnrolmentRepository extends Repository
         return $count;
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function countActiveByProgramme(Event $event): array
+    {
+        $qb = $this->connection->select('pr.programme_id, COUNT(*) AS taken')
+            ->from($this->getTable())->as('pr')
+            ->join('programme')->as('p')->on('p.id = pr.programme_id')
+            ->where('p.event_id = %i', $event->id)
+            ->where('pr.deleted_at IS NULL')
+            ->where('p.deleted_at IS NULL')
+            ->groupBy('pr.programme_id');
+
+        /** @var array<int, int> $occupancy */
+        $occupancy = $qb->fetchPairs('programme_id', 'taken');
+
+        return $occupancy;
+    }
+
+    public function countParticipantsWithOverlappingInSection(ProgrammeSection $section): int
+    {
+        /** @var int $count */
+        $count = $this->connection->select('COUNT(DISTINCT pr1.participant_id)')
+            ->from($this->getTable())->as('pr1')
+            ->join('programme')->as('p1')->on('p1.id = pr1.programme_id')
+            ->join($this->getTable())->as('pr2')
+            ->on('pr2.participant_id = pr1.participant_id AND pr2.id <> pr1.id')
+            ->join('programme')->as('p2')->on('p2.id = pr2.programme_id')
+            ->join('participant')->as('pa')->on('pa.id = pr1.participant_id')
+            ->leftJoin('participant')->as('pl')->on('pl.id = pa.patrol_leader_id')
+            ->join('user')->as('u')->on('u.id = COALESCE(pa.user_id, pl.user_id)')
+            ->where('p1.section_id = %i', $section->id)
+            ->where('p2.section_id = %i', $section->id)
+            ->where('pr1.deleted_at IS NULL')
+            ->where('pr2.deleted_at IS NULL')
+            ->where('p1.deleted_at IS NULL')
+            ->where('p2.deleted_at IS NULL')
+            ->where('u.status != %s', UserStatus::Cancelled->value)
+            ->where('p1.start < [p2.end]')
+            ->where('p2.start < [p1.end]')
+            ->fetchSingle();
+
+        return $count;
+    }
+
     public function create(Programme $programme, Participant $participant): ProgrammeEnrolment
     {
         $enrolment = new ProgrammeEnrolment();
