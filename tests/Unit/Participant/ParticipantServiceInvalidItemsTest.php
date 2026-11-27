@@ -30,6 +30,7 @@ use kissj\User\UserService;
 use Mockery;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -146,6 +147,7 @@ class ParticipantServiceInvalidItemsTest extends TestCase
                 Mockery::mock(ParticipantRepository::class),
                 Mockery::mock(UserRepository::class),
                 new Metrics(),
+                Mockery::mock(LoggerInterface::class),
             ),
             Mockery::mock(PaymentRepository::class),
         );

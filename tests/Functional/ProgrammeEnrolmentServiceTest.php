@@ -27,6 +27,7 @@ use kissj\User\UserRepository;
 use kissj\User\UserService;
 use kissj\User\UserStatus;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Slim\App;
 use Tests\AppTestCase;
 
@@ -108,6 +109,7 @@ class ProgrammeEnrolmentServiceTest extends AppTestCase
             $participantRepository,
             $this->getService($app, UserRepository::class),
             $this->getService($app, Metrics::class),
+            $this->getService($app, LoggerInterface::class),
         );
 
         self::assertNull($service->enrol($ist, $programme->id)->error);
@@ -467,6 +469,7 @@ class ProgrammeEnrolmentServiceTest extends AppTestCase
             $this->getService($app, ParticipantRepository::class),
             $this->getService($app, UserRepository::class),
             $metrics,
+            $this->getService($app, LoggerInterface::class),
         );
 
         $service->enrol($ist, PHP_INT_MAX);
@@ -530,6 +533,77 @@ class ProgrammeEnrolmentServiceTest extends AppTestCase
         $participantService->cancelParticipant($ist);
 
         self::assertCount(0, $enrolmentRepository->findActiveForParticipant($ist));
+    }
+
+    public function testEnrolAndWithdrawAreLogged(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeEnrolmentWindow($app);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
+        $programme = $this->createProgramme($app, 'logged workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'logged-ist@example.com');
+        $expectedContext = ['programmeId' => $programme->id, 'participantId' => $ist->id];
+
+        $service->enrol($ist, $programme->id);
+        self::assertSame([$expectedContext], $this->getLoggedContexts('Enrolled participant in programme'));
+
+        $service->withdraw($ist, $programme->id);
+        self::assertSame([$expectedContext], $this->getLoggedContexts('Withdrew participant from programme'));
+    }
+
+    public function testAdminAssignAndRemoveAreLogged(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
+        $programme = $this->createProgramme($app, 'admin logged workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'admin-logged-ist@example.com');
+        $expectedContext = ['programmeId' => $programme->id, 'participantId' => $ist->id];
+
+        $service->adminAssign($programme, $ist);
+        self::assertSame([$expectedContext], $this->getLoggedContexts('Assigned participant to programme'));
+
+        $service->adminRemove($programme, $ist);
+        self::assertSame([$expectedContext], $this->getLoggedContexts('Removed participant from programme'));
+    }
+
+    public function testRefusedEnrolmentChangesAreNotLogged(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeEnrolmentWindow($app);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
+        $programme = $this->createProgramme($app, 'refused logged workshop', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'refused-logged-ist@example.com');
+
+        $service->withdraw($ist, $programme->id);
+        $service->adminRemove($programme, $ist);
+        $service->adminAssign($programme, $ist);
+        $service->adminAssign($programme, $ist);
+
+        self::assertSame(
+            [['programmeId' => $programme->id, 'participantId' => $ist->id]],
+            $this->getLoggedContexts('Assigned participant to programme'),
+        );
+        self::assertSame([], $this->getLoggedContexts('Withdrew participant from programme'));
+        self::assertSame([], $this->getLoggedContexts('Removed participant from programme'));
+    }
+
+    public function testFreeAllProgrammesLogsOnlyWhenSomethingWasFreed(): void
+    {
+        $app = $this->getTestApp();
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
+        $first = $this->createProgramme($app, 'freed logged first', null, 5);
+        $second = $this->createProgramme($app, 'freed logged second', null, 5);
+        $ist = $this->createPaidIstWithEmail($app, 'freed-logged-ist@example.com');
+        $service->adminAssign($first, $ist);
+        $service->adminAssign($second, $ist);
+
+        $service->freeAllProgrammes($ist);
+        $service->freeAllProgrammes($ist);
+
+        self::assertSame(
+            [['participantId' => $ist->id, 'enrolmentCount' => 2]],
+            $this->getLoggedContexts('Freed programme enrolments of participant'),
+        );
     }
 
     /**

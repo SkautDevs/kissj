@@ -236,6 +236,55 @@ class ProgrammeServiceTest extends AppTestCase
         );
     }
 
+    public function testDeleteProgrammeIsLogged(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeEnrolmentWindow($app);
+        $programme = $this->createProgramme($app, $this->getEvent($app), 'logged doomed');
+        $ist = $this->createPaidIstOnEvent($app, $this->getEvent($app), 'logged doomed ist');
+        self::assertNull($this->getService($app, ProgrammeEnrolmentService::class)->enrol($ist, $programme->id)->error);
+
+        $this->getService($app, ProgrammeService::class)->deleteProgramme($programme);
+
+        self::assertSame(
+            [['programmeId' => $programme->id, 'enrolmentCount' => 1]],
+            $this->getLoggedContexts('Deleted programme'),
+        );
+    }
+
+    public function testFlippingProgrammeToAutoenrolledLogsRemovedEnrolmentsOnlyWhenThereWereAny(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->getEvent($app);
+        $withEnrolment = $this->createProgramme($app, $event, 'logged flip with');
+        $withoutEnrolment = $this->createProgramme($app, $event, 'logged flip without');
+        $ist = $this->createPaidIstOnEvent($app, $event, 'logged flip ist');
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($withEnrolment, $ist);
+        $service = $this->getService($app, ProgrammeService::class);
+
+        foreach ([$withEnrolment, $withoutEnrolment] as $programme) {
+            $service->updateProgramme(
+                $programme,
+                new ProgrammeData(
+                    $programme->name,
+                    'description',
+                    DateTimeUtils::getDateTime('2027-06-05 10:00'),
+                    DateTimeUtils::getDateTime('2027-06-05 12:00'),
+                    5,
+                    true,
+                    [ParticipantRole::Ist],
+                    $programme->section,
+                    null,
+                ),
+            );
+        }
+
+        self::assertSame(
+            [['programmeId' => $withEnrolment->id, 'enrolmentCount' => 1]],
+            $this->getLoggedContexts('Removed enrolments of autoenrolled programme'),
+        );
+    }
+
     /**
      * @param App<ContainerInterface> $app
      */

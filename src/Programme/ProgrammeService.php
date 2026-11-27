@@ -9,6 +9,7 @@ use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use LogicException;
+use Psr\Log\LoggerInterface;
 
 readonly class ProgrammeService
 {
@@ -17,6 +18,7 @@ readonly class ProgrammeService
         private ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
         private ProgrammeSectionRepository $programmeSectionRepository,
         private EventRepository $eventRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -33,27 +35,42 @@ readonly class ProgrammeService
     public function updateProgramme(Programme $programme, ProgrammeData $data): void
     {
         $this->fillProgramme($programme, $data);
-        $this->programmeRepository->transactional(function () use ($programme): void {
+        $removedEnrolmentCount = $this->programmeRepository->transactional(function () use ($programme): int {
             $this->programmeRepository->persist($programme);
 
-            if ($programme->isAutoenrolled) {
-                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme(
-                    $programme,
-                    DateTimeUtils::getDateTime(),
-                );
+            if ($programme->isAutoenrolled === false) {
+                return 0;
             }
+
+            return $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme(
+                $programme,
+                DateTimeUtils::getDateTime(),
+            );
         });
+
+        if ($removedEnrolmentCount > 0) {
+            $this->logger->info(
+                'Removed enrolments of autoenrolled programme',
+                ['programmeId' => $programme->id, 'enrolmentCount' => $removedEnrolmentCount],
+            );
+        }
     }
 
     public function deleteProgramme(Programme $programme): void
     {
         $deletedAt = DateTimeUtils::getDateTime();
-        $this->programmeRepository->transactional(
-            function () use ($programme, $deletedAt): void {
-                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme, $deletedAt);
+        $enrolmentCount = $this->programmeRepository->transactional(
+            function () use ($programme, $deletedAt): int {
                 $programme->deletedAt = $deletedAt;
                 $this->programmeRepository->persist($programme);
+
+                return $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme, $deletedAt);
             },
+        );
+
+        $this->logger->info(
+            'Deleted programme',
+            ['programmeId' => $programme->id, 'enrolmentCount' => $enrolmentCount],
         );
     }
 

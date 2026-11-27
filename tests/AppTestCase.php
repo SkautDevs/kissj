@@ -239,6 +239,20 @@ class AppTestCase extends TestCase
         return $this->testLogHandler ??= new TestHandler();
     }
 
+    /**
+     * @return list<array<mixed>>
+     */
+    protected function getLoggedContexts(string $message): array
+    {
+        return array_values(array_map(
+            static fn (LogRecord $record): array => $record->context,
+            array_filter(
+                $this->getTestLogHandler()->getRecords(),
+                static fn (LogRecord $record): bool => $record->message === $message,
+            ),
+        ));
+    }
+
     protected function expectLog(Level $level, string $fragment): void
     {
         $this->expectedLogs[] = ['level' => $level, 'fragment' => $fragment];

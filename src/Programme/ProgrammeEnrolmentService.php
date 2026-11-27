@@ -12,6 +12,7 @@ use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserStatus;
+use Psr\Log\LoggerInterface;
 
 readonly class ProgrammeEnrolmentService
 {
@@ -21,6 +22,7 @@ readonly class ProgrammeEnrolmentService
         private ParticipantRepository $participantRepository,
         private UserRepository $userRepository,
         private Metrics $metrics,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -76,6 +78,12 @@ readonly class ProgrammeEnrolmentService
         );
 
         $this->countOutcome($participant, $result, MetricName::ProgrammesEnrolled);
+        if ($result->error === null) {
+            $this->logger->info(
+                'Enrolled participant in programme',
+                ['programmeId' => $programmeId, 'participantId' => $participant->id],
+            );
+        }
 
         return $result;
     }
@@ -116,6 +124,12 @@ readonly class ProgrammeEnrolmentService
         );
 
         $this->countOutcome($participant, $result, MetricName::ProgrammesWithdrawn);
+        if ($result->error === null) {
+            $this->logger->info(
+                'Withdrew participant from programme',
+                ['programmeId' => $programmeId, 'participantId' => $participant->id],
+            );
+        }
 
         return $result;
     }
@@ -126,7 +140,7 @@ readonly class ProgrammeEnrolmentService
             return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::AutoenrolledNoAssign);
         }
 
-        return $this->programmeRepository->transactional(
+        $result = $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeEnrolmentResult {
                 $this->participantRepository->lock($participant);
 
@@ -148,11 +162,20 @@ readonly class ProgrammeEnrolmentService
                 return ProgrammeEnrolmentResult::success('flash.success.programmeParticipantAssigned');
             },
         );
+
+        if ($result->error === null) {
+            $this->logger->info(
+                'Assigned participant to programme',
+                ['programmeId' => $programme->id, 'participantId' => $participant->id],
+            );
+        }
+
+        return $result;
     }
 
     public function adminRemove(Programme $programme, Participant $participant): ProgrammeEnrolmentResult
     {
-        return $this->programmeRepository->transactional(
+        $result = $this->programmeRepository->transactional(
             function () use ($programme, $participant): ProgrammeEnrolmentResult {
                 $this->programmeRepository->findWithLock($programme->id);
                 $enrolment = $this->programmeEnrolmentRepository->findActive($programme, $participant);
@@ -165,14 +188,29 @@ readonly class ProgrammeEnrolmentService
                 return ProgrammeEnrolmentResult::success('flash.success.programmeParticipantRemoved');
             },
         );
+
+        if ($result->error === null) {
+            $this->logger->info(
+                'Removed participant from programme',
+                ['programmeId' => $programme->id, 'participantId' => $participant->id],
+            );
+        }
+
+        return $result;
     }
 
     public function freeAllProgrammes(Participant $participant): void
     {
-        $this->programmeEnrolmentRepository->softDeleteAllActiveForParticipant(
+        $enrolmentCount = $this->programmeEnrolmentRepository->softDeleteAllActiveForParticipant(
             $participant,
             DateTimeUtils::getDateTime(),
         );
+        if ($enrolmentCount > 0) {
+            $this->logger->info(
+                'Freed programme enrolments of participant',
+                ['participantId' => $participant->id, 'enrolmentCount' => $enrolmentCount],
+            );
+        }
     }
 
     /**
