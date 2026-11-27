@@ -229,8 +229,7 @@ class ProgrammeServiceTest extends AppTestCase
 
         $this->getService($app, ProgrammeService::class)->deleteProgramme($programme);
 
-        $reloaded = $this->reloadProgramme($app, $programme);
-        self::assertTrue($reloaded->isDeleted());
+        self::assertNotNull($this->fetchDeletedAt($app, 'programme', $programme->id));
         self::assertSame(
             0,
             $this->getService($app, ProgrammeEnrolmentRepository::class)->countActiveForProgramme($programme),

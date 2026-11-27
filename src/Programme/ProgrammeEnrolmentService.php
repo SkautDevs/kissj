@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kissj\Programme;
 
+use kissj\Application\DateTimeUtils;
 use kissj\Participant\Participant;
 use kissj\Participant\ParticipantRepository;
 use kissj\Telemetry\MetricName;
@@ -40,7 +41,6 @@ readonly class ProgrammeEnrolmentService
 
                 if (
                     $programme === null
-                    || $programme->isDeleted()
                     || $programme->event->id !== $participant->getUserButNotNull()->event->id
                 ) {
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
@@ -95,7 +95,6 @@ readonly class ProgrammeEnrolmentService
 
                 if (
                     $programme === null
-                    || $programme->isDeleted()
                     || $programme->event->id !== $participant->getUserButNotNull()->event->id
                 ) {
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
@@ -110,7 +109,7 @@ readonly class ProgrammeEnrolmentService
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotEnrolled);
                 }
 
-                $this->programmeEnrolmentRepository->softDelete($enrolment);
+                $this->programmeEnrolmentRepository->softDelete($enrolment, DateTimeUtils::getDateTime());
 
                 return ProgrammeEnrolmentResult::success();
             },
@@ -136,8 +135,7 @@ readonly class ProgrammeEnrolmentService
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::CancelledNoAssign);
                 }
 
-                $lockedProgramme = $this->programmeRepository->findWithLock($programme->id);
-                if ($lockedProgramme === null || $lockedProgramme->isDeleted()) {
+                if ($this->programmeRepository->findWithLock($programme->id) === null) {
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotFound);
                 }
 
@@ -162,7 +160,7 @@ readonly class ProgrammeEnrolmentService
                     return ProgrammeEnrolmentResult::failure(ProgrammeEnrolmentError::NotAssigned);
                 }
 
-                $this->programmeEnrolmentRepository->softDelete($enrolment);
+                $this->programmeEnrolmentRepository->softDelete($enrolment, DateTimeUtils::getDateTime());
 
                 return ProgrammeEnrolmentResult::success('flash.success.programmeParticipantRemoved');
             },
@@ -171,7 +169,10 @@ readonly class ProgrammeEnrolmentService
 
     public function freeAllProgrammes(Participant $participant): void
     {
-        $this->programmeEnrolmentRepository->softDeleteAllActiveForParticipant($participant);
+        $this->programmeEnrolmentRepository->softDeleteAllActiveForParticipant(
+            $participant,
+            DateTimeUtils::getDateTime(),
+        );
     }
 
     /**

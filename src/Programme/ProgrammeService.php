@@ -37,17 +37,21 @@ readonly class ProgrammeService
             $this->programmeRepository->persist($programme);
 
             if ($programme->isAutoenrolled) {
-                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme);
+                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme(
+                    $programme,
+                    DateTimeUtils::getDateTime(),
+                );
             }
         });
     }
 
     public function deleteProgramme(Programme $programme): void
     {
+        $deletedAt = DateTimeUtils::getDateTime();
         $this->programmeRepository->transactional(
-            function () use ($programme): void {
-                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme);
-                $programme->deletedAt = DateTimeUtils::getDateTime();
+            function () use ($programme, $deletedAt): void {
+                $this->programmeEnrolmentRepository->softDeleteAllActiveForProgramme($programme, $deletedAt);
+                $programme->deletedAt = $deletedAt;
                 $this->programmeRepository->persist($programme);
             },
         );

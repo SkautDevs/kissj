@@ -1043,6 +1043,18 @@ class AppTestCase extends TestCase
     /**
      * @param App<ContainerInterface> $app
      */
+    protected function fetchDeletedAt(App $app, string $table, int $id): mixed
+    {
+        return $this->getService($app, Connection::class)->fetchSingle(
+            'SELECT deleted_at FROM %n WHERE id = %i',
+            $table,
+            $id,
+        );
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
     protected function tieToPatrol(App $app, Participant $member, Participant $leader): void
     {
         $freshMember = $this->getFreshParticipant($app, $member);

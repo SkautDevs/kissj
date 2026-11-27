@@ -28,7 +28,6 @@ class ProgrammeRepository extends Repository
     {
         $qb = $this->createFluent();
         $qb->where('event_id = %i', $event->id);
-        $qb->where('deleted_at IS NULL');
         $qb->orderBy('start')->asc();
         $qb->orderBy('id')->asc();
 
@@ -44,7 +43,6 @@ class ProgrammeRepository extends Repository
         $qb->join('programme_enrolment')->as('r')->on('r.programme_id = programme.id');
         $qb->where('r.participant_id = %i', $participant->id);
         $qb->where('r.deleted_at IS NULL');
-        $qb->where('programme.deleted_at IS NULL');
         $qb->orderBy('programme.start')->asc();
         $qb->orderBy('programme.id')->asc();
 
@@ -59,7 +57,6 @@ class ProgrammeRepository extends Repository
         $qb = $this->createFluent();
         $qb->where('roles LIKE %~like~', Programme::encodeRoleValues([$role->value]));
         $qb->where('event_id = %i', $event->id);
-        $qb->where('deleted_at IS NULL');
         $qb->where('programme.is_autoenrolled = %b', true);
         $qb->orderBy('start')->asc();
 
@@ -90,7 +87,6 @@ class ProgrammeRepository extends Repository
         $programme = $this->findOneBy(['id' => $programmeId]);
         if (
             $programme === null
-            || $programme->isDeleted()
             || $programme->event->id !== $event->id
         ) {
             return null;

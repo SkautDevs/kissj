@@ -31,7 +31,9 @@ use kissj\User\LoginToken;
 use kissj\User\User;
 use LeanMapper\Caller;
 use LeanMapper\Exception\InvalidStateException;
+use LeanMapper\Fluent;
 use LeanMapper\IMapper;
+use LeanMapper\ImplicitFilters;
 use LeanMapper\Row;
 
 class Mapper implements IMapper
@@ -171,11 +173,20 @@ class Mapper implements IMapper
     }
 
     /**
-     * @return string[]
+     * @return array{}|ImplicitFilters
      */
-    public function getImplicitFilters(string $entityClass, ?Caller $caller = null): array
+    public function getImplicitFilters(string $entityClass, ?Caller $caller = null): array|ImplicitFilters
     {
-        return [];
+        if (
+            is_subclass_of($entityClass, SoftDeletable::class) === false
+            || $caller?->isRepository() !== true
+        ) {
+            return [];
+        }
+
+        return new ImplicitFilters([
+            fn (Fluent $statement): Fluent => $statement->where('%n.deleted_at IS NULL', $this->getTable($entityClass)),
+        ]);
     }
 
     protected function trimNamespace(string $class): string

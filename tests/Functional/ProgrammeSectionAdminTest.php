@@ -106,7 +106,7 @@ class ProgrammeSectionAdminTest extends AppTestCase
         $this->enrol($app, $deleted, $withDeleted);
         $this->enrol($app, $first, $withCancelledEnrolment);
         $this->getService($app, ProgrammeEnrolmentRepository::class)
-            ->softDelete($this->enrol($app, $second, $withCancelledEnrolment));
+            ->softDelete($this->enrol($app, $second, $withCancelledEnrolment), DateTimeUtils::getDateTime());
         $this->enrol($app, $first, $cancelled);
         $this->enrol($app, $second, $cancelled);
         $cancelledUser = $cancelled->getUserButNotNull();

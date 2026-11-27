@@ -118,7 +118,7 @@ class DeviceSessionApiTest extends AppTestCase
         $this->enrol($app, $later, $participant);
         $this->enrol($app, $earlier, $participant);
         $this->getService($app, ProgrammeEnrolmentRepository::class)
-            ->softDelete($this->enrol($app, $removed, $participant));
+            ->softDelete($this->enrol($app, $removed, $participant), DateTimeUtils::getDateTime());
         $token = $this->createSession($app, $participant);
 
         $response = $this->handle($app, '/v3/programme/participant/session', $token);

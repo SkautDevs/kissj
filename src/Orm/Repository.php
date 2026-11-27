@@ -125,7 +125,7 @@ class Repository extends BaseRepository
 
         /** @var ?(Row&iterable<string, mixed>) $row */
         $row = $this->connection->fetch(
-            'SELECT * FROM %n WHERE id = %i' . $this->getLockClause('FOR UPDATE'),
+            'SELECT * FROM %n WHERE id = %i' . $this->getSoftDeleteCondition() . $this->getLockClause('FOR UPDATE'),
             $this->getTable(),
             $id,
         );
@@ -154,6 +154,13 @@ class Repository extends BaseRepository
         }
     }
 
+    private function getSoftDeleteCondition(): string
+    {
+        return is_subclass_of($this->mapper->getEntityClass($this->getTable()), SoftDeletable::class)
+            ? ' AND deleted_at IS NULL'
+            : '';
+    }
+
     protected function getLockClause(string $lockMode): string
     {
         return $this->isPostgres() ? ' ' . $lockMode : '';
@@ -169,7 +176,7 @@ class Repository extends BaseRepository
      */
     public function countBy(array $criteria): int
     {
-        $qb = $this->connection->select('count(*)')->from($this->getTable());
+        $qb = $this->createFluent()->removeClause('select')->select('count(*)');
         $this->addConditions($qb, $criteria);
         /** @var int $row */
         $row = $qb->fetchSingle();

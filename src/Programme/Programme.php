@@ -7,6 +7,7 @@ namespace kissj\Programme;
 use DateTimeInterface;
 use kissj\Event\Event;
 use kissj\Orm\EntityDatetime;
+use kissj\Orm\SoftDeletable;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Place\ProgrammePlace;
 
@@ -25,7 +26,7 @@ use kissj\Programme\Place\ProgrammePlace;
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)
  * @property Event                  $event m:hasOne
  */
-class Programme extends EntityDatetime
+class Programme extends EntityDatetime implements SoftDeletable
 {
     private const string ROLES_DELIMITER = ',';
 
@@ -83,10 +84,5 @@ class Programme extends EntityDatetime
     public function getPlaceName(): string
     {
         return $this->programmePlace === null ? '' : $this->programmePlace->name;
-    }
-
-    public function isDeleted(): bool
-    {
-        return $this->deletedAt !== null;
     }
 }

@@ -22,6 +22,7 @@ use Tests\AppTestCase;
 class ProgrammeRepositoryTest extends AppTestCase
 {
     private const string TEST_EVENT_SLUG = 'test-event-slug';
+    private const string DELETED_AT = '2020-01-02 03:04:05';
 
     public function testOccupancyAutoenrolledRoleFilterAndSoftDelete(): void
     {
@@ -62,7 +63,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         self::assertSame(1, $occupancy[$istProgramme->id] ?? 0);
         self::assertArrayNotHasKey($tlProgramme->id, $occupancy);
 
-        $enrolmentRepository->softDelete($enrolment);
+        $enrolmentRepository->softDelete($enrolment, DateTimeUtils::getDateTime());
         self::assertSame(0, $enrolmentRepository->countActiveForProgramme($istProgramme));
         self::assertNull($enrolmentRepository->findActive($istProgramme, $participant));
 
@@ -120,7 +121,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         self::assertNotNull($ownEnrolment);
         self::assertSame($ownParticipant->id, $ownEnrolment->participant->id);
 
-        $enrolmentRepository->softDelete($ownEnrolment);
+        $enrolmentRepository->softDelete($ownEnrolment, DateTimeUtils::getDateTime());
         self::assertNull($enrolmentRepository->findActive($programme, $ownParticipant));
         // the other participant's active enrolment is untouched by the targeted lookup
         self::assertNotNull($enrolmentRepository->findActive($programme, $otherParticipant));
@@ -142,7 +143,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $first->programme = $programme;
         $first->participant = $participant;
         $enrolmentRepository->persist($first);
-        $enrolmentRepository->softDelete($first);
+        $enrolmentRepository->softDelete($first, DateTimeUtils::getDateTime());
 
         $second = new ProgrammeEnrolment();
         $second->programme = $programme;
@@ -188,7 +189,7 @@ class ProgrammeRepositoryTest extends AppTestCase
         $this->enrolParticipant($app, $earlier, $participant);
         $this->enrolParticipant($app, $deleted, $participant);
         $this->getService($app, ProgrammeEnrolmentRepository::class)
-            ->softDelete($this->enrolParticipant($app, $withdrawn, $participant));
+            ->softDelete($this->enrolParticipant($app, $withdrawn, $participant), DateTimeUtils::getDateTime());
         $this->enrolParticipant($app, $foreign, $otherParticipant);
         $deleted->deletedAt = DateTimeUtils::getDateTime();
         $programmeRepository->persist($deleted);
@@ -228,6 +229,82 @@ class ProgrammeRepositoryTest extends AppTestCase
             $programmeRepository->findActiveAutoenrolledForRole($event, ParticipantRole::Ist),
         );
         self::assertNotContains($istCeremony->id, $autoenrolledIstIdsAfterDelete);
+    }
+
+    public function testSoftDeleteStoresGivenTime(): void
+    {
+        $app = $this->getTestApp();
+        $programme = $this->createProgramme($app, 'stored time workshop', null, [ParticipantRole::Ist]);
+        $participant = $this->createIst($app, 'stored-time@example.com');
+        $enrolment = $this->enrolParticipant($app, $programme, $participant);
+
+        $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDelete($enrolment, DateTimeUtils::getDateTime(self::DELETED_AT));
+
+        $this->assertStoredDeletedAt($app, $enrolment);
+    }
+
+    public function testSoftDeleteAllActiveForProgrammeStoresGivenTimeAndCountsRows(): void
+    {
+        $app = $this->getTestApp();
+        $programme = $this->createProgramme($app, 'bulk programme workshop', null, [ParticipantRole::Ist]);
+        $first = $this->enrolParticipant($app, $programme, $this->createIst($app, 'bulk-programme-1@example.com'));
+        $second = $this->enrolParticipant($app, $programme, $this->createIst($app, 'bulk-programme-2@example.com'));
+
+        $removed = $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDeleteAllActiveForProgramme($programme, DateTimeUtils::getDateTime(self::DELETED_AT));
+
+        self::assertSame(2, $removed);
+        $this->assertStoredDeletedAt($app, $first);
+        $this->assertStoredDeletedAt($app, $second);
+    }
+
+    public function testSoftDeleteAllActiveForParticipantStoresGivenTimeAndCountsRows(): void
+    {
+        $app = $this->getTestApp();
+        $participant = $this->createIst($app, 'bulk-participant@example.com');
+        $first = $this->enrolParticipant(
+            $app,
+            $this->createProgramme($app, 'bulk participant first', null, [ParticipantRole::Ist]),
+            $participant,
+        );
+        $second = $this->enrolParticipant(
+            $app,
+            $this->createProgramme($app, 'bulk participant second', null, [ParticipantRole::Ist]),
+            $participant,
+        );
+
+        $removed = $this->getService($app, ProgrammeEnrolmentRepository::class)
+            ->softDeleteAllActiveForParticipant($participant, DateTimeUtils::getDateTime(self::DELETED_AT));
+
+        self::assertSame(2, $removed);
+        $this->assertStoredDeletedAt($app, $first);
+        $this->assertStoredDeletedAt($app, $second);
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function createIst(App $app, string $email): Participant
+    {
+        return $this->getService($app, UserService::class)->createParticipantSetRole(
+            $this->registerUser($app, $email),
+            'ist',
+        );
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    private function assertStoredDeletedAt(App $app, ProgrammeEnrolment $enrolment): void
+    {
+        $stored = $this->fetchDeletedAt($app, 'programme_enrolment', $enrolment->id);
+
+        self::assertIsString($stored);
+        self::assertSame(
+            DateTimeUtils::getDateTime(self::DELETED_AT)->getTimestamp(),
+            DateTimeUtils::getDateTime($stored)->getTimestamp(),
+        );
     }
 
     /**

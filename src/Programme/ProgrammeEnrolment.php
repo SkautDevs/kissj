@@ -6,6 +6,7 @@ namespace kissj\Programme;
 
 use DateTimeInterface;
 use kissj\Orm\EntityDatetime;
+use kissj\Orm\SoftDeletable;
 use kissj\Participant\Participant;
 
 /**
@@ -14,10 +15,6 @@ use kissj\Participant\Participant;
  * @property Participant            $participant m:hasOne
  * @property DateTimeInterface|null $deletedAt m:passThru(dateFromString|dateToString)
  */
-class ProgrammeEnrolment extends EntityDatetime
+class ProgrammeEnrolment extends EntityDatetime implements SoftDeletable
 {
-    public function isDeleted(): bool
-    {
-        return $this->deletedAt !== null;
-    }
 }

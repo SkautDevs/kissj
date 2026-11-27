@@ -453,7 +453,7 @@ class ProgrammeApiTest extends AppTestCase
         $this->enrol($app, $programme, $second);
         $this->enrol($app, $programme, $first);
         $this->getService($app, ProgrammeEnrolmentRepository::class)
-            ->softDelete($this->enrol($app, $programme, $removed));
+            ->softDelete($this->enrol($app, $programme, $removed), DateTimeUtils::getDateTime());
 
         $response = $app->handle($this->createApiRequest(
             '/v3/programme/' . $programme->id . '/participants',

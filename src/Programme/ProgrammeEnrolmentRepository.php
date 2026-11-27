@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace kissj\Programme;
 
+use DateTimeInterface;
 use Dibi\Fluent;
 use Dibi\Row;
-use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Repository;
@@ -21,6 +21,7 @@ use LogicException;
  * @method ProgrammeEnrolment getOneBy(mixed[] $criteria)
  * @method ProgrammeEnrolment[] findBy(mixed[] $criteria, Order[] $orders = [])
  * @method ProgrammeEnrolment|null findOneBy(mixed[] $criteria, Order[] $orders = [])
+ * @method ProgrammeEnrolment|null findWithLock(int $enrolmentId)
  */
 class ProgrammeEnrolmentRepository extends Repository
 {
@@ -33,7 +34,6 @@ class ProgrammeEnrolmentRepository extends Repository
         $qb->join('programme')->as('p')->on('p.id = programme_enrolment.programme_id');
         $qb->where('p.event_id = %i', $event->id);
         $qb->where('p.deleted_at IS NULL');
-        $qb->where('programme_enrolment.deleted_at IS NULL');
 
         $grouped = [];
         foreach ($qb->fetchAll() as $row) {
@@ -57,7 +57,6 @@ class ProgrammeEnrolmentRepository extends Repository
     {
         $qb = $this->createFluent();
         $qb->where('participant_id = %i', $participant->id);
-        $qb->where('deleted_at IS NULL');
 
         return $this->fetchEnrolments($qb);
     }
@@ -69,7 +68,6 @@ class ProgrammeEnrolmentRepository extends Repository
     {
         $qb = $this->createFluent();
         $qb->where('programme_id = %i', $programme->id);
-        $qb->where('deleted_at IS NULL');
         $qb->orderBy('participant_id')->asc();
 
         return $this->fetchEnrolments($qb);
@@ -85,7 +83,6 @@ class ProgrammeEnrolmentRepository extends Repository
         $qb->leftJoin('participant')->as('pl')->on('pl.id = pa.patrol_leader_id');
         $qb->join('user')->as('u')->on('u.id = COALESCE(pa.user_id, pl.user_id)');
         $qb->where('programme_enrolment.programme_id = %i', $programme->id);
-        $qb->where('programme_enrolment.deleted_at IS NULL');
         $qb->where('u.status != %s', UserStatus::Cancelled->value);
         $qb->orderBy('programme_enrolment.participant_id')->asc();
 
@@ -97,7 +94,6 @@ class ProgrammeEnrolmentRepository extends Repository
         $qb = $this->createFluent();
         $qb->where('programme_id = %i', $programme->id);
         $qb->where('participant_id = %i', $participant->id);
-        $qb->where('deleted_at IS NULL');
 
         return $this->fetchEnrolments($qb)[0] ?? null;
     }
@@ -124,24 +120,20 @@ class ProgrammeEnrolmentRepository extends Repository
         return $enrolment;
     }
 
-    public function softDelete(ProgrammeEnrolment $enrolment): void
+    public function softDelete(ProgrammeEnrolment $enrolment, DateTimeInterface $deletedAt): void
     {
-        $enrolment->deletedAt = DateTimeUtils::getDateTime();
+        $enrolment->deletedAt = $deletedAt;
         $this->persist($enrolment);
     }
 
-    public function softDeleteAllActiveForParticipant(Participant $participant): void
+    public function softDeleteAllActiveForParticipant(Participant $participant, DateTimeInterface $deletedAt): int
     {
-        foreach ($this->findActiveForParticipant($participant) as $enrolment) {
-            $this->softDelete($enrolment);
-        }
+        return $this->softDeleteAll($this->findActiveForParticipant($participant), $deletedAt);
     }
 
-    public function softDeleteAllActiveForProgramme(Programme $programme): void
+    public function softDeleteAllActiveForProgramme(Programme $programme, DateTimeInterface $deletedAt): int
     {
-        foreach ($this->findActiveForProgramme($programme) as $enrolment) {
-            $this->softDelete($enrolment);
-        }
+        return $this->softDeleteAll($this->findActiveForProgramme($programme), $deletedAt);
     }
 
     /**
@@ -156,5 +148,17 @@ class ProgrammeEnrolmentRepository extends Repository
         $enrolments = $this->createEntities($rows);
 
         return array_values($enrolments);
+    }
+
+    /**
+     * @param list<ProgrammeEnrolment> $enrolments
+     */
+    private function softDeleteAll(array $enrolments, DateTimeInterface $deletedAt): int
+    {
+        foreach ($enrolments as $enrolment) {
+            $this->softDelete($enrolment, $deletedAt);
+        }
+
+        return count($enrolments);
     }
 }
