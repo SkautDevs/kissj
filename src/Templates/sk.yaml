@@ -772,6 +772,7 @@ programme:
         colPlace: "Miesto"
         colTime: "Čas"
         delete: "Vymazať"
+        deleteConfirm: "Vymazať program? Počet prihlášok, ktoré sa s ním vymažú: %count%."
         edit: "Upraviť"
         exportCsv: "Export do CSV"
         exportPrint: "Tlač prezenčných listín"

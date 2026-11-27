@@ -544,6 +544,11 @@ class DevicePairingWebTest extends AppTestCase
         $overview = (string)$app->handle($this->createRequest(self::ADMIN_PROGRAMMES_PATH))->getBody();
         self::assertStringContainsString('1 / 1000', $overview);
         self::assertStringContainsString('action="' . self::PURGE_PATH . '"', $overview);
+        self::assertStringContainsString(
+            'data-confirm="' . htmlspecialchars($this->translate($app, 'programme.admin.pairings.purgeConfirm')) . '"',
+            $overview,
+        );
+        self::assertStringNotContainsString('onsubmit=', $overview);
 
         $this->expectLog(Level::Warning, 'Pending device pairings purged by admin');
         $response = $app->handle($this->createRequest(self::PURGE_PATH, 'POST'));

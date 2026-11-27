@@ -1007,6 +1007,31 @@ class ProgrammeAdminTest extends AppTestCase
         self::assertStringContainsString('1/5', $this->extractOverviewCard($body, $withinCapacity));
     }
 
+    public function testOverviewDeleteFormAsksForConfirmationWithEnrolmentCount(): void
+    {
+        $app = $this->getTestApp();
+        $app = $this->createLoggedAdmin($app, 'overview-confirm-admin@example.com');
+        $withEnrolments = $this->createProgramme($app, 'overview confirm with enrolments', null, 5);
+        $withoutEnrolments = $this->createProgramme($app, 'overview confirm without enrolments', null, 5);
+        $this->createNamedEnrolee($app, $withEnrolments, 'confirm-first-ist@example.com');
+        $this->createNamedEnrolee($app, $withEnrolments, 'confirm-second-ist@example.com');
+
+        $response = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/programmes'));
+        $body = (string)$response->getBody();
+
+        self::assertSame(200, $response->getStatusCode());
+        $translator = $this->getService($app, TranslatorInterface::class);
+        $cardWithEnrolments = $this->extractOverviewCard($body, $withEnrolments);
+        $cardWithoutEnrolments = $this->extractOverviewCard($body, $withoutEnrolments);
+        $confirmText = fn (int $count): string => htmlspecialchars(
+            $translator->trans('programme.admin.deleteConfirm', ['%count%' => $count]),
+        );
+        self::assertStringContainsString('data-confirm="' . $confirmText(2) . '"', $cardWithEnrolments);
+        self::assertStringContainsString('data-confirm="' . $confirmText(0) . '"', $cardWithoutEnrolments);
+        self::assertStringNotContainsString('onsubmit=', $cardWithEnrolments);
+        self::assertStringContainsString('js/confirm-submit.js', $body);
+    }
+
     public function testOverviewCardShowsTranslatedTargetRoles(): void
     {
         $app = $this->getTestApp();

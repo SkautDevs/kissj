@@ -772,6 +772,7 @@ programme:
         colPlace: "Place"
         colTime: "Time"
         delete: "Delete"
+        deleteConfirm: "Delete the programme? Enrolments removed with it: %count%."
         edit: "Edit"
         exportCsv: "Export to CSV"
         exportPrint: "Print attendance sheets"
