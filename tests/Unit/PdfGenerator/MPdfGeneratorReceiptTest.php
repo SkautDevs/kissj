@@ -12,7 +12,7 @@ use kissj\Participant\ParticipantRole;
 use kissj\Payment\Payment;
 use kissj\Payment\PaymentStatus;
 use kissj\Payment\QrCodeService;
-use kissj\PdfGenerator\mPdfGenerator;
+use kissj\PdfGenerator\MPdfGenerator;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use Mpdf\Mpdf;
@@ -42,7 +42,7 @@ class MPdfGeneratorReceiptTest extends TestCase
         $mpdf = self::createStub(Mpdf::class);
         $mpdf->method('Output')->willReturn('pdf');
 
-        $generator = new mPdfGenerator(
+        $generator = new MPdfGenerator(
             $mpdf,
             $twig,
             self::createStub(Metrics::class),

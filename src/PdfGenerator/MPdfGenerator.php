@@ -20,7 +20,7 @@ use kissj\Telemetry\Metrics;
 use Mpdf\Mpdf;
 use Slim\Views\Twig;
 
-class mPdfGenerator extends PdfGenerator
+class MPdfGenerator extends PdfGenerator
 {
     public function __construct(
         private readonly Mpdf $mpdf,

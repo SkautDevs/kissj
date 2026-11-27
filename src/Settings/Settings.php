@@ -106,7 +106,7 @@ use kissj\Payment\FinancesStatisticsService;
 use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
-use kissj\PdfGenerator\mPdfGenerator;
+use kissj\PdfGenerator\MPdfGenerator;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Image\ProgrammeImageAdminController;
 use kissj\Programme\Image\ProgrammeImageController;
@@ -489,7 +489,7 @@ class Settings
                 new ResponseFactory(),
             );
         };
-        $container[PdfGenerator::class] = get(mPdfGenerator::class);
+        $container[PdfGenerator::class] = get(MPdfGenerator::class);
         $container[TranslatorFactory::class] = function (EnvSettings $env) {
             return new TranslatorFactory(
                 $env->defaultLocale,
