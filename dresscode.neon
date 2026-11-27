@@ -1,0 +1,43 @@
+use: psr12
+
+paths: [src, tests]
+
+severity:
+	file.longLines: error
+
+indentation:
+	chain: keep
+	binaryOperator: keep
+
+blankLines:
+	bodyEnd:
+		class: keep
+
+spacing:
+	binaryOperator: keep
+	cast: keep
+	comma: keep
+
+multiline:
+	edges:
+		condition: apart
+	items:
+		condition: perLine
+	trailingComma: required
+
+qualification:
+	class:
+		otherNamespace: imported
+
+phpdoc:
+	annotation:
+		nativeTypeOnly: forbidden
+
+imports:
+	unused: forbidden
+
+overrides:
+	-
+		paths: [src/Application/migrations/seeds/programmes/*]
+		file:
+			longLines: keep

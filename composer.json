@@ -62,6 +62,7 @@
 	},
 	"require-dev": {
 		"ext-pdo": "*",
+		"dresscode/dresscode": "^1.4.1",
 		"friendsofphp/php-cs-fixer": "^3.8",
 		"mockery/mockery": "^1.6",
 		"phpstan/extension-installer": "^1.4.3",
@@ -99,9 +100,11 @@
 		"stan": "vendor/bin/phpstan analyse --configuration phpstan.neon --memory-limit=1G",
 		"stan:generate:baseline": "vendor/bin/phpstan analyse --generate-baseline --configuration phpstan.neon --memory-limit=1G",
 		"cs": "vendor/bin/php-cs-fixer fix",
+		"dresscode": "vendor/bin/dresscode fix",
 		"test": [
 			"@stan",
 			"@cs",
+			"@dresscode",
 			"@unit"
 		],
 		"phinx:create": "vendor/bin/phinx create --configuration src/Settings/phinxConfiguration.php",

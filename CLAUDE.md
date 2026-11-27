@@ -27,7 +27,7 @@ Every feature, bugfix, or behavior change follows the `/implement` skill (`.clau
 All commands run inside the Docker container:
 
 ```bash
-# Full quality suite (PHPStan + CS Fixer + PHPUnit)
+# Full quality suite (PHPStan + CS Fixer + DressCode + PHPUnit)
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer test
 
 # Same suite from a worktree
@@ -36,6 +36,7 @@ docker exec -u 1000 -it -w /var/www/html/.worktrees/<branch> kissj-app-php-fpm-1
 # Individual tools
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer stan    # PHPStan (max level)
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer cs      # PHP-CS-Fixer (PSR-12)
+docker exec -u 1000 -it kissj-app-php-fpm-1 composer dresscode # DressCode (dresscode.neon), fixes in place
 docker exec -u 1000 -it kissj-app-php-fpm-1 composer unit    # PHPUnit
 
 # Database migrations — main workspace only, never from a worktree
@@ -87,7 +88,7 @@ Do not modify without extra caution:
 - Use `LogicException` for impossible/unexpected states that should never occur
 - In tests, use static assertion methods (e.g., `self::assertEquals()`)
 - PHPStan level 10 with a baseline (`phpstan-baseline.neon`) for pre-existing issues
-- PSR-12 style enforced by PHP-CS-Fixer
+- PSR-12 style enforced by PHP-CS-Fixer and DressCode (`dresscode.neon`: 120-char lines, trailing commas, imports)
 - Do not introduce new phpstan ignores
 - Use repository pattern -> repository classes every time data from database is needed 
 - Do not use any native calls to database
