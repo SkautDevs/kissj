@@ -32,17 +32,16 @@ compose-down:
 	$(DOCKER_COMPOSE) --file $(COMPOSE_FILE) down
 
 # Get container ID
-.PHONY: $(FPM_ID)
-FPM_ID = $(shell $(DOCKER) ps | grep 'quay.io/kissj/php-ubi' | awk '{print $$1}')
+.PHONY: $(FRANKEN_ID)
+FRANKEN_ID = $(shell $(DOCKER) ps | grep 'quay.io/kissj/frankenphp' | awk '{print $$1}')
 
 .PHONY: composer-install
 composer-install:
-	$(DOCKER) exec -it -u root $(FPM_ID) sh -c "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction"
+	$(DOCKER) exec -it -u root $(FRANKEN_ID) sh -c "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction"
 
 .PHONY: migrate
 migrate:
-	$(DOCKER) exec -it -u root $(FPM_ID) sh -c "COMPOSER_ALLOW_SUPERUSER=1 composer phinx:migrate --no-interaction"
-
+	$(DOCKER) exec -it -u root $(FRANKEN_ID) sh -c "COMPOSER_ALLOW_SUPERUSER=1 composer phinx:migrate --no-interaction"
 
 dev-up: info compose-up composer-install migrate
 dev-down: info compose-down

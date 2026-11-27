@@ -13,8 +13,8 @@ services:
       - POSTGRES_DB=kissj
 
   #php-fpm
-  php-fpm:
-    image: quay.io/kissj/php-ubi
+  frankenphp:
+    image: quay.io/kissj/frankenphp
     depends_on:
       - postgresql
     links:
@@ -32,24 +32,9 @@ services:
     env_file: "compose.env"
     volumes:
       - ../../:/var/www/html
-
-  #Frontend Web Server
-  caddy:
-    image: quay.io/kissj/caddy-ubi
+      - ./Caddyfile:/etc/frankenphp/Caddyfile
     ports:
       - 8080:8080
-    depends_on:
-      - php-fpm
-    links:
-      - php-fpm
-
-    environment:
-      - PHPFPM_HOST=php-fpm
-      - WEB_HOST=localhost
-    env_file: "compose.env"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - ../../:/var/www/html
 
   #session storage
   dragonfly:
