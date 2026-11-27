@@ -18,8 +18,8 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeEnrolmentRepository;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
-use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
 use kissj\User\UserRepository;
@@ -174,7 +174,7 @@ class AdminPaymentTransferTest extends AppTestCase
             $this->getService($app, Mailer::class),
             $this->getService($app, LoggerInterface::class),
             $this->getService($app, Metrics::class),
-            $this->getService($app, ProgrammeService::class),
+            $this->getService($app, ProgrammeEnrolmentService::class),
         );
 
         try {
@@ -288,7 +288,8 @@ class AdminPaymentTransferTest extends AppTestCase
         $userRepository->persist($recipient);
 
         $programme = $this->createProgramme($app, $event);
-        $assignment = $this->getService($app, ProgrammeService::class)->adminAssign($programme, $giverParticipant);
+        $assignment = $this->getService($app, ProgrammeEnrolmentService::class)
+            ->adminAssign($programme, $giverParticipant);
         self::assertNull($assignment->error);
         $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         self::assertSame(1, $enrolmentRepository->countActiveForProgramme($programme));

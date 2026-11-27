@@ -10,8 +10,8 @@ use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
-use kissj\Programme\ProgrammeService;
 use LeanMapper\Connection;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -25,7 +25,7 @@ class ProgrammeEnrolmentMigrationTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $connection = $this->getService($app, Connection::class);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
         $this->openProgrammeEnrolmentWindow($app, $event->slug);
         $active = $this->persistProgramme($app, $event, '2027-06-05 10:00');
@@ -101,7 +101,7 @@ class ProgrammeEnrolmentMigrationTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $connection = $this->getService($app, Connection::class);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $event = $this->getTestSlugEvent($this->getService($app, EventRepository::class));
         $this->openProgrammeEnrolmentWindow($app, $event->slug);
         $programme = $this->persistProgramme($app, $event, '2027-06-05 10:00');

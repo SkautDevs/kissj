@@ -18,8 +18,8 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\QrCodeService;
 use kissj\Programme\ProgrammeEnrolmentRepository;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
-use kissj\Programme\ProgrammeService;
 use kissj\Telemetry\Metrics;
 use kissj\User\LoginTokenRepository;
 use kissj\User\UserRepository;
@@ -180,7 +180,7 @@ class ParticipantServicePhoneTest extends TestCase
             new TshirtService(Mockery::mock(TranslatorInterface::class)),
             Mockery::mock(EventRepository::class),
             Mockery::mock(UserRepository::class),
-            new ProgrammeService(
+            new ProgrammeEnrolmentService(
                 Mockery::mock(ProgrammeRepository::class),
                 Mockery::mock(ProgrammeEnrolmentRepository::class),
                 Mockery::mock(ParticipantRepository::class),

@@ -13,10 +13,10 @@ use kissj\Participant\ParticipantRole;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeEnrolmentRepository;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
 use kissj\Programme\ProgrammeSectionRepository;
-use kissj\Programme\ProgrammeService;
 use kissj\User\User;
 use kissj\User\UserRepository;
 use kissj\User\UserService;
@@ -33,7 +33,7 @@ class ProgrammeExportTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $this->openProgrammeEnrolmentWindow($app);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $pdfGenerator = $this->getService($app, PdfGenerator::class);
         $programmeRepository = $this->getService($app, ProgrammeRepository::class);
         $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
@@ -69,7 +69,7 @@ class ProgrammeExportTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $this->openProgrammeEnrolmentWindow($app);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $exportService = $this->getService($app, ExportService::class);
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => 'test-event-slug']);
@@ -98,7 +98,7 @@ class ProgrammeExportTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $this->openProgrammeEnrolmentWindow($app);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
         $section = $this->createProgrammeSection($app->getContainer(), $event, 'Vapro');
         $section->subtitle = '1. blok';
@@ -122,7 +122,7 @@ class ProgrammeExportTest extends AppTestCase
     {
         $app = $this->getTestApp();
         $this->openProgrammeEnrolmentWindow($app);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
         $eventRepository = $this->getService($app, EventRepository::class);
         $event = $eventRepository->getOneBy(['slug' => 'test-event-slug']);

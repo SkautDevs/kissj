@@ -8,6 +8,7 @@ use kissj\AbstractController;
 use kissj\Application\DateTimeUtils;
 use kissj\Event\Event;
 use kissj\Participant\Participant;
+use kissj\Participant\ParticipantRole;
 use kissj\Programme\DTO\ProgrammeApiEnrolmentWindowDTO;
 use kissj\Programme\DTO\ProgrammeApiErrorDTO;
 use kissj\Programme\DTO\ProgrammeApiImageDTO;
@@ -33,7 +34,7 @@ class ProgrammeApiController extends AbstractController
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeEnrolmentRepository $programmeEnrolmentRepository,
-        private readonly ProgrammeService $programmeService,
+        private readonly ProgrammeEnrolmentService $programmeEnrolmentService,
         private readonly ProgrammePlaceRepository $programmePlaceRepository,
         private readonly ProgrammeImageRepository $programmeImageRepository,
     ) {
@@ -70,7 +71,7 @@ class ProgrammeApiController extends AbstractController
     {
         return $this->presentEnrolmentResult(
             $response,
-            $this->programmeService->enrol($sessionParticipant, $programmeId),
+            $this->programmeEnrolmentService->enrol($sessionParticipant, $programmeId),
         );
     }
 
@@ -78,7 +79,7 @@ class ProgrammeApiController extends AbstractController
     {
         return $this->presentEnrolmentResult(
             $response,
-            $this->programmeService->withdraw($sessionParticipant, $programmeId),
+            $this->programmeEnrolmentService->withdraw($sessionParticipant, $programmeId),
         );
     }
 
@@ -123,11 +124,34 @@ class ProgrammeApiController extends AbstractController
         );
 
         return array_map(
-            fn (Programme $programme): ProgrammeApiProgrammeDTO => $this->programmeService->presentProgramme(
+            fn (Programme $programme): ProgrammeApiProgrammeDTO => $this->presentProgramme(
                 $programme,
                 array_map($presentImage, $imagesByProgramme[$programme->id] ?? []),
             ),
             $programmes,
+        );
+    }
+
+    /**
+     * @param list<ProgrammeApiImageDTO> $images
+     */
+    private function presentProgramme(Programme $programme, array $images): ProgrammeApiProgrammeDTO
+    {
+        return new ProgrammeApiProgrammeDTO(
+            $programme->id,
+            $programme->name,
+            $programme->section->id,
+            $programme->description,
+            $programme->getPlaceName(),
+            $programme->programmePlace?->id,
+            DateTimeUtils::formatAtom($programme->start),
+            DateTimeUtils::formatAtom($programme->end),
+            $programme->isAutoenrolled,
+            array_map(
+                static fn (ParticipantRole $role): string => $role->value,
+                $programme->roles,
+            ),
+            $images,
         );
     }
 

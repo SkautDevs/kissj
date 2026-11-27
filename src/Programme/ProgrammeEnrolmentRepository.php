@@ -114,6 +114,16 @@ class ProgrammeEnrolmentRepository extends Repository
         return $count;
     }
 
+    public function create(Programme $programme, Participant $participant): ProgrammeEnrolment
+    {
+        $enrolment = new ProgrammeEnrolment();
+        $enrolment->programme = $programme;
+        $enrolment->participant = $participant;
+        $this->persist($enrolment);
+
+        return $enrolment;
+    }
+
     public function softDelete(ProgrammeEnrolment $enrolment): void
     {
         $enrolment->deletedAt = DateTimeUtils::getDateTime();

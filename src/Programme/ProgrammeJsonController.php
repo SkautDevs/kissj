@@ -14,7 +14,7 @@ use stdClass;
 class ProgrammeJsonController extends AbstractController
 {
     public function __construct(
-        private readonly ProgrammeService $programmeService,
+        private readonly ProgrammeEnrolmentService $programmeEnrolmentService,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ParticipantRepository $participantRepository,
     ) {
@@ -28,7 +28,10 @@ class ProgrammeJsonController extends AbstractController
             return $this->warningJsonResponse($response, 'flash.warning.programmeParticipantNotFound');
         }
 
-        return $this->resultJsonResponse($response, $this->programmeService->adminAssign($programme, $participant));
+        return $this->resultJsonResponse(
+            $response,
+            $this->programmeEnrolmentService->adminAssign($programme, $participant),
+        );
     }
 
     public function remove(Response $response, Event $event, int $programmeId, int $participantId): Response
@@ -39,7 +42,10 @@ class ProgrammeJsonController extends AbstractController
             return $this->warningJsonResponse($response, 'flash.warning.programmeParticipantNotFound');
         }
 
-        return $this->resultJsonResponse($response, $this->programmeService->adminRemove($programme, $participant));
+        return $this->resultJsonResponse(
+            $response,
+            $this->programmeEnrolmentService->adminRemove($programme, $participant),
+        );
     }
 
     private function resultJsonResponse(Response $response, ProgrammeEnrolmentResult $result): Response

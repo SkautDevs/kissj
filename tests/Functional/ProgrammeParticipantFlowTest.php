@@ -9,9 +9,9 @@ use kissj\Event\EventRepository;
 use kissj\Participant\ParticipantRole;
 use kissj\Participant\Participant;
 use kissj\Programme\Programme;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
-use kissj\Programme\ProgrammeService;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
 use kissj\User\User;
@@ -52,7 +52,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $this->setEventApiKey($app, 'flow-widget-key');
         $programme = $this->createProgramme($app, 'widget link workshop', null, 3);
         $ist = $this->createPaidIstWithEmail($app, 'widget-link-ist@example.com');
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
@@ -72,7 +72,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $this->setEventApiKey($app, 'flow-widget-key');
         $programme = $this->createProgramme($app, 'widget no url workshop', null, 3);
         $ist = $this->createPaidIstWithEmail($app, 'widget-no-url-ist@example.com');
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
@@ -87,7 +87,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $app = $this->getTestApp();
         $programme = $this->createProgramme($app, 'widget no key workshop', null, 3);
         $ist = $this->createPaidIstWithEmail($app, 'widget-no-key-ist@example.com');
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
         $body = (string)$app->handle($this->createRequest(self::DASHBOARD_PATH))->getBody();
@@ -117,7 +117,7 @@ class ProgrammeParticipantFlowTest extends AppTestCase
         $programme = $this->createProgramme($app, 'widget closed workshop', null, 3);
         $ist = $this->createPaidIstWithEmail($app, 'widget-closed-ist@example.com');
         $this->setProgrammeWindow($app, null, null);
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
         $app = $this->loginAs($app, $ist->getUserButNotNull());
 
         $response = $app->handle($this->createRequest(self::DASHBOARD_PATH));

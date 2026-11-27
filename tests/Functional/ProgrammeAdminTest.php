@@ -18,9 +18,9 @@ use kissj\Programme\Place\ProgrammePlaceService;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeEnrolment;
 use kissj\Programme\ProgrammeEnrolmentRepository;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Programme\ProgrammeRepository;
 use kissj\Programme\ProgrammeSection;
-use kissj\Programme\ProgrammeService;
 use kissj\User\LoginToken;
 use kissj\User\LoginTokenRepository;
 use kissj\User\User;
@@ -129,7 +129,7 @@ class ProgrammeAdminTest extends AppTestCase
         $open = $this->createProgrammeSection($app->getContainer(), $event, 'open source');
         $stayer = $this->createProgramme($app, 'stays in exclusive', $exclusive, 5);
         $mover = $this->createProgramme($app, 'moves into exclusive', $open, 5);
-        $service = $this->getService($app, ProgrammeService::class);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
         $doubleBooked = $this->createPaidIstWithEmail($app, 'double-booked-mover@example.com');
         self::assertNull($service->adminAssign($stayer, $doubleBooked)->error);
         self::assertNull($service->adminAssign($mover, $doubleBooked)->error);
@@ -748,7 +748,7 @@ class ProgrammeAdminTest extends AppTestCase
         $app = $this->createLoggedAdmin($app, 'export-routes-admin@example.com');
         $programme = $this->createProgramme($app, 'export route workshop', null, 5);
         $ist = $this->createPaidIstWithEmail($app, 'export-route-ist@example.com');
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
 
         $csvResponse = $app->handle($this->createRequest('/v2/event/test-event-slug/admin/export/programmes'));
         $csvBody = (string)$csvResponse->getBody();
@@ -1136,7 +1136,7 @@ class ProgrammeAdminTest extends AppTestCase
         $ist->firstName = 'Detailo';
         $ist->lastName = 'Enrolee';
         $this->getService($app, ParticipantRepository::class)->persist($ist);
-        $this->getService($app, ProgrammeService::class)->adminAssign($programme, $ist);
+        $this->getService($app, ProgrammeEnrolmentService::class)->adminAssign($programme, $ist);
 
         return $ist;
     }

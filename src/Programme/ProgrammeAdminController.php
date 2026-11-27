@@ -30,6 +30,7 @@ class ProgrammeAdminController extends AbstractController
 {
     public function __construct(
         private readonly ProgrammeService $programmeService,
+        private readonly ProgrammeEnrolmentService $programmeEnrolmentService,
         private readonly ProgrammeRepository $programmeRepository,
         private readonly ProgrammeSectionRepository $programmeSectionRepository,
         private readonly EventRepository $eventRepository,
@@ -246,7 +247,7 @@ class ProgrammeAdminController extends AbstractController
             return $this->redirectToDetail($request, $response, $programmeId);
         }
 
-        $result = $this->programmeService->adminAssign($programme, $participant);
+        $result = $this->programmeEnrolmentService->adminAssign($programme, $participant);
         $this->flash($result);
 
         return $this->redirectToDetail($request, $response, $programmeId);
@@ -261,7 +262,7 @@ class ProgrammeAdminController extends AbstractController
     ): Response {
         $programme = $this->programmeRepository->getActiveById($programmeId, $event);
         $participant = $this->participantRepository->getParticipantById($participantId, $event);
-        $result = $this->programmeService->adminRemove($programme, $participant);
+        $result = $this->programmeEnrolmentService->adminRemove($programme, $participant);
         $this->flash($result);
 
         return $this->redirectToDetail($request, $response, $programmeId);

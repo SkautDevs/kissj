@@ -17,7 +17,7 @@ use kissj\Payment\PaymentRepository;
 use kissj\Payment\PaymentService;
 use kissj\Payment\PaymentSource;
 use kissj\Payment\PaymentStatus;
-use kissj\Programme\ProgrammeService;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\UserRepository;
@@ -34,7 +34,7 @@ readonly class PaymentTransferService
         private Mailer $mailer,
         private LoggerInterface $logger,
         private Metrics $metrics,
-        private ProgrammeService $programmeService,
+        private ProgrammeEnrolmentService $programmeEnrolmentService,
     ) {
     }
 
@@ -154,7 +154,7 @@ readonly class PaymentTransferService
             throw new \RuntimeException('Transfer aborted - the recipient is no longer in approved status');
         }
 
-        $this->programmeService->freeAllProgrammes($participantFrom);
+        $this->programmeEnrolmentService->freeAllProgrammes($participantFrom);
 
         $transferredPayment = $this->handlePayments($participantFrom, $participantTo);
 

@@ -25,7 +25,7 @@ use kissj\Deal\DealRepository;
 use kissj\PdfGenerator\PdfGenerator;
 use kissj\Programme\Programme;
 use kissj\Programme\ProgrammeEnrolment;
-use kissj\Programme\ProgrammeService;
+use kissj\Programme\ProgrammeEnrolmentService;
 use kissj\Telemetry\MetricName;
 use kissj\Telemetry\Metrics;
 use kissj\User\User;
@@ -49,7 +49,7 @@ class ParticipantController extends AbstractController
         private readonly PdfGenerator $pdfGenerator,
         private readonly Metrics $metrics,
         private readonly PaymentTransferService $paymentTransferService,
-        private readonly ProgrammeService $programmeService,
+        private readonly ProgrammeEnrolmentService $programmeEnrolmentService,
         private readonly UserService $userService,
         private readonly DevicePairingService $devicePairingService,
     ) {
@@ -366,8 +366,9 @@ class ParticipantController extends AbstractController
             'ca' => $user->event->eventType->getContentArbiterForRole($participant->getRoleOrFail()),
             'deals' => $this->dealRepository->obtainAllDealsForParticipant($participant),
             'ownerTicketTransferAllowed' => $participant->canTransferOwnerTicket(),
-            'enrolledProgrammes' => $this->programmeService->getDashboardEnrolments($participant),
-            'autoenrolledProgrammes' => $this->programmeService->getDashboardAutoenrolledProgrammes($participant),
+            'enrolledProgrammes' => $this->programmeEnrolmentService->getDashboardEnrolments($participant),
+            'autoenrolledProgrammes' => $this->programmeEnrolmentService
+                ->getDashboardAutoenrolledProgrammes($participant),
         ];
     }
 }

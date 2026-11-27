@@ -75,6 +75,23 @@ class ProgrammeRepositoryTest extends AppTestCase
         self::assertNotContains($istProgramme->id, $activeIstIdsAfterDelete);
     }
 
+    public function testCreateEnrolmentIsActiveAndBelongsToProgrammeAndParticipant(): void
+    {
+        $app = $this->getTestApp();
+        $enrolmentRepository = $this->getService($app, ProgrammeEnrolmentRepository::class);
+        $programme = $this->createProgramme($app, 'create enrolment workshop', null, [ParticipantRole::Ist]);
+        $participant = $this->getService($app, UserService::class)->createParticipantSetRole(
+            $this->registerUser($app, 'create-enrolment@example.com'),
+            'ist',
+        );
+
+        $enrolment = $enrolmentRepository->create($programme, $participant);
+
+        self::assertSame($programme->id, $enrolment->programme->id);
+        self::assertSame($participant->id, $enrolment->participant->id);
+        self::assertSame($enrolment->id, $enrolmentRepository->findActive($programme, $participant)?->id);
+    }
+
     public function testFindActiveTargetsOwnEnrolmentOnly(): void
     {
         $app = $this->getTestApp();
