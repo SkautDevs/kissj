@@ -12,7 +12,6 @@ use kissj\Orm\Order;
 use kissj\Orm\Repository;
 use kissj\Participant\Participant;
 use kissj\User\UserStatus;
-use LogicException;
 
 /**
  * @table programme_enrolment
@@ -36,15 +35,10 @@ class ProgrammeEnrolmentRepository extends Repository
         $qb->where('p.deleted_at IS NULL');
 
         $grouped = [];
-        foreach ($qb->fetchAll() as $row) {
-            /** @var Row&iterable<string, mixed> $row */
-            $programmeIdRaw = $row['programme_id'] ?? null;
-            if (is_numeric($programmeIdRaw) === false) {
-                throw new LogicException('programme_enrolment row without numeric programme_id');
-            }
-            /** @var ProgrammeEnrolment $enrolment */
-            $enrolment = $this->createEntity($row);
-            $grouped[(int)$programmeIdRaw][] = $enrolment;
+        foreach ($this->fetchEnrolments($qb) as $enrolment) {
+            /** @var int|string $programmeId */
+            $programmeId = $enrolment->getRowData()['programme_id'];
+            $grouped[(int)$programmeId][] = $enrolment;
         }
 
         return $grouped;

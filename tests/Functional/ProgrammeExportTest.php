@@ -145,6 +145,55 @@ class ProgrammeExportTest extends AppTestCase
         self::assertArrayNotHasKey($empty->id, $grouped);
     }
 
+    public function testProgrammeCsvQueryCountDoesNotGrowWithEnrolments(): void
+    {
+        $app = $this->getTestApp();
+        $this->openProgrammeEnrolmentWindow($app);
+        $service = $this->getService($app, ProgrammeEnrolmentService::class);
+        $exportService = $this->getService($app, ExportService::class);
+        $event = $this->getService($app, EventRepository::class)->getOneBy(['slug' => self::TEST_EVENT_SLUG]);
+        $queryCounter = $this->attachQueryCounter($app);
+        $workshop = $this->createProgramme(
+            $app,
+            'batch workshop',
+            null,
+            10,
+            roles: [ParticipantRole::Ist, ParticipantRole::PatrolParticipant],
+        );
+
+        foreach (['batch-1', 'batch-2'] as $name) {
+            self::assertNull($service->enrol(
+                $this->createPaidIstWithEmail($app, $name . '@example.com'),
+                $workshop->id,
+            )->error);
+        }
+        self::assertNull($service->enrol(
+            $this->createPatrolMemberOnEvent($app, $event, 'batch-member-1'),
+            $workshop->id,
+        )->error);
+        $countBefore = $queryCounter->count();
+        $rowsInFirstBatch = $exportService->programmeEnrolmentsToCSV($event);
+        $queriesForFirstBatch = $queryCounter->count() - $countBefore;
+
+        foreach (['batch-3', 'batch-4', 'batch-5', 'batch-6'] as $name) {
+            self::assertNull($service->enrol(
+                $this->createPaidIstWithEmail($app, $name . '@example.com'),
+                $workshop->id,
+            )->error);
+        }
+        self::assertNull($service->enrol(
+            $this->createPatrolMemberOnEvent($app, $event, 'batch-member-2'),
+            $workshop->id,
+        )->error);
+        $countBefore = $queryCounter->count();
+        $rowsInSecondBatch = $exportService->programmeEnrolmentsToCSV($event);
+        $queriesForSecondBatch = $queryCounter->count() - $countBefore;
+
+        self::assertCount(4, $rowsInFirstBatch);
+        self::assertCount(9, $rowsInSecondBatch);
+        self::assertSame($queriesForFirstBatch, $queriesForSecondBatch);
+    }
+
     /**
      * @param App<ContainerInterface> $app
      * @param list<ParticipantRole>|null $roles
