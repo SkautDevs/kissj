@@ -23,6 +23,9 @@ readonly class DevicePairingService
     public const int MAX_PENDING_PER_EVENT = 1000;
     private const int MAX_FAILED_ATTEMPTS_PER_HOUR = 10;
     private const int MAX_USER_CODE_DRAWS = 10;
+    // ISO 8601 duration of 7 days: pairings and device sessions of the event stay in the database
+    // for 7 days after they expire, then the next pairing start deletes them
+    private const string RETENTION_AFTER_EXPIRY = 'P7D';
 
     public function __construct(
         private DevicePairingRepository $devicePairingRepository,
@@ -63,6 +66,9 @@ readonly class DevicePairingService
             function () use ($event, $deviceId): ?DevicePairing {
                 $this->devicePairingRepository->lockForEvent($event);
                 $now = DateTimeUtils::getDateTime();
+                $retentionBoundary = $now->sub(new DateInterval(self::RETENTION_AFTER_EXPIRY));
+                $this->devicePairingRepository->deleteExpiredBefore($event, $retentionBoundary);
+                $this->deviceSessionRepository->deleteExpiredBefore($event, $retentionBoundary);
                 $this->devicePairingRepository->replacePendingOfDevice($event, $deviceId);
                 $pendingCount = $this->devicePairingRepository->countPendingUnexpired($event, $now);
                 if ($pendingCount >= self::MAX_PENDING_PER_EVENT) {

@@ -14,6 +14,8 @@ use kissj\BankPayment\BankPaymentRepository;
 use kissj\Device\DevicePairing;
 use kissj\Device\DevicePairingRepository;
 use kissj\Device\DevicePairingStatus;
+use kissj\Device\DeviceSession;
+use kissj\Device\DeviceSessionRepository;
 use kissj\Event\Event;
 use kissj\Event\EventRepository;
 use kissj\FlashMessages\FlashMessagesBySession;
@@ -528,6 +530,24 @@ class AppTestCase extends TestCase
         $this->getService($app, DevicePairingRepository::class)->persist($pairing);
 
         return $pairing;
+    }
+
+    /**
+     * @param App<ContainerInterface> $app
+     */
+    protected function createDeviceSession(
+        App $app,
+        Participant $participant,
+        ?string $token = null,
+        ?DateTimeInterface $expiresAt = null,
+    ): DeviceSession {
+        $session = new DeviceSession();
+        $session->participant = $participant;
+        $session->tokenHash = DeviceSession::hashToken($token ?? bin2hex(random_bytes(32)));
+        $session->expiresAt = $expiresAt ?? DateTimeUtils::getDateTime('+6 months');
+        $this->getService($app, DeviceSessionRepository::class)->persist($session);
+
+        return $session;
     }
 
     /**

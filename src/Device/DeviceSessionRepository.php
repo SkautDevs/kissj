@@ -6,6 +6,7 @@ namespace kissj\Device;
 
 use DateTimeInterface;
 use kissj\Application\DateTimeUtils;
+use kissj\Event\Event;
 use kissj\Orm\Order;
 use kissj\Orm\Relation;
 use kissj\Orm\Repository;
@@ -32,5 +33,19 @@ class DeviceSessionRepository extends Repository
             'participant' => $participant,
             'expires_at' => new Relation(DateTimeUtils::formatAtom($now), '>'),
         ]);
+    }
+
+    public function deleteExpiredBefore(Event $event, DateTimeInterface $before): void
+    {
+        $this->connection->delete($this->getTable())
+            ->where('expires_at < %s', DateTimeUtils::formatAtom($before))
+            ->where(
+                'participant_id IN (SELECT pa.id FROM participant pa'
+                . ' LEFT JOIN participant pl ON pl.id = pa.patrol_leader_id'
+                . ' JOIN [user] u ON u.id = COALESCE(pa.user_id, pl.user_id)'
+                . ' WHERE u.event_id = %i)',
+                $event->id,
+            )
+            ->execute();
     }
 }

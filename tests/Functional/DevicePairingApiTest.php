@@ -60,6 +60,35 @@ class DevicePairingApiTest extends AppTestCase
         self::assertSame($body['userCode'], $pairing->userCode);
     }
 
+    public function testStartDeletesPairingsAndSessionsExpiredMoreThanSevenDaysAgo(): void
+    {
+        $app = $this->getTestApp();
+        $event = $this->authorizeEventForApi($app, self::EVENT_SLUG, self::API_KEY);
+        $now = DateTimeUtils::getDateTime();
+        $pairings = $this->getService($app, DevicePairingRepository::class);
+        $sessions = $this->getService($app, DeviceSessionRepository::class);
+        $participant = $this->createPaidIstOnEvent($app, $event, 'housekeeping');
+        $oldPairing = $this->createDevicePairing(
+            $app,
+            $event,
+            status: DevicePairingStatus::Consumed,
+            expiresAt: $now->modify('-8 days'),
+        );
+        $recentPairing = $this->createDevicePairing($app, $event, expiresAt: $now->modify('-6 days'));
+        $oldSession = $this->createDeviceSession(
+            $app,
+            $participant,
+            'old-housekeeping-token',
+            $now->modify('-8 days'),
+        );
+
+        self::assertSame(200, $app->handle($this->createPairingStartRequest(self::API_KEY))->getStatusCode());
+
+        self::assertNull($pairings->findOneBy(['id' => $oldPairing->id]));
+        self::assertNotNull($pairings->findOneBy(['id' => $recentPairing->id]));
+        self::assertNull($sessions->findOneBy(['id' => $oldSession->id]));
+    }
+
     public function testStartRefusesAtThousandPendingButExpiredOnesDoNotCount(): void
     {
         $app = $this->getTestApp();

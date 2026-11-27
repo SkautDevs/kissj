@@ -104,4 +104,12 @@ class DevicePairingRepository extends Repository
 
         return $this->connection->getAffectedRows();
     }
+
+    public function deleteExpiredBefore(Event $event, DateTimeInterface $before): void
+    {
+        $this->connection->delete($this->getTable())
+            ->where('event_id = %i', $event->id)
+            ->where('expires_at < %s', DateTimeUtils::formatAtom($before))
+            ->execute();
+    }
 }

@@ -8,8 +8,6 @@ use kissj\Application\DateTimeUtils;
 use kissj\Device\DevicePairingRepository;
 use kissj\Device\DevicePairingService;
 use kissj\Device\DevicePairingStatus;
-use kissj\Device\DeviceSession;
-use kissj\Device\DeviceSessionRepository;
 use kissj\Event\EventRepository;
 use kissj\Participant\Participant;
 use Psr\Container\ContainerInterface;
@@ -86,11 +84,7 @@ class DevicePairingConnectedDevicesTest extends AppTestCase
      */
     private function createSession(App $app, Participant $participant, string $expiresIn): void
     {
-        $session = new DeviceSession();
-        $session->participant = $participant;
-        $session->tokenHash = DeviceSession::hashToken(bin2hex(random_bytes(32)));
-        $session->expiresAt = DateTimeUtils::getDateTime($expiresIn);
-        $this->getService($app, DeviceSessionRepository::class)->persist($session);
+        $this->createDeviceSession($app, $participant, expiresAt: DateTimeUtils::getDateTime($expiresIn));
     }
 
     /**

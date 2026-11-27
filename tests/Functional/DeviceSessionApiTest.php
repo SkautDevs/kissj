@@ -605,11 +605,7 @@ class DeviceSessionApiTest extends AppTestCase
     private function createSession(App $app, Participant $participant, ?DateTimeImmutable $expiresAt = null): string
     {
         $token = bin2hex(random_bytes(32));
-        $session = new DeviceSession();
-        $session->participant = $participant;
-        $session->tokenHash = DeviceSession::hashToken($token);
-        $session->expiresAt = $expiresAt ?? DateTimeUtils::getDateTime('+6 months');
-        $this->getService($app, DeviceSessionRepository::class)->persist($session);
+        $this->createDeviceSession($app, $participant, $token, $expiresAt);
 
         return $token;
     }
