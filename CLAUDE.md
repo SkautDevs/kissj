@@ -5,7 +5,7 @@ Use superskills whenever possible to enhance understanding and execution of task
 
 ## Project Overview
 
-KISSJ (Keep It Simple Stupid for Jamborees) is a Scout registration system for national and international jamborees. Built with PHP 8.3+, Slim 4 framework, LeanMapper ORM, and PostgreSQL.
+KISSJ (Keep It Simple Stupid for Jamborees) is a Scout registration system for national and international jamborees. Built with PHP 8.4+, Slim 4 framework, LeanMapper ORM, and PostgreSQL.
 
 ## Git Workflow
 

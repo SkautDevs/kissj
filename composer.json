@@ -2,7 +2,7 @@
 	"name": "skaut/kissj",
 	"description": "Scout registration system for jamborees",
 	"keywords": [
-		"registraton",
+		"registration",
 		"system",
 		"scouts",
 		"skaut",
@@ -21,7 +21,7 @@
 		}
 	],
 	"require": {
-		"php": "^8.3",
+		"php": "^8.4",
 		"ext-dom": "*",
 		"ext-fileinfo": "*",
 		"ext-gd": "*",
