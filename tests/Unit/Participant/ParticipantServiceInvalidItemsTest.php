@@ -90,14 +90,7 @@ class ParticipantServiceInvalidItemsTest extends TestCase
 
     public function testGetInvalidItemsForCloseReturnsEmptyListForFullyValidParticipant(): void
     {
-        $participant = new Guest();
-        $participant->birthDate = null;
-        $participant->firstName = 'Jan';
-        $participant->lastName = 'Novak';
-        $participant->telephoneNumber = '+420123456789';
-        $participant->email = 'jan.novak@example.com';
-        $participant->arrivalDate = DateTimeUtils::getDateTime('2026-07-20');
-        $participant->departureDate = DateTimeUtils::getDateTime('2026-07-25');
+        $participant = $this->createValidGuest();
 
         self::assertSame(
             [],
@@ -108,7 +101,71 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         );
     }
 
-    private function getParticipantService(): ParticipantService
+    public function testGetInvalidItemsForCloseFlagsFutureAndImplausiblyOldBirthDate(): void
+    {
+        $ca = new ContentArbiterGuest();
+        $ca->birthDate->allowed = true;
+        $service = $this->getParticipantService();
+
+        $futureGuest = $this->createValidGuest();
+        $futureGuest->birthDate = DateTimeUtils::getDateTime('+1 day');
+        self::assertContains($ca->birthDate, $service->getInvalidItemsForClose($futureGuest, $ca));
+
+        $tooOldGuest = $this->createValidGuest();
+        $tooOldGuest->birthDate = DateTimeUtils::getDateTime('today -120 years -1 day');
+        self::assertContains($ca->birthDate, $service->getInvalidItemsForClose($tooOldGuest, $ca));
+
+        $exactBoundaryGuest = $this->createValidGuest();
+        $exactBoundaryGuest->birthDate = DateTimeUtils::getDateTime('today -120 years');
+        self::assertNotContains($ca->birthDate, $service->getInvalidItemsForClose($exactBoundaryGuest, $ca));
+
+        $validGuest = $this->createValidGuest();
+        $validGuest->birthDate = DateTimeUtils::getDateTime('2000-05-15');
+        self::assertNotContains($ca->birthDate, $service->getInvalidItemsForClose($validGuest, $ca));
+    }
+
+    public function testAddParamsTrimsWhitespaceOnTextFieldsAndEmail(): void
+    {
+        $repository = Mockery::mock(ParticipantRepository::class);
+        $repository->shouldReceive('persist')->once();
+        $participant = new Guest();
+        $ca = new ContentArbiterGuest();
+
+        $this->getParticipantService($repository)->addParamsIntoParticipant(
+            $participant,
+            [
+                'firstName' => '  Jan  ',
+                'lastName' => "\tNovak\n",
+                'email' => '   ',
+            ],
+            [$ca->firstName, $ca->lastName, $ca->email],
+        );
+
+        self::assertSame('Jan', $participant->firstName);
+        self::assertSame('Novak', $participant->lastName);
+        self::assertNull($participant->email);
+    }
+
+    private function createValidGuest(): Guest
+    {
+        $participant = new class () extends Guest {
+            public function getAgeAtStartOfEvent(): int
+            {
+                return 20;
+            }
+        };
+        $participant->birthDate = null;
+        $participant->firstName = 'Jan';
+        $participant->lastName = 'Novak';
+        $participant->telephoneNumber = '+420603123456';
+        $participant->email = 'jan.novak@example.com';
+        $participant->arrivalDate = DateTimeUtils::getDateTime('2026-07-20');
+        $participant->departureDate = DateTimeUtils::getDateTime('2026-07-25');
+
+        return $participant;
+    }
+
+    private function getParticipantService(?ParticipantRepository $participantRepository = null): ParticipantService
     {
         $metrics = new Metrics();
         // UserService/Mailer are readonly, so Mockery cannot subclass them directly -
@@ -124,7 +181,7 @@ class ParticipantServiceInvalidItemsTest extends TestCase
         );
 
         return new ParticipantService(
-            Mockery::mock(ParticipantRepository::class),
+            $participantRepository ?? Mockery::mock(ParticipantRepository::class),
             Mockery::mock(TroopParticipantRepository::class),
             Mockery::mock(PaymentService::class),
             new UserService(

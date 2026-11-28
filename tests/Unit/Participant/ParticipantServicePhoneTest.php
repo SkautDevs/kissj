@@ -61,6 +61,7 @@ class ParticipantServicePhoneTest extends TestCase
             'slovak prefix odd spacing' => ['+421 903123456', '+421 903 123 456'],
             'surrounding whitespace and tab' => ["  +420\t603 123 456 ", '+420 603 123 456'],
             'foreign keeps grouping' => ['+49  30   1234567', '+49 30 1234567'],
+            'foreign compact gets formatted' => ['+49301234567', '+49 30 1234567'],
             'foreign trimmed' => [' +44 20 7946 0958 ', '+44 20 7946 0958'],
             'short number untouched' => ['12345', '12345'],
             'garbage untouched' => ['call me', 'call me'],
@@ -130,7 +131,7 @@ class ParticipantServicePhoneTest extends TestCase
             );
         }
 
-        foreach (['0905 123 456', '12345'] as $invalid) {
+        foreach (['0905 123 456', '12345', '+1', '+123', '+06301742099', '+420 60312345'] as $invalid) {
             self::assertContains(
                 $ca->phone,
                 $service->getInvalidItemsForClose($this->createGuestWithPhone($invalid), $ca),

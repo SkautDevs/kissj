@@ -121,22 +121,33 @@ readonly class ParticipantService
                 })(),
                 'patrolName' => (function () use ($params, $participant): void {
                     if ($participant instanceof PatrolLeader || $participant instanceof TroopLeader) {
-                        $participant->patrolName = $params['patrolName'] ?? null;
+                        $participant->patrolName = $this->trimToNull($params['patrolName'] ?? null);
                     }
                 })(),
                 'technicalTeamName' => (function () use ($params, $participant): void {
                     if ($participant instanceof TechnicalTeamLeader) {
-                        $participant->technicalTeamName = $params['technicalTeamName'] ?? null;
+                        $participant->technicalTeamName = $this->trimToNull($params['technicalTeamName'] ?? null);
                     }
                 })(),
                 'telephoneNumber' => (function () use ($params, $participant): void {
                     $participant->setTelephoneNumberNormalized($params['telephoneNumber'] ?? null);
                 })(),
                 default => (function () use ($slug, $params, $participant): void {
-                    $participant->__set($slug, $params[$slug] ?? null);
+                    $participant->__set($slug, $this->trimToNull($params[$slug] ?? null));
                 })(),
             };
         }
+    }
+
+    private function trimToNull(mixed $value): ?string
+    {
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $trimmed = trim($value);
+
+        return $trimmed === '' ? null : $trimmed;
     }
 
     public function isCloseRegistrationValid(Participant $participant): RegistrationCloseResult
@@ -335,9 +346,20 @@ readonly class ParticipantService
         }
 
         if (
+            $ca->birthDate->allowed
+            && $p->birthDate !== null
+            && (
+                $p->birthDate > DateTimeUtils::getDateTime('today')
+                || $p->birthDate < DateTimeUtils::getDateTime('today -120 years')
+            )
+        ) {
+            $invalid[] = $ca->birthDate;
+        }
+
+        if (
             $ca->phone->allowed
             && $p->telephoneNumber !== null
-            && preg_match('/^\+[0-9 ]+$/', Participant::normalizeTelephoneNumber($p->telephoneNumber)) === 0
+            && !Participant::isValidTelephoneNumber($p->telephoneNumber)
         ) {
             $invalid[] = $ca->phone;
         }

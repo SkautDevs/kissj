@@ -16,6 +16,10 @@ use kissj\User\User;
 use kissj\User\UserStatus;
 use LeanMapper\Exception\Exception as LeanMapperException;
 use LeanMapper\Exception\MemberAccessException;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use LogicException;
 use Ramsey\Uuid\Uuid;
 
@@ -424,26 +428,41 @@ class Participant extends EntityDatetime
 
     public static function normalizeTelephoneNumber(string $raw): string
     {
-        $collapsed = trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $raw) ?? $raw);
-        if (str_starts_with($collapsed, '00')) {
-            $collapsed = '+' . substr($collapsed, 2);
-        }
-
-        $compact = str_replace(' ', '', $collapsed);
-
-        if (preg_match('/^[0-9]{9}$/', $compact) === 1) {
-            $compact = '+420' . $compact;
-        }
-
-        if (preg_match('/^42[01][0-9]{9}$/', $compact) === 1) {
-            $compact = '+' . $compact;
-        }
-
-        if (preg_match('/^(\+42[01])([0-9]{3})([0-9]{3})([0-9]{3})$/', $compact, $parts) === 1) {
-            return sprintf('%s %s %s %s', $parts[1], $parts[2], $parts[3], $parts[4]);
+        $collapsed = self::collapseTelephoneInput($raw);
+        $parsed = self::parseValidTelephoneNumber($collapsed);
+        if ($parsed !== null) {
+            return PhoneNumberUtil::getInstance()->format($parsed, PhoneNumberFormat::INTERNATIONAL);
         }
 
         return $collapsed;
+    }
+
+    public static function isValidTelephoneNumber(string $raw): bool
+    {
+        return self::parseValidTelephoneNumber(self::collapseTelephoneInput($raw)) !== null;
+    }
+
+    private static function collapseTelephoneInput(string $raw): string
+    {
+        $collapsed = trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $raw) ?? $raw);
+        if (str_starts_with($collapsed, '00')) {
+            return '+' . substr($collapsed, 2);
+        }
+
+        return $collapsed;
+    }
+
+    private static function parseValidTelephoneNumber(string $collapsed): ?PhoneNumber
+    {
+        $phoneUtil = PhoneNumberUtil::getInstance();
+
+        try {
+            $parsed = $phoneUtil->parse($collapsed, 'CZ');
+
+            return $phoneUtil->isValidNumber($parsed) ? $parsed : null;
+        } catch (NumberParseException) {
+            return null;
+        }
     }
 
     public function setTelephoneNumberNormalized(?string $raw): void
